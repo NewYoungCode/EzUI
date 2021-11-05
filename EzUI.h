@@ -27,7 +27,7 @@
 #define UI namespace EzUI
 
 #ifdef _WINDLL
-#define UI_EXPORT __declspec(dllexport) 
+#define  UI_EXPORT  __declspec(dllexport) 
 #else
 #define UI_EXPORT
 #endif // _WINDLL

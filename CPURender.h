@@ -8,7 +8,7 @@
 #pragma comment(lib, "gdiplus.lib")
 #pragma comment(lib, "Msimg32.lib")
 
-#define HImage Tuple<Image*>
+
 using Bitmap = Gdiplus::Bitmap;
 using Rect = Gdiplus::Rect;
 using RectF = Gdiplus::RectF;
@@ -22,29 +22,19 @@ using Region = Gdiplus::Region;
 using Pen = Gdiplus::Pen;
 using ARGB = Gdiplus::ARGB;
 
+class UI_EXPORT  Image :public  Gdiplus::Image {
+public:
+	Bitmap *BufBitmap = NULL;//预绘制
+	Rect Box;//指定图片绘制在什么位置 //不指定就自动拉伸到当前控件上
+	Image(const std::string&filename, int radius=0);
+	Image(const std::wstring&filename, int radius = 0);
+	~Image();
+};
+
+#define HImage Tuple<Image*>
 void HighQualityMode(Gdiplus::Graphics*graphics);
 void CreateRectangle(GraphicsPath &path, const Rect& rect, float radius);//申明
-void ClipImage(Gdiplus::Image * img, const Size&sz, int _radius, Bitmap ** outBitmap);//
-class UI_EXPORT Image :public  Gdiplus::Image {
-public:
-	Bitmap *BufBitmap{ 0 };//预绘制
-	Rect Box;//指定图片绘制在什么位置 //不指定就自动拉伸到当前控件上
-	Image(const std::string&filename, int radius = 0) :Gdiplus::Image(String::ANSIToUniCode(filename).c_str()) {
-		if (radius > 0) {
-			ClipImage(this, Size{ (int)GetWidth(), (int)GetHeight() }, radius, &BufBitmap);
-		}
-	}
-	Image(const std::wstring&filename, int radius = 0) :Gdiplus::Image(filename.c_str()) {
-		if (radius > 0) {
-			ClipImage(this, Size{ (int)GetWidth(), (int)GetHeight() }, radius, &BufBitmap);
-		}
-	}
-	~Image() {
-		if (BufBitmap) {
-			delete BufBitmap;
-		}
-	}
-};
+void ClipImage(Image * img, const Size&sz, int _radius, Bitmap ** outBitmap);//
 
 enum class TextAlign {
 	// 摘要: 
@@ -150,8 +140,8 @@ public:
 		return region1;
 	}
 	Gdiplus::Graphics *base = NULL;
-	 std::list<const Rect*> Layer;
-	const HDC DC = NULL;
+	std::list<const Rect*> Layer;
+	HDC DC = NULL;
 	int OffsetX = 0;
 	int OffsetY = 0;
 	CPURender(Bitmap *image);

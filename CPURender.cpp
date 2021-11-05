@@ -53,6 +53,21 @@ Gdiplus::Font *CreateFont(const EString&fontFamily, float fontSize) {
 	return _bufFont;
 }
 
+Image::Image(const std::string&filename, int radius) :Gdiplus::Image(String::ANSIToUniCode(filename).c_str()) {
+	if (radius > 0) {
+		ClipImage(this, Size{ (int)GetWidth(), (int)GetHeight() }, radius, &BufBitmap);
+	}
+}
+Image::Image(const std::wstring&filename, int radius) :Gdiplus::Image(filename.c_str()) {
+	if (radius > 0) {
+		ClipImage(this, Size{ (int)GetWidth(), (int)GetHeight() }, radius, &BufBitmap);
+	}
+}
+Image::~Image() {
+	if (BufBitmap) {
+		delete BufBitmap;
+	}
+}
 
 void RenderInitialize()
 {
@@ -102,7 +117,7 @@ void CreateRectangle(GraphicsPath &path, const Rect& rect, float radius)
 	path.AddArc(arcRect, 90, 90);
 	path.CloseFigure();
 }
-void ClipImage(Gdiplus::Image * img, const Size&sz, int _radius, Bitmap ** outBitmap)
+void ClipImage(Image * img, const Size&sz, int _radius, Bitmap ** outBitmap)
 {
 	int width = img->GetWidth();
 	int height = img->GetHeight();
@@ -127,7 +142,7 @@ CPURender::CPURender(Bitmap * image)
 }
 CPURender::CPURender(HDC hdc)
 {
-	(HDC)DC = hdc;
+	DC = hdc;
 	base = new  Gdiplus::Graphics(hdc);
 	HighQualityMode(base);
 }

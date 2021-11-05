@@ -1,7 +1,7 @@
 ﻿#include "framework.h"
 #include "Resource.h"
 #include <thread>
-#include "Directui.h"
+#include "ezui.h"
 #include "VLayout.h"
 #include "HLayout.h"
 #include "Form.h" 
