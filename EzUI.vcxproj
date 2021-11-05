@@ -18,6 +18,66 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Application.h" />
+    <ClInclude Include="BoxShadow.h" />
+    <ClInclude Include="Button.h" />
+    <ClInclude Include="CheckBox.h" />
+    <ClInclude Include="Container.h" />
+    <ClInclude Include="Control.h" />
+    <ClInclude Include="CPURender.h" />
+    <ClInclude Include="EzUI.h" />
+    <ClInclude Include="Edit.h" />
+    <ClInclude Include="Form.h" />
+    <ClInclude Include="HLayout.h" />
+    <ClInclude Include="HList.h" />
+    <ClInclude Include="HScrollBar.h" />
+    <ClInclude Include="IControl.h" />
+    <ClInclude Include="Lable.h" />
+    <ClInclude Include="Layout.h" />
+    <ClInclude Include="Menu.h" />
+    <ClInclude Include="NotifyIcon.h" />
+    <ClInclude Include="Painter.h" />
+    <ClInclude Include="RadioButton.h" />
+    <ClInclude Include="TileLayout.h" />
+    <ClInclude Include="tinyxml\tinystr.h" />
+    <ClInclude Include="tinyxml\tinyxml.h" />
+    <ClInclude Include="UIManager.h" />
+    <ClInclude Include="VLayout.h" />
+    <ClInclude Include="VList.h" />
+    <ClInclude Include="VScrollBar.h" />
+    <ClInclude Include="Window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="BoxShadow.cpp" />
+    <ClCompile Include="Button.cpp" />
+    <ClCompile Include="CheckBox.cpp" />
+    <ClCompile Include="Container.cpp" />
+    <ClCompile Include="Control.cpp" />
+    <ClCompile Include="CPURender.cpp" />
+    <ClCompile Include="Edit.cpp" />
+    <ClCompile Include="Form.cpp" />
+    <ClCompile Include="HLayout.cpp" />
+    <ClCompile Include="HList.cpp" />
+    <ClCompile Include="HScrollBar.cpp" />
+    <ClCompile Include="IControl.cpp" />
+    <ClCompile Include="Lable.cpp" />
+    <ClCompile Include="Layout.cpp" />
+    <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="NotifyIcon.cpp" />
+    <ClCompile Include="RadioButton.cpp" />
+    <ClCompile Include="TileLayout.cpp" />
+    <ClCompile Include="tinyxml\tinystr.cpp" />
+    <ClCompile Include="tinyxml\tinyxml.cpp" />
+    <ClCompile Include="tinyxml\tinyxmlerror.cpp" />
+    <ClCompile Include="tinyxml\tinyxmlparser.cpp" />
+    <ClCompile Include="UIManager.cpp" />
+    <ClCompile Include="VLayout.cpp" />
+    <ClCompile Include="VList.cpp" />
+    <ClCompile Include="VScrollBar.cpp" />
+    <ClCompile Include="Window.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{BE15257D-96DD-4376-8270-403DD4E16783}</ProjectGuid>
@@ -27,26 +87,26 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
