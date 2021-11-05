@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.1585
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EzUI", "EzUI.vcxproj", "{BE15257D-96DD-4376-8270-403DD4E16783}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CloudMusic", "CloudMusic\CloudMusic.vcxproj", "{F2982709-24BE-469D-9EA9-36E5D34A5400}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{BE15257D-96DD-4376-8270-403DD4E16783}.Release|x64.Build.0 = Release|x64
 		{BE15257D-96DD-4376-8270-403DD4E16783}.Release|x86.ActiveCfg = Release|Win32
 		{BE15257D-96DD-4376-8270-403DD4E16783}.Release|x86.Build.0 = Release|Win32
+		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Debug|x64.ActiveCfg = Debug|x64
+		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Debug|x64.Build.0 = Debug|x64
+		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Debug|x86.ActiveCfg = Debug|Win32
+		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Debug|x86.Build.0 = Debug|Win32
+		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Release|x64.ActiveCfg = Release|x64
+		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Release|x64.Build.0 = Release|x64
+		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Release|x86.ActiveCfg = Release|Win32
+		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
