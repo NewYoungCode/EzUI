@@ -94,8 +94,7 @@ public:
 #define UI_SetUserData(hWnd,data)  SetWindowLong(hWnd, GWLP_USERDATA, (LONG)data);
 #define UI_GetUserData(hwnd) GetWindowLong(hwnd, GWLP_USERDATA);
 #endif
-
-
+//禁用一些没必要的警告
 #pragma warning(disable:4244)
 #pragma warning(disable:4267)
 

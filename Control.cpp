@@ -676,7 +676,7 @@ void Control::OnMouseEnter(const Point & point)
 	}
 	if (Cursor.valid) {//鼠标移入的时候判断是否有设置状态
 		_LastCursor = (LPCSTR)::GetClassLongPtr(ParentWid, GCL_HCURSOR);//记录之前的状态
-		::SetClassLongPtr(ParentWid, GCL_HCURSOR, (LONG)::LoadCursor(NULL, Cursor));//设置状态
+		::SetClassLongPtr(ParentWid, GCL_HCURSOR, (UINT_PTR)::LoadCursor(NULL, Cursor));//设置状态
 	}
 #ifdef DEBUGLOG
 	//Debug::Log("ClipRect %d %d %d %d", ClipRect.X, ClipRect.Y, ClipRect.Width, ClipRect.Height);
@@ -728,7 +728,7 @@ void Control::OnMouseLeave()
 		this->State = ControlState::None;//鼠标离开无论如何都要重置状态
 	}
 	if (_LastCursor) {//如果此控件已经设置过鼠标指针样式 则 鼠标移出 的时候需要恢复成之前的状态
-		::SetClassLongPtr(ParentWid, GCL_HCURSOR, (LONG)_LastCursor.value);
+		::SetClassLongPtr(ParentWid, GCL_HCURSOR, (UINT_PTR)_LastCursor.value);
 		_LastCursor = NULL;
 	}
 	TRIGGER(MouseLeave);
