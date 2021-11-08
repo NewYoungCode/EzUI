@@ -7,13 +7,13 @@ public:
 	HMODULE _hInstance;
 	HWND _hwnd;
 	std::function<bool(UINT)> _messageCallback = NULL;
-	NOTIFYICONDATA _nid;
+	NOTIFYICONDATAW _nid;
 	Menu* _menu;
 public:
 	NotifyIcon();
 	void SetIcon(short id);
 	void SetIcon(HICON icon);
-	void SetText(const TCHAR* text);
+	void SetText(const WCHAR* text);
 	void SetMenu(Menu* menu);
 	void ShowBalloonTip(const EString&title, const EString&msg, int timeOut = 1000) ;
 	void SetMessageProc(const std::function<bool(UINT)> &messageCallback);

@@ -29,8 +29,8 @@ namespace UIManager {
 
 
 	Rect StringToRect(const EString&str) {
-		auto rectStr = String::Split(str, ",");
-		if (str == TEXT("")) return Rect();//如果没写矩形区域
+		auto rectStr = String::Split(str, L",");
+		if (str == L"") return Rect();//如果没写矩形区域
 		Rect rect;
 		rect.X = std::stoi(rectStr.at(0));
 		rect.Y = std::stoi(rectStr.at(1));
@@ -40,7 +40,7 @@ namespace UIManager {
 	}
 	const EString Attribute(TiXmlElement*node, const char*szstr) {
 		auto str = node->Attribute(szstr);
-		if (str == NULL) return TEXT("");
+		if (str == NULL) return L"";
 		return str;
 	}
 	Control* BuildControl(TiXmlElement*node) {
@@ -129,13 +129,13 @@ namespace UIManager {
 			EString valueStr = node->Attribute("dock");
 			do
 			{
-				if (valueStr == "fill") {
+				if (valueStr == L"fill") {
 					ctl->Dock = DockStyle::Fill; break;
 				}
-				if (valueStr == "horizontal") {
+				if (valueStr == L"horizontal") {
 					ctl->Dock = DockStyle::Horizontal; break;
 				}
-				if (valueStr == "vertical") {
+				if (valueStr == L"vertical") {
 					ctl->Dock = DockStyle::Vertical; break;
 				}
 			} while (0);
@@ -144,16 +144,16 @@ namespace UIManager {
 			EString valueStr = node->Attribute("action");
 			do
 			{
-				if (valueStr == "close") {
+				if (valueStr == L"close") {
 					ctl->Action = ControlAction::Close; break;
 				}
-				if (valueStr == "mini") {
+				if (valueStr == L"mini") {
 					ctl->Action = ControlAction::Mini; break;
 				}
-				if (valueStr == "max") {
+				if (valueStr == L"max") {
 					ctl->Action = ControlAction::Max; break;
 				}
-				if (valueStr == "move" || valueStr == "movewindow") {
+				if (valueStr == L"move" || valueStr == L"movewindow") {
 					ctl->Action = ControlAction::MoveWindow; break;
 				}
 			} while (0);
@@ -185,9 +185,14 @@ namespace UIManager {
 	Control* LoadControl(const EString & filename)
 	{
 		TiXmlDocument doc;
-		if (!doc.LoadFile(filename.c_str())) {
+		FILE* file(0);
+		_wfopen_s(&file, filename.c_str(), L"r");
+
+		std::unique_ptr<FILE> SafeObj(file);
+		if (!doc.LoadFile(file), TIXML_ENCODING_UTF8) {
 			ASSERT(0);
 		}
+
 		TiXmlElement* _style = doc.FirstChildElement();//必须先读取样式
 		ASSERT(_style);
 
@@ -195,23 +200,23 @@ namespace UIManager {
 		TrimStyle(style);
 
 		while (style.size() > 0) {
-			size_t pos = style.find("#");
+			size_t pos = style.find(L"#");
 			if (pos == -1)break;
-			size_t pos2 = style.find("}");
+			size_t pos2 = style.find(L"}");
 			if (pos2 == -1)break;
-			size_t pos3 = style.find("{");
+			size_t pos3 = style.find(L"{");
 			EString name = style.substr(pos + 1, pos3 - pos - 1);
-			size_t pos4 = name.find(":");
+			size_t pos4 = name.find(L":");
 			EString style_type;
 			EString str = style.substr(pos3 + 1, pos2 - pos3 - 1);
-			if (pos4 != -1) {
+			if (pos4 != size_t(-1)) {
 				style_type = name.substr(pos4 + 1);
 				name = name.substr(0, pos4);
 			}
-			if (style_type == "hover") {
+			if (style_type == L"hover") {
 				styles_hover.insert(std::pair<EString, EString>(name, str));
 			}
-			else if (style_type == "active") {
+			else if (style_type == L"active") {
 				styles_active.insert(std::pair<EString, EString>(name, str));
 			}
 			else {
@@ -247,48 +252,48 @@ namespace UIManager {
 			styleStr = styles.find(ctl->Name);
 		}
 		if (styleStr != _styles->end() && styleStr->second.size() > 0) {
-			auto attrs = String::Split(styleStr->second, ";");
+			auto attrs = String::Split(styleStr->second, L";");
 			for (auto &it : attrs) {
-				size_t pos = it.find(":");
+				size_t pos = it.find(L":");
 				if (pos == -1)continue;
 				EString key = it.substr(0, pos);
 				EString value = it.substr(pos + 1);
 				do
 				{
-					if (key == "background-color") {
+					if (key == L"background-color") {
 						style->BackgroundColor = StringToColor(value);
 						break;
 					}
-					if (key == "background-image") {
+					if (key == L"background-image") {
 						style->BackgroundImage = new Image(value);
 						break;
 					}
-					if (key == "fore-image") {
+					if (key == L"fore-image") {
 						style->BackgroundImage = new Image(value);
 						break;
 					}
-					if (key == "border-color") {
+					if (key == L"border-color") {
 						style->BorderColor = StringToColor(value);
 						break;
 					}
-					if (key == "color" || key == "fore-color") {
+					if (key == L"color" || key == L"fore-color") {
 						style->ForeColor = StringToColor(value);
 						break;
 					}
-					if (key == "radius") {
+					if (key == L"radius") {
 						style->Radius = std::stoi(value);
 						break;
 					}
-					if (key == "font-size") {
+					if (key == L"font-size") {
 						style->FontSize = std::stoi(value);
 						break;
 					}
-					if (key == "font-family") {
+					if (key == L"font-family") {
 						Erase(value, '"');//删除双引号;
 						style->FontFamily = value;
 						break;
 					}
-					if (key == "border") {
+					if (key == L"border") {
 						auto width = std::stoi(value);
 						style->BorderLeft = width;
 						style->BorderTop = width;
@@ -296,19 +301,19 @@ namespace UIManager {
 						style->BorderBottom = width;
 						break;
 					}
-					if (key == "border-left") {
+					if (key == L"border-left") {
 						style->BorderLeft = std::stoi(value);
 						break;
 					}
-					if (key == "border-top") {
+					if (key == L"border-top") {
 						style->BorderTop = std::stoi(value);
 						break;
 					}
-					if (key == "border-right") {
+					if (key == L"border-right") {
 						style->BorderRight = std::stoi(value);
 						break;
 					}
-					if (key == "border-bottom") {
+					if (key == L"border-bottom") {
 						style->BorderBottom = std::stoi(value);
 						break;
 					}

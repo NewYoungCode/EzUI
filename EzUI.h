@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <memory>
 #include <SDKDDKVer.h>
 #define WIN32_LEAN_AND_MEAN             // 从 Windows 头文件中排除极少使用的内容
 #include <windows.h>
@@ -121,8 +122,6 @@ public:
 
 #define WM_UIMESSAGE  WM_USER+20   //用户额外的消息 UI保留20个消息
 
-
-
 namespace String {
 	inline std::wstring ANSIToUniCode(const std::string &str)
 	{
@@ -184,16 +183,16 @@ namespace String {
 		return strRet;
 	}
 
-	inline std::vector<std::string> Split(const std::string& str, const std::string& ch_) {
-		std::vector<std::string> arr;
+	inline std::vector<std::wstring> Split(const std::wstring& str, const std::wstring& ch_) {
+		std::vector<std::wstring> arr;
 		if (str.empty()) return arr;
-		std::string buf = str;
+		std::wstring buf = str;
 		size_t pos = buf.find(ch_);
-		if (pos == std::string::npos) {
+		if (pos == std::wstring::npos) {
 			arr.push_back(str);
 			return arr;
 		}
-		for (; pos != std::string::npos;) {
+		for (; pos != std::wstring::npos;) {
 			arr.push_back(buf.substr(0, pos));
 			buf = buf.erase(0, pos + ch_.size());
 			pos = buf.find(ch_);
@@ -205,38 +204,20 @@ namespace String {
 	}
 }
 
-#ifdef UNICODE
 #define UI_TSTR std::wstring 
-#else
-#define UI_TSTR std::string 
-#endif
-
-#ifdef  UNICODE
-//the EString is UNICODE
 class EString :public UI_TSTR {
-#else
-//the EString is ANSI 
-class EString :public UI_TSTR {
-#endif
 public:
 	EString() :UI_TSTR() {}
-#ifdef UNICODE
-	EString(const std::string&str) : UI_TSTR(String::ANSIToUniCode(str)) {}
 	EString(const std::wstring&str) :UI_TSTR(str) {}
-	EString(const char*str) :UI_TSTR(String::ANSIToUniCode(str)) {}
 	EString(const wchar_t* str) :UI_TSTR(str) {}
-#else
-	EString(const std::wstring&str) : UI_TSTR(String::UnicodeToANSI(str)) {}
-	EString(const std::string&str) :UI_TSTR(str) {}
-	EString(const wchar_t*str) : UI_TSTR(String::UnicodeToANSI(str)) {}
-	EString(const char* str) :UI_TSTR(str) {}
-#endif
-#undef BASESTRING
+
+	EString(const char*str) :UI_TSTR(String::ANSIToUniCode(str)) {}
+	EString(const std::string&str) : UI_TSTR(String::ANSIToUniCode(str)) {}
 };
 
 namespace MsgBox {
 	inline int Show(const EString&text, const EString&title = TEXT(""), int mButton = NULL) {
-		return ::MessageBox(::GetActiveWindow(), text.c_str(), title.c_str(), mButton);
+		return ::MessageBoxW(::GetActiveWindow(), text.c_str(), title.c_str(), mButton);
 	}
 }
 
@@ -244,15 +225,12 @@ namespace Debug {
 	template<typename ...T>
 	inline void Log(const EString&formatStr, T ...args) {
 #ifdef DEBUGLOG
-		TCHAR buf[256]{ 0 };
-#ifdef UNICODE
+		WCHAR buf[256]{ 0 };
 		auto count = swprintf_s((buf), 255, formatStr.c_str(), std::forward<T>(args)...);
-#else
-		auto count = sprintf_s((buf), 255, formatStr.c_str(), std::forward<T>(args)...);
-#endif
+
 		buf[count] = '\n';
 		buf[count + 1] = NULL;
-		OutputDebugString(buf);
+		OutputDebugStringW(buf);
 #endif
 	}
 };
@@ -274,10 +252,10 @@ public:
 
 
 namespace Dialog {
-	inline EString OpenFileDialog(const EString&title, const TCHAR*filter, const EString&defaultPath) {
+	inline EString OpenFileDialog(const EString&title, const WCHAR*filter, const EString&defaultPath) {
 		HWND hwnd = ::GetForegroundWindow();//获取系统前景窗口
-		OPENFILENAME ofn = { 0 };
-		TCHAR strFilename[MAX_PATH] = { 0 };//用于接收文件名
+		OPENFILENAMEW ofn = { 0 };
+		WCHAR strFilename[MAX_PATH] = { 0 };//用于接收文件名
 		ofn.lStructSize = sizeof(OPENFILENAME);//结构体大小
 		ofn.hwndOwner = hwnd;//拥有着窗口句柄，为NULL表示对话框是非模态的，实际应用中一般都要有这个句柄
 		ofn.lpstrFilter = filter;//TEXT("所有文件\0*.*\0C/C++ Flie\0*.cpp;*.c;*.h\0\0");//设置过滤
@@ -287,7 +265,7 @@ namespace Dialog {
 		ofn.lpstrInitialDir = defaultPath.c_str();//初始目录为默认
 		ofn.lpstrTitle = title.c_str();//使用系统默认标题留空即可
 		ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;//文件、目录必须存在，隐藏只读选项
-		GetOpenFileName(&ofn);
+		GetOpenFileNameW(&ofn);
 		return strFilename;
 	}
 

@@ -48,7 +48,7 @@ Rect& Window::GetClientRect()
 }
 void Window::SetText(const EString&text)
 {
-	::SetWindowText(_hWnd, text.c_str());
+	::SetWindowTextW(_hWnd, text.c_str());
 }
 void Window::ReSize(const Size&size) {
 	RECT rect;
@@ -404,9 +404,9 @@ void Window::OnPaint(HDC winHDC, const Rect&rePaintRect)
 	_layout->OnEvent(Event::OnPaint, &args);//给布局器绘制内容
 	::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetHDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//贴图
 	time_t ms = stopWatch.ElapsedMilliseconds();//获取耗时结果
-	TCHAR buf[256]{ 0 };
+	CHAR buf[256]{ 0 };
 	sprintf_s(buf, "GDIPaint %d %d   %d ms \n", rePaintRect.Width, rePaintRect.Height, (int)ms);
-	OutputDebugString(buf);
+	OutputDebugStringA(buf);
 }
 
 bool Window::IsInWindow(Control&pControl, Control&it) {

@@ -53,13 +53,7 @@ namespace UIManager {
 	}
 	inline Color StringToColor(const EString&str) {
 
-#ifdef UNICODE
-		auto color = String::Split(String::UnicodeToANSI(str), ",");
-
-#else
-		auto color = String::Split(str, ",");
-
-#endif
+		auto color = String::Split(str, L",");
 
 		BYTE A = 255;
 		BYTE R = 255;

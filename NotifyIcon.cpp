@@ -35,7 +35,7 @@ LRESULT CALLBACK _NotifyIcon_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPA
 	}
 	case WM_DESTROY:
 	{
-		Shell_NotifyIcon(NIM_DELETE, &(ntfi->_nid));
+		Shell_NotifyIconW(NIM_DELETE, &(ntfi->_nid));
 		break;
 	}
 
@@ -72,7 +72,7 @@ NotifyIcon::NotifyIcon()
 	_nid.hWnd = _hwnd;//窗口句柄
 	_nid.uCallbackMessage = WM_NOTIFYICON;//消息处理，这里很重要，处理鼠标点击
 	_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
-	Shell_NotifyIcon(NIM_ADD, &_nid);
+	Shell_NotifyIconW(NIM_ADD, &_nid);
 
 }
 
@@ -84,7 +84,7 @@ void NotifyIcon::SetIcon(short id)
 void NotifyIcon::SetIcon(HICON icon)
 {
 	_nid.hIcon = icon;
-	Shell_NotifyIcon(NIM_MODIFY, &_nid);
+	Shell_NotifyIconW(NIM_MODIFY, &_nid);
 
 }
 
@@ -93,28 +93,19 @@ void NotifyIcon::SetMenu(Menu* menu) {
 	this->_menu = menu;
 }
 
-void NotifyIcon::SetText(const TCHAR * text)
+void NotifyIcon::SetText(const WCHAR * text)
 {
-#ifdef UNICODE
 	wcscpy(_nid.szTip, text);
-#else
-	strcpy(_nid.szTip, text);
-#endif // UNICODE
-	Shell_NotifyIcon(NIM_MODIFY, &_nid);
+	Shell_NotifyIconW(NIM_MODIFY, &_nid);
 }
 
 void NotifyIcon::ShowBalloonTip(const EString&title, const EString&msg, int timeOut) {
 	_nid.uTimeout = timeOut;
 	_nid.uFlags = NIF_INFO;
 	_nid.dwInfoFlags = NIIF_INFO;
-#ifdef UNICODE
 	wcscpy(_nid.szInfoTitle, title.c_str());
 	wcscpy(_nid.szInfo, msg.c_str());
-#else
-	strcpy(_nid.szInfoTitle, title.c_str());
-	strcpy(_nid.szInfo, msg.c_str());
-#endif // UNICODE
-	Shell_NotifyIcon(NIM_MODIFY, &_nid);
+	Shell_NotifyIconW(NIM_MODIFY, &_nid);
 }
 
 void NotifyIcon::SetMessageProc(const std::function<bool(UINT)> &messageCallback) {

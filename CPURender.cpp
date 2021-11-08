@@ -42,11 +42,7 @@ Gdiplus::Font *CreateFont(const EString&fontFamily, float fontSize) {
 		return _bufFont;
 	}
 	if (_bufFont) delete _bufFont;
-#ifdef UNICODE
 	Gdiplus::FontFamily ff(fontFamily.c_str());
-#else
-	Gdiplus::FontFamily ff(String::ANSIToUniCode(fontFamily).c_str());
-#endif
 	_bufFont = new Gdiplus::Font(&ff, fontSize);
 	_fontFamily = fontFamily;
 	_fontSize = fontSize;

@@ -212,20 +212,20 @@ void EditWnd::SetText(const EString & text)
 {
 	_text = text;
 	if (_editWnd) {
-		::SetWindowText(_editWnd, _text.c_str());
+		::SetWindowTextW(_editWnd, _text.c_str());
 	}
 }
 const EString& EditWnd::GetText()
 {
-	TCHAR buf[256]{ 0 };
-	::GetWindowText(_editWnd, buf, 255);
+	WCHAR buf[256]{ 0 };
+	::GetWindowTextW(_editWnd, buf, 255);
 	_text = buf;
 	return _text;
 }
 void EditWnd::OnLoad() {
 	if (_editWnd == NULL) {
 		auto rect = GetClientRect();
-		_editWnd = CreateWindow(TEXT("Edit"), _text.c_str(), WS_VISIBLE | WS_CHILD, rect.X, rect.Y, rect.Width, rect.Height,
+		_editWnd = CreateWindowW(L"Edit", _text.c_str(), WS_VISIBLE | WS_CHILD, rect.X, rect.Y, rect.Width, rect.Height,
 			ParentWid, NULL, GetModuleHandle(0), NULL);//因为UI框架的edit并不成熟(懒得写了),所以暂时使用WIN32的输入框代替
 		UI_SetUserData(_editWnd, this);
 

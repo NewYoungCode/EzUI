@@ -16,13 +16,13 @@ Menu::Menu(const EString & text) {
 
 void Menu::Append(Menu * menu)
 {
-	::AppendMenu(_hMenu, MF_POPUP, (UINT_PTR)menu->_hMenu, menu->_text.c_str());
+	::AppendMenuW(_hMenu, MF_POPUP, (UINT_PTR)menu->_hMenu, menu->_text.c_str());
 	//return (UINT_PTR)menu->_hMenu;
 }
 
 
 UINT_PTR Menu::Append(const EString&text) {
-	::AppendMenu(_hMenu, MF_POPUP, _dui_menu_index, text.c_str());
+	::AppendMenuW(_hMenu, MF_POPUP, _dui_menu_index, text.c_str());
 	_list.push_back(_dui_menu_index);
 	auto temp = _dui_menu_index;
 	_dui_menu_index++;
