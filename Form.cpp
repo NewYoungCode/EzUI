@@ -72,11 +72,14 @@ LRESULT  BorderlessWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 LayeredWindow::LayeredWindow(int cx, int cy, HWND owner) :Window(cx, cy, owner, WS_POPUP | WS_MINIMIZEBOX, WS_EX_LAYERED)
 {
 	_boxShadow = new BoxShadow(cx, cy, _hWnd);
-	_boxShadow->Update(_shadowWidth);
+	if (_boxShadow) {
+		_boxShadow->Update(_shadowWidth);
+	}
 }
 void LayeredWindow::OnRect(const Rect&rect) {
-
-	_boxShadow->Update(_shadowWidth);
+	if (_boxShadow) {
+		_boxShadow->Update(_shadowWidth);
+	}
 	__super::OnRect(rect);
 }
 void LayeredWindow::Hide() {
@@ -100,9 +103,9 @@ void LayeredWindow::OnSize(const Size&sz) {
 	}
 	_winBitmap = new EBitmap(sz.Width, sz.Height, 32);
 	OnPaint(_winBitmap->GetHDC(), _rectClient);//当窗口大小发送改变的时候重新创建DC 并且刷新
-	TCHAR buf[256]{ 0 };
+	CHAR buf[256]{ 0 };
 	sprintf_s(buf, "GDIPaint %d %d   %d ms \n", sz.Width, sz.Height, (int)stopWatch.ElapsedMilliseconds());
-	OutputDebugString(buf);
+	OutputDebugStringA(buf);
 }
 void LayeredWindow::OnPaint(HDC _hdc, const Rect & rePaintRect) {
 	Rect &clientRect = GetClientRect();//获取整体大小
@@ -171,7 +174,7 @@ MenuWindow::MenuWindow(int cx, int cy, HWND owner) :BorderlessWindow(cx, cy, own
 LRESULT MenuWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (uMsg == WM_KILLFOCUS && !frist) {
-		Debug::Log("失去焦点 关闭窗口");
+		Debug::Log(TEXT("失去焦点 关闭窗口"));
 		this->Close();
 	}
 	else if (uMsg == WM_KILLFOCUS) {

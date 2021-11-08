@@ -72,9 +72,9 @@ void Window::SetLayout(Layout* layout) {
 	if (!_layout->Style.FontSize.valid) {
 		_layout->Style.FontSize = 9;
 	}
-	if (!_layout->Style.BackgroundColor.valid) {
-		_layout->Style.BackgroundColor = Color::White;
-	}
+	//if (!_layout->Style.BackgroundColor.valid) {
+	//	_layout->Style.BackgroundColor = Color::White;
+	//}
 	if (!_layout->Style.ForeColor.valid) {
 		_layout->Style.ForeColor = Color::Black;
 	}

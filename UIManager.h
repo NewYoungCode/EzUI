@@ -52,7 +52,15 @@ namespace UIManager {
 		delete bufStr;
 	}
 	inline Color StringToColor(const EString&str) {
+
+#ifdef UNICODE
+		auto color = String::Split(String::UnicodeToANSI(str), ",");
+
+#else
 		auto color = String::Split(str, ",");
+
+#endif
+
 		BYTE A = 255;
 		BYTE R = 255;
 		BYTE G = 255;

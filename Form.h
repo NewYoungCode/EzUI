@@ -13,11 +13,11 @@ public:
 class UI_EXPORT BorderlessWindow :public Window {
 private:
 	int _shadowWidth = SHADOWWIDTH;
-	BoxShadow *_boxShadow = NULL;
 protected:
 	void OnRect(const Rect & rect) override;
 	LRESULT  WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
 public:
+	BoxShadow *_boxShadow = NULL;
 	void SetShadow(int width);
 	BorderlessWindow(int width, int height, HWND owner = NULL);
 	virtual ~BorderlessWindow();
@@ -27,7 +27,6 @@ public:
 class  UI_EXPORT LayeredWindow :public Window
 {
 private:
-	BoxShadow *_boxShadow = NULL;
 	int _shadowWidth = SHADOWWIDTH;
 	void PushDC(HDC hdc);
 protected:
@@ -37,6 +36,7 @@ protected:
 	void OnRect(const Rect & rect);
 	LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
 public:
+	BoxShadow *_boxShadow = NULL;
 	LayeredWindow(int cx, int cy, HWND owner = NULL);
 	virtual ~LayeredWindow();
 	void Hide();

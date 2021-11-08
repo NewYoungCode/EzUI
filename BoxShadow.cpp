@@ -110,7 +110,7 @@ void BoxShadow::Update(int _shadowWidth) {
 		_bufBitmap = NULL;
 	}
 	_bufBitmap = new EBitmap(width, height, 32);//32Î»Í¸Ã÷Í¼
-	Debug::Log("Update BoxShadow");
+	Debug::Log(TEXT("Update BoxShadow"));
 	Rect rect{ 0,0,width, height };
 	////»æÍ¼
 

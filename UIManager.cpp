@@ -30,7 +30,7 @@ namespace UIManager {
 
 	Rect StringToRect(const EString&str) {
 		auto rectStr = String::Split(str, ",");
-		if (str == "") return Rect();//如果没写矩形区域
+		if (str == TEXT("")) return Rect();//如果没写矩形区域
 		Rect rect;
 		rect.X = std::stoi(rectStr.at(0));
 		rect.Y = std::stoi(rectStr.at(1));
@@ -40,7 +40,7 @@ namespace UIManager {
 	}
 	const EString Attribute(TiXmlElement*node, const char*szstr) {
 		auto str = node->Attribute(szstr);
-		if (str == NULL) return"";
+		if (str == NULL) return TEXT("");
 		return str;
 	}
 	Control* BuildControl(TiXmlElement*node) {

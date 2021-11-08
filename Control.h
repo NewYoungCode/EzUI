@@ -64,7 +64,7 @@ public:
 	EventMouseUp MouseUp;//鼠标抬起
 	EventMouseClick MouseClick;//鼠标单击
 	EventMouseDoubleClick MouseDoubleClick;//鼠标双击
-	Tuple<LPCSTR> Cursor;//鼠标样式  默认 IDC_ARROW
+	Tuple<LPCTSTR> Cursor;//鼠标样式  默认 IDC_ARROW
 public:
 	const ControlType& GetType();
 	virtual void OnChar(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息

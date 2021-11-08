@@ -185,7 +185,7 @@ LRESULT EditWnd::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (WM_COMMAND == uMsg && (HWND)lParam == _editWnd) {
 		auto hword = HIWORD(wParam);
-		Debug::Log("%x", hword);
+		Debug::Log(TEXT("%x"), hword);
 		OnKeyDown(hword);
 	}
 	if (uMsg == WM_CTLCOLOREDIT && (HWND)lParam == _editWnd) {
@@ -231,7 +231,12 @@ void EditWnd::OnLoad() {
 
 		LOGFONT LogFont;
 		memset(&LogFont, 0, sizeof(LOGFONT));
+#ifdef UNICODE
+		lstrcpyW(LogFont.lfFaceName, L"Microsoft YaHei");
+#else
 		lstrcpyA(LogFont.lfFaceName, "Microsoft YaHei");
+
+#endif
 		LogFont.lfWeight = FW_NORMAL;//FW_NORMAL;
 		LogFont.lfHeight = 20; // ×ÖÌå´óÐ¡
 		LogFont.lfCharSet = 134;

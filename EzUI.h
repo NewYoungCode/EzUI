@@ -121,13 +121,7 @@ public:
 
 #define WM_UIMESSAGE  WM_USER+20   //用户额外的消息 UI保留20个消息
 
-#ifdef UNICODE
-//std::wstring
-using EString = std::wstring;
-#else
-//std::string
-using EString = std::string;
-#endif
+
 
 namespace String {
 	inline std::wstring ANSIToUniCode(const std::string &str)
@@ -137,6 +131,57 @@ namespace String {
 		wstrCmd.resize(bytes);
 		bytes = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.size(), const_cast<wchar_t*>(wstrCmd.c_str()), wstrCmd.size());
 		return wstrCmd;
+	}
+	inline std::string UnicodeToANSI(const std::wstring &wstr)
+	{
+		int bytes = ::WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
+		std::string strCmd;
+		strCmd.resize(bytes);
+		bytes = ::WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), const_cast<char*>(strCmd.data()), strCmd.size(), NULL, NULL);
+		return strCmd;
+	}
+	inline std::string UnicodeToUTF8(const std::wstring &wstr)
+	{
+		int bytes = ::WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
+		std::string strCmd;
+		strCmd.resize(bytes);
+		bytes = ::WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), const_cast<char*>(strCmd.data()), strCmd.size(), NULL, NULL);
+		return strCmd;
+	}
+	inline 	std::string UTF8ToANSI(const std::string& str)
+	{
+		int nwLen = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
+		wchar_t* pwBuf = new wchar_t[nwLen + 1];
+		memset(pwBuf, 0, nwLen * 2 + 2);
+		MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), pwBuf, nwLen);
+		int nLen = WideCharToMultiByte(CP_ACP, 0, pwBuf, -1, NULL, NULL, NULL, NULL);
+		char* pBuf = new char[nLen + 1];
+		memset(pBuf, 0, nLen + 1);
+		WideCharToMultiByte(CP_ACP, 0, pwBuf, nwLen, pBuf, nLen, NULL, NULL);
+		std::string strRet = pBuf;
+
+		delete[]pBuf;
+		delete[]pwBuf;
+		pBuf = NULL;
+		pwBuf = NULL;
+		return strRet;
+	}
+	inline std::string ANSIToUTF8(const std::string& str)
+	{
+		int nwLen = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, NULL, 0);
+		wchar_t* pwBuf = new wchar_t[nwLen + 1];
+		ZeroMemory(pwBuf, nwLen * 2 + 2);
+		::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.length(), pwBuf, nwLen);
+		int nLen = ::WideCharToMultiByte(CP_UTF8, 0, pwBuf, -1, NULL, NULL, NULL, NULL);
+		char* pBuf = new char[nLen + 1];
+		ZeroMemory(pBuf, nLen + 1);
+		::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, pBuf, nLen, NULL, NULL);
+		std::string strRet(pBuf);
+		delete[]pwBuf;
+		delete[]pBuf;
+		pwBuf = NULL;
+		pBuf = NULL;
+		return strRet;
 	}
 
 	inline std::vector<std::string> Split(const std::string& str, const std::string& ch_) {
@@ -159,6 +204,36 @@ namespace String {
 		return arr;
 	}
 }
+
+#ifdef UNICODE
+#define UI_TSTR std::wstring 
+#else
+#define UI_TSTR std::string 
+#endif
+
+#ifdef  UNICODE
+//the EString is UNICODE
+class EString :public UI_TSTR {
+#else
+//the EString is ANSI 
+class EString :public UI_TSTR {
+#endif
+public:
+	EString() :UI_TSTR() {}
+#ifdef UNICODE
+	EString(const std::string&str) : UI_TSTR(String::ANSIToUniCode(str)) {}
+	EString(const std::wstring&str) :UI_TSTR(str) {}
+	EString(const char*str) :UI_TSTR(String::ANSIToUniCode(str)) {}
+	EString(const wchar_t* str) :UI_TSTR(str) {}
+#else
+	EString(const std::wstring&str) : UI_TSTR(String::UnicodeToANSI(str)) {}
+	EString(const std::string&str) :UI_TSTR(str) {}
+	EString(const wchar_t*str) : UI_TSTR(String::UnicodeToANSI(str)) {}
+	EString(const char* str) :UI_TSTR(str) {}
+#endif
+#undef BASESTRING
+};
+
 namespace MsgBox {
 	inline int Show(const EString&text, const EString&title = TEXT(""), int mButton = NULL) {
 		return ::MessageBox(::GetActiveWindow(), text.c_str(), title.c_str(), mButton);
