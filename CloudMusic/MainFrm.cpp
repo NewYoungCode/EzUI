@@ -79,7 +79,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 		lb->MouseClick = [=](Control*sender, MouseButton btn, const Point&)->void {
 
 			if (btn == MouseButton::Left) {
-				::MessageBox(Hwnd(), "点击", "", 0);
+				::MessageBoxW(Hwnd(), L"点击", L"", 0);
 
 			}
 
@@ -92,7 +92,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 		lb->Cursor = IDC_HAND;
 
 		lb->SetTextAlign(TextAlign::MiddleLeft);
-		lb->SetText(std::to_string(i)+TEXT("         夜空中最亮的星                逃跑计划            3:48"));
+		lb->SetText(std::to_string(i)+"         夜空中最亮的星                逃跑计划            3:48");
 		musicList.AddControl(lb);
 		lb->Dock = DockStyle::Horizontal;
 	}
