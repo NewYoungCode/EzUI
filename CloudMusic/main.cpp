@@ -19,8 +19,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	StopWatch sw;
 	MainFrm form(1022, 670);
 
-	VLayout *L=(VLayout*)UIManager::LoadControl("../html/layout.html");
-	form.SetLayout(L);
+	Layout *layout = (Layout*)UIManager::LoadControl(utf8("../html/layout.html"));
+	form.SetLayout(layout);
 
 	form.Show();
 	Debug::Log("窗口启动耗时 %d ms", sw.ElapsedMilliseconds());
