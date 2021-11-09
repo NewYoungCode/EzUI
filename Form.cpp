@@ -35,27 +35,27 @@ LRESULT  BorderlessWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	{
 	case WM_NCHITTEST: {
 		if (::IsZoomed(_hWnd)) {
-			break;//´°¿ÚÒÑ¾­ÊÇ×î´ó»¯µÄÊ±ºò²»´¦Àí
+			break;//ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ó»¯µï¿½Ê±ï¿½ò²»´ï¿½ï¿½ï¿½
 		}
 		RECT rc;
 		GetWindowRect(_hWnd, &rc);
 		POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
-		int x = 4;//±ß¿ò¿í¶È
+		int x = 4;//ï¿½ß¿ï¿½ï¿½ï¿½
 		if (pt.x < rc.left + x)
 		{
-			if (pt.y < rc.top + x)return HTTOPLEFT;//×óÉÏ½Ç
-			if (pt.y >= rc.bottom - x)return HTBOTTOMLEFT;//×óÏÂ½Ç
-			return HTLEFT;//×ó±ß
+			if (pt.y < rc.top + x)return HTTOPLEFT;//ï¿½ï¿½ï¿½Ï½ï¿½
+			if (pt.y >= rc.bottom - x)return HTBOTTOMLEFT;//ï¿½ï¿½ï¿½Â½ï¿½
+			return HTLEFT;//ï¿½ï¿½ï¿½
 		}
-		if (pt.x >= rc.right - x)//×ø±ê´Ó0¿ªÊ¼£¬ËùÒÔÊ¹ÓÃ>=
+		if (pt.x >= rc.right - x)//ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½>=
 		{
-			if (pt.y < rc.top + x)return HTTOPRIGHT;//ÓÒÉÏ½Ç
-			if (pt.y >= rc.bottom - x)return HTBOTTOMRIGHT;//ÓÒÏÂ½Ç
-			return HTRIGHT;//ÓÒ±ß
+			if (pt.y < rc.top + x)return HTTOPRIGHT;//ï¿½ï¿½ï¿½Ï½ï¿½
+			if (pt.y >= rc.bottom - x)return HTBOTTOMRIGHT;//ï¿½ï¿½ï¿½Â½ï¿½
+			return HTRIGHT;//ï¿½Ò±ï¿½
 		}
-		if (pt.y < rc.top + x)return HTTOP;//ÉÏ±ß
-		if (pt.y >= rc.bottom - x)return HTBOTTOM;//ÏÂ±ß
-		return HTCLIENT;//Ö¸Ê¾µ±Ç°Êó±êÔÚ¿Í»§Çø£¬½«ÏìÓ¦OnLButtonDownÏûÏ¢¡£
+		if (pt.y < rc.top + x)return HTTOP;//ï¿½Ï±ï¿½
+		if (pt.y >= rc.bottom - x)return HTBOTTOM;//ï¿½Â±ï¿½
+		return HTCLIENT;//Ö¸Ê¾ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Ú¿Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦OnLButtonDownï¿½ï¿½Ï¢ï¿½ï¿½
 	}
 	default:
 		break;
@@ -95,62 +95,62 @@ LayeredWindow::~LayeredWindow() {
 }
 
 void LayeredWindow::OnSize(const Size&sz) {
-	StopWatch stopWatch;//¼ÆËãºÄÊ±
+	StopWatch stopWatch;//ï¿½ï¿½ï¿½ï¿½ï¿½Ê±
 	_layout->SetRect(this->GetClientRect(), false);
-	*((Rect*)(&_layout->ClipRect)) = this->GetClientRect();//²¼¾ÖÒªÏÈÈ·¶¨×Ô¼ºµÄ²Ã¼ôÇøÓòÊÇºÍ´°¿ÚÒ»Ñù´óÐ¡
+	*((Rect*)(&_layout->ClipRect)) = this->GetClientRect();//ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½È·ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½Ä²Ã¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÇºÍ´ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ð¡
 	if (_winBitmap) {
 		delete _winBitmap;
 	}
 	_winBitmap = new EBitmap(sz.Width, sz.Height, 32);
-	OnPaint(_winBitmap->GetHDC(), _rectClient);//µ±´°¿Ú´óÐ¡·¢ËÍ¸Ä±äµÄÊ±ºòÖØÐÂ´´½¨DC ²¢ÇÒË¢ÐÂ
+	OnPaint(_winBitmap->GetHDC(), _rectClient);//ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½Ð¡ï¿½ï¿½ï¿½Í¸Ä±ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Â´ï¿½ï¿½ï¿½DC ï¿½ï¿½ï¿½ï¿½Ë¢ï¿½ï¿½
 	CHAR buf[256]{ 0 };
 	sprintf_s(buf, "GDIPaint %d %d   %d ms \n", sz.Width, sz.Height, (int)stopWatch.ElapsedMilliseconds());
 	OutputDebugStringA(buf);
 }
 void LayeredWindow::OnPaint(HDC _hdc, const Rect & rePaintRect) {
-	Rect &clientRect = GetClientRect();//»ñÈ¡ÕûÌå´óÐ¡
-	Painter pt(_hdc);//»­¼Ò
+	Rect &clientRect = GetClientRect();//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡
+	Painter pt(_hdc);//ï¿½ï¿½ï¿½ï¿½
 	PaintEventArgs args(pt);
-	args.InvalidRectangle = rePaintRect;//ÎÞÐ§ÇøÓò
+	args.InvalidRectangle = rePaintRect;//ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½
 	args.HWnd = _hWnd;
-	_layout->OnEvent(Event::OnPaint, &args);//¸ø²¼¾ÖÆ÷»æÖÆÄÚÈÝ
+	_layout->OnEvent(Event::OnPaint, &args);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	PushDC(_hdc);//updatelaredwindow
 }
 LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	if (uMsg == WM_PAINT) //layeredWindow²»ÔÊÐí½ÓÊÜWM_PAINTÏûÏ¢
+	if (uMsg == WM_PAINT) //layeredWindowï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½WM_PAINTï¿½ï¿½Ï¢
 	{
 		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
 	}
 	if (uMsg == WM_CONTROL_REFRESH && _winBitmap) {
 		Control *ctl = (Control*)wParam;
-		OnPaint(_winBitmap->GetHDC(), ctl->GetClientRect());//¿Ø¼þ¾Ö²¿Ë¢ÐÂ
+		OnPaint(_winBitmap->GetHDC(), ctl->GetClientRect());//ï¿½Ø¼ï¿½ï¿½Ö²ï¿½Ë¢ï¿½ï¿½
 		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
 	}
 	if (uMsg == WM_NCHITTEST) {
 		if (::IsZoomed(_hWnd)) {
-			return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);//´°¿ÚÒÑ¾­ÊÇ×î´ó»¯µÄÊ±ºò²»´¦Àí
+			return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);//ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ó»¯µï¿½Ê±ï¿½ò²»´ï¿½ï¿½ï¿½
 		}
 		RECT rc;
 		GetWindowRect(_hWnd, &rc);
 		POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
-		int x = 4;//±ß¿ò¿í¶È
+		int x = 4;//ï¿½ß¿ï¿½ï¿½ï¿½
 		if (pt.x < rc.left + x)
 		{
-			if (pt.y < rc.top + x)return HTTOPLEFT;//×óÉÏ½Ç
-			if (pt.y >= rc.bottom - x)return HTBOTTOMLEFT;//×óÏÂ½Ç
-			return HTLEFT;//×ó±ß
+			if (pt.y < rc.top + x)return HTTOPLEFT;//ï¿½ï¿½ï¿½Ï½ï¿½
+			if (pt.y >= rc.bottom - x)return HTBOTTOMLEFT;//ï¿½ï¿½ï¿½Â½ï¿½
+			return HTLEFT;//ï¿½ï¿½ï¿½
 		}
-		if (pt.x >= rc.right - x)//×ø±ê´Ó0¿ªÊ¼£¬ËùÒÔÊ¹ÓÃ>=
+		if (pt.x >= rc.right - x)//ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½>=
 		{
-			if (pt.y < rc.top + x)return HTTOPRIGHT;//ÓÒÉÏ½Ç
-			if (pt.y >= rc.bottom - x)return HTBOTTOMRIGHT;//ÓÒÏÂ½Ç
-			return HTRIGHT;//ÓÒ±ß
+			if (pt.y < rc.top + x)return HTTOPRIGHT;//ï¿½ï¿½ï¿½Ï½ï¿½
+			if (pt.y >= rc.bottom - x)return HTBOTTOMRIGHT;//ï¿½ï¿½ï¿½Â½ï¿½
+			return HTRIGHT;//ï¿½Ò±ï¿½
 		}
-		if (pt.y < rc.top + x)return HTTOP;//ÉÏ±ß
-		if (pt.y >= rc.bottom - x)return HTBOTTOM;//ÏÂ±ß
-		return HTCLIENT;//Ö¸Ê¾µ±Ç°Êó±êÔÚ¿Í»§Çø£¬½«ÏìÓ¦OnLButtonDownÏûÏ¢¡£
+		if (pt.y < rc.top + x)return HTTOP;//ï¿½Ï±ï¿½
+		if (pt.y >= rc.bottom - x)return HTBOTTOM;//ï¿½Â±ï¿½
+		return HTCLIENT;//Ö¸Ê¾ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Ú¿Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦OnLButtonDownï¿½ï¿½Ï¢ï¿½ï¿½
 	}
 	return __super::WndProc(uMsg, wParam, lParam);
 }
@@ -163,7 +163,7 @@ void LayeredWindow::PushDC(HDC hdc) {
 	blend.BlendFlags = 0;
 	blend.AlphaFormat = AC_SRC_ALPHA;
 	blend.SourceConstantAlpha = 255;
-	UpdateLayeredWindow(_hWnd, NULL, NULL, &size, hdc, &point, 0, &blend, LWA_ALPHA);//¡£¡£¡£¡£¡£¡£¸üÐÂ·Ö²ã´°¿Ú
+	UpdateLayeredWindow(_hWnd, NULL, NULL, &size, hdc, &point, 0, &blend, LWA_ALPHA);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â·Ö²ã´°ï¿½ï¿½
 }
 
 MenuWindow::MenuWindow(int cx, int cy, HWND owner) :BorderlessWindow(cx, cy, owner)
@@ -174,7 +174,7 @@ MenuWindow::MenuWindow(int cx, int cy, HWND owner) :BorderlessWindow(cx, cy, own
 LRESULT MenuWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (uMsg == WM_KILLFOCUS && !frist) {
-		Debug::Log(TEXT("Ê§È¥½¹µã ¹Ø±Õ´°¿Ú"));
+		//Debug::Log(TEXT("Ê§È¥ï¿½ï¿½ï¿½ï¿½ ï¿½Ø±Õ´ï¿½ï¿½ï¿½"));
 		this->Close();
 	}
 	else if (uMsg == WM_KILLFOCUS) {

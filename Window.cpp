@@ -48,7 +48,7 @@ Rect& Window::GetClientRect()
 }
 void Window::SetText(const EString&text)
 {
-	::SetWindowTextW(_hWnd, text.c_str());
+	::SetWindowTextW(_hWnd, text.utf16().c_str());
 }
 void Window::ReSize(const Size&size) {
 	RECT rect;
@@ -57,7 +57,7 @@ void Window::ReSize(const Size&size) {
 }
 void Window::SetIcon(short id)
 {
-	SetIcon(::LoadIcon(::GetModuleHandle(0), MAKEINTRESOURCE(id)));//¼ÓÔØÍ¼±ê
+	SetIcon(::LoadIcon(::GetModuleHandle(0), MAKEINTRESOURCE(id)));//ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½
 }
 void Window::SetIcon(HICON icon)
 {
@@ -88,7 +88,7 @@ void Window::Show(int cmdShow)
 {
 	ASSERT(_layout);
 	::ShowWindow(_hWnd, cmdShow);
-	//// ´¦Àí¶àÏÔÊ¾Æ÷Ä£Ê½ÏÂÆÁÄ»¾ÓÖÐ
+	//// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½
 	//MONITORINFO oMonitor = {};
 	//oMonitor.cbSize = sizeof(oMonitor);
 	//::GetMonitorInfo(::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &oMonitor);
@@ -102,7 +102,7 @@ void Window::ShowModal(bool wait)
 	::EnableWindow(p_hwnd, FALSE);
 	this->Show();
 	::SetFocus(_hWnd);
-	if (wait) {//Èç¹ûÐèÒª×èÈû
+	if (wait) {//ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½
 		MSG msg;
 		while (GetMessage(&msg, 0, 0, 0))
 		{
@@ -112,7 +112,7 @@ void Window::ShowModal(bool wait)
 				break;
 			}
 		}
-		if (msg.message == WM_QUIT) {//ºóÃæµÄ´°¿ÚÒ²²»ÔÙ½øÐÐÏûÏ¢Ñ­»·
+		if (msg.message == WM_QUIT) {//ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½Ù½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢Ñ­ï¿½ï¿½
 			::PostQuitMessage(msg.wParam);
 		}
 	}
@@ -170,7 +170,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	
 
 
-	case  WM_IME_STARTCOMPOSITION://´¦ÀíÊäÈë·¨×ø±ê
+	case  WM_IME_STARTCOMPOSITION://ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë·¨ï¿½ï¿½ï¿½ï¿½
 	{
 		HIMC hIMC = ImmGetContext(_hWnd);
 		COMPOSITIONFORM cpf;
@@ -202,7 +202,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		b = ImmReleaseContext(_hWnd, hIMC);
 		break;
 	}
-	case WM_ERASEBKGND: {//²»ÔÊÐí»æÖÆ±³¾°
+	case WM_ERASEBKGND: {//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ±ï¿½ï¿½ï¿½
 		return TRUE;
 	}
 	case WM_CONTROL_REFRESH: {
@@ -234,7 +234,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_CONTROL_DELETE:
 	{
-		//µ±´°¿ÚÏÂµÄ×Ó¿Ø¼þÉ¾³ýµÄÊ±ºò½«µ±Ç°Êó±ê²Ù×÷µÄ¿Ø¼þÇå¿Õ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½Ó¿Ø¼ï¿½É¾ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ò½«µï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿Ø¼ï¿½ï¿½ï¿½ï¿½
 		Control *delControl = (Control*)wParam;
 		EmptyControl((Controls*)delControl->GetControls());
 		return TRUE;
@@ -244,7 +244,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		WINDOWPOS *wPos = (WINDOWPOS *)(void*)lParam;
 		int flag = SWP_NOCOPYBITS;//
 		if ((wPos->flags & flag) == flag) {
-			//¶ªÆú¿Í»§ÇøµÄÈ«²¿ÄÚÈÝ¡£Èç¹ûÎ´Ö¸¶¨´Ë±êÖ¾£¬ÔòÔÚµ÷Õû´°¿Ú´óÐ¡»òÖØÐÂ¶¨Î»ºó£¬½«±£´æ¿Í»§ÇøµÄÓÐÐ§ÄÚÈÝ²¢½«Æä¸´ÖÆ»Ø¿Í»§Çø¡£
+			//ï¿½ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½ï¿½Ý¡ï¿½ï¿½ï¿½ï¿½Î´Ö¸ï¿½ï¿½ï¿½Ë±ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½Â¶ï¿½Î»ï¿½ó£¬½ï¿½ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½Ý²ï¿½ï¿½ï¿½ï¿½ä¸´ï¿½Æ»Ø¿Í»ï¿½ï¿½ï¿½ï¿½ï¿½
 			rePaint = true;
 		}
 		RECT rect;
@@ -254,16 +254,16 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		_rectClient = { point,size };
 		if (_rectClient.IsEmptyArea()) {
 			_rect = { 0,0,0,0 };
-			return TRUE;//²»ÔÚ·¢ËÍ WM_MOVE ºÍ WM_SIZE ÏûÏ¢
+			return TRUE;//ï¿½ï¿½ï¿½Ú·ï¿½ï¿½ï¿½ WM_MOVE ï¿½ï¿½ WM_SIZE ï¿½ï¿½Ï¢
 		}
 		_rect = { wPos->x,wPos->y,wPos->cx,wPos->cy };
 		if (!_lastSize.Equals(size)) {
-			_lastSize = size;//µ±´°¿Ú´óÐ¡ºÍÉÏ´Î²»Ò»ÑùµÄÊ±ºò
+			_lastSize = size;//ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½Ð¡ï¿½ï¿½ï¿½Ï´Î²ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
 			OnSize(size);
 		}
 		else if (rePaint) {
-			//¶ÔÓÚlayeredwindowÀ´Ëµ ¾ÍËã´°¿Ú´óÐ¡ºÍÉÏ´ÎÒ»ÑùÒ²ÒªÖØÐÂ»æÖÆ,ÓÐSWP_NOCOPYBITS¾ÍÐèÒªÖØÐÂ»æÖÆ
-			Debug::Log("SWP_NOCOPYBITSÖØ»æ!");
+			//ï¿½ï¿½ï¿½ï¿½layeredwindowï¿½ï¿½Ëµ ï¿½ï¿½ï¿½ã´°ï¿½Ú´ï¿½Ð¡ï¿½ï¿½ï¿½Ï´ï¿½Ò»ï¿½ï¿½Ò²Òªï¿½ï¿½ï¿½Â»ï¿½ï¿½ï¿½,ï¿½ï¿½SWP_NOCOPYBITSï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Â»ï¿½ï¿½ï¿½
+			Debug::Log("SWP_NOCOPYBITS!");
 			OnSize(size);
 		}
 		if (!_lastPoint.Equals(point)) {
@@ -271,7 +271,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			OnMove(point);
 		}
 		OnRect(_rect);
-		return TRUE;//²»ÔÚ·¢ËÍ WM_MOVE ºÍ WM_SIZE ÏûÏ¢
+		return TRUE;//ï¿½ï¿½ï¿½Ú·ï¿½ï¿½ï¿½ WM_MOVE ï¿½ï¿½ WM_SIZE ï¿½ï¿½Ï¢
 	}
 	case WM_CLOSE:
 	{
@@ -304,7 +304,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		break;
 	}
-	//Êó±êÒÆ¶¯
+	//ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½
 	case WM_MOUSEMOVE:
 	{
 		TRACKMOUSEEVENT tme;
@@ -319,42 +319,42 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 
-	//Êó±êË«»÷ ×ó¼ü
+	//ï¿½ï¿½ï¿½Ë«ï¿½ï¿½ ï¿½ï¿½ï¿½
 	case WM_LBUTTONDBLCLK: {
 		OnMouseDoubleClick(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		break;
 	}
-						   //Êó±êË«»÷ ÓÒ¼ü
+						   //ï¿½ï¿½ï¿½Ë«ï¿½ï¿½ ï¿½Ò¼ï¿½
 	case WM_RBUTTONDBLCLK: {
 		OnMouseDoubleClick(MouseButton::Right, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		break;
 	}
-						   //Êó±ê°´ÏÂ ×ó¼ü
+						   //ï¿½ï¿½ê°´ï¿½ï¿½ ï¿½ï¿½ï¿½
 	case WM_LBUTTONDOWN:
 	{
 
 		OnMouseDown(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		break;
 	}
-	//Êó±ê°´ÏÂ ÓÒ¼ü
+	//ï¿½ï¿½ê°´ï¿½ï¿½ ï¿½Ò¼ï¿½
 	case WM_RBUTTONDOWN:
 	{
 		OnMouseDown(MouseButton::Right, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		break;
 	}
-	//Êó±êµ¯Æð ×ó¼ü
+	//ï¿½ï¿½êµ¯ï¿½ï¿½ ï¿½ï¿½ï¿½
 	case WM_LBUTTONUP:
 	{
 		OnMouseUp(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		break;
 	}
-	//Êó±êµ¯Æð ÓÒ¼ü
+	//ï¿½ï¿½êµ¯ï¿½ï¿½ ï¿½Ò¼ï¿½
 	case WM_RBUTTONUP:
 	{
 		OnMouseUp(MouseButton::Right, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		break;
 	}
-	//Êó±êÒÆ³ö
+	//ï¿½ï¿½ï¿½ï¿½Æ³ï¿½
 	case WM_MOUSELEAVE:
 	{
 		_mouseIn = false;
@@ -366,7 +366,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		auto fwKeys = GET_KEYSTATE_WPARAM(wParam);
 		auto zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-		//Ê¹ÓÃÒÔÏÂ´úÂë»ñÈ¡Ë®Æ½ºÍ´¹Ö±Î»ÖÃ£º
+		//Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½Â´ï¿½ï¿½ï¿½ï¿½È¡Ë®Æ½ï¿½Í´ï¿½Ö±Î»ï¿½Ã£ï¿½
 		auto xPos = GET_X_LPARAM(lParam);
 		auto yPos = GET_Y_LPARAM(lParam);
 		OnMouseWheel(zDelta, { xPos,yPos });
@@ -379,7 +379,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	default:
 	{
-		if (uMsg >= (WM_USER + 0x04) && uMsg <= (WM_USER + 0x0c)) { //Êó±ê·¶Î§ÏûÏ¢
+		if (uMsg >= (WM_USER + 0x04) && uMsg <= (WM_USER + 0x0c)) { //ï¿½ï¿½ê·¶Î§ï¿½ï¿½Ï¢
 			MouseEventArgs *args = (MouseEventArgs*)lParam;
 			return OnNotify((Control*)(wParam), args);
 		}
@@ -395,15 +395,15 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void Window::OnPaint(HDC winHDC, const Rect&rePaintRect)
 {
-	StopWatch stopWatch;//¼ÆËãºÄÊ±
-	EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height, 24);//Ë«»º³åÎ»Í¼
+	StopWatch stopWatch;//ï¿½ï¿½ï¿½ï¿½ï¿½Ê±
+	EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height, 24);//Ë«ï¿½ï¿½ï¿½ï¿½Î»Í¼
 	Painter pt(memBitmap.GetHDC());
 	PaintEventArgs args(pt);
 	args.InvalidRectangle = rePaintRect;
 	args.HWnd = _hWnd;
-	_layout->OnEvent(Event::OnPaint, &args);//¸ø²¼¾ÖÆ÷»æÖÆÄÚÈÝ
-	::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetHDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//ÌùÍ¼
-	time_t ms = stopWatch.ElapsedMilliseconds();//»ñÈ¡ºÄÊ±½á¹û
+	_layout->OnEvent(Event::OnPaint, &args);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetHDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//ï¿½ï¿½Í¼
+	time_t ms = stopWatch.ElapsedMilliseconds();//ï¿½ï¿½È¡ï¿½ï¿½Ê±ï¿½ï¿½ï¿½
 	CHAR buf[256]{ 0 };
 	sprintf_s(buf, "GDIPaint %d %d   %d ms \n", rePaintRect.Width, rePaintRect.Height, (int)ms);
 	OutputDebugStringA(buf);
@@ -411,12 +411,12 @@ void Window::OnPaint(HDC winHDC, const Rect&rePaintRect)
 
 bool Window::IsInWindow(Control&pControl, Control&it) {
 	Rect &winClientRect = GetClientRect();
-	auto rect = it.GetRect();//»ñÈ¡×Ó¿Ø¼þ¾ØÐÎ
+	auto rect = it.GetRect();//ï¿½ï¿½È¡ï¿½Ó¿Ø¼ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	if (rect.IsEmptyArea()) {
 		return false;
 	}
-	auto clientRect = it.GetClientRect();//»ñÈ¡»ùÓÚ¸¸´°¿ÚµÄ×î±í
+	auto clientRect = it.GetClientRect();//ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½
 	if (!winClientRect.IntersectsWith(clientRect)) {
 		return false;
 	}
@@ -430,7 +430,6 @@ Control*  Window::FindControl(const Point & clientPoint, Point&outPoint) {
 	outPoint = clientPoint;
 	Control *outCtl = _layout;
 loop:
-	//¹ö¶¯ÌõÓÅÏÈ
 	Control *scrollBar = outCtl->ScrollBar;
 	if (scrollBar && scrollBar->GetClientRect().Contains(clientPoint)) {
 		if (scrollBar->Visible) {
@@ -442,25 +441,25 @@ loop:
 		}
 	}
 	std::list<Control*> *pTemp;
-	if (outCtl->VisibleControls.size() > 0) { //Èç¹ûÓÐ¿Ø¼þÊÕ¼¯ÁË¿É¼û×Ó¿Ø¼þ ÔòÖ»¶Ô¿É¼û¿Ø¼þ½øÐÐÑ°ÕÒ×ø±ê
+	if (outCtl->VisibleControls.size() > 0) { 
 		pTemp = &outCtl->VisibleControls;
 	}
 	else {
 		pTemp = (Controls*)outCtl->GetControls();
 	}
-	//¶Ô¿É¼û×Ó¿Ø¼þ½øÐÐÑ°ÕÒ
+	
 	for (auto i = pTemp->rbegin(); i != pTemp->rend(); i++) {
 		Control &it = **i;
 		if (!it.Visible) {
 			continue;
 		}
-		//ÅÐ¶ÏÊÇ²»ÊÇÔÚ´°¿ÚÄÚ¿É¼û
+		
 		if (!IsInWindow(*outCtl, it)) {
 			continue;
 		}
 		if (it.GetClientRect().Contains(clientPoint)) {
 			Spacer*spcaer = DynamicCast((&it), Spacer, ControlType::ControlSpacer);
-			if (spcaer) {//Èç¹û¸Ã¿Ø¼þÊÇµ¯»ÉÔò²»½ÓÊÕÈÎºÎÊó±êÏûÏ¢
+			if (spcaer) {
 				return outCtl;
 			}
 			outCtl = &it;
@@ -476,12 +475,12 @@ loop:
 void Window::OnMouseMove(const Point & point)
 {
 
-	if (_focusControl && _mouseDown) { //Èç¹ûÊó±ê°´ÏÂÄ³¸ö¿Ø¼þ ÔòÏàÓ¦°´ÏÂÊó±êµÄÒÆ¶¯ÏûÏ¢
+	if (_focusControl && _mouseDown) {
 		auto &ctlRect = _focusControl->GetClientRect();
 		MouseEventArgs args;
 		args.Location = { point.X - ctlRect.X ,point.Y - ctlRect.Y };
 		args.EventType = Event::OnMouseMove;
-		_focusControl->OnMouseEvent(args);//´¥·¢ÒÆ¶¯ÏûÏ¢
+		_focusControl->OnMouseEvent(args);
 		return;
 	}
 
@@ -489,13 +488,13 @@ void Window::OnMouseMove(const Point & point)
 	Control *outCtl = FindControl(point, relativePoint);
 	MouseEventArgs args;
 
-	if (_focusControl && outCtl != _focusControl) {//ÈÃÖ®Ç°µÄ¿Ø¼þÏÈ·¢ËÍÒÆ³öÏûÏ¢
+	if (_focusControl && outCtl != _focusControl) {
 		args.EventType = Event::OnMouseLeave;
-		_focusControl->OnMouseEvent(args);//Èç¹ûµ±Ç°¿Ø¼þ²»ÊÇÉÏÒ»¸ö¾ßÓÐ½¹µãµÄ¿Ø¼þ ´¥·¢ÉÏÒ»¸ö¿Ø¼þµÄÒÆ³öÏûÏ¢
+		_focusControl->OnMouseEvent(args);
 	}
 	args.EventType = Event::OnMouseMove;
 	args.Location = relativePoint;
-	outCtl->OnMouseEvent(args);//×îºó¿ªÊ¼³ö·¢µ±Ç°¿Ø¼þµÄÒÆ¶¯ÏûÏ¢
+	outCtl->OnMouseEvent(args);
 	_focusControl = outCtl;
 
 }
@@ -534,12 +533,7 @@ void Window::OnMouseWheel(short zDelta, const Point & point)
 		args.EventType = Event::OnMouseWheel;
 		vBar->OnMouseEvent(args);
 
-		//¹ö¶¯Ìõ¹ö¶¯Ö®ºóÈÔÈ»ÒªÒªÊó±êÐü¸¡ÔÚ¿Ø¼þÉÏ
-	/*	POINT pt;
-		GetCursorPos(&pt);
-		ScreenToClient(Hwnd(), &pt);
-		Debug::Log("%d %d", pt.x, pt.y);
-		OnMouseMove({ pt.x,pt.y });*/
+
 	}
 
 }
@@ -606,11 +600,10 @@ void Window::OnMouseUp(MouseButton mbtn, const Point & point)
 }
 void Window::OnSize(const Size & sz)
 {
-	*((Rect*)(&_layout->ClipRect)) = this->GetClientRect();//²¼¾ÖÒªÏÈÈ·¶¨×Ô¼ºµÄ²Ã¼ôÇøÓòÊÇºÍ´°¿ÚÒ»Ñù´óÐ¡
-	//ÏÈÈÃÇøÓòÓÐÐ§
+	*((Rect*)(&_layout->ClipRect)) = this->GetClientRect();//
 	//RECT rc{ _layout->ClipRect.X,_layout->ClipRect.Y,_layout->ClipRect.GetRight(),_layout->ClipRect.GetBottom() };
 	//::ValidateRect(_hWnd, &rc);
-	_layout->SetRect(this->GetClientRect(), true);//ÈÃ²¼¾ÖÆ÷ÖØ»æ Õû¸ö´°¿Ú¶¼»áÖØ»æ
+	_layout->SetRect(this->GetClientRect(), true);
 }
 
 void Window::OnRect(const Rect & rect)
@@ -630,21 +623,21 @@ void Window::OnLoad()
 
 void Window::OnKeyDown(WPARAM wParam) {
 
-	if (_inputControl) { //ÊäÈë¿òÓÅÏÈ¼¶¸ß
+	if (_inputControl) { //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½
 		_inputControl->OnKeyDown(wParam);
 		return;
 	}
-	if (_focusControl) {//È»ºóÔÙÏìÓ¦ÆäËû¿Ø¼þµÄ°´ÏÂÊÂ¼þ
+	if (_focusControl) {//
 		_focusControl->OnKeyDown(wParam);
 	}
 }
 void Window::OnChar(WPARAM wParam, LPARAM lParam)
 {
-	if (_inputControl) { //ÊäÈë¿òÓÅÏÈ¼¶¸ß
+	if (_inputControl) { //
 		_inputControl->OnChar(wParam, lParam);
 		return;
 	}
-	if (_focusControl) {//È»ºóÔÙÏìÓ¦ÆäËû¿Ø¼þµÄ°´ÏÂÊÂ¼þ
+	if (_focusControl) {//
 		_focusControl->OnChar(wParam, lParam);
 	}
 }

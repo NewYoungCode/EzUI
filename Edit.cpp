@@ -212,7 +212,7 @@ void EditWnd::SetText(const EString & text)
 {
 	_text = text;
 	if (_editWnd) {
-		::SetWindowTextW(_editWnd, _text.c_str());
+		::SetWindowTextW(_editWnd, _text.utf16().c_str());
 	}
 }
 const EString& EditWnd::GetText()
@@ -225,18 +225,13 @@ const EString& EditWnd::GetText()
 void EditWnd::OnLoad() {
 	if (_editWnd == NULL) {
 		auto rect = GetClientRect();
-		_editWnd = CreateWindowW(L"Edit", _text.c_str(), WS_VISIBLE | WS_CHILD, rect.X, rect.Y, rect.Width, rect.Height,
+		_editWnd = CreateWindowW(L"Edit", _text.utf16().c_str(), WS_VISIBLE | WS_CHILD, rect.X, rect.Y, rect.Width, rect.Height,
 			ParentWid, NULL, GetModuleHandle(0), NULL);//因为UI框架的edit并不成熟(懒得写了),所以暂时使用WIN32的输入框代替
 		UI_SetUserData(_editWnd, this);
 
-		LOGFONT LogFont;
+		LOGFONTW LogFont;
 		memset(&LogFont, 0, sizeof(LOGFONT));
-#ifdef UNICODE
 		lstrcpyW(LogFont.lfFaceName, L"Microsoft YaHei");
-#else
-		lstrcpyA(LogFont.lfFaceName, "Microsoft YaHei");
-
-#endif
 		LogFont.lfWeight = FW_NORMAL;//FW_NORMAL;
 		LogFont.lfHeight = 20; // 字体大小
 		LogFont.lfCharSet = 134;
@@ -246,9 +241,9 @@ void EditWnd::OnLoad() {
 		LogFont.lfQuality = 1;
 		LogFont.lfPitchAndFamily = 2;
 		// 创建字体
-		_font = CreateFontIndirect(&LogFont);
+		_font = CreateFontIndirectW(&LogFont);
 		// 取得控件句柄
-		SendMessage(_editWnd, WM_SETFONT, (WPARAM)_font, TRUE);
+		SendMessageW(_editWnd, WM_SETFONT, (WPARAM)_font, TRUE);
 	}
 }
 void EditWnd::OnPaint(PaintEventArgs&e) {

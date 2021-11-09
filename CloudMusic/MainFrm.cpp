@@ -1,8 +1,7 @@
-#include "MainFrm.h"
+ï»¿#include "MainFrm.h"
 
 MainFrm::MainFrm(int width, int height) :Form(width, height)
 {
-	SetLayout(&laout);
 	laout.Style.BackgroundColor = { 35,35,38 };
 	top.ReSize({ laout.Width(),60 });
 	//Image *imgx = new Image("D:\\hd(3).png");
@@ -11,9 +10,9 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	top.Style.BackgroundColor = { 33,33,36 };
 	laout.AddControl(&top);
 	top.Dock = DockStyle::Horizontal;
-	top.Action = ControlAction::MoveWindow;//Êó±ê²¶×½ ÒÆ¶¯´°¿Ú
+	top.Action = ControlAction::MoveWindow;//é¼ æ ‡æ•æ‰ ç§»åŠ¨çª—å£
 
-	title.SetText(TEXT("ÍøÒÖÔÆÒôÀÖ"));
+	title.SetText(utf8("ç½‘æŠ‘äº‘éŸ³ä¹"));
 	title.Style.ForeColor = (Color::White);
 	title.Style.FontSize = (14);
 	title.SetRect({ 14,15,131,35 });
@@ -77,47 +76,46 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 		}
 
 		lb->MouseClick = [=](Control*sender, MouseButton btn, const Point&)->void {
-
 			if (btn == MouseButton::Left) {
-				::MessageBox(Hwnd(), "µã»÷", "", 0);
+				::MessageBox(Hwnd(), TEXT("ç‚¹å‡»"), TEXT(""), 0);
 
 			}
-
 		};
 
-		//lb->Style.FontFamily = "»ª¿µÉÙÅ®ÎÄ×ÖW5(P)";
+		//lb->Style.FontFamily = "ååº·å°‘å¥³æ–‡å­—W5(P)";
 		lb->HoverStyle.BackgroundColor = Color{ 63,63,63 };
 		//lb->HoverStyle.ForeColor = Color{ 55,55,55 };
 
 		lb->Cursor = IDC_HAND;
 
 		lb->SetTextAlign(TextAlign::MiddleLeft);
-		lb->SetText(std::to_string(i)+TEXT("         Ò¹¿ÕÖĞ×îÁÁµÄĞÇ                ÌÓÅÜ¼Æ»®            3:48"));
+
+		lb->SetText(utf8(std::to_string(i) + "         å¤œç©ºä¸­æœ€äº®çš„æ˜Ÿ                é€ƒè·‘è®¡åˆ’            3:48"));
 		musicList.AddControl(lb);
 		lb->Dock = DockStyle::Horizontal;
 	}
 
-	btn1.SetText(TEXT("·¢ÏÖÒôÀÖ"));
+	btn1.SetText(utf8("å‘ç°éŸ³ä¹"));
 	btn1.ReSize({ 200,63 });
 	menu.AddControl(&btn1);
 
-	btn2.SetText(TEXT("²©¿Í"));
+	btn2.SetText(utf8("åšå®¢"));
 	btn2.ReSize({ 200,63 });
 	menu.AddControl(&btn2);
 
-	btn3.SetText(TEXT("ÊÓÆµ"));
+	btn3.SetText(utf8("è§†é¢‘"));
 	btn3.ReSize({ 200,63 });
 	menu.AddControl(&btn3);
 
-	btn4.SetText(TEXT("ÅóÓÑ"));
+	btn4.SetText(utf8("æœ‹å‹"));
 	btn4.ReSize({ 200,63 });
 	menu.AddControl(&btn4);
 
-	btn5.SetText(TEXT("Ö±²¥"));
+	btn5.SetText(utf8("ç›´æ’­"));
 	btn5.ReSize({ 200,63 });
 	menu.AddControl(&btn5);
 
-	btn6.SetText(TEXT("Ê«ÈËFM"));
+	btn6.SetText(utf8("è¯—äººFM"));
 	btn6.ReSize({ 200,63 });
 	menu.AddControl(&btn6);
 
@@ -141,17 +139,16 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	head.Action = ControlAction::Max;
 	head.Cursor = IDC_HAND;
 
-
 	bottom_left.AddControl(&head);
 
 	songName.SetRect({ 73,15 , 155, 23 });
-	songName.SetText(TEXT("Smile Again"));
+	songName.SetText(L"Smile Againí•œêµ­ì–´");
 	songName.Style.FontSize = (10);
 	songName.SetTextAlign(TextAlign::MiddleLeft);
 	bottom_left.AddControl(&songName);
 
 	singer.SetRect({ 73,39 , 165, 23 });
-	singer.SetText(TEXT("G.NA/Ğì¶÷¹â/ÁøÏÍÕò"));
+	singer.SetText(utf8("G.NA/å¾æ©å…‰/æŸ³è´¤é•‡"));
 	singer.SetTextAlign(TextAlign::MiddleLeft);
 	bottom_left.AddControl(&singer);
 
@@ -172,7 +169,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	lable1.ReSize({ 70,15 });
 	lable1.Move({ 0,50 });
 	lable1.SetFixedWidth(70);
-	lable1.SetText(TEXT("00:00"));
+	lable1.SetText(utf8("00:00"));
 	bottom_center.AddControl(&lable1);
 
 
@@ -186,7 +183,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	lable2.ReSize({ 70,15 });
 	lable2.Move({ 0,50 });
 	lable2.SetFixedWidth(70);
-	lable2.SetText(TEXT("03:50"));
+	lable2.SetText(utf8("03:50"));
 	bottom_center.AddControl(&lable2);
 
 
@@ -243,8 +240,9 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	space5.ReSize({ 1,1 });
 	bottom_right.AddControl(&space5);
 
-	//ÉèÖÃ²¼¾ÖÏÔÊ¾´°¿Ú
+	//è®¾ç½®å¸ƒå±€æ˜¾ç¤ºçª—å£
 	//laout.Style.SetBorder(Color::Gray-100, 1);
+	SetLayout(&laout);
 
 }
 

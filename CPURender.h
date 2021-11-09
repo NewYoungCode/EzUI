@@ -26,8 +26,7 @@ class UI_EXPORT  Image :public  Gdiplus::Image {
 public:
 	Bitmap *BufBitmap = NULL;//预绘制
 	Rect Box;//指定图片绘制在什么位置 //不指定就自动拉伸到当前控件上
-	Image(const std::string&filename, int radius=0);
-	Image(const std::wstring&filename, int radius = 0);
+	Image(const EString&filename, int radius = 0);
 	~Image();
 };
 
@@ -150,9 +149,9 @@ public:
 	virtual ~CPURender();
 	void DrawRectangle(const Color&color, const Rect&rect, float width = 1, float radius = 0);
 	void FillRectangle(const Color&color, const Rect&rect, int radius = 0);
-	void DrawString(const std::string &text, const EString& fontFamily, float fontSize, const Color & color, const RectF & rect, TextAlign textAlign, bool underLine = false);
+	void DrawString(const EString &text, const EString& fontFamily, float fontSize, const Color & color, const RectF & rect, TextAlign textAlign, bool underLine = false);
 	void DrawString(const std::wstring & text, const EString & fontFamily, float fontSize, const Color & color, const RectF & _rect, TextAlign textAlign, bool underLine = false);
-	void MeasureString(const std::string&_text, const EString&fontf, float fontSize, RectF &outBox);
+	void MeasureString(const EString&_text, const EString&fontf, float fontSize, RectF &outBox);
 	void MeasureString(const std::wstring & _text, const EString & fontf, float fontSize, RectF & outBox);
 	void CreateLayer(const Rect&rect, ClipMode clipMode = ClipMode::Valid, int radius = 0);
 	void PopLayer();

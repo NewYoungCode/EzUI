@@ -9,7 +9,7 @@
 #include <map>
 #include <memory>
 #include <SDKDDKVer.h>
-#define WIN32_LEAN_AND_MEAN             // ´Ó Windows Í·ÎÄ¼þÖÐÅÅ³ý¼«ÉÙÊ¹ÓÃµÄÄÚÈÝ
+#define WIN32_LEAN_AND_MEAN             // ï¿½ï¿½ Windows Í·ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Å³ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½
 #include <windows.h>
 #include <windowsx.h>
 #include <time.h>
@@ -36,7 +36,7 @@
 template<typename T>
 struct Tuple {
 public:
-	bool valid = false;//×Ö¶ÎÄÚÈÝÊÇ·ñÓÐÐ§
+	bool valid = false;//ï¿½Ö¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ð§
 	T value = NULL;
 	Tuple() :valid(false) {
 	}
@@ -78,8 +78,8 @@ public:
 #endif
 
 #ifdef _DEBUG
-#define DEBUGPAINT //µ÷ÊÔÄ£Ê½»æÖÆ±ß¿ò,²¼¾ÖÐÅÏ¢ ºê
-#define DEBUGLOG //µ÷ÊÔ´òÓ¡Êä³ö
+#define DEBUGPAINT //ï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½Æ±ß¿ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ ï¿½ï¿½
+#define DEBUGLOG //ï¿½ï¿½ï¿½Ô´ï¿½Ó¡ï¿½ï¿½ï¿½
 #endif
 
 #ifndef GCL_HCURSOR
@@ -95,7 +95,7 @@ public:
 #define UI_SetUserData(hWnd,data)  SetWindowLong(hWnd, GWLP_USERDATA, (LONG)data);
 #define UI_GetUserData(hwnd) GetWindowLong(hwnd, GWLP_USERDATA);
 #endif
-//½ûÓÃÒ»Ð©Ã»±ØÒªµÄ¾¯¸æ
+//ï¿½ï¿½ï¿½ï¿½Ò»Ð©Ã»ï¿½ï¿½Òªï¿½Ä¾ï¿½ï¿½ï¿½
 #pragma warning(disable:4244)
 #pragma warning(disable:4267)
 
@@ -112,15 +112,89 @@ public:
 #define UI_CLASSNAME TEXT("EzUI_Win32")
 #define UI_NotifyIcon_CLASSNAME TEXT("EzUI_NotifyIcon_Class")
 
-#define WM_NOTIFYICON WM_USER+0x01 //×óÏÂ½ÇÍÐÅÌÏûÏ¢
-#define WM_CONTROL_DELETE WM_USER+0x02 //¿Ø¼þÉ¾³ýµÄÊ±ºò·¢Éú´ËÏûÏ¢
-#define WM_CONTROL_REFRESH WM_USER+0x03 //´°¿ÚË¢ÐÂµÄÏûÏ¢
+#define WM_NOTIFYICON WM_USER+0x01 //ï¿½ï¿½ï¿½Â½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
+#define WM_CONTROL_DELETE WM_USER+0x02 //ï¿½Ø¼ï¿½É¾ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
+#define WM_CONTROL_REFRESH WM_USER+0x03 //ï¿½ï¿½ï¿½ï¿½Ë¢ï¿½Âµï¿½ï¿½ï¿½Ï¢
 //WM_USER ~ 0x7FFF
-//¿ò¼ÜÄÚ¶¨ÒåµÄÊó±êÊó±êÏûÏ¢
-//0x04~0x0bÊó±êÏûÏ¢
-//0x0c~0x0e¼üÅÌÏûÏ¢(°´ÏÂ,µ¯Æð,WM_CHAR)
-
-#define WM_UIMESSAGE  WM_USER+20   //ÓÃ»§¶îÍâµÄÏûÏ¢ UI±£Áô20¸öÏûÏ¢
+//ï¿½ï¿½ï¿½ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
+//0x04~0x0b mouse message
+//0x0c~0x0eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢(ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½,WM_CHAR)
+#define WM_UIMESSAGE  WM_USER+20   
+//utf8
+class EString :public std::string {
+public:
+	enum
+	{
+		ANSI = CP_ACP,
+		UTF8 = CP_UTF8
+	};
+public:
+	size_t length() const {
+		const char*s = this->c_str();
+		int i = 0, j = 0;
+		while (s[i]) {
+			if ((s[i] & 0xc0) != 0x80) {
+				j++;
+			}
+			i++;
+		}
+		return j;
+	}
+	EString() {}
+	EString(const std::string&str, int codePage = EString::UTF8) :std::string() {
+		if ((codePage == EString::ANSI) && (::GetACP() != CP_UTF8)) {
+			int nwLen = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.size(), NULL, 0);
+			wchar_t* pwBuf = new wchar_t[nwLen + 1];
+			ZeroMemory(pwBuf, nwLen * 2 + 2);
+			::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.length(), pwBuf, nwLen);
+			int nLen = ::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, NULL, NULL, NULL, NULL);
+			this->resize(nLen);
+			::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, (char*)this->c_str(), nLen, NULL, NULL);
+			delete[]pwBuf;
+		}
+		else {
+			this->resize(str.size());
+			::memcpy((void*)c_str(), str.c_str(), str.size());
+		}
+	}
+	EString(const char*szbuf, int codePage = EString::UTF8) {
+		size_t len = ::strlen(szbuf);
+		if ((codePage == EString::ANSI) && (::GetACP() != CP_UTF8)) {
+			int nwLen = ::MultiByteToWideChar(CP_ACP, 0, szbuf, len, NULL, 0);
+			wchar_t* pwBuf = new wchar_t[nwLen + 1];
+			ZeroMemory(pwBuf, nwLen * 2 + 2);
+			::MultiByteToWideChar(CP_ACP, 0, szbuf, len, pwBuf, nwLen);
+			int nLen = ::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, NULL, NULL, NULL, NULL);
+			this->resize(nLen);
+			::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, (char*)this->c_str(), nLen, NULL, NULL);
+			delete[]pwBuf;
+		}
+		else
+		{
+			this->resize(len);
+			::memcpy((void*)c_str(), szbuf, len);
+		}
+	}
+	EString(const wchar_t*szbuf) {
+		size_t len = ::lstrlenW(szbuf);
+		int bytes = ::WideCharToMultiByte(CP_UTF8, 0, szbuf, len, NULL, 0, NULL, NULL);
+		this->resize(bytes);
+		WideCharToMultiByte(CP_UTF8, 0, szbuf, len, (char*)this->c_str(), bytes, NULL, NULL);
+	}
+	EString(const std::wstring*wstr) {
+		int bytes = ::WideCharToMultiByte(CP_UTF8, 0, wstr->c_str(), wstr->size(), NULL, 0, NULL, NULL);
+		this->resize(bytes);
+		WideCharToMultiByte(CP_UTF8, 0, wstr->c_str(), wstr->size(), (char*)this->c_str(), bytes, NULL, NULL);
+	}
+	std::wstring utf16() const {
+		int textlen = MultiByteToWideChar(CP_UTF8, 0, this->c_str(), this->size(), NULL, 0);
+		std::wstring wstr;
+		wstr.resize(textlen);
+		MultiByteToWideChar(CP_UTF8, 0, this->c_str(), this->size(), (WCHAR*)wstr.c_str(), textlen);
+		return wstr;
+	}
+};
+#define utf8(szbuf)  EString(szbuf,EString::ANSI)
 
 namespace String {
 	inline std::wstring ANSIToUniCode(const std::string &str)
@@ -183,16 +257,16 @@ namespace String {
 		return strRet;
 	}
 
-	inline std::vector<std::wstring> Split(const std::wstring& str, const std::wstring& ch_) {
-		std::vector<std::wstring> arr;
+	inline std::vector<EString> Split(const EString& str, const EString& ch_) {
+		std::vector<EString> arr;
 		if (str.empty()) return arr;
-		std::wstring buf = str;
+		EString buf = str;
 		size_t pos = buf.find(ch_);
-		if (pos == std::wstring::npos) {
+		if (pos == EString::npos) {
 			arr.push_back(str);
 			return arr;
 		}
-		for (; pos != std::wstring::npos;) {
+		for (; pos != EString::npos;) {
 			arr.push_back(buf.substr(0, pos));
 			buf = buf.erase(0, pos + ch_.size());
 			pos = buf.find(ch_);
@@ -204,34 +278,22 @@ namespace String {
 	}
 }
 
-#define UI_TSTR std::wstring 
-class EString :public UI_TSTR {
-public:
-	EString() :UI_TSTR() {}
-	EString(const std::wstring&str) :UI_TSTR(str) {}
-	EString(const wchar_t* str) :UI_TSTR(str) {}
-
-	EString(const char*str) :UI_TSTR(String::ANSIToUniCode(str)) {}
-	EString(const std::string&str) : UI_TSTR(String::ANSIToUniCode(str)) {}
-};
-
 namespace MsgBox {
 	inline int Show(const EString&text, const EString&title = TEXT(""), int mButton = NULL) {
-		return ::MessageBoxW(::GetActiveWindow(), text.c_str(), title.c_str(), mButton);
+		return ::MessageBoxW(::GetActiveWindow(), text.utf16().c_str(), text.utf16().c_str(), mButton);
 	}
 }
 
 namespace Debug {
 	template<typename ...T>
 	inline void Log(const EString&formatStr, T ...args) {
-#ifdef DEBUGLOG
-		WCHAR buf[256]{ 0 };
-		auto count = swprintf_s((buf), 255, formatStr.c_str(), std::forward<T>(args)...);
-
-		buf[count] = '\n';
-		buf[count + 1] = NULL;
-		OutputDebugStringW(buf);
-#endif
+//#ifdef DEBUGLOG
+//		WCHAR buf[256]{ 0 };
+//		auto count = swprintf_s((buf), 255, formatStr.c_str(), std::forward<T>(args)...);
+//		buf[count] = '\n';
+//		buf[count + 1] = NULL;
+//		OutputDebugStringW(buf);
+//#endif
 	}
 };
 
@@ -240,41 +302,40 @@ private:
 	std::chrono::system_clock::time_point beg_t;
 public:
 	StopWatch() {
-		beg_t = std::chrono::system_clock::now();    //ÆðÊ¼Ê±¼ä
+		beg_t = std::chrono::system_clock::now();    //ï¿½ï¿½Ê¼Ê±ï¿½ï¿½
 	}
 	time_t ElapsedMilliseconds() {
-		auto end_t = std::chrono::system_clock::now();    //½áÊøÊ±¼ä
-		std::chrono::duration<double> diff = end_t - beg_t;//Ê±¼ä¼ä¸ôs
-		return std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//Ê±¼ä¼ä¸ôms
+		auto end_t = std::chrono::system_clock::now();    //ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+		std::chrono::duration<double> diff = end_t - beg_t;//Ê±ï¿½ï¿½ï¿½ï¿½s
+		return std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//Ê±ï¿½ï¿½ï¿½ï¿½ms
 	}
 };
 
 
 
 namespace Dialog {
-	inline EString OpenFileDialog(const EString&title, const WCHAR*filter, const EString&defaultPath) {
-		HWND hwnd = ::GetForegroundWindow();//»ñÈ¡ÏµÍ³Ç°¾°´°¿Ú
+	inline EString OpenFileDialog(HWND oWner, const EString&title, const EString&filter, const EString&defaultPath) {
 		OPENFILENAMEW ofn = { 0 };
-		WCHAR strFilename[MAX_PATH] = { 0 };//ÓÃÓÚ½ÓÊÕÎÄ¼þÃû
-		ofn.lStructSize = sizeof(OPENFILENAME);//½á¹¹Ìå´óÐ¡
-		ofn.hwndOwner = hwnd;//ÓµÓÐ×Å´°¿Ú¾ä±ú£¬ÎªNULL±íÊ¾¶Ô»°¿òÊÇ·ÇÄ£Ì¬µÄ£¬Êµ¼ÊÓ¦ÓÃÖÐÒ»°ã¶¼ÒªÓÐÕâ¸ö¾ä±ú
-		ofn.lpstrFilter = filter;//TEXT("ËùÓÐÎÄ¼þ\0*.*\0C/C++ Flie\0*.cpp;*.c;*.h\0\0");//ÉèÖÃ¹ýÂË
-		ofn.nFilterIndex = 1;//¹ýÂËÆ÷Ë÷Òý
-		ofn.lpstrFile = strFilename;//½ÓÊÕ·µ»ØµÄÎÄ¼þÃû£¬×¢ÒâµÚÒ»¸ö×Ö·ûÐèÒªÎªNULL
-		ofn.nMaxFile = sizeof(strFilename);//»º³åÇø³¤¶È
-		ofn.lpstrInitialDir = defaultPath.c_str();//³õÊ¼Ä¿Â¼ÎªÄ¬ÈÏ
-		ofn.lpstrTitle = title.c_str();//Ê¹ÓÃÏµÍ³Ä¬ÈÏ±êÌâÁô¿Õ¼´¿É
-		ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;//ÎÄ¼þ¡¢Ä¿Â¼±ØÐë´æÔÚ£¬Òþ²ØÖ»¶ÁÑ¡Ïî
+		WCHAR strFilename[MAX_PATH] = { 0 };//ï¿½ï¿½ï¿½Ú½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
+		ofn.lStructSize = sizeof(OPENFILENAME);//ï¿½á¹¹ï¿½ï¿½ï¿½Ð¡
+		ofn.hwndOwner = oWner;//Óµï¿½ï¿½ï¿½Å´ï¿½ï¿½Ú¾ï¿½ï¿½ï¿½ï¿½ÎªNULLï¿½ï¿½Ê¾ï¿½Ô»ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Ä£Ì¬ï¿½Ä£ï¿½Êµï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ã¶¼Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		ofn.lpstrFilter = filter.utf16().c_str();//TEXT("ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½\0*.*\0C/C++ Flie\0*.cpp;*.c;*.h\0\0");//ï¿½ï¿½ï¿½Ã¹ï¿½ï¿½ï¿½
+		ofn.nFilterIndex = 1;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		ofn.lpstrFile = strFilename;//ï¿½ï¿½ï¿½Õ·ï¿½ï¿½Øµï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ÒªÎªNULL
+		ofn.nMaxFile = sizeof(strFilename);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		ofn.lpstrInitialDir = defaultPath.utf16().c_str();//ï¿½ï¿½Ê¼Ä¿Â¼ÎªÄ¬ï¿½ï¿½
+		ofn.lpstrTitle = title.utf16().c_str();//Ê¹ï¿½ï¿½ÏµÍ³Ä¬ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½Õ¼ï¿½ï¿½ï¿½
+		ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;//ï¿½Ä¼ï¿½ï¿½ï¿½Ä¿Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½Ñ¡ï¿½ï¿½
 		GetOpenFileNameW(&ofn);
 		return strFilename;
 	}
 
 	//
 	//#include<windows.h>
-	////´ò¿ª±£´æÎÄ¼þ¶Ô»°¿ò
+	////ï¿½ò¿ª±ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½Ô»ï¿½ï¿½ï¿½
 	//#include<Commdlg.h>
 	//
-	////Ñ¡ÔñÎÄ¼þ¼Ð¶Ô»°¿ò
+	////Ñ¡ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½Ð¶Ô»ï¿½ï¿½ï¿½
 	//#include<Shlobj.h>
 	//#pragma comment(lib,"Shell32.lib")
 	//
@@ -285,48 +346,48 @@ namespace Dialog {
 	//{
 	//loop:
 	//	OPENFILENAME ofn = { 0 };
-	//	TCHAR strFilename[MAX_PATH] = { 0 };//ÓÃÓÚ½ÓÊÕÎÄ¼þÃû
-	//	ofn.lStructSize = sizeof(OPENFILENAME);//½á¹¹Ìå´óÐ¡
-	//	ofn.hwndOwner = NULL;//ÓµÓÐ×Å´°¿Ú¾ä±ú£¬ÎªNULL±íÊ¾¶Ô»°¿òÊÇ·ÇÄ£Ì¬µÄ£¬Êµ¼ÊÓ¦ÓÃÖÐÒ»°ã¶¼ÒªÓÐÕâ¸ö¾ä±ú
-	//	ofn.lpstrFilter = TEXT("ËùÓÐÎÄ¼þ\0*.*\0C/C++ Flie\0*.cpp;*.c;*.h\0\0");//ÉèÖÃ¹ýÂË
-	//	ofn.nFilterIndex = 1;//¹ýÂËÆ÷Ë÷Òý
-	//	ofn.lpstrFile = strFilename;//½ÓÊÕ·µ»ØµÄÎÄ¼þÃû£¬×¢ÒâµÚÒ»¸ö×Ö·ûÐèÒªÎªNULL
-	//	ofn.nMaxFile = sizeof(strFilename);//»º³åÇø³¤¶È
-	//	ofn.lpstrInitialDir = NULL;//³õÊ¼Ä¿Â¼ÎªÄ¬ÈÏ
-	//	ofn.lpstrTitle = TEXT("ÇëÑ¡ÔñÒ»¸öÎÄ¼þ");//Ê¹ÓÃÏµÍ³Ä¬ÈÏ±êÌâÁô¿Õ¼´¿É
-	//	ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;//ÎÄ¼þ¡¢Ä¿Â¼±ØÐë´æÔÚ£¬Òþ²ØÖ»¶ÁÑ¡Ïî
+	//	TCHAR strFilename[MAX_PATH] = { 0 };//ï¿½ï¿½ï¿½Ú½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
+	//	ofn.lStructSize = sizeof(OPENFILENAME);//ï¿½á¹¹ï¿½ï¿½ï¿½Ð¡
+	//	ofn.hwndOwner = NULL;//Óµï¿½ï¿½ï¿½Å´ï¿½ï¿½Ú¾ï¿½ï¿½ï¿½ï¿½ÎªNULLï¿½ï¿½Ê¾ï¿½Ô»ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Ä£Ì¬ï¿½Ä£ï¿½Êµï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ã¶¼Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//	ofn.lpstrFilter = TEXT("ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½\0*.*\0C/C++ Flie\0*.cpp;*.c;*.h\0\0");//ï¿½ï¿½ï¿½Ã¹ï¿½ï¿½ï¿½
+	//	ofn.nFilterIndex = 1;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//	ofn.lpstrFile = strFilename;//ï¿½ï¿½ï¿½Õ·ï¿½ï¿½Øµï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ÒªÎªNULL
+	//	ofn.nMaxFile = sizeof(strFilename);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//	ofn.lpstrInitialDir = NULL;//ï¿½ï¿½Ê¼Ä¿Â¼ÎªÄ¬ï¿½ï¿½
+	//	ofn.lpstrTitle = TEXT("ï¿½ï¿½Ñ¡ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ä¼ï¿½");//Ê¹ï¿½ï¿½ÏµÍ³Ä¬ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½Õ¼ï¿½ï¿½ï¿½
+	//	ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;//ï¿½Ä¼ï¿½ï¿½ï¿½Ä¿Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½Ñ¡ï¿½ï¿½
 	//	if (GetOpenFileName(&ofn))
 	//	{
-	//		MessageBox(NULL, strFilename, TEXT("Ñ¡ÔñµÄÎÄ¼þ"), 0);
+	//		MessageBox(NULL, strFilename, TEXT("Ñ¡ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½"), 0);
 	//	}
 	//	else {
-	//		MessageBox(NULL, TEXT("ÇëÑ¡ÔñÒ»¸öÎÄ¼þ"), NULL, MB_ICONERROR);
+	//		MessageBox(NULL, TEXT("ï¿½ï¿½Ñ¡ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ä¼ï¿½"), NULL, MB_ICONERROR);
 	//		goto loop;
 	//	}
 	//
-	//	ofn.Flags = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;//Ä¿Â¼±ØÐë´æÔÚ£¬¸²¸ÇÎÄ¼þÇ°·¢³ö¾¯¸æ
-	//	ofn.lpstrTitle = TEXT("±£´æµ½");//Ê¹ÓÃÏµÍ³Ä¬ÈÏ±êÌâÁô¿Õ¼´¿É
-	//	ofn.lpstrDefExt = TEXT("cpp");//Ä¬ÈÏ×·¼ÓµÄÀ©Õ¹Ãû
+	//	ofn.Flags = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;//Ä¿Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//	ofn.lpstrTitle = TEXT("ï¿½ï¿½ï¿½æµ½");//Ê¹ï¿½ï¿½ÏµÍ³Ä¬ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½Õ¼ï¿½ï¿½ï¿½
+	//	ofn.lpstrDefExt = TEXT("cpp");//Ä¬ï¿½ï¿½×·ï¿½Óµï¿½ï¿½ï¿½Õ¹ï¿½ï¿½
 	//	if (GetSaveFileName(&ofn))
 	//	{
-	//		MessageBox(NULL, strFilename, TEXT("±£´æµ½"), 0);
+	//		MessageBox(NULL, strFilename, TEXT("ï¿½ï¿½ï¿½æµ½"), 0);
 	//	}
 	//	else {
-	//		MessageBox(NULL, TEXT("ÇëÊäÈëÒ»¸öÎÄ¼þÃû"), NULL, MB_ICONERROR);
+	//		MessageBox(NULL, TEXT("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½"), NULL, MB_ICONERROR);
 	//	}
 	//
 	//	TCHAR szBuffer[MAX_PATH] = { 0 };
 	//	BROWSEINFO bi = { 0 };
-	//	bi.hwndOwner = NULL;//ÓµÓÐ×Å´°¿Ú¾ä±ú£¬ÎªNULL±íÊ¾¶Ô»°¿òÊÇ·ÇÄ£Ì¬µÄ£¬Êµ¼ÊÓ¦ÓÃÖÐÒ»°ã¶¼ÒªÓÐÕâ¸ö¾ä±ú
-	//	bi.pszDisplayName = szBuffer;//½ÓÊÕÎÄ¼þ¼ÐµÄ»º³åÇø
-	//	bi.lpszTitle = TEXT("Ñ¡ÔñÒ»¸öÎÄ¼þ¼Ð");//±êÌâ
+	//	bi.hwndOwner = NULL;//Óµï¿½ï¿½ï¿½Å´ï¿½ï¿½Ú¾ï¿½ï¿½ï¿½ï¿½ÎªNULLï¿½ï¿½Ê¾ï¿½Ô»ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Ä£Ì¬ï¿½Ä£ï¿½Êµï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ã¶¼Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//	bi.pszDisplayName = szBuffer;//ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ÐµÄ»ï¿½ï¿½ï¿½ï¿½ï¿½
+	//	bi.lpszTitle = TEXT("Ñ¡ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½");//ï¿½ï¿½ï¿½ï¿½
 	//	bi.ulFlags = BIF_NEWDIALOGSTYLE;
 	//	LPITEMIDLIST idl = SHBrowseForFolder(&bi);
 	//	if (SHGetPathFromIDList(idl, szBuffer)) {
-	//		MessageBox(NULL, szBuffer, TEXT("ÄãÑ¡ÔñµÄÎÄ¼þ¼Ð"), 0);
+	//		MessageBox(NULL, szBuffer, TEXT("ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½"), 0);
 	//	}
 	//	else {
-	//		MessageBox(NULL, TEXT("ÇëÑ¡ÔñÒ»¸öÎÄ¼þ¼Ð"), NULL, MB_ICONERROR);
+	//		MessageBox(NULL, TEXT("ï¿½ï¿½Ñ¡ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½"), NULL, MB_ICONERROR);
 	//	}
 	//
 	//	return 0;

@@ -153,7 +153,7 @@ public:
 public:
 #ifdef DEBUGPAINT
 	void OnPaint(Painter&pt, PaintEventArgs&args) {
-		pt.DrawString(TEXT("auto"), GetFontFamily(this->State), 8, GetForeColor(this->State), RectF(0, 0, (float)_rect.Width, (float)_rect.Height), TextAlign::MiddleCenter);
+		pt.DrawString("auto", GetFontFamily(this->State), 8, GetForeColor(this->State), RectF(0, 0, (float)_rect.Width, (float)_rect.Height), TextAlign::MiddleCenter);
 	}
 #endif
 };

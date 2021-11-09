@@ -42,19 +42,14 @@ Gdiplus::Font *CreateFont(const EString&fontFamily, float fontSize) {
 		return _bufFont;
 	}
 	if (_bufFont) delete _bufFont;
-	Gdiplus::FontFamily ff(fontFamily.c_str());
+	Gdiplus::FontFamily ff(fontFamily.utf16().c_str());
 	_bufFont = new Gdiplus::Font(&ff, fontSize);
 	_fontFamily = fontFamily;
 	_fontSize = fontSize;
 	return _bufFont;
 }
 
-Image::Image(const std::string&filename, int radius) :Gdiplus::Image(String::ANSIToUniCode(filename).c_str()) {
-	if (radius > 0) {
-		ClipImage(this, Size{ (int)GetWidth(), (int)GetHeight() }, radius, &BufBitmap);
-	}
-}
-Image::Image(const std::wstring&filename, int radius) :Gdiplus::Image(filename.c_str()) {
+Image::Image(const EString&filename, int radius) :Gdiplus::Image(filename.utf16().c_str()) {
 	if (radius > 0) {
 		ClipImage(this, Size{ (int)GetWidth(), (int)GetHeight() }, radius, &BufBitmap);
 	}
@@ -267,12 +262,12 @@ void CPURender::FillRectangle(const Color & color, const Rect & _rect, int radiu
 		base->FillRectangle(brush, rect);
 	}
 }
-void CPURender::DrawString(const std::string & text, const EString & fontFamily, float fontSize, const Color & color, const RectF & _rect, TextAlign textAlign, bool underLine)
+void CPURender::DrawString(const EString & text, const EString & fontFamily, float fontSize, const Color & color, const RectF & _rect, TextAlign textAlign, bool underLine)
 {
 	RectF rect = _rect;
 	rect.X += OffsetX;
 	rect.Y += OffsetY;
-	this->DrawString(String::ANSIToUniCode(text), CreateFont(fontFamily, fontSize), color, rect, textAlign, underLine);
+	this->DrawString(text.utf16(), CreateFont(fontFamily, fontSize), color, rect, textAlign, underLine);
 }
 
 void CPURender::DrawString(const std::wstring & text, const EString & fontFamily, float fontSize, const Color & color, const RectF & _rect, TextAlign textAlign, bool underLine)
@@ -283,8 +278,8 @@ void CPURender::DrawString(const std::wstring & text, const EString & fontFamily
 	this->DrawString(text, CreateFont(fontFamily, fontSize), color, rect, textAlign, underLine);
 }
 
-void CPURender::MeasureString(const std::string&_text, const EString&fontf, float fontSize, RectF &outBox) {
-	std::wstring _wtext = String::ANSIToUniCode(_text);
+void CPURender::MeasureString(const EString&_text, const EString&fontf, float fontSize, RectF &outBox) {
+	std::wstring _wtext = _text.utf16();
 	base->MeasureString(_wtext.c_str(), _wtext.length(), CreateFont(fontf, fontSize), { 0,0 }, &outBox);
 }
 

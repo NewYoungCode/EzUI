@@ -103,8 +103,8 @@ void NotifyIcon::ShowBalloonTip(const EString&title, const EString&msg, int time
 	_nid.uTimeout = timeOut;
 	_nid.uFlags = NIF_INFO;
 	_nid.dwInfoFlags = NIIF_INFO;
-	wcscpy(_nid.szInfoTitle, title.c_str());
-	wcscpy(_nid.szInfo, msg.c_str());
+	wcscpy(_nid.szInfoTitle, title.utf16().c_str());
+	wcscpy(_nid.szInfo, msg.utf16().c_str());
 	Shell_NotifyIconW(NIM_MODIFY, &_nid);
 }
 
