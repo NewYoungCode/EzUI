@@ -9,7 +9,7 @@
 #include <map>
 #include <memory>
 #include <SDKDDKVer.h>
-#define WIN32_LEAN_AND_MEAN             // �� Windows ͷ�ļ����ų�����ʹ�õ�����
+#define WIN32_LEAN_AND_MEAN            
 #include <windows.h>
 #include <windowsx.h>
 #include <time.h>
@@ -36,7 +36,7 @@
 template<typename T>
 struct Tuple {
 public:
-	bool valid = false;//�ֶ������Ƿ���Ч
+	bool valid = false;
 	T value = NULL;
 	Tuple() :valid(false) {
 	}
@@ -78,8 +78,8 @@ public:
 #endif
 
 #ifdef _DEBUG
-#define DEBUGPAINT //����ģʽ���Ʊ߿�,������Ϣ ��
-#define DEBUGLOG //���Դ�ӡ���
+#define DEBUGPAINT //
+#define DEBUGLOG //
 #endif
 
 #ifndef GCL_HCURSOR
@@ -95,7 +95,7 @@ public:
 #define UI_SetUserData(hWnd,data)  SetWindowLong(hWnd, GWLP_USERDATA, (LONG)data);
 #define UI_GetUserData(hwnd) GetWindowLong(hwnd, GWLP_USERDATA);
 #endif
-//����һЩû��Ҫ�ľ���
+//
 #pragma warning(disable:4244)
 #pragma warning(disable:4267)
 
@@ -112,13 +112,10 @@ public:
 #define UI_CLASSNAME TEXT("EzUI_Win32")
 #define UI_NotifyIcon_CLASSNAME TEXT("EzUI_NotifyIcon_Class")
 
-#define WM_NOTIFYICON WM_USER+0x01 //���½�������Ϣ
-#define WM_CONTROL_DELETE WM_USER+0x02 //�ؼ�ɾ����ʱ��������Ϣ
-#define WM_CONTROL_REFRESH WM_USER+0x03 //����ˢ�µ���Ϣ
-//WM_USER ~ 0x7FFF
-//����ڶ������������Ϣ
-//0x04~0x0b mouse message
-//0x0c~0x0e������Ϣ(����,����,WM_CHAR)
+#define WM_NOTIFYICON WM_USER+0x01 //
+#define WM_CONTROL_DELETE WM_USER+0x02 //
+#define WM_CONTROL_REFRESH WM_USER+0x03 //
+
 #define WM_UIMESSAGE  WM_USER+20   
 //utf8
 class EString :public std::string {
@@ -302,12 +299,12 @@ private:
 	std::chrono::system_clock::time_point beg_t;
 public:
 	StopWatch() {
-		beg_t = std::chrono::system_clock::now();    //��ʼʱ��
+		beg_t = std::chrono::system_clock::now();    //
 	}
 	time_t ElapsedMilliseconds() {
-		auto end_t = std::chrono::system_clock::now();    //����ʱ��
-		std::chrono::duration<double> diff = end_t - beg_t;//ʱ����s
-		return std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//ʱ����ms
+		auto end_t = std::chrono::system_clock::now();    //
+		std::chrono::duration<double> diff = end_t - beg_t;//
+		return std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//
 	}
 };
 
@@ -316,82 +313,19 @@ public:
 namespace Dialog {
 	inline EString OpenFileDialog(HWND oWner, const EString&title, const EString&filter, const EString&defaultPath) {
 		OPENFILENAMEW ofn = { 0 };
-		WCHAR strFilename[MAX_PATH] = { 0 };//���ڽ����ļ���
-		ofn.lStructSize = sizeof(OPENFILENAME);//�ṹ���С
-		ofn.hwndOwner = oWner;//ӵ���Ŵ��ھ����ΪNULL��ʾ�Ի����Ƿ�ģ̬�ģ�ʵ��Ӧ����һ�㶼Ҫ��������
-		ofn.lpstrFilter = filter.utf16().c_str();//TEXT("�����ļ�\0*.*\0C/C++ Flie\0*.cpp;*.c;*.h\0\0");//���ù���
-		ofn.nFilterIndex = 1;//����������
-		ofn.lpstrFile = strFilename;//���շ��ص��ļ�����ע���һ���ַ���ҪΪNULL
-		ofn.nMaxFile = sizeof(strFilename);//����������
-		ofn.lpstrInitialDir = defaultPath.utf16().c_str();//��ʼĿ¼ΪĬ��
-		ofn.lpstrTitle = title.utf16().c_str();//ʹ��ϵͳĬ�ϱ�����ռ���
-		ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;//�ļ���Ŀ¼������ڣ�����ֻ��ѡ��
+		WCHAR strFilename[MAX_PATH] = { 0 };//
+		ofn.lStructSize = sizeof(OPENFILENAME);//
+		ofn.hwndOwner = oWner;//
+		ofn.lpstrFilter = filter.utf16().c_str();//
+		ofn.nFilterIndex = 1;//
+		ofn.lpstrFile = strFilename;//
+		ofn.nMaxFile = sizeof(strFilename);//
+		ofn.lpstrInitialDir = defaultPath.utf16().c_str();//
+		ofn.lpstrTitle = title.utf16().c_str();//
+		ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;//
 		GetOpenFileNameW(&ofn);
 		return strFilename;
 	}
 
-	//
-	//#include<windows.h>
-	////�򿪱����ļ��Ի���
-	//#include<Commdlg.h>
-	//
-	////ѡ���ļ��жԻ���
-	//#include<Shlobj.h>
-	//#pragma comment(lib,"Shell32.lib")
-	//
-	//int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
-	//	_In_opt_ HINSTANCE hPrevInstance,
-	//	_In_ LPTSTR    lpCmdLine,
-	//	_In_ int       nCmdShow)
-	//{
-	//loop:
-	//	OPENFILENAME ofn = { 0 };
-	//	TCHAR strFilename[MAX_PATH] = { 0 };//���ڽ����ļ���
-	//	ofn.lStructSize = sizeof(OPENFILENAME);//�ṹ���С
-	//	ofn.hwndOwner = NULL;//ӵ���Ŵ��ھ����ΪNULL��ʾ�Ի����Ƿ�ģ̬�ģ�ʵ��Ӧ����һ�㶼Ҫ��������
-	//	ofn.lpstrFilter = TEXT("�����ļ�\0*.*\0C/C++ Flie\0*.cpp;*.c;*.h\0\0");//���ù���
-	//	ofn.nFilterIndex = 1;//����������
-	//	ofn.lpstrFile = strFilename;//���շ��ص��ļ�����ע���һ���ַ���ҪΪNULL
-	//	ofn.nMaxFile = sizeof(strFilename);//����������
-	//	ofn.lpstrInitialDir = NULL;//��ʼĿ¼ΪĬ��
-	//	ofn.lpstrTitle = TEXT("��ѡ��һ���ļ�");//ʹ��ϵͳĬ�ϱ�����ռ���
-	//	ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;//�ļ���Ŀ¼������ڣ�����ֻ��ѡ��
-	//	if (GetOpenFileName(&ofn))
-	//	{
-	//		MessageBox(NULL, strFilename, TEXT("ѡ����ļ�"), 0);
-	//	}
-	//	else {
-	//		MessageBox(NULL, TEXT("��ѡ��һ���ļ�"), NULL, MB_ICONERROR);
-	//		goto loop;
-	//	}
-	//
-	//	ofn.Flags = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;//Ŀ¼������ڣ������ļ�ǰ��������
-	//	ofn.lpstrTitle = TEXT("���浽");//ʹ��ϵͳĬ�ϱ�����ռ���
-	//	ofn.lpstrDefExt = TEXT("cpp");//Ĭ��׷�ӵ���չ��
-	//	if (GetSaveFileName(&ofn))
-	//	{
-	//		MessageBox(NULL, strFilename, TEXT("���浽"), 0);
-	//	}
-	//	else {
-	//		MessageBox(NULL, TEXT("������һ���ļ���"), NULL, MB_ICONERROR);
-	//	}
-	//
-	//	TCHAR szBuffer[MAX_PATH] = { 0 };
-	//	BROWSEINFO bi = { 0 };
-	//	bi.hwndOwner = NULL;//ӵ���Ŵ��ھ����ΪNULL��ʾ�Ի����Ƿ�ģ̬�ģ�ʵ��Ӧ����һ�㶼Ҫ��������
-	//	bi.pszDisplayName = szBuffer;//�����ļ��еĻ�����
-	//	bi.lpszTitle = TEXT("ѡ��һ���ļ���");//����
-	//	bi.ulFlags = BIF_NEWDIALOGSTYLE;
-	//	LPITEMIDLIST idl = SHBrowseForFolder(&bi);
-	//	if (SHGetPathFromIDList(idl, szBuffer)) {
-	//		MessageBox(NULL, szBuffer, TEXT("��ѡ����ļ���"), 0);
-	//	}
-	//	else {
-	//		MessageBox(NULL, TEXT("��ѡ��һ���ļ���"), NULL, MB_ICONERROR);
-	//	}
-	//
-	//	return 0;
-	//}
-	//
 
 }

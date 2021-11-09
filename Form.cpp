@@ -35,27 +35,27 @@ LRESULT  BorderlessWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	{
 	case WM_NCHITTEST: {
 		if (::IsZoomed(_hWnd)) {
-			break;//�����Ѿ�����󻯵�ʱ�򲻴���
+			break;//
 		}
 		RECT rc;
 		GetWindowRect(_hWnd, &rc);
 		POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
-		int x = 4;//�߿���
+		int x = 4;//
 		if (pt.x < rc.left + x)
 		{
-			if (pt.y < rc.top + x)return HTTOPLEFT;//���Ͻ�
-			if (pt.y >= rc.bottom - x)return HTBOTTOMLEFT;//���½�
-			return HTLEFT;//���
+			if (pt.y < rc.top + x)return HTTOPLEFT;//
+			if (pt.y >= rc.bottom - x)return HTBOTTOMLEFT;//
+			return HTLEFT;//
 		}
-		if (pt.x >= rc.right - x)//�����0��ʼ������ʹ��>=
+		if (pt.x >= rc.right - x)//
 		{
-			if (pt.y < rc.top + x)return HTTOPRIGHT;//���Ͻ�
-			if (pt.y >= rc.bottom - x)return HTBOTTOMRIGHT;//���½�
-			return HTRIGHT;//�ұ�
+			if (pt.y < rc.top + x)return HTTOPRIGHT;//
+			if (pt.y >= rc.bottom - x)return HTBOTTOMRIGHT;//
+			return HTRIGHT;//
 		}
-		if (pt.y < rc.top + x)return HTTOP;//�ϱ�
-		if (pt.y >= rc.bottom - x)return HTBOTTOM;//�±�
-		return HTCLIENT;//ָʾ��ǰ����ڿͻ���������ӦOnLButtonDown��Ϣ��
+		if (pt.y < rc.top + x)return HTTOP;//
+		if (pt.y >= rc.bottom - x)return HTBOTTOM;//
+		return HTCLIENT;//ָ
 	}
 	default:
 		break;
