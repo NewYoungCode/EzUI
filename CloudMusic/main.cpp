@@ -9,8 +9,7 @@
 #include "VList.h"
 #include "Edit.h"
 #include "MainFrm.h"
-//#include<dwmapi.h>
-#pragma comment(lib,"Dwmapi.lib")
+#include <UIManager.h>
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPWSTR    lpCmdLine,
@@ -19,6 +18,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	Application app;
 	StopWatch sw;
 	MainFrm form(1022, 670);
+
+	VLayout *L=(VLayout*)UIManager::LoadControl("../html/layout.html");
+	form.SetLayout(L);
+
 	form.Show();
 	Debug::Log("窗口启动耗时 %d ms", sw.ElapsedMilliseconds());
 	return	app.exec();

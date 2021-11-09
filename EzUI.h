@@ -155,6 +155,7 @@ public:
 		}
 	}
 	EString(const char*szbuf, int codePage = EString::UTF8) {
+		if (szbuf == NULL)return;
 		size_t len = ::strlen(szbuf);
 		if ((codePage == EString::ANSI) && (::GetACP() != CP_UTF8)) {
 			int nwLen = ::MultiByteToWideChar(CP_ACP, 0, szbuf, len, NULL, 0);
@@ -173,6 +174,7 @@ public:
 		}
 	}
 	EString(const wchar_t*szbuf) {
+		if (szbuf == NULL)return;
 		size_t len = ::lstrlenW(szbuf);
 		int bytes = ::WideCharToMultiByte(CP_UTF8, 0, szbuf, len, NULL, 0, NULL, NULL);
 		this->resize(bytes);

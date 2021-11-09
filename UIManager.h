@@ -23,7 +23,7 @@ namespace UIManager {
 	}
 	//去除空格或者其他符号 双引号内的空格不会去除
 	inline void TrimStyle(EString&str, TCHAR _char = ' ') {
-		TCHAR *bufStr = new TCHAR[str.size()]{ 0 };
+		TCHAR *bufStr = new TCHAR[str.size()+1]{ 0 };
 		size_t pos = 0;
 		char count = 0;
 		for (auto &it : str) {

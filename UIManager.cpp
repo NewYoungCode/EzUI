@@ -147,13 +147,13 @@ namespace UIManager {
 				if (valueStr == "close") {
 					ctl->Action = ControlAction::Close; break;
 				}
-				if (valueStr == "mini"){
+				if (valueStr == "mini") {
 					ctl->Action = ControlAction::Mini; break;
 				}
 				if (valueStr == "max") {
 					ctl->Action = ControlAction::Max; break;
 				}
-				if (valueStr =="move" || valueStr == "movewindow") {
+				if (valueStr == "move" || valueStr == "movewindow") {
 					ctl->Action = ControlAction::MoveWindow; break;
 				}
 			} while (0);
@@ -186,13 +186,11 @@ namespace UIManager {
 	{
 		TiXmlDocument doc;
 		FILE* file(0);
-		_wfopen_s(&file, filename.utf16().c_str(), L"r");
-
+		_wfopen_s(&file, filename.utf16().c_str(), L"rb+");
 		std::unique_ptr<FILE> SafeObj(file);
-		if (!doc.LoadFile(file), TIXML_ENCODING_UTF8) {
+		if (!doc.LoadFile(file, TiXmlEncoding::TIXML_ENCODING_UTF8)) {
 			ASSERT(0);
 		}
-
 		TiXmlElement* _style = doc.FirstChildElement();//必须先读取样式
 		ASSERT(_style);
 
@@ -230,6 +228,8 @@ namespace UIManager {
 		Control *control = BuildControl(_Control);//先加载根节点
 		LoadControl(_Control, control);//加载子节点
 		style.clear();
+
+		::fclose(file);
 		return control;
 	}
 	void LoadStyle(Control*ctl, ControlState styleState) {
@@ -276,7 +276,7 @@ namespace UIManager {
 						style->BorderColor = StringToColor(value);
 						break;
 					}
-					if (key == "color" || key =="fore-color") {
+					if (key == "color" || key == "fore-color") {
 						style->ForeColor = StringToColor(value);
 						break;
 					}
@@ -293,7 +293,7 @@ namespace UIManager {
 						style->FontFamily = value;
 						break;
 					}
-					if (key == "border"){
+					if (key == "border") {
 						auto width = std::stoi(value);
 						style->BorderLeft = width;
 						style->BorderTop = width;
