@@ -207,7 +207,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 
 	yx.SetRect({ 0,26,20,20 });
 	yx.SetFixedWidth(20);
-
+	 
 	yx.Style.ForeImage = (&yx_img);
 	bottom_right.AddControl(&yx);
 
