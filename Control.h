@@ -192,8 +192,8 @@ class ScrollBar :public Control {
 public:
 	ScrollBar() {
 		this->_Type = ControlType::ControlScrollBar;
-		Style.BackgroundColor = { 240,240,240 };//滚动条背景颜色
-		Style.ForeColor = { 155,155,155 };//滚动条滑块颜色
+		Style.BackgroundColor = { 240,240,240 };//the bar backgroundcolor
+		Style.ForeColor = { 155,155,155 };//the slider color
 	}
 	virtual void MoveScroll(int offset) {}//move silder use offset move
 	virtual void Move(double pos) {}//move silder user absolutely
