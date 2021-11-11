@@ -23,7 +23,7 @@
     <ProjectGuid>{F2982709-24BE-469D-9EA9-36E5D34A5400}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CloudMusic</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

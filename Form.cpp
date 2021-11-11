@@ -95,62 +95,62 @@ LayeredWindow::~LayeredWindow() {
 }
 
 void LayeredWindow::OnSize(const Size&sz) {
-	StopWatch stopWatch;//�����ʱ
+	StopWatch stopWatch;//
 	_layout->SetRect(this->GetClientRect(), false);
-	*((Rect*)(&_layout->ClipRect)) = this->GetClientRect();//����Ҫ��ȷ���Լ��Ĳü������Ǻʹ���һ����С
+	*((Rect*)(&_layout->ClipRect)) = this->GetClientRect();//
 	if (_winBitmap) {
 		delete _winBitmap;
 	}
 	_winBitmap = new EBitmap(sz.Width, sz.Height, 32);
-	OnPaint(_winBitmap->GetHDC(), _rectClient);//�����ڴ�С���͸ı��ʱ�����´���DC ����ˢ��
+	OnPaint(_winBitmap->GetHDC(), _rectClient);//
 	CHAR buf[256]{ 0 };
 	sprintf_s(buf, "GDIPaint %d %d   %d ms \n", sz.Width, sz.Height, (int)stopWatch.ElapsedMilliseconds());
 	OutputDebugStringA(buf);
 }
 void LayeredWindow::OnPaint(HDC _hdc, const Rect & rePaintRect) {
-	Rect &clientRect = GetClientRect();//��ȡ�����С
-	Painter pt(_hdc);//����
+	Rect &clientRect = GetClientRect();//
+	Painter pt(_hdc);//
 	PaintEventArgs args(pt);
-	args.InvalidRectangle = rePaintRect;//��Ч����
+	args.InvalidRectangle = rePaintRect;//
 	args.HWnd = _hWnd;
-	_layout->OnEvent(Event::OnPaint, &args);//����������������
+	_layout->OnEvent(Event::OnPaint, &args);//
 
 	PushDC(_hdc);//updatelaredwindow
 }
 LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	if (uMsg == WM_PAINT) //layeredWindow���������WM_PAINT��Ϣ
+	if (uMsg == WM_PAINT) //layeredWindow
 	{
 		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
 	}
 	if (uMsg == WM_CONTROL_REFRESH && _winBitmap) {
 		Control *ctl = (Control*)wParam;
-		OnPaint(_winBitmap->GetHDC(), ctl->GetClientRect());//�ؼ��ֲ�ˢ��
+		OnPaint(_winBitmap->GetHDC(), ctl->GetClientRect());//
 		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
 	}
 	if (uMsg == WM_NCHITTEST) {
 		if (::IsZoomed(_hWnd)) {
-			return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);//�����Ѿ�����󻯵�ʱ�򲻴���
+			return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);//
 		}
 		RECT rc;
 		GetWindowRect(_hWnd, &rc);
 		POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
-		int x = 4;//�߿���
+		int x = 4;//
 		if (pt.x < rc.left + x)
 		{
-			if (pt.y < rc.top + x)return HTTOPLEFT;//���Ͻ�
-			if (pt.y >= rc.bottom - x)return HTBOTTOMLEFT;//���½�
-			return HTLEFT;//���
+			if (pt.y < rc.top + x)return HTTOPLEFT;//x
+			if (pt.y >= rc.bottom - x)return HTBOTTOMLEFT;//
+			return HTLEFT;//
 		}
-		if (pt.x >= rc.right - x)//�����0��ʼ������ʹ��>=
+		if (pt.x >= rc.right - x)
 		{
-			if (pt.y < rc.top + x)return HTTOPRIGHT;//���Ͻ�
-			if (pt.y >= rc.bottom - x)return HTBOTTOMRIGHT;//���½�
-			return HTRIGHT;//�ұ�
+			if (pt.y < rc.top + x)return HTTOPRIGHT;//
+			if (pt.y >= rc.bottom - x)return HTBOTTOMRIGHT;
+			return HTRIGHT;//
 		}
-		if (pt.y < rc.top + x)return HTTOP;//�ϱ�
-		if (pt.y >= rc.bottom - x)return HTBOTTOM;//�±�
-		return HTCLIENT;//ָʾ��ǰ����ڿͻ���������ӦOnLButtonDown��Ϣ��
+		if (pt.y < rc.top + x)return HTTOP;//
+		if (pt.y >= rc.bottom - x)return HTBOTTOM;//
+		return HTCLIENT;//ָ
 	}
 	return __super::WndProc(uMsg, wParam, lParam);
 }
@@ -163,7 +163,7 @@ void LayeredWindow::PushDC(HDC hdc) {
 	blend.BlendFlags = 0;
 	blend.AlphaFormat = AC_SRC_ALPHA;
 	blend.SourceConstantAlpha = 255;
-	UpdateLayeredWindow(_hWnd, NULL, NULL, &size, hdc, &point, 0, &blend, LWA_ALPHA);//���������������·ֲ㴰��
+	UpdateLayeredWindow(_hWnd, NULL, NULL, &size, hdc, &point, 0, &blend, LWA_ALPHA);//
 }
 
 MenuWindow::MenuWindow(int cx, int cy, HWND owner) :BorderlessWindow(cx, cy, owner)
@@ -174,7 +174,6 @@ MenuWindow::MenuWindow(int cx, int cy, HWND owner) :BorderlessWindow(cx, cy, own
 LRESULT MenuWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (uMsg == WM_KILLFOCUS && !frist) {
-		//Debug::Log(TEXT("ʧȥ���� �رմ���"));
 		this->Close();
 	}
 	else if (uMsg == WM_KILLFOCUS) {

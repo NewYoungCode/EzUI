@@ -25,8 +25,10 @@ public:
 	virtual void Move(double posY);
 	virtual void OnLayout(const Size & sz, bool fast = true)override;
 	virtual void MoveScroll(int offsetY);
-	virtual int GetSliderHeight();
 	void SetMaxBottom(int maxBottom);
-	Rect GetSliderRect();
+	virtual Rect GetSliderRect();
+
+	virtual int RollingTotal();//
+	virtual double RollingCurrent();
 };
 

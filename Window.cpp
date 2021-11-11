@@ -57,7 +57,7 @@ void Window::ReSize(const Size&size) {
 }
 void Window::SetIcon(short id)
 {
-	SetIcon(::LoadIcon(::GetModuleHandle(0), MAKEINTRESOURCE(id)));//����ͼ��
+	SetIcon(::LoadIcon(::GetModuleHandle(0), MAKEINTRESOURCE(id)));//
 }
 void Window::SetIcon(HICON icon)
 {
@@ -72,9 +72,6 @@ void Window::SetLayout(Layout* layout) {
 	if (!_layout->Style.FontSize.valid) {
 		_layout->Style.FontSize = 9;
 	}
-	//if (!_layout->Style.BackgroundColor.valid) {
-	//	_layout->Style.BackgroundColor = Color::White;
-	//}
 	if (!_layout->Style.ForeColor.valid) {
 		_layout->Style.ForeColor = Color::Black;
 	}
@@ -88,7 +85,6 @@ void Window::Show(int cmdShow)
 {
 	ASSERT(_layout);
 	::ShowWindow(_hWnd, cmdShow);
-	//// �������ʾ��ģʽ����Ļ����
 	//MONITORINFO oMonitor = {};
 	//oMonitor.cbSize = sizeof(oMonitor);
 	//::GetMonitorInfo(::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &oMonitor);
@@ -102,7 +98,7 @@ void Window::ShowModal(bool wait)
 	::EnableWindow(p_hwnd, FALSE);
 	this->Show();
 	::SetFocus(_hWnd);
-	if (wait) {//�����Ҫ����
+	if (wait) {//
 		MSG msg;
 		while (GetMessage(&msg, 0, 0, 0))
 		{
@@ -112,7 +108,7 @@ void Window::ShowModal(bool wait)
 				break;
 			}
 		}
-		if (msg.message == WM_QUIT) {//����Ĵ���Ҳ���ٽ�����Ϣѭ��
+		if (msg.message == WM_QUIT) {//
 			::PostQuitMessage(msg.wParam);
 		}
 	}
@@ -170,7 +166,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	
 
 
-	case  WM_IME_STARTCOMPOSITION://�������뷨����
+	case  WM_IME_STARTCOMPOSITION://
 	{
 		HIMC hIMC = ImmGetContext(_hWnd);
 		COMPOSITIONFORM cpf;
@@ -202,7 +198,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		b = ImmReleaseContext(_hWnd, hIMC);
 		break;
 	}
-	case WM_ERASEBKGND: {//��������Ʊ���
+	case WM_ERASEBKGND: {
 		return TRUE;
 	}
 	case WM_CONTROL_REFRESH: {
@@ -234,7 +230,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_CONTROL_DELETE:
 	{
-		//�������µ��ӿؼ�ɾ����ʱ�򽫵�ǰ�������Ŀؼ����
+		
 		Control *delControl = (Control*)wParam;
 		EmptyControl((Controls*)delControl->GetControls());
 		return TRUE;
@@ -244,7 +240,6 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		WINDOWPOS *wPos = (WINDOWPOS *)(void*)lParam;
 		int flag = SWP_NOCOPYBITS;//
 		if ((wPos->flags & flag) == flag) {
-			//�����ͻ�����ȫ�����ݡ����δָ���˱�־�����ڵ������ڴ�С�����¶�λ�󣬽�����ͻ�������Ч���ݲ����临�ƻؿͻ�����
 			rePaint = true;
 		}
 		RECT rect;
@@ -254,15 +249,15 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		_rectClient = { point,size };
 		if (_rectClient.IsEmptyArea()) {
 			_rect = { 0,0,0,0 };
-			return TRUE;//���ڷ��� WM_MOVE �� WM_SIZE ��Ϣ
+			return TRUE;
 		}
 		_rect = { wPos->x,wPos->y,wPos->cx,wPos->cy };
 		if (!_lastSize.Equals(size)) {
-			_lastSize = size;//�����ڴ�С���ϴβ�һ����ʱ��
+			_lastSize = size;
 			OnSize(size);
 		}
 		else if (rePaint) {
-			//����layeredwindow��˵ ���㴰�ڴ�С���ϴ�һ��ҲҪ���»���,��SWP_NOCOPYBITS����Ҫ���»���
+			
 			Debug::Log("SWP_NOCOPYBITS!");
 			OnSize(size);
 		}
@@ -271,7 +266,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			OnMove(point);
 		}
 		OnRect(_rect);
-		return TRUE;//���ڷ��� WM_MOVE �� WM_SIZE ��Ϣ
+		return TRUE;
 	}
 	case WM_CLOSE:
 	{
@@ -304,7 +299,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		break;
 	}
-	//����ƶ�
+	
 	case WM_MOUSEMOVE:
 	{
 		TRACKMOUSEEVENT tme;
@@ -319,42 +314,38 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 
-	//���˫�� ���
+
 	case WM_LBUTTONDBLCLK: {
 		OnMouseDoubleClick(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		break;
 	}
-						   //���˫�� �Ҽ�
+						 
 	case WM_RBUTTONDBLCLK: {
 		OnMouseDoubleClick(MouseButton::Right, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		break;
 	}
-						   //��갴�� ���
+						  
 	case WM_LBUTTONDOWN:
 	{
 
 		OnMouseDown(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		break;
 	}
-	//��갴�� �Ҽ�
 	case WM_RBUTTONDOWN:
 	{
 		OnMouseDown(MouseButton::Right, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		break;
 	}
-	//��굯�� ���
 	case WM_LBUTTONUP:
 	{
 		OnMouseUp(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		break;
 	}
-	//��굯�� �Ҽ�
 	case WM_RBUTTONUP:
 	{
 		OnMouseUp(MouseButton::Right, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		break;
 	}
-	//����Ƴ�
 	case WM_MOUSELEAVE:
 	{
 		_mouseIn = false;
@@ -366,7 +357,6 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		auto fwKeys = GET_KEYSTATE_WPARAM(wParam);
 		auto zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-		//ʹ�����´����ȡˮƽ�ʹ�ֱλ�ã�
 		auto xPos = GET_X_LPARAM(lParam);
 		auto yPos = GET_Y_LPARAM(lParam);
 		OnMouseWheel(zDelta, { xPos,yPos });
@@ -379,7 +369,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	default:
 	{
-		if (uMsg >= (WM_USER + 0x04) && uMsg <= (WM_USER + 0x0c)) { //��귶Χ��Ϣ
+		if (uMsg >= (WM_USER + 0x04) && uMsg <= (WM_USER + 0x0c)) { //
 			MouseEventArgs *args = (MouseEventArgs*)lParam;
 			return OnNotify((Control*)(wParam), args);
 		}
@@ -395,15 +385,15 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void Window::OnPaint(HDC winHDC, const Rect&rePaintRect)
 {
-	StopWatch stopWatch;//�����ʱ
-	EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height, 24);//˫����λͼ
+	StopWatch stopWatch;
+	EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height, 24);//
 	Painter pt(memBitmap.GetHDC());
 	PaintEventArgs args(pt);
 	args.InvalidRectangle = rePaintRect;
 	args.HWnd = _hWnd;
-	_layout->OnEvent(Event::OnPaint, &args);//����������������
-	::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetHDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//��ͼ
-	time_t ms = stopWatch.ElapsedMilliseconds();//��ȡ��ʱ���
+	_layout->OnEvent(Event::OnPaint, &args);//
+	::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetHDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//
+	time_t ms = stopWatch.ElapsedMilliseconds();//
 	CHAR buf[256]{ 0 };
 	sprintf_s(buf, "GDIPaint %d %d   %d ms \n", rePaintRect.Width, rePaintRect.Height, (int)ms);
 	OutputDebugStringA(buf);
@@ -411,12 +401,12 @@ void Window::OnPaint(HDC winHDC, const Rect&rePaintRect)
 
 bool Window::IsInWindow(Control&pControl, Control&it) {
 	Rect &winClientRect = GetClientRect();
-	auto rect = it.GetRect();//��ȡ�ӿؼ�����
+	auto rect = it.GetRect();//
 
 	if (rect.IsEmptyArea()) {
 		return false;
 	}
-	auto clientRect = it.GetClientRect();//��ȡ���ڸ����ڵ����
+	auto clientRect = it.GetClientRect();//
 	if (!winClientRect.IntersectsWith(clientRect)) {
 		return false;
 	}
@@ -623,7 +613,7 @@ void Window::OnLoad()
 
 void Window::OnKeyDown(WPARAM wParam) {
 
-	if (_inputControl) { //��������ȼ���
+	if (_inputControl) { //
 		_inputControl->OnKeyDown(wParam);
 		return;
 	}

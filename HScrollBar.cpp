@@ -25,10 +25,17 @@ void HScrollBar::SetMaxRight(int maxRight)
 	Move(sliderX);
 }
 
-int HScrollBar::GetSliderWidth()
+int HScrollBar::RollingTotal()
 {
-	return _sliderWidth;
+	auto sliderRect= GetSliderRect();
+	return Width() - _sliderWidth;
 }
+
+double HScrollBar::RollingCurrent()
+{
+	return sliderX;
+}
+
 Rect HScrollBar::GetSliderRect() {
 	Rect sliderRect(0, 0, Width(), Height());
 	sliderRect.X = sliderX;
@@ -97,11 +104,12 @@ void HScrollBar::OnMouseMove(const Point & point)
 		int offsetX = point.X - this->pointX;
 		sliderX += offsetX;
 		pointX = point.X;
-		Move(point.X);
+		Move(sliderX);
 	}
 }
 
 void HScrollBar::Move(double posY) {
+	sliderX = posY;
 
 	if (sliderX <= 0) { //»¬¿éÔÚ¶¥²¿
 		sliderX = 0;

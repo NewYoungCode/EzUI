@@ -127,15 +127,15 @@ public:
 	};
 public:
 	size_t length() const {
-		const char*s = this->c_str();
-		int i = 0, j = 0;
-		while (s[i]) {
-			if ((s[i] & 0xc0) != 0x80) {
-				j++;
+		auto *p = this->c_str();
+		size_t pos = 0, count = 0;
+		while (p[pos] && pos < this->size()) {
+			if ((p[pos] & 0xc0) != 0x80) {
+				count++;
 			}
-			i++;
+			pos++;
 		}
-		return j;
+		return count;
 	}
 	EString() {}
 	EString(const std::string&str, int codePage = EString::UTF8) :std::string() {
@@ -286,13 +286,13 @@ namespace MsgBox {
 namespace Debug {
 	template<typename ...T>
 	inline void Log(const EString&formatStr, T ...args) {
-//#ifdef DEBUGLOG
-//		WCHAR buf[256]{ 0 };
-//		auto count = swprintf_s((buf), 255, formatStr.c_str(), std::forward<T>(args)...);
-//		buf[count] = '\n';
-//		buf[count + 1] = NULL;
-//		OutputDebugStringW(buf);
-//#endif
+		//#ifdef DEBUGLOG
+		//		WCHAR buf[256]{ 0 };
+		//		auto count = swprintf_s((buf), 255, formatStr.utf16().c_str(), std::forward<T>(args)...);
+		//		buf[count] = '\n';
+		//		buf[count + 1] = NULL;
+		//		OutputDebugStringW(buf);
+		//#endif
 	}
 };
 

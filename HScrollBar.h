@@ -24,9 +24,11 @@ public:
 	virtual ~HScrollBar();
 	virtual void OnLayout(const Size & sz,bool fast=true)override;
 	virtual void MoveScroll(int offsetX);
-	virtual int GetSliderWidth();
-	virtual void Move(double posX);
+	virtual Rect GetSliderRect();
+	virtual void Move(double posX)override;
 	void SetMaxRight(int maxRight);
-	Rect GetSliderRect();
+
+	virtual int RollingTotal();//
+	virtual double RollingCurrent();
 };
 

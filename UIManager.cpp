@@ -14,11 +14,11 @@
 #include"tinyxml/tinystr.h"
 
 namespace UIManager {
-	const EString Attribute(TiXmlElement*node, const char*szstr);
-	void LoadControl(TiXmlElement*node, Control*control);
-	Rect StringToRect(const EString&str);
-	Control* BuildControl(TiXmlElement*node);
-	void LoadStyle(Control*ctl, ControlState styleType);
+	const EString Attribute(TiXmlElement* node, const char* szstr);
+	void LoadControl(TiXmlElement* node, Control* control);
+	Rect StringToRect(const EString& str);
+	Control* BuildControl(TiXmlElement* node);
+	void LoadStyle(Control* ctl, ControlState styleType);
 
 	std::map<EString, EString> styles;//默认样式集合
 	std::map<EString, EString> styles_active;//按下样式集合
@@ -27,8 +27,7 @@ namespace UIManager {
 
 namespace UIManager {
 
-
-	Rect StringToRect(const EString&str) {
+	Rect StringToRect(const EString& str) {
 		auto rectStr = String::Split(str.c_str(), L",");
 		if (str.empty()) return Rect();//如果没写矩形区域
 		Rect rect;
@@ -38,13 +37,13 @@ namespace UIManager {
 		rect.Height = std::stoi(rectStr.at(3));
 		return rect;
 	}
-	const EString Attribute(TiXmlElement*node, const char*szstr) {
+	const EString Attribute(TiXmlElement* node, const char* szstr) {
 		auto str = node->Attribute(szstr);
 		if (str == NULL) return L"";
 		return str;
 	}
-	Control* BuildControl(TiXmlElement*node) {
-		Control *ctl = NULL;
+	Control* BuildControl(TiXmlElement* node) {
+		Control* ctl = NULL;
 		do
 		{
 			if (node->ValueTStr() == "Control") {
@@ -163,40 +162,58 @@ namespace UIManager {
 		LoadStyle(ctl, ControlState::Hover);
 		return ctl;
 	}
-	void LoadControl(TiXmlElement*node, Control*control) {
-		TiXmlElement*fristChild = NULL;
+	void LoadControl(TiXmlElement* node, Control* control) {
+		TiXmlElement* fristChild = NULL;
 		if ((fristChild = node->FirstChildElement()))//先寻找子控件
 		{
 			//Debug::Log("node %s", fristChild->Value());
-			Control *ctl = BuildControl(fristChild);
+			Control* ctl = BuildControl(fristChild);
 			LoadControl(fristChild, ctl);
 			control->AddControl(ctl);
-			TiXmlElement*nextChild = fristChild->NextSiblingElement();
+			TiXmlElement* nextChild = fristChild->NextSiblingElement();
 			while (nextChild)//然后寻找兄弟
 			{
 				//Debug::Log("node %s", nextChild->Value());
-				Control *ctl2 = BuildControl(nextChild);
+				Control* ctl2 = BuildControl(nextChild);
 				LoadControl(nextChild, ctl2);
 				control->AddControl(ctl2);
 				nextChild = nextChild->NextSiblingElement();
 			}
 		}
 	}
-	Control* LoadControl(const EString & filename)
-	{
-		TiXmlDocument doc;
-		FILE* file(0);
-		_wfopen_s(&file, filename.utf16().c_str(), L"rb+");
-		std::unique_ptr<FILE> SafeObj(file);
-		if (!doc.LoadFile(file, TiXmlEncoding::TIXML_ENCODING_UTF8)) {
-			ASSERT(0);
+	//去除空格或者其他符号 双引号内的空格不会去除
+	void TrimStyle(EString& str, TCHAR _char = ' ') {
+		TCHAR* bufStr = new TCHAR[str.size() + 1]{ 0 };
+		size_t pos = 0;
+		char count = 0;
+		for (auto& it : str) {
+			if (it == '"') {
+				count++;
+			}
+			if (it == _char && count != 1) {
+				continue;
+			}
+			if (count == 2)count = 0;
+			bufStr[pos] = it;
+			pos++;
 		}
-		TiXmlElement* _style = doc.FirstChildElement();//必须先读取样式
-		ASSERT(_style);
-
-		EString style = _style->GetText();
+		str = bufStr;
+		delete bufStr;
+	}
+	void Erase(EString& str, TCHAR _char = ' ') {
+		TCHAR* bufStr = new TCHAR[str.size()]{ 0 };
+		size_t pos = 0;
+		for (auto& it : str) {
+			if (_char == it)continue;
+			bufStr[pos] = it;
+			pos++;
+		}
+		str = bufStr;
+		delete bufStr;
+	}
+	void AnalysisStyle(const EString& styleStr) {
+		EString style;
 		TrimStyle(style);
-
 		while (style.size() > 0) {
 			size_t pos = style.find("#");
 			if (pos == -1)break;
@@ -223,19 +240,38 @@ namespace UIManager {
 			style = style.substr(pos2 + 1);
 		}
 
-		TiXmlElement *_Control = _style->NextSiblingElement();//控件布局在样式下面
-		ASSERT(_Control);
-		Control *control = BuildControl(_Control);//先加载根节点
-		LoadControl(_Control, control);//加载子节点
-		style.clear();
+	}
+
+	std::vector<Control*> LoadControl(const EString& filename)
+	{
+		TiXmlDocument doc;
+		FILE* file(0);
+		_wfopen_s(&file, filename.utf16().c_str(), L"rb+");
+		if (!doc.LoadFile(file, TiXmlEncoding::TIXML_ENCODING_UTF8)) {//the file code page must utf8
+			ASSERT(0);
+		}
+		std::vector<Control*> controls;
+		TiXmlElement* element = doc.FirstChildElement();//read frist element
+		do
+		{
+			if (element == NULL) break;
+			if (element->ValueTStr() == "style") {// if element is style
+				AnalysisStyle(element->GetText());//
+			}
+			else { //if no style , must be Control
+				Control* control = BuildControl(element);//先加载根节点
+				LoadControl(element, control);//加载子节点
+				if (control) controls.push_back(control);
+			}
+		} while ((element = element->NextSiblingElement()));
 
 		::fclose(file);
-		return control;
+		return controls;
 	}
-	void LoadStyle(Control*ctl, ControlState styleState) {
-		ControlStyle *style = NULL;
+	void LoadStyle(Control* ctl, ControlState styleState) {
+		ControlStyle* style = NULL;
 		std::map<EString, EString>::iterator styleStr;
-		std::map<EString, EString> *_styles = NULL;
+		std::map<EString, EString>* _styles = NULL;
 		if (styleState == ControlState::Active) {//按下样式
 			style = &ctl->ActiveStyle;
 			_styles = &styles_active;
@@ -253,7 +289,7 @@ namespace UIManager {
 		}
 		if (styleStr != _styles->end() && styleStr->second.size() > 0) {
 			auto attrs = String::Split(styleStr->second.c_str(), L";");
-			for (auto &it : attrs) {
+			for (auto& it : attrs) {
 				size_t pos = it.find(":");
 				if (pos == -1)continue;
 				EString key = it.substr(0, pos);

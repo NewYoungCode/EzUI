@@ -13,21 +13,28 @@ void VScrollBar::SetMaxBottom(int maxBottom)
 {
 	this->_maxBottom = maxBottom;
 	//计算滚动条相关
-	auto &rect = GetRect();
+	auto& rect = GetRect();
 	if (rect.Height >= _maxBottom) {
 		_sliderHeight = rect.Height;
 	}
 	else {
 		//滑块高度
-		_sliderHeight = rect.Height*1.0*rect.Height / _maxBottom;
+		_sliderHeight = rect.Height * 1.0 * rect.Height / _maxBottom;
 	}
 	Move(sliderY);
 }
-
-int VScrollBar::GetSliderHeight()
+int VScrollBar::RollingTotal()
 {
-	return _sliderHeight;
+	auto sliderRect = GetSliderRect();
+	return Height() - _sliderHeight;
 }
+
+double VScrollBar::RollingCurrent()
+{
+	return sliderY;
+}
+
+
 Rect VScrollBar::GetSliderRect() {
 
 	Rect sliderRect(0, 0, Width(), Height());
@@ -37,7 +44,7 @@ Rect VScrollBar::GetSliderRect() {
 	return sliderRect;
 }
 
-void VScrollBar::OnBackgroundPaint(PaintEventArgs &e) {
+void VScrollBar::OnBackgroundPaint(PaintEventArgs& e) {
 
 	if (_sliderHeight >= _rect.Height) {
 		return;
@@ -45,12 +52,12 @@ void VScrollBar::OnBackgroundPaint(PaintEventArgs &e) {
 	e.Painter.FillRectangle(GetBackgroundColor(), Rect{ 0,0,_rect.Width,_rect.Height });
 }
 
-void VScrollBar::OnLayout(const Size&size, bool fast ) {
+void VScrollBar::OnLayout(const Size& size, bool fast) {
 
 	this->SetRect({ size.Width - this->Width() ,0,this->GetRect().Width,Parent->Height() });
 }
 
-void VScrollBar::OnForePaint(PaintEventArgs&args)
+void VScrollBar::OnForePaint(PaintEventArgs& args)
 {
 	//滑块rect
 	Rect sliderRect(0, 0, _rect.Width, _rect.Height);
@@ -70,17 +77,17 @@ void VScrollBar::OnForePaint(PaintEventArgs&args)
 	args.Painter.FillRectangle(GetForeColor(this->State), sliderRect, radius);
 }
 
-void VScrollBar::OnMouseDown(MouseButton mBtn, const Point&point) {
+void VScrollBar::OnMouseDown(MouseButton mBtn, const Point& point) {
 	__super::OnMouseDown(mBtn, point);
 
 	Rect sliderRect(0, sliderY, Width(), _sliderHeight);
 	if (_sliderHeight == Height()) { return; }
-	if (mBtn == MouseButton::Left &&sliderRect.Contains({ point.X,point.Y })) {
+	if (mBtn == MouseButton::Left && sliderRect.Contains({ point.X,point.Y })) {
 		mouseDown = true;
 		this->pointY = point.Y;
 	}
 }
-void VScrollBar::OnMouseUp(MouseButton mBtn, const Point & point)
+void VScrollBar::OnMouseUp(MouseButton mBtn, const Point& point)
 {
 	__super::OnMouseUp(mBtn, point);
 	mouseDown = false;
@@ -92,18 +99,20 @@ void VScrollBar::OnMouseLeave()
 	mouseDown = false;
 }
 
-void VScrollBar::OnMouseMove(const Point & point)
+void VScrollBar::OnMouseMove(const Point& point)
 {
 	__super::OnMouseMove(point);
 	if (mouseDown) {
 		int offsetY = point.Y - this->pointY;
 		sliderY += offsetY;
 		pointY = point.Y;
-		Move(point.Y);
+		Move(sliderY);
 	}
 }
 
 void VScrollBar::Move(double posY) {
+	sliderY = posY;
+
 	if (sliderY <= 0) { //滑块在顶部
 		sliderY = 0;
 	}
@@ -113,14 +122,14 @@ void VScrollBar::Move(double posY) {
 	int  distanceTotal = Height() - _sliderHeight;//当前滑块可用滑道的总距离
 	double rate = distanceTotal * 1.0 / (_maxBottom - Parent->Height());//滑块可用总高度 / list item高度总和 * 当前滑块坐标的坐标
 	double offsetY = sliderY / rate;
-	if (Parent &&distanceTotal > 0) {
-		for (auto &it : *_controlsLocationY) { //挨个移动坐标
+	if (Parent && distanceTotal > 0) {
+		for (auto& it : *_controlsLocationY) { //挨个移动坐标
 			it.first->SetRect({ it.first->X(), (int)(it.second - offsetY), it.first->Width(),it.first->Height() });
 		}
 		Parent->Refresh();
 	}
 	else if (Parent) {//当滚动条不可用的的时候
-		for (auto &it : *_controlsLocationY) { //使用原坐标 挨个移动坐标
+		for (auto& it : *_controlsLocationY) { //使用原坐标 挨个移动坐标
 			it.first->SetRect({ it.first->X(), (int)(it.second), it.first->Width(),it.first->Height() });
 		}
 		Parent->Refresh();
@@ -133,7 +142,7 @@ void VScrollBar::MoveScroll(int offsetY)
 	Move(sliderY);
 }
 
-void VScrollBar::OnMouseWheel(short zDelta, const Point&point) {
+void VScrollBar::OnMouseWheel(short zDelta, const Point& point) {
 	//double offset = (Height() - GetSliderHeight())*0.01 + 0.9;
 	double offset = 5;
 	sliderY += (zDelta > 0 ? -offset : offset);

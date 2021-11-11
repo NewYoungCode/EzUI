@@ -6,7 +6,7 @@ namespace UIManager {
 	extern std::map<EString, EString> styles;//默认样式集合
 	extern std::map<EString, EString> styles_active;//按下样式集合
 	extern std::map<EString, EString> styles_hover;//鼠标悬浮样式集合
-	Control* LoadControl(const EString & filename);
+	std::vector<Control*> LoadControl(const EString & filename);
 
 	inline size_t  Replace(std::string  &str, const std::string & oldText, const std::string & newText)
 	{
@@ -21,36 +21,7 @@ namespace UIManager {
 		}
 		return count;
 	}
-	//去除空格或者其他符号 双引号内的空格不会去除
-	inline void TrimStyle(EString&str, TCHAR _char = ' ') {
-		TCHAR *bufStr = new TCHAR[str.size()+1]{ 0 };
-		size_t pos = 0;
-		char count = 0;
-		for (auto &it : str) {
-			if (it == '"') {
-				count++;
-			}
-			if (it == _char && count != 1) {
-				continue;
-			}
-			if (count == 2)count = 0;
-			bufStr[pos] = it;
-			pos++;
-		}
-		str = bufStr;
-		delete bufStr;
-	}
-	inline void Erase(EString&str, TCHAR _char = ' ') {
-		TCHAR *bufStr = new TCHAR[str.size()]{ 0 };
-		size_t pos = 0;
-		for (auto &it : str) {
-			if (_char == it)continue;
-			bufStr[pos] = it;
-			pos++;
-		}
-		str = bufStr;
-		delete bufStr;
-	}
+	
 	inline Color StringToColor(const EString&str) {
 
 		auto color = String::Split(str.c_str(), TEXT(","));
