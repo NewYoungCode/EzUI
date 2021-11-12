@@ -195,9 +195,9 @@ public:
 		Style.BackgroundColor = { 240,240,240 };//the bar backgroundcolor
 		Style.ForeColor = { 155,155,155 };//the slider color
 	}
-	virtual void MoveScroll(int offset) {}//move silder use offset 
 	virtual void Move(double pos) {}//move silder use absolutely
 	virtual Rect GetSliderRect() { return Rect(); }//
+	virtual  int RollingCurrent() { return 0; }
 	virtual int RollingTotal() { return 0; }//
-	virtual double RollingCurrent() { return 0; }
+	UIFunc<void(int, int)> Rolling = NULL;
 };

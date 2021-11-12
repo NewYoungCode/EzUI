@@ -16,6 +16,17 @@ void VList::SetMargin(int margin)
 {
 	Margin = margin;
 }
+void VList::RefreshLayout() {
+	_maxBottom = 0;
+	for (auto& it : _controls) {
+		if (it->Width() <= 0 || it->Visible == false) continue;
+		_maxBottom += it->Height();
+		_maxBottom += Margin;
+	}
+	if (verticalScrollBar) {
+		verticalScrollBar->SetMaxBottom(_maxBottom);
+	}
+}
 void VList::AddControl(Control * ctl)
 {
 	__super::AddControl(ctl);

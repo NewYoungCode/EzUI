@@ -13,6 +13,7 @@ public:
 	HList();
 	virtual ~HList();
 	virtual	void SetMargin(int margin);
+	void RefreshLayout()override;
 	virtual	void AddControl(Control*ctl) override;
 	virtual		ControlIterator RemoveControl(Control * ctl)override;
 	virtual		void Clear();

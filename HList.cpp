@@ -16,7 +16,20 @@ void HList::SetMargin(int margin)
 {
 	Margin = margin;
 }
-void HList::AddControl(Control * ctl)
+
+void HList::RefreshLayout() {
+	_maxRight = 0;
+	for (auto& it : _controls) {
+		if (it->Width() <= 0 || it->Visible == false) continue;
+		_maxRight += it->Width();
+		_maxRight += Margin;
+	}
+	if (hScrollBar) {
+		hScrollBar->SetMaxRight(_maxRight);
+	}
+}
+
+void HList::AddControl(Control* ctl)
 {
 	__super::AddControl(ctl);
 	ctl->Move({ _maxRight, ctl->Y() });
@@ -27,7 +40,7 @@ void HList::AddControl(Control * ctl)
 		hScrollBar->SetMaxRight(_maxRight);
 	}
 }
-ControlIterator HList::RemoveControl(Control * ctl)
+ControlIterator HList::RemoveControl(Control* ctl)
 {
 	size_t before = _controls.size();//记录一开始的控件数量
 	ControlIterator nextIt = __super::RemoveControl(ctl);//删除控件
@@ -37,7 +50,7 @@ ControlIterator HList::RemoveControl(Control * ctl)
 		_controlsLocationX.erase(ctl);//将记录X坐标的map也要删除控件
 		for (auto i = nextIt; i != _controls.end(); i++)//从删除的下一个控件开始往前移动X坐标
 		{
-			Control *it = *i;
+			Control* it = *i;
 			it->SetRect(Rect(it->X() - outWidth, it->Y(), it->Width(), it->Height()));//自身移动
 			_controlsLocationX[it] -= outWidth;//记录的原始坐标移动
 		}
@@ -62,13 +75,13 @@ void HList::OnSize(const Size& size) {
 	}
 }
 
-void HList::OnChildPaint(Controls &controls, PaintEventArgs &args) {
+void HList::OnChildPaint(Controls& controls, PaintEventArgs& args) {
 	VisibleControls.clear();
 	auto rect = Rect(0, 0, _rect.Width, _rect.Height);
 	//绘制子控件
 	for (auto i = controls.begin(); i != controls.end(); i++)
 	{
-		auto &it = **i;
+		auto& it = **i;
 		if (rect.IntersectsWith(it.GetRect())) {
 			VisibleControls.push_back(*i);
 			it.OnEvent(Event::OnPaint, &args);

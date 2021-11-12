@@ -23,6 +23,11 @@ void Window::SetUserMessageProc(const UserMessageProc & userMessageProc)
 	_userMessageProc = userMessageProc;
 }
 
+Control* Window::FindControl(const EString& objectName)
+{
+	return this->_layout->FindControl(objectName);
+}
+
 
 HWND Window::Hwnd()
 {
@@ -385,7 +390,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void Window::OnPaint(HDC winHDC, const Rect&rePaintRect)
 {
-	StopWatch stopWatch;
+	//StopWatch stopWatch;
 	EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height, 24);//
 	Painter pt(memBitmap.GetHDC());
 	PaintEventArgs args(pt);
@@ -393,10 +398,10 @@ void Window::OnPaint(HDC winHDC, const Rect&rePaintRect)
 	args.HWnd = _hWnd;
 	_layout->OnEvent(Event::OnPaint, &args);//
 	::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetHDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//
-	time_t ms = stopWatch.ElapsedMilliseconds();//
-	CHAR buf[256]{ 0 };
-	sprintf_s(buf, "GDIPaint %d %d   %d ms \n", rePaintRect.Width, rePaintRect.Height, (int)ms);
-	OutputDebugStringA(buf);
+	//time_t ms = stopWatch.ElapsedMilliseconds();//
+	//CHAR buf[256]{ 0 };
+	//sprintf_s(buf, "GDIPaint %d %d   %d ms \n", rePaintRect.Width, rePaintRect.Height, (int)ms);
+	//OutputDebugStringA(buf);
 }
 
 bool Window::IsInWindow(Control&pControl, Control&it) {

@@ -18,91 +18,91 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Window.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Application.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="BoxShadow.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="CheckBox.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Container.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Control.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="CPURender.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Edit.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Form.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="HLayout.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="HList.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="HScrollBar.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="IControl.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Lable.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Layout.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Menu.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="NotifyIcon.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Painter.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="RadioButton.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="TileLayout.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="UIManager.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="VLayout.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="VList.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="VScrollBar.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="tinyxml\tinystr.h">
       <Filter>tinyxml</Filter>
     </ClInclude>
     <ClInclude Include="tinyxml\tinyxml.h">
       <Filter>tinyxml</Filter>
     </ClInclude>
-    <ClInclude Include="EzUI.h">
+    <ClInclude Include="include\Application.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ui.h">
+    <ClInclude Include="include\BoxShadow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Button.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CheckBox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Container.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Control.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CPURender.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Edit.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EzUI.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Form.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\HLayout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\HList.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\HScrollBar.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IControl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Lable.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Layout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Menu.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NotifyIcon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Painter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RadioButton.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TileLayout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UIManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\VLayout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\VList.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\VScrollBar.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Window.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

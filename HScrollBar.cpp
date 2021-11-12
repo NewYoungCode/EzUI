@@ -31,9 +31,9 @@ int HScrollBar::RollingTotal()
 	return Width() - _sliderWidth;
 }
 
-double HScrollBar::RollingCurrent()
+int HScrollBar::RollingCurrent()
 {
-	return sliderX;
+	return (int)sliderX;
 }
 
 Rect HScrollBar::GetSliderRect() {
@@ -132,13 +132,12 @@ void HScrollBar::Move(double posY) {
 		}
 		Parent->Refresh();
 	}
+	if (Rolling) {
+		Rolling(RollingCurrent(), RollingTotal());
+	}
 }
 
-void HScrollBar::MoveScroll(int offsetX)
-{
-	sliderX += offsetX;
-	Move(sliderX);
-}
+
 
 void HScrollBar::OnMouseWheel(short zDelta, const Point&point) {
 	//double offset = (Width() - GetSliderWidth())*0.01 + 0.9;

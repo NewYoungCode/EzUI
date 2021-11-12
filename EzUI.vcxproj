@@ -19,35 +19,35 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Application.h" />
-    <ClInclude Include="BoxShadow.h" />
-    <ClInclude Include="Button.h" />
-    <ClInclude Include="CheckBox.h" />
-    <ClInclude Include="Container.h" />
-    <ClInclude Include="Control.h" />
-    <ClInclude Include="CPURender.h" />
-    <ClInclude Include="EzUI.h" />
-    <ClInclude Include="Edit.h" />
-    <ClInclude Include="Form.h" />
-    <ClInclude Include="HLayout.h" />
-    <ClInclude Include="HList.h" />
-    <ClInclude Include="HScrollBar.h" />
-    <ClInclude Include="IControl.h" />
-    <ClInclude Include="Lable.h" />
-    <ClInclude Include="Layout.h" />
-    <ClInclude Include="Menu.h" />
-    <ClInclude Include="NotifyIcon.h" />
-    <ClInclude Include="Painter.h" />
-    <ClInclude Include="RadioButton.h" />
-    <ClInclude Include="TileLayout.h" />
+    <ClInclude Include="include\Application.h" />
+    <ClInclude Include="include\BoxShadow.h" />
+    <ClInclude Include="include\Button.h" />
+    <ClInclude Include="include\CheckBox.h" />
+    <ClInclude Include="include\Container.h" />
+    <ClInclude Include="include\Control.h" />
+    <ClInclude Include="include\CPURender.h" />
+    <ClInclude Include="include\Edit.h" />
+    <ClInclude Include="include\EzUI.h" />
+    <ClInclude Include="include\Form.h" />
+    <ClInclude Include="include\HLayout.h" />
+    <ClInclude Include="include\HList.h" />
+    <ClInclude Include="include\HScrollBar.h" />
+    <ClInclude Include="include\IControl.h" />
+    <ClInclude Include="include\Lable.h" />
+    <ClInclude Include="include\Layout.h" />
+    <ClInclude Include="include\Menu.h" />
+    <ClInclude Include="include\NotifyIcon.h" />
+    <ClInclude Include="include\Painter.h" />
+    <ClInclude Include="include\RadioButton.h" />
+    <ClInclude Include="include\TileLayout.h" />
+    <ClInclude Include="include\ui.h" />
+    <ClInclude Include="include\UIManager.h" />
+    <ClInclude Include="include\VLayout.h" />
+    <ClInclude Include="include\VList.h" />
+    <ClInclude Include="include\VScrollBar.h" />
+    <ClInclude Include="include\Window.h" />
     <ClInclude Include="tinyxml\tinystr.h" />
     <ClInclude Include="tinyxml\tinyxml.h" />
-    <ClInclude Include="ui.h" />
-    <ClInclude Include="UIManager.h" />
-    <ClInclude Include="VLayout.h" />
-    <ClInclude Include="VList.h" />
-    <ClInclude Include="VScrollBar.h" />
-    <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -88,13 +88,13 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -156,6 +156,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -171,6 +172,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -188,6 +190,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -207,6 +210,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

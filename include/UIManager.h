@@ -5,12 +5,12 @@
 namespace UIManager {
 	extern std::map<EString, EString> styles;//默认样式集合
 	extern std::map<EString, EString> styles_active;//按下样式集合
-	extern std::map<EString, EString> styles_hover;//鼠标悬浮样式集合
-	std::vector<Control*> LoadControl(const EString & filename);
+	extern  std::map<EString, EString> styles_hover;//鼠标悬浮样式集合
+	std::vector<Control*> UI_EXPORT LoadControl(const EString& filename);
 
-	inline size_t  Replace(std::string  &str, const std::string & oldText, const std::string & newText)
+	inline size_t  Replace(std::string& str, const std::string& oldText, const std::string& newText)
 	{
-		std::string &newStr = str;
+		std::string& newStr = str;
 		size_t pos;
 		pos = str.find(oldText);
 		size_t count = 0;
@@ -21,8 +21,7 @@ namespace UIManager {
 		}
 		return count;
 	}
-	
-	inline Color StringToColor(const EString&str) {
+	inline Color StringToColor(const EString& str) {
 
 		auto color = String::Split(str.c_str(), TEXT(","));
 

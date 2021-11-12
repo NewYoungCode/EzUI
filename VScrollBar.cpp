@@ -29,9 +29,9 @@ int VScrollBar::RollingTotal()
 	return Height() - _sliderHeight;
 }
 
-double VScrollBar::RollingCurrent()
+int VScrollBar::RollingCurrent()
 {
-	return sliderY;
+	return (int)sliderY;
 }
 
 
@@ -134,13 +134,11 @@ void VScrollBar::Move(double posY) {
 		}
 		Parent->Refresh();
 	}
+	if (Rolling) {
+		Rolling(RollingCurrent(), RollingTotal());
+	}
 }
 
-void VScrollBar::MoveScroll(int offsetY)
-{
-	sliderY += offsetY;
-	Move(sliderY);
-}
 
 void VScrollBar::OnMouseWheel(short zDelta, const Point& point) {
 	//double offset = (Height() - GetSliderHeight())*0.01 + 0.9;

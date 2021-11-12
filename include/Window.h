@@ -50,6 +50,7 @@ public:
 	Window(int width, int height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
 	virtual ~Window();
 	void SetUserMessageProc(const UserMessageProc&userMessageProc);
+	Control* FindControl(const EString& objectName);
 	HWND Hwnd();
 	Rect& GetRect();
 	Rect& GetClientRect();
