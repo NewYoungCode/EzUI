@@ -2,7 +2,6 @@
 #include "Application.h"
 #include "IControl.h"
 #include "Painter.h"
-#include <WinUser.h>
 class Control;
 class ScrollBar;
 class Spacer;
@@ -21,7 +20,7 @@ typedef std::list<Control*>::iterator ControlIterator;
 class UI_EXPORT Control :public IControl
 {
 private:
-	Rect GetClientRect(const Rect& _rect);
+	bool _delete = false;
 	bool _mouseIn = false;
 	Control(const Control&);
 	Control& operator=(const Control&);
@@ -33,7 +32,6 @@ protected:
 	int _fixedWidth = 0;
 	int _fixedHeight = 0;
 	bool _isAnchorStyle = false;
-	bool _topmost = false;
 	int _right = 0;
 	int _bottom = 0;
 	int _marginRight = 0;
@@ -107,9 +105,9 @@ public:
 	Color GetBorderColor();
 	Color GetBackgroundColor();
 	//具有继承性样式
-	EString GetFontFamily(ControlState _state);//获取当前控件状态下字体Family
-	UI_Float GetFontSize(ControlState _state);//获取当前控件状态下字体大小样式
-	Color GetForeColor(ControlState _state);//获取当前控件状态下前景色
+	EString GetFontFamily(ControlState _state = ControlState::None);//获取默认控件状态下字体Family
+	UI_Float GetFontSize(ControlState _state = ControlState::None);//获取默认控件状态下字体大小样式
+	Color GetForeColor(ControlState _state = ControlState::None);//获取默认控件状态下前景色
 	void SetTopmost(bool flag);//设置置顶
 	bool GetTopmost();//是否置顶
 	Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
@@ -150,6 +148,7 @@ public:
 		//this->Visible = false;
 		this->_Type = ControlType::ControlSpacer;
 	}
+	virtual ~Spacer() {};
 public:
 #ifdef DEBUGPAINT
 	void OnPaint(Painter& pt, PaintEventArgs& args) {
@@ -195,6 +194,7 @@ public:
 		Style.BackgroundColor = { 240,240,240 };//the bar backgroundcolor
 		Style.ForeColor = { 155,155,155 };//the slider color
 	}
+	~ScrollBar() {}
 	virtual void Move(double pos) {}//move silder use absolutely
 	virtual Rect GetSliderRect() { return Rect(); }//
 	virtual  int RollingCurrent() { return 0; }

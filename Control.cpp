@@ -1,24 +1,11 @@
 #include "Control.h"
-Control::Control()
-{
-	ParentWid = NULL;
-}
-
+Control::Control() {}
 Control::Control(const Control&) {}
 Control& Control::operator=(const Control&) {
 	return *this;
 }
 
-void Control::SetTopmost(bool flag)
-{
-	_topmost = flag;
-}
-bool Control::GetTopmost()
-{
-	return _topmost;
-}
-
-#define BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed()  { \
+#define UI_BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed()  { \
 if(this->State==ControlState::None){return  Style. ##_filed; }\
 ControlStyle &style = GetStyle(this->State); \
 if (this->State != ControlState::None &&style. ##_filed.valid) { \
@@ -27,24 +14,22 @@ if (this->State != ControlState::None &&style. ##_filed.valid) { \
 return Style. ##_filed; \
 }
 
-BINDFUNC(UI_Int, Radius);
-BINDFUNC(UI_Int, BorderLeft);
-BINDFUNC(UI_Int, BorderTop);
-BINDFUNC(UI_Int, BorderRight);
-BINDFUNC(UI_Int, BorderBottom);
+UI_BINDFUNC(UI_Int, Radius);
+UI_BINDFUNC(UI_Int, BorderLeft);
+UI_BINDFUNC(UI_Int, BorderTop);
+UI_BINDFUNC(UI_Int, BorderRight);
+UI_BINDFUNC(UI_Int, BorderBottom);
 
-BINDFUNC(Color, BorderColor);
-BINDFUNC(Color, BackgroundColor);
+UI_BINDFUNC(Color, BorderColor);
+UI_BINDFUNC(Color, BackgroundColor);
 
-BINDFUNC(HImage, ForeImage);
-BINDFUNC(HImage, BackgroundImage);
-
+UI_BINDFUNC(HImage, ForeImage);
+UI_BINDFUNC(HImage, BackgroundImage);
 
 //触发事件宏
-#define TRIGGER(Event,...)  if( ##Event){ \
+#define UI_TRIGGER(Event,...)  if( ##Event){ \
 Event(this , ##__VA_ARGS__); \
 }
-
 
 void Control::OnChildPaint(Controls &controls, PaintEventArgs &args)
 {
@@ -135,10 +120,8 @@ ControlStyle& Control::GetStyle(ControlState _state) {
 	return Style;
 }
 
-void Control::OnLoad()
-{
+void Control::OnLoad() {}
 
-}
 EString Control::GetFontFamily(ControlState _state)
 {
 	ControlStyle &style = GetStyle(_state);
@@ -226,10 +209,8 @@ const int& Control::Height()
 void Control::ComputeClipRect()
 {
 	if (Parent) {
-		//if (!Parent->ClipRect.IsEmptyArea()) {
 		Rect &ClipRectRef = *(Rect*)(&this->ClipRect);//引用父控件的裁剪区域
 		Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->ClipRect);//自身和父控件对吧裁剪区域
-	//}
 	}
 }
 
@@ -371,7 +352,6 @@ void Control::OnEvent(Event eventType, void* param) {
 #else
 #endif
 	}
-
 	default:
 		break;
 	}
@@ -420,6 +400,7 @@ Control::~Control()
 	if (this->ScrollBar) {
 		delete ScrollBar;
 	}
+	_delete = true;
 	DestroySpacers();
 }
 
@@ -433,7 +414,6 @@ void Control::DestroySpacers() {
 	_spacer.clear();
 }
 
-
 void Control::SetX(int X) {
 	Move({ X,Y() });
 }
@@ -442,10 +422,6 @@ void Control::SetY(int Y) {
 }
 void Control::Move(const Point&pt) {
 	SetRect(Rect(pt.X, pt.Y, Width(), Height()));
-	//this->ComputeClipRect();
-	//_rect.X = pt.X;
-	//_rect.Y = pt.Y;
-
 }
 
 void Control::SetWidth(int width) {
@@ -468,20 +444,7 @@ Rect Control::GetClientRect() {
 	Control *pCtrl = this;
 	int x = _rect.X;
 	int y = _rect.Y;
-	while (pCtrl = pCtrl->Parent)
-	{
-		x += pCtrl->X();
-		y += pCtrl->Y();
-	}
-	return Rect{ x,y,_rect.Width,_rect.Height };
-}
-
-
-Rect Control::GetClientRect(const Rect&_rect) {
-	Control *pCtrl = this;
-	int x = _rect.X;
-	int y = _rect.Y;
-	while (pCtrl = pCtrl->Parent)
+	while ((pCtrl = pCtrl->Parent))
 	{
 		x += pCtrl->X();
 		y += pCtrl->Y();
@@ -490,7 +453,6 @@ Rect Control::GetClientRect(const Rect&_rect) {
 }
 
 int Control::GetAnchorStyle() {
-
 	return _anchorStyle;
 }
 void Control::SetAnchorStyle(int anchorStyle)
@@ -508,17 +470,6 @@ void Control::SetAnchorStyle(int anchorStyle)
 }
 
 void Control::AddControl(Control* ctl) {
-
-#ifdef _DEBUG
-	for (auto it = _controls.begin(); it != _controls.end(); it++)
-	{
-		if (*it == ctl) {
-			bool repetitive = true;//包含重复的控件不允许添加
-			ASSERT(!repetitive);
-			return;
-		}
-	}
-#endif // _DEBUG
 	_controls.push_back(ctl);
 	ctl->ParentWid = this->ParentWid;
 	ctl->Parent = this;
@@ -544,39 +495,18 @@ ControlIterator Control::RemoveControl(Control * ctl)
 	ControlIterator nextIt;
 	ControlIterator it1 = ::std::find(_controls.begin(), _controls.end(), ctl);
 	if (it1 != _controls.end()) {
+		if (::IsWindow(ParentWid)) { //移除控件之前先通知父窗口
+			::SendMessage(ParentWid, WM_CONTROL_DELETE, (WPARAM)ctl, NULL);
+		}
 		ctl->ParentWid = NULL;
 		nextIt = _controls.erase(it1);
 		ControlIterator it2 = ::std::find(VisibleControls.begin(), VisibleControls.end(), ctl);
 		if (it2 != VisibleControls.end()) {
 			VisibleControls.erase(it2);
 		}
-		if (::IsWindow(ParentWid)) { //移除控件之前先通知父窗口
-			::SendMessage(ParentWid, WM_CONTROL_DELETE, (WPARAM)ctl, NULL);
-		}
+		
 	}
 	return nextIt;
-
-	//ControlIterator returnItor;
-	//for (auto it = _controls.begin(); it != _controls.end(); it++)
-	//{
-	//	if (ctl == *it) {
-	//		//移除可见控件集合
-	//		for (auto i = VisibleControls.begin(); i != VisibleControls.end(); i++)
-	//		{
-	//			if (ctl == *i) {
-	//				VisibleControls.erase(i);
-	//				break;
-	//			}
-	//		}
-	//		ctl->ParentWid = NULL;
-	//		returnItor = _controls.erase(it);
-	//		if (::IsWindow(ParentWid)) { //移除控件之前先通知父窗口
-	//			::SendMessage(ParentWid, WM_CONTROL_DELETE, (WPARAM)ctl, NULL);
-	//		}
-	//		break;
-	//	}
-	//}
-	//return returnItor;
 }
 
 UINT_PTR Control::SetTimer(size_t interval)
@@ -607,7 +537,6 @@ Control * Control::FindControl(const EString & objectName)
 }
 
 
-
 Controls* Control::GetControls()
 {
 	return &_controls;
@@ -633,27 +562,24 @@ const ControlType & Control::GetType()
 	return _Type;
 }
 
-void Control::OnChar(WPARAM wParam, LPARAM lParam)
-{
-}
-void Control::OnKeyDown(WPARAM wParam)
-{
-}
+void Control::OnChar(WPARAM wParam, LPARAM lParam) {}
+void Control::OnKeyDown(WPARAM wParam) {}
+
 void Control::OnMouseMove(const Point & point)
 {
-	TRIGGER(MouseMove, point);
+	UI_TRIGGER(MouseMove, point);
 }
 void Control::OnMouseWheel(short zDelta, const Point & point)
 {
-	TRIGGER(MouseWheel, zDelta, point);
+	UI_TRIGGER(MouseWheel, zDelta, point);
 }
 void Control::OnMouseClick(MouseButton mbtn, const Point & point)
 {
-	TRIGGER(MouseClick, mbtn, point);
+	UI_TRIGGER(MouseClick, mbtn, point);
 }
 void Control::OnMouseDoubleClick(MouseButton mbtn, const Point & point)
 {
-	TRIGGER(MouseDoubleClick, mbtn, point);
+	UI_TRIGGER(MouseDoubleClick, mbtn, point);
 }
 void Control::OnMouseEnter(const Point & point)
 {
@@ -678,10 +604,7 @@ void Control::OnMouseEnter(const Point & point)
 		_LastCursor = (LPCSTR)::GetClassLongPtr(ParentWid, GCL_HCURSOR);//记录之前的状态
 		::SetClassLongPtr(ParentWid, GCL_HCURSOR, (UINT_PTR)::LoadCursor(NULL, Cursor));//设置状态
 	}
-#ifdef DEBUGLOG
-	//Debug::Log("ClipRect %d %d %d %d", ClipRect.X, ClipRect.Y, ClipRect.Width, ClipRect.Height);
-#endif
-	TRIGGER(MouseEnter, point);
+	UI_TRIGGER(MouseEnter, point);
 }
 
 void Control::OnMouseDown(MouseButton mbtn, const Point & point)
@@ -703,8 +626,7 @@ void Control::OnMouseDown(MouseButton mbtn, const Point & point)
 			pControl = pControl->Parent;
 		}
 	}
-
-	TRIGGER(MouseDown, mbtn, point);
+	UI_TRIGGER(MouseDown, mbtn, point);
 }
 void Control::OnMouseUp(MouseButton mbtn, const Point & point)
 {
@@ -716,7 +638,7 @@ void Control::OnMouseUp(MouseButton mbtn, const Point & point)
 		this->State = ControlState::None;
 		Refresh();
 	}
-	TRIGGER(MouseUp, mbtn, point);
+	UI_TRIGGER(MouseUp, mbtn, point);
 }
 void Control::OnMouseLeave()
 {
@@ -731,7 +653,7 @@ void Control::OnMouseLeave()
 		::SetClassLongPtr(ParentWid, GCL_HCURSOR, (UINT_PTR)_LastCursor.value);
 		_LastCursor = NULL;
 	}
-	TRIGGER(MouseLeave);
+	UI_TRIGGER(MouseLeave);
 }
 void Control::OnSize(const Size & size)
 {

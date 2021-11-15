@@ -235,7 +235,6 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_CONTROL_DELETE:
 	{
-		
 		Control *delControl = (Control*)wParam;
 		EmptyControl((Controls*)delControl->GetControls());
 		return TRUE;
