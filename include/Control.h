@@ -20,12 +20,9 @@ typedef std::list<Control*>::iterator ControlIterator;
 class UI_EXPORT Control :public IControl
 {
 private:
-	bool _delete = false;
-	bool _mouseIn = false;
 	Control(const Control&);
 	Control& operator=(const Control&);
 protected:
-	bool _hasTimer = false;
 	int _anchorStyle = (AnchorStyle::Top | AnchorStyle::Left);
 	Rect _rect;
 	Controls _controls;
@@ -38,7 +35,6 @@ protected:
 	int _marginBottom = 0;
 	Tuple<LPCSTR> _LastCursor;
 	Controls _spacer;//存储控件下布局的的弹簧集合
-	ControlType _Type = ControlType::ControlBase;//控件类型
 public:
 	const Rect ClipRect;//控件在窗口中的可见区域
 	EString Name;//控件的ObjectName
@@ -52,7 +48,6 @@ public:
 	bool Visible = true;//控件是否可见
 	Control* Parent = NULL;//父控件
 	Controls VisibleControls;//基于控件中的可见控件
-	HWND ParentWid = NULL;//父窗口句柄
 	//鼠标事件相关
 	EventMouseMove MouseMove;//移动事件
 	EventMouseEnter MouseEnter;//移入事件
@@ -77,7 +72,6 @@ public:
 	virtual void OnLayout(const Size& parentRect, bool instantly = true);//父控件大小改变事件  instantly立即生效
 	virtual void OnLoad();//控件第一次加载 警告 此函数在LayerWindow里面不允许在函数内添加控件 但是允许设置控件参数  
 	virtual void OnSize(const Size& size);//大小发生改变
-	virtual void OnTimer();//计时器函数
 public:
 	virtual void OnMouseMove(const Point& point);//鼠标在控件上移动
 	virtual void OnMouseLeave();//鼠标离开控件
@@ -108,18 +102,13 @@ public:
 	EString GetFontFamily(ControlState _state = ControlState::None);//获取默认控件状态下字体Family
 	UI_Float GetFontSize(ControlState _state = ControlState::None);//获取默认控件状态下字体大小样式
 	Color GetForeColor(ControlState _state = ControlState::None);//获取默认控件状态下前景色
-	void SetTopmost(bool flag);//设置置顶
-	bool GetTopmost();//是否置顶
 	Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
 	Control* FindControl(Control* ctl);//使用指针寻找子控件 不包含孙子 曾孙 
 	void SetAnchorStyle(int anchorStyle);//设置控件对齐方式
 	int  GetAnchorStyle();//获取锚定风格
 	Controls* GetControls();//获取当前所有子控件
-	virtual void AddControl(Control* ctl);
-	//添加控件
+	virtual void AddControl(Control* ctl);//添加控件
 	virtual ControlIterator RemoveControl(Control* ctl);//删除控件 返回下一个迭代器
-	UINT_PTR SetTimer(size_t interval);
-	void KillTimer();
 	void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件
 	void Move(const Point& pt);//移动相对与父控件的位置
 	const int& X();

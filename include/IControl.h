@@ -33,7 +33,8 @@ enum ControlType :BYTE {
 	ControlEditWin32,//win32输入框
 	ControlContainer,//容器
 	ControlSpacer,//弹簧
-	ControlScrollBar //滚动条
+	ControlScrollBar, //滚动条
+	ControlWindow
 };
 
 #define DynamicCast(_ControlPtr,_ControlClass,_ControlTypeEnum) ( ##_ControlPtr->GetType()== ##_ControlTypeEnum?(( ##_ControlClass*)( ##_ControlPtr)):NULL)
@@ -230,8 +231,12 @@ class  UI_EXPORT IControl {
 protected:
 	bool _load = false;
 	bool _mouseIn = false;
+	bool _mouseDown = false;//鼠标是否已经按下
+	bool _hasTimer = false;
 public:
+	ControlType _Type = ControlType::ControlBase;//控件类型
 	UINT_PTR Tag = NULL;
+	HWND _hWnd = NULL;//if son is control,the hwnd is parent window handle
 public:
 	IControl();
 	virtual ~IControl();
@@ -246,4 +251,8 @@ public:
 	virtual void OnLoad() = 0;
 	virtual void OnChar(WPARAM wParam, LPARAM lParam) = 0;
 	virtual void OnKeyDown(WPARAM wParam) = 0;
+	virtual void OnTimer();//计时器函数
+public:
+	virtual UINT_PTR SetTimer(size_t interval);
+	virtual void KillTimer();
 };

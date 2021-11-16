@@ -212,7 +212,7 @@ namespace UIManager {
 		delete bufStr;
 	}
 	void AnalysisStyle(const EString& styleStr) {
-		EString style;
+		EString style= styleStr;
 		TrimStyle(style);
 		while (style.size() > 0) {
 			size_t pos = style.find("#");
@@ -301,11 +301,13 @@ namespace UIManager {
 						break;
 					}
 					if (key == "background-image") {
+						Erase(value, '"');//É¾³ýË«ÒýºÅ;
 						style->BackgroundImage = new Image(value);
 						break;
 					}
 					if (key == "fore-image") {
-						style->BackgroundImage = new Image(value);
+						Erase(value, '"');//É¾³ýË«ÒýºÅ;
+						style->ForeImage = new Image(value);
 						break;
 					}
 					if (key == "border-color") {

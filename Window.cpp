@@ -2,6 +2,7 @@
 
 Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 {
+	_Type = ControlType::ControlWindow;
 	int sw = GetSystemMetrics(SM_CXFULLSCREEN);
 	int sh = GetSystemMetrics(SM_CYFULLSCREEN);
 	_rect.X = (sw - width) / 2;
@@ -17,10 +18,6 @@ Window::~Window()
 	if (::IsWindow(_hWnd)) {
 		::DestroyWindow(_hWnd);
 	}
-}
-void Window::SetUserMessageProc(const UserMessageProc & userMessageProc)
-{
-	_userMessageProc = userMessageProc;
 }
 
 Control* Window::FindControl(const EString& objectName)
@@ -51,11 +48,11 @@ Rect& Window::GetClientRect()
 	}
 	return _rectClient;
 }
-void Window::SetText(const EString&text)
+void Window::SetText(const EString& text)
 {
 	::SetWindowTextW(_hWnd, text.utf16().c_str());
 }
-void Window::ReSize(const Size&size) {
+void Window::ReSize(const Size& size) {
 	RECT rect;
 	::GetWindowRect(_hWnd, &rect);
 	::MoveWindow(_hWnd, rect.left, rect.right, size.Width, size.Height, TRUE);
@@ -66,7 +63,7 @@ void Window::SetIcon(short id)
 }
 void Window::SetIcon(HICON icon)
 {
-	::SendMessage(_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)icon);
+	::SendMessageW(_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)icon);
 }
 void Window::SetLayout(Layout* layout) {
 	ASSERT(layout);
@@ -80,11 +77,11 @@ void Window::SetLayout(Layout* layout) {
 	if (!_layout->Style.ForeColor.valid) {
 		_layout->Style.ForeColor = Color::Black;
 	}
-	_layout->ParentWid = _hWnd;
+	_layout->_hWnd = _hWnd;
 	_layout->SetRect(this->GetClientRect());
 }
 void Window::Close() {
-	::SendMessage(_hWnd, WM_CLOSE, 0, 0);
+	::SendMessageW(_hWnd, WM_CLOSE, 0, 0);
 }
 void Window::Show(int cmdShow)
 {
@@ -105,7 +102,7 @@ void Window::ShowModal(bool wait)
 	::SetFocus(_hWnd);
 	if (wait) {//
 		MSG msg;
-		while (GetMessage(&msg, 0, 0, 0))
+		while (GetMessageW(&msg, 0, 0, 0))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
@@ -129,14 +126,14 @@ bool Window::IsVisible() {
 }
 void Window::SetVisible(bool flag) {
 	if (flag) {
-		::ShowWindow(_hWnd, SW_SHOW);
+		::ShowWindow(_hWnd, SW_RESTORE);
 		::SetForegroundWindow(_hWnd);
 	}
 	else {
 		Hide();
 	}
 }
-void Window::EmptyControl(Controls*controls) {
+void Window::EmptyControl(Controls* controls) {
 	for (auto it : *controls) {
 		if (_focusControl == it) {
 			_focusControl = NULL;
@@ -157,10 +154,9 @@ LRESULT HandleStartComposition(HWND hWnd, WPARAM wParam, LPARAM lParam)
 
 LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-
 	if (WM_COMMAND == uMsg || uMsg == WM_CTLCOLOREDIT) {
-		Control *win32Control = (Control*)UI_GetUserData((HWND)lParam);
-		EditWnd *win32Edit = dynamic_cast<EditWnd*>(win32Control);
+		Control* win32Control = (Control*)UI_GetUserData((HWND)lParam);
+		EditWnd* win32Edit = dynamic_cast<EditWnd*>(win32Control);
 		if (win32Edit) {
 			return win32Edit->WndProc(uMsg, wParam, lParam);
 		}
@@ -168,9 +164,6 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	switch (uMsg)
 	{
-	
-
-
 	case  WM_IME_STARTCOMPOSITION://
 	{
 		HIMC hIMC = ImmGetContext(_hWnd);
@@ -179,7 +172,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		int x = 0;
 		int y = 0;
 		if (_inputControl) {
-			auto &ime = *_inputControl;
+			auto& ime = *_inputControl;
 			x = ime.GetClientRect().X;
 			y = ime.GetClientRect().Y + ime.GetClientRect().Height;
 		}
@@ -207,7 +200,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		return TRUE;
 	}
 	case WM_CONTROL_REFRESH: {
-		Control *ctl = (Control*)wParam;
+		Control* ctl = (Control*)wParam;
 		Rect clienRect = ctl->GetClientRect();
 		RECT wRect;
 		wRect.left = clienRect.X;
@@ -217,13 +210,11 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		::InvalidateRect(_hWnd, &wRect, FALSE);
 		return TRUE;
 	}
-
-
 	case WM_PAINT:
 	{
 		PAINTSTRUCT pst;
 		BeginPaint(_hWnd, &pst);
-		RECT &r = pst.rcPaint;
+		RECT& r = pst.rcPaint;
 		Rect paintRect{ r.left,r.top,r.right - r.left, r.bottom - r.top };
 		OnPaint(pst.hdc, paintRect);
 		EndPaint(_hWnd, &pst);
@@ -235,13 +226,13 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_CONTROL_DELETE:
 	{
-		Control *delControl = (Control*)wParam;
+		Control* delControl = (Control*)wParam;
 		EmptyControl((Controls*)delControl->GetControls());
 		return TRUE;
 	}
 	case WM_WINDOWPOSCHANGED: {
 		bool rePaint = false;
-		WINDOWPOS *wPos = (WINDOWPOS *)(void*)lParam;
+		WINDOWPOS* wPos = (WINDOWPOS*)(void*)lParam;
 		int flag = SWP_NOCOPYBITS;//
 		if ((wPos->flags & flag) == flag) {
 			rePaint = true;
@@ -261,7 +252,6 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			OnSize(size);
 		}
 		else if (rePaint) {
-			
 			Debug::Log("SWP_NOCOPYBITS!");
 			OnSize(size);
 		}
@@ -274,7 +264,9 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_CLOSE:
 	{
-		if (OnClose()) {
+		bool Cancel = false;
+		OnClose(Cancel);
+		if (!Cancel) {
 			::DestroyWindow(_hWnd);
 		}
 		else {
@@ -296,14 +288,12 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 
-
 	case WM_DESTROY:
 	{
 		OnDestroy();
-
 		break;
 	}
-	
+
 	case WM_MOUSEMOVE:
 	{
 		TRACKMOUSEEVENT tme;
@@ -323,12 +313,12 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		OnMouseDoubleClick(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		break;
 	}
-						 
+
 	case WM_RBUTTONDBLCLK: {
 		OnMouseDoubleClick(MouseButton::Right, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		break;
 	}
-						  
+
 	case WM_LBUTTONDOWN:
 	{
 
@@ -367,19 +357,15 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 	case WM_TIMER: {
-		Control *ctl = (Control*)wParam;
+		IControl* ctl = (IControl*)wParam;
 		ctl->OnTimer();
 		break;
 	}
 	default:
 	{
 		if (uMsg >= (WM_USER + 0x04) && uMsg <= (WM_USER + 0x0c)) { //
-			MouseEventArgs *args = (MouseEventArgs*)lParam;
+			MouseEventArgs* args = (MouseEventArgs*)lParam;
 			return OnNotify((Control*)(wParam), args);
-		}
-		if (uMsg > WM_UIMESSAGE && _userMessageProc) {
-			_userMessageProc(uMsg, wParam, lParam);
-			return true;
 		}
 		break;
 	}
@@ -387,7 +373,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
 }
 
-void Window::OnPaint(HDC winHDC, const Rect&rePaintRect)
+void Window::OnPaint(HDC winHDC, const Rect& rePaintRect)
 {
 	//StopWatch stopWatch;
 	EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height, 24);//
@@ -403,8 +389,8 @@ void Window::OnPaint(HDC winHDC, const Rect&rePaintRect)
 	//OutputDebugStringA(buf);
 }
 
-bool Window::IsInWindow(Control&pControl, Control&it) {
-	Rect &winClientRect = GetClientRect();
+bool Window::IsInWindow(Control& pControl, Control& it) {
+	Rect& winClientRect = GetClientRect();
 	auto rect = it.GetRect();//
 
 	if (rect.IsEmptyArea()) {
@@ -420,44 +406,44 @@ bool Window::IsInWindow(Control&pControl, Control&it) {
 	return true;
 }
 
-Control*  Window::FindControl(const Point & clientPoint, Point&outPoint) {
+Control* Window::FindControl(const Point& clientPoint, Point& outPoint) {
 	outPoint = clientPoint;
-	Control *outCtl = _layout;
+	Control* outCtl = _layout;
 loop:
-	Control *scrollBar = outCtl->ScrollBar;
+	Control* scrollBar = outCtl->ScrollBar;
 	if (scrollBar && scrollBar->GetClientRect().Contains(clientPoint)) {
 		if (scrollBar->Visible) {
-			auto &barRect = scrollBar->GetClientRect();
+			auto& barRect = scrollBar->GetClientRect();
 			outPoint.X = clientPoint.X - barRect.X;
 			outPoint.Y = clientPoint.Y - barRect.Y;
 			outCtl = scrollBar;
 			return outCtl;
 		}
 	}
-	std::list<Control*> *pTemp;
-	if (outCtl->VisibleControls.size() > 0) { 
+	std::list<Control*>* pTemp;
+	if (outCtl->VisibleControls.size() > 0) {
 		pTemp = &outCtl->VisibleControls;
 	}
 	else {
 		pTemp = (Controls*)outCtl->GetControls();
 	}
-	
+
 	for (auto i = pTemp->rbegin(); i != pTemp->rend(); i++) {
-		Control &it = **i;
+		Control& it = **i;
 		if (!it.Visible) {
 			continue;
 		}
-		
+
 		if (!IsInWindow(*outCtl, it)) {
 			continue;
 		}
 		if (it.GetClientRect().Contains(clientPoint)) {
-			Spacer*spcaer = DynamicCast((&it), Spacer, ControlType::ControlSpacer);
+			Spacer* spcaer = DynamicCast((&it), Spacer, ControlType::ControlSpacer);
 			if (spcaer) {
 				return outCtl;
 			}
 			outCtl = &it;
-			auto &ctlRect = it.GetClientRect();
+			auto& ctlRect = it.GetClientRect();
 			outPoint.X = clientPoint.X - ctlRect.X;
 			outPoint.Y = clientPoint.Y - ctlRect.Y;
 			goto loop;
@@ -466,11 +452,11 @@ loop:
 	return outCtl;
 }
 
-void Window::OnMouseMove(const Point & point)
+void Window::OnMouseMove(const Point& point)
 {
 
 	if (_focusControl && _mouseDown) {
-		auto &ctlRect = _focusControl->GetClientRect();
+		auto& ctlRect = _focusControl->GetClientRect();
 		MouseEventArgs args;
 		args.Location = { point.X - ctlRect.X ,point.Y - ctlRect.Y };
 		args.EventType = Event::OnMouseMove;
@@ -479,7 +465,7 @@ void Window::OnMouseMove(const Point & point)
 	}
 
 	Point relativePoint;
-	Control *outCtl = FindControl(point, relativePoint);
+	Control* outCtl = FindControl(point, relativePoint);
 	MouseEventArgs args;
 
 	if (_focusControl && outCtl != _focusControl) {
@@ -504,14 +490,14 @@ void Window::OnMouseLeave()
 }
 
 
-void Window::OnMouseWheel(short zDelta, const Point & point)
+void Window::OnMouseWheel(short zDelta, const Point& point)
 {
 	if (_focusControl == NULL) return;
-	ScrollBar * vBar = NULL;
+	ScrollBar* vBar = NULL;
 	if (_focusControl->ScrollBar) {
 		vBar = DynamicCast(_focusControl->ScrollBar, ScrollBar, ControlType::ControlScrollBar);
 	}
-	Control *pControl = _focusControl;
+	Control* pControl = _focusControl;
 	while (vBar == NULL && pControl)
 	{
 		if (pControl->ScrollBar) {
@@ -531,10 +517,10 @@ void Window::OnMouseWheel(short zDelta, const Point & point)
 	}
 
 }
-void Window::OnMouseDoubleClick(MouseButton mbtn, const Point & point)
+void Window::OnMouseDoubleClick(MouseButton mbtn, const Point& point)
 {
 	Point relativePoint;
-	Control *outCtl = FindControl(point, relativePoint);
+	Control* outCtl = FindControl(point, relativePoint);
 	MouseEventArgs args;
 	args.Button = mbtn;
 	args.Location = relativePoint;
@@ -542,13 +528,13 @@ void Window::OnMouseDoubleClick(MouseButton mbtn, const Point & point)
 	outCtl->OnMouseEvent(args);
 }
 
-void Window::OnMouseDown(MouseButton mbtn, const Point & point)
+void Window::OnMouseDown(MouseButton mbtn, const Point& point)
 {
 	_mouseDown = true;
 	::SetCapture(_hWnd);
 
 	Point relativePoint;
-	Control *outCtl = FindControl(point, relativePoint);
+	Control* outCtl = FindControl(point, relativePoint);
 
 	MouseEventArgs args;
 	args.Button = mbtn;
@@ -574,12 +560,12 @@ void Window::MoveWindow() {
 	SendMessage(_hWnd, 0x0202, 0, NULL);
 }
 
-void Window::OnMouseUp(MouseButton mbtn, const Point & point)
+void Window::OnMouseUp(MouseButton mbtn, const Point& point)
 {
 	_mouseDown = false;
 	::ReleaseCapture();
 	if (_focusControl) {
-		auto &ctlRect = _focusControl->GetClientRect();
+		auto& ctlRect = _focusControl->GetClientRect();
 		MouseEventArgs args;
 		args.Button = mbtn;
 		args.Location = { point.X - ctlRect.X,point.Y - ctlRect.Y };
@@ -592,7 +578,7 @@ void Window::OnMouseUp(MouseButton mbtn, const Point & point)
 		}
 	}
 }
-void Window::OnSize(const Size & sz)
+void Window::OnSize(const Size& sz)
 {
 	*((Rect*)(&_layout->ClipRect)) = this->GetClientRect();//
 	//RECT rc{ _layout->ClipRect.X,_layout->ClipRect.Y,_layout->ClipRect.GetRight(),_layout->ClipRect.GetBottom() };
@@ -600,12 +586,11 @@ void Window::OnSize(const Size & sz)
 	_layout->SetRect(this->GetClientRect(), true);
 }
 
-void Window::OnRect(const Rect & rect)
+void Window::OnRect(const Rect& rect)
 {
 }
-bool Window::OnClose()
+void Window::OnClose(bool & Cancel)
 {
-	return true;
 }
 void Window::OnDestroy()
 {
@@ -636,11 +621,11 @@ void Window::OnChar(WPARAM wParam, LPARAM lParam)
 	}
 }
 
-void Window::OnMove(const Point &point) {
+void Window::OnMove(const Point& point) {
 
 }
 
-bool Window::OnNotify(Control *sender, EventArgs *args) {
+bool Window::OnNotify(Control* sender, EventArgs* args) {
 	if (args->EventType == Event::OnMouseDown) {
 		if (sender->Action == ControlAction::MoveWindow || sender == _layout) {
 			MoveWindow();

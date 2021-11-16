@@ -198,7 +198,7 @@ LRESULT EditWnd::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (_brush) DeleteBrush(_brush);
 		return (INT_PTR)(_brush = CreateSolidBrush(_bkColor));
 	}
-	return ::DefWindowProc(ParentWid, uMsg, wParam, lParam);
+	return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
 }
 void EditWnd::SetRect(const Rect & rect, bool rePaint)
 {
@@ -226,7 +226,7 @@ void EditWnd::OnLoad() {
 	if (_editWnd == NULL) {
 		auto rect = GetClientRect();
 		_editWnd = CreateWindowW(L"Edit", _text.utf16().c_str(), WS_VISIBLE | WS_CHILD, rect.X, rect.Y, rect.Width, rect.Height,
-			ParentWid, NULL, GetModuleHandle(0), NULL);//因为UI框架的edit并不成熟(懒得写了),所以暂时使用WIN32的输入框代替
+			_hWnd, NULL, GetModuleHandle(0), NULL);//因为UI框架的edit并不成熟(懒得写了),所以暂时使用WIN32的输入框代替
 		UI_SetUserData(_editWnd, this);
 
 		LOGFONTW LogFont;

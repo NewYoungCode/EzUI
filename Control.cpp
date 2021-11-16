@@ -219,19 +219,19 @@ void Control::OnMouseEvent(MouseEventArgs &args) {
 	switch (args.EventType)
 	{
 	case Event::OnMouseWheel: {
-		if (!::SendMessage(ParentWid, WM_USER + 0x04, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+		if (!::SendMessage(_hWnd, WM_USER + 0x04, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 			OnMouseWheel(args.Delta, args.Location);
 		}
 		break;
 	}
 	case Event::OnMouseClick: {
-		if (!::SendMessage(ParentWid, WM_USER + 0x05, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+		if (!::SendMessage(_hWnd, WM_USER + 0x05, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 			OnMouseClick(args.Button, args.Location);
 		}
 		break;
 	}
 	case Event::OnMouseEnter: {
-		if (!::SendMessage(ParentWid, WM_USER + 0x06, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+		if (!::SendMessage(_hWnd, WM_USER + 0x06, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 			OnMouseEnter(args.Location);
 		}
 		break;
@@ -242,26 +242,26 @@ void Control::OnMouseEvent(MouseEventArgs &args) {
 			OnMouseEvent(args);
 			_mouseIn = true;
 		}
-		if (!::SendMessage(ParentWid, WM_USER + 0x07, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+		if (!::SendMessage(_hWnd, WM_USER + 0x07, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 			OnMouseMove(args.Location);
 		}
 		break;
 	}
 	case Event::OnMouseDoubleClick: {
-		if (!::SendMessage(ParentWid, WM_USER + 0x08, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+		if (!::SendMessage(_hWnd, WM_USER + 0x08, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 			OnMouseDoubleClick(args.Button, args.Location);
 		}
 		break;
 	}
 	case Event::OnMouseDown: {
-		if (!::SendMessage(ParentWid, WM_USER + 0x09, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+		if (!::SendMessage(_hWnd, WM_USER + 0x09, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 			OnMouseDown(args.Button, args.Location);
 		}
 		break;
 	}
 	case Event::OnMouseUp: {
 
-		if (!::SendMessage(ParentWid, WM_USER + 0x0a, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+		if (!::SendMessage(_hWnd, WM_USER + 0x0a, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 			OnMouseUp(args.Button, args.Location);
 		}
 		args.EventType = Event::OnMouseClick;
@@ -270,7 +270,7 @@ void Control::OnMouseEvent(MouseEventArgs &args) {
 	}
 	case Event::OnMouseLeave: {
 		_mouseIn = false;
-		if (!::SendMessage(ParentWid, WM_USER + 0x0b, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+		if (!::SendMessage(_hWnd, WM_USER + 0x0b, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 			OnMouseLeave();
 		}
 		break;
@@ -285,7 +285,7 @@ void Control::OnEvent(Event eventType, void* param) {
 	case Event::OnPaint: {
 #if 1
 		PaintEventArgs &args = *(PaintEventArgs*)param;
-		this->ParentWid = args.HWnd;
+		this->_hWnd = args.HWnd;
 		if (!_load) {
 			OnLoad();
 			_load = true;
@@ -400,7 +400,6 @@ Control::~Control()
 	if (this->ScrollBar) {
 		delete ScrollBar;
 	}
-	_delete = true;
 	DestroySpacers();
 }
 
@@ -436,8 +435,8 @@ void Control::ReSize(const Size & size)
 }
 
 void Control::Refresh() {
-	if (ParentWid) {
-		::SendMessage(ParentWid, WM_CONTROL_REFRESH, (WPARAM)this, NULL);
+	if (_hWnd) {
+		::SendMessage(_hWnd, WM_CONTROL_REFRESH, (WPARAM)this, NULL);
 	}
 }
 Rect Control::GetClientRect() {
@@ -471,7 +470,7 @@ void Control::SetAnchorStyle(int anchorStyle)
 
 void Control::AddControl(Control* ctl) {
 	_controls.push_back(ctl);
-	ctl->ParentWid = this->ParentWid;
+	ctl->_hWnd = this->_hWnd;
 	ctl->Parent = this;
 	Size sz{ _rect.Width,_rect.Height };
 	//新添加的控件必须先触发 自身布局特性
@@ -495,10 +494,10 @@ ControlIterator Control::RemoveControl(Control * ctl)
 	ControlIterator nextIt;
 	ControlIterator it1 = ::std::find(_controls.begin(), _controls.end(), ctl);
 	if (it1 != _controls.end()) {
-		if (::IsWindow(ParentWid)) { //移除控件之前先通知父窗口
-			::SendMessage(ParentWid, WM_CONTROL_DELETE, (WPARAM)ctl, NULL);
+		if (::IsWindow(_hWnd)) { //移除控件之前先通知父窗口
+			::SendMessage(_hWnd, WM_CONTROL_DELETE, (WPARAM)ctl, NULL);
 		}
-		ctl->ParentWid = NULL;
+		ctl->_hWnd = NULL;
 		nextIt = _controls.erase(it1);
 		ControlIterator it2 = ::std::find(VisibleControls.begin(), VisibleControls.end(), ctl);
 		if (it2 != VisibleControls.end()) {
@@ -509,19 +508,7 @@ ControlIterator Control::RemoveControl(Control * ctl)
 	return nextIt;
 }
 
-UINT_PTR Control::SetTimer(size_t interval)
-{
-	if (_hasTimer) {
-		return (UINT_PTR)this;
-	}
-	_hasTimer = true;
-	return ::SetTimer(ParentWid, (UINT_PTR)this, interval, NULL);
-}
 
-void Control::KillTimer() {
-	::KillTimer(ParentWid, (UINT_PTR)this);
-	_hasTimer = false;
-}
 
 Control * Control::FindControl(const EString & objectName)
 {
@@ -545,8 +532,8 @@ void Control::Clear(bool freeControls)
 {
 	for (auto i = _controls.begin(); i != _controls.end(); i++)
 	{
-		if (::IsWindow(ParentWid)) { //移除控件之前先通知父窗口
-			::SendMessage(ParentWid, WM_CONTROL_DELETE, (WPARAM)*i, NULL);
+		if (::IsWindow(_hWnd)) { //移除控件之前先通知父窗口
+			::SendMessage(_hWnd, WM_CONTROL_DELETE, (WPARAM)*i, NULL);
 		}
 		if (freeControls && (*i)->GetType() != ControlType::ControlSpacer) {//弹簧不能删除 弹簧必须使用DestroySpacers()函数删除
 			delete *i;
@@ -601,8 +588,8 @@ void Control::OnMouseEnter(const Point & point)
 		}
 	}
 	if (Cursor.valid) {//鼠标移入的时候判断是否有设置状态
-		_LastCursor = (LPCSTR)::GetClassLongPtr(ParentWid, GCL_HCURSOR);//记录之前的状态
-		::SetClassLongPtr(ParentWid, GCL_HCURSOR, (UINT_PTR)::LoadCursor(NULL, Cursor));//设置状态
+		_LastCursor = (LPCSTR)::GetClassLongPtr(_hWnd, GCL_HCURSOR);//记录之前的状态
+		::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)::LoadCursor(NULL, Cursor));//设置状态
 	}
 	UI_TRIGGER(MouseEnter, point);
 }
@@ -650,7 +637,7 @@ void Control::OnMouseLeave()
 		this->State = ControlState::None;//鼠标离开无论如何都要重置状态
 	}
 	if (_LastCursor) {//如果此控件已经设置过鼠标指针样式 则 鼠标移出 的时候需要恢复成之前的状态
-		::SetClassLongPtr(ParentWid, GCL_HCURSOR, (UINT_PTR)_LastCursor.value);
+		::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)_LastCursor.value);
 		_LastCursor = NULL;
 	}
 	UI_TRIGGER(MouseLeave);
@@ -660,9 +647,6 @@ void Control::OnSize(const Size & size)
 	for (auto &it : _controls) {
 		it->OnLayout(size);//让子控件触发布局特性 进行调整rect
 	}
-}
-void Control::OnTimer()
-{
 }
 void Control::OnLayout(const Size&pRect, bool instantly) {
 	while (Dock != DockStyle::None)
