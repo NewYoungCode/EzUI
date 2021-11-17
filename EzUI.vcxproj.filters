@@ -105,6 +105,9 @@
     <ClInclude Include="include\Window.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="include\TabLayout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp">
@@ -190,6 +193,9 @@
     </ClCompile>
     <ClCompile Include="tinyxml\tinystr.cpp">
       <Filter>tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="TabLayout.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

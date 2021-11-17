@@ -39,6 +39,7 @@
     <ClInclude Include="include\NotifyIcon.h" />
     <ClInclude Include="include\Painter.h" />
     <ClInclude Include="include\RadioButton.h" />
+    <ClInclude Include="include\TabLayout.h" />
     <ClInclude Include="include\TileLayout.h" />
     <ClInclude Include="include\ui.h" />
     <ClInclude Include="include\UIManager.h" />
@@ -68,6 +69,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="NotifyIcon.cpp" />
     <ClCompile Include="RadioButton.cpp" />
+    <ClCompile Include="TabLayout.cpp" />
     <ClCompile Include="TileLayout.cpp" />
     <ClCompile Include="tinyxml\tinystr.cpp" />
     <ClCompile Include="tinyxml\tinyxml.cpp" />

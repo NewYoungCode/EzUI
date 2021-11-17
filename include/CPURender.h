@@ -35,42 +35,58 @@ void HighQualityMode(Gdiplus::Graphics*graphics);
 void CreateRectangle(GraphicsPath &path, const Rect& rect, float radius);//申明
 void ClipImage(Image * img, const Size&sz, int _radius, Bitmap ** outBitmap);//
 
-enum class TextAlign {
+#define Align_Top  1
+#define Align_Bottom  2
+#define Align_Left  4
+#define Align_Right  8
+#define Align_Mid  16
+#define Align_Center  32
+
+enum class  Align :int
+{
+	Top = Align_Top,
+	Bottom = Align_Bottom,
+	Left = Align_Left,
+	Right = Align_Right,
+	Mid = Align_Mid,
+	Center = Align_Center
+};
+enum class TextAlign :int {
 	// 摘要: 
 	   //     内容在垂直方向上顶部对齐，在水平方向上左边对齐。
-	TopLeft = 1,
+	TopLeft = Align_Top | Align_Left,
 	//
 	// 摘要: 
 	//     内容在垂直方向上顶部对齐，在水平方向上居中对齐。
-	TopCenter = 2,
+	TopCenter = Align_Top | Align_Center,
 	//
 	// 摘要: 
 	//     内容在垂直方向上顶部对齐，在水平方向上右边对齐。
-	TopRight = 4,
+	TopRight = Align_Top | Align_Right,
 	//
 	// 摘要: 
 	//     内容在垂直方向上中间对齐，在水平方向上左边对齐。
-	MiddleLeft = 16,
+	MiddleLeft = Align_Mid| Align_Left,
 	//
 	// 摘要: 
 	//     内容在垂直方向上中间对齐，在水平方向上居中对齐。
-	MiddleCenter = 32,
+	MiddleCenter = Align_Mid| Align_Center,
 	//
 	// 摘要: 
 	//     内容在垂直方向上中间对齐，在水平方向上右边对齐。
-	MiddleRight = 64,
+	MiddleRight = Align_Mid| Align_Right,
 	//
 	// 摘要: 
 	//     内容在垂直方向上底边对齐，在水平方向上左边对齐。
-	BottomLeft = 256,
+	BottomLeft = Align_Bottom | Align_Left,
 	//
 	// 摘要: 
 	//     内容在垂直方向上底边对齐，在水平方向上居中对齐。
-	BottomCenter = 512,
+	BottomCenter = Align_Bottom | Align_Center,
 	//
 	// 摘要: 
 	//     内容在垂直方向上底边对齐，在水平方向上右边对齐。
-	BottomRight = 1024,
+	BottomRight = Align_Bottom | Align_Right
 };
 enum class ImageSizeMode {
 	Normal,//
@@ -107,8 +123,8 @@ public:
 		Argb = argb;
 		valid = true;
 	}
-	_Color& operator=(const _Color&_right_Color) {
-		Argb = _right_Color.GetValue();
+	_Color& operator=(const _Color&Align_Right_Color) {
+		Argb = Align_Right_Color.GetValue();
 		valid = true;
 		return *this;
 	}

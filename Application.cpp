@@ -11,7 +11,7 @@ LRESULT CALLBACK EzUI_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 	//if (message == WM_NCCALCSIZE) {//去除系统菜单
 	//	return FALSE;
 	//}
-	Window *USERDATA = (Window*)UI_GetUserData(hwnd);
+	Window* USERDATA = (Window*)UI_GetUserData(hwnd);
 	if (USERDATA) {
 		return USERDATA->WndProc(message, wParam, lParam);
 	}
@@ -39,6 +39,13 @@ Application::Application() {
 			wc.lpszClassName, MB_ICONERROR);
 		return;
 	}
+
+	WCHAR exeFullPath[512]{ 0 };
+	::GetModuleFileNameW(NULL, exeFullPath, 512);
+	std::wstring exeFullPathw(exeFullPath);
+	size_t pos= exeFullPathw.rfind(L"\\");
+	exeFullPathw = exeFullPathw.substr(0, pos);
+	::SetCurrentDirectoryW(exeFullPathw.c_str());
 
 	CoInitialize(NULL);//初始化com
 	RenderInitialize();

@@ -7,7 +7,7 @@ Lable::~Lable()
 {
 
 }
-void Lable::OnForePaint(PaintEventArgs&args)
+void Lable::OnForePaint(PaintEventArgs& args)
 {
 	__super::OnForePaint(args);
 	if (!_text.empty()) {
@@ -19,12 +19,10 @@ void Lable::OnForePaint(PaintEventArgs&args)
 void Lable::SetTextAlign(TextAlign textAlign)
 {
 	_textAlign = textAlign;
-	Refresh();
 }
 
-void Lable::SetText(const EString&text) {
+void Lable::SetText(const EString& text) {
 	_text = text;
-	Refresh();
 }
 
 void Lable::SetUnderline(bool enable)

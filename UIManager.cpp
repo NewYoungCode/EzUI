@@ -9,6 +9,7 @@
 #include "HList.h"
 #include "RadioButton.h"
 #include "CheckBox.h"
+#include "Edit.h"
 
 #include"tinyxml/tinyxml.h"
 #include"tinyxml/tinystr.h"
@@ -44,70 +45,114 @@ namespace UIManager {
 	}
 	Control* BuildControl(TiXmlElement* node) {
 		Control* ctl = NULL;
+		std::string valueStr(node->ValueTStr().c_str());
+		for (size_t i = 0; i < valueStr.size(); i++)
+		{
+			char& ch = (char&)valueStr.c_str()[i];
+			if (ch >= 65 && ch <= 90) {
+				ch += 32;
+			}
+		}
 		do
 		{
-			if (node->ValueTStr() == "Control") {
+			if (valueStr == "control") {
 				ctl = new Control();
 				break;
 			}
-			if (node->ValueTStr() == "VList") {
+			if (valueStr == "vlist") {
 				ctl = new VList;
 				break;
 			}
-			if (node->ValueTStr() == "HList") {
+			if (valueStr == "hlist") {
 				ctl = new HList;
 				break;
 			}
-			if (node->ValueTStr() == "VLayout") {
+			if (valueStr == "vlayout") {
 				ctl = new VLayout;
 				break;
 			}
-			if (node->ValueTStr() == "HLayout") {
+			if (valueStr == "hlayout") {
 				ctl = new HLayout;
 				break;
 			}
-			if (node->ValueTStr() == "Layout") {
+			if (valueStr == "layout") {
 				ctl = new Layout;
 				break;
 			}
-			if (node->ValueTStr() == "TileLayout") {
+			if (valueStr == "tilelayout") {
 				ctl = new TileLayout;
 				break;
 			}
-			if (node->ValueTStr() == "Container") {
+			if (valueStr == "container") {
 				ctl = new Container;
 				break;
 			}
-			if (node->ValueTStr() == "Spacer") {
+			if (valueStr == "spacer") {
 				ctl = new Spacer();
 				break;
 			}
-			if (node->ValueTStr() == "VSpacer") {
+			if (valueStr == "vspacer") {
 				ctl = new VSpacer(0);
 				break;
 			}
-			if (node->ValueTStr() == "HSpacer") {
+			if (valueStr == "hspacer") {
 				ctl = new HSpacer(0);
 				break;
 			}
-			if (node->ValueTStr() == "Lable") {
+			if (valueStr == "lable") {
 				ctl = new Lable;
 				((Lable*)ctl)->SetText(Attribute(node, "text"));
+
+				EString valign = Attribute(node, "valign");//垂直
+				EString halign = Attribute(node, "halign");//水平
+
+				if (!valign.empty() || !halign.empty()) {
+					int v = 0;
+					int h = 0;
+					if (valign == "top") {
+						v = (int)Align::Top;
+					}if (valign == "mid") {
+						v = (int)Align::Mid;
+					}if (valign == "bottom") {
+						v = (int)Align::Bottom;
+					}
+					if (halign == "left") {
+						h = (int)Align::Left;
+					}if (halign == "center") {
+						h = (int)Align::Center;
+					}if (halign == "right") {
+						h = (int)Align::Right;
+					}
+					if (v && h) {
+						((Lable*)ctl)->SetTextAlign((TextAlign)(v | h));
+					}
+					else if (v && !h) {
+						((Lable*)ctl)->SetTextAlign((TextAlign)(v));
+					}
+					else  if (!v && h) {
+						((Lable*)ctl)->SetTextAlign((TextAlign)(h));
+					}
+				}
 				break;
 			}
-			if (node->ValueTStr() == "Button") {
+			if (valueStr == "button") {
 				ctl = new Button;
 				((Button*)ctl)->SetText(Attribute(node, "text"));
 				break;
 			}
-			if (node->ValueTStr() == "RadioButton") {
+			if (valueStr == "radiobutton") {
 				ctl = new RadioButton;
 				((RadioButton*)ctl)->SetText(Attribute(node, "text"));
 				break;
 			}
-			if (node->ValueTStr() == "CheckBox") {
+			if (valueStr == "checkbox") {
 				ctl = new CheckBox;
 				((CheckBox*)ctl)->SetText(Attribute(node, "text"));
+				break;
+			}
+			if (valueStr == "edit") {
+				ctl = new EditWnd;
+				((EditWnd*)ctl)->SetText(Attribute(node, "text"));
 				break;
 			}
 		} while (false);
@@ -122,7 +167,12 @@ namespace UIManager {
 			ctl->SetFixedHeight(std::stoi(node->Attribute("height")));
 		}
 		if (node->Attribute("visible")) {//控件是否可见
-			ctl->Visible = (node->Attribute("visible") == "true" ? true : false);
+			auto value = node->Attribute("visible");
+			ctl->Visible = (::strcmp(value, "true") == 0 ? true : false);
+		}
+		if (node->Attribute("display")) {//控件是否可见
+			auto value = node->Attribute("display");
+			ctl->Visible = (::strcmp(value, "true") == 0 ? true : false);
 		}
 		if (node->Attribute("dock")) {//控件对其方式
 			EString valueStr = node->Attribute("dock");
@@ -212,7 +262,7 @@ namespace UIManager {
 		delete bufStr;
 	}
 	void AnalysisStyle(const EString& styleStr) {
-		EString style= styleStr;
+		EString style = styleStr;
 		TrimStyle(style);
 		while (style.size() > 0) {
 			size_t pos = style.find("#");
@@ -239,7 +289,6 @@ namespace UIManager {
 			}
 			style = style.substr(pos2 + 1);
 		}
-
 	}
 
 	std::vector<Control*> LoadControl(const EString& filename)

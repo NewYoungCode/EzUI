@@ -48,4 +48,7 @@ public:
 	const EString& GetText();
 	virtual void OnLoad()override;
 	virtual void OnPaint(PaintEventArgs & e)override;
+
+	HFONT SetFont(float fontHeight, const WCHAR* faceName);
+	void SetVisible(bool visible);
 };

@@ -105,6 +105,7 @@ public:
 	Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
 	Control* FindControl(Control* ctl);//使用指针寻找子控件 不包含孙子 曾孙 
 	void SetAnchorStyle(int anchorStyle);//设置控件对齐方式
+	size_t IndexOf();
 	int  GetAnchorStyle();//获取锚定风格
 	Controls* GetControls();//获取当前所有子控件
 	virtual void AddControl(Control* ctl);//添加控件

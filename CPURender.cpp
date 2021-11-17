@@ -2,12 +2,12 @@
 #include <mutex>
 
 ULONG_PTR _gdiplusToken = NULL;
-Gdiplus::Font *_bufFont = NULL;
+Gdiplus::Font* _bufFont = NULL;
 EString _fontFamily;
 float _fontSize = 0;
-SolidBrush *_bufBrush = NULL;
+SolidBrush* _bufBrush = NULL;
 DWORD _brushColor = 0;
-Pen *_buffPen = NULL;
+Pen* _buffPen = NULL;
 DWORD _penColor = 0;
 float _penWidth = 0;
 std::mutex renderMtx;//避免多窗口渲染干扰到全局对象
@@ -15,7 +15,7 @@ std::mutex renderMtx;//避免多窗口渲染干扰到全局对象
 #ifdef CreateFont
 #undef CreateFont
 #endif
-SolidBrush* CreateBrush(const Color&color) {
+SolidBrush* CreateBrush(const Color& color) {
 	std::unique_lock<std::mutex> autoLock(renderMtx);
 	if (_bufBrush && color.GetValue() == _brushColor) {
 		return _bufBrush;
@@ -25,7 +25,7 @@ SolidBrush* CreateBrush(const Color&color) {
 	_brushColor = color.GetValue();
 	return _bufBrush;
 }
-Pen* CreatePen(const Color&color, float width) {
+Pen* CreatePen(const Color& color, float width) {
 	std::unique_lock<std::mutex> autoLock(renderMtx);
 	if (_buffPen && color.GetValue() == _penColor && _penWidth == width) {
 		return _buffPen;
@@ -36,7 +36,7 @@ Pen* CreatePen(const Color&color, float width) {
 	_penWidth = width;
 	return _buffPen;
 }
-Gdiplus::Font *CreateFont(const EString&fontFamily, float fontSize) {
+Gdiplus::Font* CreateFont(const EString& fontFamily, float fontSize) {
 	std::unique_lock<std::mutex> autoLock(renderMtx);
 	if (_bufFont && fontFamily == _fontFamily && _fontSize == fontSize) {
 		return _bufFont;
@@ -49,7 +49,7 @@ Gdiplus::Font *CreateFont(const EString&fontFamily, float fontSize) {
 	return _bufFont;
 }
 
-Image::Image(const EString&filename, int radius) :Gdiplus::Image(filename.utf16().c_str()) {
+Image::Image(const EString& filename, int radius) :Gdiplus::Image(filename.utf16().c_str()) {
 	if (radius > 0) {
 		ClipImage(this, Size{ (int)GetWidth(), (int)GetHeight() }, radius, &BufBitmap);
 	}
@@ -79,14 +79,14 @@ void RenderUnInitialize()
 	Gdiplus::GdiplusShutdown(_gdiplusToken); //关闭gdi+
 }
 
-void HighQualityMode(Gdiplus::Graphics*graphics)
+void HighQualityMode(Gdiplus::Graphics* graphics)
 {
 	graphics->SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);//抗锯齿
 	graphics->SetPixelOffsetMode(Gdiplus::PixelOffsetMode::PixelOffsetModeHalf);//像素偏移模式
 	graphics->SetTextRenderingHint(Gdiplus::TextRenderingHint::TextRenderingHintClearTypeGridFit);//文字
 	graphics->SetInterpolationMode(Gdiplus::InterpolationMode::InterpolationModeHighQuality);//图像
 }
-void CreateRectangle(GraphicsPath &path, const Rect& rect, float radius)
+void CreateRectangle(GraphicsPath& path, const Rect& rect, float radius)
 {
 	if (radius <= 0) {
 		path.AddRectangle(rect);
@@ -108,12 +108,12 @@ void CreateRectangle(GraphicsPath &path, const Rect& rect, float radius)
 	path.AddArc(arcRect, 90, 90);
 	path.CloseFigure();
 }
-void ClipImage(Image * img, const Size&sz, int _radius, Bitmap ** outBitmap)
+void ClipImage(Image* img, const Size& sz, int _radius, Bitmap** outBitmap)
 {
 	int width = img->GetWidth();
 	int height = img->GetHeight();
 
-	Bitmap *bitmap = new Bitmap(width, height);
+	Bitmap* bitmap = new Bitmap(width, height);
 	Gdiplus::Graphics g(bitmap);
 	HighQualityMode(&g);
 	double rate = width * 1.0 / sz.Width;
@@ -122,11 +122,11 @@ void ClipImage(Image * img, const Size&sz, int _radius, Bitmap ** outBitmap)
 	Gdiplus::GraphicsPath path;
 	CreateRectangle(path, Rect{ 0,0,width,height }, radius);
 	g.SetClip(&path);
-	g.DrawImage(img, 0, 0,sz.Width,sz.Height);
+	g.DrawImage(img, 0, 0, sz.Width, sz.Height);
 	*outBitmap = bitmap;
 }
 
-CPURender::CPURender(Bitmap * image)
+CPURender::CPURender(Bitmap* image)
 {
 	base = new  Gdiplus::Graphics(image);
 	HighQualityMode(base);
@@ -149,7 +149,7 @@ CPURender::~CPURender()
 	delete base;
 }
 
-void CPURender::CreateFormat(TextAlign textAlign, Gdiplus::StringFormat &outStrFormat) {
+void CPURender::CreateFormat(TextAlign textAlign, Gdiplus::StringFormat& outStrFormat) {
 	switch (textAlign)
 	{
 	case TextAlign::TopLeft:
@@ -211,7 +211,7 @@ void CPURender::CreateFormat(TextAlign textAlign, Gdiplus::StringFormat &outStrF
 	}
 }
 
-void CPURender::DrawString(const std::wstring & text, const Gdiplus::Font*font, const Color & color, const RectF & rect, TextAlign textAlign, bool underLine)
+void CPURender::DrawString(const std::wstring& text, const Gdiplus::Font* font, const Color& color, const RectF& rect, TextAlign textAlign, bool underLine)
 {
 	Gdiplus::StringFormat sf;
 	CreateFormat(textAlign, sf);
@@ -225,7 +225,7 @@ void CPURender::DrawString(const std::wstring & text, const Gdiplus::Font*font, 
 	}
 }
 
-void CPURender::DrawRectangle(const Color & color, const Rect & _rect, float width, float radius)
+void CPURender::DrawRectangle(const Color& color, const Rect& _rect, float width, float radius)
 {
 	if (color.GetA() == 0) {
 		return;
@@ -244,7 +244,7 @@ void CPURender::DrawRectangle(const Color & color, const Rect & _rect, float wid
 		base->DrawRectangle(pen, rect);
 	}
 }
-void CPURender::FillRectangle(const Color & color, const Rect & _rect, int radius)
+void CPURender::FillRectangle(const Color& color, const Rect& _rect, int radius)
 {
 	if (color.GetA() == 0) {
 		return;
@@ -262,7 +262,7 @@ void CPURender::FillRectangle(const Color & color, const Rect & _rect, int radiu
 		base->FillRectangle(brush, rect);
 	}
 }
-void CPURender::DrawString(const EString & text, const EString & fontFamily, float fontSize, const Color & color, const RectF & _rect, TextAlign textAlign, bool underLine)
+void CPURender::DrawString(const EString& text, const EString& fontFamily, float fontSize, const Color& color, const RectF& _rect, TextAlign textAlign, bool underLine)
 {
 	RectF rect = _rect;
 	rect.X += OffsetX;
@@ -270,7 +270,7 @@ void CPURender::DrawString(const EString & text, const EString & fontFamily, flo
 	this->DrawString(text.utf16(), CreateFont(fontFamily, fontSize), color, rect, textAlign, underLine);
 }
 
-void CPURender::DrawString(const std::wstring & text, const EString & fontFamily, float fontSize, const Color & color, const RectF & _rect, TextAlign textAlign, bool underLine)
+void CPURender::DrawString(const std::wstring& text, const EString& fontFamily, float fontSize, const Color& color, const RectF& _rect, TextAlign textAlign, bool underLine)
 {
 	RectF rect = _rect;
 	rect.X += OffsetX;
@@ -278,16 +278,16 @@ void CPURender::DrawString(const std::wstring & text, const EString & fontFamily
 	this->DrawString(text, CreateFont(fontFamily, fontSize), color, rect, textAlign, underLine);
 }
 
-void CPURender::MeasureString(const EString&_text, const EString&fontf, float fontSize, RectF &outBox) {
+void CPURender::MeasureString(const EString& _text, const EString& fontf, float fontSize, RectF& outBox) {
 	std::wstring _wtext = _text.utf16();
 	base->MeasureString(_wtext.c_str(), _wtext.length(), CreateFont(fontf, fontSize), { 0,0 }, &outBox);
 }
 
-void CPURender::MeasureString(const std::wstring&text, const EString&fontf, float fontSize, RectF &outBox) {
+void CPURender::MeasureString(const std::wstring& text, const EString& fontf, float fontSize, RectF& outBox) {
 	base->MeasureString(text.c_str(), text.length(), CreateFont(fontf, fontSize), { 0,0 }, &outBox);
 }
 
-void CPURender::CreateLayer(const Rect & rect, ClipMode clipMode, int radius)
+void CPURender::CreateLayer(const Rect& rect, ClipMode clipMode, int radius)
 {
 	Layer.push_back(&rect);
 	base->SetClip(rect, (Gdiplus::CombineMode)clipMode);
@@ -303,7 +303,7 @@ void CPURender::PopLayer()
 		}
 	}
 }
-void CPURender::DrawLine(const Color & color, const Point & _A, const Point & _B, float width)
+void CPURender::DrawLine(const Color& color, const Point& _A, const Point& _B, float width)
 {
 	Point A = _A;
 	A.X += OffsetX;
@@ -314,7 +314,7 @@ void CPURender::DrawLine(const Color & color, const Point & _A, const Point & _B
 
 	base->DrawLine(CreatePen(color, width), A, B);
 }
-void CPURender::DrawImage(Image * image, const Rect & _rect, float radius)
+void CPURender::DrawImage(Image* image, const Rect& _rect, float radius)
 {
 	if (!image || image->GetLastStatus() != Gdiplus::Status::Ok) return;
 	Rect rect = _rect;
@@ -335,35 +335,35 @@ void CPURender::DrawImage(Image * image, const Rect & _rect, float radius)
 		return;
 	}
 	if (radius > 0) {
-			Bitmap *bitmap(0);
-			ClipImage(image, { rect.Width,rect.Height }, radius, &bitmap);
-			base->DrawImage(bitmap, rect);
-	//#if 1 //GDI+绘制
-	//#else //Gdi绘制
-	//		HBITMAP outHMap;
-	//		bitmap->GetHBITMAP(Color::Transparent, &outHMap);
-	//		HDC hdc = ::CreateCompatibleDC(DC);
-	//		HGDIOBJ	_hgdiobj = ::SelectObject(hdc, outHMap);
-	//		int srcWidth = bitmap->GetWidth();
-	//		int srcHeight = bitmap->GetHeight();
-	//		int srcX = Layer.X > rect.X ? srcWidth - Layer.Width : 0;
-	//		int srcY = Layer.Y > rect.Y ? srcHeight - Layer.Height : 0;
-	//		//::BitBlt(DC, Layer.X, Layer.Y, Layer.Width, Layer.Height, hdc, srcX, srcY, SRCCOPY);
-	//		BLENDFUNCTION blend;
-	//		blend.BlendOp = AC_SRC_OVER;
-	//		blend.BlendFlags = 0;
-	//		blend.AlphaFormat = AC_SRC_ALPHA;
-	//		blend.SourceConstantAlpha = 255;
-	//		//::AlphaBlend(DC, Layer.X, Layer.Y, Layer.Width, Layer.Height, hdc, srcX, srcY, Layer.Width, Layer.Height, blend);
-	//		::StretchBlt(DC, Layer.X, Layer.Y, Layer.Width, Layer.Height, hdc, srcX, srcY, srcWidth, srcHeight, SRCCOPY);
-	//
-	//		::SelectObject(hdc, _hgdiobj);
-	//		::DeleteDC(hdc);
-	//		::DeleteBitmap(outHMap);
-	//#endif
-			delete bitmap;
-			return;
-		}
+		Bitmap* bitmap(0);
+		ClipImage(image, { rect.Width,rect.Height }, radius, &bitmap);
+		base->DrawImage(bitmap, rect);
+		//#if 1 //GDI+绘制
+		//#else //Gdi绘制
+		//		HBITMAP outHMap;
+		//		bitmap->GetHBITMAP(Color::Transparent, &outHMap);
+		//		HDC hdc = ::CreateCompatibleDC(DC);
+		//		HGDIOBJ	_hgdiobj = ::SelectObject(hdc, outHMap);
+		//		int srcWidth = bitmap->GetWidth();
+		//		int srcHeight = bitmap->GetHeight();
+		//		int srcX = Layer.X > rect.X ? srcWidth - Layer.Width : 0;
+		//		int srcY = Layer.Y > rect.Y ? srcHeight - Layer.Height : 0;
+		//		//::BitBlt(DC, Layer.X, Layer.Y, Layer.Width, Layer.Height, hdc, srcX, srcY, SRCCOPY);
+		//		BLENDFUNCTION blend;
+		//		blend.BlendOp = AC_SRC_OVER;
+		//		blend.BlendFlags = 0;
+		//		blend.AlphaFormat = AC_SRC_ALPHA;
+		//		blend.SourceConstantAlpha = 255;
+		//		//::AlphaBlend(DC, Layer.X, Layer.Y, Layer.Width, Layer.Height, hdc, srcX, srcY, Layer.Width, Layer.Height, blend);
+		//		::StretchBlt(DC, Layer.X, Layer.Y, Layer.Width, Layer.Height, hdc, srcX, srcY, srcWidth, srcHeight, SRCCOPY);
+		//
+		//		::SelectObject(hdc, _hgdiobj);
+		//		::DeleteDC(hdc);
+		//		::DeleteBitmap(outHMap);
+		//#endif
+		delete bitmap;
+		return;
+	}
 	//int srcWidth = image->GetWidth();
 	//int srcHeight = image->GetHeight();
 	//if (srcWidth == rect.Width && srcHeight == rect.Height) {
@@ -407,7 +407,7 @@ int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
 	free(pImageCodecInfo);
 	return -1;  // Failure
 }
-BOOL SaveHDCToFile(HDC hDC, LPRECT lpRect, const WCHAR* format, const WCHAR*filename)
+BOOL SaveHDCToFile(HDC hDC, LPRECT lpRect, const WCHAR* format, const WCHAR* filename)
 {
 	BOOL bRet = FALSE;
 	int nWidth = lpRect->right - lpRect->left;
@@ -423,7 +423,7 @@ BOOL SaveHDCToFile(HDC hDC, LPRECT lpRect, const WCHAR* format, const WCHAR*file
 		//L"image/bmp" L"image/jpeg"  L"image/gif" L"image/tiff" L"image/png"
 		CLSID pngClsid;
 		GetEncoderClsid(format, &pngClsid);//此处以BMP为例，其它格式选择对应的类型，如JPG用L"image/jpeg" 
-		Gdiplus::Bitmap *pbmSrc = Gdiplus::Bitmap::FromHBITMAP(hBmp, NULL);
+		Gdiplus::Bitmap* pbmSrc = Gdiplus::Bitmap::FromHBITMAP(hBmp, NULL);
 		if (pbmSrc->Save(filename, &pngClsid) == Gdiplus::Status::Ok)
 		{
 			bRet = TRUE;
@@ -437,7 +437,7 @@ BOOL SaveHDCToFile(HDC hDC, LPRECT lpRect, const WCHAR* format, const WCHAR*file
 	return bRet;
 }
 
-void CPURender::SaveImage(const WCHAR * format, const WCHAR * fileName, const Size&size)
+void CPURender::SaveImage(const WCHAR* format, const WCHAR* fileName, const Size& size)
 {
 	if (DC) {
 		::DeleteFileW(fileName);

@@ -31,21 +31,21 @@ UI_BINDFUNC(HImage, BackgroundImage);
 Event(this , ##__VA_ARGS__); \
 }
 
-void Control::OnChildPaint(Controls &controls, PaintEventArgs &args)
+void Control::OnChildPaint(Controls& controls, PaintEventArgs& args)
 {
 	//绘制子控件
-	for (auto &it : controls) {
+	for (auto& it : controls) {
 		it->OnEvent(Event::OnPaint, &args);
 	}
 	//子控件绘制完毕
 }
-void Control::OnPaint(PaintEventArgs&args)
+void Control::OnPaint(PaintEventArgs& args)
 {
 	OnBackgroundPaint(args);//先绘制背景
 	OnForePaint(args);//再绘制前景
 	OnChildPaint(this->_controls, args);//绘制子控件
 }
-void Control::OnBackgroundPaint(PaintEventArgs & e)
+void Control::OnBackgroundPaint(PaintEventArgs& e)
 {
 	Color backgroundColor = GetBackgroundColor();
 	HImage backgroundImage = GetBackgroundImage();
@@ -58,7 +58,7 @@ void Control::OnBackgroundPaint(PaintEventArgs & e)
 	}
 }
 
-void Control::OnForePaint(PaintEventArgs&e) {
+void Control::OnForePaint(PaintEventArgs& e) {
 	HImage foreImage = GetForeImage();
 	UI_Int radius = GetRadius();
 	if (foreImage.valid) {
@@ -66,7 +66,7 @@ void Control::OnForePaint(PaintEventArgs&e) {
 	}
 }
 
-void Control::OnBorderPaint(PaintEventArgs & e)
+void Control::OnBorderPaint(PaintEventArgs& e)
 {
 	Color borderColor = GetBorderColor();
 	if (!borderColor.valid) return;//边框无效颜色不绘制
@@ -124,7 +124,7 @@ void Control::OnLoad() {}
 
 EString Control::GetFontFamily(ControlState _state)
 {
-	ControlStyle &style = GetStyle(_state);
+	ControlStyle& style = GetStyle(_state);
 	if (_state != ControlState::None && !style.FontFamily.empty()) { //先看看对应状态的是否有 有效字段
 		return style.FontFamily;
 	}
@@ -132,7 +132,7 @@ EString Control::GetFontFamily(ControlState _state)
 		return Style.FontFamily;
 	}
 	//如果还是没拿到就从父控件里面拿去相应的字段
-	Control *pControl = this->Parent;
+	Control* pControl = this->Parent;
 	EString _FontFamily;
 	while (_FontFamily.empty() && pControl)
 	{
@@ -146,15 +146,15 @@ EString Control::GetFontFamily(ControlState _state)
 }
 UI_Float  Control::GetFontSize(ControlState _state)
 {
-	ControlStyle &style = GetStyle(_state);
-	if (_state != ControlState::None &&style.FontSize.valid) { //先看看对应状态的是否有 有效字段
+	ControlStyle& style = GetStyle(_state);
+	if (_state != ControlState::None && style.FontSize.valid) { //先看看对应状态的是否有 有效字段
 		return style.FontSize;
 	}
 	else if (Style.FontSize.valid) { //如果对应状态没有 有效字段 则从默认样式里面拿
 		return Style.FontSize;
 	}
 	//如果还是没拿到就从父控件里面拿去相应的字段
-	Control *pControl = this->Parent;
+	Control* pControl = this->Parent;
 	UI_Float _FontSize;
 	while (!_FontSize.valid && pControl)
 	{
@@ -168,15 +168,15 @@ UI_Float  Control::GetFontSize(ControlState _state)
 }
 Color  Control::GetForeColor(ControlState _state)
 {
-	ControlStyle &style = GetStyle(_state);
-	if (_state != ControlState::None &&style.ForeColor.valid) { //先看看对应状态的是否有 有效字段
+	ControlStyle& style = GetStyle(_state);
+	if (_state != ControlState::None && style.ForeColor.valid) { //先看看对应状态的是否有 有效字段
 		return style.ForeColor;
 	}
 	else if (Style.ForeColor.valid) { //如果对应状态没有 有效字段 则从默认样式里面拿
 		return Style.ForeColor;
 	}
 	//如果还是没拿到就从父控件里面拿去相应的字段
-	Control *pControl = this->Parent;
+	Control* pControl = this->Parent;
 	Color _ForeColor;
 	while (!_ForeColor.valid && pControl)
 	{
@@ -209,13 +209,13 @@ const int& Control::Height()
 void Control::ComputeClipRect()
 {
 	if (Parent) {
-		Rect &ClipRectRef = *(Rect*)(&this->ClipRect);//引用父控件的裁剪区域
+		Rect& ClipRectRef = *(Rect*)(&this->ClipRect);//引用父控件的裁剪区域
 		Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->ClipRect);//自身和父控件对吧裁剪区域
 	}
 }
 
 //专门处理鼠标消息的
-void Control::OnMouseEvent(MouseEventArgs &args) {
+void Control::OnMouseEvent(MouseEventArgs& args) {
 	switch (args.EventType)
 	{
 	case Event::OnMouseWheel: {
@@ -284,7 +284,7 @@ void Control::OnEvent(Event eventType, void* param) {
 	{
 	case Event::OnPaint: {
 #if 1
-		PaintEventArgs &args = *(PaintEventArgs*)param;
+		PaintEventArgs& args = *(PaintEventArgs*)param;
 		this->_hWnd = args.HWnd;
 		if (!_load) {
 			OnLoad();
@@ -293,8 +293,8 @@ void Control::OnEvent(Event eventType, void* param) {
 		if (!Visible) { return; }//如果控件设置为不可见直接不绘制
 		auto clientRect = this->GetClientRect();//获取基于父窗口的最表
 		if (clientRect.IsEmptyArea()) { return; }
-		auto &invalidRect = args.InvalidRectangle;
-		auto &pt = args.Painter;
+		auto& invalidRect = args.InvalidRectangle;
+		auto& pt = args.Painter;
 		Rect _ClipRect;
 		if (!Rect::Intersect(_ClipRect, this->ClipRect, invalidRect)) {//和重绘区域进行裁剪
 			return;
@@ -327,7 +327,7 @@ void Control::OnEvent(Event eventType, void* param) {
 		this->OnPaint(args);//绘制基本上下文
 		//创建分层 避免 滚动条和边框超出本控件
 		//绘制滚动条
-		::ScrollBar *scrollbar = NULL;
+		::ScrollBar* scrollbar = NULL;
 		if (scrollbar = this->ScrollBar) {
 			Rect barRect = scrollbar->GetClientRect();
 			pt.OffsetX = barRect.X; //设置偏移
@@ -356,7 +356,7 @@ void Control::OnEvent(Event eventType, void* param) {
 		break;
 	}
 }
-void Control::SetRect(const Rect & rect, bool rePaint)
+void Control::SetRect(const Rect& rect, bool rePaint)
 {
 	_rect = rect;
 	Size outSize{ _rect.Width,_rect.Height };
@@ -391,7 +391,7 @@ const int& Control::GetFixedWidth()
 {
 	return _fixedWidth;
 }
-const int &Control::GetFixedHeight()
+const int& Control::GetFixedHeight()
 {
 	return _fixedHeight;
 }
@@ -408,7 +408,7 @@ void Control::DestroySpacers() {
 	for (auto it = _spacer.begin(); it != _spacer.end(); it++)
 	{
 		this->RemoveControl(*it);
-		delete *it;
+		delete* it;
 	}
 	_spacer.clear();
 }
@@ -419,7 +419,7 @@ void Control::SetX(int X) {
 void Control::SetY(int Y) {
 	Move({ X(),Y });
 }
-void Control::Move(const Point&pt) {
+void Control::Move(const Point& pt) {
 	SetRect(Rect(pt.X, pt.Y, Width(), Height()));
 }
 
@@ -429,7 +429,7 @@ void Control::SetWidth(int width) {
 void Control::SetHeight(int height) {
 	ReSize({ Width(),height });
 }
-void Control::ReSize(const Size & size)
+void Control::ReSize(const Size& size)
 {
 	SetRect({ X(),Y(),size.Width,size.Height });
 }
@@ -440,7 +440,7 @@ void Control::Refresh() {
 	}
 }
 Rect Control::GetClientRect() {
-	Control *pCtrl = this;
+	Control* pCtrl = this;
 	int x = _rect.X;
 	int y = _rect.Y;
 	while ((pCtrl = pCtrl->Parent))
@@ -468,6 +468,23 @@ void Control::SetAnchorStyle(int anchorStyle)
 	_isAnchorStyle = true;
 }
 
+size_t Control::IndexOf()
+{
+	Controls* pControls = Parent->GetControls();
+	size_t pos(0);
+	for (auto i = pControls->begin(); i != pControls->end(); i++)
+	{
+		if (dynamic_cast<Spacer*>(*i)) {
+			continue;
+		}
+		if (*i == this) {
+			return pos;
+		}
+		pos++;
+	}
+	return size_t(-1);
+}
+
 void Control::AddControl(Control* ctl) {
 	_controls.push_back(ctl);
 	ctl->_hWnd = this->_hWnd;
@@ -481,7 +498,7 @@ void Control::AddControl(Control* ctl) {
 	}
 }
 
-Control* Control::FindControl(Control * ctl) {
+Control* Control::FindControl(Control* ctl) {
 	ControlIterator it1 = ::std::find(_controls.begin(), _controls.end(), ctl);
 	if (it1 != _controls.end()) {
 		return ctl;
@@ -489,7 +506,7 @@ Control* Control::FindControl(Control * ctl) {
 	return NULL;
 }
 
-ControlIterator Control::RemoveControl(Control * ctl)
+ControlIterator Control::RemoveControl(Control* ctl)
 {
 	ControlIterator nextIt;
 	ControlIterator it1 = ::std::find(_controls.begin(), _controls.end(), ctl);
@@ -503,16 +520,16 @@ ControlIterator Control::RemoveControl(Control * ctl)
 		if (it2 != VisibleControls.end()) {
 			VisibleControls.erase(it2);
 		}
-		
+
 	}
 	return nextIt;
 }
 
 
 
-Control * Control::FindControl(const EString & objectName)
+Control* Control::FindControl(const EString& objectName)
 {
-	for (auto &it : *(this->GetControls()))
+	for (auto& it : *(this->GetControls()))
 	{
 		if (it->Name == objectName) {
 			return it;
@@ -536,7 +553,7 @@ void Control::Clear(bool freeControls)
 			::SendMessage(_hWnd, WM_CONTROL_DELETE, (WPARAM)*i, NULL);
 		}
 		if (freeControls && (*i)->GetType() != ControlType::ControlSpacer) {//弹簧不能删除 弹簧必须使用DestroySpacers()函数删除
-			delete *i;
+			delete* i;
 		}
 	}
 	VisibleControls.clear();//清空可见控件
@@ -544,7 +561,7 @@ void Control::Clear(bool freeControls)
 	DestroySpacers();//清空弹簧并删除弹簧
 }
 
-const ControlType & Control::GetType()
+const ControlType& Control::GetType()
 {
 	return _Type;
 }
@@ -552,31 +569,31 @@ const ControlType & Control::GetType()
 void Control::OnChar(WPARAM wParam, LPARAM lParam) {}
 void Control::OnKeyDown(WPARAM wParam) {}
 
-void Control::OnMouseMove(const Point & point)
+void Control::OnMouseMove(const Point& point)
 {
 	UI_TRIGGER(MouseMove, point);
 }
-void Control::OnMouseWheel(short zDelta, const Point & point)
+void Control::OnMouseWheel(short zDelta, const Point& point)
 {
 	UI_TRIGGER(MouseWheel, zDelta, point);
 }
-void Control::OnMouseClick(MouseButton mbtn, const Point & point)
+void Control::OnMouseClick(MouseButton mbtn, const Point& point)
 {
 	UI_TRIGGER(MouseClick, mbtn, point);
 }
-void Control::OnMouseDoubleClick(MouseButton mbtn, const Point & point)
+void Control::OnMouseDoubleClick(MouseButton mbtn, const Point& point)
 {
 	UI_TRIGGER(MouseDoubleClick, mbtn, point);
 }
-void Control::OnMouseEnter(const Point & point)
+void Control::OnMouseEnter(const Point& point)
 {
 	if (HoverStyle.IsValid()) {
 		this->State = ControlState::Hover;
 		Refresh();
 	}
 	else {
-		Control *pControl = this->Parent;
-		ControlStyle *_style = NULL;
+		Control* pControl = this->Parent;
+		ControlStyle* _style = NULL;
 		while (pControl)
 		{
 			_style = &pControl->HoverStyle;
@@ -594,15 +611,15 @@ void Control::OnMouseEnter(const Point & point)
 	UI_TRIGGER(MouseEnter, point);
 }
 
-void Control::OnMouseDown(MouseButton mbtn, const Point & point)
+void Control::OnMouseDown(MouseButton mbtn, const Point& point)
 {
 	this->State = ControlState::Active;
 	if (ActiveStyle.IsValid()) {
 		Refresh();
 	}
 	else {
-		Control *pControl = this->Parent;
-		ControlStyle *_style = NULL;
+		Control* pControl = this->Parent;
+		ControlStyle* _style = NULL;
 		while (pControl)
 		{
 			_style = &pControl->ActiveStyle;
@@ -615,9 +632,9 @@ void Control::OnMouseDown(MouseButton mbtn, const Point & point)
 	}
 	UI_TRIGGER(MouseDown, mbtn, point);
 }
-void Control::OnMouseUp(MouseButton mbtn, const Point & point)
+void Control::OnMouseUp(MouseButton mbtn, const Point& point)
 {
-	if (this->State != ControlState::None&& Rect(0, 0, _rect.Width, _rect.Height).Contains(point)) {
+	if (this->State != ControlState::None && Rect(0, 0, _rect.Width, _rect.Height).Contains(point)) {
 		this->State = ControlState::Hover;
 		Refresh();
 	}
@@ -642,13 +659,13 @@ void Control::OnMouseLeave()
 	}
 	UI_TRIGGER(MouseLeave);
 }
-void Control::OnSize(const Size & size)
+void Control::OnSize(const Size& size)
 {
-	for (auto &it : _controls) {
+	for (auto& it : _controls) {
 		it->OnLayout(size);//让子控件触发布局特性 进行调整rect
 	}
 }
-void Control::OnLayout(const Size&pRect, bool instantly) {
+void Control::OnLayout(const Size& pRect, bool instantly) {
 	while (Dock != DockStyle::None)
 	{
 		if (Dock == DockStyle::Fill) {

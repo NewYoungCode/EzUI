@@ -1,7 +1,7 @@
 #pragma once
-#include "Control.h"
+#include "Container.h"
 class UI_EXPORT  Layout :
-	public Control
+	public Container
 {
 public:
 	Layout();

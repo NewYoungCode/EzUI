@@ -200,15 +200,12 @@ LRESULT EditWnd::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
 }
-void EditWnd::SetRect(const Rect & rect, bool rePaint)
+void EditWnd::SetRect(const Rect& rect, bool rePaint)
 {
 	__super::SetRect(rect, rePaint);
-	if (_editWnd) {
-		auto rect = GetClientRect();
-		::MoveWindow(_editWnd, rect.X, rect.Y, rect.Width, rect.Height, TRUE);
-	}
+
 }
-void EditWnd::SetText(const EString & text)
+void EditWnd::SetText(const EString& text)
 {
 	_text = text;
 	if (_editWnd) {
@@ -228,25 +225,53 @@ void EditWnd::OnLoad() {
 		_editWnd = CreateWindowW(L"Edit", _text.utf16().c_str(), WS_VISIBLE | WS_CHILD, rect.X, rect.Y, rect.Width, rect.Height,
 			_hWnd, NULL, GetModuleHandle(0), NULL);//因为UI框架的edit并不成熟(懒得写了),所以暂时使用WIN32的输入框代替
 		UI_SetUserData(_editWnd, this);
-
-		LOGFONTW LogFont;
-		memset(&LogFont, 0, sizeof(LOGFONT));
-		lstrcpyW(LogFont.lfFaceName, L"Microsoft YaHei");
-		LogFont.lfWeight = FW_NORMAL;//FW_NORMAL;
-		LogFont.lfHeight = 20; // 字体大小
-		LogFont.lfCharSet = 134;
-		LogFont.lfOutPrecision = 3;
-		LogFont.lfClipPrecision = 2;
-		LogFont.lfOrientation = 45;
-		LogFont.lfQuality = 1;
-		LogFont.lfPitchAndFamily = 2;
-		// 创建字体
-		_font = CreateFontIndirectW(&LogFont);
-		// 取得控件句柄
-		SendMessageW(_editWnd, WM_SETFONT, (WPARAM)_font, TRUE);
 	}
 }
-void EditWnd::OnPaint(PaintEventArgs&e) {
+
+HFONT EditWnd::SetFont(float fontHeight, const WCHAR* faceName) {
+	if (_font) {
+		DeleteFont(_font);
+	}
+	LOGFONTW LogFont;
+	memset(&LogFont, 0, sizeof(LOGFONT));
+	lstrcpyW(LogFont.lfFaceName, faceName);
+	LogFont.lfWeight = FW_NORMAL;//FW_NORMAL;
+	LogFont.lfHeight = fontHeight; // 字体大小
+	LogFont.lfCharSet = 134;
+	LogFont.lfOutPrecision = 3;
+	LogFont.lfClipPrecision = 2;
+	LogFont.lfOrientation = 45;
+	LogFont.lfQuality = 1;
+	LogFont.lfPitchAndFamily = 2;
+	// 创建字体
+	_font = CreateFontIndirectW(&LogFont);
+	// 取得控件句柄
+	if (_editWnd) {
+		SendMessageW(_editWnd, WM_SETFONT, (WPARAM)_font, TRUE);
+	}
+
+	return _font;
+}
+
+void EditWnd::SetVisible(bool visible) {
+	if (_editWnd) {
+		::ShowWindow(_editWnd, visible? SW_SHOW: SW_HIDE);
+	}
+}
+
+void EditWnd::OnPaint(PaintEventArgs& e) {
 	__super::OnPaint(e);
+
+	if (_editWnd) {
+		auto font_size = GetFontSize(this->State);
+		auto font_faceName = GetFontFamily(this->State);
+		SetFont(font_size, font_faceName.utf16().c_str());
+		auto rect = GetClientRect();
+		rect.Y += (rect.Height - font_size) / 2;
+		rect.X += 1;
+		rect.Width -= 2;
+		::MoveWindow(_editWnd, rect.X, rect.Y, rect.Width, font_size, TRUE);
+	}
+
 }
 

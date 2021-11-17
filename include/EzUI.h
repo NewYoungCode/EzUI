@@ -25,6 +25,8 @@
 #include <sys/timeb.h>
 #include <WinUser.h>
 #include <objbase.h>
+#include <shlwapi.h>
+#pragma comment(lib,"Shlwapi.lib")
 #define UI namespace EzUI
 
 #ifdef _WINDLL
