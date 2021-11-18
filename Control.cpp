@@ -550,6 +550,7 @@ void Control::Clear(bool freeControls)
 	for (auto i = _controls.begin(); i != _controls.end(); i++)
 	{
 		if (::IsWindow(_hWnd)) { //移除控件之前先通知父窗口
+			Debug::Log("WM_CONTROL_DELETE %p", *i);
 			::SendMessage(_hWnd, WM_CONTROL_DELETE, (WPARAM)*i, NULL);
 		}
 		if (freeControls && (*i)->GetType() != ControlType::ControlSpacer) {//弹簧不能删除 弹簧必须使用DestroySpacers()函数删除

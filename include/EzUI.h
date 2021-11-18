@@ -288,13 +288,13 @@ namespace MsgBox {
 namespace Debug {
 	template<typename ...T>
 	inline void Log(const EString&formatStr, T ...args) {
-		//#ifdef DEBUGLOG
-		//		WCHAR buf[256]{ 0 };
-		//		auto count = swprintf_s((buf), 255, formatStr.utf16().c_str(), std::forward<T>(args)...);
-		//		buf[count] = '\n';
-		//		buf[count + 1] = NULL;
-		//		OutputDebugStringW(buf);
-		//#endif
+		#ifdef DEBUGLOG
+				WCHAR buf[256]{ 0 };
+				auto count = swprintf_s((buf), 255, formatStr.utf16().c_str(), std::forward<T>(args)...);
+				buf[count] = '\n';
+				buf[count + 1] = NULL;
+				OutputDebugStringW(buf);
+		#endif
 	}
 };
 

@@ -7,9 +7,12 @@ protected:
 	TextAlign _textAlign = TextAlign::MiddleCenter;
 	EString _text;
 	bool _underline = false;
+	RectF fontBox;
 protected:
 	virtual void OnForePaint( PaintEventArgs&args) override;
 public:
+	bool AutoWidth = false;
+	Size GetFontWidth();
 	Lable();
 	virtual ~Lable();
 	void SetTextAlign(TextAlign textAlign);

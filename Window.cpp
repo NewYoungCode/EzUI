@@ -99,7 +99,7 @@ void Window::ShowModal(bool wait)
 	ASSERT(::IsWindow(p_hwnd));
 	::EnableWindow(p_hwnd, FALSE);
 	this->Show();
-	::SetFocus(_hWnd);
+	::SetForegroundWindow(_hWnd);
 	if (wait) {//
 		MSG msg;
 		while (GetMessageW(&msg, 0, 0, 0))
@@ -115,7 +115,7 @@ void Window::ShowModal(bool wait)
 		}
 	}
 	::EnableWindow(p_hwnd, TRUE);
-	::SetFocus(p_hwnd);
+	::SetForegroundWindow(p_hwnd);
 }
 
 void Window::Hide() {
@@ -134,9 +134,13 @@ void Window::SetVisible(bool flag) {
 	}
 }
 void Window::EmptyControl(Controls* controls) {
+	//_focusControl = NULL;
+	//_inputControl = NULL;
+	//return;
 	for (auto it : *controls) {
 		if (_focusControl == it) {
 			_focusControl = NULL;
+			Debug::Log("EmptyControl %p", it);
 		}
 		if (_inputControl == it) {
 			_inputControl = NULL;
@@ -212,16 +216,16 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_PAINT:
 	{
+		if (!_load) {
+			OnLoad();
+			_load = true;
+		}
 		PAINTSTRUCT pst;
 		BeginPaint(_hWnd, &pst);
 		RECT& r = pst.rcPaint;
 		Rect paintRect{ r.left,r.top,r.right - r.left, r.bottom - r.top };
 		OnPaint(pst.hdc, paintRect);
 		EndPaint(_hWnd, &pst);
-		if (!_load) {
-			OnLoad();
-			_load = true;
-		}
 		break;
 	}
 	case WM_CONTROL_DELETE:
@@ -589,7 +593,7 @@ void Window::OnSize(const Size& sz)
 void Window::OnRect(const Rect& rect)
 {
 }
-void Window::OnClose(bool & Cancel)
+void Window::OnClose(bool& Cancel)
 {
 }
 void Window::OnDestroy()
