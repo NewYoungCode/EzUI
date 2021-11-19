@@ -121,7 +121,22 @@ ControlStyle& Control::GetStyle(ControlState _state) {
 }
 
 void Control::OnLoad() {}
-
+void Control::SetAttribute(const EString& attrName, const EString& attrValue) {
+	AttributeIterator itor = _attrs.find(attrName);
+	if (itor != _attrs.end()) {
+		(*itor).second = attrValue;
+	}
+	else {
+		_attrs.insert(std::pair<EString, EString>(attrName, attrValue));
+	}
+}
+const EString Control::GetAttribute(const EString& attrName) {
+	AttributeIterator itor = _attrs.find(attrName);
+	if (itor != _attrs.end()) {
+		return (*itor).second;
+	}
+	return "";
+}
 EString Control::GetFontFamily(ControlState _state)
 {
 	ControlStyle& style = GetStyle(_state);
@@ -538,6 +553,22 @@ Control* Control::FindControl(const EString& objectName)
 		if (ctl) return ctl;
 	}
 	return NULL;
+}
+
+Controls Control::FindControl(const EString& attr, const EString& attrValue)
+{
+	Controls ctls;
+	for (auto& it : *(this->GetControls()))
+	{
+		if (it->GetAttribute(attr) == attrValue) {
+			ctls.push_back(it);
+		}
+		Controls _ctls = it->FindControl(attr, attrValue);
+		for (auto& it2 : _ctls) {
+			ctls.push_back(it2);
+		}
+	}
+	return ctls;
 }
 
 

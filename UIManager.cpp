@@ -160,6 +160,14 @@ namespace UIManager {
 		ctl->Name = Attribute(node, "name");
 		ctl->SetRect(StringToRect(Attribute(node, "rect")));
 
+		TiXmlAttribute* attr = node->FirstAttribute();
+		do
+		{
+			if (!attr)break;
+			ctl->SetAttribute(attr->Name(), attr->Value());
+		} while ((attr = attr->Next()));
+
+		
 		if (node->Attribute("width")) {//如果单独设置了宽高那就是绝对宽高了
 			ctl->SetFixedWidth(std::stoi(node->Attribute("width")));
 		}

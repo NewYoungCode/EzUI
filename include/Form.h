@@ -48,7 +48,7 @@ private:
 public:
 	MenuWindow(int cx, int cy, HWND owner = NULL);
 	LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
+	virtual void Show(int cmdShow = SW_SHOW);
 };
-
 using Form = BorderlessWindow;
 

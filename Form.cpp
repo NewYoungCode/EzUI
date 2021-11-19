@@ -13,7 +13,7 @@ void BorderlessWindow::SetShadow(int width)
 	_shadowWidth = width;
 	_boxShadow->Update(_shadowWidth);
 }
-void BorderlessWindow::OnRect(const Rect&rect) {
+void BorderlessWindow::OnRect(const Rect& rect) {
 	_boxShadow->Update(_shadowWidth);
 	__super::OnRect(rect);
 }
@@ -34,6 +34,9 @@ LRESULT  BorderlessWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg)
 	{
 	case WM_NCHITTEST: {
+		if (!Zoom) {
+			break;
+		}
 		if (::IsZoomed(_hWnd)) {
 			break;//
 		}
@@ -76,7 +79,7 @@ LayeredWindow::LayeredWindow(int cx, int cy, HWND owner) :Window(cx, cy, owner, 
 		_boxShadow->Update(_shadowWidth);
 	}
 }
-void LayeredWindow::OnRect(const Rect&rect) {
+void LayeredWindow::OnRect(const Rect& rect) {
 	if (_boxShadow) {
 		_boxShadow->Update(_shadowWidth);
 	}
@@ -94,7 +97,7 @@ LayeredWindow::~LayeredWindow() {
 	}
 }
 
-void LayeredWindow::OnSize(const Size&sz) {
+void LayeredWindow::OnSize(const Size& sz) {
 	StopWatch stopWatch;//
 	_layout->SetRect(this->GetClientRect(), false);
 	*((Rect*)(&_layout->ClipRect)) = this->GetClientRect();//
@@ -107,8 +110,8 @@ void LayeredWindow::OnSize(const Size&sz) {
 	sprintf_s(buf, "GDIPaint %d %d   %d ms \n", sz.Width, sz.Height, (int)stopWatch.ElapsedMilliseconds());
 	OutputDebugStringA(buf);
 }
-void LayeredWindow::OnPaint(HDC _hdc, const Rect & rePaintRect) {
-	Rect &clientRect = GetClientRect();//
+void LayeredWindow::OnPaint(HDC _hdc, const Rect& rePaintRect) {
+	Rect& clientRect = GetClientRect();//
 	Painter pt(_hdc);//
 	PaintEventArgs args(pt);
 	args.InvalidRectangle = rePaintRect;//
@@ -124,7 +127,7 @@ LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
 	}
 	if (uMsg == WM_CONTROL_REFRESH && _winBitmap) {
-		Control *ctl = (Control*)wParam;
+		Control* ctl = (Control*)wParam;
 		OnPaint(_winBitmap->GetHDC(), ctl->GetClientRect());//
 		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
 	}
@@ -168,16 +171,41 @@ void LayeredWindow::PushDC(HDC hdc) {
 
 MenuWindow::MenuWindow(int cx, int cy, HWND owner) :BorderlessWindow(cx, cy, owner)
 {
-
 }
-
 LRESULT MenuWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	if (uMsg == WM_NCHITTEST) {
+		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
+	}
+
 	if (uMsg == WM_KILLFOCUS && !frist) {
 		this->Close();
 	}
-	else if (uMsg == WM_KILLFOCUS) {
+	else if (uMsg == WM_KILLFOCUS) {//因为第一次启动背景窗口会让主窗口失去焦点 所以不能让窗口关闭
 		frist = false;
 	}
 	return __super::WndProc(uMsg, wParam, lParam);
+}
+void MenuWindow::Show(int cmdShow)
+{
+	HWND Owner = ::GetWindowOwner(_hWnd);
+	RECT OwnerRect;
+	::GetWindowRect(Owner, &OwnerRect);
+	auto rect = GetRect();
+
+	POINT mousePos;
+	GetCursorPos(&mousePos);
+	POINT clientPos = mousePos;
+	ScreenToClient(Owner, &clientPos);
+	Debug::Log("%d %d", clientPos.x, clientPos.y);
+
+	int height = OwnerRect.bottom - OwnerRect.top;
+	if (rect.Height>height  ) {
+		::MoveWindow(_hWnd, mousePos.x, mousePos.y, rect.Width, rect.Height, FALSE);
+	}
+	else {
+		::MoveWindow(_hWnd, mousePos.x, mousePos.y- rect.Height, rect.Width, rect.Height, FALSE);
+	}
+	__super::Show(cmdShow);
+	::SetForegroundWindow(_hWnd);
 }

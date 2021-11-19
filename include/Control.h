@@ -7,6 +7,9 @@ class ScrollBar;
 class Spacer;
 typedef std::list<Control*> Controls;
 typedef std::list<Control*>::iterator ControlIterator;
+typedef std::map<EString, EString> Attributes;
+typedef std::map<EString, EString>::iterator AttributeIterator;
+
 #define UIFunc std::function
 #define EventMouseMove  UIFunc<void(Control*,const Point&)>  //移动事件
 #define EventMouseEnter  UIFunc<void( Control*, const Point&)>//移入事件
@@ -23,6 +26,7 @@ private:
 	Control(const Control&);
 	Control& operator=(const Control&);
 protected:
+	Attributes _attrs;
 	int _anchorStyle = (AnchorStyle::Top | AnchorStyle::Left);
 	Rect _rect;
 	Controls _controls;
@@ -98,12 +102,17 @@ public:
 	UI_Int GetBorderBottom();
 	Color GetBorderColor();
 	Color GetBackgroundColor();
+	//设置属性
+	virtual void SetAttribute(const EString& attrName, const EString& attrValue);
+	//获取属性
+	virtual const EString GetAttribute(const EString& attrName);
 	//具有继承性样式
 	EString GetFontFamily(ControlState _state = ControlState::None);//获取默认控件状态下字体Family
 	UI_Float GetFontSize(ControlState _state = ControlState::None);//获取默认控件状态下字体大小样式
 	Color GetForeColor(ControlState _state = ControlState::None);//获取默认控件状态下前景色
 	Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
 	Control* FindControl(Control* ctl);//使用指针寻找子控件 不包含孙子 曾孙 
+	Controls FindControl(const EString& attr, const EString& attrValue);//使用属性查找
 	void SetAnchorStyle(int anchorStyle);//设置控件对齐方式
 	size_t IndexOf();
 	int  GetAnchorStyle();//获取锚定风格
@@ -145,7 +154,7 @@ public:
 		pt.DrawString("auto", GetFontFamily(this->State), 8, GetForeColor(this->State), RectF(0, 0, (float)_rect.Width, (float)_rect.Height), TextAlign::MiddleCenter);
 	}
 #endif
-};
+	};
 
 //具有绝对高度的 的弹簧
 class VSpacer :public Spacer {

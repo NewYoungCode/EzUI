@@ -13,7 +13,6 @@ private:
 	Size _lastSize;//上一次客户端大小的信息
 	Point _lastPoint;//上一次移动的坐标
 protected:
-	Layout* _layout = NULL;//布局
 	Rect _rect;//基于桌面的坐标
 	Rect _rectClient;//客户绘图区域
 	Control* _focusControl = NULL;//具有焦点的控件
@@ -44,6 +43,8 @@ protected:
 public:
 	virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 public:
+	Layout* _layout = NULL;//布局
+	bool Zoom = false;
 	Window(int width, int height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
 	virtual ~Window();
 	Control* FindControl(const EString& objectName);
@@ -55,7 +56,7 @@ public:
 	void SetIcon(HICON icon);
 	void SetLayout(Layout* layout);
 	void SetText(const EString& text);
-	void Show(int cmdShow = SW_SHOW);
+	virtual void Show(int cmdShow = SW_SHOW);
 	void ShowModal(bool wait = true);//参数 wait 是否阻塞
 	void Close();
 	virtual void Hide();
