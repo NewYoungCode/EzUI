@@ -15,7 +15,7 @@ public:
 	void RefreshLayout()override;
 	virtual	void AddControl(Control*ctl) override;
 	virtual		ControlIterator RemoveControl(Control * ctl)override;
-	virtual		void Clear();
+	virtual		void Clear(bool freeChilds=false);
 	virtual	void OnSize(const Size & size) override;
 	void OnChildPaint(Controls & controls, PaintEventArgs & args)override;
 };

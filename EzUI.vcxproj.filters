@@ -66,7 +66,7 @@
     <ClInclude Include="include\IControl.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\Lable.h">
+    <ClInclude Include="include\Label.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\Layout.h">
@@ -149,7 +149,7 @@
     <ClCompile Include="IControl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Lable.cpp">
+    <ClCompile Include="Label.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Layout.cpp">

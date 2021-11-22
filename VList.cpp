@@ -27,7 +27,7 @@ void VList::RefreshLayout() {
 		verticalScrollBar->SetMaxBottom(_maxBottom);
 	}
 }
-void VList::AddControl(Control * ctl)
+void VList::AddControl(Control* ctl)
 {
 	__super::AddControl(ctl);
 	ctl->Move({ ctl->X(), _maxBottom });
@@ -38,7 +38,7 @@ void VList::AddControl(Control * ctl)
 		verticalScrollBar->SetMaxBottom(_maxBottom);
 	}
 }
-ControlIterator VList::RemoveControl(Control * ctl)
+ControlIterator VList::RemoveControl(Control* ctl)
 {
 	size_t before = _controls.size();//记录一开始的控件数量
 	ControlIterator nextIt = __super::RemoveControl(ctl);//删除控件
@@ -48,9 +48,9 @@ ControlIterator VList::RemoveControl(Control * ctl)
 		_controlsLocationY.erase(ctl);//将记录Y坐标的map也要删除控件
 		for (auto i = nextIt; i != _controls.end(); i++)//从删除的下一个控件开始往前移动X坐标
 		{
-			Control *it = *i;
-			it->SetRect(Rect(it->X(), it->Y() - outHeight,it->Width(),it->Height()));//自身移动
-			int &locationY = _controlsLocationY[it] -= outHeight;//记录的坐标也要移动
+			Control* it = *i;
+			it->SetRect(Rect(it->X(), it->Y() - outHeight, it->Width(), it->Height()));//自身移动
+			int& locationY = _controlsLocationY[it] -= outHeight;//记录的坐标也要移动
 		}
 		if (verticalScrollBar) {
 			verticalScrollBar->SetMaxBottom(_maxBottom);//通知滚动条容器最大边界值已经改变
@@ -75,8 +75,8 @@ ControlIterator VList::RemoveControl(Control * ctl)
 	//return pos;
 }
 
-void VList::Clear() {
-	__super::Clear();
+void VList::Clear(bool freeChilds) {
+	__super::Clear(freeChilds);
 	_controlsLocationY.clear();
 	_maxBottom = 0;
 }
@@ -89,13 +89,13 @@ void VList::OnSize(const Size& size) {
 	}
 }
 
-void VList::OnChildPaint(Controls &controls, PaintEventArgs &args) {
+void VList::OnChildPaint(Controls& controls, PaintEventArgs& args) {
 	VisibleControls.clear();
 	auto rect = Rect(0, 0, _rect.Width, _rect.Height);
 	//绘制子控件
 	for (auto i = controls.begin(); i != controls.end(); i++)
 	{
-		auto &it = **i;
+		auto& it = **i;
 		if (rect.IntersectsWith(it.GetRect())) {
 			VisibleControls.push_back(*i);
 			it.OnEvent(Event::OnPaint, &args);

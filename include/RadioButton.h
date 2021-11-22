@@ -1,7 +1,7 @@
 #pragma once
-#include "Lable.h"
+#include "Label.h"
 class UI_EXPORT  RadioButton :
-	public Lable
+	public Label
 {
 protected:
 	bool _checked = false;

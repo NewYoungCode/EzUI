@@ -1,13 +1,13 @@
-#include "Lable.h"
-Lable::Lable()
+#include "Label.h"
+Label::Label()
 {
 }
 
-Lable::~Lable()
+Label::~Label()
 {
 
 }
-void Lable::OnForePaint(PaintEventArgs& args)
+void Label::OnForePaint(PaintEventArgs& args)
 {
 	__super::OnForePaint(args);
 	if (!_text.empty()) {
@@ -15,26 +15,26 @@ void Lable::OnForePaint(PaintEventArgs& args)
 		args.Painter.DrawString(_text, GetFontFamily(this->State), GetFontSize(this->State), GetForeColor(this->State), RectF(0, 0, (float)_rect.Width, (float)_rect.Height), _textAlign, _underline);
 	}
 }
-Size Lable::GetFontWidth() {
+Size Label::GetFontWidth() {
 
 	return Size((int)fontBox.Width,(int)fontBox.Height);
 }
 
-void Lable::SetTextAlign(TextAlign textAlign)
+void Label::SetTextAlign(TextAlign textAlign)
 {
 	_textAlign = textAlign;
 }
 
-void Lable::SetText(const EString& text) {
+void Label::SetText(const EString& text) {
 	_text = text;
 }
 
-void Lable::SetUnderline(bool enable)
+void Label::SetUnderline(bool enable)
 {
 	_underline = enable;
 }
 
-EString& Lable::GetText()
+EString& Label::GetText()
 {
 	return _text;
 }

@@ -1,6 +1,6 @@
 #include "UIManager.h"
 #include "HLayout.h"
-#include "Lable.h"
+#include "Label.h"
 #include "Form.h"
 #include "VLayout.h"
 #include "TileLayout.h"
@@ -99,9 +99,9 @@ namespace UIManager {
 				ctl = new HSpacer(0);
 				break;
 			}
-			if (valueStr == "lable") {
-				ctl = new Lable;
-				((Lable*)ctl)->SetText(Attribute(node, "text"));
+			if (valueStr == "label") {
+				ctl = new Label;
+				((Label*)ctl)->SetText(Attribute(node, "text"));
 
 				EString valign = Attribute(node, "valign");//垂直
 				EString halign = Attribute(node, "halign");//水平
@@ -124,13 +124,13 @@ namespace UIManager {
 						h = (int)Align::Right;
 					}
 					if (v && h) {
-						((Lable*)ctl)->SetTextAlign((TextAlign)(v | h));
+						((Label*)ctl)->SetTextAlign((TextAlign)(v | h));
 					}
 					else if (v && !h) {
-						((Lable*)ctl)->SetTextAlign((TextAlign)(v));
+						((Label*)ctl)->SetTextAlign((TextAlign)(v));
 					}
 					else  if (!v && h) {
-						((Lable*)ctl)->SetTextAlign((TextAlign)(h));
+						((Label*)ctl)->SetTextAlign((TextAlign)(h));
 					}
 				}
 				break;
@@ -167,7 +167,12 @@ namespace UIManager {
 			ctl->SetAttribute(attr->Name(), attr->Value());
 		} while ((attr = attr->Next()));
 
-		
+		if (node->Attribute("x")) {//如果单独设置了宽高那就是绝对宽高了
+			ctl->Move({ std::stoi(node->Attribute("x")) ,ctl->GetRect().Y });
+		}
+		if (node->Attribute("y")) {//如果单独设置了宽高那就是绝对宽高了
+			ctl->Move({ctl->GetRect().X, std::stoi(node->Attribute("y"))  });
+		}
 		if (node->Attribute("width")) {//如果单独设置了宽高那就是绝对宽高了
 			ctl->SetFixedWidth(std::stoi(node->Attribute("width")));
 		}

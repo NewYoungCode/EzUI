@@ -1,6 +1,6 @@
 #pragma once
 #include "Control.h"
-class UI_EXPORT  Lable :
+class UI_EXPORT  Label :
 	public Control
 {
 protected:
@@ -13,8 +13,8 @@ protected:
 public:
 	bool AutoWidth = false;
 	Size GetFontWidth();
-	Lable();
-	virtual ~Lable();
+	Label();
+	virtual ~Label();
 	void SetTextAlign(TextAlign textAlign);
 	void SetText(const EString&text);
 	void SetUnderline(bool enable = true);

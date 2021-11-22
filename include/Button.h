@@ -1,7 +1,7 @@
 #pragma once
-#include "Lable.h"
+#include "Label.h"
 class UI_EXPORT Button :
-	public Lable
+	public Label
 {
 public:
 	Button();

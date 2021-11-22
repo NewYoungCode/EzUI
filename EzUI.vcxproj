@@ -33,7 +33,7 @@
     <ClInclude Include="include\HList.h" />
     <ClInclude Include="include\HScrollBar.h" />
     <ClInclude Include="include\IControl.h" />
-    <ClInclude Include="include\Lable.h" />
+    <ClInclude Include="include\Label.h" />
     <ClInclude Include="include\Layout.h" />
     <ClInclude Include="include\Menu.h" />
     <ClInclude Include="include\NotifyIcon.h" />
@@ -64,7 +64,7 @@
     <ClCompile Include="HList.cpp" />
     <ClCompile Include="HScrollBar.cpp" />
     <ClCompile Include="IControl.cpp" />
-    <ClCompile Include="Lable.cpp" />
+    <ClCompile Include="Label.cpp" />
     <ClCompile Include="Layout.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="NotifyIcon.cpp" />
