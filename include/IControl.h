@@ -4,20 +4,20 @@
 
 typedef std::function< void(UINT uMsg, WPARAM wParam, LPARAM lParam)> UserMessageProc;
 
-enum class Event {
-	OnPaint,
+enum  Event :int {
+	OnMouseWheel = 1,
+	OnMouseEnter = 2,
+	OnMouseMove = 4,
+	OnMouseLeave = 8,
+	OnMouseClick = 16,
+	OnMouseDoubleClick = 32,
+	OnMouseDown = 64,
+	OnMouseUp = 128,
 
-	OnMouseWheel,
-	OnMouseEnter,
-	OnMouseMove,
-	OnMouseLeave,
-	OnMouseClick,
-	OnMouseDoubleClick,
-	OnMouseDown,
-	OnMouseUp,
-
-	OnKeyDown,
-	OnKeyUp
+	OnKeyDown = 256,
+	OnKeyUp = 512,
+	
+	OnPaint = 1024
 };
 enum class ControlState {
 	None,
@@ -124,10 +124,10 @@ struct MouseEventArgs :public EventArgs {
 // 为 OnPaint 事件提供数据。
 struct PaintEventArgs :public EventArgs {
 	using _Painter_ = Painter;//预防重命名
-	Painter &Painter;//画家
+	Painter& Painter;//画家
 	Rect InvalidRectangle;//WM_PAINT里面的无效区域
 	HWND HWnd;//父窗口句柄
-	PaintEventArgs(_Painter_&painter) :Painter(painter) {}
+	PaintEventArgs(_Painter_& painter) :Painter(painter) {}
 };
 
 //描述边框
@@ -160,11 +160,11 @@ struct Background {
 	Color color;
 	HImage image;
 	Background() {}
-	Background(const Color& color, Image *image = NULL) {
+	Background(const Color& color, Image* image = NULL) {
 		this->color = color;
 		this->image = image;
 	}
-	Background(Image *image) {
+	Background(Image* image) {
 		this->image = image;
 	}
 };
@@ -172,11 +172,11 @@ struct Fore {
 	Color color;
 	HImage image;
 	Fore() {}
-	Fore(const Color& color, Image *image = NULL) {
+	Fore(const Color& color, Image* image = NULL) {
 		this->color = color;
 		this->image = image;
 	}
-	Fore(Image *image) {
+	Fore(Image* image) {
 		this->image = image;
 	}
 };
@@ -197,14 +197,14 @@ struct ControlStyle {
 	UI_Float FontSize;//字体大小       具有继承性
 	Color ForeColor;//前景颜色      具有继承性
 private:
-	ControlStyle& operator=(const ControlStyle&right) { //禁止直接赋值 因为这样会导致 Color执行拷贝使得Color变得不合法的有效
+	ControlStyle& operator=(const ControlStyle& right) { //禁止直接赋值 因为这样会导致 Color执行拷贝使得Color变得不合法的有效
 		return *this;
 	}
-	ControlStyle(const ControlStyle&right) { //禁止拷贝 因为这样会导致 Color执行拷贝使得Color变得不合法的有效
+	ControlStyle(const ControlStyle& right) { //禁止拷贝 因为这样会导致 Color执行拷贝使得Color变得不合法的有效
 	}
 public:
 	ControlStyle() {}
-	void SetBorder(const Color&color, int width) { //对所有border有效
+	void SetBorder(const Color& color, int width) { //对所有border有效
 		BorderColor = color;
 		BorderLeft = width;//左边边框
 		BorderTop = width;//顶部边框
@@ -241,13 +241,13 @@ public:
 	IControl();
 	virtual ~IControl();
 public:
-	virtual void OnMouseMove(const Point&point) = 0;
+	virtual void OnMouseMove(const Point& point) = 0;
 	virtual void OnMouseLeave() = 0;
-	virtual void OnMouseWheel(short zDelta, const Point&point) = 0;
-	virtual void OnMouseDoubleClick(MouseButton mbtn, const Point&point) = 0;
-	virtual void OnMouseDown(MouseButton mbtn, const Point&point) = 0;
-	virtual void OnMouseUp(MouseButton mbtn, const Point&point) = 0;
-	virtual void OnSize(const Size&size) = 0;
+	virtual void OnMouseWheel(short zDelta, const Point& point) = 0;
+	virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point) = 0;
+	virtual void OnMouseDown(MouseButton mbtn, const Point& point) = 0;
+	virtual void OnMouseUp(MouseButton mbtn, const Point& point) = 0;
+	virtual void OnSize(const Size& size) = 0;
 	virtual void OnLoad() = 0;
 	virtual void OnChar(WPARAM wParam, LPARAM lParam) = 0;
 	virtual void OnKeyDown(WPARAM wParam) = 0;

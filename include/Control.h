@@ -25,6 +25,7 @@ class UI_EXPORT Control :public IControl
 private:
 	Control(const Control&);
 	Control& operator=(const Control&);
+	bool CheckEventPassThrough(Event eventType);
 protected:
 	Attributes _attrs;
 	int _anchorStyle = (AnchorStyle::Top | AnchorStyle::Left);
@@ -40,6 +41,7 @@ protected:
 	Tuple<LPCSTR> _LastCursor;
 	Controls _spacer;//存储控件下布局的的弹簧集合
 public:
+	int MousePassThrough = 0;
 	const Rect ClipRect;//控件在窗口中的可见区域
 	EString Name;//控件的ObjectName
 	ScrollBar* ScrollBar = NULL;//垂直滚动条或者水平滚动条 一个控件只允许有一个

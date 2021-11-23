@@ -134,9 +134,9 @@ void Window::SetVisible(bool flag) {
 	}
 }
 void Window::EmptyControl(Controls* controls) {
-	//_focusControl = NULL;
-	//_inputControl = NULL;
-	//return;
+	_focusControl = NULL;
+	_inputControl = NULL;
+	return;
 	for (auto it : *controls) {
 		if (_focusControl == it) {
 			_focusControl = NULL;

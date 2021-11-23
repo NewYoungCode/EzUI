@@ -228,7 +228,12 @@ void Control::ComputeClipRect()
 		Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->ClipRect);//自身和父控件对吧裁剪区域
 	}
 }
-
+bool Control::CheckEventPassThrough(Event eventType) {
+	if ((MousePassThrough & eventType) == eventType) {
+		return true;
+	}
+	return false;
+}
 //专门处理鼠标消息的
 void Control::OnMouseEvent(MouseEventArgs& args) {
 	switch (args.EventType)
@@ -292,6 +297,9 @@ void Control::OnMouseEvent(MouseEventArgs& args) {
 	}
 	default:
 		break;
+	}
+	if (CheckEventPassThrough(args.EventType)) {//检查鼠标穿透
+		this->Parent->OnMouseEvent(args);//如果设置了穿透就直接发送给上一层控件
 	}
 }
 void Control::OnEvent(Event eventType, void* param) {
