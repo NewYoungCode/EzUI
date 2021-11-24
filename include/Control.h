@@ -113,7 +113,7 @@ public:
 	UI_Float GetFontSize(ControlState _state = ControlState::None);//获取默认控件状态下字体大小样式
 	Color GetForeColor(ControlState _state = ControlState::None);//获取默认控件状态下前景色
 	Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
-	Control* FindControl(Control* ctl);//使用指针寻找子控件 不包含孙子 曾孙 
+	bool ExistControl(Control* ctl);//使用指针寻找子控件 不包含孙子 曾孙 
 	Controls FindControl(const EString& attr, const EString& attrValue);//使用属性查找
 	void SetAnchorStyle(int anchorStyle);//设置控件对齐方式
 	size_t IndexOf();

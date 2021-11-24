@@ -12,6 +12,7 @@ class UI_EXPORT Window :public IControl
 private:
 	Size _lastSize;//上一次客户端大小的信息
 	Point _lastPoint;//上一次移动的坐标
+	int _closeCode = 0;
 protected:
 	Rect _rect;//基于桌面的坐标
 	Rect _rectClient;//客户绘图区域
@@ -57,8 +58,8 @@ public:
 	void SetLayout(Layout* layout);
 	void SetText(const EString& text);
 	virtual void Show(int cmdShow = SW_SHOW);
-	void ShowModal(bool wait = true);//参数 wait 是否阻塞
-	void Close();
+	int ShowModal(bool wait = true);//参数 wait 是否阻塞
+	void Close(int code=0);
 	virtual void Hide();
 	bool IsVisible();
 	void SetVisible(bool flag);

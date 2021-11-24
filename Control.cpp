@@ -420,6 +420,9 @@ const int& Control::GetFixedHeight()
 }
 Control::~Control()
 {
+	//if (::IsWindow(_hWnd)) { //移除控件之前先通知父窗口
+	//	::SendMessage(_hWnd, WM_CONTROL_DELETE, (WPARAM)this, NULL);
+	//}
 	if (this->ScrollBar) {
 		delete ScrollBar;
 	}
@@ -521,12 +524,22 @@ void Control::AddControl(Control* ctl) {
 	}
 }
 
-Control* Control::FindControl(Control* ctl) {
-	ControlIterator it1 = ::std::find(_controls.begin(), _controls.end(), ctl);
-	if (it1 != _controls.end()) {
-		return ctl;
+bool _FindControl(Controls* controls, Control* ctl) {
+	bool exist = false;
+	ControlIterator it1 = ::std::find(controls->begin(), controls->end(), ctl);
+	if (it1 != controls->end()) {
+		return true;
 	}
-	return NULL;
+	for (auto& it : *controls) {
+		exist = _FindControl(it->GetControls(), ctl);
+		if (exist)break;
+	}
+	return exist;
+}
+
+bool Control::ExistControl(Control* ctl) {
+	bool exist = _FindControl(&_controls, ctl);
+	return exist;
 }
 
 ControlIterator Control::RemoveControl(Control* ctl)

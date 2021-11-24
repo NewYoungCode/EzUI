@@ -80,7 +80,8 @@ void Window::SetLayout(Layout* layout) {
 	_layout->_hWnd = _hWnd;
 	_layout->SetRect(this->GetClientRect());
 }
-void Window::Close() {
+void Window::Close(int code) {
+	_closeCode = code;
 	::SendMessageW(_hWnd, WM_CLOSE, 0, 0);
 }
 void Window::Show(int cmdShow)
@@ -93,7 +94,7 @@ void Window::Show(int cmdShow)
 	//rcArea = oMonitor.rcWork;
 }
 
-void Window::ShowModal(bool wait)
+int Window::ShowModal(bool wait)
 {
 	auto p_hwnd = ::GetWindowOwner(_hWnd);
 	ASSERT(::IsWindow(p_hwnd));
@@ -116,6 +117,7 @@ void Window::ShowModal(bool wait)
 	}
 	::EnableWindow(p_hwnd, TRUE);
 	::SetForegroundWindow(p_hwnd);
+	return _closeCode;
 }
 
 void Window::Hide() {
@@ -134,9 +136,9 @@ void Window::SetVisible(bool flag) {
 	}
 }
 void Window::EmptyControl(Controls* controls) {
-	_focusControl = NULL;
-	_inputControl = NULL;
-	return;
+	//_focusControl = NULL;
+	//_inputControl = NULL;
+	//return;
 	for (auto it : *controls) {
 		if (_focusControl == it) {
 			_focusControl = NULL;
@@ -231,6 +233,14 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_CONTROL_DELETE:
 	{
 		Control* delControl = (Control*)wParam;
+		if (_focusControl == delControl) {
+			_focusControl = NULL;
+			return TRUE;
+		}
+		if (_inputControl == delControl) {
+			_focusControl = NULL;
+			return TRUE;
+		}
 		EmptyControl((Controls*)delControl->GetControls());
 		return TRUE;
 	}
@@ -417,7 +427,7 @@ loop:
 	Control* scrollBar = outCtl->ScrollBar;
 	if (scrollBar && scrollBar->GetClientRect().Contains(clientPoint)) {
 		if (scrollBar->Visible) {
-			auto& barRect = scrollBar->GetClientRect();
+			auto barRect = scrollBar->GetClientRect();
 			outPoint.X = clientPoint.X - barRect.X;
 			outPoint.Y = clientPoint.Y - barRect.Y;
 			outCtl = scrollBar;
@@ -447,7 +457,7 @@ loop:
 				return outCtl;
 			}
 			outCtl = &it;
-			auto& ctlRect = it.GetClientRect();
+			auto ctlRect = it.GetClientRect();
 			outPoint.X = clientPoint.X - ctlRect.X;
 			outPoint.Y = clientPoint.Y - ctlRect.Y;
 			goto loop;
@@ -460,7 +470,7 @@ void Window::OnMouseMove(const Point& point)
 {
 
 	if (_focusControl && _mouseDown) {
-		auto& ctlRect = _focusControl->GetClientRect();
+		auto ctlRect = _focusControl->GetClientRect();
 		MouseEventArgs args;
 		args.Location = { point.X - ctlRect.X ,point.Y - ctlRect.Y };
 		args.EventType = Event::OnMouseMove;
@@ -569,7 +579,7 @@ void Window::OnMouseUp(MouseButton mbtn, const Point& point)
 	_mouseDown = false;
 	::ReleaseCapture();
 	if (_focusControl) {
-		auto& ctlRect = _focusControl->GetClientRect();
+		auto ctlRect = _focusControl->GetClientRect();
 		MouseEventArgs args;
 		args.Button = mbtn;
 		args.Location = { point.X - ctlRect.X,point.Y - ctlRect.Y };
