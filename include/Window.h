@@ -40,7 +40,7 @@ protected:
 	virtual void OnChar(WPARAM wParam, LPARAM lParam);
 	virtual void OnKeyDown(WPARAM wParam);
 	virtual void OnMove(const Point& point);
-	virtual bool OnNotify(Control* sender, EventArgs* args);//返回true将不再派发给子控件处理
+	virtual bool OnNotify(Control* sender, EventArgs* args);//返回true将不再派发给子控件处理 注意:不要在此函数内部删除自身控件
 public:
 	virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 public:

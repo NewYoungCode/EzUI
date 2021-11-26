@@ -1,51 +1,19 @@
 #include "CPURender.h"
-#include <mutex>
-
 ULONG_PTR _gdiplusToken = NULL;
-Gdiplus::Font* _bufFont = NULL;
-EString _fontFamily;
-float _fontSize = 0;
-SolidBrush* _bufBrush = NULL;
-DWORD _brushColor = 0;
-Pen* _buffPen = NULL;
-DWORD _penColor = 0;
-float _penWidth = 0;
-std::mutex renderMtx;//避免多窗口渲染干扰到全局对象
-
 #ifdef CreateFont
 #undef CreateFont
 #endif
 SolidBrush* CreateBrush(const Color& color) {
-	std::unique_lock<std::mutex> autoLock(renderMtx);
-	if (_bufBrush && color.GetValue() == _brushColor) {
-		return _bufBrush;
-	}
-	if (_bufBrush) delete _bufBrush;
-	_bufBrush = new SolidBrush(color);
-	_brushColor = color.GetValue();
+	SolidBrush* _bufBrush = new SolidBrush(color);
 	return _bufBrush;
 }
 Pen* CreatePen(const Color& color, float width) {
-	std::unique_lock<std::mutex> autoLock(renderMtx);
-	if (_buffPen && color.GetValue() == _penColor && _penWidth == width) {
-		return _buffPen;
-	}
-	if (_buffPen) delete _buffPen;
-	_buffPen = new Pen(color, width);
-	_penColor = color.GetValue();
-	_penWidth = width;
-	return _buffPen;
+	Pen* pen = new Pen(color, width);
+	return pen;
 }
 Gdiplus::Font* CreateFont(const EString& fontFamily, float fontSize) {
-	std::unique_lock<std::mutex> autoLock(renderMtx);
-	if (_bufFont && fontFamily == _fontFamily && _fontSize == fontSize) {
-		return _bufFont;
-	}
-	if (_bufFont) delete _bufFont;
 	Gdiplus::FontFamily ff(fontFamily.utf16().c_str());
-	_bufFont = new Gdiplus::Font(&ff, fontSize);
-	_fontFamily = fontFamily;
-	_fontSize = fontSize;
+	Gdiplus::Font* _bufFont = new Gdiplus::Font(&ff, fontSize);
 	return _bufFont;
 }
 
@@ -67,15 +35,6 @@ void RenderInitialize()
 }
 void RenderUnInitialize()
 {
-	if (_bufFont) {
-		delete _bufFont;//释放全局缓冲字体
-	}
-	if (_buffPen) {
-		delete _buffPen;//释放全局缓存笔
-	}
-	if (_bufBrush) {
-		delete _bufBrush;//释放全局缓存画刷
-	}
 	Gdiplus::GdiplusShutdown(_gdiplusToken); //关闭gdi+
 }
 
@@ -215,13 +174,17 @@ void CPURender::DrawString(const std::wstring& text, const Gdiplus::Font* font, 
 {
 	Gdiplus::StringFormat sf;
 	CreateFormat(textAlign, sf);
-	base->DrawString(text.c_str(), text.length(), font, rect, &sf, CreateBrush(color));
+
+	SafeObject<SolidBrush> brush(CreateBrush(color));
+
+	base->DrawString(text.c_str(), text.length(), font, rect, &sf, brush);
 	if (underLine) {
 		RectF box;
 		base->MeasureString(text.c_str(), text.length(), font, rect, &sf, &box);
 		PointF p1(box.X, box.GetBottom());
 		PointF p2(box.GetRight(), box.GetBottom());
-		base->DrawLine(CreatePen(color, 1), p1, p2);
+		SafeObject<Pen> pen(CreatePen(color, 1));
+		base->DrawLine(pen, p1, p2);
 	}
 }
 
@@ -234,7 +197,7 @@ void CPURender::DrawRectangle(const Color& color, const Rect& _rect, float width
 	rect.X += OffsetX;
 	rect.Y += OffsetY;
 
-	auto pen = CreatePen(color, width);
+	SafeObject<Pen> pen(CreatePen(color, width));
 	if (radius > 0) {
 		Gdiplus::GraphicsPath path;
 		CreateRectangle(path, rect, radius);
@@ -252,7 +215,8 @@ void CPURender::FillRectangle(const Color& color, const Rect& _rect, int radius)
 	Rect rect = _rect;
 	rect.X += OffsetX;
 	rect.Y += OffsetY;
-	auto brush = CreateBrush(color);
+
+	SafeObject<SolidBrush> brush(CreateBrush(color));
 	if (radius > 0) {
 		Gdiplus::GraphicsPath path;
 		CreateRectangle(path, rect, radius);
@@ -267,24 +231,16 @@ void CPURender::DrawString(const EString& text, const EString& fontFamily, float
 	RectF rect = _rect;
 	rect.X += OffsetX;
 	rect.Y += OffsetY;
-	this->DrawString(text.utf16(), CreateFont(fontFamily, fontSize), color, rect, textAlign, underLine);
+	SafeObject<Gdiplus::Font> font(CreateFont(fontFamily, fontSize));
+	this->DrawString(text.utf16(), font, color, rect, textAlign, underLine);
 }
 
-void CPURender::DrawString(const std::wstring& text, const EString& fontFamily, float fontSize, const Color& color, const RectF& _rect, TextAlign textAlign, bool underLine)
-{
-	RectF rect = _rect;
-	rect.X += OffsetX;
-	rect.Y += OffsetY;
-	this->DrawString(text, CreateFont(fontFamily, fontSize), color, rect, textAlign, underLine);
-}
+
 
 void CPURender::MeasureString(const EString& _text, const EString& fontf, float fontSize, RectF& outBox) {
 	std::wstring _wtext = _text.utf16();
-	base->MeasureString(_wtext.c_str(), _wtext.length(), CreateFont(fontf, fontSize), { 0,0 }, &outBox);
-}
-
-void CPURender::MeasureString(const std::wstring& text, const EString& fontf, float fontSize, RectF& outBox) {
-	base->MeasureString(text.c_str(), text.length(), CreateFont(fontf, fontSize), { 0,0 }, &outBox);
+	SafeObject<Gdiplus::Font> font(CreateFont(fontf, fontSize));
+	base->MeasureString(_wtext.c_str(), _wtext.length(), font, { 0,0 }, &outBox);
 }
 
 void CPURender::CreateLayer(const Rect& rect, ClipMode clipMode, int radius)
@@ -311,8 +267,8 @@ void CPURender::DrawLine(const Color& color, const Point& _A, const Point& _B, f
 	Point B = _B;
 	B.X += OffsetX;
 	B.Y += OffsetY;
-
-	base->DrawLine(CreatePen(color, width), A, B);
+	SafeObject<Pen> pen(CreatePen(color, width));
+	base->DrawLine(pen, A, B);
 }
 void CPURender::DrawImage(Image* image, const Rect& _rect, float radius)
 {

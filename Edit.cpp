@@ -169,6 +169,12 @@
 //}
 //
 
+bool EditWnd::HaveText()
+{
+
+	return false;
+}
+
 EditWnd::EditWnd()
 {
 	this->_Type = ControlType::ControlEditWin32;
@@ -184,13 +190,24 @@ EditWnd::~EditWnd()
 LRESULT EditWnd::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (WM_COMMAND == uMsg && (HWND)lParam == _editWnd) {
-		auto hword = HIWORD(wParam);
-		Debug::Log(TEXT("%x"), hword);
-		OnKeyDown(hword);
+		//WORD WMId = LOWORD(wparam);
+		WORD wmEvent = HIWORD(wParam);
+		if (wmEvent == EN_CHANGE) {
+			OnTextChanged();
+		}
+		if (wmEvent == EN_SETFOCUS) {
+			OnFocus();
+		}
+		if (wmEvent == EN_KILLFOCUS) {
+			OnKillFocus();
+		}
 	}
 	if (uMsg == WM_CTLCOLOREDIT && (HWND)lParam == _editWnd) {
 		auto bkColor = GetBackgroundColor();
 		auto foreColor = GetForeColor(State);
+		if (GetText().empty()) {
+			foreColor = Color::Gray;
+		}
 		DWORD _foreColor = RGB(foreColor.GetR(), foreColor.GetG(), foreColor.GetB());
 		DWORD _bkColor = RGB(bkColor.GetR(), bkColor.GetG(), bkColor.GetB());
 		SetBkMode((HDC)wParam, TRANSPARENT);
@@ -214,10 +231,24 @@ void EditWnd::SetText(const EString& text)
 }
 const EString& EditWnd::GetText()
 {
+	if (this->HaveText()) {//如果已经设置了文字
+
+	}
+
 	WCHAR buf[256]{ 0 };
 	::GetWindowTextW(_editWnd, buf, 255);
-	_text = buf;
+	if (Placeholder == EString(buf)) {
+		_text = "";
+	}
+	else {
+		_text = buf;
+	}
 	return _text;
+}
+void EditWnd::SetPlaceholder(const EString& str)
+{
+	Placeholder = str;
+	_text = str;
 }
 void EditWnd::OnLoad() {
 	if (_editWnd == NULL) {
@@ -227,7 +258,19 @@ void EditWnd::OnLoad() {
 		UI_SetUserData(_editWnd, this);
 	}
 }
-
+void EditWnd::OnKillFocus()
+{
+	if (GetText().empty()) {
+		::SetWindowTextW(_editWnd, Placeholder.utf16().c_str());
+	}
+}
+void EditWnd::OnTextChanged()
+{
+	
+}
+HWND EditWnd::Hwnd() {
+	return _editWnd;
+}
 HFONT EditWnd::SetFont(float fontHeight, const WCHAR* faceName) {
 	if (_font) {
 		DeleteFont(_font);
@@ -255,13 +298,12 @@ HFONT EditWnd::SetFont(float fontHeight, const WCHAR* faceName) {
 
 void EditWnd::SetVisible(bool visible) {
 	if (_editWnd) {
-		::ShowWindow(_editWnd, visible? SW_SHOW: SW_HIDE);
+		::ShowWindow(_editWnd, visible ? SW_SHOW : SW_HIDE);
 	}
 }
 
 void EditWnd::OnPaint(PaintEventArgs& e) {
 	__super::OnPaint(e);
-
 	if (_editWnd) {
 		auto font_size = GetFontSize(this->State);
 		auto font_faceName = GetFontFamily(this->State);
@@ -272,6 +314,11 @@ void EditWnd::OnPaint(PaintEventArgs& e) {
 		rect.Width -= 2;
 		::MoveWindow(_editWnd, rect.X, rect.Y, rect.Width, font_size, TRUE);
 	}
+
+}
+
+void EditWnd::OnFocus()
+{
 
 }
 

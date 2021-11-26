@@ -236,6 +236,9 @@ bool Control::CheckEventPassThrough(Event eventType) {
 }
 //专门处理鼠标消息的
 void Control::OnMouseEvent(MouseEventArgs& args) {
+	if (CheckEventPassThrough(args.EventType)) {//检查鼠标穿透
+		this->Parent->OnMouseEvent(args);//如果设置了穿透就直接发送给上一层控件
+	}
 	switch (args.EventType)
 	{
 	case Event::OnMouseWheel: {
@@ -298,9 +301,7 @@ void Control::OnMouseEvent(MouseEventArgs& args) {
 	default:
 		break;
 	}
-	if (CheckEventPassThrough(args.EventType)) {//检查鼠标穿透
-		this->Parent->OnMouseEvent(args);//如果设置了穿透就直接发送给上一层控件
-	}
+
 }
 void Control::OnEvent(Event eventType, void* param) {
 	switch (eventType)
@@ -420,8 +421,8 @@ const int& Control::GetFixedHeight()
 }
 Control::~Control()
 {
-	//if (::IsWindow(_hWnd)) { //移除控件之前先通知父窗口
-	//	::SendMessage(_hWnd, WM_CONTROL_DELETE, (WPARAM)this, NULL);
+	//if (Parent) {
+	//	Parent->RemoveControl(this);
 	//}
 	if (this->ScrollBar) {
 		delete ScrollBar;
@@ -493,8 +494,23 @@ void Control::SetAnchorStyle(int anchorStyle)
 	_marginBottom = parentRect.Height - this->Height();
 	_isAnchorStyle = true;
 }
-
-size_t Control::IndexOf()
+size_t Control::Find(Control* ctl) {
+	size_t pos = 0;
+	bool exist = false;
+	for (auto i = _controls.begin(); i != _controls.end(); i++)
+	{
+		if (dynamic_cast<Spacer*>(*i)) {
+			continue;
+		}
+		if (ctl == *i) {
+			exist = true;
+			break;
+		}
+		pos++;
+	}
+	return exist ? pos : size_t(-1);
+}
+size_t Control::Index()
 {
 	Controls* pControls = Parent->GetControls();
 	size_t pos(0);
@@ -537,6 +553,7 @@ bool _FindControl(Controls* controls, Control* ctl) {
 	return exist;
 }
 
+
 bool Control::ExistControl(Control* ctl) {
 	bool exist = _FindControl(&_controls, ctl);
 	return exist;
@@ -551,6 +568,7 @@ ControlIterator Control::RemoveControl(Control* ctl)
 			::SendMessage(_hWnd, WM_CONTROL_DELETE, (WPARAM)ctl, NULL);
 		}
 		ctl->_hWnd = NULL;
+		ctl->Parent = NULL;
 		nextIt = _controls.erase(it1);
 		ControlIterator it2 = ::std::find(VisibleControls.begin(), VisibleControls.end(), ctl);
 		if (it2 != VisibleControls.end()) {
@@ -599,10 +617,11 @@ Controls* Control::GetControls()
 }
 void Control::Clear(bool freeControls)
 {
-	for (auto i = _controls.begin(); i != _controls.end(); i++)
+	Controls temp = _controls;
+	for (auto i = temp.begin(); i != temp.end(); i++)
 	{
 		if (::IsWindow(_hWnd)) { //移除控件之前先通知父窗口
-			Debug::Log("WM_CONTROL_DELETE %p", *i);
+			//Debug::Log("WM_CONTROL_DELETE %p", *i);
 			::SendMessage(_hWnd, WM_CONTROL_DELETE, (WPARAM)*i, NULL);
 		}
 		if (freeControls && (*i)->GetType() != ControlType::ControlSpacer) {//弹簧不能删除 弹簧必须使用DestroySpacers()函数删除
@@ -621,6 +640,7 @@ const ControlType& Control::GetType()
 
 void Control::OnChar(WPARAM wParam, LPARAM lParam) {}
 void Control::OnKeyDown(WPARAM wParam) {}
+
 
 void Control::OnMouseMove(const Point& point)
 {
@@ -657,10 +677,10 @@ void Control::OnMouseEnter(const Point& point)
 			pControl = pControl->Parent;
 		}
 	}
-	if (Cursor.valid) {//鼠标移入的时候判断是否有设置状态
-		_LastCursor = (LPCSTR)::GetClassLongPtr(_hWnd, GCL_HCURSOR);//记录之前的状态
-		::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)::LoadCursor(NULL, Cursor));//设置状态
-	}
+	//if (Cursor.valid) {//鼠标移入的时候判断是否有设置状态
+	//	_LastCursor = (LPCSTR)::GetClassLongPtr(_hWnd, GCL_HCURSOR);//记录之前的状态
+	//	::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)::LoadCursor(NULL, Cursor));//设置状态
+	//}
 	UI_TRIGGER(MouseEnter, point);
 }
 
@@ -706,10 +726,10 @@ void Control::OnMouseLeave()
 	else {
 		this->State = ControlState::None;//鼠标离开无论如何都要重置状态
 	}
-	if (_LastCursor) {//如果此控件已经设置过鼠标指针样式 则 鼠标移出 的时候需要恢复成之前的状态
-		::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)_LastCursor.value);
-		_LastCursor = NULL;
-	}
+	//if (_LastCursor) {//如果此控件已经设置过鼠标指针样式 则 鼠标移出 的时候需要恢复成之前的状态
+	//	::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)_LastCursor.value);
+	//	_LastCursor = NULL;
+	//}
 	UI_TRIGGER(MouseLeave);
 }
 void Control::OnSize(const Size& size)

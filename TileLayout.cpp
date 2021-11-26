@@ -39,6 +39,16 @@ void TileLayout::Sort()
 	_MaxBottom += MarginTop;
 }
 
+void TileLayout::Clear(bool freeChilds)
+{
+	__super::Clear(freeChilds);
+	_controlsLocationY.clear();
+	_MaxBottom = 0;
+	if (verticalScrollBar) {
+		verticalScrollBar->SetMaxBottom(_MaxBottom);
+	}
+}
+
 TileLayout::TileLayout()
 {
 	this->ScrollBar = new VScrollBar;

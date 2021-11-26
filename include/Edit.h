@@ -39,6 +39,9 @@ private:
 	EString _text;
 	HFONT _font = NULL;
 	HBRUSH _brush = NULL;
+	bool HaveText();
+	EString Placeholder;
+public:
 public:
 	EditWnd();
 	virtual ~EditWnd();
@@ -46,9 +49,14 @@ public:
 	virtual void SetRect(const Rect&rect, bool rePaint=true)override;
 	virtual void SetText(const EString&text);
 	const EString& GetText();
+	 void SetPlaceholder(const EString&str);
+
 	virtual void OnLoad()override;
 	virtual void OnPaint(PaintEventArgs & e)override;
-
+	virtual void OnFocus();
+	virtual void OnKillFocus();
+	virtual void OnTextChanged();
+	HWND Hwnd();
 	HFONT SetFont(float fontHeight, const WCHAR* faceName);
 	void SetVisible(bool visible);
 };

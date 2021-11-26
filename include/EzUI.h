@@ -64,7 +64,9 @@ public:
 	SafeObject(T* _ptr) {
 		ptr = _ptr;
 	}
-
+	operator T* () {
+		return ptr;
+	}
 	~SafeObject() {
 		if (ptr) delete ptr;
 	}
@@ -196,6 +198,8 @@ public:
 	}
 };
 #define utf8(szbuf)  EString(szbuf,EString::ANSI)
+//#define utf8(szbuf)  EString(szbuf,EString::UTF8)
+
 
 namespace String {
 	inline std::wstring ANSIToUniCode(const std::string &str)

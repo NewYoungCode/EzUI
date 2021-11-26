@@ -1,5 +1,9 @@
 #include "VLayout.h"
 
+VLayout::~VLayout()
+{
+}
+
 void VLayout::Sort()
 {
 	int fixedHeight = 0;
@@ -35,6 +39,8 @@ void VLayout::Sort()
 		}
 	}
 }
+
+
 
 void VLayout::AddControl(Control * ctl)
 {

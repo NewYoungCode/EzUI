@@ -4,6 +4,7 @@ class UI_EXPORT  VLayout :
 	public Layout
 {
 public:
+	virtual ~VLayout();
 	void Sort();
 public:
 	void AddControl(Control*ctl) override;

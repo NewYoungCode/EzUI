@@ -38,7 +38,7 @@ protected:
 	int _bottom = 0;
 	int _marginRight = 0;
 	int _marginBottom = 0;
-	Tuple<LPCSTR> _LastCursor;
+	//Tuple<LPCSTR> _LastCursor;
 	Controls _spacer;//存储控件下布局的的弹簧集合
 public:
 	int MousePassThrough = 0;
@@ -63,7 +63,7 @@ public:
 	EventMouseUp MouseUp;//鼠标抬起
 	EventMouseClick MouseClick;//鼠标单击
 	EventMouseDoubleClick MouseDoubleClick;//鼠标双击
-	Tuple<LPCTSTR> Cursor;//鼠标样式  默认 IDC_ARROW
+	//Tuple<LPCTSTR> Cursor;//鼠标样式  默认 IDC_ARROW
 public:
 	const ControlType& GetType();
 	virtual void OnChar(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
@@ -116,12 +116,13 @@ public:
 	bool ExistControl(Control* ctl);//使用指针寻找子控件 不包含孙子 曾孙 
 	Controls FindControl(const EString& attr, const EString& attrValue);//使用属性查找
 	void SetAnchorStyle(int anchorStyle);//设置控件对齐方式
-	size_t IndexOf();
+	size_t Index();
+	size_t Find(Control* ctl);
 	int  GetAnchorStyle();//获取锚定风格
 	Controls* GetControls();//获取当前所有子控件
 	virtual void AddControl(Control* ctl);//添加控件
 	virtual ControlIterator RemoveControl(Control* ctl);//删除控件 返回下一个迭代器
-	void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件
+	virtual void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件
 	void Move(const Point& pt);//移动相对与父控件的位置
 	const int& X();
 	const int& Y();

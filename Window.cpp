@@ -544,6 +544,7 @@ void Window::OnMouseDoubleClick(MouseButton mbtn, const Point& point)
 
 void Window::OnMouseDown(MouseButton mbtn, const Point& point)
 {
+	::SetFocus(_hWnd);
 	_mouseDown = true;
 	::SetCapture(_hWnd);
 
@@ -595,8 +596,6 @@ void Window::OnMouseUp(MouseButton mbtn, const Point& point)
 void Window::OnSize(const Size& sz)
 {
 	*((Rect*)(&_layout->ClipRect)) = this->GetClientRect();//
-	//RECT rc{ _layout->ClipRect.X,_layout->ClipRect.Y,_layout->ClipRect.GetRight(),_layout->ClipRect.GetBottom() };
-	//::ValidateRect(_hWnd, &rc);
 	_layout->SetRect(this->GetClientRect(), true);
 }
 

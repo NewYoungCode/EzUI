@@ -2,7 +2,7 @@
 
 CheckBox::CheckBox()
 {
-	Cursor = IDC_HAND;
+	//Cursor = IDC_HAND;
 	SetTextAlign(TextAlign::MiddleLeft);
 
 }

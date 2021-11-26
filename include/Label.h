@@ -12,6 +12,7 @@ protected:
 	virtual void OnForePaint( PaintEventArgs&args) override;
 public:
 	bool AutoWidth = false;
+	bool AutoHeight = false;
 	Size GetFontWidth();
 	Label();
 	virtual ~Label();

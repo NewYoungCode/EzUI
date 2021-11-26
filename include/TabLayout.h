@@ -3,6 +3,14 @@
 class TabLayout :
 	public Container
 {
+protected:
+	int _index = 0;
 public:
-	void SetCheck(int index);
+	TabLayout();
+	virtual ~TabLayout();
+	void SetPageIndex(int index);
+	virtual void AddControl(Control* ctl);
+	int PageIndex();
+	virtual void RefreshLayout();
+	virtual void OnSize(const Size& sz);
 };
