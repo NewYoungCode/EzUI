@@ -24,16 +24,35 @@ using ARGB = Gdiplus::ARGB;
 
 class UI_EXPORT  Image :public  Gdiplus::Image {
 public:
-	Bitmap *BufBitmap = NULL;//预绘制
+	Bitmap* BufBitmap = NULL;//预绘制
 	Rect Box;//指定图片绘制在什么位置 //不指定就自动拉伸到当前控件上
-	Image(const EString&filename, int radius = 0);
+	Image(const EString& filename, int radius = 0);
 	~Image();
+	Image(Gdiplus::GpImage* nativeImage, Gdiplus::Status status) :Gdiplus::Image(nativeImage, status) {}
+	Image* Clone();
 };
 
+//class HImage {
+//private:
+//	void Clone(const Image* img);
+//public:
+//	int ref = 0;
+//	bool valid = false;
+//	Image* value = NULL;
+//	HImage(const HImage& img);
+//	HImage& operator=(const HImage& img);
+//	HImage();
+//	void operator=(const Image* img);
+//	operator Image* ();
+//	Image* operator->();
+//	~HImage();
+//};
+
 #define HImage Tuple<Image*>
-void HighQualityMode(Gdiplus::Graphics*graphics);
-void CreateRectangle(GraphicsPath &path, const Rect& rect, float radius);//申明
-void ClipImage(Image * img, const Size&sz, int _radius, Bitmap ** outBitmap);//
+
+void HighQualityMode(Gdiplus::Graphics* graphics);
+void CreateRectangle(GraphicsPath& path, const Rect& rect, float radius);//申明
+void ClipImage(Image* img, const Size& sz, int _radius, Bitmap** outBitmap);//
 
 #define Align_Top  1
 #define Align_Bottom  2
@@ -66,15 +85,15 @@ enum class TextAlign :int {
 	//
 	// 摘要: 
 	//     内容在垂直方向上中间对齐，在水平方向上左边对齐。
-	MiddleLeft = Align_Mid| Align_Left,
+	MiddleLeft = Align_Mid | Align_Left,
 	//
 	// 摘要: 
 	//     内容在垂直方向上中间对齐，在水平方向上居中对齐。
-	MiddleCenter = Align_Mid| Align_Center,
+	MiddleCenter = Align_Mid | Align_Center,
 	//
 	// 摘要: 
 	//     内容在垂直方向上中间对齐，在水平方向上右边对齐。
-	MiddleRight = Align_Mid| Align_Right,
+	MiddleRight = Align_Mid | Align_Right,
 	//
 	// 摘要: 
 	//     内容在垂直方向上底边对齐，在水平方向上左边对齐。
@@ -123,7 +142,7 @@ public:
 		Argb = argb;
 		valid = true;
 	}
-	_Color& operator=(const _Color&Align_Right_Color) {
+	_Color& operator=(const _Color& Align_Right_Color) {
 		Argb = Align_Right_Color.GetValue();
 		valid = true;
 		return *this;
@@ -140,8 +159,8 @@ class UI_EXPORT CPURender
 protected:
 	//函数供内部使用 没有设置偏移所不可直接访问 
 
-	void DrawString(const std::wstring&text, const Gdiplus::Font*font, const Color&color, const RectF&rect, TextAlign textAlign, bool underLine = false);
-	void CreateFormat(TextAlign textAlign, Gdiplus::StringFormat & outStrFormat);
+	void DrawString(const std::wstring& text, const Gdiplus::Font* font, const Color& color, const RectF& rect, TextAlign textAlign, bool underLine = false);
+	void CreateFormat(TextAlign textAlign, Gdiplus::StringFormat& outStrFormat);
 public:
 	static Region* IntersectRound(const Rect& clientRect, int r, const Rect& _ClipRect) {
 		GraphicsPath gp;//控件本身的光栅化路径
@@ -150,28 +169,28 @@ public:
 		gp.AddArc(clientRect.Width + clientRect.X - r, clientRect.Y + clientRect.Height - r, r, r, 0, 90);//右下角
 		gp.AddArc(clientRect.X, clientRect.Y + clientRect.Height - r, r, r, 90, 90);//左下角
 		gp.CloseFigure();
-		Region *region1 = new Region(&gp);
+		Region* region1 = new Region(&gp);
 		region1->Intersect(_ClipRect);//控件本身区域 和交集 区域做 交集处理 
 		return region1;
 	}
-	Gdiplus::Graphics *base = NULL;
+	Gdiplus::Graphics* base = NULL;
 	std::list<const Rect*> Layer;
 	HDC DC = NULL;
 	int OffsetX = 0;
 	int OffsetY = 0;
-	CPURender(Bitmap *image);
+	CPURender(Bitmap* image);
 	CPURender(HDC hdc);
 	CPURender(HWND hWnd);
 	virtual ~CPURender();
-	void DrawRectangle(const Color&color, const Rect&rect, float width = 1, float radius = 0);
-	void FillRectangle(const Color&color, const Rect&rect, int radius = 0);
-	void DrawString(const EString &text, const EString& fontFamily, float fontSize, const Color & color, const RectF & rect, TextAlign textAlign, bool underLine = false);
-	void MeasureString(const EString&_text, const EString&fontf, float fontSize, RectF &outBox);
-	void CreateLayer(const Rect&rect, ClipMode clipMode = ClipMode::Valid, int radius = 0);
+	void DrawRectangle(const Color& color, const Rect& rect, float width = 1, float radius = 0);
+	void FillRectangle(const Color& color, const Rect& rect, int radius = 0);
+	void DrawString(const EString& text, const EString& fontFamily, float fontSize, const Color& color, const RectF& rect, TextAlign textAlign, bool underLine = false);
+	void MeasureString(const EString& _text, const EString& fontf, float fontSize, RectF& outBox);
+	void CreateLayer(const Rect& rect, ClipMode clipMode = ClipMode::Valid, int radius = 0);
 	void PopLayer();
-	void DrawLine(const Color & color, const Point&A, const Point&B, float width = 1);
-	void DrawImage(Image*image, const Rect&rect, float radius = 0);
-	void SaveImage(const WCHAR * format, const WCHAR* fileName, const Size&size);
+	void DrawLine(const Color& color, const Point& A, const Point& B, float width = 1);
+	void DrawImage(Image* image, const Rect& rect, float radius = 0);
+	void SaveImage(const WCHAR* format, const WCHAR* fileName, const Size& size);
 };
 void RenderInitialize();
 void RenderUnInitialize();

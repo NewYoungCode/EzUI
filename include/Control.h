@@ -7,8 +7,7 @@ class ScrollBar;
 class Spacer;
 typedef std::list<Control*> Controls;
 typedef std::list<Control*>::iterator ControlIterator;
-typedef std::map<EString, EString> Attributes;
-typedef std::map<EString, EString>::iterator AttributeIterator;
+
 
 #define UIFunc std::function
 #define EventMouseMove  UIFunc<void(Control*,const Point&)>  //移动事件
@@ -27,7 +26,6 @@ private:
 	Control& operator=(const Control&);
 	bool CheckEventPassThrough(Event eventType);
 protected:
-	Attributes _attrs;
 	int _anchorStyle = (AnchorStyle::Top | AnchorStyle::Left);
 	Rect _rect;
 	Controls _controls;
@@ -104,10 +102,7 @@ public:
 	UI_Int GetBorderBottom();
 	Color GetBorderColor();
 	Color GetBackgroundColor();
-	//设置属性
-	virtual void SetAttribute(const EString& attrName, const EString& attrValue);
-	//获取属性
-	virtual const EString GetAttribute(const EString& attrName);
+	
 	//具有继承性样式
 	EString GetFontFamily(ControlState _state = ControlState::None);//获取默认控件状态下字体Family
 	UI_Float GetFontSize(ControlState _state = ControlState::None);//获取默认控件状态下字体大小样式

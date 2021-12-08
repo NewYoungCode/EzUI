@@ -226,13 +226,15 @@ enum class ControlAction {
 	Max,//最大化|恢复
 	Close//关闭
 };
-
+typedef std::map<EString, EString> Attributes;
+typedef std::map<EString, EString>::iterator AttributeIterator;
 class  UI_EXPORT IControl {
 protected:
 	bool _load = false;
 	bool _mouseIn = false;
 	bool _mouseDown = false;//鼠标是否已经按下
 	bool _hasTimer = false;
+	Attributes _attrs;
 public:
 	ControlType _Type = ControlType::ControlBase;//控件类型
 	UINT_PTR Tag = NULL;
@@ -253,6 +255,10 @@ public:
 	virtual void OnKeyDown(WPARAM wParam) = 0;
 	virtual void OnTimer();//计时器函数
 public:
+	//设置属性
+	virtual void SetAttribute(const EString& attrName, const EString& attrValue);
+	//获取属性
+	virtual const EString GetAttribute(const EString& attrName);
 	virtual UINT_PTR SetTimer(size_t interval);
 	virtual void KillTimer();
 };

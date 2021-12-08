@@ -178,11 +178,11 @@ LRESULT MenuWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
 	}
 
-	if (uMsg == WM_KILLFOCUS && !frist) {
-		this->Close();
-	}
-	else if (uMsg == WM_KILLFOCUS) {//因为第一次启动背景窗口会让主窗口失去焦点 所以不能让窗口关闭
-		frist = false;
+	 if (uMsg == WM_KILLFOCUS) {
+		HWND wnd = (HWND)wParam;
+		if (wnd != this->_boxShadow->_hWnd) {
+			this->Close();
+		}
 	}
 	return __super::WndProc(uMsg, wParam, lParam);
 }

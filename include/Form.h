@@ -44,7 +44,6 @@ public:
 
 class  UI_EXPORT MenuWindow :public BorderlessWindow {
 private:
-	bool frist = true;
 public:
 	MenuWindow(int cx, int cy, HWND owner = NULL);
 	LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;

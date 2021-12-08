@@ -196,38 +196,9 @@ public:
 		MultiByteToWideChar(CP_UTF8, 0, this->c_str(), this->size(), (WCHAR*)wstr.c_str(), textlen);
 		return wstr;
 	}
-};
-#define utf8(szbuf)  EString(szbuf,EString::ANSI)
-//#define utf8(szbuf)  EString(szbuf,EString::UTF8)
+	std::string ansi()const {
+		auto& str = *this;
 
-
-namespace String {
-	inline std::wstring ANSIToUniCode(const std::string &str)
-	{
-		int bytes = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.size(), NULL, 0);
-		std::wstring wstrCmd;
-		wstrCmd.resize(bytes);
-		bytes = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.size(), const_cast<wchar_t*>(wstrCmd.c_str()), wstrCmd.size());
-		return wstrCmd;
-	}
-	inline std::string UnicodeToANSI(const std::wstring &wstr)
-	{
-		int bytes = ::WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
-		std::string strCmd;
-		strCmd.resize(bytes);
-		bytes = ::WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), const_cast<char*>(strCmd.data()), strCmd.size(), NULL, NULL);
-		return strCmd;
-	}
-	inline std::string UnicodeToUTF8(const std::wstring &wstr)
-	{
-		int bytes = ::WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
-		std::string strCmd;
-		strCmd.resize(bytes);
-		bytes = ::WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), const_cast<char*>(strCmd.data()), strCmd.size(), NULL, NULL);
-		return strCmd;
-	}
-	inline 	std::string UTF8ToANSI(const std::string& str)
-	{
 		int nwLen = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
 		wchar_t* pwBuf = new wchar_t[nwLen + 1];
 		memset(pwBuf, 0, nwLen * 2 + 2);
@@ -244,25 +215,8 @@ namespace String {
 		pwBuf = NULL;
 		return strRet;
 	}
-	inline std::string ANSIToUTF8(const std::string& str)
-	{
-		int nwLen = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, NULL, 0);
-		wchar_t* pwBuf = new wchar_t[nwLen + 1];
-		ZeroMemory(pwBuf, nwLen * 2 + 2);
-		::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.length(), pwBuf, nwLen);
-		int nLen = ::WideCharToMultiByte(CP_UTF8, 0, pwBuf, -1, NULL, NULL, NULL, NULL);
-		char* pBuf = new char[nLen + 1];
-		ZeroMemory(pBuf, nLen + 1);
-		::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, pBuf, nLen, NULL, NULL);
-		std::string strRet(pBuf);
-		delete[]pwBuf;
-		delete[]pBuf;
-		pwBuf = NULL;
-		pBuf = NULL;
-		return strRet;
-	}
 
-	inline std::vector<EString> Split(const EString& str, const EString& ch_) {
+	static std::vector<EString> Split(const EString& str, const EString& ch_) {
 		std::vector<EString> arr;
 		if (str.empty()) return arr;
 		EString buf = str;
@@ -281,7 +235,11 @@ namespace String {
 		}
 		return arr;
 	}
-}
+
+};
+#define utf8(szbuf)  EString(szbuf,EString::ANSI)
+//#define utf8(szbuf)  EString(szbuf,EString::UTF8)
+
 
 namespace MsgBox {
 	inline int Show(const EString&text, const EString&title = TEXT(""), int mButton = NULL) {

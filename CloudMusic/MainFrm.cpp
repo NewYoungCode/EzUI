@@ -66,7 +66,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 
 	for (size_t i = 0; i < 1010; i++)
 	{
-		Lable *lb = new Lable;
+		Label *lb = new Label;
 		lb->ReSize({ musicList.Width(),35 });
 		if (i % 2) {
 			lb->Style.BackgroundColor = { 55,55,55 };
@@ -86,7 +86,6 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 		lb->HoverStyle.BackgroundColor = Color{ 63,63,63 };
 		//lb->HoverStyle.ForeColor = Color{ 55,55,55 };
 
-		lb->Cursor = IDC_HAND;
 
 		lb->SetTextAlign(TextAlign::MiddleLeft);
 
@@ -137,7 +136,6 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 
 	head.Style.BackgroundImage = (&img);
 	head.Action = ControlAction::Max;
-	head.Cursor = IDC_HAND;
 
 	bottom_left.AddControl(&head);
 
@@ -166,11 +164,11 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	bottom_center.AddControl(&sp1);
 
 
-	lable1.ReSize({ 70,15 });
-	lable1.Move({ 0,50 });
-	lable1.SetFixedWidth(70);
-	lable1.SetText(utf8("00:00"));
-	bottom_center.AddControl(&lable1);
+	Label1.ReSize({ 70,15 });
+	Label1.Move({ 0,50 });
+	Label1.SetFixedWidth(70);
+	Label1.SetText(utf8("00:00"));
+	bottom_center.AddControl(&Label1);
 
 
 	prog.ReSize({ 1,3 });
@@ -180,11 +178,11 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	bottom_center.AddControl(&prog);
 
 
-	lable2.ReSize({ 70,15 });
-	lable2.Move({ 0,50 });
-	lable2.SetFixedWidth(70);
-	lable2.SetText(utf8("03:50"));
-	bottom_center.AddControl(&lable2);
+	Label2.ReSize({ 70,15 });
+	Label2.Move({ 0,50 });
+	Label2.SetFixedWidth(70);
+	Label2.SetText(utf8("03:50"));
+	bottom_center.AddControl(&Label2);
 
 
 

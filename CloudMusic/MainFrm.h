@@ -1,7 +1,7 @@
 #pragma once
 #include "ui.h"
 #include "Form.h"
-#include "Lable.h"
+#include "Label.h"
 #include "Layout.h"
 #include "HLayout.h"
 #include "VLayout.h"
@@ -12,42 +12,42 @@ class MainFrm:public Form
 {
 private:
 	VLayout laout;//垂直布局器
-	Lable title;//标题
+	Label title;//标题
 	EditWnd edit;//搜索框
 	Layout top;//顶部部分
 	Control redBar;//红色的线条
 	HLayout centerLayout;//中心部分
 	VList menu;//左侧菜单
 	VList musicList;//音乐列表
-	Lable btn1;
-	Lable btn2;
+	Label btn1;
+	Label btn2;
 
 	Control sp2;
 	Control prog;//进度条
 	
-	Lable btn4;
-	Lable btn3;
-	Lable lb;
+	Label btn4;
+	Label btn3;
+	Label lb;
 	Control space3;
-	Lable yx;
+	Label yx;
 	Control space1;
-	Lable yz_std;
-	Lable lable2;
-	Lable btn5;
-	Lable btn6;
+	Label yz_std;
+	Label Label2;
+	Label btn5;
+	Label btn6;
 	HLayout bottom;
 	Layout bottom_left;
-	Lable head;//歌手头像
-	Lable songName;//歌曲名称
-	Lable singer;//歌手
-	Lable aixin;//爱心
+	Label head;//歌手头像
+	Label songName;//歌曲名称
+	Label singer;//歌手
+	Label aixin;//爱心
 	HLayout bottom_center;//进度条 按钮部分
 	Control sp1;//占位控件
-	Lable lable1;
+	Label Label1;
 	HLayout bottom_right;
 	Control space2;
-	Lable yl;
-	Lable hy;
+	Label yl;
+	Label hy;
 	Control space4;
 	Control space5;
 

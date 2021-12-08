@@ -103,13 +103,10 @@ int Window::ShowModal(bool wait)
 	::SetForegroundWindow(_hWnd);
 	if (wait) {//
 		MSG msg;
-		while (GetMessageW(&msg, 0, 0, 0))
+		while (::IsWindow(_hWnd) && ::GetMessage(&msg, 0, 0, 0) && msg.message != WM_QUIT)
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
-			if (!::IsWindow(_hWnd) || msg.message == WM_QUIT) {
-				break;
-			}
 		}
 		if (msg.message == WM_QUIT) {//
 			::PostQuitMessage(msg.wParam);

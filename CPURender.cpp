@@ -16,17 +16,66 @@ Gdiplus::Font* CreateFont(const EString& fontFamily, float fontSize) {
 	Gdiplus::Font* _bufFont = new Gdiplus::Font(&ff, fontSize);
 	return _bufFont;
 }
-
 Image::Image(const EString& filename, int radius) :Gdiplus::Image(filename.utf16().c_str()) {
 	if (radius > 0) {
 		ClipImage(this, Size{ (int)GetWidth(), (int)GetHeight() }, radius, &BufBitmap);
 	}
+}
+Image* Image::Clone() {
+	Gdiplus::GpImage* cloneimage = NULL;
+	SetStatus(Gdiplus::DllExports::GdipCloneImage(nativeImage, &cloneimage));
+	Image* newImage = new Image(cloneimage, lastResult);
+	newImage->Box = Box;
+	//newImage->BufBitmap = BufBitmap;
+	return newImage;
 }
 Image::~Image() {
 	if (BufBitmap) {
 		delete BufBitmap;
 	}
 }
+//
+//void HImage::Clone(const Image* img) {
+//	if (value || img == NULL) {
+//		delete value;
+//		value = NULL;
+//	}
+//	valid = false;
+//	if (img) {
+//		value = (((Image*)img)->Clone());
+//		valid = true;
+//	}
+//}
+//HImage::HImage(const HImage& img) {
+//	((HImage*)&img)->ref++;
+//	this->value = img.value;
+//	this->valid = img.valid;
+//}
+//HImage& HImage::operator=(const HImage& img) {
+//	((HImage*)&img)->ref++;
+//	this->value = img.value;
+//	this->valid = img.valid;
+//	return *this;
+//}
+//HImage::HImage() {
+//}
+//void HImage::operator=(const Image* img) {
+//	Clone(img);
+//}
+//HImage::operator Image* () {
+//	return value;
+//}
+//Image* HImage::operator->() {
+//	return value;
+//}
+//HImage::~HImage() {
+//	if (ref > 0) {
+//		this;
+//	}
+//	if (value && ref == 0) {
+//		delete value;
+//	}
+//}
 
 void RenderInitialize()
 {

@@ -121,22 +121,7 @@ ControlStyle& Control::GetStyle(ControlState _state) {
 }
 
 void Control::OnLoad() {}
-void Control::SetAttribute(const EString& attrName, const EString& attrValue) {
-	AttributeIterator itor = _attrs.find(attrName);
-	if (itor != _attrs.end()) {
-		(*itor).second = attrValue;
-	}
-	else {
-		_attrs.insert(std::pair<EString, EString>(attrName, attrValue));
-	}
-}
-const EString Control::GetAttribute(const EString& attrName) {
-	AttributeIterator itor = _attrs.find(attrName);
-	if (itor != _attrs.end()) {
-		return (*itor).second;
-	}
-	return "";
-}
+
 EString Control::GetFontFamily(ControlState _state)
 {
 	ControlStyle& style = GetStyle(_state);
@@ -277,18 +262,22 @@ void Control::OnMouseEvent(MouseEventArgs& args) {
 		break;
 	}
 	case Event::OnMouseDown: {
+		_mouseDown = true;
 		if (!::SendMessage(_hWnd, WM_USER + 0x09, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 			OnMouseDown(args.Button, args.Location);
 		}
 		break;
 	}
 	case Event::OnMouseUp: {
-
+		bool isDown = _mouseDown;
+		_mouseDown = false;
 		if (!::SendMessage(_hWnd, WM_USER + 0x0a, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 			OnMouseUp(args.Button, args.Location);
 		}
-		args.EventType = Event::OnMouseClick;
-		OnMouseEvent(args);
+		if (isDown) {
+			args.EventType = Event::OnMouseClick;
+			OnMouseEvent(args);
+		}
 		break;
 	}
 	case Event::OnMouseLeave: {

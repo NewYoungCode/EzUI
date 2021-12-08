@@ -29,7 +29,7 @@ namespace UIManager {
 namespace UIManager {
 
 	Rect StringToRect(const EString& str) {
-		auto rectStr = String::Split(str.c_str(), L",");
+		auto rectStr = EString::Split(str.c_str(), L",");
 		if (str.empty()) return Rect();//如果没写矩形区域
 		Rect rect;
 		rect.X = std::stoi(rectStr.at(0));
@@ -111,18 +111,24 @@ namespace UIManager {
 					int h = 0;
 					if (valign == "top") {
 						v = (int)Align::Top;
-					}if (valign == "mid") {
-						v = (int)Align::Mid;
-					}if (valign == "bottom") {
+					}else if (valign == "bottom") {
 						v = (int)Align::Bottom;
 					}
+					else {
+						v = (int)Align::Mid;
+					}
+
 					if (halign == "left") {
 						h = (int)Align::Left;
-					}if (halign == "center") {
-						h = (int)Align::Center;
-					}if (halign == "right") {
+					}
+					else if (halign == "right") {
 						h = (int)Align::Right;
 					}
+					else {
+						h = (int)Align::Center;
+					}
+
+
 					if (v && h) {
 						((Label*)ctl)->SetTextAlign((TextAlign)(v | h));
 					}
@@ -275,6 +281,10 @@ namespace UIManager {
 		delete bufStr;
 	}
 	void AnalysisStyle(const EString& styleStr) {
+		styles.clear();
+		styles_active.clear();
+		styles_hover.clear();
+
 		EString style = styleStr;
 		TrimStyle(style);
 		while (style.size() > 0) {
@@ -350,7 +360,7 @@ namespace UIManager {
 			styleStr = styles.find(ctl->Name);
 		}
 		if (styleStr != _styles->end() && styleStr->second.size() > 0) {
-			auto attrs = String::Split(styleStr->second.c_str(), L";");
+			auto attrs = EString::Split(styleStr->second.c_str(), L";");
 			for (auto& it : attrs) {
 				size_t pos = it.find(":");
 				if (pos == -1)continue;

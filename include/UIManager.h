@@ -23,7 +23,7 @@ namespace UIManager {
 	}
 	inline Color StringToColor(const EString& str) {
 
-		auto color = String::Split(str.c_str(), TEXT(","));
+		auto color = EString::Split(str.c_str(), TEXT(","));
 
 		BYTE A = 255;
 		BYTE R = 255;

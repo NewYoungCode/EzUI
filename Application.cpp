@@ -22,7 +22,7 @@ Application::Application() {
 	//Éè¼Æ´°¿Ú
 	HINSTANCE hInstance = GetModuleHandle(0);
 	WNDCLASS     wc;
-	wc.style = NULL;
+	wc.style = CS_DBLCLKS;
 	//wc.style = CS_HREDRAW | CS_VREDRAW;//| CS_DBLCLKS;
 	wc.lpfnWndProc = EzUI_WndProc;
 	wc.cbClsExtra = NULL;
