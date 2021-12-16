@@ -216,8 +216,8 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_PAINT:
 	{
 		if (!_load) {
-			OnLoad();
 			_load = true;
+			OnLoad();
 		}
 		PAINTSTRUCT pst;
 		BeginPaint(_hWnd, &pst);

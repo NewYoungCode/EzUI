@@ -120,6 +120,61 @@ ControlStyle& Control::GetStyle(ControlState _state) {
 	return Style;
 }
 
+void Control::SetAttribute(const EString& attrName, const EString& attrValue)
+{
+	__super::SetAttribute(attrName, attrValue);
+	do
+	{
+		if (attrName == "x") {
+			this->Move({ std::stoi(attrValue) ,this->GetRect().Y });
+			break;
+		}
+		if (attrName == "y") {
+			this->Move({ this->GetRect().X, std::stoi(attrValue) });
+			break;
+		}
+		if (attrName=="width") {//如果单独设置了宽高那就是绝对宽高了
+			this->SetFixedWidth(std::stoi(attrValue));
+			break;
+		}
+		if (attrName == "height") {//如果单独设置了宽高那就是绝对宽高了
+			this->SetFixedHeight(std::stoi(attrValue));
+			break;
+		}
+		if (attrName == "visible" || attrName == "display") {
+			this->Visible = (::strcmp(attrValue.c_str(), "true") == 0 ? true : false);
+			break;
+		}
+		if (attrName == "dock") {
+			if (attrValue == "fill") {
+				this->Dock = DockStyle::Fill; break;
+			}
+			if (attrValue == "horizontal") {
+				this->Dock = DockStyle::Horizontal; break;
+			}
+			if (attrValue == "vertical") {
+				this->Dock = DockStyle::Vertical; break;
+			}
+			break;
+		}
+		if (attrName == "action") {
+			if (attrValue == "close") {
+				this->Action = ControlAction::Close; break;
+			}
+			if (attrValue == "mini") {
+				this->Action = ControlAction::Mini; break;
+			}
+			if (attrValue == "max") {
+				this->Action = ControlAction::Max; break;
+			}
+			if (attrValue == "move" || attrValue == "movewindow") {
+				this->Action = ControlAction::MoveWindow; break;
+			}
+			break;
+		}
+	} while (false);
+}
+
 void Control::OnLoad() {}
 
 EString Control::GetFontFamily(ControlState _state)

@@ -103,6 +103,7 @@ public:
 	Color GetBorderColor();
 	Color GetBackgroundColor();
 	
+	virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性
 	//具有继承性样式
 	EString GetFontFamily(ControlState _state = ControlState::None);//获取默认控件状态下字体Family
 	UI_Float GetFontSize(ControlState _state = ControlState::None);//获取默认控件状态下字体大小样式

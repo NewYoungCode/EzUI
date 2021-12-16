@@ -16,7 +16,7 @@ enum  Event :int {
 
 	OnKeyDown = 256,
 	OnKeyUp = 512,
-	
+
 	OnPaint = 1024
 };
 enum class ControlState {
@@ -255,10 +255,9 @@ public:
 	virtual void OnKeyDown(WPARAM wParam) = 0;
 	virtual void OnTimer();//计时器函数
 public:
-	//设置属性
-	virtual void SetAttribute(const EString& attrName, const EString& attrValue);
-	//获取属性
-	virtual const EString GetAttribute(const EString& attrName);
+	virtual void SetStyleSheet(const EString&styleStr);//设置style
+	virtual void SetAttribute(const EString& attrName, const EString& attrValue);//设置属性
+	virtual const EString GetAttribute(const EString& attrName);//获取属性
 	virtual UINT_PTR SetTimer(size_t interval);
 	virtual void KillTimer();
 };

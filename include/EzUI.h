@@ -184,10 +184,10 @@ public:
 		this->resize(bytes);
 		WideCharToMultiByte(CP_UTF8, 0, szbuf, len, (char*)this->c_str(), bytes, NULL, NULL);
 	}
-	EString(const std::wstring*wstr) {
-		int bytes = ::WideCharToMultiByte(CP_UTF8, 0, wstr->c_str(), wstr->size(), NULL, 0, NULL, NULL);
+	EString(const std::wstring&wstr) {
+		int bytes = ::WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
 		this->resize(bytes);
-		WideCharToMultiByte(CP_UTF8, 0, wstr->c_str(), wstr->size(), (char*)this->c_str(), bytes, NULL, NULL);
+		WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), (char*)this->c_str(), bytes, NULL, NULL);
 	}
 	std::wstring utf16() const {
 		int textlen = MultiByteToWideChar(CP_UTF8, 0, this->c_str(), this->size(), NULL, 0);
@@ -251,8 +251,8 @@ namespace Debug {
 	template<typename ...T>
 	inline void Log(const EString&formatStr, T ...args) {
 		#ifdef DEBUGLOG
-				WCHAR buf[256]{ 0 };
-				auto count = swprintf_s((buf), 255, formatStr.utf16().c_str(), std::forward<T>(args)...);
+				WCHAR buf[1024]{ 0 };
+				auto count = swprintf_s((buf), 1024, formatStr.utf16().c_str(), std::forward<T>(args)...);
 				buf[count] = '\n';
 				buf[count + 1] = NULL;
 				OutputDebugStringW(buf);

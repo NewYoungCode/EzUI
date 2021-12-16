@@ -1,6 +1,6 @@
 #pragma once
 #include "Container.h"
-class TabLayout :
+class UI_EXPORT TabLayout :
 	public Container
 {
 protected:

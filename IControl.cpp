@@ -15,6 +15,9 @@ void IControl::KillTimer() {
 	::KillTimer(_hWnd, (UINT_PTR)this);
 	_hasTimer = false;
 }
+void IControl::SetStyleSheet(const EString& styleStr)
+{
+}
 void IControl::SetAttribute(const EString& attrName, const EString& attrValue) {
 	AttributeIterator itor = _attrs.find(attrName);
 	if (itor != _attrs.end()) {

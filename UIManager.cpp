@@ -10,6 +10,7 @@
 #include "RadioButton.h"
 #include "CheckBox.h"
 #include "Edit.h"
+#include "TabLayout.h"
 
 #include"tinyxml/tinyxml.h"
 #include"tinyxml/tinystr.h"
@@ -81,6 +82,10 @@ namespace UIManager {
 			}
 			if (valueStr == "tilelayout") {
 				ctl = new TileLayout;
+				break;
+			}
+			if (valueStr == "tablayout") {
+				ctl = new TabLayout;
 				break;
 			}
 			if (valueStr == "container") {
@@ -173,59 +178,6 @@ namespace UIManager {
 			ctl->SetAttribute(attr->Name(), attr->Value());
 		} while ((attr = attr->Next()));
 
-		if (node->Attribute("x")) {//如果单独设置了宽高那就是绝对宽高了
-			ctl->Move({ std::stoi(node->Attribute("x")) ,ctl->GetRect().Y });
-		}
-		if (node->Attribute("y")) {//如果单独设置了宽高那就是绝对宽高了
-			ctl->Move({ctl->GetRect().X, std::stoi(node->Attribute("y"))  });
-		}
-		if (node->Attribute("width")) {//如果单独设置了宽高那就是绝对宽高了
-			ctl->SetFixedWidth(std::stoi(node->Attribute("width")));
-		}
-		if (node->Attribute("height")) {//如果单独设置了宽高那就是绝对宽高了
-			ctl->SetFixedHeight(std::stoi(node->Attribute("height")));
-		}
-		if (node->Attribute("visible")) {//控件是否可见
-			auto value = node->Attribute("visible");
-			ctl->Visible = (::strcmp(value, "true") == 0 ? true : false);
-		}
-		if (node->Attribute("display")) {//控件是否可见
-			auto value = node->Attribute("display");
-			ctl->Visible = (::strcmp(value, "true") == 0 ? true : false);
-		}
-		if (node->Attribute("dock")) {//控件对其方式
-			EString valueStr = node->Attribute("dock");
-			do
-			{
-				if (valueStr == "fill") {
-					ctl->Dock = DockStyle::Fill; break;
-				}
-				if (valueStr == "horizontal") {
-					ctl->Dock = DockStyle::Horizontal; break;
-				}
-				if (valueStr == "vertical") {
-					ctl->Dock = DockStyle::Vertical; break;
-				}
-			} while (0);
-		}
-		if (node->Attribute("action")) {//控件行为
-			EString valueStr = node->Attribute("action");
-			do
-			{
-				if (valueStr == "close") {
-					ctl->Action = ControlAction::Close; break;
-				}
-				if (valueStr == "mini") {
-					ctl->Action = ControlAction::Mini; break;
-				}
-				if (valueStr == "max") {
-					ctl->Action = ControlAction::Max; break;
-				}
-				if (valueStr == "move" || valueStr == "movewindow") {
-					ctl->Action = ControlAction::MoveWindow; break;
-				}
-			} while (0);
-		}
 		LoadStyle(ctl, ControlState::None);
 		LoadStyle(ctl, ControlState::Active);
 		LoadStyle(ctl, ControlState::Hover);
