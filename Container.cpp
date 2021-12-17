@@ -2,7 +2,7 @@
 
 Container::Container()
 {
-	_Type = ControlType::ControlContainer;
+
 }
 Container::~Container()
 {

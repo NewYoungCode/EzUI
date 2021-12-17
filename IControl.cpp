@@ -1,8 +1,101 @@
 #include "IControl.h"
 
-IControl::IControl(){}
-IControl::~IControl(){}
-void IControl::OnTimer(){}
+
+void ControlStyle::SetBorder(const Color& color, int width) { //¶ÔËùÓÐborderÓÐÐ§
+	BorderColor = color;
+	BorderLeft = width;//×ó±ß±ß¿ò
+	BorderTop = width;//¶¥²¿±ß¿ò
+	BorderRight = width;//ÓÒ±ß±ß¿ò
+	BorderBottom = width;//µ×²¿±ß¿ò
+}
+bool ControlStyle::IsValid() {
+	return Radius.valid ||
+		BorderLeft.valid || BorderTop.valid || BorderRight.valid || BorderBottom.valid || BorderColor.valid || BackgroundColor.valid ||
+		BackgroundImage.valid || ForeImage.valid ||
+		!FontFamily.empty() || FontSize.valid || ForeColor.valid;
+}
+void ControlStyle::SetStyleSheet(const EString& styleStr)
+{
+	auto attrs = EString::Split(styleStr,";");
+	for (auto& it : attrs) {
+		size_t pos = it.find(":");
+		if (pos == -1)continue;
+		EString key = it.substr(0, pos);
+		EString value = it.substr(pos + 1);
+		this->SetStyle(key, value);
+	}
+}
+void ControlStyle::SetStyle(const EString& key, const EString& _value)
+{
+	EString& value = (EString&)_value;
+	ControlStyle* style = this;
+	do
+	{
+		if (key == "background-color") {
+			style->BackgroundColor = ::Style::StringToColor(value);
+			break;
+		}
+		if (key == "background-image") {
+			::Style::Erase(value, '"');//É¾³ýË«ÒýºÅ;
+			style->BackgroundImage = new Image(value);
+			break;
+		}
+		if (key == "fore-image") {
+			::Style::Erase(value, '"');//É¾³ýË«ÒýºÅ;
+			style->ForeImage = new Image(value);
+			break;
+		}
+		if (key == "border-color") {
+			style->BorderColor = ::Style::StringToColor(value);
+			break;
+		}
+		if (key == "color" || key == "fore-color") {
+			style->ForeColor = ::Style::StringToColor(value);
+			break;
+		}
+		if (key == "radius") {
+			style->Radius = std::stoi(value);
+			break;
+		}
+		if (key == "font-size") {
+			style->FontSize = std::stoi(value);
+			break;
+		}
+		if (key == "font-family") {
+			::Style::Erase(value, '"');//É¾³ýË«ÒýºÅ;
+			style->FontFamily = value;
+			break;
+		}
+		if (key == "border") {
+			auto width = std::stoi(value);
+			style->BorderLeft = width;
+			style->BorderTop = width;
+			style->BorderRight = width;
+			style->BorderBottom = width;
+			break;
+		}
+		if (key == "border-left") {
+			style->BorderLeft = std::stoi(value);
+			break;
+		}
+		if (key == "border-top") {
+			style->BorderTop = std::stoi(value);
+			break;
+		}
+		if (key == "border-right") {
+			style->BorderRight = std::stoi(value);
+			break;
+		}
+		if (key == "border-bottom") {
+			style->BorderBottom = std::stoi(value);
+			break;
+		}
+	} while (false);
+}
+
+IControl::IControl() {}
+IControl::~IControl() {}
+void IControl::OnTimer() {}
 UINT_PTR IControl::SetTimer(size_t interval)
 {
 	if (_hasTimer) {

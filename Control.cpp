@@ -125,6 +125,14 @@ void Control::SetAttribute(const EString& attrName, const EString& attrValue)
 	__super::SetAttribute(attrName, attrValue);
 	do
 	{
+		if (attrName == "name") {
+			this->Name = attrValue;
+			break;
+		}
+		if (attrName == "rect") {
+			this->SetRect(::Style::StringToRect(attrValue));
+			break;
+		}
 		if (attrName == "x") {
 			this->Move({ std::stoi(attrValue) ,this->GetRect().Y });
 			break;
@@ -579,7 +587,7 @@ void Control::AddControl(Control* ctl) {
 	//新添加的控件必须先触发 自身布局特性
 	ctl->OnLayout(sz);
 	//如果控件是一个弹簧对象
-	if ((DynamicCast(ctl, Spacer, ControlType::ControlSpacer))) {
+	if (dynamic_cast<Spacer*>(ctl)) {
 		_spacer.push_back(ctl);//控件内收集弹簧对象 当本控件执行析构函数的时候 自动会释放控件内弹簧对象
 	}
 }
@@ -668,7 +676,8 @@ void Control::Clear(bool freeControls)
 			//Debug::Log("WM_CONTROL_DELETE %p", *i);
 			::SendMessage(_hWnd, WM_CONTROL_DELETE, (WPARAM)*i, NULL);
 		}
-		if (freeControls && (*i)->GetType() != ControlType::ControlSpacer) {//弹簧不能删除 弹簧必须使用DestroySpacers()函数删除
+
+		if (freeControls && !dynamic_cast<Spacer*>(*i)) {//弹簧不能删除 弹簧必须使用DestroySpacers()函数删除
 			delete* i;
 		}
 	}
@@ -677,10 +686,10 @@ void Control::Clear(bool freeControls)
 	DestroySpacers();//清空弹簧并删除弹簧
 }
 
-const ControlType& Control::GetType()
-{
-	return _Type;
-}
+//const ControlType& Control::GetType()
+//{
+//	return _Type;
+//}
 
 void Control::OnChar(WPARAM wParam, LPARAM lParam) {}
 void Control::OnKeyDown(WPARAM wParam) {}

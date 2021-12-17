@@ -63,7 +63,7 @@ public:
 	EventMouseDoubleClick MouseDoubleClick;//鼠标双击
 	//Tuple<LPCTSTR> Cursor;//鼠标样式  默认 IDC_ARROW
 public:
-	const ControlType& GetType();
+	/*const ControlType& GetType();*/
 	virtual void OnChar(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
 	virtual void OnKeyDown(WPARAM wParam) override;//WM_CAHR消息
 	virtual void OnPaint(PaintEventArgs& args);//绘制 
@@ -142,10 +142,6 @@ public:
 //添加弹簧无需用户手动释放,
 class Spacer :public Control {
 public:
-	Spacer() :Control() {
-		//this->Visible = false;
-		this->_Type = ControlType::ControlSpacer;
-	}
 	virtual ~Spacer() {};
 public:
 #ifdef DEBUGPAINT
@@ -188,7 +184,6 @@ public:
 class ScrollBar :public Control {
 public:
 	ScrollBar() {
-		this->_Type = ControlType::ControlScrollBar;
 		Style.BackgroundColor = { 240,240,240 };//the bar backgroundcolor
 		Style.ForeColor = { 155,155,155 };//the slider color
 	}

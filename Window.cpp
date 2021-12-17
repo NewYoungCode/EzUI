@@ -2,7 +2,6 @@
 
 Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 {
-	_Type = ControlType::ControlWindow;
 	int sw = GetSystemMetrics(SM_CXFULLSCREEN);
 	int sh = GetSystemMetrics(SM_CYFULLSCREEN);
 	_rect.X = (sw - width) / 2;
@@ -449,8 +448,7 @@ loop:
 			continue;
 		}
 		if (it.GetClientRect().Contains(clientPoint)) {
-			Spacer* spcaer = DynamicCast((&it), Spacer, ControlType::ControlSpacer);
-			if (spcaer) {
+			if (dynamic_cast<Spacer*>(&it)) {
 				return outCtl;
 			}
 			outCtl = &it;
@@ -506,13 +504,13 @@ void Window::OnMouseWheel(short zDelta, const Point& point)
 	if (_focusControl == NULL) return;
 	ScrollBar* vBar = NULL;
 	if (_focusControl->ScrollBar) {
-		vBar = DynamicCast(_focusControl->ScrollBar, ScrollBar, ControlType::ControlScrollBar);
+		vBar = dynamic_cast<ScrollBar*>(_focusControl->ScrollBar);
 	}
 	Control* pControl = _focusControl;
 	while (vBar == NULL && pControl)
 	{
 		if (pControl->ScrollBar) {
-			vBar = DynamicCast(pControl->ScrollBar, ScrollBar, ControlType::ControlScrollBar);
+			vBar = dynamic_cast<ScrollBar*>(pControl->ScrollBar);
 			break;
 		}
 		pControl = pControl->Parent;

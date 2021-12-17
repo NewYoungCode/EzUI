@@ -18,8 +18,10 @@ void VScrollBar::SetMaxBottom(int maxBottom)
 		_sliderHeight = rect.Height;
 	}
 	else {
-		//滑块高度
-		_sliderHeight = rect.Height * 1.0 * rect.Height / _maxBottom;
+		if (_maxBottom != 0) {
+			//滑块高度
+			_sliderHeight = rect.Height * 1.0 * rect.Height / _maxBottom;
+		}
 	}
 	Move(sliderY);
 }

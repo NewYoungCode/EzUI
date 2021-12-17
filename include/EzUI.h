@@ -121,8 +121,8 @@ public:
 #define WM_CONTROL_REFRESH WM_USER+0x03 //
 
 #define WM_UIMESSAGE  WM_USER+20   
-//utf8
-class EString :public std::string {
+
+class UI_EXPORT EString :public std::string {
 public:
 	enum
 	{
@@ -130,91 +130,13 @@ public:
 		UTF8 = CP_UTF8
 	};
 public:
-	size_t length() const {
-		auto *p = this->c_str();
-		size_t pos = 0, count = 0;
-		while (p[pos] && pos < this->size()) {
-			if ((p[pos] & 0xc0) != 0x80) {
-				count++;
-			}
-			pos++;
-		}
-		return count;
-	}
-	EString() {}
-	EString(const std::string&str, int codePage = EString::UTF8) :std::string() {
-		if ((codePage == EString::ANSI) && (::GetACP() != CP_UTF8)) {
-			int nwLen = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.size(), NULL, 0);
-			wchar_t* pwBuf = new wchar_t[nwLen + 1];
-			ZeroMemory(pwBuf, nwLen * 2 + 2);
-			::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.length(), pwBuf, nwLen);
-			int nLen = ::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, NULL, NULL, NULL, NULL);
-			this->resize(nLen);
-			::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, (char*)this->c_str(), nLen, NULL, NULL);
-			delete[]pwBuf;
-		}
-		else {
-			this->resize(str.size());
-			::memcpy((void*)c_str(), str.c_str(), str.size());
-		}
-	}
-	EString(const char*szbuf, int codePage = EString::UTF8) {
-		if (szbuf == NULL)return;
-		size_t len = ::strlen(szbuf);
-		if ((codePage == EString::ANSI) && (::GetACP() != CP_UTF8)) {
-			int nwLen = ::MultiByteToWideChar(CP_ACP, 0, szbuf, len, NULL, 0);
-			wchar_t* pwBuf = new wchar_t[nwLen + 1];
-			ZeroMemory(pwBuf, nwLen * 2 + 2);
-			::MultiByteToWideChar(CP_ACP, 0, szbuf, len, pwBuf, nwLen);
-			int nLen = ::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, NULL, NULL, NULL, NULL);
-			this->resize(nLen);
-			::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, (char*)this->c_str(), nLen, NULL, NULL);
-			delete[]pwBuf;
-		}
-		else
-		{
-			this->resize(len);
-			::memcpy((void*)c_str(), szbuf, len);
-		}
-	}
-	EString(const wchar_t*szbuf) {
-		if (szbuf == NULL)return;
-		size_t len = ::lstrlenW(szbuf);
-		int bytes = ::WideCharToMultiByte(CP_UTF8, 0, szbuf, len, NULL, 0, NULL, NULL);
-		this->resize(bytes);
-		WideCharToMultiByte(CP_UTF8, 0, szbuf, len, (char*)this->c_str(), bytes, NULL, NULL);
-	}
-	EString(const std::wstring&wstr) {
-		int bytes = ::WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
-		this->resize(bytes);
-		WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), (char*)this->c_str(), bytes, NULL, NULL);
-	}
-	std::wstring utf16() const {
-		int textlen = MultiByteToWideChar(CP_UTF8, 0, this->c_str(), this->size(), NULL, 0);
-		std::wstring wstr;
-		wstr.resize(textlen);
-		MultiByteToWideChar(CP_UTF8, 0, this->c_str(), this->size(), (WCHAR*)wstr.c_str(), textlen);
-		return wstr;
-	}
-	std::string ansi()const {
-		auto& str = *this;
-
-		int nwLen = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
-		wchar_t* pwBuf = new wchar_t[nwLen + 1];
-		memset(pwBuf, 0, nwLen * 2 + 2);
-		MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), pwBuf, nwLen);
-		int nLen = WideCharToMultiByte(CP_ACP, 0, pwBuf, -1, NULL, NULL, NULL, NULL);
-		char* pBuf = new char[nLen + 1];
-		memset(pBuf, 0, nLen + 1);
-		WideCharToMultiByte(CP_ACP, 0, pwBuf, nwLen, pBuf, nLen, NULL, NULL);
-		std::string strRet = pBuf;
-
-		delete[]pBuf;
-		delete[]pwBuf;
-		pBuf = NULL;
-		pwBuf = NULL;
-		return strRet;
-	}
+	size_t length() const;
+	EString();
+	EString(const std::string& str, int codePage = EString::UTF8);
+	EString(const char* szbuf, int codePage = EString::UTF8);
+	EString(const wchar_t* szbuf);
+	EString(const std::wstring& wstr);
+	std::wstring utf16() const;
 
 	static std::vector<EString> Split(const EString& str, const EString& ch_) {
 		std::vector<EString> arr;
@@ -235,17 +157,22 @@ public:
 		}
 		return arr;
 	}
-
-};
+	static size_t  Replace(EString& str, const EString& oldText, const EString& newText)
+	{
+		EString& newStr = str;
+		size_t pos;
+		pos = str.find(oldText);
+		size_t count = 0;
+		for (; pos != std::string::npos;) {
+			newStr.replace(pos, oldText.size(), newText);
+			count++;
+			pos = newStr.find(oldText);
+		}
+		return count;
+	}
+	};
 #define utf8(szbuf)  EString(szbuf,EString::ANSI)
 //#define utf8(szbuf)  EString(szbuf,EString::UTF8)
-
-
-namespace MsgBox {
-	inline int Show(const EString&text, const EString&title = TEXT(""), int mButton = NULL) {
-		return ::MessageBoxW(::GetActiveWindow(), text.utf16().c_str(), text.utf16().c_str(), mButton);
-	}
-}
 
 namespace Debug {
 	template<typename ...T>
@@ -274,8 +201,6 @@ public:
 	}
 };
 
-
-
 namespace Dialog {
 	inline EString OpenFileDialog(HWND oWner, const EString&title, const EString&filter, const EString&defaultPath) {
 		OPENFILENAMEW ofn = { 0 };
@@ -292,6 +217,4 @@ namespace Dialog {
 		GetOpenFileNameW(&ofn);
 		return strFilename;
 	}
-
-
 }

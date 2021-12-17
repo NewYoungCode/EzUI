@@ -18,7 +18,6 @@
 namespace UIManager {
 	const EString Attribute(TiXmlElement* node, const char* szstr);
 	void LoadControl(TiXmlElement* node, Control* control);
-	Rect StringToRect(const EString& str);
 	Control* BuildControl(TiXmlElement* node);
 	void LoadStyle(Control* ctl, ControlState styleType);
 
@@ -28,17 +27,6 @@ namespace UIManager {
 }
 
 namespace UIManager {
-
-	Rect StringToRect(const EString& str) {
-		auto rectStr = EString::Split(str.c_str(), L",");
-		if (str.empty()) return Rect();//如果没写矩形区域
-		Rect rect;
-		rect.X = std::stoi(rectStr.at(0));
-		rect.Y = std::stoi(rectStr.at(1));
-		rect.Width = std::stoi(rectStr.at(2));
-		rect.Height = std::stoi(rectStr.at(3));
-		return rect;
-	}
 	const EString Attribute(TiXmlElement* node, const char* szstr) {
 		auto str = node->Attribute(szstr);
 		if (str == NULL) return L"";
@@ -167,9 +155,6 @@ namespace UIManager {
 				break;
 			}
 		} while (false);
-		//通用属性
-		ctl->Name = Attribute(node, "name");
-		ctl->SetRect(StringToRect(Attribute(node, "rect")));
 
 		TiXmlAttribute* attr = node->FirstAttribute();
 		do
@@ -221,17 +206,6 @@ namespace UIManager {
 		str = bufStr;
 		delete bufStr;
 	}
-	void Erase(EString& str, TCHAR _char = ' ') {
-		TCHAR* bufStr = new TCHAR[str.size()]{ 0 };
-		size_t pos = 0;
-		for (auto& it : str) {
-			if (_char == it)continue;
-			bufStr[pos] = it;
-			pos++;
-		}
-		str = bufStr;
-		delete bufStr;
-	}
 	void AnalysisStyle(const EString& styleStr) {
 		styles.clear();
 		styles_active.clear();
@@ -265,7 +239,6 @@ namespace UIManager {
 			style = style.substr(pos2 + 1);
 		}
 	}
-
 	std::vector<Control*> LoadControl(const EString& filename)
 	{
 		TiXmlDocument doc;
@@ -312,75 +285,7 @@ namespace UIManager {
 			styleStr = styles.find(ctl->Name);
 		}
 		if (styleStr != _styles->end() && styleStr->second.size() > 0) {
-			auto attrs = EString::Split(styleStr->second.c_str(), L";");
-			for (auto& it : attrs) {
-				size_t pos = it.find(":");
-				if (pos == -1)continue;
-				EString key = it.substr(0, pos);
-				EString value = it.substr(pos + 1);
-				do
-				{
-					if (key == "background-color") {
-						style->BackgroundColor = StringToColor(value);
-						break;
-					}
-					if (key == "background-image") {
-						Erase(value, '"');//删除双引号;
-						style->BackgroundImage = new Image(value);
-						break;
-					}
-					if (key == "fore-image") {
-						Erase(value, '"');//删除双引号;
-						style->ForeImage = new Image(value);
-						break;
-					}
-					if (key == "border-color") {
-						style->BorderColor = StringToColor(value);
-						break;
-					}
-					if (key == "color" || key == "fore-color") {
-						style->ForeColor = StringToColor(value);
-						break;
-					}
-					if (key == "radius") {
-						style->Radius = std::stoi(value);
-						break;
-					}
-					if (key == "font-size") {
-						style->FontSize = std::stoi(value);
-						break;
-					}
-					if (key == "font-family") {
-						Erase(value, '"');//删除双引号;
-						style->FontFamily = value;
-						break;
-					}
-					if (key == "border") {
-						auto width = std::stoi(value);
-						style->BorderLeft = width;
-						style->BorderTop = width;
-						style->BorderRight = width;
-						style->BorderBottom = width;
-						break;
-					}
-					if (key == "border-left") {
-						style->BorderLeft = std::stoi(value);
-						break;
-					}
-					if (key == "border-top") {
-						style->BorderTop = std::stoi(value);
-						break;
-					}
-					if (key == "border-right") {
-						style->BorderRight = std::stoi(value);
-						break;
-					}
-					if (key == "border-bottom") {
-						style->BorderBottom = std::stoi(value);
-						break;
-					}
-				} while (false);
-			}
+			style->SetStyleSheet(styleStr->second);
 		}
 	}
 }

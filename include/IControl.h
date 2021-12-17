@@ -1,8 +1,7 @@
 #pragma once
 #include "EzUI.h"
 #include "Painter.h"
-
-typedef std::function< void(UINT uMsg, WPARAM wParam, LPARAM lParam)> UserMessageProc;
+#include "Style.h"
 
 enum  Event :int {
 	OnMouseWheel = 1,
@@ -25,19 +24,6 @@ enum class ControlState {
 	Active,
 	Disable
 };
-
-//摘要: 描述当前控件类型
-enum ControlType :BYTE {
-	ControlBase,//基础控件
-	ControlEdit,//输入框
-	ControlEditWin32,//win32输入框
-	ControlContainer,//容器
-	ControlSpacer,//弹簧
-	ControlScrollBar, //滚动条
-	ControlWindow
-};
-
-#define DynamicCast(_ControlPtr,_ControlClass,_ControlTypeEnum) ( ##_ControlPtr->GetType()== ##_ControlTypeEnum?(( ##_ControlClass*)( ##_ControlPtr)):NULL)
 
 enum AnchorStyle : int
 {
@@ -77,7 +63,6 @@ enum class DockStyle {
 	Fill
 };
 
-
 enum class MouseButton {
 	// 摘要: 
 	  //     未曾按下鼠标按钮。
@@ -104,8 +89,6 @@ enum class MouseButton {
 	XButton2 = 16777216,
 };
 
-
-
 // 摘要: 
 //基础事件
 struct EventArgs {
@@ -130,59 +113,9 @@ struct PaintEventArgs :public EventArgs {
 	PaintEventArgs(_Painter_& painter) :Painter(painter) {}
 };
 
-//描述边框
-struct  Border {
-	UI_UInt left;
-	UI_UInt top;
-	UI_UInt right;
-	UI_UInt bottom;
-	Color color;
-	Border() {
-
-	}
-	Border(UI_UInt width, const Color& color) {
-		this->left = width;
-		this->top = width;
-		this->right = width;
-		this->bottom = width;
-		this->color = color;
-	}
-	Border(UI_UInt left, UI_UInt top, UI_UInt right, UI_UInt bottom, const Color& color) {
-		this->left = left;
-		this->top = top;
-		this->right = right;
-		this->bottom = bottom;
-		this->color = color;
-	}
-};
-
-struct Background {
-	Color color;
-	HImage image;
-	Background() {}
-	Background(const Color& color, Image* image = NULL) {
-		this->color = color;
-		this->image = image;
-	}
-	Background(Image* image) {
-		this->image = image;
-	}
-};
-struct Fore {
-	Color color;
-	HImage image;
-	Fore() {}
-	Fore(const Color& color, Image* image = NULL) {
-		this->color = color;
-		this->image = image;
-	}
-	Fore(Image* image) {
-		this->image = image;
-	}
-};
-
 //控件样式
-struct ControlStyle {
+class UI_EXPORT ControlStyle {
+public:
 	UI_Int Radius;//圆角系数
 	UI_Int BorderLeft;//左边边框
 	UI_Int BorderTop;//顶部边框
@@ -197,26 +130,15 @@ struct ControlStyle {
 	UI_Float FontSize;//字体大小       具有继承性
 	Color ForeColor;//前景颜色      具有继承性
 private:
-	ControlStyle& operator=(const ControlStyle& right) { //禁止直接赋值 因为这样会导致 Color执行拷贝使得Color变得不合法的有效
-		return *this;
-	}
-	ControlStyle(const ControlStyle& right) { //禁止拷贝 因为这样会导致 Color执行拷贝使得Color变得不合法的有效
-	}
+	void operator=(const ControlStyle& right) {} //禁止直接赋值 因为这样会导致 Color执行拷贝使得Color变得不合法的有效
+	ControlStyle(const ControlStyle& right) {} //禁止拷贝 因为这样会导致 Color执行拷贝使得Color变得不合法的有效
 public:
 	ControlStyle() {}
-	void SetBorder(const Color& color, int width) { //对所有border有效
-		BorderColor = color;
-		BorderLeft = width;//左边边框
-		BorderTop = width;//顶部边框
-		BorderRight = width;//右边边框
-		BorderBottom = width;//底部边框
-	}
-	bool IsValid() {
-		return Radius.valid ||
-			BorderLeft.valid || BorderTop.valid || BorderRight.valid || BorderBottom.valid || BorderColor.valid || BackgroundColor.valid ||
-			BackgroundImage.valid || ForeImage.valid ||
-			!FontFamily.empty() || FontSize.valid || ForeColor.valid;
-	}
+	virtual ~ControlStyle() {}
+	void SetBorder(const Color& color, int width);
+	bool IsValid();
+	void SetStyleSheet(const EString& styleStr);
+	void SetStyle(const EString& key,const EString&value);
 };
 //控件行为
 enum class ControlAction {
@@ -236,7 +158,6 @@ protected:
 	bool _hasTimer = false;
 	Attributes _attrs;
 public:
-	ControlType _Type = ControlType::ControlBase;//控件类型
 	UINT_PTR Tag = NULL;
 	HWND _hWnd = NULL;//if son is control,the hwnd is parent window handle
 public:
@@ -255,7 +176,7 @@ public:
 	virtual void OnKeyDown(WPARAM wParam) = 0;
 	virtual void OnTimer();//计时器函数
 public:
-	virtual void SetStyleSheet(const EString&styleStr);//设置style
+	virtual void SetStyleSheet(const EString& styleStr);//设置style
 	virtual void SetAttribute(const EString& attrName, const EString& attrValue);//设置属性
 	virtual const EString GetAttribute(const EString& attrName);//获取属性
 	virtual UINT_PTR SetTimer(size_t interval);

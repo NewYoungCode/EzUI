@@ -177,7 +177,6 @@ bool EditWnd::HaveText()
 
 EditWnd::EditWnd()
 {
-	this->_Type = ControlType::ControlEditWin32;
 }
 EditWnd::~EditWnd()
 {
