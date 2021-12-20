@@ -1,8 +1,6 @@
-# EzUI
+//WIN32 desktop application UI framework
 
-WIN32 desktop application UI framework
-
-email:718987717@qq.com
+//email:718987717@qq.com
 
 #include "EzUI.h"
 
