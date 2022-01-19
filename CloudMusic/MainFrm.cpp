@@ -245,6 +245,16 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 }
 
 
+void MainFrm::OnPaint(HDC hdc, const Rect& rect)
+{
+	StopWatch sw;
+	__super::OnPaint(hdc, rect);
+
+	char buf[256]{ 0 };
+	sprintf_s(buf, "%dms\n", sw.ElapsedMilliseconds());
+	OutputDebugStringA(buf);
+}
+
 void MainFrm::OnDestroy()
 {
 	Application::exit();

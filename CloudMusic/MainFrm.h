@@ -63,6 +63,8 @@ public :
 
 	//WS_OVERLAPPEDWINDOW
 
+	void OnPaint(HDC hdc, const Rect& rect);
+
 	void OnDestroy();
 };
 
