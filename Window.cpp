@@ -331,7 +331,9 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_LBUTTONDOWN:
 	{
-
+	/*	char buff[256]{ 0 };
+		sprintf_s(buff, "X:%d Y:%d LParam:%d\n", GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), lParam);
+		OutputDebugStringA(buff);*/
 		OnMouseDown(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		break;
 	}
@@ -632,6 +634,7 @@ void Window::OnChar(WPARAM wParam, LPARAM lParam)
 void Window::OnMove(const Point& point) {
 
 }
+
 
 bool Window::OnNotify(Control* sender, EventArgs* args) {
 	if (args->EventType == Event::OnMouseDown) {
