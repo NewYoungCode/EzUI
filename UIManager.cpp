@@ -163,6 +163,9 @@ namespace UIManager {
 			ctl->SetAttribute(attr->Name(), attr->Value());
 		} while ((attr = attr->Next()));
 
+		if (ctl) {
+			ctl->IsXmlControl = true;//标记为xml加载进来的控件
+		}
 		LoadStyle(ctl, ControlState::None);
 		LoadStyle(ctl, ControlState::Active);
 		LoadStyle(ctl, ControlState::Hover);

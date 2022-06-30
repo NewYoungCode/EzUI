@@ -66,5 +66,6 @@ public :
 	void OnPaint(HDC hdc, const Rect& rect);
 
 	void OnDestroy();
+	bool OnNotify(Control* sender, EventArgs* args) override;
 };
 

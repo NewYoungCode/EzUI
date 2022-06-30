@@ -19,7 +19,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	top.AddControl(&title);
 
 	edit.SetRect({ 198,14,400,33 });
-
+	
 	edit.Style.BackgroundColor = { 41,41,44 };
 	edit.Style.SetBorder({ 41,41,44 }, 1);
 	edit.Style.ForeColor = (Color::White);
@@ -258,4 +258,8 @@ void MainFrm::OnPaint(HDC hdc, const Rect& rect)
 void MainFrm::OnDestroy()
 {
 	Application::exit();
+}
+
+bool MainFrm::OnNotify(Control* sender, EventArgs* args) {
+	return __super::OnNotify(sender, args);
 }
