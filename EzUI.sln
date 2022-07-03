@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EzUI", "EzUI.vcxproj", "{BE
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CloudMusic", "CloudMusic\CloudMusic.vcxproj", "{F2982709-24BE-469D-9EA9-36E5D34A5400}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BilibiliTTS", "..\BilibiliTTS\BilibiliTTS.vcxproj", "{EE5A46D6-24FA-4416-9F3C-D5348F62BABF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Release|x64.Build.0 = Release|x64
 		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Release|x86.ActiveCfg = Release|Win32
 		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Release|x86.Build.0 = Release|Win32
+		{EE5A46D6-24FA-4416-9F3C-D5348F62BABF}.Debug|x64.ActiveCfg = Debug|x64
+		{EE5A46D6-24FA-4416-9F3C-D5348F62BABF}.Debug|x64.Build.0 = Debug|x64
+		{EE5A46D6-24FA-4416-9F3C-D5348F62BABF}.Debug|x86.ActiveCfg = Debug|Win32
+		{EE5A46D6-24FA-4416-9F3C-D5348F62BABF}.Debug|x86.Build.0 = Debug|Win32
+		{EE5A46D6-24FA-4416-9F3C-D5348F62BABF}.Release|x64.ActiveCfg = Release|x64
+		{EE5A46D6-24FA-4416-9F3C-D5348F62BABF}.Release|x64.Build.0 = Release|x64
+		{EE5A46D6-24FA-4416-9F3C-D5348F62BABF}.Release|x86.ActiveCfg = Release|Win32
+		{EE5A46D6-24FA-4416-9F3C-D5348F62BABF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
