@@ -1,16 +1,6 @@
 #include "Application.h"
 #include "Window.h"
-//
-#include<dwmapi.h>
-#pragma comment(lib,"Dwmapi.lib")
 LRESULT CALLBACK EzUI_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
-	//if (message == WM_CREATE) {//创建阴影
-	//	const MARGINS shadow = { 0,0,0,0 };
-	//	DwmExtendFrameIntoClientArea(hwnd, &shadow);
-	//}
-	//if (message == WM_NCCALCSIZE) {//去除系统菜单
-	//	return FALSE;
-	//}
 	Window* USERDATA = (Window*)UI_GetUserData(hwnd);
 	if (USERDATA) {
 		return USERDATA->WndProc(message, wParam, lParam);

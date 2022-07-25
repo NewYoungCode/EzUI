@@ -15,12 +15,15 @@
 #include"tinyxml/tinyxml.h"
 #include"tinyxml/tinystr.h"
 
+#include <fstream>
+#include <sstream>
+
+
 namespace UIManager {
 	const EString Attribute(TiXmlElement* node, const char* szstr);
 	void LoadControl(TiXmlElement* node, Control* control);
 	Control* BuildControl(TiXmlElement* node);
 	void LoadStyle(Control* ctl, ControlState styleType);
-
 	std::map<EString, EString> styles;//默认样式集合
 	std::map<EString, EString> styles_active;//按下样式集合
 	std::map<EString, EString> styles_hover;//鼠标悬浮样式集合
@@ -104,7 +107,8 @@ namespace UIManager {
 					int h = 0;
 					if (valign == "top") {
 						v = (int)Align::Top;
-					}else if (valign == "bottom") {
+					}
+					else if (valign == "bottom") {
 						v = (int)Align::Bottom;
 					}
 					else {
@@ -244,13 +248,27 @@ namespace UIManager {
 	}
 	std::vector<Control*> LoadControl(const EString& filename)
 	{
-		TiXmlDocument doc;
-		FILE* file(0);
-		_wfopen_s(&file, filename.utf16().c_str(), L"rb+");
-		if (!doc.LoadFile(file, TiXmlEncoding::TIXML_ENCODING_UTF8)) {//the file code page must utf8
-			ASSERT(0);
-		}
+		//FILE* file(0);
+		//_wfopen_s(&file, filename.utf16().c_str(), L"rb+");
+		//if (!doc.LoadFile(file, TiXmlEncoding::TIXML_ENCODING_UTF8)) {//the file code page must utf8
+		//	ASSERT(0);
+		//}
+		//::fclose(file);
+		std::ifstream ifs(filename.utf16().c_str());
+		std::stringstream ss;
+		ss << ifs.rdbuf();
+		ifs.close();
+
 		std::vector<Control*> controls;
+		LoadControl(ss.str(), controls);
+
+		return controls;
+	}
+	void LoadControl(const EString& xmlRaw, std::vector<Control*>& controls)
+	{
+		TiXmlDocument doc;
+		auto result = doc.Parse(xmlRaw.c_str(), NULL, TiXmlEncoding::TIXML_ENCODING_UTF8);
+		//doc.Parse
 		TiXmlElement* element = doc.FirstChildElement();//read frist element
 		do
 		{
@@ -264,9 +282,11 @@ namespace UIManager {
 				if (control) controls.push_back(control);
 			}
 		} while ((element = element->NextSiblingElement()));
-
-		::fclose(file);
-		return controls;
+	}
+	void AppendControl(const EString& xmlContent, Window* wind)
+	{
+		std::vector<Control*> controls;
+		LoadControl(xmlContent, controls);
 	}
 	void LoadStyle(Control* ctl, ControlState styleState) {
 		ControlStyle* style = NULL;

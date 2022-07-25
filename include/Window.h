@@ -41,6 +41,8 @@ protected:
 	virtual void OnKeyDown(WPARAM wParam);
 	virtual void OnMove(const Point& point);
 	virtual bool OnNotify(Control* sender, EventArgs* args);//返回true将不再派发给子控件处理 注意:不要在此函数内部删除自身控件
+protected:
+
 public:
 	virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 public:
@@ -59,8 +61,11 @@ public:
 	void SetText(const EString& text);
 	virtual void Show(int cmdShow = SW_SHOW);
 	int ShowModal(bool wait = true);//参数 wait 是否阻塞
-	void Close(int code=0);
+	void Close(int code = 0);
 	virtual void Hide();
 	bool IsVisible();
 	void SetVisible(bool flag);
+	void LoadStyle(const EString& cssFile);//加载样式文件
+	void AppendStyle(const EString& cssStyleStr);//追加样式
+	void LoadLayout(const EString& xmlFile);//加载布局
 };
