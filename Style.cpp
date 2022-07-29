@@ -12,25 +12,7 @@ namespace Style {
 		str = bufStr;
 		delete bufStr;
 	}
-	Color StringToColor(const EString& str) {
-		auto color = EString::Split(str.c_str(), TEXT(","));
-		BYTE A = 255;
-		BYTE R = 255;
-		BYTE G = 255;
-		BYTE B = 255;
-		if (color.size() == 3) {
-			R = std::stoi(color.at(0));
-			G = std::stoi(color.at(1));
-			B = std::stoi(color.at(2));
-		}
-		if (color.size() == 4) {
-			A = std::stoi(color.at(0));
-			R = std::stoi(color.at(1));
-			G = std::stoi(color.at(2));
-			B = std::stoi(color.at(3));
-		}
-		return Color(A, R, G, B);
-	}
+	
 	Rect StringToRect(const EString& str) {
 		auto rectStr = EString::Split(str.c_str(), L",");
 		if (str.empty()) return Rect();//如果没写矩形区域

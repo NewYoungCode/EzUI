@@ -1,6 +1,5 @@
 #include "IControl.h"
 
-
 void ControlStyle::SetBorder(const Color& color, int width) { //对所有border有效
 	BorderColor = color;
 	BorderLeft = width;//左边边框
@@ -32,7 +31,7 @@ void ControlStyle::SetStyle(const EString& key, const EString& _value)
 	do
 	{
 		if (key == "background-color") {
-			style->BackgroundColor = ::Style::StringToColor(value);
+			style->BackgroundColor = value;
 			break;
 		}
 		if (key == "background-image") {
@@ -46,11 +45,11 @@ void ControlStyle::SetStyle(const EString& key, const EString& _value)
 			break;
 		}
 		if (key == "border-color") {
-			style->BorderColor = ::Style::StringToColor(value);
+			style->BorderColor = value;
 			break;
 		}
 		if (key == "color" || key == "fore-color") {
-			style->ForeColor = ::Style::StringToColor(value);
+			style->ForeColor = value;
 			break;
 		}
 		if (key == "radius") {

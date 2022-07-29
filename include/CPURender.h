@@ -8,7 +8,6 @@
 #pragma comment(lib, "gdiplus.lib")
 #pragma comment(lib, "Msimg32.lib")
 
-
 using Bitmap = Gdiplus::Bitmap;
 using Rect = Gdiplus::Rect;
 using RectF = Gdiplus::RectF;
@@ -116,11 +115,50 @@ enum class ImageSizeMode {
 typedef struct _Color :Gdiplus::Color {
 public:
 	bool valid = false;
+private:
+	void _MakeARGB(const EString& colorStr) {
+		if (colorStr.find("#") == 0) { //"#4e6ef2"
+			auto rStr = colorStr.substr(1, 2);
+			auto gStr = colorStr.substr(3, 2);
+			auto bStr = colorStr.substr(5, 2);
+			unsigned int r, g, b;
+			sscanf_s(rStr.c_str(), "%x", &r);
+			sscanf_s(gStr.c_str(), "%x", &g);
+			sscanf_s(bStr.c_str(), "%x", &b);
+			Argb = MakeARGB(255, r, g, b);
+			valid = true;
+			return;
+		}
+
+		if (colorStr.find("rgb") == 0) { //"rgb(255,100,2,3)"
+			int pos1 = colorStr.find("(");
+			int pos2 = colorStr.rfind(")");
+			auto rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
+			auto rgbList = EString::Split(rgbStr, ",");
+			unsigned char r, g, b;
+			float a = rgbList.size() == 3 ? 1 : std::stof(rgbList.at(3));//透明百分比 0~1
+			r = std::stoi(rgbList.at(0));
+			g = std::stoi(rgbList.at(1));
+			b = std::stoi(rgbList.at(2));
+			Argb = MakeARGB(255 * (a > 1 ? 1 : a), r, g, b);
+			valid = true;
+			return;
+		}
+
+	}
 public:
 	_Color()
 	{
 		Argb = (ARGB)Color::Black;
 		valid = false;
+	}
+	
+	_Color& operator=(const EString& colorStr) {
+		_MakeARGB(colorStr);
+		return *this;
+	}
+	_Color(const EString& colorStr) {
+		_MakeARGB(colorStr);
 	}
 	_Color(IN BYTE r,
 		IN BYTE g,
@@ -158,7 +196,6 @@ class UI_EXPORT CPURender
 {
 protected:
 	//函数供内部使用 没有设置偏移所不可直接访问 
-
 	void DrawString(const std::wstring& text, const Gdiplus::Font* font, const Color& color, const RectF& rect, TextAlign textAlign, bool underLine = false);
 	void CreateFormat(TextAlign textAlign, Gdiplus::StringFormat& outStrFormat);
 public:
