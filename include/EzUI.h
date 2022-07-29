@@ -42,11 +42,11 @@ public:
 	T value = NULL;
 	Tuple() :valid(false) {
 	}
-	Tuple(const T&value) {
+	Tuple(const T& value) {
 		this->value = value;
 		valid = true;
 	}
-	operator T&() {
+	operator T& () {
 		return value;
 	}
 	T& operator->() {
@@ -57,8 +57,8 @@ public:
 template<typename T>
 struct SafeObject {
 private:
-	SafeObject(const SafeObject&right) {}
-	SafeObject& operator=(const SafeObject&right) {}
+	SafeObject(const SafeObject& right) {}
+	SafeObject& operator=(const SafeObject& right) {}
 public:
 	T* ptr = NULL;
 	SafeObject(T* _ptr) {
@@ -170,20 +170,20 @@ public:
 		}
 		return count;
 	}
-	};
+};
 #define utf8(szbuf)  EString(szbuf,EString::ANSI)
 //#define utf8(szbuf)  EString(szbuf,EString::UTF8)
 
 namespace Debug {
 	template<typename ...T>
-	inline void Log(const EString&formatStr, T ...args) {
-		#ifdef DEBUGLOG
-				WCHAR buf[1024]{ 0 };
-				auto count = swprintf_s((buf), 1024, formatStr.utf16().c_str(), std::forward<T>(args)...);
-				buf[count] = '\n';
-				buf[count + 1] = NULL;
-				OutputDebugStringW(buf);
-		#endif
+	inline void Log(const EString& formatStr, T ...args) {
+#ifdef DEBUGLOG
+		WCHAR buf[1024]{ 0 };
+		auto count = swprintf_s((buf), 1024, formatStr.utf16().c_str(), std::forward<T>(args)...);
+		buf[count] = '\n';
+		buf[count + 1] = NULL;
+		OutputDebugStringW(buf);
+#endif
 	}
 };
 
@@ -193,6 +193,10 @@ private:
 public:
 	StopWatch() {
 		beg_t = std::chrono::system_clock::now();    //
+	}
+	static time_t Now() {
+		auto nowTime = std::chrono::system_clock::now();    //
+		return std::chrono::system_clock::to_time_t(nowTime);
 	}
 	time_t ElapsedMilliseconds() {
 		auto end_t = std::chrono::system_clock::now();    //

@@ -295,7 +295,6 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	case SWP_HIDEWINDOW: {
 		break;
-
 	}
 	case WM_CHAR: {
 		OnChar(wParam, lParam);
@@ -306,13 +305,11 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		OnKeyDown(wParam);
 		break;
 	}
-
 	case WM_DESTROY:
 	{
 		OnDestroy();
 		break;
 	}
-
 	case WM_MOUSEMOVE:
 	{
 		TRACKMOUSEEVENT tme;
@@ -326,23 +323,19 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	}
-
-
-	case WM_LBUTTONDBLCLK: {
-		OnMouseDoubleClick(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
-		break;
-	}
-
-	case WM_RBUTTONDBLCLK: {
-		OnMouseDoubleClick(MouseButton::Right, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
-		break;
-	}
-
+	//case WM_LBUTTONDBLCLK: {
+	//	OnMouseDoubleClick(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+	//	break;
+	//}
+	//case WM_RBUTTONDBLCLK: {
+	//	OnMouseDoubleClick(MouseButton::Right, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+	//	break;
+	//}
 	case WM_LBUTTONDOWN:
 	{
-	/*	char buff[256]{ 0 };
-		sprintf_s(buff, "X:%d Y:%d LParam:%d\n", GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), lParam);
-		OutputDebugStringA(buff);*/
+		/*	char buff[256]{ 0 };
+			sprintf_s(buff, "X:%d Y:%d LParam:%d\n", GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), lParam);
+			OutputDebugStringA(buff);*/
 		OnMouseDown(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 		break;
 	}
@@ -532,18 +525,14 @@ void Window::OnMouseWheel(short zDelta, const Point& point)
 		args.Location = point;
 		args.EventType = Event::OnMouseWheel;
 		vBar->OnMouseEvent(args);
-
-
 	}
-
 }
 void Window::OnMouseDoubleClick(MouseButton mbtn, const Point& point)
 {
-	Point relativePoint;
-	Control* outCtl = FindControl(point, relativePoint);
+	Control* outCtl = _lastDownCtl;
 	MouseEventArgs args;
 	args.Button = mbtn;
-	args.Location = relativePoint;
+	args.Location = *_mouseDbClick;
 	args.EventType = Event::OnMouseDoubleClick;
 	outCtl->OnMouseEvent(args);
 }
@@ -564,6 +553,18 @@ void Window::OnMouseDown(MouseButton mbtn, const Point& point)
 	outCtl->OnMouseEvent(args);
 
 	_inputControl = _focusControl;
+	{ //做双击消息处理
+		auto _time = std::chrono::system_clock::now();
+		auto diff = _time - _lastDownTime;
+		auto timeOffset = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//
+		_lastDownTime = _time;
+		if (timeOffset < 200) {//200毫秒之内单机两次算双击消息
+			_lastDownCtl = outCtl;
+			_lastDownTime = std::chrono::system_clock::from_time_t(0);
+			_mouseDbClick = &relativePoint;
+			OnMouseDoubleClick(mbtn, point);
+		}
+	}
 
 	if (_focusControl && _focusControl != outCtl) {
 		args.EventType = Event::OnMouseLeave;

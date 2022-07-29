@@ -1,7 +1,7 @@
 #pragma once
 #include "EzUI.h"
 #include "Control.h"
-
+#include "Window.h"
 namespace UIManager {
 	extern std::map<EString, EString> styles;//默认样式集合
 	extern std::map<EString, EString> styles_active;//按下样式集合

@@ -263,3 +263,4 @@ __pycache__/
 *.exp
 *.iobj
 *.ipdb
+*.lib
