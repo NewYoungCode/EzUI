@@ -67,7 +67,4 @@ public:
 	virtual void Hide();
 	bool IsVisible();
 	void SetVisible(bool flag);
-	void LoadStyle(const EString& cssFile);//加载样式文件
-	void AppendStyle(const EString& cssStyleStr);//追加样式
-	void LoadLayout(const EString& xmlFile);//加载布局
 };

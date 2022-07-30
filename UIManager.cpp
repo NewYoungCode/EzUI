@@ -312,18 +312,21 @@ namespace UIManager {
 		}
 	}
 }
-_Selector::_Selector(const Window* wind, const EString& str)
-{
-	auto newStrs = str.Replace("  ", " ").Split(" ");
-}
 _Selector::_Selector(const Controls& Controls)
 {
 	this->ctls = Controls;
 }
+_Selector::_Selector( Control* ctl)
+{
+	this->ctl = ctl;
+}
 _Selector& _Selector::css(const EString& styleStr)
 {
 	for (auto& it : this->ctls) {
-		it->Style.SetStyleSheet(styleStr);
+		it->SetStyleSheet(styleStr);
+	}
+	if (ctl) {
+		ctl->SetStyleSheet(styleStr);
 	}
 	return *this;
 }
@@ -331,6 +334,9 @@ _Selector& _Selector::attr(const EString& key, const EString& value)
 {
 	for (auto& it : this->ctls) {
 		it->SetAttribute(key, value);
+	}
+	if (ctl) {
+		ctl->SetAttribute(key, value);
 	}
 	return *this;
 }

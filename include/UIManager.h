@@ -11,15 +11,16 @@ namespace UIManager {
 	extern std::map<EString, EString> styles_hover;//鼠标悬浮样式集合
 }
 struct _Selector
-{  
+{
 private:
+	Control* ctl = NULL;
 	Controls ctls;
-public:
-	_Selector(const Window* wind, const EString& str);
-	_Selector(const Controls& Controls);
-	_Selector& css(const EString& styleStr);
-	_Selector& attr(const EString& key, const EString& value);
 	_Selector& NextName(const EString& key) {};
 	_Selector& NextId(const EString& key) {};
+public:
+	_Selector(const Controls& Controls);
+	_Selector(Control* control);
+	_Selector& css(const EString& styleStr);
+	_Selector& attr(const EString& key, const EString& value);
 };
 #define $ _Selector

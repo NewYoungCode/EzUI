@@ -1,4 +1,5 @@
 ﻿#include "MainFrm.h"
+#include <UIManager.h>
 
 MainFrm::MainFrm(int width, int height) :Form(width, height)
 {
@@ -85,7 +86,6 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 		//lb->Style.FontFamily = "华康少女文字W5(P)";
 		lb->HoverStyle.BackgroundColor = Color{ 63,63,63 };
 		//lb->HoverStyle.ForeColor = Color{ 55,55,55 };
-
 
 		lb->SetTextAlign(TextAlign::MiddleLeft);
 

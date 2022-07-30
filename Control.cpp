@@ -120,6 +120,30 @@ ControlStyle& Control::GetStyle(ControlState _state) {
 	return Style;
 }
 
+void Control::SetStyleSheet(const EString& styleStr)
+{
+	__super::SetStyleSheet(styleStr);
+	size_t pos1 = styleStr.find("{");
+	size_t pos2 = styleStr.find("}");
+	auto sheet = styleStr.substr(pos1 + 1, pos2 - pos1 - 1);
+	do
+	{
+		if (pos1 == 0 || pos1 == size_t(-1)) {
+			this->Style.SetStyleSheet(sheet);//默认样式
+			break;
+		}
+		if (styleStr.find("hover") == 0) {
+			this->HoverStyle.SetStyleSheet(sheet);//悬浮样式
+			break;
+		}
+		if (styleStr.find("active") == 0) {
+			this->ActiveStyle.SetStyleSheet(sheet);//鼠标按下样式
+			break;
+		}
+	} while (false);
+
+}
+
 void Control::SetAttribute(const EString& attrName, const EString& attrValue)
 {
 	__super::SetAttribute(attrName, attrValue);
@@ -178,6 +202,18 @@ void Control::SetAttribute(const EString& attrName, const EString& attrValue)
 			if (attrValue == "move" || attrValue == "movewindow") {
 				this->Action = ControlAction::MoveWindow; break;
 			}
+			break;
+		}
+		if (attrName == "style") {
+			this->Style.SetStyleSheet(attrValue);
+			break;
+		}
+		if (attrName == "hover") {
+			this->HoverStyle.SetStyleSheet(attrValue);
+			break;
+		}
+		if (attrName == "active") {
+			this->ActiveStyle.SetStyleSheet(attrValue);
 			break;
 		}
 	} while (false);

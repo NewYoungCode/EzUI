@@ -109,6 +109,8 @@ void IControl::KillTimer() {
 }
 void IControl::SetStyleSheet(const EString& styleStr)
 {
+	
+
 }
 void IControl::SetAttribute(const EString& attrName, const EString& attrValue) {
 	AttributeIterator itor = _attrs.find(attrName);

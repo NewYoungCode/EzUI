@@ -131,15 +131,7 @@ void Window::SetVisible(bool flag) {
 		Hide();
 	}
 }
-void Window::LoadStyle(const EString& cssFile)
-{
-}
-void Window::AppendStyle(const EString& cssStyleStr)
-{
-}
-void Window::LoadLayout(const EString& xmlFile)
-{
-}
+
 void Window::EmptyControl(Controls* controls) {
 	//_focusControl = NULL;
 	//_inputControl = NULL;
