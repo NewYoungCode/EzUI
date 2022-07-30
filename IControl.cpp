@@ -15,7 +15,7 @@ bool ControlStyle::IsValid() {
 }
 void ControlStyle::SetStyleSheet(const EString& styleStr)
 {
-	auto attrs = EString::Split(styleStr,";");
+	auto attrs = styleStr.Split(";");
 	for (auto& it : attrs) {
 		size_t pos = it.find(":");
 		if (pos == -1)continue;
@@ -35,12 +35,12 @@ void ControlStyle::SetStyle(const EString& key, const EString& _value)
 			break;
 		}
 		if (key == "background-image") {
-			::Style::Erase(value, '"');//É¾³ýË«ÒýºÅ;
+			value = value.Erase('"');//É¾³ýË«ÒýºÅ;
 			style->BackgroundImage = new Image(value);
 			break;
 		}
 		if (key == "fore-image") {
-			::Style::Erase(value, '"');//É¾³ýË«ÒýºÅ;
+			value = value.Erase('"');//É¾³ýË«ÒýºÅ;
 			style->ForeImage = new Image(value);
 			break;
 		}
@@ -61,7 +61,7 @@ void ControlStyle::SetStyle(const EString& key, const EString& _value)
 			break;
 		}
 		if (key == "font-family") {
-			::Style::Erase(value, '"');//É¾³ýË«ÒýºÅ;
+			value = value.Erase('"');//É¾³ýË«ÒýºÅ;
 			style->FontFamily = value;
 			break;
 		}

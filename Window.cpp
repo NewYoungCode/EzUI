@@ -210,7 +210,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_ERASEBKGND: {
 		return TRUE;
 	}
-	case WM_CONTROL_REFRESH: {
+	case UI_CONTROL_REFRESH: {
 		Control* ctl = (Control*)wParam;
 		Rect clienRect = ctl->GetClientRect();
 		RECT wRect;
@@ -235,7 +235,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		EndPaint(_hWnd, &pst);
 		break;
 	}
-	case WM_CONTROL_DELETE:
+	case  UI_CONTROL_DELETE:
 	{
 		Control* delControl = (Control*)wParam;
 		if (_focusControl == delControl) {

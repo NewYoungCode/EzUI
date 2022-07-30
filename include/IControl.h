@@ -1,7 +1,6 @@
 #pragma once
 #include "EzUI.h"
 #include "Painter.h"
-#include "Style.h"
 
 enum  Event :int {
 	OnMouseWheel = 1,

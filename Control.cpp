@@ -130,7 +130,7 @@ void Control::SetAttribute(const EString& attrName, const EString& attrValue)
 			break;
 		}
 		if (attrName == "rect") {
-			this->SetRect(::Style::StringToRect(attrValue));
+			this->SetRect(Rect(attrValue));
 			break;
 		}
 		if (attrName == "x") {
@@ -141,7 +141,7 @@ void Control::SetAttribute(const EString& attrName, const EString& attrValue)
 			this->Move({ this->GetRect().X, std::stoi(attrValue) });
 			break;
 		}
-		if (attrName=="width") {//如果单独设置了宽高那就是绝对宽高了
+		if (attrName == "width") {//如果单独设置了宽高那就是绝对宽高了
 			this->SetFixedWidth(std::stoi(attrValue));
 			break;
 		}
@@ -515,7 +515,7 @@ void Control::ReSize(const Size& size)
 
 void Control::Refresh() {
 	if (_hWnd) {
-		::SendMessage(_hWnd, WM_CONTROL_REFRESH, (WPARAM)this, NULL);
+		::SendMessage(_hWnd, UI_CONTROL_REFRESH, (WPARAM)this, NULL);
 	}
 }
 Rect Control::GetClientRect() {
@@ -617,7 +617,7 @@ ControlIterator Control::RemoveControl(Control* ctl)
 	ControlIterator it1 = ::std::find(_controls.begin(), _controls.end(), ctl);
 	if (it1 != _controls.end()) {
 		if (::IsWindow(_hWnd)) { //移除控件之前先通知父窗口
-			::SendMessage(_hWnd, WM_CONTROL_DELETE, (WPARAM)ctl, NULL);
+			::SendMessage(_hWnd, UI_CONTROL_DELETE, (WPARAM)ctl, NULL);
 		}
 		ctl->_hWnd = NULL;
 		ctl->Parent = NULL;
@@ -674,7 +674,7 @@ void Control::Clear(bool freeControls)
 	{
 		if (::IsWindow(_hWnd)) { //移除控件之前先通知父窗口
 			//Debug::Log("WM_CONTROL_DELETE %p", *i);
-			::SendMessage(_hWnd, WM_CONTROL_DELETE, (WPARAM)*i, NULL);
+			::SendMessage(_hWnd, UI_CONTROL_DELETE, (WPARAM)*i, NULL);
 		}
 
 		if (freeControls && !dynamic_cast<Spacer*>(*i)) {//弹簧不能删除 弹簧必须使用DestroySpacers()函数删除

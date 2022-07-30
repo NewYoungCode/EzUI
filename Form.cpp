@@ -66,11 +66,6 @@ LRESULT  BorderlessWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	return __super::WndProc(uMsg, wParam, lParam);
 }
 
-
-
-
-
-
 //WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
 LayeredWindow::LayeredWindow(int cx, int cy, HWND owner) :Window(cx, cy, owner, WS_POPUP | WS_MINIMIZEBOX, WS_EX_LAYERED)
 {
@@ -126,7 +121,7 @@ LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
 	}
-	if (uMsg == WM_CONTROL_REFRESH && _winBitmap) {
+	if (uMsg == UI_CONTROL_REFRESH && _winBitmap) {
 		Control* ctl = (Control*)wParam;
 		OnPaint(_winBitmap->GetHDC(), ctl->GetClientRect());//
 		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);

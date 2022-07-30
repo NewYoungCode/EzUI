@@ -10,7 +10,7 @@
 class UI_EXPORT Window :public IControl
 {
 private:
-	std::chrono::system_clock::time_point _lastDownTime= std::chrono::system_clock::from_time_t(0);
+	std::chrono::system_clock::time_point _lastDownTime = std::chrono::system_clock::from_time_t(0);
 	Control* _lastDownCtl = NULL;
 	Point* _mouseDbClick = NULL;
 	Size _lastSize;//上一次客户端大小的信息
@@ -45,7 +45,6 @@ protected:
 	virtual void OnMove(const Point& point);
 	virtual bool OnNotify(Control* sender, EventArgs* args);//返回true将不再派发给子控件处理 注意:不要在此函数内部删除自身控件
 protected:
-
 public:
 	virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 public:

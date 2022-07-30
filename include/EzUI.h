@@ -116,9 +116,9 @@ public:
 #define UI_CLASSNAME TEXT("EzUI_Win32")
 #define UI_NotifyIcon_CLASSNAME TEXT("EzUI_NotifyIcon_Class")
 
-#define WM_NOTIFYICON WM_USER+0x01 //
-#define WM_CONTROL_DELETE WM_USER+0x02 //
-#define WM_CONTROL_REFRESH WM_USER+0x03 //
+#define UI_NOTIFYICON WM_USER+0x01 //
+#define UI_CONTROL_DELETE WM_USER+0x02 //
+#define UI_CONTROL_REFRESH WM_USER+0x03 //
 
 #define WM_UIMESSAGE  WM_USER+20   
 
@@ -137,26 +137,9 @@ public:
 	EString(const wchar_t* szbuf);
 	EString(const std::wstring& wstr);
 	std::wstring utf16() const;
-
-	static std::vector<EString> Split(const EString& str, const EString& ch_) {
-		std::vector<EString> arr;
-		if (str.empty()) return arr;
-		EString buf = str;
-		size_t pos = buf.find(ch_);
-		if (pos == EString::npos) {
-			arr.push_back(str);
-			return arr;
-		}
-		for (; pos != EString::npos;) {
-			arr.push_back(buf.substr(0, pos));
-			buf = buf.erase(0, pos + ch_.size());
-			pos = buf.find(ch_);
-			if (pos == std::string::npos) {
-				arr.push_back(buf);
-			}
-		}
-		return arr;
-	}
+	EString Erase(CHAR _char)const;
+	std::vector<EString> Split( const EString& ch_)const;
+	EString Replace(const EString& oldText, const EString& newText)const;
 	static size_t  Replace(EString& str, const EString& oldText, const EString& newText)
 	{
 		EString& newStr = str;

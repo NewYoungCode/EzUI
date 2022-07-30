@@ -108,9 +108,6 @@
     <ClInclude Include="include\TabLayout.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\Style.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp">
@@ -198,9 +195,6 @@
       <Filter>tinyxml</Filter>
     </ClCompile>
     <ClCompile Include="TabLayout.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Style.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="EzUI.cpp">

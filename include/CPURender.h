@@ -9,7 +9,7 @@
 #pragma comment(lib, "Msimg32.lib")
 
 using Bitmap = Gdiplus::Bitmap;
-using Rect = Gdiplus::Rect;
+//using Rect = Gdiplus::Rect;
 using RectF = Gdiplus::RectF;
 using Size = Gdiplus::Size;
 using SizeF = Gdiplus::SizeF;
@@ -20,6 +20,32 @@ using GraphicsPath = Gdiplus::GraphicsPath;
 using Region = Gdiplus::Region;
 using Pen = Gdiplus::Pen;
 using ARGB = Gdiplus::ARGB;
+
+typedef struct _Rect :Gdiplus::Rect {
+private:
+	void StringToRect(const EString& str) {
+		auto rectStr = str.Split(",");
+		if (str.empty()) {
+			X = Y = Width = Height = 0;
+			return;//如果没写矩形区域
+		}
+		X = std::stoi(rectStr.at(0));
+		Y = std::stoi(rectStr.at(1));
+		Width = std::stoi(rectStr.at(2));
+		Height = std::stoi(rectStr.at(3));
+	}
+public:
+	_Rect() :Gdiplus::Rect() {};
+	_Rect(IN INT x, IN INT y, IN INT width, IN INT height) :Gdiplus::Rect(x, y, width, height) {};
+	_Rect(IN const Point& location, IN const Size& size) :Gdiplus::Rect(location, size) {};
+	_Rect(const EString& rect) {
+		StringToRect(rect);
+	}
+	_Rect& operator=(const EString& rect) {
+		StringToRect(rect);
+		return *this;
+	}
+}Rect;
 
 class UI_EXPORT  Image :public  Gdiplus::Image {
 public:
@@ -112,6 +138,8 @@ enum class ImageSizeMode {
 	Zoom,//自动根据比例居中
 	Clip//根据宽高自动裁剪
 };
+
+
 typedef struct _Color :Gdiplus::Color {
 public:
 	bool valid = false;
@@ -133,8 +161,8 @@ private:
 		if (colorStr.find("rgb") == 0) { //"rgb(255,100,2,3)"
 			int pos1 = colorStr.find("(");
 			int pos2 = colorStr.rfind(")");
-			auto rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
-			auto rgbList = EString::Split(rgbStr, ",");
+			EString rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
+			auto rgbList = rgbStr.Split(",");
 			unsigned char r, g, b;
 			float a = rgbList.size() == 3 ? 1 : std::stof(rgbList.at(3));//透明百分比 0~1
 			r = std::stoi(rgbList.at(0));
@@ -152,7 +180,7 @@ public:
 		Argb = (ARGB)Color::Black;
 		valid = false;
 	}
-	
+
 	_Color& operator=(const EString& colorStr) {
 		_MakeARGB(colorStr);
 		return *this;

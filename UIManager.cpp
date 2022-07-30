@@ -18,12 +18,12 @@
 #include <fstream>
 #include <sstream>
 
-
 namespace UIManager {
 	const EString Attribute(TiXmlElement* node, const char* szstr);
 	void LoadControl(TiXmlElement* node, Control* control);
 	Control* BuildControl(TiXmlElement* node);
 	void LoadStyle(Control* ctl, ControlState styleType);
+	void AnalysisStyle(const EString& styleStr);
 	std::map<EString, EString> styles;//默认样式集合
 	std::map<EString, EString> styles_active;//按下样式集合
 	std::map<EString, EString> styles_hover;//鼠标悬浮样式集合
@@ -213,39 +213,6 @@ namespace UIManager {
 		str = bufStr;
 		delete bufStr;
 	}
-	void AnalysisStyle(const EString& styleStr) {
-		styles.clear();
-		styles_active.clear();
-		styles_hover.clear();
-
-		EString style = styleStr;
-		TrimStyle(style);
-		while (style.size() > 0) {
-			size_t pos = style.find("#");
-			if (pos == -1)break;
-			size_t pos2 = style.find("}");
-			if (pos2 == -1)break;
-			size_t pos3 = style.find("{");
-			EString name = style.substr(pos + 1, pos3 - pos - 1);
-			size_t pos4 = name.find(":");
-			EString style_type;
-			EString str = style.substr(pos3 + 1, pos2 - pos3 - 1);
-			if (pos4 != size_t(-1)) {
-				style_type = name.substr(pos4 + 1);
-				name = name.substr(0, pos4);
-			}
-			if (style_type == "hover") {
-				styles_hover.insert(std::pair<EString, EString>(name, str));
-			}
-			else if (style_type == "active") {
-				styles_active.insert(std::pair<EString, EString>(name, str));
-			}
-			else {
-				styles.insert(std::pair<EString, EString>(name, str));
-			}
-			style = style.substr(pos2 + 1);
-		}
-	}
 	std::vector<Control*> LoadControl(const EString& filename)
 	{
 		//FILE* file(0);
@@ -288,6 +255,39 @@ namespace UIManager {
 		std::vector<Control*> controls;
 		LoadControl(xmlContent, controls);
 	}
+	void AnalysisStyle(const EString& styleStr) {
+		styles.clear();
+		styles_active.clear();
+		styles_hover.clear();
+
+		EString style = styleStr;
+		TrimStyle(style);
+		while (style.size() > 0) {
+			size_t pos = style.find("#");
+			if (pos == -1)break;
+			size_t pos2 = style.find("}");
+			if (pos2 == -1)break;
+			size_t pos3 = style.find("{");
+			EString name = style.substr(pos + 1, pos3 - pos - 1);
+			size_t pos4 = name.find(":");
+			EString style_type;
+			EString str = style.substr(pos3 + 1, pos2 - pos3 - 1);
+			if (pos4 != size_t(-1)) {
+				style_type = name.substr(pos4 + 1);
+				name = name.substr(0, pos4);
+			}
+			if (style_type == "hover") {
+				styles_hover.insert(std::pair<EString, EString>(name, str));
+			}
+			else if (style_type == "active") {
+				styles_active.insert(std::pair<EString, EString>(name, str));
+			}
+			else {
+				styles.insert(std::pair<EString, EString>(name, str));
+			}
+			style = style.substr(pos2 + 1);
+		}
+	}
 	void LoadStyle(Control* ctl, ControlState styleState) {
 		ControlStyle* style = NULL;
 		std::map<EString, EString>::iterator styleStr;
@@ -311,4 +311,26 @@ namespace UIManager {
 			style->SetStyleSheet(styleStr->second);
 		}
 	}
+}
+_Selector::_Selector(const Window* wind, const EString& str)
+{
+	auto newStrs = str.Replace("  ", " ").Split(" ");
+}
+_Selector::_Selector(const Controls& Controls)
+{
+	this->ctls = Controls;
+}
+size_t _Selector::css(const EString& styleStr)
+{
+	for (auto& it : this->ctls) {
+		it->Style.SetStyleSheet(styleStr);
+	}
+	return this->ctls.size();
+}
+size_t _Selector::attr(const EString& key, const EString& value)
+{
+	for (auto& it : this->ctls) {
+		it->SetAttribute(key, value);
+	}
+	return this->ctls.size();
 }

@@ -18,7 +18,7 @@ LRESULT CALLBACK _NotifyIcon_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPA
 		}
 		break;
 	}
-	case WM_NOTIFYICON:
+	case  UI_NOTIFYICON:
 	{
 		if (ntfi->_messageCallback) {
 			if (ntfi->_messageCallback(lParam)) {
@@ -70,7 +70,7 @@ NotifyIcon::NotifyIcon()
 	::SetWindowLongPtr(_hwnd, GWLP_USERDATA, (LONG_PTR)this);
 	_nid.cbSize = sizeof(NOTIFYICONDATA);//结构体长度
 	_nid.hWnd = _hwnd;//窗口句柄
-	_nid.uCallbackMessage = WM_NOTIFYICON;//消息处理，这里很重要，处理鼠标点击
+	_nid.uCallbackMessage = UI_NOTIFYICON;//消息处理，这里很重要，处理鼠标点击
 	_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	Shell_NotifyIconW(NIM_ADD, &_nid);
 

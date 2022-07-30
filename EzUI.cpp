@@ -58,6 +58,50 @@ EString::EString(const std::wstring& wstr) {
 	this->resize(bytes);
 	WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), (char*)this->c_str(), bytes, NULL, NULL);
 }
+
+EString EString::Erase(CHAR _char)const {
+	const EString& self = *this;
+	CHAR* bufStr = new CHAR[self.size()]{ 0 };
+	size_t pos = 0;
+	for (auto& it : self) {
+		if (_char == it)continue;
+		bufStr[pos] = it;
+		pos++;
+	}
+	delete bufStr;
+	return EString(bufStr);
+}
+std::vector<EString> EString::Split(const EString& ch_)const {
+
+	const EString& str = *this;
+
+	std::vector<EString> arr;
+	if (str.empty()) return arr;
+	EString buf = str;
+	size_t pos = buf.find(ch_);
+	if (pos == EString::npos) {
+		arr.push_back(str);
+		return arr;
+	}
+	for (; pos != EString::npos;) {
+		auto item = buf.substr(0, pos);
+		if (!item.empty()) {
+			arr.push_back(item);
+		}
+		buf = buf.erase(0, pos + ch_.size());
+		pos = buf.find(ch_);
+		if (pos == std::string::npos) {
+			arr.push_back(buf);
+		}
+	}
+	return arr;
+}
+EString EString::Replace(const EString& oldText, const EString& newText) const
+{
+	EString newStr = *this;
+	EString::Replace(newStr, oldText, newText);
+	return newStr;
+}
 std::wstring EString::utf16() const {
 	int textlen = MultiByteToWideChar(CP_UTF8, 0, this->c_str(), this->size(), NULL, 0);
 	std::wstring wstr;
