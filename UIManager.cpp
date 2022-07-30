@@ -320,17 +320,17 @@ _Selector::_Selector(const Controls& Controls)
 {
 	this->ctls = Controls;
 }
-size_t _Selector::css(const EString& styleStr)
+_Selector& _Selector::css(const EString& styleStr)
 {
 	for (auto& it : this->ctls) {
 		it->Style.SetStyleSheet(styleStr);
 	}
-	return this->ctls.size();
+	return *this;
 }
-size_t _Selector::attr(const EString& key, const EString& value)
+_Selector& _Selector::attr(const EString& key, const EString& value)
 {
 	for (auto& it : this->ctls) {
 		it->SetAttribute(key, value);
 	}
-	return this->ctls.size();
+	return *this;
 }

@@ -28,7 +28,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	form._layout->Style.BackgroundColor = "rgb(255,100,255)";
 	form.FindControl("title")->Style.ForeColor = "rgb(0,0,0,0.8)";
 	$(form._layout->FindControl("name", "song")).css("color:#003d6a;background-color:rgb(255,100,200,1)");
-
 	form.Show();
 	Debug::Log(utf8("窗口启动耗时 %d ms"), sw.ElapsedMilliseconds());
 	return	app.exec();
