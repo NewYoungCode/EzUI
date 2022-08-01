@@ -68,8 +68,9 @@ EString EString::Erase(CHAR _char)const {
 		bufStr[pos] = it;
 		pos++;
 	}
+	EString newStr(bufStr);
 	delete bufStr;
-	return EString(bufStr);
+	return newStr;
 }
 std::vector<EString> EString::Split(const EString& ch_)const {
 
