@@ -327,7 +327,7 @@ _Selector& _Selector::Css(const EString& styleStr)
 		it->SetStyleSheet(styleStr);
 	}
 	if (ctl) {
-		if (notCtl == ctl)return;
+		if (notCtl == ctl)return *this;
 		ctl->SetStyleSheet(styleStr);
 	}
 	return *this;
@@ -339,7 +339,7 @@ _Selector& _Selector::Attr(const EString& key, const EString& value)
 		it->SetAttribute(key, value);
 	}
 	if (ctl) {
-		if (notCtl == ctl)return;
+		if (notCtl == ctl)return *this;
 		ctl->SetAttribute(key, value);
 	}
 	return *this;
