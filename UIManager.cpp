@@ -320,27 +320,32 @@ _Selector::_Selector( Control* ctl)
 {
 	this->ctl = ctl;
 }
-_Selector& _Selector::css(const EString& styleStr)
+_Selector& _Selector::Css(const EString& styleStr)
 {
 	for (auto& it : this->ctls) {
+		if (notCtl == it)continue;
 		it->SetStyleSheet(styleStr);
 	}
 	if (ctl) {
+		if (notCtl == ctl)return;
 		ctl->SetStyleSheet(styleStr);
 	}
 	return *this;
 }
-_Selector& _Selector::attr(const EString& key, const EString& value)
+_Selector& _Selector::Attr(const EString& key, const EString& value)
 {
 	for (auto& it : this->ctls) {
+		if (notCtl == it)continue;
 		it->SetAttribute(key, value);
 	}
 	if (ctl) {
+		if (notCtl == ctl)return;
 		ctl->SetAttribute(key, value);
 	}
 	return *this;
 }
-_Selector& _Selector::refresh()
+
+_Selector& _Selector::Refresh()
 {
 	for (auto& it : this->ctls) {
 		it->Refresh();
@@ -351,3 +356,8 @@ _Selector& _Selector::refresh()
 	return *this;
 }
 
+_Selector& _Selector::Not(Control* fiterCtl) {
+
+	this->notCtl = fiterCtl;
+	return *this;
+}
