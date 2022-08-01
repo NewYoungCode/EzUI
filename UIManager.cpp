@@ -24,9 +24,9 @@ namespace UIManager {
 	Control* BuildControl(TiXmlElement* node);
 	void LoadStyle(Control* ctl, ControlState styleType);
 	void AnalysisStyle(const EString& styleStr);
-	std::map<EString, EString> styles;//Ä¬ÈÏÑùÊ½¼¯ºÏ
-	std::map<EString, EString> styles_active;//°´ÏÂÑùÊ½¼¯ºÏ
-	std::map<EString, EString> styles_hover;//Êó±êĞü¸¡ÑùÊ½¼¯ºÏ
+	std::map<EString, EString> styles;//é»˜è®¤æ ·å¼é›†åˆ
+	std::map<EString, EString> styles_active;//æŒ‰ä¸‹æ ·å¼é›†åˆ
+	std::map<EString, EString> styles_hover;//é¼ æ ‡æ‚¬æµ®æ ·å¼é›†åˆ
 }
 
 namespace UIManager {
@@ -99,8 +99,8 @@ namespace UIManager {
 				ctl = new Label;
 				((Label*)ctl)->SetText(Attribute(node, "text"));
 
-				EString valign = Attribute(node, "valign");//´¹Ö±
-				EString halign = Attribute(node, "halign");//Ë®Æ½
+				EString valign = Attribute(node, "valign");//å‚ç›´
+				EString halign = Attribute(node, "halign");//æ°´å¹³
 
 				if (!valign.empty() || !halign.empty()) {
 					int v = 0;
@@ -168,7 +168,7 @@ namespace UIManager {
 		} while ((attr = attr->Next()));
 
 		if (ctl) {
-			ctl->IsXmlControl = true;//±ê¼ÇÎªxml¼ÓÔØ½øÀ´µÄ¿Ø¼ş
+			ctl->IsXmlControl = true;//æ ‡è®°ä¸ºxmlåŠ è½½è¿›æ¥çš„æ§ä»¶
 		}
 		LoadStyle(ctl, ControlState::None);
 		LoadStyle(ctl, ControlState::Active);
@@ -177,14 +177,14 @@ namespace UIManager {
 	}
 	void LoadControl(TiXmlElement* node, Control* control) {
 		TiXmlElement* fristChild = NULL;
-		if ((fristChild = node->FirstChildElement()))//ÏÈÑ°ÕÒ×Ó¿Ø¼ş
+		if ((fristChild = node->FirstChildElement()))//å…ˆå¯»æ‰¾å­æ§ä»¶
 		{
 			//Debug::Log("node %s", fristChild->Value());
 			Control* ctl = BuildControl(fristChild);
 			LoadControl(fristChild, ctl);
 			control->AddControl(ctl);
 			TiXmlElement* nextChild = fristChild->NextSiblingElement();
-			while (nextChild)//È»ºóÑ°ÕÒĞÖµÜ
+			while (nextChild)//ç„¶åå¯»æ‰¾å…„å¼Ÿ
 			{
 				//Debug::Log("node %s", nextChild->Value());
 				Control* ctl2 = BuildControl(nextChild);
@@ -194,7 +194,7 @@ namespace UIManager {
 			}
 		}
 	}
-	//È¥³ı¿Õ¸ñ»òÕßÆäËû·ûºÅ Ë«ÒıºÅÄÚµÄ¿Õ¸ñ²»»áÈ¥³ı
+	//å»é™¤ç©ºæ ¼æˆ–è€…å…¶ä»–ç¬¦å· åŒå¼•å·å†…çš„ç©ºæ ¼ä¸ä¼šå»é™¤
 	void TrimStyle(EString& str, TCHAR _char = ' ') {
 		TCHAR* bufStr = new TCHAR[str.size() + 1]{ 0 };
 		size_t pos = 0;
@@ -244,8 +244,8 @@ namespace UIManager {
 				AnalysisStyle(element->GetText());//
 			}
 			else { //if no style , must be Control
-				Control* control = BuildControl(element);//ÏÈ¼ÓÔØ¸ù½Úµã
-				LoadControl(element, control);//¼ÓÔØ×Ó½Úµã
+				Control* control = BuildControl(element);//å…ˆåŠ è½½æ ¹èŠ‚ç‚¹
+				LoadControl(element, control);//åŠ è½½å­èŠ‚ç‚¹
 				if (control) controls.push_back(control);
 			}
 		} while ((element = element->NextSiblingElement()));
@@ -292,17 +292,17 @@ namespace UIManager {
 		ControlStyle* style = NULL;
 		std::map<EString, EString>::iterator styleStr;
 		std::map<EString, EString>* _styles = NULL;
-		if (styleState == ControlState::Active) {//°´ÏÂÑùÊ½
+		if (styleState == ControlState::Active) {//æŒ‰ä¸‹æ ·å¼
 			style = &ctl->ActiveStyle;
 			_styles = &styles_active;
 			styleStr = styles_active.find(ctl->Name);
 		}
-		else if (styleState == ControlState::Hover) {//Ğü¸¡ÑùÊ½
+		else if (styleState == ControlState::Hover) {//æ‚¬æµ®æ ·å¼
 			style = &ctl->HoverStyle;
 			_styles = &styles_hover;
 			styleStr = styles_hover.find(ctl->Name);
 		}
-		else {//Ä¬ÈÏÑùÊ½
+		else {//é»˜è®¤æ ·å¼
 			style = &ctl->Style;
 			_styles = &styles;
 			styleStr = styles.find(ctl->Name);
@@ -340,3 +340,14 @@ _Selector& _Selector::attr(const EString& key, const EString& value)
 	}
 	return *this;
 }
+_Selector& _Selector::refresh()
+{
+	for (auto& it : this->ctls) {
+		it->Refresh();
+	}
+	if (ctl) {
+		ctl->Refresh();
+	}
+	return *this;
+}
+
