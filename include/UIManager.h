@@ -14,14 +14,16 @@ struct _Selector
 {
 private:
 	Control* ctl = NULL;
+	Control* notCtl = NULL;
 	Controls ctls;
 	_Selector& NextName(const EString& key) {};
 	_Selector& NextId(const EString& key) {};
 public:
 	_Selector(const Controls& Controls);
 	_Selector(Control* control);
-	_Selector& css(const EString& styleStr);
-	_Selector& attr(const EString& key, const EString& value);
-	_Selector& refresh();
+	_Selector& Css(const EString& styleStr);
+	_Selector& Attr(const EString& key, const EString& value);
+	_Selector& Refresh();
+	_Selector& Not(Control* fiterCtl);
 };
 #define $ _Selector
