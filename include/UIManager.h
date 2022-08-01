@@ -5,10 +5,10 @@
 namespace UIManager {
 	std::vector<Control*> UI_EXPORT LoadControl(const EString& filename);
 	void  UI_EXPORT LoadControl(const EString& xmlRaw, std::vector<Control*>& controls);
-	void AppendControl(const EString& xmlContent, Window* wind);//ÔİÊ±Ã»ÓÃµ½...Ô¤Áô°É
-	extern std::map<EString, EString> styles;//Ä¬ÈÏÑùÊ½¼¯ºÏ
-	extern std::map<EString, EString> styles_active;//°´ÏÂÑùÊ½¼¯ºÏ
-	extern std::map<EString, EString> styles_hover;//Êó±êĞü¸¡ÑùÊ½¼¯ºÏ
+	void AppendControl(const EString& xmlContent, Window* wind);//æš‚æ—¶æ²¡ç”¨åˆ°...é¢„ç•™å§
+	extern std::map<EString, EString> styles;//é»˜è®¤æ ·å¼é›†åˆ
+	extern std::map<EString, EString> styles_active;//æŒ‰ä¸‹æ ·å¼é›†åˆ
+	extern std::map<EString, EString> styles_hover;//é¼ æ ‡æ‚¬æµ®æ ·å¼é›†åˆ
 }
 struct _Selector
 {
@@ -22,5 +22,6 @@ public:
 	_Selector(Control* control);
 	_Selector& css(const EString& styleStr);
 	_Selector& attr(const EString& key, const EString& value);
+	_Selector& refresh();
 };
 #define $ _Selector
