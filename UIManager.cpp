@@ -231,6 +231,10 @@ namespace UIManager {
 
 		return controls;
 	}
+	Layout*  LoadLayout(const EString& filename)
+	{
+		return (Layout*)LoadControl(filename).at(0);
+	}
 	void LoadControl(const EString& xmlRaw, std::vector<Control*>& controls)
 	{
 		TiXmlDocument doc;
@@ -249,11 +253,6 @@ namespace UIManager {
 				if (control) controls.push_back(control);
 			}
 		} while ((element = element->NextSiblingElement()));
-	}
-	void AppendControl(const EString& xmlContent, Window* wind)
-	{
-		std::vector<Control*> controls;
-		LoadControl(xmlContent, controls);
 	}
 	void AnalysisStyle(const EString& styleStr) {
 		styles.clear();
