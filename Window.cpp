@@ -371,7 +371,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		if (uMsg >= (WM_USER + 0x04) && uMsg <= (WM_USER + 0x0c)) { //
 			MouseEventArgs* args = (MouseEventArgs*)lParam;
-			return OnNotify((Control*)(wParam), args);
+			return OnNotify((Control*)(wParam), *args);
 		}
 		break;
 	}
@@ -637,9 +637,8 @@ void Window::OnMove(const Point& point) {
 
 }
 
-
-bool Window::OnNotify(Control* sender, EventArgs* args) {
-	if (args->EventType == Event::OnMouseDown) {
+bool Window::OnNotify(Control* sender,const EventArgs& args) {
+	if (args.EventType == Event::OnMouseDown) {
 		if (sender->Action == ControlAction::MoveWindow || sender == _layout) {
 			MoveWindow();
 			return true;
