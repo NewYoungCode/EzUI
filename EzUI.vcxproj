@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -23,6 +23,7 @@
     <ClInclude Include="include\BoxShadow.h" />
     <ClInclude Include="include\Button.h" />
     <ClInclude Include="include\CheckBox.h" />
+    <ClInclude Include="include\ComBox.h" />
     <ClInclude Include="include\Container.h" />
     <ClInclude Include="include\Control.h" />
     <ClInclude Include="include\CPURender.h" />
@@ -55,6 +56,7 @@
     <ClCompile Include="BoxShadow.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="CheckBox.cpp" />
+    <ClCompile Include="ComBox.cpp" />
     <ClCompile Include="Container.cpp" />
     <ClCompile Include="Control.cpp" />
     <ClCompile Include="CPURender.cpp" />

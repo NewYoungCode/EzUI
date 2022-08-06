@@ -108,6 +108,9 @@
     <ClInclude Include="include\TabLayout.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ComBox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp">
@@ -198,6 +201,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="EzUI.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ComBox.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
