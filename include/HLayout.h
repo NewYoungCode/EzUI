@@ -10,3 +10,4 @@ public:
 	void OnSize(const Size&size)override;
 	void RefreshLayout()override;
 };
+using HBox = HLayout;

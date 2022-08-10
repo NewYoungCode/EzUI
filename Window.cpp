@@ -144,7 +144,7 @@ void Window::EmptyControl(Controls* controls) {
 		if (_inputControl == it) {
 			_inputControl = NULL;
 		}
-		EmptyControl((Controls*)it->GetControls());
+		EmptyControl(&(it->GetControls()));
 	}
 }
 //#pragma comment(lib,"odbc32.lib")
@@ -238,7 +238,7 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			_focusControl = NULL;
 			return TRUE;
 		}
-		EmptyControl((Controls*)delControl->GetControls());
+		EmptyControl(&(delControl->GetControls()));
 		return TRUE;
 	}
 	case WM_WINDOWPOSCHANGED: {
@@ -431,7 +431,7 @@ loop:
 		pTemp = &outCtl->VisibleControls;
 	}
 	else {
-		pTemp = (Controls*)outCtl->GetControls();
+		pTemp = &(outCtl->GetControls());
 	}
 
 	for (auto i = pTemp->rbegin(); i != pTemp->rend(); i++) {
@@ -459,13 +459,10 @@ loop:
 
 void Window::OnMouseMove(const Point& point)
 {
-
 	if (_focusControl && _mouseDown) {
 		auto ctlRect = _focusControl->GetClientRect();
-		MouseEventArgs args;
-		args.Location = { point.X - ctlRect.X ,point.Y - ctlRect.Y };
-		args.EventType = Event::OnMouseMove;
-		_focusControl->OnMouseEvent(args);
+		MouseEventArgs args(Event::OnMouseMove, { point.X - ctlRect.X ,point.Y - ctlRect.Y });
+		_focusControl->Trigger(args);
 		return;
 	}
 
@@ -475,20 +472,19 @@ void Window::OnMouseMove(const Point& point)
 
 	if (_focusControl && outCtl != _focusControl) {
 		args.EventType = Event::OnMouseLeave;
-		_focusControl->OnMouseEvent(args);
+		_focusControl->Trigger(args);
 	}
 	args.EventType = Event::OnMouseMove;
 	args.Location = relativePoint;
-	outCtl->OnMouseEvent(args);
+	outCtl->Trigger(args);
 	_focusControl = outCtl;
 
 }
 void Window::OnMouseLeave()
 {
 	if (_focusControl) {
-		MouseEventArgs args;
-		args.EventType = Event::OnMouseLeave;
-		_focusControl->OnMouseEvent(args);
+		MouseEventArgs args(Event::OnMouseLeave);
+		_focusControl->Trigger(args);
 	}
 	_focusControl = NULL;
 	_mouseDown = false;
@@ -516,7 +512,7 @@ void Window::OnMouseWheel(short zDelta, const Point& point)
 		args.Delta = zDelta;
 		args.Location = point;
 		args.EventType = Event::OnMouseWheel;
-		vBar->OnMouseEvent(args);
+		vBar->Trigger(args);
 	}
 }
 void Window::OnMouseDoubleClick(MouseButton mbtn, const Point& point)
@@ -526,7 +522,7 @@ void Window::OnMouseDoubleClick(MouseButton mbtn, const Point& point)
 	args.Button = mbtn;
 	args.Location = *_mouseDbClick;
 	args.EventType = Event::OnMouseDoubleClick;
-	outCtl->OnMouseEvent(args);
+	outCtl->Trigger(args);
 }
 
 void Window::OnMouseDown(MouseButton mbtn, const Point& point)
@@ -542,7 +538,7 @@ void Window::OnMouseDown(MouseButton mbtn, const Point& point)
 	args.Button = mbtn;
 	args.Location = relativePoint;
 	args.EventType = Event::OnMouseDown;
-	outCtl->OnMouseEvent(args);
+	outCtl->Trigger(args);
 
 	_inputControl = _focusControl;
 	{ //做双击消息处理
@@ -560,7 +556,7 @@ void Window::OnMouseDown(MouseButton mbtn, const Point& point)
 
 	if (_focusControl && _focusControl != outCtl) {
 		args.EventType = Event::OnMouseLeave;
-		_focusControl->OnMouseEvent(args);
+		_focusControl->Trigger(args);
 	}
 	_focusControl = outCtl;
 
@@ -584,11 +580,11 @@ void Window::OnMouseUp(MouseButton mbtn, const Point& point)
 		args.Button = mbtn;
 		args.Location = { point.X - ctlRect.X,point.Y - ctlRect.Y };
 		args.EventType = Event::OnMouseUp;
-		_focusControl->OnMouseEvent(args);
+		_focusControl->Trigger(args);
 		if (_focusControl && !ctlRect.Contains(point))
 		{
 			args.EventType = Event::OnMouseLeave;
-			_focusControl->OnMouseEvent(args);
+			_focusControl->Trigger(args);
 		}
 	}
 }
@@ -637,7 +633,7 @@ void Window::OnMove(const Point& point) {
 
 }
 
-bool Window::OnNotify(Control* sender,const EventArgs& args) {
+bool Window::OnNotify(Control* sender, const EventArgs& args) {
 	if (args.EventType == Event::OnMouseDown) {
 		if (sender->Action == ControlAction::MoveWindow || sender == _layout) {
 			MoveWindow();
@@ -659,7 +655,7 @@ bool Window::OnNotify(Control* sender,const EventArgs& args) {
 		if (sender->Action == ControlAction::Close) {
 			MouseEventArgs args;
 			args.EventType = Event::OnMouseLeave;
-			sender->OnMouseEvent(args);
+			sender->Trigger(args);
 			this->Close();
 			return true;
 		}

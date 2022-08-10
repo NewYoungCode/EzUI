@@ -33,7 +33,7 @@ public:
 		}
 		return _hdc;
 	}
-	~EBitmap() {
+	virtual ~EBitmap() {
 		if (_hdc) {
 			::SelectObject(_hdc, _hgdiobj);
 			::DeleteDC(_hdc);

@@ -9,4 +9,4 @@ public:
 	virtual void Sort();//重新布局
 	virtual void RefreshLayout();//刷新布局并重绘
 };
-
+using Box = Layout;

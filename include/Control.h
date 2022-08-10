@@ -72,21 +72,22 @@ public:
 	virtual void OnBackgroundPaint(PaintEventArgs& painter);//背景绘制
 	virtual void OnForePaint(PaintEventArgs& e);//前景绘制
 	virtual void OnBorderPaint(PaintEventArgs& painter);//边框绘制
-	void OnMouseEvent(MouseEventArgs& args);//鼠标事件消息
-	void OnEvent(Event eventType, void* param);//基础事件消息
+	virtual void OnEvent(Event eventType, void* param);//基础事件消息
 	virtual void OnLayout(const Size& parentRect, bool instantly = true);//父控件大小改变事件  instantly立即生效
 	virtual void OnLoad();//控件第一次加载 警告 此函数在LayerWindow里面不允许在函数内添加控件 但是允许设置控件参数  
 	virtual void OnSize(const Size& size);//大小发生改变
-public:
+protected:
+	virtual void OnMouseEvent(const MouseEventArgs& args);//鼠标事件消息
 	virtual void OnMouseMove(const Point& point);//鼠标在控件上移动
 	virtual void OnMouseLeave();//鼠标离开控件
 	virtual void OnMouseWheel(short zDelta, const Point& point);//鼠标滚轮
 	virtual void OnMouseDown(MouseButton mbtn, const Point& point);//鼠标按下
 	virtual void OnMouseUp(MouseButton mbtn, const Point& point);//鼠标弹起
-	virtual void OnMouseClick(MouseButton mbtn, const Point& point);
+	virtual void OnMouseClick(MouseButton mbtn, const Point& point);//鼠标单击
 	virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point);//鼠标双击
-	//鼠标单击
-	virtual void OnMouseEnter(const Point& point);//已实现
+	virtual void OnMouseEnter(const Point& point);//鼠标移入
+public:
+	void Trigger(const MouseEventArgs& args);//触发鼠标相关消息
 protected:
 	ControlStyle& GetStyle(ControlState _state);//获取当前控件状态下的样式信息
 public:
@@ -116,7 +117,7 @@ public:
 	size_t Index();
 	size_t Find(Control* ctl);
 	int  GetAnchorStyle();//获取锚定风格
-	Controls* GetControls();//获取当前所有子控件
+	Controls& GetControls();//获取当前所有子控件
 	virtual void AddControl(Control* ctl);//添加控件
 	virtual ControlIterator RemoveControl(Control* ctl);//删除控件 返回下一个迭代器
 	virtual void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件
@@ -140,6 +141,7 @@ public:
 	virtual void SetRect(const Rect& rect, bool rePaint = false);//设置相对父控件矩形
 	const Rect& GetRect();//获取相对与父控件矩形
 };
+
 //添加弹簧无需用户手动释放,
 class Spacer :public Control {
 public:
@@ -150,7 +152,7 @@ public:
 		pt.DrawString("auto", GetFontFamily(this->State), 8, GetForeColor(this->State), RectF(0, 0, (float)_rect.Width, (float)_rect.Height), TextAlign::MiddleCenter);
 	}
 #endif
-	};
+};
 
 //具有绝对高度的 的弹簧
 class VSpacer :public Spacer {

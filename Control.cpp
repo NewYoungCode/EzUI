@@ -319,7 +319,8 @@ bool Control::CheckEventPassThrough(Event eventType) {
 	return false;
 }
 //专门处理鼠标消息的
-void Control::OnMouseEvent(MouseEventArgs& args) {
+void Control::OnMouseEvent(const MouseEventArgs& _args) {
+	MouseEventArgs& args = (MouseEventArgs&)_args;
 	if (CheckEventPassThrough(args.EventType)) {//检查鼠标穿透
 		this->Parent->OnMouseEvent(args);//如果设置了穿透就直接发送给上一层控件
 	}
@@ -600,9 +601,9 @@ size_t Control::Find(Control* ctl) {
 }
 size_t Control::Index()
 {
-	Controls* pControls = Parent->GetControls();
+	Controls& pControls = Parent->GetControls();
 	size_t pos(0);
-	for (auto i = pControls->begin(); i != pControls->end(); i++)
+	for (auto i = pControls.begin(); i != pControls.end(); i++)
 	{
 		if (dynamic_cast<Spacer*>(*i)) {
 			continue;
@@ -635,7 +636,7 @@ bool _FindControl(Controls* controls, Control* ctl) {
 		return true;
 	}
 	for (auto& it : *controls) {
-		exist = _FindControl(it->GetControls(), ctl);
+		exist = _FindControl(&(it->GetControls()), ctl);
 		if (exist)break;
 	}
 	return exist;
@@ -671,7 +672,7 @@ ControlIterator Control::RemoveControl(Control* ctl)
 
 Control* Control::FindControl(const EString& objectName)
 {
-	for (auto& it : *(this->GetControls()))
+	for (auto& it : (this->GetControls()))
 	{
 		if (it->Name == objectName) {
 			return it;
@@ -685,7 +686,7 @@ Control* Control::FindControl(const EString& objectName)
 Controls Control::FindControl(const EString& attr, const EString& attrValue)
 {
 	Controls ctls;
-	for (auto& it : *(this->GetControls()))
+	for (auto& it : (this->GetControls()))
 	{
 		if (it->GetAttribute(attr) == attrValue) {
 			ctls.push_back(it);
@@ -699,9 +700,9 @@ Controls Control::FindControl(const EString& attr, const EString& attrValue)
 }
 
 
-Controls* Control::GetControls()
+Controls& Control::GetControls()
 {
-	return &_controls;
+	return _controls;
 }
 void Control::Clear(bool freeControls)
 {
@@ -729,7 +730,6 @@ void Control::Clear(bool freeControls)
 
 void Control::OnChar(WPARAM wParam, LPARAM lParam) {}
 void Control::OnKeyDown(WPARAM wParam) {}
-
 
 void Control::OnMouseMove(const Point& point)
 {
@@ -772,7 +772,10 @@ void Control::OnMouseEnter(const Point& point)
 	//}
 	UI_TRIGGER(MouseEnter, point);
 }
-
+void Control::Trigger(const MouseEventArgs& args)
+{
+	OnMouseEvent(args);
+}
 void Control::OnMouseDown(MouseButton mbtn, const Point& point)
 {
 	this->State = ControlState::Active;

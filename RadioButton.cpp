@@ -24,7 +24,7 @@ bool RadioButton::GetCheck()
 void RadioButton::OnMouseClick(MouseButton btn, const Point & pt)
 {
 	SetCheck(true);
-	for (auto &it : *Parent->GetControls()) {
+	for (auto &it : Parent->GetControls()) {
 		RadioButton *rbtn = dynamic_cast<RadioButton*>(it);
 		if (rbtn&&rbtn != this && rbtn->GetCheck() == true) {
 			rbtn->SetCheck(false);

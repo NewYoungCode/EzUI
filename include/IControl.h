@@ -97,9 +97,19 @@ struct EventArgs {
 // 摘要: 
 //为鼠标事件提供基础数据
 struct MouseEventArgs :public EventArgs {
+public:
 	MouseButton Button;
 	short Delta;
 	Point Location;
+public:
+	MouseEventArgs() {}
+	virtual ~MouseEventArgs() {}
+	MouseEventArgs(const Event& eventType, const Point& location =Point(0,0), const MouseButton& mouseButton = MouseButton::None, const short& delta = 0) {
+		this->EventType = eventType;
+		this->Button = mouseButton;
+		this->Delta = delta;
+		this->Location = location;
+	}
 };
 
 // 摘要: 
@@ -110,6 +120,7 @@ struct PaintEventArgs :public EventArgs {
 	Rect InvalidRectangle;//WM_PAINT里面的无效区域
 	HWND HWnd;//父窗口句柄
 	PaintEventArgs(_Painter_& painter) :Painter(painter) {}
+	virtual ~PaintEventArgs() {}
 };
 
 //控件样式
@@ -137,7 +148,7 @@ public:
 	void SetBorder(const Color& color, int width);
 	bool IsValid();
 	void SetStyleSheet(const EString& styleStr);
-	void SetStyle(const EString& key,const EString&value);
+	void SetStyle(const EString& key, const EString& value);
 };
 //控件行为
 enum class ControlAction {

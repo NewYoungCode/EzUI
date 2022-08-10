@@ -108,7 +108,7 @@
     <ClInclude Include="include\TabLayout.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ComBox.h">
+    <ClInclude Include="include\ComBox.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

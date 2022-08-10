@@ -59,15 +59,15 @@ namespace UIManager {
 				ctl = new HList;
 				break;
 			}
-			if (valueStr == "vlayout") {
+			if (valueStr == "vlayout" || valueStr == "vbox") {
 				ctl = new VLayout;
 				break;
 			}
-			if (valueStr == "hlayout") {
+			if (valueStr == "hlayout" || valueStr == "hbox") {
 				ctl = new HLayout;
 				break;
 			}
-			if (valueStr == "layout") {
+			if (valueStr == "layout" || valueStr == "box") {
 				ctl = new Layout;
 				break;
 			}
@@ -75,7 +75,7 @@ namespace UIManager {
 				ctl = new TileLayout;
 				break;
 			}
-			if (valueStr == "tablayout") {
+			if (valueStr == "tablayout" ) {
 				ctl = new TabLayout;
 				break;
 			}
@@ -231,7 +231,7 @@ namespace UIManager {
 
 		return controls;
 	}
-	Layout*  LoadLayout(const EString& filename)
+	Layout* LoadLayout(const EString& filename)
 	{
 		return (Layout*)LoadControl(filename).at(0);
 	}
@@ -315,7 +315,7 @@ _Selector::_Selector(const Controls& Controls)
 {
 	this->ctls = Controls;
 }
-_Selector::_Selector( Control* ctl)
+_Selector::_Selector(Control* ctl)
 {
 	this->ctl = ctl;
 }

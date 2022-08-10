@@ -36,6 +36,7 @@ private:
 	}
 public:
 	_Rect() :Gdiplus::Rect() {};
+	virtual ~_Rect() {};
 	_Rect(IN INT x, IN INT y, IN INT width, IN INT height) :Gdiplus::Rect(x, y, width, height) {};
 	_Rect(IN const Point& location, IN const Size& size) :Gdiplus::Rect(location, size) {};
 	_Rect(const EString& rect) {
@@ -52,7 +53,7 @@ public:
 	Bitmap* BufBitmap = NULL;//预绘制
 	Rect Box;//指定图片绘制在什么位置 //不指定就自动拉伸到当前控件上
 	Image(const EString& filename, int radius = 0);
-	~Image();
+	virtual ~Image();
 	Image(Gdiplus::GpImage* nativeImage, Gdiplus::Status status) :Gdiplus::Image(nativeImage, status) {}
 	Image* Clone();
 };
@@ -180,6 +181,7 @@ public:
 		Argb = (ARGB)Color::Black;
 		valid = false;
 	}
+	virtual ~_Color(){}
 
 	_Color& operator=(const EString& colorStr) {
 		_MakeARGB(colorStr);
