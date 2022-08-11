@@ -154,8 +154,8 @@ namespace UIManager {
 				break;
 			}
 			if (valueStr == "edit") {
-				ctl = new EditWnd;
-				((EditWnd*)ctl)->SetText(Attribute(node, "text"));
+				ctl = new Edit;
+				((Edit*)ctl)->SetText(Attribute(node, "text"));
 				break;
 			}
 		} while (false);

@@ -1,5 +1,5 @@
 #include "Window.h"
-
+#include "TabLayout.h"
 Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 {
 	int sw = GetSystemMetrics(SM_CXFULLSCREEN);
@@ -157,12 +157,8 @@ LRESULT HandleStartComposition(HWND hWnd, WPARAM wParam, LPARAM lParam)
 
 LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	if (WM_COMMAND == uMsg || uMsg == WM_CTLCOLOREDIT) {
-		Control* win32Control = (Control*)UI_GetUserData((HWND)lParam);
-		EditWnd* win32Edit = dynamic_cast<EditWnd*>(win32Control);
-		if (win32Edit) {
-			return win32Edit->WndProc(uMsg, wParam, lParam);
-		}
+	if (WM_COMMAND == uMsg) {
+		
 	}
 
 	switch (uMsg)
@@ -658,6 +654,16 @@ bool Window::OnNotify(Control* sender, const EventArgs& args) {
 			sender->Trigger(args);
 			this->Close();
 			return true;
+		}
+	}
+	if (args.EventType == Event::OnMouseClick) {
+		EString  ctlName = sender->GetAttribute("tablayout");
+		if (!ctlName.empty()) {
+			TabLayout* tabLayout = dynamic_cast<TabLayout*>(FindControl(ctlName));
+			if (tabLayout) {
+				tabLayout->SetPageIndex(sender->Index());
+				tabLayout->Refresh();
+			}
 		}
 	}
 	return false;
