@@ -1,16 +1,16 @@
 #include "Application.h"
 #include "Window.h"
 LRESULT CALLBACK EzUI_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
-	Window* USERDATA = (Window*)UI_GetUserData(hwnd);
-	if (USERDATA) {
-		return USERDATA->WndProc(message, wParam, lParam);
+	WindowData* wndData = (WindowData*)UI_GetUserData(hwnd);
+	if (wndData) {
+		return  ((Window*)wndData->Window)->WndProc(message, wParam, lParam);
 	}
 	return ::DefWindowProc(hwnd, message, wParam, lParam);
 }
 
 Application::Application() {
 	//设计窗口
-	::HINSTANCE hInstance = GetModuleHandle(0);
+	::HINSTANCE hInstance = GetModuleHandle(NULL);
 	::WNDCLASS     wc;
 	wc.style = NULL;// CS_DBLCLKS;放弃windows消息中的双击消息
 	//wc.style = CS_HREDRAW | CS_VREDRAW;//| CS_DBLCLKS;
@@ -25,18 +25,11 @@ Application::Application() {
 	wc.lpszClassName = UI_CLASSNAME;
 	if (!RegisterClass(&wc)) //注册窗口
 	{
-		::MessageBox(NULL, TEXT("This program requires Windows NT!"),
+		::MessageBox(NULL, TEXT("This program requires Windows NT !"),
 			wc.lpszClassName, MB_ICONERROR);
 		return;
 	}
-
-	WCHAR exeFullPath[512]{ 0 };
-	::GetModuleFileNameW(NULL, exeFullPath, 512);
-	std::wstring exeFullPathw(exeFullPath);
-	size_t pos = exeFullPathw.rfind(L"\\");
-	exeFullPathw = exeFullPathw.substr(0, pos);
-	::SetCurrentDirectoryW(exeFullPathw.c_str());
-
+	::SetCurrentDirectoryW(Application::StartPath().c_str());
 	::CoInitialize(NULL);//初始化com
 	::RenderInitialize();
 }
@@ -48,8 +41,8 @@ Application::~Application() {
 
 int Application::exec()
 {
-	::MSG msg;
-	while (GetMessage(&msg, 0, 0, 0) != 0)
+	::MSG msg{0};
+	while (GetMessage(&msg, NULL, 0, 0) != 0)
 	{
 		::TranslateMessage(&msg);
 		::DispatchMessage(&msg);

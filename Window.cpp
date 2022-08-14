@@ -10,7 +10,8 @@ Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 	_rect.Height = height;
 	_hWnd = ::CreateWindowEx(ExStyle, UI_CLASSNAME, UI_CLASSNAME, dStyle,
 		_rect.X, _rect.Y, width, height, owner, NULL, GetModuleHandle(NULL), NULL);
-	UI_SetUserData(_hWnd, this);
+	_winData.Window = this;
+	UI_SetUserData(_hWnd, &_winData);
 }
 Window::~Window()
 {
@@ -95,26 +96,23 @@ void Window::Show(int cmdShow)
 
 int Window::ShowModal(bool wait)
 {
-	auto p_hwnd = ::GetWindowOwner(_hWnd);
-	ASSERT(::IsWindow(p_hwnd));
-	this->Show();
-	//::EnableWindow(p_hwnd, FALSE);
-	Window* wnd = (Window*)UI_GetUserData(p_hwnd);
-	wnd->SetChildModal(_hWnd);
+	_OwnerHwnd = ::GetWindowOwner(_hWnd);
+	ASSERT(::IsWindow(_OwnerHwnd));
+	Show();
+	::EnableWindow(_OwnerHwnd, FALSE);
 	if (wait) {//
-		MSG msg;
-		while (::IsWindow(_hWnd) && ::GetMessage(&msg, 0, 0, 0) && msg.message != WM_QUIT)
+		MSG msg{ 0 };
+		while (::IsWindow(_hWnd) && ::GetMessage(&msg, NULL, 0, 0) && msg.message != WM_QUIT)
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
 		if (msg.message == WM_QUIT) {//
 			::PostQuitMessage(msg.wParam);
+			return _closeCode;
 		}
 	}
-	/*::EnableWindow(p_hwnd, TRUE);*/
-	wnd->SetChildModal(NULL);
-	::SetForegroundWindow(p_hwnd);
+	::SetForegroundWindow(_OwnerHwnd);
 	return _closeCode;
 }
 
@@ -124,11 +122,6 @@ void Window::Hide() {
 bool Window::IsVisible() {
 	return ::IsWindowVisible(_hWnd) ? true : false;
 }
-
-void Window::SetChildModal(HWND hwnd) {
-	_ChildModalWnd = hwnd;
-}
-
 
 void Window::SetVisible(bool flag) {
 	if (flag) {
@@ -171,17 +164,23 @@ bool _Has(UINT uMsg, UINT msg) {
 
 LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	if (_ChildModalWnd && uMsg == WM_SETFOCUS) {
-		FLASHWINFO info;
-		info.cbSize = sizeof(FLASHWINFO);
-		info.hwnd = _ChildModalWnd;
-		info.dwFlags = FLASHW_ALL;
-		info.dwTimeout = 100;
-		info.uCount = 5;
-		::FlashWindowEx(&info);
-		::SetFocus(_ChildModalWnd);
-		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
-	}
+	//if (_ChildModalWnd) {
+	//	if (uMsg == WM_SETFOCUS) {
+	//		FLASHWINFO info;
+	//		info.cbSize = sizeof(FLASHWINFO);
+	//		info.hwnd = _ChildModalWnd;
+	//		info.dwFlags = FLASHW_ALL;
+	//		info.dwTimeout = 100;
+	//		info.uCount = 5;
+	//		::FlashWindowEx(&info);
+	//		::SetFocus(_ChildModalWnd);
+	//		::MessageBeep(MB_ICONWARNING);//发出咚咚咚的声音
+	//	}
+	//	if (uMsg == WM_MOUSEWHEEL || uMsg == WM_MOUSEMOVE) {
+	//		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
+	//	}
+	//} //已经解决owner闪烁的问题 不需要再拦截这些信息来实现 阻塞对话框
+
 	if (WM_COMMAND == uMsg) {
 
 	}
@@ -298,6 +297,10 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		bool Cancel = false;
 		OnClose(Cancel);
 		if (!Cancel) {
+			if (_OwnerHwnd) {
+				::EnableWindow(_OwnerHwnd, TRUE);
+				_OwnerHwnd = NULL;
+			}
 			::DestroyWindow(_hWnd);
 		}
 		else {
@@ -314,6 +317,10 @@ LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_KEYDOWN:
 	{
+		if (wParam == VK_F11 ) {
+			_winData.Debug = !_winData.Debug;
+			_layout->Refresh();
+		}
 		OnKeyDown(wParam);
 		break;
 	}
@@ -619,6 +626,7 @@ void Window::OnRect(const Rect& rect)
 }
 void Window::OnClose(bool& Cancel)
 {
+
 }
 void Window::OnDestroy()
 {

@@ -10,13 +10,14 @@
 class UI_EXPORT Window :public IControl
 {
 private:
-	HWND _ChildModalWnd = NULL;
+	WindowData _winData;
 	std::chrono::system_clock::time_point _lastDownTime = std::chrono::system_clock::from_time_t(0);
 	Control* _lastDownCtl = NULL;
 	Point* _mouseDbClick = NULL;
 	Size _lastSize;//上一次客户端大小的信息
 	Point _lastPoint;//上一次移动的坐标
 	int _closeCode = 0;
+	HWND _OwnerHwnd = NULL;
 protected:
 	Rect _rect;//基于桌面的坐标
 	Rect _rectClient;//客户绘图区域
@@ -67,6 +68,5 @@ public:
 	void Close(int code = 0);
 	virtual void Hide();
 	bool IsVisible();
-	void SetChildModal(HWND hwnd);
 	void SetVisible(bool flag);
 };

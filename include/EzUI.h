@@ -72,6 +72,13 @@ public:
 	}
 };
 
+struct WindowData {
+	void* Window = NULL;
+	void* Styles = NULL;
+	void* HoverStyles = NULL;
+	void* ActiveStyles = NULL;
+	bool Debug = false;
+};
 
 #define UI_Float Tuple<float>
 #define UI_Int Tuple<int>
@@ -138,7 +145,7 @@ public:
 	EString(const std::wstring& wstr);
 	std::wstring utf16() const;
 	EString Erase(CHAR _char)const;
-	std::vector<EString> Split( const EString& ch_)const;
+	std::vector<EString> Split(const EString& ch_)const;
 	EString Replace(const EString& oldText, const EString& newText)const;
 	static size_t  Replace(EString& str, const EString& oldText, const EString& newText)
 	{

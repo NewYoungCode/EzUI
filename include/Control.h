@@ -146,42 +146,27 @@ public:
 class Spacer :public Control {
 public:
 	virtual ~Spacer() {};
-public:
-#ifdef DEBUGPAINT
-	void OnPaint(Painter& pt, PaintEventArgs& args) {
-		pt.DrawString("auto", GetFontFamily(this->State), 8, GetForeColor(this->State), RectF(0, 0, (float)_rect.Width, (float)_rect.Height), TextAlign::MiddleCenter);
-	}
-#endif
 };
-
 //具有绝对高度的 的弹簧
 class VSpacer :public Spacer {
 private:
 	VSpacer() {};
+
 public:
+	virtual ~VSpacer() {};
 	VSpacer(int fixedHeight) {
 		SetFixedHeight(fixedHeight);
 	}
-#ifdef DEBUGPAINT
-	void OnPaint(Painter& pt, PaintEventArgs& args) {
-		pt.DrawString(std::to_string(GetFixedHeight()), GetFontFamily(this->State), 8, GetForeColor(this->State), RectF(0, 0, (float)_rect.Width, (float)_rect.Height), TextAlign::MiddleCenter);
-	}
-#endif
 };
-
 //具有绝对宽度的 的弹簧
 class HSpacer :public Spacer {
 private:
 	HSpacer() {};
 public:
+	virtual ~HSpacer() {};
 	HSpacer(int fixedWidth) {
 		SetFixedWidth(fixedWidth);
 	}
-#ifdef DEBUGPAINT
-	void OnPaint(Painter& pt, PaintEventArgs& args) {
-		pt.DrawString(std::to_string(GetFixedWidth()), GetFontFamily(this->State), 8, GetForeColor(this->State), RectF(0, 0, (float)_rect.Width, (float)_rect.Height), TextAlign::MiddleCenter);
-	}
-#endif
 };
 
 class ScrollBar :public Control {

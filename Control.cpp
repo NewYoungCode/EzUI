@@ -452,13 +452,20 @@ void Control::OnEvent(Event eventType, void* param) {
 		pt.OffsetX = clientRect.X; //ÉèÖÃÆ«ÒÆ
 		pt.OffsetY = clientRect.Y;//ÉèÖÃÆ«ÒÆ
 		this->OnBorderPaint(args);//»æÖÆ±ß¿ò
+
 #ifdef DEBUGPAINT
-		if (this->State == ControlState::Hover) {
-			pt.DrawRectangle(Color(255, 0, 0), Rect{ 0,0,_rect.Width,_rect.Height });
-		}
-		else {
-			pt.DrawRectangle(Color(100, 255, 255, 255), Rect{ 0,0,_rect.Width,_rect.Height });
-		}
+	  WindowData* wndData=(WindowData*)UI_GetUserData(_hWnd);
+	  if (wndData->Debug) {
+		  if (this->State == ControlState::Hover) {
+			  pt.DrawRectangle(Color(255, 0, 0), Rect{ 0,0,_rect.Width,_rect.Height });
+		  }
+		  else {
+			  pt.DrawRectangle(Color(100, 255, 255, 255), Rect{ 0,0,_rect.Width,_rect.Height});
+		  }
+		  if (!Name.empty()) {
+			  pt.DrawString(Name, GetFontFamily(), GetFontSize(), GetForeColor(), RectF(0, 0, Width(), Height()), TextAlign::MiddleLeft);
+		  }
+	  }
 #endif
 		pt.PopLayer();//µ¯³ö·Ö²ã
 		return;

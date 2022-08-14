@@ -1,7 +1,7 @@
 ﻿#include "MainFrm.h"
 #include <UIManager.h>
 
-MainFrm::MainFrm(int width, int height) :FrameWindow(width, height)
+MainFrm::MainFrm(int width, int height) :Form(width, height)
 {
 	laout.Style.BackgroundColor = { 35,35,38 };
 	top.ReSize({ laout.Width(),60 });
@@ -281,7 +281,7 @@ void MainFrm::OnKeyDown(WPARAM wparam) {
 		Layout *l=new Layout;
 		l->Style.BackgroundColor = Color::Pink;
 		dl->SetLayout(l);
-		dl->Show();
+		dl->ShowModal();
 		int pause = 0;
 	}
 }
