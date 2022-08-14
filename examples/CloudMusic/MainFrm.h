@@ -8,12 +8,13 @@
 #include "Edit.h"
 #include "VList.h"
 #include "TileLayout.h"
-class MainFrm:public Form
+#include "Button.h"
+class MainFrm:public FrameWindow
 {
 private:
 	VLayout laout;//垂直布局器
-	Label title;//标题
-	EditWnd edit;//搜索框
+	Button title;//标题
+	Edit edit;//搜索框
 	Layout top;//顶部部分
 	Control redBar;//红色的线条
 	HLayout centerLayout;//中心部分
@@ -50,7 +51,6 @@ private:
 	Label hy;
 	Control space4;
 	Control space5;
-
 	Image yl_img=(L"D:\\wyy\\yl.png");
 	Image hy_img=(L"D:\\wyy\\hy.png");
 	Image lb_img=(L"D:\\wyy\\lb.png");
@@ -60,12 +60,10 @@ private:
 	Image img=(L"D:\\wyy\\hd2.png");
 public :
 	MainFrm(int width, int height);
-
 	//WS_OVERLAPPEDWINDOW
-
 	void OnPaint(HDC hdc, const Rect& rect);
-
 	void OnDestroy();
+	void OnKeyDown(WPARAM wparam) override;
 	bool OnNotify(Control* sender, const EventArgs& args) override;
 };
 

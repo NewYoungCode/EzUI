@@ -97,9 +97,10 @@ int Window::ShowModal(bool wait)
 {
 	auto p_hwnd = ::GetWindowOwner(_hWnd);
 	ASSERT(::IsWindow(p_hwnd));
-	::EnableWindow(p_hwnd, FALSE);
 	this->Show();
-	::SetForegroundWindow(_hWnd);
+	//::EnableWindow(p_hwnd, FALSE);
+	Window* wnd = (Window*)UI_GetUserData(p_hwnd);
+	wnd->SetChildModal(_hWnd);
 	if (wait) {//
 		MSG msg;
 		while (::IsWindow(_hWnd) && ::GetMessage(&msg, 0, 0, 0) && msg.message != WM_QUIT)
@@ -111,7 +112,8 @@ int Window::ShowModal(bool wait)
 			::PostQuitMessage(msg.wParam);
 		}
 	}
-	::EnableWindow(p_hwnd, TRUE);
+	/*::EnableWindow(p_hwnd, TRUE);*/
+	wnd->SetChildModal(NULL);
 	::SetForegroundWindow(p_hwnd);
 	return _closeCode;
 }
@@ -122,6 +124,12 @@ void Window::Hide() {
 bool Window::IsVisible() {
 	return ::IsWindowVisible(_hWnd) ? true : false;
 }
+
+void Window::SetChildModal(HWND hwnd) {
+	_ChildModalWnd = hwnd;
+}
+
+
 void Window::SetVisible(bool flag) {
 	if (flag) {
 		::ShowWindow(_hWnd, SW_RESTORE);
@@ -155,12 +163,28 @@ LRESULT HandleStartComposition(HWND hWnd, WPARAM wParam, LPARAM lParam)
 	return 1;
 }
 
+bool _Has(UINT uMsg, UINT msg) {
+	if (uMsg == msg) return true;
+	return false;
+}
+#define HAS(arg) _Has(uMsg,arg)
+
 LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	if (WM_COMMAND == uMsg) {
-		
+	if (_ChildModalWnd && uMsg == WM_SETFOCUS) {
+		FLASHWINFO info;
+		info.cbSize = sizeof(FLASHWINFO);
+		info.hwnd = _ChildModalWnd;
+		info.dwFlags = FLASHW_ALL;
+		info.dwTimeout = 100;
+		info.uCount = 5;
+		::FlashWindowEx(&info);
+		::SetFocus(_ChildModalWnd);
+		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
 	}
+	if (WM_COMMAND == uMsg) {
 
+	}
 	switch (uMsg)
 	{
 	case  WM_IME_STARTCOMPOSITION://

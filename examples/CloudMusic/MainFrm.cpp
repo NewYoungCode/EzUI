@@ -1,7 +1,7 @@
 ﻿#include "MainFrm.h"
 #include <UIManager.h>
 
-MainFrm::MainFrm(int width, int height) :Form(width, height)
+MainFrm::MainFrm(int width, int height) :FrameWindow(width, height)
 {
 	laout.Style.BackgroundColor = { 35,35,38 };
 	top.ReSize({ laout.Width(),60 });
@@ -14,13 +14,13 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	top.Action = ControlAction::MoveWindow;//鼠标捕捉 移动窗口
 
 	title.SetText(utf8("网抑云音乐"));
-	title.Style.ForeColor = (Color::White);
+	//title.Style.ForeColor = (Color::White);
 	title.Style.FontSize = (14);
 	title.SetRect({ 14,15,131,35 });
 	top.AddControl(&title);
 
 	edit.SetRect({ 198,14,400,33 });
-	
+
 	edit.Style.BackgroundColor = { 41,41,44 };
 	edit.Style.SetBorder({ 41,41,44 }, 1);
 	edit.Style.ForeColor = (Color::White);
@@ -67,7 +67,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 
 	for (size_t i = 0; i < 1010; i++)
 	{
-		Label *lb = new Label;
+		Label* lb = new Label;
 		lb->ReSize({ musicList.Width(),35 });
 		if (i % 2) {
 			lb->Style.BackgroundColor = { 55,55,55 };
@@ -76,7 +76,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 			lb->Style.BackgroundColor = { 43,43,43 };
 		}
 
-		lb->MouseClick = [=](Control*sender, MouseButton btn, const Point&)->void {
+		lb->MouseClick = [=](Control* sender, MouseButton btn, const Point&)->void {
 			if (btn == MouseButton::Left) {
 				::MessageBox(Hwnd(), TEXT("点击"), TEXT(""), 0);
 
@@ -205,7 +205,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 
 	yx.SetRect({ 0,26,20,20 });
 	yx.SetFixedWidth(20);
-	 
+
 	yx.Style.ForeImage = (&yx_img);
 	bottom_right.AddControl(&yx);
 
@@ -244,7 +244,6 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 
 }
 
-
 void MainFrm::OnPaint(HDC hdc, const Rect& rect)
 {
 	StopWatch sw;
@@ -260,6 +259,41 @@ void MainFrm::OnDestroy()
 	Application::exit();
 }
 
+
+class DialogWnd :public FrameWindow {
+public:
+	DialogWnd(int width, int height, HWND wnd) :FrameWindow(width, height, wnd) {
+		SetText("I am a dialog window !");
+	};
+	void OnKeyDown(WPARAM wparam) override {
+		__super::OnKeyDown(wparam);
+		if (wparam==VK_F5) {
+			Close();//模态框按F5关闭
+		}
+	}
+};
+void MainFrm::OnKeyDown(WPARAM wparam) {
+	__super::OnKeyDown(wparam);
+	//按F5启动开启一个模态框
+	if (wparam == VK_F5) {
+		//启动模态框 会阻塞
+		DialogWnd *dl=new DialogWnd(400, 200, Hwnd());
+		Layout *l=new Layout;
+		l->Style.BackgroundColor = Color::Pink;
+		dl->SetLayout(l);
+		dl->Show();
+		int pause = 0;
+	}
+}
+
 bool MainFrm::OnNotify(Control* sender, const  EventArgs& args) {
+
+	if (args.EventType == Event::OnMouseDoubleClick) {
+
+	
+
+	
+
+	}
 	return __super::OnNotify(sender, args);
 }

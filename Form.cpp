@@ -172,7 +172,6 @@ LRESULT MenuWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	if (uMsg == WM_NCHITTEST) {
 		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
 	}
-
 	 if (uMsg == WM_KILLFOCUS) {
 		HWND wnd = (HWND)wParam;
 		if (wnd != this->_boxShadow->_hWnd) {
@@ -195,12 +194,12 @@ void MenuWindow::Show(int cmdShow)
 	Debug::Log("%d %d", clientPos.x, clientPos.y);
 
 	int height = OwnerRect.bottom - OwnerRect.top;
-	if (rect.Height>height  ) {
+	//if (rect.Height>height  ) {
 		::MoveWindow(_hWnd, mousePos.x, mousePos.y, rect.Width, rect.Height, FALSE);
-	}
+	/*}
 	else {
 		::MoveWindow(_hWnd, mousePos.x, mousePos.y- rect.Height, rect.Width, rect.Height, FALSE);
-	}
+	}*/
 	__super::Show(cmdShow);
 	::SetForegroundWindow(_hWnd);
 }

@@ -10,6 +10,7 @@
 class UI_EXPORT Window :public IControl
 {
 private:
+	HWND _ChildModalWnd = NULL;
 	std::chrono::system_clock::time_point _lastDownTime = std::chrono::system_clock::from_time_t(0);
 	Control* _lastDownCtl = NULL;
 	Point* _mouseDbClick = NULL;
@@ -66,5 +67,6 @@ public:
 	void Close(int code = 0);
 	virtual void Hide();
 	bool IsVisible();
+	void SetChildModal(HWND hwnd);
 	void SetVisible(bool flag);
 };
