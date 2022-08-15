@@ -8,7 +8,7 @@ Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 	_rect.Y = (sh - height) / 2;
 	_rect.Width = width;
 	_rect.Height = height;
-	_hWnd = ::CreateWindowEx(ExStyle, UI_CLASSNAME, UI_CLASSNAME, dStyle,
+	_hWnd = ::CreateWindowEx(ExStyle | WS_EX_ACCEPTFILES, UI_CLASSNAME, UI_CLASSNAME, dStyle,
 		_rect.X, _rect.Y, width, height, owner, NULL, GetModuleHandle(NULL), NULL);
 	_winData.Window = this;
 	UI_SetUserData(_hWnd, &_winData);

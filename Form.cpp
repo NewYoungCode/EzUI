@@ -28,7 +28,7 @@ BorderlessWindow::~BorderlessWindow() {
 		delete _boxShadow;
 	}
 }
-
+ 
 LRESULT  BorderlessWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
 	switch (uMsg)
@@ -65,6 +65,9 @@ LRESULT  BorderlessWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	}
 	return __super::WndProc(uMsg, wParam, lParam);
 }
+
+
+
 
 //WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
 LayeredWindow::LayeredWindow(int cx, int cy, HWND owner) :Window(cx, cy, owner, WS_POPUP | WS_MINIMIZEBOX, WS_EX_LAYERED)
@@ -112,7 +115,7 @@ void LayeredWindow::OnPaint(HDC _hdc, const Rect& rePaintRect) {
 	args.InvalidRectangle = rePaintRect;//
 	args.HWnd = _hWnd;
 	_layout->OnEvent(Event::OnPaint, &args);//
-
+	//pt.SaveImage(L"image/jpeg", L"E:\\a.jpg", { clientRect.Width, clientRect.Height });
 	PushDC(_hdc);//updatelaredwindow
 }
 LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)

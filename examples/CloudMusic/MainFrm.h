@@ -9,7 +9,7 @@
 #include "VList.h"
 #include "TileLayout.h"
 #include "Button.h"
-class MainFrm:public Form
+class MainFrm:public BorderlessWindow
 {
 private:
 	VLayout laout;//´¹Ö±²¼¾ÖÆ÷
