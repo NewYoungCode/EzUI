@@ -1,12 +1,15 @@
 #include "Container.h"
 
-Container::Container()
-{
+namespace EzUI {
 
-}
-Container::~Container()
-{
-}
-void Container::RefreshLayout()
-{
-}
+	Container::Container()
+	{
+
+	}
+	Container::~Container()
+	{
+	}
+	void Container::RefreshLayout()
+	{
+	}
+};

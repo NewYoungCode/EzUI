@@ -1,20 +1,23 @@
 #include "Layout.h"
 
-Layout::Layout()
-{
+namespace EzUI {
 
-}
+	Layout::Layout()
+	{
 
-Layout::~Layout()
-{
-}
+	}
 
-void Layout::Sort()
-{
-}
+	Layout::~Layout()
+	{
+	}
 
-void Layout::RefreshLayout()
-{
-	Sort();
-	Refresh();
-}
+	void Layout::Sort()
+	{
+	}
+
+	void Layout::RefreshLayout()
+	{
+		Sort();
+		Refresh();
+	}
+};

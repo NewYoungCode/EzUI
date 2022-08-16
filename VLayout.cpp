@@ -1,4 +1,6 @@
 #include "VLayout.h"
+namespace EzUI { 
+
 
 VLayout::~VLayout()
 {
@@ -63,3 +65,4 @@ void VLayout::RefreshLayout()
 	Refresh();
 }
 
+};

@@ -1,120 +1,121 @@
 #include "NotifyIcon.h"
-bool _DuiLib_NotifyIcon_Class = false;
 
-#pragma warning(disable:4996)
-LRESULT CALLBACK _NotifyIcon_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	LONG_PTR USERDATA = GetWindowLongPtr(hwnd, GWLP_USERDATA);
-	NotifyIcon *ntfi = dynamic_cast<NotifyIcon*>((NotifyIcon*)USERDATA);
+namespace EzUI {
+	bool _EZUI_NotifyIcon_Class = false;
+	LRESULT CALLBACK _NotifyIcon_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+	{
+		LONG_PTR USERDATA = GetWindowLongPtr(hwnd, GWLP_USERDATA);
+		NotifyIcon* ntfi = dynamic_cast<NotifyIcon*>((NotifyIcon*)USERDATA);
 
-	switch (message)
-	{
+		switch (message)
+		{
 
-	case WM_COMMAND:
-	{
-		short id = LOWORD(wParam);
-		if (ntfi->_menu && ntfi->_menu->_callback) {
-			ntfi->_menu->_callback(id);
-		}
-		break;
-	}
-	case  UI_NOTIFYICON:
-	{
-		if (ntfi->_messageCallback) {
-			if (ntfi->_messageCallback(lParam)) {
-				break;
+		case WM_COMMAND:
+		{
+			short id = LOWORD(wParam);
+			if (ntfi->_menu && ntfi->_menu->_callback) {
+				ntfi->_menu->_callback(id);
 			}
+			break;
 		}
-		if (lParam == WM_RBUTTONDOWN && ntfi->_menu && ntfi->_menu->_hMenu) {
-			POINT           point;
-			GetCursorPos(&point);
-			SetForegroundWindow(hwnd);
-			TrackPopupMenu(ntfi->_menu->_hMenu, TPM_RIGHTBUTTON, point.x, point.y, 0, hwnd, NULL);
+		case  UI_NOTIFYICON:
+		{
+			if (ntfi->_messageCallback) {
+				if (ntfi->_messageCallback(lParam)) {
+					break;
+				}
+			}
+			if (lParam == WM_RBUTTONDOWN && ntfi->_menu && ntfi->_menu->_hMenu) {
+				POINT           point;
+				GetCursorPos(&point);
+				SetForegroundWindow(hwnd);
+				TrackPopupMenu(ntfi->_menu->_hMenu, TPM_RIGHTBUTTON, point.x, point.y, 0, hwnd, NULL);
+			}
+			break;
 		}
-		break;
+		case WM_DESTROY:
+		{
+			Shell_NotifyIconW(NIM_DELETE, &(ntfi->_nid));
+			break;
+		}
+
+		}
+		return DefWindowProc(hwnd, message, wParam, lParam);
 	}
-	case WM_DESTROY:
+
+	NotifyIcon::NotifyIcon()
 	{
-		Shell_NotifyIconW(NIM_DELETE, &(ntfi->_nid));
-		break;
-	}
+		_menu = NULL;
+
+		_hInstance = GetModuleHandle(0);
+		if (!_EZUI_NotifyIcon_Class) {
+			//设计窗口
+			WNDCLASS     wc;
+			wc.style = CS_HREDRAW | CS_VREDRAW;
+			wc.lpfnWndProc = _NotifyIcon_WndProc;
+			wc.cbClsExtra = NULL;
+			wc.cbWndExtra = NULL;
+			wc.hInstance = _hInstance;
+			wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+			wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+			wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+			wc.lpszMenuName = NULL;
+			wc.lpszClassName = UI_NotifyIcon_CLASSNAME;
+			RegisterClass(&wc);
+			_EZUI_NotifyIcon_Class = true;
+		}
+
+		_hwnd = ::CreateWindow(UI_NotifyIcon_CLASSNAME, UI_NotifyIcon_CLASSNAME, WS_OVERLAPPEDWINDOW,
+			0, 0, 10, 10, NULL, NULL, _hInstance, NULL);
+		::SetWindowLongPtr(_hwnd, GWLP_USERDATA, (LONG_PTR)this);
+		_nid.cbSize = sizeof(NOTIFYICONDATA);//结构体长度
+		_nid.hWnd = _hwnd;//窗口句柄
+		_nid.uCallbackMessage = UI_NOTIFYICON;//消息处理，这里很重要，处理鼠标点击
+		_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+		Shell_NotifyIconW(NIM_ADD, &_nid);
 
 	}
-	return DefWindowProc(hwnd, message, wParam, lParam);
-}
 
-NotifyIcon::NotifyIcon()
-{
-	_menu = NULL;
-
-	_hInstance = GetModuleHandle(0);
-	if (!_DuiLib_NotifyIcon_Class) {
-		//设计窗口
-		WNDCLASS     wc;
-		wc.style = CS_HREDRAW | CS_VREDRAW;
-		wc.lpfnWndProc = _NotifyIcon_WndProc;
-		wc.cbClsExtra = NULL;
-		wc.cbWndExtra = NULL;
-		wc.hInstance = _hInstance;
-		wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-		wc.lpszMenuName = NULL;
-		wc.lpszClassName = UI_NotifyIcon_CLASSNAME;
-		RegisterClass(&wc);
-		_DuiLib_NotifyIcon_Class = true;
+	void NotifyIcon::SetIcon(short id)
+	{
+		SetIcon(::LoadIcon(_hInstance, MAKEINTRESOURCE(id)));//加载图标
 	}
 
-	_hwnd = ::CreateWindow(UI_NotifyIcon_CLASSNAME, UI_NotifyIcon_CLASSNAME, WS_OVERLAPPEDWINDOW,
-		0, 0, 10, 10, NULL, NULL, _hInstance, NULL);
-	::SetWindowLongPtr(_hwnd, GWLP_USERDATA, (LONG_PTR)this);
-	_nid.cbSize = sizeof(NOTIFYICONDATA);//结构体长度
-	_nid.hWnd = _hwnd;//窗口句柄
-	_nid.uCallbackMessage = UI_NOTIFYICON;//消息处理，这里很重要，处理鼠标点击
-	_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
-	Shell_NotifyIconW(NIM_ADD, &_nid);
+	void NotifyIcon::SetIcon(HICON icon)
+	{
+		_nid.hIcon = icon;
+		Shell_NotifyIconW(NIM_MODIFY, &_nid);
 
-}
-
-void NotifyIcon::SetIcon(short id)
-{
-	SetIcon(::LoadIcon(_hInstance, MAKEINTRESOURCE(id)));//加载图标
-}
-
-void NotifyIcon::SetIcon(HICON icon)
-{
-	_nid.hIcon = icon;
-	Shell_NotifyIconW(NIM_MODIFY, &_nid);
-
-}
-
-void NotifyIcon::SetMenu(Menu* menu) {
-
-	this->_menu = menu;
-}
-
-void NotifyIcon::SetText(const WCHAR * text)
-{
-	wcscpy(_nid.szTip, text);
-	Shell_NotifyIconW(NIM_MODIFY, &_nid);
-}
-
-void NotifyIcon::ShowBalloonTip(const EString&title, const EString&msg, int timeOut) {
-	_nid.uTimeout = timeOut;
-	_nid.uFlags = NIF_INFO;
-	_nid.dwInfoFlags = NIIF_INFO;
-	wcscpy(_nid.szInfoTitle, title.utf16().c_str());
-	wcscpy(_nid.szInfo, msg.utf16().c_str());
-	Shell_NotifyIconW(NIM_MODIFY, &_nid);
-}
-
-void NotifyIcon::SetMessageProc(const std::function<bool(UINT)> &messageCallback) {
-	_messageCallback = messageCallback;
-}
-
-NotifyIcon::~NotifyIcon()
-{
-	if (::IsWindow(_hwnd)) {
-		::SendMessage(_hwnd, WM_DESTROY, NULL, NULL);
 	}
-}
+
+	void NotifyIcon::SetMenu(Menu* menu) {
+
+		this->_menu = menu;
+	}
+
+	void NotifyIcon::SetText(const WCHAR* text)
+	{
+		wcscpy_s(_nid.szTip, text);
+		Shell_NotifyIconW(NIM_MODIFY, &_nid);
+	}
+
+	void NotifyIcon::ShowBalloonTip(const EString& title, const EString& msg, int timeOut) {
+		_nid.uTimeout = timeOut;
+		_nid.uFlags = NIF_INFO;
+		_nid.dwInfoFlags = NIIF_INFO;
+		wcscpy_s(_nid.szInfoTitle, title.utf16().c_str());
+		wcscpy_s(_nid.szInfo, msg.utf16().c_str());
+		Shell_NotifyIconW(NIM_MODIFY, &_nid);
+	}
+
+	void NotifyIcon::SetMessageProc(const std::function<bool(UINT)>& messageCallback) {
+		_messageCallback = messageCallback;
+	}
+
+	NotifyIcon::~NotifyIcon()
+	{
+		if (::IsWindow(_hwnd)) {
+			::SendMessage(_hwnd, WM_DESTROY, NULL, NULL);
+		}
+	}
+};

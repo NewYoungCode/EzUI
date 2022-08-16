@@ -1,6 +1,9 @@
 #pragma once
 #include "EzUI.h"
-#include "Painter.h"
+#include "Painter.h" 
+namespace EzUI { 
+
+
 
 enum  Event :int {
 	OnMouseWheel = 1,
@@ -118,7 +121,9 @@ struct PaintEventArgs :public EventArgs {
 	Painter& Painter;//画家
 	Rect InvalidRectangle;//WM_PAINT里面的无效区域
 	HWND HWnd;//父窗口句柄
-	PaintEventArgs(_Painter_& painter) :Painter(painter) {}
+	PaintEventArgs(_Painter_& painter) :Painter(painter) {
+		EventType = Event::OnPaint;
+	}
 	virtual ~PaintEventArgs() {}
 };
 
@@ -190,4 +195,4 @@ public:
 	virtual const EString GetAttribute(const EString& attrName);//获取属性
 	virtual UINT_PTR SetTimer(size_t interval);
 	virtual void KillTimer();
-};
+};};

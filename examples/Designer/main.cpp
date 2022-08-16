@@ -4,6 +4,7 @@
 #include "Button.h"
 #include "UIManager.h"
 #include "TileLayout.h"
+using namespace ui;
 class GameItem :public VBox {
 public:
 	Label ctlImg, ctlName;
@@ -16,7 +17,7 @@ public:
 		ctlImg.Style.ForeImage = img;
 		AddControl(&ctlImg);
 		AddControl(&ctlName);
-		ctlImg.MousePassThrough = ctlName.MousePassThrough= Event::OnMouseEnter | Event::OnMouseLeave;
+		ctlImg.MousePassThrough = ctlName.MousePassThrough = Event::OnMouseEnter | Event::OnMouseLeave;
 		HoverStyle.SetBorder(Color::HotPink, 1);
 	}
 };
@@ -30,12 +31,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	VBox box;
 	form.SetLayout(&box);
 
+
+	ui::Control ctl;
+	ctl.Action = ui::ControlAction::MoveWindow;
+
+
 	TileLayout list;
 	box.AddControl(&list);
 	box.Style.BackgroundColor = Color::Pink;
 	form.Zoom = true;
 	Image img = EString(L"Images/icon1.png");
-	for (size_t i = 0; i < 50;i++)
+	for (size_t i = 0; i < 50; i++)
 	{
 		GameItem* it = new GameItem(&img, "");
 		list.AddControl(it);

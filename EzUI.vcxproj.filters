@@ -24,6 +24,36 @@
     <ClInclude Include="tinyxml\tinyxml.h">
       <Filter>tinyxml</Filter>
     </ClInclude>
+    <ClInclude Include="include\Control.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EzUI.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IControl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ui.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Painter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Container.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Layout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\HLayout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\VLayout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ComBox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
     <ClInclude Include="include\Application.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -36,25 +66,13 @@
     <ClInclude Include="include\CheckBox.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\Container.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Control.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\CPURender.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\Edit.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\EzUI.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\Form.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\HLayout.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\HList.h">
@@ -63,13 +81,7 @@
     <ClInclude Include="include\HScrollBar.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\IControl.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\Label.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Layout.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\Menu.h">
@@ -78,22 +90,16 @@
     <ClInclude Include="include\NotifyIcon.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\Painter.h">
+    <ClInclude Include="include\RadioButton.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\RadioButton.h">
+    <ClInclude Include="include\TabLayout.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\TileLayout.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\ui.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\UIManager.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\VLayout.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\VList.h">
@@ -105,84 +111,12 @@
     <ClInclude Include="include\Window.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\TabLayout.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ComBox.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Application.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="BoxShadow.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Button.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="CheckBox.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Container.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Control.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="CPURender.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Edit.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Form.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="HLayout.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="HList.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="HScrollBar.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="IControl.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Label.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Layout.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Menu.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="NotifyIcon.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="RadioButton.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="TileLayout.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="UIManager.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="VLayout.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="VList.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="VScrollBar.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Window.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="tinyxml\tinyxmlparser.cpp">
@@ -197,14 +131,83 @@
     <ClCompile Include="tinyxml\tinystr.cpp">
       <Filter>tinyxml</Filter>
     </ClCompile>
-    <ClCompile Include="TabLayout.cpp">
+    <ClCompile Include="EzUI.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="EzUI.cpp">
+    <ClCompile Include="CPURender.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Container.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VLayout.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="HLayout.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Layout.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxShadow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CheckBox.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ComBox.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Edit.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Form.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="HList.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="HScrollBar.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Label.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="NotifyIcon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RadioButton.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TabLayout.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TileLayout.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="UIManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VList.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VScrollBar.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

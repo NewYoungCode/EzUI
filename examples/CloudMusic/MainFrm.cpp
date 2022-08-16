@@ -1,7 +1,7 @@
 ﻿#include "MainFrm.h"
 #include <UIManager.h>
 
-MainFrm::MainFrm(int width, int height) :BorderlessWindow(width, height)
+MainFrm::MainFrm(int width, int height) :LayeredWindow(width, height)
 {
 	laout.Style.BackgroundColor = { 35,35,38 };
 	top.ReSize({ laout.Width(),60 });
@@ -17,6 +17,9 @@ MainFrm::MainFrm(int width, int height) :BorderlessWindow(width, height)
 	//title.Style.ForeColor = (Color::White);
 	title.Style.FontSize = (14);
 	title.SetRect({ 14,15,131,35 });
+
+	top.HoverStyle.BackgroundColor = Color::Pink;
+
 	top.AddControl(&title);
 
 	edit.SetRect({ 198,14,400,33 });

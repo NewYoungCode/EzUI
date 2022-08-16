@@ -13,6 +13,7 @@
 #include "WebClient.h"
 #include "JsonCpp.h"
 
+using namespace UI;
 namespace TTS {
 	void Speak(const EString& text);
 }

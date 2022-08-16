@@ -84,6 +84,9 @@
     <ClCompile Include="VScrollBar.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{BE15257D-96DD-4376-8270-403DD4E16783}</ProjectGuid>

@@ -9,7 +9,11 @@
 #include "VList.h"
 #include "TileLayout.h"
 #include "Button.h"
-class MainFrm:public BorderlessWindow
+
+using namespace ui;
+
+
+class MainFrm:public LayeredWindow
 {
 private:
 	VLayout laout;//´¹Ö±²¼¾ÖÆ÷
