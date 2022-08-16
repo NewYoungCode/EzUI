@@ -10,7 +10,7 @@ void TileLayout::Sort()
 	int _lineCount = 0;//一共有几行
 	int _hCount = 0;//横着一行放了几个
 	_MaxBottom = 0;//滚动条参数
-	std::list<Control*>::iterator itor = _controls.begin();
+	ControlIterator itor = _controls.begin();
 	for (; itor != _controls.end(); )
 	{
 		Control &it = **itor;

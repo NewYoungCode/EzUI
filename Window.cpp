@@ -453,7 +453,8 @@ loop:
 			return outCtl;
 		}
 	}
-	std::list<Control*>* pTemp;
+
+	Controls* pTemp;
 	if (outCtl->VisibleControls.size() > 0) {
 		pTemp = &outCtl->VisibleControls;
 	}

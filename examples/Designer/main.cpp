@@ -26,19 +26,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ int       nCmdShow)
 {
 	Application app;
-	FrameWindow form(1022, 670);
+	LayeredWindow form(1022, 670);
 	VBox box;
+	form.SetLayout(&box);
+
 	TileLayout list;
 	box.AddControl(&list);
 	box.Style.BackgroundColor = Color::Pink;
 	form.Zoom = true;
 	Image img = EString(L"Images/icon1.png");
-	for (size_t i = 0; i < 170; i++)
+	for (size_t i = 0; i < 50;i++)
 	{
 		GameItem* it = new GameItem(&img, "");
 		list.AddControl(it);
 	}
-	form.SetLayout(&box);
 	form.Show();
 	return	app.exec();
 }

@@ -11,11 +11,10 @@ enum  Event :int {
 	OnMouseDoubleClick = 32,
 	OnMouseDown = 64,
 	OnMouseUp = 128,
-
 	OnKeyDown = 256,
 	OnKeyUp = 512,
-
-	OnPaint = 1024
+	OnPaint = 1024,
+	OnActive= OnMouseEnter | OnMouseLeave
 };
 enum class ControlState {
 	None,

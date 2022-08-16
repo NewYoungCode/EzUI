@@ -8,7 +8,6 @@ class Spacer;
 typedef std::list<Control*> Controls;
 typedef std::list<Control*>::iterator ControlIterator;
 
-
 #define UIFunc std::function
 #define EventMouseMove  UIFunc<void(Control*,const Point&)>  //移动事件
 #define EventMouseEnter  UIFunc<void( Control*, const Point&)>//移入事件
@@ -118,6 +117,7 @@ public:
 	size_t Find(Control* ctl);
 	int  GetAnchorStyle();//获取锚定风格
 	Controls& GetControls();//获取当前所有子控件
+	Control* GetControl(size_t pos);//使用下标获取控件
 	virtual void AddControl(Control* ctl);//添加控件
 	virtual ControlIterator RemoveControl(Control* ctl);//删除控件 返回下一个迭代器
 	virtual void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件

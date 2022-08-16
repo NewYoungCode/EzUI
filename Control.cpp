@@ -309,7 +309,7 @@ void Control::ComputeClipRect()
 {
 	if (Parent) {
 		Rect& ClipRectRef = *(Rect*)(&this->ClipRect);//引用父控件的裁剪区域
-		Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->ClipRect);//自身和父控件对吧裁剪区域
+		Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->ClipRect);//自身和父控件对比较裁剪区域
 	}
 }
 bool Control::CheckEventPassThrough(Event eventType) {
@@ -454,18 +454,18 @@ void Control::OnEvent(Event eventType, void* param) {
 		this->OnBorderPaint(args);//绘制边框
 
 #ifdef DEBUGPAINT
-	  WindowData* wndData=(WindowData*)UI_GetUserData(_hWnd);
-	  if (wndData->Debug) {
-		  if (this->State == ControlState::Hover) {
-			  pt.DrawRectangle(Color(255, 0, 0), Rect{ 0,0,_rect.Width,_rect.Height });
-		  }
-		  else {
-			  pt.DrawRectangle(Color(100, 255, 255, 255), Rect{ 0,0,_rect.Width,_rect.Height});
-		  }
-		  if (!Name.empty()) {
-			  pt.DrawString(Name, GetFontFamily(), GetFontSize(), GetForeColor(), RectF(0, 0, Width(), Height()), TextAlign::MiddleLeft);
-		  }
-	  }
+		WindowData* wndData = (WindowData*)UI_GetUserData(_hWnd);
+		if (wndData->Debug) {
+			if (this->State == ControlState::Hover) {
+				pt.DrawRectangle(Color(255, 0, 0), Rect{ 0,0,_rect.Width,_rect.Height });
+			}
+			else {
+				pt.DrawRectangle(Color(100, 255, 255, 255), Rect{ 0,0,_rect.Width,_rect.Height });
+			}
+			if (!Name.empty()) {
+				pt.DrawString(Name, GetFontFamily(), GetFontSize(), GetForeColor(), RectF(0, 0, Width(), Height()), TextAlign::MiddleLeft);
+			}
+		}
 #endif
 		pt.PopLayer();//弹出分层
 		return;
@@ -711,6 +711,17 @@ Controls& Control::GetControls()
 {
 	return _controls;
 }
+Control* Control::GetControl(size_t pos)
+{
+	size_t _pos = 0;
+	for (auto& it : _controls) {
+		if (_pos == pos) {
+			return it;
+		}
+		_pos++;
+	}
+	return NULL;
+}
 void Control::Clear(bool freeControls)
 {
 	Controls temp = _controls;
@@ -729,11 +740,6 @@ void Control::Clear(bool freeControls)
 	_controls.clear();//清空子控件集合
 	DestroySpacers();//清空弹簧并删除弹簧
 }
-
-//const ControlType& Control::GetType()
-//{
-//	return _Type;
-//}
 
 void Control::OnChar(WPARAM wParam, LPARAM lParam) {}
 void Control::OnKeyDown(WPARAM wParam) {}
