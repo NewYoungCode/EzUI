@@ -24,7 +24,7 @@ namespace EzUI {
 
 	Control* Window::FindControl(const EString& objectName)
 	{
-		return this->_layout->FindControl(objectName);
+		return this->MainLayout->FindControl(objectName);
 	}
 
 
@@ -67,20 +67,20 @@ namespace EzUI {
 	{
 		::SendMessageW(_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)icon);
 	}
-	void Window::SetLayout(Layout* layout) {
+	void Window::SetLayout(EzUI::Layout* layout) {
 		ASSERT(layout);
-		_layout = layout;
-		if (_layout->Style.FontFamily.empty()) {
-			_layout->Style.FontFamily = TEXT("Microsoft YaHei");
+		MainLayout = layout;
+		if (MainLayout->Style.FontFamily.empty()) {
+			MainLayout->Style.FontFamily = TEXT("Microsoft YaHei");
 		}
-		if (!_layout->Style.FontSize.valid) {
-			_layout->Style.FontSize = 9;
+		if (!MainLayout->Style.FontSize.valid) {
+			MainLayout->Style.FontSize = 9;
 		}
-		if (!_layout->Style.ForeColor.valid) {
-			_layout->Style.ForeColor = Color::Black;
+		if (!MainLayout->Style.ForeColor.valid) {
+			MainLayout->Style.ForeColor = Color::Black;
 		}
-		_layout->_hWnd = _hWnd;
-		_layout->SetRect(this->GetClientRect());
+		MainLayout->_hWnd = _hWnd;
+		MainLayout->SetRect(this->GetClientRect());
 	}
 	void Window::Close(int code) {
 		_closeCode = code;
@@ -88,7 +88,7 @@ namespace EzUI {
 	}
 	void Window::Show(int cmdShow)
 	{
-		ASSERT(_layout);
+		ASSERT(MainLayout);
 		::ShowWindow(_hWnd, cmdShow);
 		//MONITORINFO oMonitor = {};
 		//oMonitor.cbSize = sizeof(oMonitor);
@@ -136,15 +136,14 @@ namespace EzUI {
 	}
 
 	void Window::EmptyControl(Controls* controls) {
-		//_focusControl = NULL;
-		//_inputControl = NULL;
-		//return;
 		for (auto it : *controls) {
 			if (_focusControl == it) {
+				_focusControl->Trigger(Event::OnMouseLeave);
 				_focusControl = NULL;
-				Debug::Log("EmptyControl %p", it);
+				//Debug::Log("EmptyControl %p", it);
 			}
 			if (_inputControl == it) {
+				_inputControl->OnKillFocus();
 				_inputControl = NULL;
 			}
 			EmptyControl(&(it->GetControls()));
@@ -333,7 +332,7 @@ namespace EzUI {
 		{
 			if (wParam == VK_F11) {
 				_winData.Debug = !_winData.Debug;
-				_layout->Refresh();
+				MainLayout->Refresh();
 			}
 			OnKeyDown(wParam);
 			break;
@@ -428,7 +427,7 @@ namespace EzUI {
 		PaintEventArgs args(pt);
 		args.InvalidRectangle = rePaintRect;
 		args.HWnd = _hWnd;
-		_layout->OnEvent(Event::OnPaint, &args);//
+		MainLayout->OnEvent(Event::OnPaint, &args);//
 		::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetHDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//
 		//time_t ms = stopWatch.ElapsedMilliseconds();//
 		//CHAR buf[256]{ 0 };
@@ -455,8 +454,8 @@ namespace EzUI {
 
 	Control* Window::FindControl(const Point& clientPoint, Point& outPoint) {
 		outPoint = clientPoint;
-		Control* outCtl = _layout;
-	loop:
+		Control* outCtl = MainLayout;
+	UI_Loop:
 		Control* scrollBar = outCtl->ScrollBar;
 		if (scrollBar && scrollBar->GetClientRect().Contains(clientPoint)) {
 			if (scrollBar->Visible) {
@@ -493,7 +492,7 @@ namespace EzUI {
 				auto ctlRect = it.GetClientRect();
 				outPoint.X = clientPoint.X - ctlRect.X;
 				outPoint.Y = clientPoint.Y - ctlRect.Y;
-				goto loop;
+				goto UI_Loop;
 			}
 		}
 		return outCtl;
@@ -581,7 +580,9 @@ namespace EzUI {
 		args.Location = relativePoint;
 		args.EventType = Event::OnMouseDown;
 		outCtl->Trigger(args);
-
+		if (_inputControl && _inputControl != _focusControl) { //输入焦点更换
+			_inputControl->OnKillFocus();//给上一个输入焦点触发失去焦点的事件
+		}
 		_inputControl = _focusControl;
 		{ //做双击消息处理
 			auto _time = std::chrono::system_clock::now();
@@ -632,8 +633,8 @@ namespace EzUI {
 	}
 	void Window::OnSize(const Size& sz)
 	{
-		*((Rect*)(&_layout->ClipRect)) = this->GetClientRect();//
-		_layout->SetRect(this->GetClientRect(), true);
+		*((Rect*)(&MainLayout->ClipRect)) = this->GetClientRect();//
+		MainLayout->SetRect(this->GetClientRect(), true);
 	}
 
 	void Window::OnRect(const Rect& rect)
@@ -678,7 +679,7 @@ namespace EzUI {
 
 	bool Window::OnNotify(Control* sender, const EventArgs& args) {
 		if (args.EventType == Event::OnMouseDown) {
-			if (sender->Action == ControlAction::MoveWindow || sender == _layout) {
+			if (sender->Action == ControlAction::MoveWindow || sender == MainLayout) {
 				MoveWindow();
 				return true;
 			}
@@ -715,4 +716,5 @@ namespace EzUI {
 		}
 		return false;
 	}
+
 };

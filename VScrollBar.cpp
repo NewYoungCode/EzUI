@@ -21,7 +21,7 @@ namespace EzUI {
 		else {
 			if (_maxBottom != 0) {
 				//»¬¿é¸ß¶È
-				_sliderHeight = rect.Height * 1.0 * rect.Height / _maxBottom;
+				_sliderHeight = (int)(rect.Height * 1.0 * rect.Height / _maxBottom);
 			}
 		}
 		Move(sliderY);

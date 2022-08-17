@@ -20,7 +20,7 @@
 namespace EzUI {
 
 
-	namespace EzUIManager {
+	namespace UIManager {
 		const EString Attribute(TiXmlElement* node, const char* szstr);
 		void LoadControl(TiXmlElement* node, Control* control);
 		Control* BuildControl(TiXmlElement* node);
@@ -31,7 +31,7 @@ namespace EzUI {
 		std::map<EString, EString> styles_hover;//鼠标悬浮样式集合
 	}
 
-	namespace EzUIManager {
+	namespace UIManager {
 		const EString Attribute(TiXmlElement* node, const char* szstr) {
 			auto str = node->Attribute(szstr);
 			if (str == NULL) return L"";

@@ -99,8 +99,8 @@ namespace EzUI {
 	void LayeredWindow::OnSize(const Size& sz) {
 		StopWatch stopWatch;//
 		auto rect = this->GetClientRect();
-		_layout->SetRect(rect, false);
-		*((Rect*)(&_layout->ClipRect)) = rect;//
+		MainLayout->SetRect(rect, false);
+		*((Rect*)(&MainLayout->ClipRect)) = rect;//
 		if (_winBitmap) {
 			delete _winBitmap;
 		}
@@ -116,7 +116,7 @@ namespace EzUI {
 		PaintEventArgs args(pt);
 		args.InvalidRectangle = rePaintRect;//
 		args.HWnd = _hWnd;
-		_layout->OnEvent(Event::OnPaint, &args);//
+		MainLayout->OnEvent(Event::OnPaint, &args);//
 		//pt.SaveImage(L"image/jpeg", L"E:\\a.jpg", { clientRect.Width, clientRect.Height });
 		PushDC(_hdc);//updatelaredwindow
 	}

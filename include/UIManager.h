@@ -4,8 +4,7 @@
 #include "Window.h"
 namespace EzUI {
 
-
-	namespace EzUIManager {
+	namespace UIManager {
 		std::vector<Control*> UI_EXPORT LoadControl(const EString& filename);
 		Layout* UI_EXPORT LoadLayout(const EString& filename);
 		void  UI_EXPORT LoadControl(const EString& xmlRaw, std::vector<Control*>& controls);

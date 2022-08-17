@@ -245,7 +245,7 @@ Event(this , ##__VA_ARGS__); \
 		}
 		return _FontFamily;
 	}
-	UI_Float  Control::GetFontSize(ControlState _state)
+	UI_Int  Control::GetFontSize(ControlState _state)
 	{
 		ControlStyle& style = GetStyle(_state);
 		if (_state != ControlState::None && style.FontSize.valid) { //先看看对应状态的是否有 有效字段
@@ -256,7 +256,7 @@ Event(this , ##__VA_ARGS__); \
 		}
 		//如果还是没拿到就从父控件里面拿去相应的字段
 		Control* pControl = this->Parent;
-		UI_Float _FontSize;
+		UI_Int _FontSize;
 		while (!_FontSize.valid && pControl)
 		{
 			_FontSize = pControl->GetFontSize(_state);
@@ -845,6 +845,9 @@ Event(this , ##__VA_ARGS__); \
 		for (auto& it : _controls) {
 			it->OnLayout(size);//让子控件触发布局特性 进行调整rect
 		}
+	}
+	void Control::OnKillFocus()
+	{
 	}
 	void Control::OnLayout(const Size& pRect, bool instantly) {
 		while (Dock != DockStyle::None)

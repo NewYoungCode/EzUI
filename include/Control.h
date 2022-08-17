@@ -64,7 +64,6 @@ namespace EzUI {
 		EventMouseDoubleClick MouseDoubleClick;//鼠标双击
 		//Tuple<LPCTSTR> Cursor;//鼠标样式  默认 IDC_ARROW
 	public:
-		/*const ControlType& GetType();*/
 		virtual void OnChar(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
 		virtual void OnKeyDown(WPARAM wParam) override;//WM_CAHR消息
 		virtual void OnPaint(PaintEventArgs& args);//绘制 
@@ -76,6 +75,7 @@ namespace EzUI {
 		virtual void OnLayout(const Size& parentRect, bool instantly = true);//父控件大小改变事件  instantly立即生效
 		virtual void OnLoad();//控件第一次加载 警告 此函数在LayerWindow里面不允许在函数内添加控件 但是允许设置控件参数  
 		virtual void OnSize(const Size& size);//大小发生改变
+		virtual void OnKillFocus();//失去焦点的时候发生
 	protected:
 		virtual void OnMouseEvent(const MouseEventArgs& args);//鼠标事件消息
 		virtual void OnMouseMove(const Point& point);//鼠标在控件上移动
@@ -108,7 +108,7 @@ namespace EzUI {
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性
 		//具有继承性样式
 		EString GetFontFamily(ControlState _state = ControlState::None);//获取默认控件状态下字体Family
-		UI_Float GetFontSize(ControlState _state = ControlState::None);//获取默认控件状态下字体大小样式
+		UI_Int GetFontSize(ControlState _state = ControlState::None);//获取默认控件状态下字体大小样式
 		Color GetForeColor(ControlState _state = ControlState::None);//获取默认控件状态下前景色
 		Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
 		bool ExistControl(Control* ctl);//使用指针寻找子控件 不包含孙子 曾孙 

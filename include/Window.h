@@ -52,7 +52,7 @@ namespace EzUI {
 	public:
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	public:
-		Layout* _layout = NULL;//布局
+		Layout* MainLayout = NULL;//布局
 		bool Zoom = false;
 		Window(int width, int height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
 		virtual ~Window();
@@ -63,7 +63,7 @@ namespace EzUI {
 		void ReSize(const Size& size);
 		void SetIcon(short id);
 		void SetIcon(HICON icon);
-		void SetLayout(Layout* layout);
+		void SetLayout(EzUI::Layout* layout);
 		void SetText(const EString& text);
 		virtual void Show(int cmdShow = SW_SHOW);
 		int ShowModal(bool wait = true);//参数 wait 是否阻塞

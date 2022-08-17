@@ -1,7 +1,7 @@
 ﻿#include "MainFrm.h"
 #include <UIManager.h>
 
-MainFrm::MainFrm(int width, int height) :LayeredWindow(width, height)
+MainFrm::MainFrm(int width, int height) :BorderlessWindow(width, height)
 {
 	laout.Style.BackgroundColor = { 35,35,38 };
 	top.ReSize({ laout.Width(),60 });
@@ -22,12 +22,12 @@ MainFrm::MainFrm(int width, int height) :LayeredWindow(width, height)
 
 	top.AddControl(&title);
 
-	edit.SetRect({ 198,14,400,33 });
+	edit.SetRect({ 198,14,400,30 });
 
 	edit.Style.BackgroundColor = { 41,41,44 };
 	edit.Style.SetBorder({ 41,41,44 }, 1);
 	edit.Style.ForeColor = (Color::White);
-	edit.Style.Radius = (33);
+	edit.Style.Radius = (30);
 	top.AddControl(&edit);
 
 	redBar.ReSize({ laout.Width(),2 });
@@ -157,15 +157,12 @@ MainFrm::MainFrm(int width, int height) :LayeredWindow(width, height)
 	aixin.SetRect({ 156,15,22,22 });
 	bottom_left.AddControl(&aixin);
 
-
 	bottom_center.ReSize({ 1,74 });
 	bottom_center.Style.ForeColor = (Color::White);
 	bottom.AddControl(&bottom_center);
 
-
 	sp1.ReSize({ 1,1 });
 	bottom_center.AddControl(&sp1);
-
 
 	Label1.ReSize({ 70,15 });
 	Label1.Move({ 0,50 });
@@ -173,13 +170,11 @@ MainFrm::MainFrm(int width, int height) :LayeredWindow(width, height)
 	Label1.SetText(utf8("00:00"));
 	bottom_center.AddControl(&Label1);
 
-
 	prog.ReSize({ 1,3 });
 	prog.Move({ 0,55 });
 	prog.SetFixedWidth(360);
 	prog.Style.BackgroundColor = { 236,65,65 };
 	bottom_center.AddControl(&prog);
-
 
 	Label2.ReSize({ 70,15 });
 	Label2.Move({ 0,50 });
@@ -187,11 +182,8 @@ MainFrm::MainFrm(int width, int height) :LayeredWindow(width, height)
 	Label2.SetText(utf8("03:50"));
 	bottom_center.AddControl(&Label2);
 
-
-
 	sp2.ReSize({ 1,1 });
 	bottom_center.AddControl(&sp2);
-
 
 	bottom_right.ReSize({ 219,74 });
 	bottom_right.SetFixedWidth(219);
@@ -244,7 +236,6 @@ MainFrm::MainFrm(int width, int height) :LayeredWindow(width, height)
 	//设置布局显示窗口
 	//laout.Style.SetBorder(Color::Gray-100, 1);
 	SetLayout(&laout);
-
 }
 
 void MainFrm::OnPaint(HDC hdc, const Rect& rect)

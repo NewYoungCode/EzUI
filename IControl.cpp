@@ -8,7 +8,7 @@ namespace EzUI {
 		BorderBottom = width;//µ×²¿±ß¿ò
 	}
 	bool ControlStyle::IsValid() {
-		return Radius.valid ||
+		return  Radius.valid ||
 			BorderLeft.valid || BorderTop.valid || BorderRight.valid || BorderBottom.valid || BorderColor.valid || BackgroundColor.valid ||
 			BackgroundImage.valid || ForeImage.valid ||
 			!FontFamily.empty() || FontSize.valid || ForeColor.valid;

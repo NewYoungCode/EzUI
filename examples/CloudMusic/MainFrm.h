@@ -10,10 +10,10 @@
 #include "TileLayout.h"
 #include "Button.h"
 
+#include "Edit.h"
 using namespace ui;
 
-
-class MainFrm:public LayeredWindow
+class MainFrm :public BorderlessWindow
 {
 private:
 	VLayout laout;//垂直布局器
@@ -29,7 +29,7 @@ private:
 
 	Control sp2;
 	Control prog;//进度条
-	
+
 	Label btn4;
 	Label btn3;
 	Label lb;
@@ -55,14 +55,14 @@ private:
 	Label hy;
 	Control space4;
 	Control space5;
-	Image yl_img=(L"D:\\wyy\\yl.png");
-	Image hy_img=(L"D:\\wyy\\hy.png");
-	Image lb_img=(L"D:\\wyy\\lb.png");
-	Image yx_img=(L"D:\\wyy\\yx.png");
-	Image std_img=(L"D:\\wyy\\std.png");
-	Image ax=(L"D:\\wyy\\ax.png");
-	Image img=(L"D:\\wyy\\hd2.png");
-public :
+	Image yl_img = (L"D:\\wyy\\yl.png");
+	Image hy_img = (L"D:\\wyy\\hy.png");
+	Image lb_img = (L"D:\\wyy\\lb.png");
+	Image yx_img = (L"D:\\wyy\\yx.png");
+	Image std_img = (L"D:\\wyy\\std.png");
+	Image ax = (L"D:\\wyy\\ax.png");
+	Image img = (L"D:\\wyy\\hd2.png");
+public:
 	MainFrm(int width, int height);
 	//WS_OVERLAPPEDWINDOW
 	void OnPaint(HDC hdc, const Rect& rect);

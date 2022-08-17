@@ -69,9 +69,6 @@
     <ClInclude Include="include\CPURender.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\Edit.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\Form.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -109,6 +106,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\Window.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Edit.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -164,9 +164,6 @@
     <ClCompile Include="ComBox.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Edit.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Form.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -204,6 +201,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="VScrollBar.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Edit.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

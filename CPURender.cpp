@@ -9,13 +9,13 @@ namespace EzUI {
 		SolidBrush* _bufBrush = new SolidBrush(color);
 		return _bufBrush;
 	}
-	Pen* CreatePen(const Color& color, float width) {
-		Pen* pen = new Pen(color, width);
+	Pen* CreatePen(const Color& color, int width) {
+		Pen* pen = new Pen(color, (float)width);
 		return pen;
 	}
-	Gdiplus::Font* CreateFont(const EString& fontFamily, float fontSize) {
+	Gdiplus::Font* CreateFont(const EString& fontFamily, int fontSize) {
 		Gdiplus::FontFamily ff(fontFamily.utf16().c_str());
-		Gdiplus::Font* _bufFont = new Gdiplus::Font(&ff, fontSize);
+		Gdiplus::Font* _bufFont = new Gdiplus::Font(&ff, (float)fontSize);
 		return _bufFont;
 	}
 	Image::Image(const EString& filename, int radius) :Gdiplus::Image(filename.utf16().c_str()) {
@@ -96,7 +96,7 @@ namespace EzUI {
 		graphics->SetTextRenderingHint(Gdiplus::TextRenderingHint::TextRenderingHintClearTypeGridFit);//ÎÄ×Ö
 		graphics->SetInterpolationMode(Gdiplus::InterpolationMode::InterpolationModeHighQuality);//Í¼Ïñ
 	}
-	void CreateRectangle(GraphicsPath& path, const Rect& rect, float radius)
+	void CreateRectangle(GraphicsPath& path, const Rect& rect, int radius)
 	{
 		if (radius <= 0) {
 			path.AddRectangle(rect);
@@ -104,7 +104,7 @@ namespace EzUI {
 			return;
 		}
 		int diameter = radius;
-		RectF arcRect(rect.X, rect.Y, diameter, diameter);// = new Rect(rect.Location, new Size(diameter, diameter));
+		Rect arcRect(rect.X, rect.Y, diameter, diameter);// = new Rect(rect.Location, new Size(diameter, diameter));
 		//   ×óÉÏ½Ç      
 		path.AddArc(arcRect, 180, 90);
 		//   ÓÒÉÏ½Ç      
@@ -239,7 +239,7 @@ namespace EzUI {
 		}
 	}
 
-	void CPURender::DrawRectangle(const Color& color, const Rect& _rect, float width, float radius)
+	void CPURender::DrawRectangle(const Color& color, const Rect& _rect, int width, int radius)
 	{
 		if (color.GetA() == 0) {
 			return;
@@ -277,7 +277,7 @@ namespace EzUI {
 			base->FillRectangle(brush, rect);
 		}
 	}
-	void CPURender::DrawString(const EString& text, const EString& fontFamily, float fontSize, const Color& color, const RectF& _rect, TextAlign textAlign, bool underLine)
+	void CPURender::DrawString(const EString& text, const EString& fontFamily, int fontSize, const Color& color, const RectF& _rect, TextAlign textAlign, bool underLine)
 	{
 		RectF rect = _rect;
 		rect.X += OffsetX;
@@ -286,14 +286,20 @@ namespace EzUI {
 		this->DrawString(text.utf16(), font, color, rect, textAlign, underLine);
 	}
 
-
-
-	void CPURender::MeasureString(const EString& _text, const EString& fontf, float fontSize, RectF& outBox) {
+	void CPURender::MeasureString(const EString& _text, const EString& fontf, int fontSize, RectF& outBox) {
 		std::wstring _wtext = _text.utf16();
 		SafeObject<Gdiplus::Font> font(CreateFont(fontf, fontSize));
 		base->MeasureString(_wtext.c_str(), _wtext.length(), font, { 0,0 }, &outBox);
 	}
 
+	//Î´¼ÆËãÆ«ÒÆ ÔÝ²»Ê¹ÓÃ
+	//void CPURender::MeasureString(const EString& _text, const EString& fontFamily, int fontSize, const Color& color, const RectF& _rect, TextAlign textAlign, RectF& outBox) {
+	//	std::wstring _wtext = _text.utf16();
+	//	SafeObject<Gdiplus::Font> font(CreateFont(fontFamily, fontSize));
+	//	Gdiplus::StringFormat sf;
+	//	CreateFormat(textAlign, sf);
+	//	base->MeasureString(_wtext.c_str(), _wtext.length(), font, _rect, &sf, &outBox);
+	//}
 	void CPURender::CreateLayer(const Rect& rect, ClipMode clipMode, int radius)
 	{
 		Layer.push_back(&rect);
@@ -310,7 +316,7 @@ namespace EzUI {
 			}
 		}
 	}
-	void CPURender::DrawLine(const Color& color, const Point& _A, const Point& _B, float width)
+	void CPURender::DrawLine(const Color& color, const Point& _A, const Point& _B, int width)
 	{
 		Point A = _A;
 		A.X += OffsetX;
@@ -321,7 +327,7 @@ namespace EzUI {
 		SafeObject<Pen> pen(CreatePen(color, width));
 		base->DrawLine(pen, A, B);
 	}
-	void CPURender::DrawImage(Image* image, const Rect& _rect, float radius)
+	void CPURender::DrawImage(Image* image, const Rect& _rect, int radius)
 	{
 		if (!image || image->GetLastStatus() != Gdiplus::Status::Ok) return;
 		Rect rect = _rect;
@@ -443,7 +449,6 @@ namespace EzUI {
 		DeleteObject(hBmp);
 		return bRet;
 	}
-
 	void CPURender::SaveImage(const WCHAR* format, const WCHAR* fileName, const Size& size)
 	{
 		if (DC) {

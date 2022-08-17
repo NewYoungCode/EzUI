@@ -78,7 +78,7 @@ namespace EzUI {
 #define HImage Tuple<Image*>
 
 	void HighQualityMode(Gdiplus::Graphics* graphics);
-	void CreateRectangle(GraphicsPath& path, const Rect& rect, float radius);//申明
+	void CreateRectangle(GraphicsPath& path, const Rect& rect, int radius);//申明
 	void ClipImage(Image* img, const Size& sz, int _radius, Bitmap** outBitmap);//
 
 #define Align_Top  1
@@ -170,7 +170,7 @@ namespace EzUI {
 				r = std::stoi(rgbList.at(0));
 				g = std::stoi(rgbList.at(1));
 				b = std::stoi(rgbList.at(2));
-				Argb = MakeARGB(255 * (a > 1 ? 1 : a), r, g, b);
+				Argb = MakeARGB(255 * (a > 1 ? 1 : (byte)a), r, g, b);
 				valid = true;
 				return;
 			}
@@ -250,14 +250,16 @@ namespace EzUI {
 		CPURender(HDC hdc);
 		CPURender(HWND hWnd);
 		virtual ~CPURender();
-		void DrawRectangle(const Color& color, const Rect& rect, float width = 1, float radius = 0);
+		void DrawRectangle(const Color& color, const Rect& rect, int width = 1, int radius = 0);
 		void FillRectangle(const Color& color, const Rect& rect, int radius = 0);
-		void DrawString(const EString& text, const EString& fontFamily, float fontSize, const Color& color, const RectF& rect, TextAlign textAlign, bool underLine = false);
-		void MeasureString(const EString& _text, const EString& fontf, float fontSize, RectF& outBox);
+		void DrawString(const EString& text, const EString& fontFamily, int fontSize, const Color& color, const RectF& rect, TextAlign textAlign, bool underLine = false);
+		void MeasureString(const EString& _text, const EString& fontf, int fontSize, RectF& outBox);
+		//未计算偏移 预留暂不使用
+		//void MeasureString(const EString& text, const EString& fontFamily, int fontSize, const Color& color, const RectF& _rect, TextAlign textAlign, RectF& outBox);
 		void CreateLayer(const Rect& rect, ClipMode clipMode = ClipMode::Valid, int radius = 0);
 		void PopLayer();
-		void DrawLine(const Color& color, const Point& A, const Point& B, float width = 1);
-		void DrawImage(Image* image, const Rect& rect, float radius = 0);
+		void DrawLine(const Color& color, const Point& A, const Point& B, int width = 1);
+		void DrawImage(Image* image, const Rect& rect, int radius = 0);
 		void SaveImage(const WCHAR* format, const WCHAR* fileName, const Size& size);
 	};
 	void RenderInitialize();
