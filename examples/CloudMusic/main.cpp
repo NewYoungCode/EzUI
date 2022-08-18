@@ -20,6 +20,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	StopWatch sw;
 	MainFrm form(1022, 670);
 	form.Zoom = true;
+
+
 	//form.SetLayout(UIManager::LoadLayout(utf8("../html/layout.html")));
 	//form._layout->Style.BackgroundColor = "rgb(255,100,255)";
 	//form.FindControl("title")->Style.ForeColor = "rgb(0,0,0,0.8)";

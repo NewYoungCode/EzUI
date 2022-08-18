@@ -170,7 +170,7 @@ namespace EzUI {
 				r = std::stoi(rgbList.at(0));
 				g = std::stoi(rgbList.at(1));
 				b = std::stoi(rgbList.at(2));
-				Argb = MakeARGB(255 * (a > 1 ? 1 : (byte)a), r, g, b);
+				Argb = MakeARGB(255 * (a > 1 ? 1 : a), r, g, b);
 				valid = true;
 				return;
 			}

@@ -36,48 +36,6 @@ namespace EzUI {
 			delete BufBitmap;
 		}
 	}
-	//
-	//void HImage::Clone(const Image* img) {
-	//	if (value || img == NULL) {
-	//		delete value;
-	//		value = NULL;
-	//	}
-	//	valid = false;
-	//	if (img) {
-	//		value = (((Image*)img)->Clone());
-	//		valid = true;
-	//	}
-	//}
-	//HImage::HImage(const HImage& img) {
-	//	((HImage*)&img)->ref++;
-	//	this->value = img.value;
-	//	this->valid = img.valid;
-	//}
-	//HImage& HImage::operator=(const HImage& img) {
-	//	((HImage*)&img)->ref++;
-	//	this->value = img.value;
-	//	this->valid = img.valid;
-	//	return *this;
-	//}
-	//HImage::HImage() {
-	//}
-	//void HImage::operator=(const Image* img) {
-	//	Clone(img);
-	//}
-	//HImage::operator Image* () {
-	//	return value;
-	//}
-	//Image* HImage::operator->() {
-	//	return value;
-	//}
-	//HImage::~HImage() {
-	//	if (ref > 0) {
-	//		this;
-	//	}
-	//	if (value && ref == 0) {
-	//		delete value;
-	//	}
-	//}
 
 	void RenderInitialize()
 	{

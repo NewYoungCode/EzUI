@@ -255,7 +255,7 @@ namespace EzUI {
 				return TRUE;
 			}
 			if (_inputControl == delControl) {
-				_focusControl = NULL;
+				_inputControl = NULL;
 				return TRUE;
 			}
 			EmptyControl(&(delControl->GetControls()));
@@ -580,10 +580,7 @@ namespace EzUI {
 		args.Location = relativePoint;
 		args.EventType = Event::OnMouseDown;
 		outCtl->Trigger(args);
-		if (_inputControl && _inputControl != _focusControl) { //输入焦点更换
-			_inputControl->OnKillFocus();//给上一个输入焦点触发失去焦点的事件
-		}
-		_inputControl = _focusControl;
+
 		{ //做双击消息处理
 			auto _time = std::chrono::system_clock::now();
 			auto diff = _time - _lastDownTime;
@@ -596,14 +593,16 @@ namespace EzUI {
 				OnMouseDoubleClick(mbtn, point);
 			}
 		}
-
 		if (_focusControl && _focusControl != outCtl) {
 			args.EventType = Event::OnMouseLeave;
 			_focusControl->Trigger(args);
 		}
 		_focusControl = outCtl;
 
-
+		if (_inputControl && _inputControl != _focusControl) { //输入焦点更换
+			_inputControl->OnKillFocus();//给上一个输入焦点触发失去焦点的事件
+		}
+		_inputControl = _focusControl;
 
 	}
 

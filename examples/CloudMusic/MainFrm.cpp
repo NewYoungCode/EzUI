@@ -238,10 +238,22 @@ MainFrm::MainFrm(int width, int height) :BorderlessWindow(width, height)
 	SetLayout(&laout);
 }
 
-void MainFrm::OnPaint(HDC hdc, const Rect& rect)
+void MainFrm::OnPaint(HDC hdc, const Rect& _rect)
 {
 	StopWatch sw;
-	__super::OnPaint(hdc, rect);
+	__super::OnPaint(hdc, _rect);
+
+	{
+		RECT rect;
+		::GetClientRect(Hwnd(), &rect);
+		DrawText(
+			hdc,
+			TEXT("这是一段GDI输出的文字"),
+			-1,
+			&rect,
+			DT_SINGLELINE | DT_CENTER | DT_VCENTER
+		);
+	}
 
 	char buf[256]{ 0 };
 	sprintf_s(buf, "%dms\n", sw.ElapsedMilliseconds());
@@ -261,7 +273,7 @@ public:
 	};
 	void OnKeyDown(WPARAM wparam) override {
 		__super::OnKeyDown(wparam);
-		if (wparam==VK_F5) {
+		if (wparam == VK_F5) {
 			Close();//模态框按F5关闭
 		}
 	}
@@ -271,8 +283,8 @@ void MainFrm::OnKeyDown(WPARAM wparam) {
 	//按F5启动开启一个模态框
 	if (wparam == VK_F5) {
 		//启动模态框 会阻塞
-		DialogWnd *dl=new DialogWnd(400, 200, Hwnd());
-		Layout *l=new Layout;
+		DialogWnd* dl = new DialogWnd(400, 200, Hwnd());
+		Layout* l = new Layout;
 		l->Style.BackgroundColor = Color::Pink;
 		dl->SetLayout(l);
 		dl->ShowModal();
@@ -284,9 +296,9 @@ bool MainFrm::OnNotify(Control* sender, const  EventArgs& args) {
 
 	if (args.EventType == Event::OnMouseDoubleClick) {
 
-	
 
-	
+
+
 
 	}
 	return __super::OnNotify(sender, args);

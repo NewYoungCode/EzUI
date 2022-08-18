@@ -3,7 +3,6 @@
 #include "Painter.h" 
 namespace EzUI {
 
-
 	enum  Event :int {
 		OnMouseWheel = 1,
 		OnMouseEnter = 2,
@@ -16,8 +15,8 @@ namespace EzUI {
 		OnKeyDown = 256,
 		OnKeyUp = 512,
 		OnPaint = 1024,
-		OnActive = OnMouseEnter | OnMouseLeave,
-		OnKillFocus=2048
+		OnHover = OnMouseEnter | OnMouseLeave,
+		OnKillFocus = 2048
 	};
 	enum class ControlState {
 		None,
