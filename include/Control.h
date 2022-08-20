@@ -26,19 +26,18 @@ namespace EzUI {
 		Control& operator=(const Control&);
 		bool CheckEventPassThrough(Event eventType);
 	protected:
-		int _anchorStyle = (AnchorStyle::Top | AnchorStyle::Left);
 		Rect _rect;
 		Controls _controls;
 		int _fixedWidth = 0;
 		int _fixedHeight = 0;
-		bool _isAnchorStyle = false;
 		int _right = 0;
 		int _bottom = 0;
 		int _marginRight = 0;
 		int _marginBottom = 0;
-		//Tuple<LPCSTR> _LastCursor;
+		Tuple<LPTSTR> _LastCursor;
 		Controls _spacer;//存储控件下布局的的弹簧集合
 	public:
+		Cursor Cursor = Cursor::None;//鼠标样式
 		int MousePassThrough = 0;
 		bool IsXmlControl = false;//是否是xml加载进来的
 		const Rect ClipRect;//控件在窗口中的可见区域
@@ -110,15 +109,11 @@ namespace EzUI {
 		EString GetFontFamily(ControlState _state = ControlState::None);//获取默认控件状态下字体Family
 		UI_Int GetFontSize(ControlState _state = ControlState::None);//获取默认控件状态下字体大小样式
 		Color GetForeColor(ControlState _state = ControlState::None);//获取默认控件状态下前景色
-		Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
-		bool ExistControl(Control* ctl);//使用指针寻找子控件 不包含孙子 曾孙 
-		Controls FindControl(const EString& attr, const EString& attrValue);//使用属性查找
-		void SetAnchorStyle(int anchorStyle);//设置控件对齐方式
-		size_t Index();
-		size_t Find(Control* ctl);
-		int  GetAnchorStyle();//获取锚定风格
 		Controls& GetControls();//获取当前所有子控件
 		Control* GetControl(size_t pos);//使用下标获取控件
+		Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
+		Controls FindControl(const EString& attr, const EString& attrValue);//使用属性查找
+		size_t Index();
 		virtual void AddControl(Control* ctl);//添加控件
 		virtual ControlIterator RemoveControl(Control* ctl);//删除控件 返回下一个迭代器
 		virtual void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件

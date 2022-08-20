@@ -1,6 +1,5 @@
 #include "Control.h"
 namespace EzUI {
-
 	Control::Control() {}
 	Control::Control(const Control&) {}
 	Control& Control::operator=(const Control&) {
@@ -32,7 +31,6 @@ return Style. ##_filed; \
 #define UI_TRIGGER(Event,...)  if( ##Event){ \
 Event(this , ##__VA_ARGS__); \
 }
-
 	void Control::OnChildPaint(Controls& controls, PaintEventArgs& args)
 	{
 		//绘制子控件
@@ -59,7 +57,6 @@ Event(this , ##__VA_ARGS__); \
 			e.Painter.DrawImage(backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, radius);
 		}
 	}
-
 	void Control::OnForePaint(PaintEventArgs& e) {
 		HImage foreImage = GetForeImage();
 		UI_Int radius = GetRadius();
@@ -67,7 +64,6 @@ Event(this , ##__VA_ARGS__); \
 			e.Painter.DrawImage(foreImage, Rect{ 0,0,_rect.Width,_rect.Height }, radius);
 		}
 	}
-
 	void Control::OnBorderPaint(PaintEventArgs& e)
 	{
 		Color borderColor = GetBorderColor();
@@ -99,7 +95,6 @@ Event(this , ##__VA_ARGS__); \
 			e.Painter.DrawLine(borderColor, Point{ 0,_rect.Height }, Point{ _rect.Width,_rect.Height }, borderBottom);
 		}
 	}
-
 	ControlStyle& Control::GetStyle(ControlState _state) {
 		switch (_state)
 		{
@@ -121,7 +116,6 @@ Event(this , ##__VA_ARGS__); \
 		}
 		return Style;
 	}
-
 	void Control::SetStyleSheet(const EString& styleStr)
 	{
 		__super::SetStyleSheet(styleStr);
@@ -145,7 +139,6 @@ Event(this , ##__VA_ARGS__); \
 		} while (false);
 
 	}
-
 	void Control::SetAttribute(const EString& attrName, const EString& attrValue)
 	{
 		__super::SetAttribute(attrName, attrValue);
@@ -220,9 +213,7 @@ Event(this , ##__VA_ARGS__); \
 			}
 		} while (false);
 	}
-
 	void Control::OnLoad() {}
-
 	EString Control::GetFontFamily(ControlState _state)
 	{
 		ControlStyle& style = GetStyle(_state);
@@ -289,7 +280,6 @@ Event(this , ##__VA_ARGS__); \
 		}
 		return _ForeColor;
 	}
-
 	const int& Control::X()
 	{
 		return _rect.X;
@@ -306,7 +296,6 @@ Event(this , ##__VA_ARGS__); \
 	{
 		return _rect.Height;
 	}
-
 	void Control::ComputeClipRect()
 	{
 		if (Parent) {
@@ -498,7 +487,6 @@ Event(this , ##__VA_ARGS__); \
 	{
 		return _rect;
 	}
-
 	void Control::SetFixedWidth(int fixedWidth)
 	{
 		_rect.Width = fixedWidth;
@@ -527,7 +515,6 @@ Event(this , ##__VA_ARGS__); \
 		}
 		DestroySpacers();
 	}
-
 	void Control::DestroySpacers() {
 		//控件释放的时候自动释放弹簧
 		for (auto it = _spacer.begin(); it != _spacer.end(); it++)
@@ -537,7 +524,6 @@ Event(this , ##__VA_ARGS__); \
 		}
 		_spacer.clear();
 	}
-
 	void Control::SetX(int X) {
 		Move({ X,Y() });
 	}
@@ -547,7 +533,6 @@ Event(this , ##__VA_ARGS__); \
 	void Control::Move(const Point& pt) {
 		SetRect(Rect(pt.X, pt.Y, Width(), Height()));
 	}
-
 	void Control::SetWidth(int width) {
 		ReSize({ width,Height() });
 	}
@@ -558,7 +543,6 @@ Event(this , ##__VA_ARGS__); \
 	{
 		SetRect({ X(),Y(),size.Width,size.Height });
 	}
-
 	void Control::Refresh() {
 		if (_hWnd) {
 			//WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
@@ -576,39 +560,6 @@ Event(this , ##__VA_ARGS__); \
 		}
 		return Rect{ x,y,_rect.Width,_rect.Height };
 	}
-
-	int Control::GetAnchorStyle() {
-		return _anchorStyle;
-	}
-	void Control::SetAnchorStyle(int anchorStyle)
-	{
-		ASSERT(Parent);
-		int emptyRect = !_rect.IsEmptyArea();
-		ASSERT(emptyRect);
-		this->_anchorStyle = anchorStyle;
-		Rect 	parentRect = Parent->GetRect();
-		_bottom = parentRect.Height - this->Y();
-		_right = parentRect.Width - this->X();
-		_marginRight = parentRect.Width - this->Width();
-		_marginBottom = parentRect.Height - this->Height();
-		_isAnchorStyle = true;
-	}
-	size_t Control::Find(Control* ctl) {
-		size_t pos = 0;
-		bool exist = false;
-		for (auto i = _controls.begin(); i != _controls.end(); i++)
-		{
-			if (dynamic_cast<Spacer*>(*i)) {
-				continue;
-			}
-			if (ctl == *i) {
-				exist = true;
-				break;
-			}
-			pos++;
-		}
-		return exist ? pos : size_t(-1);
-	}
 	size_t Control::Index()
 	{
 		Controls& pControls = Parent->GetControls();
@@ -625,7 +576,6 @@ Event(this , ##__VA_ARGS__); \
 		}
 		return size_t(-1);
 	}
-
 	void Control::AddControl(Control* ctl) {
 		_controls.push_back(ctl);
 		ctl->_hWnd = this->_hWnd;
@@ -638,26 +588,6 @@ Event(this , ##__VA_ARGS__); \
 			_spacer.push_back(ctl);//控件内收集弹簧对象 当本控件执行析构函数的时候 自动会释放控件内弹簧对象
 		}
 	}
-
-	bool _FindControl(Controls* controls, Control* ctl) {
-		bool exist = false;
-		ControlIterator it1 = ::std::find(controls->begin(), controls->end(), ctl);
-		if (it1 != controls->end()) {
-			return true;
-		}
-		for (auto& it : *controls) {
-			exist = _FindControl(&(it->GetControls()), ctl);
-			if (exist)break;
-		}
-		return exist;
-	}
-
-
-	bool Control::ExistControl(Control* ctl) {
-		bool exist = _FindControl(&_controls, ctl);
-		return exist;
-	}
-
 	ControlIterator Control::RemoveControl(Control* ctl)
 	{
 		ControlIterator nextIt;
@@ -673,13 +603,9 @@ Event(this , ##__VA_ARGS__); \
 			if (it2 != VisibleControls.end()) {
 				VisibleControls.erase(it2);
 			}
-
 		}
 		return nextIt;
 	}
-
-
-
 	Control* Control::FindControl(const EString& objectName)
 	{
 		for (auto& it : (this->GetControls()))
@@ -692,7 +618,6 @@ Event(this , ##__VA_ARGS__); \
 		}
 		return NULL;
 	}
-
 	Controls Control::FindControl(const EString& attr, const EString& attrValue)
 	{
 		Controls ctls;
@@ -708,8 +633,6 @@ Event(this , ##__VA_ARGS__); \
 		}
 		return ctls;
 	}
-
-
 	Controls& Control::GetControls()
 	{
 		return _controls;
@@ -743,10 +666,8 @@ Event(this , ##__VA_ARGS__); \
 		_controls.clear();//清空子控件集合
 		DestroySpacers();//清空弹簧并删除弹簧
 	}
-
 	void Control::OnChar(WPARAM wParam, LPARAM lParam) {}
 	void Control::OnKeyDown(WPARAM wParam) {}
-
 	void Control::OnMouseMove(const Point& point)
 	{
 		UI_TRIGGER(MouseMove, point);
@@ -782,10 +703,10 @@ Event(this , ##__VA_ARGS__); \
 				pControl = pControl->Parent;
 			}
 		}
-		//if (Cursor.valid) {//鼠标移入的时候判断是否有设置状态
-		//	_LastCursor = (LPCSTR)::GetClassLongPtr(_hWnd, GCL_HCURSOR);//记录之前的状态
-		//	::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)::LoadCursor(NULL, Cursor));//设置状态
-		//}
+		if (Cursor != Cursor::None) {//鼠标移入的时候判断是否有设置状态
+			_LastCursor = (LPTSTR)::GetClassLongPtr(_hWnd, GCL_HCURSOR);//记录之前的状态
+			::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)::LoadCursor(NULL, (LPTSTR)Cursor));//设置状态
+		}
 		UI_TRIGGER(MouseEnter, point);
 	}
 	void Control::Trigger(const MouseEventArgs& args)
@@ -834,10 +755,10 @@ Event(this , ##__VA_ARGS__); \
 		else {
 			this->State = ControlState::None;//鼠标离开无论如何都要重置状态
 		}
-		//if (_LastCursor) {//如果此控件已经设置过鼠标指针样式 则 鼠标移出 的时候需要恢复成之前的状态
-		//	::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)_LastCursor.value);
-		//	_LastCursor = NULL;
-		//}
+		if (_LastCursor) {//如果此控件已经设置过鼠标指针样式 则 鼠标移出 的时候需要恢复成之前的状态
+			::SetClassLongPtrW(_hWnd, GCL_HCURSOR, (UINT_PTR)_LastCursor.value);
+			_LastCursor = NULL;
+		}
 		UI_TRIGGER(MouseLeave);
 	}
 	void Control::OnSize(const Size& size)
@@ -866,85 +787,8 @@ Event(this , ##__VA_ARGS__); \
 			}
 			break;
 		}
-		while (_anchorStyle != (AnchorStyle::Top | AnchorStyle::Left))//当不是默认布局时
-		{
-			//左上保持 默认左上保持
-					//下
-			if (_anchorStyle == AnchorStyle::Bottom) {
-				_rect.Y = pRect.Height - _bottom;
-				break;
-			}
-			//上下
-			if (_anchorStyle == (AnchorStyle::Top | AnchorStyle::Bottom)) {
-				_rect.Width = _rect.Width;
-				_rect.Height = pRect.Height - _marginBottom;
-				break;
-			}
-			//右
-			if (_anchorStyle == AnchorStyle::Right) {
-				_rect.X = pRect.Width - _right;
-				break;
-			}
-			//左
-			if (_anchorStyle == AnchorStyle::Left) {
-				_rect.X = pRect.Width - _right;
-				break;
-			}
-			//左右
-			if (_anchorStyle == (AnchorStyle::Left | AnchorStyle::Right)) {
-				_rect.Width = pRect.Width - _marginRight;
-				_rect.Height = _rect.Height;
-				break;
-			}
-			//上下左右
-			if (_anchorStyle == (AnchorStyle::Top | AnchorStyle::Bottom | AnchorStyle::Left | AnchorStyle::Right)) {
-				_rect.Width = pRect.Width - _marginRight;//优化 左右缩放
-				_rect.Height = pRect.Height - _marginBottom;
-				break;
-			}
-			//其他组合
-			//右上
-			if (_anchorStyle == (AnchorStyle::Top | AnchorStyle::Right)) {
-				_rect.X = pRect.Width - _right;
-				break;
-			}
-			//右下
-			if (_anchorStyle == (AnchorStyle::Bottom | AnchorStyle::Right)) {
-				_rect.X = pRect.Width - _right;   //优化 保持右边距离
-				_rect.Y = pRect.Height - _bottom;
-				break;
-			}
-			//左下
-			if (_anchorStyle == (AnchorStyle::Bottom | AnchorStyle::Left)) {
-				_rect.Y = pRect.Height - _bottom;
-				break;
-			}
-			//上下左
-			if (_anchorStyle == (AnchorStyle::Top | AnchorStyle::Bottom | AnchorStyle::Left)) {
-				_rect.Height = pRect.Height - _marginBottom;
-				break;
-			}
-			//上下右
-			if (_anchorStyle == (AnchorStyle::Top | AnchorStyle::Bottom | AnchorStyle::Right)) {
-				_rect.Height = pRect.Height - _marginBottom;//优化 上下缩放
-				_rect.X = pRect.Width - _right;
-				break;
-			}
-			//左右上
-			if (_anchorStyle == (AnchorStyle::Left | AnchorStyle::Right | AnchorStyle::Top)) {
-				_rect.Width = pRect.Width - _marginRight;
-				break;
-			}
-			//左右下
-			if (_anchorStyle == (AnchorStyle::Left | AnchorStyle::Right | AnchorStyle::Bottom)) {
-				_rect.Width = pRect.Width - _marginRight;//优化 左右缩放
-				_rect.Y = pRect.Height - _bottom;
-				break;
-			}
-			break;
-		}
 		if (instantly) {
 			SetRect(_rect);
 		}
 	}
-};
+	};

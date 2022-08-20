@@ -2,7 +2,6 @@
 #include "EzUI.h"
 #include "Painter.h" 
 namespace EzUI {
-
 	enum  Event :int {
 		OnMouseWheel = 1,
 		OnMouseEnter = 2,
@@ -15,6 +14,7 @@ namespace EzUI {
 		OnKeyDown = 256,
 		OnKeyUp = 512,
 		OnPaint = 1024,
+		OnActive = OnMouseDown | OnMouseUp,
 		OnHover = OnMouseEnter | OnMouseLeave,
 		OnKillFocus = 2048
 	};
@@ -87,6 +87,26 @@ namespace EzUI {
 		// 摘要: 
 		//     第 2 个 XButton 曾按下。
 		XButton2 = 16777216,
+	};
+	enum class Cursor :ULONG_PTR
+	{
+		None = 0,//未指定
+		APPSTARTING = (ULONG_PTR)IDC_APPSTARTING,// 标准的箭头和小沙漏
+		ARROW = (ULONG_PTR)IDC_ARROW,// 标准的箭头
+		CROSS = (ULONG_PTR)IDC_CROSS,// 十字光标
+		HAND = (ULONG_PTR)IDC_HAND,// Windows 98/Me, Windows 2000/XP: Hand
+		HELP = (ULONG_PTR)IDC_HELP,// 标准的箭头和问号
+		IBEAM = (ULONG_PTR)IDC_IBEAM,// 工字光标
+		ICON = (ULONG_PTR)IDC_ICON,// Obsolete for applications marked version 4.0 or later.
+		NO = (ULONG_PTR)IDC_NO,// 禁止圈
+		SIZE = (ULONG_PTR)IDC_SIZE,// Obsolete for applications marked version 4.0 or later. Use SIZEALL.
+		SIZEALL = (ULONG_PTR)IDC_SIZEALL,// 四向箭头指向东、西、南、北
+		SIZENESW = (ULONG_PTR)IDC_SIZENESW,// 双箭头指向东北和西南
+		SIZENS = (ULONG_PTR)IDC_SIZENS, // 双箭头指向南北
+		SIZENWSE = (ULONG_PTR)IDC_SIZENWSE,// 双箭头指向西北和东南
+		SIZEWE = (ULONG_PTR)IDC_SIZEWE,// 双箭头指向东西
+		UPARROW = (ULONG_PTR)IDC_UPARROW,// 垂直箭头
+		WAIT = (ULONG_PTR)IDC_WAIT// 沙漏，Windows7下会显示为选择的圆圈表示等待
 	};
 
 	// 摘要: 

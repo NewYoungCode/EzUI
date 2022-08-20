@@ -1,6 +1,45 @@
 ﻿#include "MainFrm.h"
 #include <UIManager.h>
 
+class SongItem :public HLayout {
+public:
+	Label lb1;
+	Label lb2;
+	Label lb3;
+	Label lb4;
+	SongItem() {
+		lb1.SetText("1");
+		lb2.SetText(utf8("张学友"));
+		lb3.SetText(utf8("会呼吸的痛"));
+		lb4.SetText(L"▶");
+		AddControl(&lb1);
+		AddControl(&lb2);
+		AddControl(&lb3);
+		AddControl(&lb4);
+		AddControl(new HSpacer(200));
+		SetFixedHeight(35);
+		Cursor = Cursor::HAND;
+		Dock = DockStyle::Horizontal;
+		/*#a:hover{
+	  color: pink;
+		}
+			#a span : hover{
+				color: red;
+		}*/
+		//lb1.MousePassThrough = lb2.MousePassThrough = lb3.MousePassThrough = lb4.MousePassThrough = Event::OnActive;
+
+		ActiveStyle.ForeColor = Color::Pink;
+		lb1.ActiveStyle.ForeColor = Color::Red;
+	}
+	void OnMouseUp(MouseButton mbtn, const Point& point)override {
+		__super::OnMouseUp(mbtn,point);
+	}
+	void OnPaint(PaintEventArgs& args)override {
+		__super::OnPaint(args);
+	}
+};
+
+
 MainFrm::MainFrm(int width, int height) :BorderlessWindow(width, height)
 {
 	laout.Style.BackgroundColor = { 35,35,38 };
@@ -61,40 +100,37 @@ MainFrm::MainFrm(int width, int height) :BorderlessWindow(width, height)
 	musicList.ScrollBar->Style.BackgroundColor = { 100, 63,63,63 };
 	musicList.ScrollBar->Style.ForeColor = { 50, 250,250,250 };
 	musicList.ScrollBar->Style.Radius = (10);
-	musicList.ScrollBar->ActiveStyle.ForeColor = { 50, 200,200,200 };;
+	musicList.ScrollBar->ActiveStyle.ForeColor = { 50, 200,200,200 };
 
-	musicList.HoverStyle.ForeColor = Color::Red;
+	/*musicList.HoverStyle.ForeColor = Color::Red;
 	musicList.ActiveStyle.ForeColor = Color::Blue;
-	musicList.ActiveStyle.FontSize = 9;
+	musicList.ActiveStyle.FontSize = 9;*/
 
+	musicList.ActiveStyle.BackgroundColor = Color(100, 1, 200, 100);
 
-	for (size_t i = 0; i < 1010; i++)
+	musicList.Margin = 10;
+
+	for (size_t i = 0; i < 500; i++)
 	{
-		Label* lb = new Label;
-		lb->ReSize({ musicList.Width(),35 });
-		if (i % 2) {
-			lb->Style.BackgroundColor = { 55,55,55 };
-		}
-		else {
-			lb->Style.BackgroundColor = { 43,43,43 };
-		}
+		SongItem* lb = new SongItem;
 
-		lb->MouseClick = [=](Control* sender, MouseButton btn, const Point&)->void {
-			if (btn == MouseButton::Left) {
-				::MessageBox(Hwnd(), TEXT("点击"), TEXT(""), 0);
-
+		/*	if (i % 2) {
+				lb->Style.BackgroundColor = { 55,55,55 };
 			}
-		};
+			else {
+				lb->Style.BackgroundColor = { 43,43,43 };
+			}*/
 
-		//lb->Style.FontFamily = "华康少女文字W5(P)";
-		lb->HoverStyle.BackgroundColor = Color{ 63,63,63 };
-		//lb->HoverStyle.ForeColor = Color{ 55,55,55 };
+			//lb->MouseClick = [=](Control* sender, MouseButton btn, const Point&)->void {
+			//	if (btn == MouseButton::Left) {
+			//		::MessageBox(Hwnd(), TEXT("点击"), TEXT(""), 0);
 
-		lb->SetTextAlign(TextAlign::MiddleLeft);
+			//	}
+			//};
 
-		lb->SetText(utf8(std::to_string(i) + "         夜空中最亮的星                逃跑计划            3:48"));
+
+
 		musicList.AddControl(lb);
-		lb->Dock = DockStyle::Horizontal;
 	}
 
 	btn1.SetText(utf8("发现音乐"));
