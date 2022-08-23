@@ -17,6 +17,21 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ int       nCmdShow)
 {
 	Application app;
+
+	/*WCHAR buf[]{ L"一百万个可能" };
+	HWND wnd = (HWND)0x00080154;
+	::SetFocus(wnd);
+	for (size_t i = 0; i < sizeof(buf) / 2; i++)
+	{
+		LRESULT r = ::SendMessageW(wnd, WM_CHAR, (WPARAM)buf[i], NULL);
+		int pause = 0;
+	}
+	::Sleep(500);
+	::SendMessageW(wnd, WM_CHAR, (WPARAM)VK_RETURN, NULL);
+	::SendMessageW(wnd, WM_KEYDOWN, (WPARAM)VK_RETURN, NULL);
+
+	return 0;*/
+
 	StopWatch sw;
 	MainFrm form(1022, 670);
 	form.Zoom = true;

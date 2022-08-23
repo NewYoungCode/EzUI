@@ -46,37 +46,32 @@ namespace EzUI {
 		__super::Clear(freeChilds);
 		_controlsLocationY.clear();
 		_MaxBottom = 0;
-		if (verticalScrollBar) {
-			verticalScrollBar->SetMaxBottom(_MaxBottom);
+		if (vScrollBar) {
+			vScrollBar->SetMaxBottom(_MaxBottom);
 		}
 	}
 
 	TileLayout::TileLayout()
 	{
 		this->ScrollBar = new VScrollBar;
-		verticalScrollBar = (VScrollBar*)this->ScrollBar;
-		if (verticalScrollBar) {
-			verticalScrollBar->ReSize({ 10,Height() });//滚动条宽度
-			verticalScrollBar->Parent = this;
-			verticalScrollBar->_controlsLocationY = &_controlsLocationY;
+		vScrollBar = (VScrollBar*)this->ScrollBar;
+		if (vScrollBar) {
+			vScrollBar->ReSize({ 10,Height() });//滚动条宽度
+			vScrollBar->Parent = this;
+			vScrollBar->_controlsLocationY = &_controlsLocationY;
 		}
 	}
 
-	void TileLayout::AddControl(Control* ctl)
+	TileLayout::~TileLayout()
 	{
-		__super::AddControl(ctl);
-		Sort();
-		if (verticalScrollBar) {
-			verticalScrollBar->SetMaxBottom(_MaxBottom);
-		}
 	}
 
 	void TileLayout::OnSize(const Size& sz)
 	{
 		Sort();
-		if (verticalScrollBar) {
-			verticalScrollBar->OnLayout(sz);
-			verticalScrollBar->SetMaxBottom(_MaxBottom);
+		if (vScrollBar) {
+			vScrollBar->OnLayout(sz);
+			vScrollBar->SetMaxBottom(_MaxBottom);
 		}
 	}
 
@@ -97,10 +92,9 @@ namespace EzUI {
 		}
 		//子控件绘制完毕
 	}
-
 	void TileLayout::RefreshLayout()
 	{
 		Sort();
-		Refresh();
 	}
+
 };

@@ -2,11 +2,11 @@
 namespace EzUI {
 	VList::VList()
 	{
-		this->ScrollBar = verticalScrollBar = new VScrollBar;
-		if (verticalScrollBar) {
-			verticalScrollBar->ReSize({ 10,Height() });//滚动条宽度
-			verticalScrollBar->Parent = this;
-			verticalScrollBar->_controlsLocationY = &_controlsLocationY;
+		this->ScrollBar = vScrollBar = new VScrollBar;
+		if (vScrollBar) {
+			vScrollBar->ReSize({ 10,Height() });//滚动条宽度
+			vScrollBar->Parent = this;
+			vScrollBar->_controlsLocationY = &_controlsLocationY;
 		}
 	}
 
@@ -24,8 +24,8 @@ namespace EzUI {
 			_maxBottom += it->Height();
 			_maxBottom += Margin;
 		}
-		if (verticalScrollBar) {
-			verticalScrollBar->SetMaxBottom(_maxBottom);
+		if (vScrollBar) {
+			vScrollBar->SetMaxBottom(_maxBottom);
 		}
 	}
 	void VList::AddControl(Control* ctl)
@@ -35,10 +35,8 @@ namespace EzUI {
 		_maxBottom += ctl->Height();
 		_maxBottom += Margin;
 		_controlsLocationY.insert(std::pair<Control*, int>(ctl, ctl->Y()));
-		if (verticalScrollBar) {
-			verticalScrollBar->SetMaxBottom(_maxBottom);
-		}
 	}
+
 	ControlIterator VList::RemoveControl(Control* ctl)
 	{
 		size_t before = _controls.size();//记录一开始的控件数量
@@ -53,27 +51,11 @@ namespace EzUI {
 				it->SetRect(Rect(it->X(), it->Y() - outHeight, it->Width(), it->Height()));//自身移动
 				int& locationY = _controlsLocationY[it] -= outHeight;//记录的坐标也要移动
 			}
-			if (verticalScrollBar) {
-				verticalScrollBar->SetMaxBottom(_maxBottom);//通知滚动条容器最大边界值已经改变
+			if (vScrollBar) {
+				vScrollBar->SetMaxBottom(_maxBottom);//通知滚动条容器最大边界值已经改变
 			}
 		}
 		return nextIt;
-
-		//size_t pos = -1;
-		//if ((pos = __super::RemoveControl(ctl)) != -1) {
-		//	_controlsLocationY.erase(ctl);
-		//	auto outHeight = (_margin + ctl->GetRect().Height);
-		//	_maxBottom -= outHeight;
-		//	for (auto &it : _controls) {
-		//		it->SetY(it->Y() - outHeight);
-		//		int &locationY = _controlsLocationY[it];//记录的坐标也要移动
-		//		locationY -= outHeight;
-		//	}
-		//	if (verticalScrollBar) {
-		//		verticalScrollBar->SetMaxBottom(_maxBottom);
-		//	}
-		//}
-		//return pos;
 	}
 
 	void VList::Clear(bool freeChilds) {
@@ -84,9 +66,9 @@ namespace EzUI {
 
 	void VList::OnSize(const Size& size) {
 		__super::OnSize(size);
-		if (verticalScrollBar) {
-			verticalScrollBar->OnLayout(size);
-			verticalScrollBar->SetMaxBottom(_maxBottom);
+		if (vScrollBar) {
+			vScrollBar->OnLayout(size);
+			vScrollBar->SetMaxBottom(_maxBottom);
 		}
 	}
 

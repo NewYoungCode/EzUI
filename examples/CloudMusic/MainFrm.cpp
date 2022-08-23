@@ -32,7 +32,7 @@ public:
 		lb1.ActiveStyle.ForeColor = Color::Red;
 	}
 	void OnMouseUp(MouseButton mbtn, const Point& point)override {
-		__super::OnMouseUp(mbtn,point);
+		__super::OnMouseUp(mbtn, point);
 	}
 	void OnPaint(PaintEventArgs& args)override {
 		__super::OnPaint(args);
@@ -110,9 +110,10 @@ MainFrm::MainFrm(int width, int height) :BorderlessWindow(width, height)
 
 	musicList.Margin = 10;
 
-	for (size_t i = 0; i < 500; i++)
+	for (size_t i = 0; i < 99999; i++)
 	{
 		SongItem* lb = new SongItem;
+		lb->lb1.SetText(std::to_string(i));
 
 		/*	if (i % 2) {
 				lb->Style.BackgroundColor = { 55,55,55 };

@@ -38,9 +38,6 @@ namespace EzUI {
 		_maxRight += ctl->Width();
 		_maxRight += Margin;
 		_controlsLocationX.insert(std::pair<Control*, int>(ctl, ctl->X()));
-		if (hScrollBar) {
-			hScrollBar->SetMaxRight(_maxRight);
-		}
 	}
 	ControlIterator HList::RemoveControl(Control* ctl)
 	{
