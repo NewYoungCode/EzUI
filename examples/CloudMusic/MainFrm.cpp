@@ -110,7 +110,7 @@ MainFrm::MainFrm(int width, int height) :BorderlessWindow(width, height)
 
 	musicList.Margin = 10;
 
-	for (size_t i = 0; i < 99999; i++)
+	for (size_t i = 0; i < 999; i++)
 	{
 		SongItem* lb = new SongItem;
 		lb->lb1.SetText(std::to_string(i));

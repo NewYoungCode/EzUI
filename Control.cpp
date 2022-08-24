@@ -95,7 +95,11 @@ Event(this , ##__VA_ARGS__); \
 			e.Painter.DrawLine(borderColor, Point{ 0,_rect.Height }, Point{ _rect.Width,_rect.Height }, borderBottom);
 		}
 	}
-	ControlStyle& Control::GetStyle(ControlState _state) {
+
+	ControlStyle& Control::GetStyle(ControlState& _state) {
+		if (this->Parent && this->Parent->State != ControlState::None) {
+			_state = this->Parent->State;
+		}
 		switch (_state)
 		{
 		case ControlState::None:
@@ -791,4 +795,4 @@ Event(this , ##__VA_ARGS__); \
 			SetRect(_rect);
 		}
 	}
-	};
+};

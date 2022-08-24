@@ -88,7 +88,7 @@ namespace EzUI {
 	public:
 		void Trigger(const MouseEventArgs& args);//触发鼠标相关消息
 	protected:
-		ControlStyle& GetStyle(ControlState _state);//获取当前控件状态下的样式信息
+		ControlStyle& GetStyle(ControlState &_state);//获取当前控件状态下的样式信息
 	public:
 		Control();
 		virtual ~Control();
