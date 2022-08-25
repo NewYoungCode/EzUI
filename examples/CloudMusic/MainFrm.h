@@ -13,7 +13,7 @@
 #include "Edit.h"
 using namespace ui;
 
-class MainFrm :public BorderlessWindow
+class MainFrm :public LayeredWindow
 {
 private:
 	VLayout laout;//´¹Ö±²¼¾ÖÆ÷
@@ -67,7 +67,6 @@ public:
 	//WS_OVERLAPPEDWINDOW
 	void OnPaint(HDC hdc, const Rect& rect);
 	void OnDestroy();
-	void OnKeyDown(WPARAM wparam) override;
-	bool OnNotify(Control* sender, const EventArgs& args) override;
+
 };
 

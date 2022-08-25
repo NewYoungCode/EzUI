@@ -39,8 +39,7 @@ public:
 	}
 };
 
-
-MainFrm::MainFrm(int width, int height) :BorderlessWindow(width, height)
+MainFrm::MainFrm(int width, int height) :LayeredWindow(width, height)
 {
 	laout.Style.BackgroundColor = { 35,35,38 };
 	top.ReSize({ laout.Width(),60 });
@@ -277,24 +276,7 @@ MainFrm::MainFrm(int width, int height) :BorderlessWindow(width, height)
 
 void MainFrm::OnPaint(HDC hdc, const Rect& _rect)
 {
-	StopWatch sw;
 	__super::OnPaint(hdc, _rect);
-
-	{
-		RECT rect;
-		::GetClientRect(Hwnd(), &rect);
-		DrawText(
-			hdc,
-			TEXT("这是一段GDI输出的文字"),
-			-1,
-			&rect,
-			DT_SINGLELINE | DT_CENTER | DT_VCENTER
-		);
-	}
-
-	char buf[256]{ 0 };
-	sprintf_s(buf, "%dms\n", sw.ElapsedMilliseconds());
-	OutputDebugStringA(buf);
 }
 
 void MainFrm::OnDestroy()
@@ -303,40 +285,3 @@ void MainFrm::OnDestroy()
 }
 
 
-class DialogWnd :public FrameWindow {
-public:
-	DialogWnd(int width, int height, HWND wnd) :FrameWindow(width, height, wnd) {
-		SetText("I am a dialog window !");
-	};
-	void OnKeyDown(WPARAM wparam) override {
-		__super::OnKeyDown(wparam);
-		if (wparam == VK_F5) {
-			Close();//模态框按F5关闭
-		}
-	}
-};
-void MainFrm::OnKeyDown(WPARAM wparam) {
-	__super::OnKeyDown(wparam);
-	//按F5启动开启一个模态框
-	if (wparam == VK_F5) {
-		//启动模态框 会阻塞
-		DialogWnd* dl = new DialogWnd(400, 200, Hwnd());
-		Layout* l = new Layout;
-		l->Style.BackgroundColor = Color::Pink;
-		dl->SetLayout(l);
-		dl->ShowModal();
-		int pause = 0;
-	}
-}
-
-bool MainFrm::OnNotify(Control* sender, const  EventArgs& args) {
-
-	if (args.EventType == Event::OnMouseDoubleClick) {
-
-
-
-
-
-	}
-	return __super::OnNotify(sender, args);
-}

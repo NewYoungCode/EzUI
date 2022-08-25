@@ -44,6 +44,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//$(form._layout->FindControl("name", "song")).Attr("style", "color:#0x101d32").Refresh();
 	//$(form._layout).Css("background-color:rgb(0,255,0,0.5)").Refresh();
 	form.Show();
+	UpdateWindow(form.Hwnd());
 	Debug::Log(utf8("窗口启动耗时 %d ms"), sw.ElapsedMilliseconds());
 	return	app.exec();
 }

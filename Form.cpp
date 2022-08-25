@@ -68,8 +68,6 @@ namespace EzUI {
 		return __super::WndProc(uMsg, wParam, lParam);
 	}
 
-
-
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
 	LayeredWindow::LayeredWindow(int cx, int cy, HWND owner) :Window(cx, cy, owner, WS_POPUP | WS_MINIMIZEBOX, WS_EX_LAYERED)
 	{
@@ -99,8 +97,8 @@ namespace EzUI {
 	void LayeredWindow::OnSize(const Size& sz) {
 		StopWatch stopWatch;//
 		auto rect = this->GetClientRect();
-		MainLayout->SetRect(rect, false);
 		*((Rect*)(&MainLayout->ClipRect)) = rect;//
+		MainLayout->SetRect(rect, false);
 		if (_winBitmap) {
 			delete _winBitmap;
 		}
@@ -117,7 +115,6 @@ namespace EzUI {
 		args.InvalidRectangle = rePaintRect;//
 		args.HWnd = _hWnd;
 		MainLayout->OnEvent(Event::OnPaint, &args);//
-		//pt.SaveImage(L"image/jpeg", L"E:\\a.jpg", { clientRect.Width, clientRect.Height });
 		PushDC(_hdc);//updatelaredwindow
 	}
 	LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
