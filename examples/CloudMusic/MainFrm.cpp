@@ -39,7 +39,7 @@ public:
 	}
 };
 
-MainFrm::MainFrm(int width, int height) :LayeredWindow(width, height)
+MainFrm::MainFrm(int width, int height) :BorderlessWindow(width, height)
 {
 	laout.Style.BackgroundColor = { 35,35,38 };
 	top.ReSize({ laout.Width(),60 });

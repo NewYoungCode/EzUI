@@ -13,7 +13,7 @@
 #include "Edit.h"
 using namespace ui;
 
-class MainFrm :public LayeredWindow
+class MainFrm :public BorderlessWindow
 {
 private:
 	VLayout laout;//´¹Ö±²¼¾ÖÆ÷
