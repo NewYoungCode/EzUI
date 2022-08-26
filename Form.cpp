@@ -1,6 +1,28 @@
 #include "Form.h"
 
 namespace EzUI {
+	LRESULT __ZoomWindow(const HWND& _hWnd, const  LPARAM& lParam) {
+		RECT rc;
+		GetWindowRect(_hWnd, &rc);
+		POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
+		int x = 4;//
+		if (pt.x < rc.left + x)
+		{
+			if (pt.y < rc.top + x)return HTTOPLEFT;//
+			if (pt.y >= rc.bottom - x)return HTBOTTOMLEFT;//
+			return HTLEFT;//
+		}
+		if (pt.x >= rc.right - x)//
+		{
+			if (pt.y < rc.top + x)return HTTOPRIGHT;//
+			if (pt.y >= rc.bottom - x)return HTBOTTOMRIGHT;//
+			return HTRIGHT;//
+		}
+		if (pt.y < rc.top + x)return HTTOP;//
+		if (pt.y >= rc.bottom - x)return HTBOTTOM;//
+		return HTCLIENT;//ָ
+	}
+
 	FrameWindow::FrameWindow(int cx, int cy, HWND owner) :Window(cx, cy, owner, WS_OVERLAPPEDWINDOW, NULL)
 	{
 	}
@@ -13,10 +35,14 @@ namespace EzUI {
 	void BorderlessWindow::SetShadow(int width)
 	{
 		_shadowWidth = width;
-		_boxShadow->Update(_shadowWidth);
+		if (_boxShadow) {
+			_boxShadow->Update(_shadowWidth);
+		}
 	}
 	void BorderlessWindow::OnRect(const Rect& rect) {
-		_boxShadow->Update(_shadowWidth);
+		if (_boxShadow) {
+			_boxShadow->Update(_shadowWidth);
+		}
 		__super::OnRect(rect);
 	}
 	void BorderlessWindow::Hide() {
@@ -31,36 +57,23 @@ namespace EzUI {
 		}
 	}
 
+	void BorderlessWindow::CloseShadow()
+	{
+		if (_boxShadow) {
+			delete _boxShadow;
+			_boxShadow = NULL;
+		}
+	}
+
 	LRESULT  BorderlessWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
 		switch (uMsg)
 		{
 		case WM_NCHITTEST: {
-			if (!Zoom) {
-				break;
+			if (!::IsZoomed(_hWnd) && Zoom) {
+				return __ZoomWindow(_hWnd, lParam);
 			}
-			if (::IsZoomed(_hWnd)) {
-				break;//
-			}
-			RECT rc;
-			GetWindowRect(_hWnd, &rc);
-			POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
-			int x = 4;//
-			if (pt.x < rc.left + x)
-			{
-				if (pt.y < rc.top + x)return HTTOPLEFT;//
-				if (pt.y >= rc.bottom - x)return HTBOTTOMLEFT;//
-				return HTLEFT;//
-			}
-			if (pt.x >= rc.right - x)//
-			{
-				if (pt.y < rc.top + x)return HTTOPRIGHT;//
-				if (pt.y >= rc.bottom - x)return HTBOTTOMRIGHT;//
-				return HTRIGHT;//
-			}
-			if (pt.y < rc.top + x)return HTTOP;//
-			if (pt.y >= rc.bottom - x)return HTBOTTOM;//
-			return HTCLIENT;//ָ
+			break;
 		}
 		default:
 			break;
@@ -74,6 +87,13 @@ namespace EzUI {
 		_boxShadow = new BoxShadow(cx, cy, _hWnd);
 		if (_boxShadow) {
 			_boxShadow->Update(_shadowWidth);
+		}
+	}
+	void LayeredWindow::CloseShadow()
+	{
+		if (_boxShadow) {
+			delete _boxShadow;
+			_boxShadow = NULL;
 		}
 	}
 	void LayeredWindow::OnRect(const Rect& rect) {
@@ -129,28 +149,9 @@ namespace EzUI {
 			return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
 		}
 		if (uMsg == WM_NCHITTEST) {
-			if (::IsZoomed(_hWnd)) {
-				return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);//
+			if (!::IsZoomed(_hWnd) && Zoom) {
+				return __ZoomWindow(_hWnd, lParam);
 			}
-			RECT rc;
-			GetWindowRect(_hWnd, &rc);
-			POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
-			int x = 4;//
-			if (pt.x < rc.left + x)
-			{
-				if (pt.y < rc.top + x)return HTTOPLEFT;//x
-				if (pt.y >= rc.bottom - x)return HTBOTTOMLEFT;//
-				return HTLEFT;//
-			}
-			if (pt.x >= rc.right - x)
-			{
-				if (pt.y < rc.top + x)return HTTOPRIGHT;//
-				if (pt.y >= rc.bottom - x)return HTBOTTOMRIGHT;
-				return HTRIGHT;//
-			}
-			if (pt.y < rc.top + x)return HTTOP;//
-			if (pt.y >= rc.bottom - x)return HTBOTTOM;//
-			return HTCLIENT;//ָ
 		}
 		return __super::WndProc(uMsg, wParam, lParam);
 	}
@@ -205,4 +206,5 @@ namespace EzUI {
 		__super::Show(cmdShow);
 		::SetForegroundWindow(_hWnd);
 	}
+	
 };

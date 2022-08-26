@@ -2,8 +2,6 @@
 #include "EzUI.h"
 #include "CPURender.h"
 namespace EzUI {
-
-
 	struct EBitmap {
 	private:
 		HDC _hdc = NULL;

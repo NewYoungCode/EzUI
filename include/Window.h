@@ -9,7 +9,6 @@
 #include "Container.h"
 namespace EzUI {
 
-
 	class UI_EXPORT Window :public IControl
 	{
 	private:

@@ -39,7 +39,7 @@ public:
 	}
 };
 
-MainFrm::MainFrm(int width, int height) :BorderlessWindow(width, height)
+MainFrm::MainFrm(int width, int height) :Form(width, height)
 {
 	laout.Style.BackgroundColor = { 35,35,38 };
 	top.ReSize({ laout.Width(),60 });
@@ -109,7 +109,7 @@ MainFrm::MainFrm(int width, int height) :BorderlessWindow(width, height)
 
 	musicList.Margin = 10;
 
-	for (size_t i = 0; i < 999; i++)
+	for (size_t i = 0; i < 200; i++)
 	{
 		SongItem* lb = new SongItem;
 		lb->lb1.SetText(std::to_string(i));
