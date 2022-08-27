@@ -88,7 +88,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../../EzUi/include;E:\C++\GeneralLib\GeneralLib\include;E:\C++\GeneralLib\GeneralLib\include\json;E:\C++\GeneralLib\GeneralLib\GeneralLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;E:\C++\GeneralLib\GeneralLib\include;E:\C++\GeneralLib\GeneralLib\include\json;E:\C++\GeneralLib\GeneralLib\GeneralLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -104,7 +104,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../../../EzUi/include;E:\C++\GeneralLib\GeneralLib\include;E:\C++\GeneralLib\GeneralLib\include\json;E:\C++\GeneralLib\GeneralLib\GeneralLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;E:\C++\GeneralLib\GeneralLib\include;E:\C++\GeneralLib\GeneralLib\include\json;E:\C++\GeneralLib\GeneralLib\GeneralLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

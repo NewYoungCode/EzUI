@@ -46,7 +46,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	top.Action = ControlAction::MoveWindow;//鼠标捕捉 移动窗口
 
 	title.SetText(utf8("网抑云音乐"));
-	//title.Style.ForeColor = (Color::White);
+	title.Style.ForeColor = (Color::White);
 	title.Style.FontSize = (14);
 	title.SetRect({ 14,15,131,35 });
 
@@ -98,8 +98,8 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	musicList.ActiveStyle.ForeColor = Color::Blue;
 	musicList.ActiveStyle.FontSize = 9;*/
 	musicList.ActiveStyle.BackgroundColor = Color(100, 1, 200, 100);
-	musicList.Margin = 10;
-	for (size_t i = 0; i < 99999; i++)
+	//musicList.Margin = 10;
+	for (size_t i = 0; i < 999; i++)
 	{
 		SongItem* lb = new SongItem;
 		lb->lb1.SetText(std::to_string(i));

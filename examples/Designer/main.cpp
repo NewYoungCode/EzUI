@@ -27,7 +27,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ int       nCmdShow)
 {
 	Application app;
-	LayeredWindow form(1022, 670);
+	FrameWindow form(1022, 670);
 	VBox box;
 	form.SetLayout(&box);
 
