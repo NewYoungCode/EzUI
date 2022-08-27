@@ -110,12 +110,12 @@ namespace EzUI {
 			sliderY += offsetY;
 			pointY = point.Y;
 			Move(sliderY);
+			::UpdateWindow(_hWnd);//用户拖动鼠标的时候 需要提高响应速度 显得丝滑
 		}
 	}
 
 	void VScrollBar::Move(double posY) {
 		sliderY = posY;
-
 		if (sliderY <= 0) { //滑块在顶部
 			sliderY = 0;
 		}

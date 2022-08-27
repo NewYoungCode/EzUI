@@ -115,7 +115,6 @@ namespace EzUI {
 	}
 
 	void LayeredWindow::OnSize(const Size& sz) {
-		StopWatch stopWatch;//
 		auto rect = this->GetClientRect();
 		*((Rect*)(&MainLayout->ClipRect)) = rect;//
 		MainLayout->SetRect(rect, false);
@@ -124,9 +123,6 @@ namespace EzUI {
 		}
 		_winBitmap = new EBitmap(rect.Width, rect.Height, 32);
 		OnPaint(_winBitmap->GetHDC(), _rectClient);//
-		CHAR buf[256]{ 0 };
-		sprintf_s(buf, "GDIPaint %d %d   %d ms \n", rect.Width, rect.Height, (int)stopWatch.ElapsedMilliseconds());
-		OutputDebugStringA(buf);
 	}
 	void LayeredWindow::OnPaint(HDC _hdc, const Rect& rePaintRect) {
 		Rect& clientRect = GetClientRect();//
@@ -146,7 +142,7 @@ namespace EzUI {
 		if (uMsg == UI_CONTROL_REFRESH && _winBitmap) {
 			Control* ctl = (Control*)wParam;
 			OnPaint(_winBitmap->GetHDC(), ctl->GetClientRect());//
-			return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
+			return TRUE;
 		}
 		if (uMsg == WM_NCHITTEST) {
 			if (!::IsZoomed(_hWnd) && Zoom) {
@@ -206,5 +202,5 @@ namespace EzUI {
 		__super::Show(cmdShow);
 		::SetForegroundWindow(_hWnd);
 	}
-	
+
 };

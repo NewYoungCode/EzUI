@@ -437,6 +437,7 @@ Event(this , ##__VA_ARGS__); \
 			//绘制滚动条
 			EzUI::ScrollBar* scrollbar = NULL;
 			if (scrollbar = this->ScrollBar) {
+				scrollbar->_hWnd = args.HWnd;
 				Rect barRect = scrollbar->GetClientRect();
 				pt.OffsetX = barRect.X; //设置偏移
 				pt.OffsetY = barRect.Y;//设置偏移

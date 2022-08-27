@@ -107,6 +107,7 @@ namespace EzUI {
 			sliderX += offsetX;
 			pointX = point.X;
 			Move(sliderX);
+			::UpdateWindow(_hWnd);//用户拖动鼠标的时候 需要提高响应速度 显得丝滑
 		}
 	}
 
@@ -138,14 +139,10 @@ namespace EzUI {
 			Rolling(RollingCurrent(), RollingTotal());
 		}
 	}
-
-
-
 	void HScrollBar::OnMouseWheel(short zDelta, const Point& point) {
 		//double offset = (Width() - GetSliderWidth())*0.01 + 0.9;
 		double offset = 5;
 		sliderX += (zDelta > 0 ? -offset : offset);
 		Move(sliderX);
 	}
-
 };

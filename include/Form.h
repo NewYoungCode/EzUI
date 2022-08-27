@@ -2,15 +2,13 @@
 #include "Window.h"
 #include "BoxShadow.h"
 namespace EzUI {
-
+#define SHADOWWIDTH 12
 	//经典带边框WIN32窗口样式
 	class UI_EXPORT FrameWindow :public Window
 	{
 	public:
 		FrameWindow(int cx, int cy, HWND owner = NULL);
 	};
-
-#define SHADOWWIDTH 12
 	//无边框带阴影的窗口 常规接受WM_PAINT消息
 	class UI_EXPORT BorderlessWindow :public Window {
 	private:
@@ -45,14 +43,11 @@ namespace EzUI {
 		virtual ~LayeredWindow();
 		void Hide();
 	};
-
 	class  UI_EXPORT MenuWindow :public BorderlessWindow {
-	private:
 	public:
 		MenuWindow(int cx, int cy, HWND owner = NULL);
 		LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
 		virtual void Show(int cmdShow = SW_SHOW);
 	};
 	using Form = BorderlessWindow;
-
 };

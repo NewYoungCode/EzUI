@@ -17,7 +17,7 @@ class MainFrm :public Form
 {
 private:
 	VLayout laout;//垂直布局器
-	Button title;//标题
+	Label title;//标题
 	Edit edit;//搜索框
 	Layout top;//顶部部分
 	Control redBar;//红色的线条
@@ -67,6 +67,5 @@ public:
 	//WS_OVERLAPPEDWINDOW
 	void OnPaint(HDC hdc, const Rect& rect);
 	void OnDestroy();
-
 };
 

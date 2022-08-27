@@ -95,7 +95,6 @@ namespace EzUI {
 		//::GetMonitorInfo(::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &oMonitor);
 		//rcArea = oMonitor.rcWork;
 	}
-
 	int Window::ShowModal(bool wait)
 	{
 		_OwnerHwnd = ::GetWindowOwner(_hWnd);
@@ -117,14 +116,12 @@ namespace EzUI {
 		::SetForegroundWindow(_OwnerHwnd);
 		return _closeCode;
 	}
-
 	void Window::Hide() {
 		::ShowWindow(_hWnd, SW_HIDE);
 	}
 	bool Window::IsVisible() {
 		return ::IsWindowVisible(_hWnd) ? true : false;
 	}
-
 	void Window::SetVisible(bool flag) {
 		if (flag) {
 			::ShowWindow(_hWnd, SW_RESTORE);
@@ -134,7 +131,6 @@ namespace EzUI {
 			Hide();
 		}
 	}
-
 	void Window::EmptyControl(Controls* controls) {
 		for (auto it : *controls) {
 			if (_focusControl == it) {
@@ -156,7 +152,6 @@ namespace EzUI {
 	{
 		return 1;
 	}
-
 	bool _Has(UINT uMsg, UINT msg) {
 		if (uMsg == msg) return true;
 		return false;
@@ -231,6 +226,7 @@ namespace EzUI {
 			wRect.right = clienRect.GetRight();
 			wRect.bottom = clienRect.GetBottom();
 			::InvalidateRect(_hWnd, &wRect, FALSE);
+			//::UpdateWindow(_hWnd);//刷新 立即响应WM_PAINT消息 
 			return TRUE;
 		}
 		case WM_PAINT:

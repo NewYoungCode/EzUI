@@ -20,16 +20,9 @@ public:
 		SetFixedHeight(35);
 		Cursor = Cursor::HAND;
 		Dock = DockStyle::Horizontal;
-		/*#a:hover{
-	  color: pink;
-		}
-			#a span : hover{
-				color: red;
-		}*/
-		//lb1.MousePassThrough = lb2.MousePassThrough = lb3.MousePassThrough = lb4.MousePassThrough = Event::OnActive;
-
 		ActiveStyle.ForeColor = Color::Pink;
 		lb1.ActiveStyle.ForeColor = Color::Red;
+		HoverStyle.BackgroundColor = Color(200, 200, 200, 200);
 	}
 	void OnMouseUp(MouseButton mbtn, const Point& point)override {
 		__super::OnMouseUp(mbtn, point);
@@ -41,6 +34,7 @@ public:
 
 MainFrm::MainFrm(int width, int height) :Form(width, height)
 {
+	//::SetParent(::CreateWindowW(L"Button", L"hello word", WS_VISIBLE |WS_POPUP, 100, 30, 120, 35, _hWnd, NULL, GetModuleHandle(NULL), NULL),_hWnd);
 	laout.Style.BackgroundColor = { 35,35,38 };
 	top.ReSize({ laout.Width(),60 });
 	//Image *imgx = new Image("D:\\hd(3).png");
@@ -100,36 +94,28 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	musicList.ScrollBar->Style.ForeColor = { 50, 250,250,250 };
 	musicList.ScrollBar->Style.Radius = (10);
 	musicList.ScrollBar->ActiveStyle.ForeColor = { 50, 200,200,200 };
-
 	/*musicList.HoverStyle.ForeColor = Color::Red;
 	musicList.ActiveStyle.ForeColor = Color::Blue;
 	musicList.ActiveStyle.FontSize = 9;*/
-
 	musicList.ActiveStyle.BackgroundColor = Color(100, 1, 200, 100);
-
 	musicList.Margin = 10;
-
-	for (size_t i = 0; i < 200; i++)
+	for (size_t i = 0; i < 99999; i++)
 	{
 		SongItem* lb = new SongItem;
 		lb->lb1.SetText(std::to_string(i));
 
-		/*	if (i % 2) {
-				lb->Style.BackgroundColor = { 55,55,55 };
-			}
-			else {
-				lb->Style.BackgroundColor = { 43,43,43 };
-			}*/
+		if (i % 2) {
+			lb->Style.BackgroundColor = { 55,55,55 };
+		}
+		else {
+			lb->Style.BackgroundColor = { 43,43,43 };
+		}
+		//lb->MouseClick = [=](Control* sender, MouseButton btn, const Point&)->void {
+		//	if (btn == MouseButton::Left) {
+		//		::MessageBox(Hwnd(), TEXT("点击"), TEXT(""), 0);
 
-			//lb->MouseClick = [=](Control* sender, MouseButton btn, const Point&)->void {
-			//	if (btn == MouseButton::Left) {
-			//		::MessageBox(Hwnd(), TEXT("点击"), TEXT(""), 0);
-
-			//	}
-			//};
-
-
-
+		//	}
+		//};
 		musicList.AddControl(lb);
 	}
 
@@ -277,6 +263,9 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 void MainFrm::OnPaint(HDC hdc, const Rect& _rect)
 {
 	__super::OnPaint(hdc, _rect);
+	StopWatch sw;
+	__super::OnPaint(hdc, _rect);
+	Debug::Log("Paint %dms", sw.ElapsedMilliseconds());
 }
 
 void MainFrm::OnDestroy()

@@ -21,18 +21,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	StopWatch sw;
 	MainFrm form(1022, 670);
 	form.Zoom = true;
-	//form.CloseShadow();//关闭窗口阴影
+	form.CloseShadow();//关闭窗口阴影
 
-	form.SetLayout(UIManager::LoadLayout(utf8("../html/layout.html")));
-	form.MainLayout->Style.BackgroundColor = "rgb(255,100,255)";
-	form.FindControl("title")->Style.ForeColor = "rgb(0,0,0,0.8)";
-	$(form.MainLayout->FindControl("name", "song")).Css("active{color:#003d6a;background-color:rgb(5,200,200,1)}").Refresh();
-	$(form.MainLayout->FindControl("name", "song")).Attr("style", "color:#0x101d32").Refresh();
-	$(form.MainLayout).Css("background-color:rgb(0,255,0,0.5)").Refresh();
-
-
+	//form.SetLayout(UIManager::LoadLayout(utf8("../html/layout.html")));
+	//form.MainLayout->Style.BackgroundColor = "rgb(255,100,255)";
+	//form.FindControl("title")->Style.ForeColor = "rgb(0,0,0,0.8)";
+	//$(form.MainLayout->FindControl("name", "song")).Css("active{color:#003d6a;background-color:rgb(5,200,200,1)}").Refresh();
+	//$(form.MainLayout->FindControl("name", "song")).Attr("style", "color:#0x101d32").Refresh();
+	//$(form.MainLayout).Css("background-color:rgb(0,255,0)").Refresh();
 	form.Show();
-	UpdateWindow(form.Hwnd());
 	Debug::Log(utf8("窗口启动耗时 %d ms"), sw.ElapsedMilliseconds());
 	return	app.exec();
 }
