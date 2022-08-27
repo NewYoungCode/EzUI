@@ -1,0 +1,97 @@
+<style>
+    #main {
+        background-image: "imgs/bkimage.png";
+    }
+
+    #icon {
+        fore-image: "imgs/icon.png";
+    }
+
+    #up {
+        fore-image: "imgs/up.png";
+    }
+
+        #up:hover {
+            fore-image: "imgs/up_1.png";
+        }
+
+    #play {
+        fore-image: "imgs/play.png";
+    }
+
+        #play:hover {
+            fore-image: "imgs/play_1.png";
+        }
+
+    #next {
+        fore-image: "imgs/next.png";
+    }
+
+        #next:hover {
+            fore-image: "imgs/next_1.png";
+        }
+
+    icon0
+
+    #icon0 {
+        fore-image: "imgs/music.png";
+    }
+
+    #icon1 {
+        fore-image: "imgs/down.png";
+    }
+
+    #tools {
+        background-color: rgb(250,250,250,0.5);
+        border-color: rgb(250,250,250);
+    }
+</style>
+<vbox style="background-color:#029BE9" name="main">
+    <hbox name="title" height="50" action="move" style="fore-color:#ffffff;">
+        <spacer width="15"></spacer>
+        <label name="icon" width="29" height="29" y="9"></label>
+        <spacer width="15"></spacer>
+        <label text="登录" width="40"></label>
+        <spacer width="206"></spacer>
+        <edit name="searchEdit" width="257" height="26" style="background-color:#ffffff;fore-color:#000000;radius:26" y="12"></edit>
+
+        <spacer></spacer>
+        <hbox width="100" name="btns">  <label text="0" action="mini"></label><label text="1" action="max"></label><label text="r" action="close"></label> </hbox>
+    </hbox>
+    <hbox name="center">
+
+        <vbox width="309">
+            <!--<hbox height="40" name="tools">
+                <spacer width="18"></spacer>
+                <label name="icon0" width="25" height="25" y="7" tablayout="leftList"></label>
+                <spacer width="18"></spacer>
+                <label name="icon1" width="25" height="25" y="7" tablayout="leftList"></label>
+            </hbox>-->
+
+            <tablayout name="leftList">
+                <vlist name="playList" style="background-color:rgb(200,200,200,0.5)"></vlist>
+                <vlist name="downList" style="background-color:rgb(250,200,200,0.5)"></vlist>
+            </tablayout>
+
+           
+        </vbox>
+
+        <vlist name="searchList" style="background-color:rgb(250,250,250,0.9)"></vlist>
+    </hbox>
+    <hbox name="bottom" height="67">
+        <spacer width="17"></spacer>
+        <label width="38" height="38" y="14" name="up"></label>
+        <spacer width="18"></spacer>
+        <label width="46" height="46" y="10" name="play"></label>
+        <spacer width="18"></spacer>
+        <label width="38" height="38" y="14" name="next"></label>
+        <spacer width="24"></spacer>
+
+        <hbox style="background-color:rgb(200,200,200,0.3)" width="310" height="4" y="31">
+
+            <label style="background-color:#FFFEA1" width="120"></label>
+
+        </hbox>
+
+    </hbox>
+</vbox>

@@ -31,10 +31,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	VBox box;
 	form.SetLayout(&box);
 
-
 	ui::Control ctl;
 	ctl.Action = ui::ControlAction::MoveWindow;
-
 
 	TileLayout list;
 	box.AddControl(&list);
