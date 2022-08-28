@@ -12,6 +12,7 @@
 #include "WebClient.h"
 #include "JsonCpp.h"
 #include "HttpUtility.h"
+#include "base64.h"
 
 using namespace EzUI;
 struct Song {
@@ -62,6 +63,8 @@ class SongItem2 :public HBox {
 public:
 	SongItem2(const Song& s) {
 		song = s;
+		this->Tag = (UINT_PTR)&song;
+		SetAttribute("FileHash", s.hash);
 		SetFixedHeight(35);
 		Dock = DockStyle::Horizontal;
 		Style.BorderBottom = 1;
@@ -88,13 +91,11 @@ public:
 			mv.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
 		}
 
-
 		time.SetFixedWidth(80);
 		time.SetText(std::to_string(s.Duration * 1.0 / 60));
 		time.TextAlign = TextAlign::MiddleLeft;
 		time.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
 		time.Style.ForeColor = Color(150, 150, 150);
-
 
 		AddControl(new HSpacer(15));
 		AddControl(&songName);
@@ -122,50 +123,23 @@ namespace global {
 				host = host.substr(0, pos1);
 			}
 		}
+		EString userid = "1581500868";//酷狗的用户ID 不传入可能请求不到正确的数据
 		WebClient wc;
-		wc.AddHeader("Accept", " image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
+		wc.AddHeader("Accept", " */*");
 		wc.AddHeader("Accept-Language", " en-US,en;q=0.8,zh-Hans-CN;q=0.5,zh-Hans;q=0.2");
-		//wc.AddHeader("Accept-Encoding", " gzip, deflate");
+		//wc.AddHeader("Accept-Encoding", " gzip, deflate");//注释掉 因为服务器会返回gzip
 		wc.AddHeader("User-Agent", " Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");
 		wc.AddHeader("Host", host);
 		wc.AddHeader("Connection", " Keep-Alive");
 		wc.AddHeader("Cache-Control", " no-cache");
-		return wc.HttpGet(newUrl, resp);
+		return wc.HttpGet(newUrl + "&userid=" + userid, resp);
 	}
-	inline int HttpPost(const EString& url, const EString& data, EString& resp) {
-		EString newUrl = url;
-		size_t pos1 = newUrl.find("://");
-		EString host;
-		if (pos1 != EString::npos) {
-			host = newUrl.substr(pos1 + 3);
-			pos1 = host.find("/");
-			if (pos1 != EString::npos) {
-				host = host.substr(0, pos1);
-			}
-		}
-		WebClient wc;
-		wc.AddHeader("Accept", " image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
-		wc.AddHeader("Accept-Language", " en-US,en;q=0.8,zh-Hans-CN;q=0.5,zh-Hans;q=0.2");
-		//wc.AddHeader("Accept-Encoding", " gzip, deflate");
-		wc.AddHeader("User-Agent", " Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");
-		wc.AddHeader("Host", host);
-		wc.AddHeader("Connection", " Keep-Alive");
-		wc.AddHeader("Cache-Control", " no-cache");
-		return wc.HttpPost(newUrl, data, resp);
-	}
-#define aa 1
+
 	inline std::vector<Song> SearchSongs(const EString& keyword) {
 		char buf[999]{ 0 };
 		EString resp;
-
-#if aa
-		sprintf(buf, "https://songsearch.kugou.com/song_search_v2?pagesize=%d&page=%d&platform=WebFilter&keyword=%s", pageSize, page, HttpUtility::UrlEncode(keyword).c_str());
+		sprintf(buf, "https://songsearch.kugou.com/song_search_v2?pagesize=%d&page=%d&keyword=%s", pageSize, page, HttpUtility::UrlEncode(keyword).c_str());
 		HttpGet(buf, resp);
-#else
-		HttpGet("https://mobilecdn.kugou.com/api/v3/search/song?page=1&pagesize=50&format=json&keyword=" + keyword, resp);
-#endif
-
-		//resp = Text::UTF8ToANSI(resp);
 
 		JObject json(resp);
 		int total = json["data"]["total"].asInt();
@@ -173,13 +147,9 @@ namespace global {
 		if (page >= pageCount) {
 			nextPage = false;
 		}
-		std::vector<Song> songs;
 
-#if aa
+		std::vector<Song> songs;
 		for (auto&& it : json["data"]["lists"]) {
-#else
-		for (auto&& it : json["data"]["info"]) {
-#endif
 			Song s;
 			s.hash = it["FileHash"].asString();
 			s.Duration = it["Duration"].asInt();
@@ -193,11 +163,23 @@ namespace global {
 		}
 		return songs;
 	}
-	inline EString GetSongLrc(const EString & hash, const EString & AlbumID = "") {
+
+	inline EString GetSongLrc(const EString& hash, const EString& AlbumID = "") {
 		EString url = "http://krcs.kugou.com/search?ver=1&man=yes&client=mobi&keyword=&duration=&hash=" + hash + "&album_audio_id=" + AlbumID;
 		EString resp;
 		HttpGet(url, resp);
 		JObject json(resp);
 
+		EString id = (*json["candidates"].begin())["id"].asString();
+		EString accesskey = (*json["candidates"].begin())["accesskey"].asString();
+		resp.clear();
+		url = "http://lyrics.kugou.com/download?ver=1&client=pc&id=" + id + "&accesskey=" + accesskey + "&fmt=lrc&charset=utf8";
+		HttpGet(url, resp);
+
+		JObject json2(resp);
+		EString base64Text = json2["content"].asString();
+		base64Text = alg::CBase64::decodeBase64(base64Text);
+		auto gbkLrc = Text::UTF8ToANSI(base64Text);
+		return base64Text;
 	}
 };

@@ -78,8 +78,8 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 			EString url = "http://m.kugou.com/app/i/getSongInfo.php?hash={hash}&cmd=playInfo";
 			EString::Replace(url, "{hash}", hash);
 			EString resp;
-			WebClient wc;
-			wc.HttpGet(url, resp);
+			global::HttpGet(url, resp);
+
 			JObject json(resp);
 			EString playUrl = json["url"].asCString();
 			if (!playUrl.empty()) {
@@ -88,6 +88,9 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 			else {
 				::MessageBoxW(Hwnd(), L"∏Ë«˙ ’∑—", L"ERROR", 0);
 			}
+
+			global::GetSongLrc(hash);
+
 		}
 	}
 	if (args.EventType == Event::OnMouseClick) {
