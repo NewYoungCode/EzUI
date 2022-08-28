@@ -126,16 +126,14 @@ namespace EzUI {
 						else {
 							h = (int)Align::Center;
 						}
-
-
 						if (v && h) {
-							((Label*)ctl)->SetTextAlign((TextAlign)(v | h));
+							((Label*)ctl)->TextAlign=((TextAlign)(v | h));
 						}
 						else if (v && !h) {
-							((Label*)ctl)->SetTextAlign((TextAlign)(v));
+							((Label*)ctl)->TextAlign = ((TextAlign)(v));
 						}
 						else  if (!v && h) {
-							((Label*)ctl)->SetTextAlign((TextAlign)(h));
+							((Label*)ctl)->TextAlign = ((TextAlign)(h));
 						}
 					}
 					break;

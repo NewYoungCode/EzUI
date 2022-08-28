@@ -11,8 +11,22 @@
 #include "os.h"
 #include "WebClient.h"
 #include "JsonCpp.h"
+#include "HttpUtility.h"
 
 using namespace EzUI;
+struct Song {
+	EString hash;
+	EString SongName;
+	EString SingerName;
+	EString MvHash;
+	int Duration;
+	EString AlbumID;//专辑ID
+	EString AlbumName;//专辑
+	int QualityLevel;//热度
+};
+
+extern Image* mvicon;
+
 class SongItem :public HBox {
 public:
 	Label songName;
@@ -20,21 +34,170 @@ public:
 
 	SongItem(const EString& _songName) {
 		songName.SetText(_songName);
-		songName.SetTextAlign(TextAlign::MiddleLeft);
-		songName.MousePassThrough = Event::OnHover|Event::OnMouseDoubleClick;
+		songName.TextAlign = TextAlign::MiddleLeft;
+		songName.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
 
 		time.SetFixedWidth(50);
 		time.SetText("03:56");
-		time.SetTextAlign(TextAlign::MiddleRight);
+		time.TextAlign = TextAlign::MiddleRight;
 
 		this->SetFixedHeight(33);
 		this->Dock = DockStyle::Horizontal;
-		HoverStyle.BackgroundColor = Color(100,230, 230, 230);
+		HoverStyle.BackgroundColor = Color(100, 230, 230, 230);
 
 		AddControl(new HSpacer(15));
 		AddControl(&songName);
 		AddControl(&time);
 		AddControl(new HSpacer(15));
+
+	}
+};
+
+class SongItem2 :public HBox {
+	Label songName;
+	Label AlbumName;
+	Label mv;
+	Label time;
+	Song song;
+public:
+	SongItem2(const Song& s) {
+		song = s;
+		SetFixedHeight(35);
+		Dock = DockStyle::Horizontal;
+		Style.BorderBottom = 1;
+		Style.BorderColor = Color(245, 245, 245);
+		HoverStyle.BackgroundColor = Color(245, 245, 245);
+
+		songName.SetText(s.SongName);
+		songName.TextAlign = TextAlign::MiddleLeft;
+		songName.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
+
+		AlbumName.SetFixedWidth(180);
+		AlbumName.SetText(utf8("《") + s.AlbumName + utf8("》"));
+		AlbumName.TextAlign = TextAlign::MiddleLeft;
+		AlbumName.Cursor = Cursor::HAND;
+		AlbumName.Style.ForeColor = Color(150, 150, 150);
+
+		mv.SetFixedWidth(35);
+		if (!s.MvHash.empty()) {
+			mv.Style.ForeImage = mvicon;
+			mv.Style.ForeImage.value->Box = Rect(8, 8, 19, 19);
+			mv.Cursor = Cursor::HAND;
+		}
+		else {
+			mv.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
+		}
+
+
+		time.SetFixedWidth(80);
+		time.SetText(std::to_string(s.Duration * 1.0 / 60));
+		time.TextAlign = TextAlign::MiddleLeft;
+		time.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
+		time.Style.ForeColor = Color(150, 150, 150);
+
+
+		AddControl(new HSpacer(15));
+		AddControl(&songName);
+		AddControl(&AlbumName);
+		AddControl(&mv);
+		AddControl(&time);
+		AddControl(new HSpacer(15));
+
+	}
+};
+namespace global {
+
+	extern int pageSize;
+	extern int page;
+	extern bool nextPage;
+
+	inline int HttpGet(const EString& url, EString& resp) {
+		EString newUrl = url;
+		size_t pos1 = newUrl.find("://");
+		EString host;
+		if (pos1 != EString::npos) {
+			host = newUrl.substr(pos1 + 3);
+			pos1 = host.find("/");
+			if (pos1 != EString::npos) {
+				host = host.substr(0, pos1);
+			}
+		}
+		WebClient wc;
+		wc.AddHeader("Accept", " image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
+		wc.AddHeader("Accept-Language", " en-US,en;q=0.8,zh-Hans-CN;q=0.5,zh-Hans;q=0.2");
+		//wc.AddHeader("Accept-Encoding", " gzip, deflate");
+		wc.AddHeader("User-Agent", " Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");
+		wc.AddHeader("Host", host);
+		wc.AddHeader("Connection", " Keep-Alive");
+		wc.AddHeader("Cache-Control", " no-cache");
+		return wc.HttpGet(newUrl, resp);
+	}
+	inline int HttpPost(const EString& url, const EString& data, EString& resp) {
+		EString newUrl = url;
+		size_t pos1 = newUrl.find("://");
+		EString host;
+		if (pos1 != EString::npos) {
+			host = newUrl.substr(pos1 + 3);
+			pos1 = host.find("/");
+			if (pos1 != EString::npos) {
+				host = host.substr(0, pos1);
+			}
+		}
+		WebClient wc;
+		wc.AddHeader("Accept", " image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*");
+		wc.AddHeader("Accept-Language", " en-US,en;q=0.8,zh-Hans-CN;q=0.5,zh-Hans;q=0.2");
+		//wc.AddHeader("Accept-Encoding", " gzip, deflate");
+		wc.AddHeader("User-Agent", " Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");
+		wc.AddHeader("Host", host);
+		wc.AddHeader("Connection", " Keep-Alive");
+		wc.AddHeader("Cache-Control", " no-cache");
+		return wc.HttpPost(newUrl, data, resp);
+	}
+#define aa 1
+	inline std::vector<Song> SearchSongs(const EString& keyword) {
+		char buf[999]{ 0 };
+		EString resp;
+
+#if aa
+		sprintf(buf, "https://songsearch.kugou.com/song_search_v2?pagesize=%d&page=%d&platform=WebFilter&keyword=%s", pageSize, page, HttpUtility::UrlEncode(keyword).c_str());
+		HttpGet(buf, resp);
+#else
+		HttpGet("https://mobilecdn.kugou.com/api/v3/search/song?page=1&pagesize=50&format=json&keyword=" + keyword, resp);
+#endif
+
+		//resp = Text::UTF8ToANSI(resp);
+
+		JObject json(resp);
+		int total = json["data"]["total"].asInt();
+		int pageCount = total * 1.0 / pageSize + 0.9;
+		if (page >= pageCount) {
+			nextPage = false;
+		}
+		std::vector<Song> songs;
+
+#if aa
+		for (auto&& it : json["data"]["lists"]) {
+#else
+		for (auto&& it : json["data"]["info"]) {
+#endif
+			Song s;
+			s.hash = it["FileHash"].asString();
+			s.Duration = it["Duration"].asInt();
+			s.MvHash = it["MvHash"].asString();
+			s.SongName = it["FileName"].asString();
+			s.SingerName = it["SingerName"].asString();
+			s.AlbumID = it["AlbumID"].asString();
+			s.AlbumName = it["AlbumName"].asString();
+			s.QualityLevel = it["QualityLevel"].asInt();
+			songs.push_back(s);
+		}
+		return songs;
+	}
+	inline EString GetSongLrc(const EString & hash, const EString & AlbumID = "") {
+		EString url = "http://krcs.kugou.com/search?ver=1&man=yes&client=mobi&keyword=&duration=&hash=" + hash + "&album_audio_id=" + AlbumID;
+		EString resp;
+		HttpGet(url, resp);
+		JObject json(resp);
 
 	}
 };

@@ -11,6 +11,9 @@ private:
 protected:
 	virtual void OnKeyDown(WPARAM wparam)override;
 	bool OnNotify(Control* sender, const EventArgs& args)override;
+	void NextPage(int a, int b);
+	void SongView();
+	void LrcView();
 public:
 	MainFrm();
 	virtual ~MainFrm();

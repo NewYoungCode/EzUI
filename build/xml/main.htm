@@ -1,24 +1,16 @@
 <style>
-    #main {
-        background-image: "imgs/bkimage.png";
-    }
-
     #icon {
         fore-image: "imgs/icon.png";
     }
-
     #up {
         fore-image: "imgs/up.png";
     }
-
         #up:hover {
             fore-image: "imgs/up_1.png";
         }
-
     #play {
         fore-image: "imgs/play.png";
     }
-
         #play:hover {
             fore-image: "imgs/play_1.png";
         }
@@ -41,10 +33,6 @@
         fore-image: "imgs/down.png";
     }
 
-    #tools {
-        background-color: rgb(250,250,250,0.5);
-        border-color: rgb(250,250,250);
-    }
 </style>
 <vbox style="background-color:#029BE9" name="main">
     <hbox name="title" height="50" action="move" style="fore-color:#ffffff;">
@@ -58,25 +46,40 @@
         <spacer></spacer>
         <hbox width="100" name="btns">  <label text="0" action="mini"></label><label text="1" action="max"></label><label text="r" action="close"></label> </hbox>
     </hbox>
-    <hbox name="center">
+    <hbox name="center" style="background-color:rgb(255,255,255)">
 
-        <vbox width="309">
-            <!--<hbox height="40" name="tools">
-                <spacer width="18"></spacer>
-                <label name="icon0" width="25" height="25" y="7" tablayout="leftList"></label>
-                <spacer width="18"></spacer>
-                <label name="icon1" width="25" height="25" y="7" tablayout="leftList"></label>
-            </hbox>-->
+        <vbox width="309" name="centerLeft">
+            <hbox height="40" name="tools">
+                <spacer width="15"></spacer>
+                <label   text="默认列表" halign="left"  tablayout="leftList"></label>
+                <!--<spacer width="18"></spacer>
+                <label name="icon1" width="25" height="25" y="7" tablayout="leftList"></label>-->
+            </hbox>
 
             <tablayout name="leftList">
-                <vlist name="playList" style="background-color:rgb(200,200,200,0.5)"></vlist>
-                <vlist name="downList" style="background-color:rgb(250,200,200,0.5)"></vlist>
+                <vlist name="playList"></vlist>
+                <vlist name="downList"></vlist>
             </tablayout>
 
-           
         </vbox>
 
-        <vlist name="searchList" style="background-color:rgb(250,250,250,0.9)"></vlist>
+        <vbox>
+            <hbox height="40" style="border-bottom:1;border-color:rgb(221,221,221);">
+                <spacer></spacer>
+                <label width="54" text="乐库" tablayout="rightView" name="songView" style="border-bottom:3;border-color:rgb(55,174,254);"></label>
+                <label width="54" text="歌词" tablayout="rightView" name="lrcView"></label>
+                <label width="54" text="MV" tablayout="rightView" ></label>
+                <label width="54" text="直播" tablayout="rightView" ></label>
+                <spacer></spacer>
+            </hbox>
+            <tablayout name="rightView">
+                <vlist name="searchList"></vlist>
+                <label text="酷狗音乐" style="font-size:20"> </label>
+            </tablayout>
+        </vbox>
+
+
+
     </hbox>
     <hbox name="bottom" height="67">
         <spacer width="17"></spacer>

@@ -613,6 +613,9 @@ Event(this , ##__VA_ARGS__); \
 	}
 	Control* Control::FindControl(const EString& objectName)
 	{
+		if (this->Name == objectName) {
+			return this;
+		}
 		for (auto& it : (this->GetControls()))
 		{
 			if (it->Name == objectName) {
