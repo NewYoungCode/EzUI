@@ -24,6 +24,12 @@
     <ClCompile Include="global.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="base64.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VlcPlayer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="global.h">
@@ -33,6 +39,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="base64.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="VlcPlayer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

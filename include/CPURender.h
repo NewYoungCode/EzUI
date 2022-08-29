@@ -75,6 +75,7 @@ namespace EzUI {
 	//	~HImage();
 	//};
 
+
 #define HImage Tuple<Image*>
 
 	void HighQualityMode(Gdiplus::Graphics* graphics);
@@ -264,4 +265,7 @@ namespace EzUI {
 	};
 	void RenderInitialize();
 	void RenderUnInitialize();
+
+	extern int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
+	extern BOOL SaveHDCToFile(HDC hDC, LPRECT lpRect, const WCHAR* format, const WCHAR* filename);
 };

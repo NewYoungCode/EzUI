@@ -1,9 +1,11 @@
 #pragma once
 #include "global.h"
+#include "VlcPlayer.h"
 class MainFrm :
 	public Form
 {
 private:
+	VlcPlayer player;
 	void InitForm();
 	VList* localList;
 	VList* searchList;

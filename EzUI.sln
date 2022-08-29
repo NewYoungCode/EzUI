@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Designer", "examples\Design
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KuGou", "examples\KuGou\KuGou.vcxproj", "{0B03FCC7-4480-48CD-A159-34D8ED89B108}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testVLC", "..\testVLC\testVLC.vcxproj", "{967ACB17-88FB-4B31-B3DA-7B2DFBA8F4DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -61,6 +63,14 @@ Global
 		{0B03FCC7-4480-48CD-A159-34D8ED89B108}.Release|x64.Build.0 = Release|x64
 		{0B03FCC7-4480-48CD-A159-34D8ED89B108}.Release|x86.ActiveCfg = Release|Win32
 		{0B03FCC7-4480-48CD-A159-34D8ED89B108}.Release|x86.Build.0 = Release|Win32
+		{967ACB17-88FB-4B31-B3DA-7B2DFBA8F4DA}.Debug|x64.ActiveCfg = Debug|x64
+		{967ACB17-88FB-4B31-B3DA-7B2DFBA8F4DA}.Debug|x64.Build.0 = Debug|x64
+		{967ACB17-88FB-4B31-B3DA-7B2DFBA8F4DA}.Debug|x86.ActiveCfg = Debug|Win32
+		{967ACB17-88FB-4B31-B3DA-7B2DFBA8F4DA}.Debug|x86.Build.0 = Debug|Win32
+		{967ACB17-88FB-4B31-B3DA-7B2DFBA8F4DA}.Release|x64.ActiveCfg = Release|x64
+		{967ACB17-88FB-4B31-B3DA-7B2DFBA8F4DA}.Release|x64.Build.0 = Release|x64
+		{967ACB17-88FB-4B31-B3DA-7B2DFBA8F4DA}.Release|x86.ActiveCfg = Release|Win32
+		{967ACB17-88FB-4B31-B3DA-7B2DFBA8F4DA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

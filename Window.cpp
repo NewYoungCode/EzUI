@@ -531,25 +531,31 @@ namespace EzUI {
 	void Window::OnMouseWheel(short zDelta, const Point& point)
 	{
 		if (_focusControl == NULL) return;
-		ScrollBar* vBar = NULL;
+		ScrollBar* scrollBar = NULL;
 		if (_focusControl->ScrollBar) {
-			vBar = dynamic_cast<ScrollBar*>(_focusControl->ScrollBar);
+			scrollBar = dynamic_cast<ScrollBar*>(_focusControl->ScrollBar);
 		}
 		Control* pControl = _focusControl;
-		while (vBar == NULL && pControl)
+		while (scrollBar == NULL && pControl)
 		{
 			if (pControl->ScrollBar) {
-				vBar = dynamic_cast<ScrollBar*>(pControl->ScrollBar);
+				scrollBar = dynamic_cast<ScrollBar*>(pControl->ScrollBar);
 				break;
 			}
 			pControl = pControl->Parent;
 		}
-		if (vBar) {
+		if (scrollBar) {
 			MouseEventArgs args;
 			args.Delta = zDelta;
 			args.Location = point;
 			args.EventType = Event::OnMouseWheel;
-			vBar->Trigger(args);
+			scrollBar->Trigger(args);
+
+			::UpdateWindow(_hWnd);
+			POINT p1{ 0 };
+			::GetCursorPos(&p1);
+			::ScreenToClient(_hWnd, &p1);
+			OnMouseMove({ p1.x, p1.y });
 		}
 	}
 	void Window::OnMouseDoubleClick(MouseButton mbtn, const Point& point)

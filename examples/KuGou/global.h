@@ -74,18 +74,22 @@ public:
 		songName.SetText(s.SongName);
 		songName.TextAlign = TextAlign::MiddleLeft;
 		songName.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
+		songName.HoverStyle.ForeColor = Color::Orange;
 
 		AlbumName.SetFixedWidth(180);
 		AlbumName.SetText(utf8("¡¶") + s.AlbumName + utf8("¡·"));
 		AlbumName.TextAlign = TextAlign::MiddleLeft;
 		AlbumName.Cursor = Cursor::HAND;
 		AlbumName.Style.ForeColor = Color(150, 150, 150);
+		AlbumName.MousePassThrough = Event::OnHover;
 
 		mv.SetFixedWidth(35);
+		mv.MousePassThrough = Event::OnHover;
 		if (!s.MvHash.empty()) {
 			mv.Style.ForeImage = mvicon;
 			mv.Style.ForeImage.value->Box = Rect(8, 8, 19, 19);
 			mv.Cursor = Cursor::HAND;
+
 		}
 		else {
 			mv.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
@@ -170,6 +174,8 @@ namespace global {
 		HttpGet(url, resp);
 		JObject json(resp);
 
+		return "";
+
 		EString id = (*json["candidates"].begin())["id"].asString();
 		EString accesskey = (*json["candidates"].begin())["accesskey"].asString();
 		resp.clear();
@@ -178,7 +184,7 @@ namespace global {
 
 		JObject json2(resp);
 		EString base64Text = json2["content"].asString();
-		base64Text = alg::CBase64::decodeBase64(base64Text);
+		base64Text = base64_decode(base64Text);
 		auto gbkLrc = Text::UTF8ToANSI(base64Text);
 		return base64Text;
 	}

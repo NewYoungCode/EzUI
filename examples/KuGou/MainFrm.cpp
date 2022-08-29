@@ -2,9 +2,8 @@
 
 void MainFrm::InitForm() {
 
-	//this->Zoom = true;
+	this->Zoom = true;
 	//CloseShadow();
-
 	this->SetLayout(ui::UIManager::LoadLayout("xml/main.htm"));
 	localList = (VList*)this->FindControl("playList");
 	searchList = (VList*)this->FindControl("searchList");
@@ -33,6 +32,8 @@ void MainFrm::InitForm() {
 	searchList->ScrollBar->Rolling = [=](int a, int b)->void {
 		NextPage(a, b);
 	};
+
+	FindControl("vlcDock")->AddControl(&player);
 
 	SongView();
 }
@@ -83,14 +84,15 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 			JObject json(resp);
 			EString playUrl = json["url"].asCString();
 			if (!playUrl.empty()) {
-				::ShellExecuteA(0, "open", playUrl.c_str(), NULL, NULL, SW_SHOW);
+				//::ShellExecuteA(0, "open", playUrl.c_str(), NULL, NULL, SW_SHOW);
+				player.OpenUrl(playUrl);
+				//player.OpenPath("E:\\CloudMusic\\MV\\Trouble Maker - Smile Again.mp4");
+				player.Play();
 			}
 			else {
 				::MessageBoxW(Hwnd(), L"∏Ë«˙ ’∑—", L"ERROR", 0);
 			}
-
 			global::GetSongLrc(hash);
-
 		}
 	}
 	if (args.EventType == Event::OnMouseClick) {

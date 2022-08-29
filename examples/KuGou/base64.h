@@ -1,98 +1,35 @@
-#ifndef _CBASE64_H_
-#define _CBASE64_H_
+#pragma once
+//
+//  base64 encoding and decoding with C++.
+//  Version: 2.rc.08 (release candidate)
+//
+#ifndef BASE64_H_C0CE2A47_D10E_42C9_A27C_C883944E704A
+#define BASE64_H_C0CE2A47_D10E_42C9_A27C_C883944E704A
 
-
-#include <iostream>
 #include <string>
-#include <string.h>
 
-namespace alg {
-	class CBase64 {
-	public:
-		static std::string encodeBase64(unsigned char* input, int input_len) {
-			const char* code = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-			unsigned char input_char[3];
-			char output_char[5];
-			int output_num;
-			std::string output_str = "";
-			int _near = input_len % 3;
+#if __cplusplus >= 201703L
+#include <string_view>
+#endif  // __cplusplus >= 201703L
 
-			for (int i = 0; i < input_len; i += 3) {
-				memset(input_char, 0, 3);
-				memset(output_char, 61, 5);
-				if (i + 3 <= input_len) {
-					memcpy(input_char, input + i, 3);
-				}
-				else {
-					// ²»¹»´Õ³É3¸öbyte
-					memcpy(input_char, input + i, input_len - i);
-					output_num = ((int)input_char[0] << 16) + ((int)input_char[1] << 8) + (int)input_char[2];
+std::string base64_encode(std::string const& s, bool url = false);
+std::string base64_encode_pem(std::string const& s);
+std::string base64_encode_mime(std::string const& s);
 
-					if (_near == 1) {
-						output_char[0] = code[((output_num >> 18) & 0x3f)];
-						output_char[1] = code[((output_num >> 12) & 0x3f)];
-						output_char[2] = '=';
-						output_char[3] = '=';
-						output_char[4] = '\0';
-					}
+std::string base64_decode(std::string const& s, bool remove_linebreaks = false);
+std::string base64_encode(unsigned char const*, size_t len, bool url = false);
 
-					if (_near == 2) {
-						output_char[0] = code[((output_num >> 18) & 0x3f)];
-						output_char[1] = code[((output_num >> 12) & 0x3f)];
-						output_char[2] = code[((output_num >> 6) & 0x3f)];;
-						output_char[3] = '=';
-						output_char[4] = '\0';
-					}
+#if __cplusplus >= 201703L
+//
+// Interface with std::string_view rather than const std::string&
+// Requires C++17
+// Provided by Yannic Bonenberger (https://github.com/Yannic)
+//
+std::string base64_encode(std::string_view s, bool url = false);
+std::string base64_encode_pem(std::string_view s);
+std::string base64_encode_mime(std::string_view s);
 
-					output_str.append(output_char);
-					break;
-				}
+std::string base64_decode(std::string_view s, bool remove_linebreaks = false);
+#endif  // __cplusplus >= 201703L
 
-				output_num = ((int)input_char[0] << 16) + ((int)input_char[1] << 8) + (int)input_char[2];
-				output_char[0] = code[((output_num >> 18) & 0x3f)];
-				output_char[1] = code[((output_num >> 12) & 0x3f)];
-				output_char[2] = code[((output_num >> 6) & 0x3f)];
-				output_char[3] = code[((output_num) & 0x3f)];
-				output_char[4] = '\0';
-				output_str.append(output_char);
-			}
-
-			return output_str;
-		}
-
-		static std::string decodeBase64(std::string input) {
-			unsigned char input_char[4];
-			unsigned char output_char[4];
-			int output_num = 0;
-			int k = 0;
-			std::string output_str = "";
-
-			for (unsigned int i = 0; i < input.size(); i++) {
-				input_char[k] = indexOfCode(input[i]);
-				k++;
-				if (k == 4) {
-					output_num = ((int)input_char[0] << 18) + ((int)input_char[1] << 12) + ((int)input_char[2] << 6) + ((int)input_char[3]);
-					output_char[0] = (unsigned char)((output_num & 0x00FF0000) >> 16);
-					output_char[1] = (unsigned char)((output_num & 0x0000FF00) >> 8);
-					output_char[2] = (unsigned char)(output_num & 0x000000FF);
-					output_char[3] = '\0';
-					output_str.append((char*)output_char);
-					k = 0;
-				}
-			}
-
-			return output_str;
-		}
-
-		static int indexOfCode(const char c) {
-			const char* code = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-			for (unsigned int i = 0; i < 64; i++) {
-				if (code[i] == c)
-					return i;
-			}
-			return 0;
-		}
-	};
-}
-
-#endif
+#endif /* BASE64_H_C0CE2A47_D10E_42C9_A27C_C883944E704A */
