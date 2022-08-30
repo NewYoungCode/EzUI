@@ -60,10 +60,13 @@ namespace EzUI {
 		return nextIt;
 	}
 
-	void HList::Clear() {
-		__super::Clear();
+	void HList::Clear(bool freeControls) {
+		__super::Clear(freeControls);
 		_controlsLocationX.clear();
 		_maxRight = 0;
+		if (hScrollBar) {
+			hScrollBar->SetMaxRight(_maxRight);
+		}
 	}
 
 	void HList::OnSize(const Size& size) {

@@ -168,8 +168,9 @@ namespace EzUI {
 	class ScrollBar :public Control {
 	public:
 		ScrollBar() {
-			Style.BackgroundColor = { 240,240,240 };//the bar backgroundcolor
-			Style.ForeColor = { 155,155,155 };//the slider color
+			Style.BackgroundColor = { 90,127,127,127 };//the bar backgroundcolor
+			Style.ForeColor = { 127,127,127,127 };//the slider color
+			ActiveStyle.ForeColor = { 170,127,127,127 };//the slider color
 		}
 		~ScrollBar() {}
 		virtual void Move(double pos) {}//move silder use absolutely

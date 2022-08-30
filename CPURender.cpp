@@ -285,6 +285,14 @@ namespace EzUI {
 		SafeObject<Pen> pen(CreatePen(color, width));
 		base->DrawLine(pen, A, B);
 	}
+
+	void CPURender::DrawImage(Bitmap* image, const Rect& _rect) {
+		if (!image || image->GetLastStatus() != Gdiplus::Status::Ok) return;
+		Rect rect = _rect;
+		rect.X += OffsetX;
+		rect.Y += OffsetY;
+		base->DrawImage(image, RectF(rect.X, rect.Y, rect.Width, rect.Height));
+	}
 	void CPURender::DrawImage(Image* image, const Rect& _rect, int radius)
 	{
 		if (!image || image->GetLastStatus() != Gdiplus::Status::Ok) return;

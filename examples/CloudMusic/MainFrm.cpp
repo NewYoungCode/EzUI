@@ -167,12 +167,12 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	songName.SetRect({ 73,15 , 155, 23 });
 	songName.SetText(L"Smile Again한국어");
 	songName.Style.FontSize = (10);
-	songName.SetTextAlign(TextAlign::MiddleLeft);
+	songName.TextAlign=(TextAlign::MiddleLeft);
 	bottom_left.AddControl(&songName);
 
 	singer.SetRect({ 73,39 , 165, 23 });
 	singer.SetText(utf8("G.NA/徐恩光/柳贤镇"));
-	singer.SetTextAlign(TextAlign::MiddleLeft);
+	singer.TextAlign = (TextAlign::MiddleLeft);
 	bottom_left.AddControl(&singer);
 
 	aixin.Style.BackgroundImage = (&ax);

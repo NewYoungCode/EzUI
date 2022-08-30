@@ -16,6 +16,8 @@ namespace EzUI {
 		long long duration = 0;
 	public:
 		std::mutex mtx;
+
+		std::mutex mtx2;
 		unsigned int IMG_WIDTH = 0;
 		unsigned int IMG_HEIGHT = 0;
 		EBitmap* BuffBitmap = NULL;

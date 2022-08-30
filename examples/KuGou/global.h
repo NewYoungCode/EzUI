@@ -33,13 +33,13 @@ public:
 	Label songName;
 	Label time;
 
-	SongItem(const EString& _songName) {
+	SongItem(const EString& _songName, const EString& _songTime = "03:56") {
 		songName.SetText(_songName);
 		songName.TextAlign = TextAlign::MiddleLeft;
 		songName.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
 
 		time.SetFixedWidth(50);
-		time.SetText("03:56");
+		time.SetText(_songTime);
 		time.TextAlign = TextAlign::MiddleRight;
 
 		this->SetFixedHeight(33);
@@ -54,6 +54,15 @@ public:
 	}
 };
 
+inline EString toTimeStr(long long dur) {
+	EString str = std::to_string(dur * 1.0 / 60);
+	EString::Replace(str, ".", ":");
+	if (str.find(":") == 1) {
+		str = "0" + str;
+	}
+	return str = str.substr(0, 5);
+}
+
 class SongItem2 :public HBox {
 	Label songName;
 	Label AlbumName;
@@ -65,6 +74,8 @@ public:
 		song = s;
 		this->Tag = (UINT_PTR)&song;
 		SetAttribute("FileHash", s.hash);
+		SetAttribute("SingerName", s.SingerName);
+
 		SetFixedHeight(35);
 		Dock = DockStyle::Horizontal;
 		Style.BorderBottom = 1;
@@ -86,6 +97,7 @@ public:
 		mv.SetFixedWidth(35);
 		mv.MousePassThrough = Event::OnHover;
 		if (!s.MvHash.empty()) {
+			mv.SetAttribute("mvhash", s.MvHash);
 			mv.Style.ForeImage = mvicon;
 			mv.Style.ForeImage.value->Box = Rect(8, 8, 19, 19);
 			mv.Cursor = Cursor::HAND;
@@ -96,7 +108,7 @@ public:
 		}
 
 		time.SetFixedWidth(80);
-		time.SetText(std::to_string(s.Duration * 1.0 / 60));
+		time.SetText(toTimeStr(s.Duration));
 		time.TextAlign = TextAlign::MiddleLeft;
 		time.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
 		time.Style.ForeColor = Color(150, 150, 150);

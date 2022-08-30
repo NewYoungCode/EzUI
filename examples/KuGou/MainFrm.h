@@ -2,7 +2,7 @@
 #include "global.h"
 #include "VlcPlayer.h"
 class MainFrm :
-	public Form
+	public LayeredWindow
 {
 private:
 	VlcPlayer player;
@@ -11,6 +11,7 @@ private:
 	VList* searchList;
 	Edit* searchEdit;
 protected:
+	Image* bkImage = NULL;
 	virtual void OnKeyDown(WPARAM wparam)override;
 	bool OnNotify(Control* sender, const EventArgs& args)override;
 	void NextPage(int a, int b);

@@ -62,6 +62,9 @@ namespace EzUI {
 		__super::Clear(freeChilds);
 		_controlsLocationY.clear();
 		_maxBottom = 0;
+		if (vScrollBar) {
+			vScrollBar->SetMaxBottom(_maxBottom);
+		}
 	}
 
 	void VList::OnSize(const Size& size) {

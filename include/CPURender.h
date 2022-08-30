@@ -260,6 +260,7 @@ namespace EzUI {
 		void CreateLayer(const Rect& rect, ClipMode clipMode = ClipMode::Valid, int radius = 0);
 		void PopLayer();
 		void DrawLine(const Color& color, const Point& A, const Point& B, int width = 1);
+		void DrawImage(Bitmap* image, const Rect& _rect);
 		void DrawImage(Image* image, const Rect& rect, int radius = 0);
 		void SaveImage(const WCHAR* format, const WCHAR* fileName, const Size& size);
 	};

@@ -2,9 +2,12 @@
 
 void MainFrm::InitForm() {
 
-	this->Zoom = true;
+	//this->Zoom = true;
 	//CloseShadow();
 	this->SetLayout(ui::UIManager::LoadLayout("xml/main.htm"));
+	auto main2 = FindControl("main2");
+	main2->Style.BackgroundColor = Color(120, 0, 0, 0);
+
 	localList = (VList*)this->FindControl("playList");
 	searchList = (VList*)this->FindControl("searchList");
 	searchEdit = (Edit*)FindControl("searchEdit");
@@ -24,7 +27,7 @@ void MainFrm::InitForm() {
 	$(this->FindControl("btns")->GetControls()).Css("font-family:\"Marlett\";font-size:13;color:#dddddd;");
 	$(this->FindControl("btns")->GetControls()).Css("hover{font-size:13;color:#ffffff;}");
 
-	for (size_t i = 0; i < 99; i++)
+	for (size_t i = 0; i < 5; i++)
 	{
 		SongItem* it = new SongItem(utf8("TG小辉-女孩(DJ版)"));
 		localList->AddControl(it);
@@ -34,11 +37,10 @@ void MainFrm::InitForm() {
 	};
 
 	FindControl("vlcDock")->AddControl(&player);
-
 	SongView();
 }
 
-MainFrm::MainFrm() :Form(1000, 670)
+MainFrm::MainFrm() :LayeredWindow(1000, 670)
 {
 	InitForm();
 }
@@ -84,15 +86,63 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 			JObject json(resp);
 			EString playUrl = json["url"].asCString();
 			if (!playUrl.empty()) {
-				//::ShellExecuteA(0, "open", playUrl.c_str(), NULL, NULL, SW_SHOW);
+
+				EString SingerName = sender->GetAttribute("SingerName");
+				auto rect = GetClientRect();
+				EString imageUrl = "https://artistpicserver.kuwo.cn/pic.web?type=big_artist_pic&pictype=url&content=list&&id=0&name=" + HttpUtility::UrlEncode(SingerName) + "&from=pc&json=1&version=1&width=" + std::to_string(rect.Width) + "&height=" + std::to_string(rect.Height);
+
+				EString resp;
+				WebClient wc;
+				wc.HttpGet(imageUrl, resp);
+				JObject json(resp);
+				EString bkurl;
+				/*	for (auto&& it : json["array"]) {
+						if (!it["wpurl"].isNull()) {
+							bkurl = it["wpurl"].asString();
+							break;
+						}
+					}*/
+				if (bkurl.empty()) {
+					for (auto&& it : json["array"]) {
+						if (!it["bkurl"].isNull()) {
+							bkurl = it["bkurl"].asString();
+							break;
+						}
+					}
+				}
+
+
+				if (bkImage) {
+					delete bkImage;
+				}
+
+				WCHAR buf[513]{ 0 };
+				::GetTempPathW(512, buf);
+				std::wstring file(buf);
+				Path::Create(EString(file + L"KuGou"));
+				file += L"KuGou\\a.png";
+
+				WebClient wc2;
+				wc2.DownloadFile(bkurl, EString(file).c_str());
+
+				auto main = FindControl("main");
+
+				bkImage = new Image(file);
+				main->Style.BackgroundImage = bkImage;
+
+				Song* tag = (Song*)sender->Tag;
+				SongItem* it = new SongItem(tag->SongName, toTimeStr(tag->Duration));
+				localList->AddControl(it);
+				localList->RefreshLayout();
+				localList->ScrollBar->Move(localList->ScrollBar->RollingTotal());
+				localList->Refresh();
 				player.OpenUrl(playUrl);
-				//player.OpenPath("E:\\CloudMusic\\MV\\Trouble Maker - Smile Again.mp4");
 				player.Play();
 			}
 			else {
 				::MessageBoxW(Hwnd(), L"歌曲收费", L"ERROR", 0);
 			}
-			global::GetSongLrc(hash);
+			//global::GetSongLrc(hash);
 		}
 	}
 	if (args.EventType == Event::OnMouseClick) {
@@ -106,6 +156,22 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 			else if (sender->Index() == 1) {
 				LrcView();
 			}
+		}
+		if (!sender->GetAttribute("mvhash").empty()) {
+			EString resp;
+			WebClient wc;
+			wc.HttpGet("http://m.kugou.com/app/i/mv.php?cmd=100&hash=" + sender->GetAttribute("mvhash") + "&ismp3=1&ext=mp4", resp);
+			JObject json(resp);
+			std::vector<EString> urls;
+			urls.reserve(6);
+			for (auto&& it : json["mvdata"]) {
+				urls.push_back(it["downurl"].asString());
+			}
+
+			FindControl("mvView")->Trigger(Event::OnMouseClick);
+			player.OpenUrl(urls[urls.size() - 1]);
+			//player.OpenPath("D:\\aa.mp4");
+			player.Play();
 		}
 	}
 	return __super::OnNotify(sender, args);
@@ -141,17 +207,13 @@ void  MainFrm::SongView() {
 	auto center = FindControl("center");
 	auto centerLeft = FindControl("centerLeft");
 	centerLeft->Style.BackgroundColor = Color(0, 0, 0, 0);
-
 	auto tools = FindControl("tools");
 	tools->Style.BorderBottom = 1;
 	tools->Style.BorderColor = Color(238, 238, 238);
-
 	main->Style.BackgroundImage.valid = false;
-
 	localList->ScrollBar->Style.BackgroundColor = Color(50, 200, 200, 200);
 	localList->ScrollBar->Style.ForeColor = Color(217, 217, 217);
 	localList->ScrollBar->ActiveStyle.ForeColor = Color(191, 191, 191);
-
 	searchEdit->Style.BackgroundColor = Color::White;
 	center->Style.BackgroundColor = Color::White;
 	center->Style.ForeColor = Color::Black;
@@ -160,22 +222,17 @@ void  MainFrm::SongView() {
 void  MainFrm::LrcView() {
 	auto main = FindControl("main");
 	auto center = FindControl("center");
-
 	auto centerLeft = FindControl("centerLeft");
-	centerLeft->Style.BackgroundColor = Color(200, 200, 200, 200);
+	centerLeft->Style.BackgroundColor = Color(100, 200, 200, 200);
 	auto tools = FindControl("tools");
 	tools->Style.BorderBottom = 1;
 	tools->Style.BorderColor = Color(238, 238, 238);
-
-
 	localList->ScrollBar->Style.BackgroundColor = Color(50, 200, 200, 200);
 	localList->ScrollBar->Style.ForeColor = Color(100, 255, 255, 255);
 	localList->ScrollBar->ActiveStyle.ForeColor = Color(150, 255, 255, 255);
-
-	main->Style.BackgroundImage = new Image(L"imgs/jxy.png");
+	main->Style.BackgroundImage = bkImage;
 	searchEdit->Style.BackgroundColor = Color(200, 250, 250, 250);
 	center->Style.BackgroundColor = Color(0, 0, 0, 0);
 	center->Style.ForeColor = Color::White;
-
 	main->Refresh();
 }
