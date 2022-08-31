@@ -313,6 +313,38 @@ namespace EzUI {
 			base->DrawImage(image->BufBitmap, RectF(rect.X, rect.Y, rect.Width, rect.Height));
 			return;
 		}
+		if (image->SizeMode == Image::SizeMode::StretchImage) {
+			base->DrawImage(image, rect);
+			return;
+		}
+		if (image->SizeMode == Image::SizeMode::CenterImage) {
+			//客户端数据
+			int destWidth = rect.Width;
+			int destHeight = rect.Height;
+			double destRate = destWidth * 1.0 / destHeight;
+			//图片数据
+			int srcWidth = image->GetWidth();
+			int srcHeight = image->GetHeight();
+			double srcRate = srcWidth * 1.0 / srcHeight;
+			if (destRate < srcRate) {
+				int mabyeWidth = destHeight * 1.0 / srcHeight * srcWidth + 0.5;//图片应该这么宽才对
+				int offset = mabyeWidth - destWidth;
+				EBitmap temp(mabyeWidth, destHeight);
+				Gdiplus::Graphics gp(temp.GetHDC());
+				gp.DrawImage(image, 0, 0, mabyeWidth, destHeight);
+				::BitBlt(DC, rect.X, rect.Y, destWidth, destHeight, temp.GetHDC(), offset / 2, 0, SRCCOPY);
+			}
+			else {
+				int mabyeHeight = destWidth * 1.0 / srcWidth * srcHeight + 0.5;//图片应该这么高才对
+				int offset = mabyeHeight - destHeight;
+				EBitmap temp(destWidth, mabyeHeight);
+				Gdiplus::Graphics gp(temp.GetHDC());
+				gp.DrawImage(image, 0, 0, destWidth, mabyeHeight);
+				::BitBlt(DC, rect.X, rect.Y, destWidth, destHeight, temp.GetHDC(), 0, offset / 2, SRCCOPY);
+			}
+			return;
+		}
+
 		if (radius > 0) {
 			Bitmap* bitmap(0);
 			ClipImage(image, { rect.Width,rect.Height }, radius, &bitmap);

@@ -274,6 +274,7 @@ namespace EzUI {
 				return TRUE;
 			}
 			_rect = { wPos->x,wPos->y,wPos->cx,wPos->cy };
+			OnRect(_rect);
 			if (!_lastSize.Equals(size)) {
 				_lastSize = size;
 				OnSize(size);
@@ -286,7 +287,7 @@ namespace EzUI {
 				_lastPoint = point;
 				OnMove(point);
 			}
-			OnRect(_rect);
+			
 			return TRUE;
 		}
 

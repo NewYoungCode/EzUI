@@ -54,13 +54,12 @@ public:
 	}
 };
 
-inline EString toTimeStr(long long dur) {
-	EString str = std::to_string(dur * 1.0 / 60);
-	EString::Replace(str, ".", ":");
-	if (str.find(":") == 1) {
-		str = "0" + str;
-	}
-	return str = str.substr(0, 5);
+inline EString toTimeStr( long dur) {
+	EString fen = std::to_string(dur / 60);
+	if (fen.size() <= 1) fen = "0" + fen;
+	EString yu = std::to_string(dur % 60);
+	if (yu.size() <= 1) yu = "0" + yu;
+	return fen + ":" + yu;
 }
 
 class SongItem2 :public HBox {

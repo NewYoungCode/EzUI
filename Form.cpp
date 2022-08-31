@@ -52,9 +52,7 @@ namespace EzUI {
 		}
 	}
 	BorderlessWindow::~BorderlessWindow() {
-		if (_boxShadow) {
-			delete _boxShadow;
-		}
+		CloseShadow();
 	}
 
 	void BorderlessWindow::CloseShadow()
@@ -109,9 +107,7 @@ namespace EzUI {
 		}
 	}
 	LayeredWindow::~LayeredWindow() {
-		if (_boxShadow) {
-			delete _boxShadow;
-		}
+		CloseShadow();
 	}
 
 	void LayeredWindow::OnSize(const Size& sz) {

@@ -1,8 +1,6 @@
 #include "MainFrm.h"
-
 void MainFrm::InitForm() {
-
-	//this->Zoom = true;
+	this->Zoom = true;
 	//CloseShadow();
 	this->SetLayout(ui::UIManager::LoadLayout("xml/main.htm"));
 	auto main2 = FindControl("main2");
@@ -39,28 +37,22 @@ void MainFrm::InitForm() {
 	FindControl("vlcDock")->AddControl(&player);
 	SongView();
 }
-
-MainFrm::MainFrm() :LayeredWindow(1000, 670)
+MainFrm::MainFrm() :Form(1004, 670)
 {
 	InitForm();
 }
-
 MainFrm::~MainFrm()
 {
 }
 void MainFrm::OnClose(bool& cal) {
-	//cal = true;
 	Application::exit(0);
 }
-
 void MainFrm::OnKeyDown(WPARAM wparam)
 {
 	if (wparam == 13) {
 		global::page = 1;
 		global::nextPage = true;
-
 		FindControl("songView")->Trigger(Event::OnMouseClick);
-
 		EString keyword = searchEdit->GetText();
 		std::vector<Song> songs = global::SearchSongs(keyword);
 		searchList->Clear(true);
@@ -73,7 +65,6 @@ void MainFrm::OnKeyDown(WPARAM wparam)
 	}
 	__super::OnKeyDown(wparam);
 }
-
 bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 	if (args.EventType == Event::OnMouseDoubleClick) {
 		if (!sender->GetAttribute("FileHash").empty()) {
@@ -89,7 +80,7 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 
 				EString SingerName = sender->GetAttribute("SingerName");
 				auto rect = GetClientRect();
-				EString imageUrl = "https://artistpicserver.kuwo.cn/pic.web?type=big_artist_pic&pictype=url&content=list&&id=0&name=" + HttpUtility::UrlEncode(SingerName) + "&from=pc&json=1&version=1&width=" + std::to_string(rect.Width) + "&height=" + std::to_string(rect.Height);
+				EString imageUrl = "https://artistpicserver.kuwo.cn/pic.web?type=big_artist_pic&pictype=url&content=list&&id=0&name=" + HttpUtility::UrlEncode(SingerName) + "&from=pc&json=1&version=1&width=" + std::to_string(1920) + "&height=" + std::to_string(1080);
 
 				EString resp;
 				WebClient wc;
@@ -128,7 +119,7 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 				auto main = FindControl("main");
 
 				bkImage = new Image(file);
-				main->Style.BackgroundImage = bkImage;
+				bkImage->SizeMode = Image::SizeMode::CenterImage;
 
 				Song* tag = (Song*)sender->Tag;
 				SongItem* it = new SongItem(tag->SongName, toTimeStr(tag->Duration));
@@ -176,7 +167,6 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 	}
 	return __super::OnNotify(sender, args);
 }
-
 void MainFrm::NextPage(int a, int b) {
 
 	Debug::Log("%d %d", a, b);
@@ -201,7 +191,6 @@ void MainFrm::NextPage(int a, int b) {
 		searchList->Refresh();
 	}
 }
-
 void  MainFrm::SongView() {
 	auto main = FindControl("main");
 	auto center = FindControl("center");
@@ -235,4 +224,84 @@ void  MainFrm::LrcView() {
 	center->Style.BackgroundColor = Color(0, 0, 0, 0);
 	center->Style.ForeColor = Color::White;
 	main->Refresh();
+}
+
+
+
+#include <cmath>
+using namespace std;
+
+int gcd(int a, int b)
+{
+	if (b == 0) { return a; }
+	return gcd(b, a % b);
+}
+std::pair<int, int> ratioFunc(int a, int b)
+{
+	std::pair<int, int> ret;
+	if (a == 0)
+	{
+		ret.first = 0; ret.second = b;
+	}
+	else
+	{
+		int gc = gcd(abs(a), abs(b));
+		a /= gc; b /= gc;
+		ret.first = a; ret.second = b;
+	}
+	return ret;
+}
+void MainFrm::OnPaint(HDC DC, const Rect& rect) {
+	
+	if (0) {
+		Painter pt(DC);
+		//static Bitmap* img = Gdiplus::Bitmap::FromFile(L"d:\\dd.png");
+		auto img = bkImage;
+		//客户端数据
+		auto& _rect = GetRect();
+		int destWidth = _rect.Width;
+		int destHeight = _rect.Height;
+		//auto destRatioWidth = ratioFunc(destWidth, destHeight).first;
+		//auto destRatioHeight = ratioFunc(destWidth, destHeight).second;
+		double destRate = destWidth * 1.0 / destHeight;
+		//图片数据
+		int srcWidth = img->GetWidth();
+		int srcHeight = img->GetHeight();
+		//auto srctRatioWidth = ratioFunc(srcWidth, srcHeight).first;
+		//auto srcRatioHeight = ratioFunc(srcWidth, srcHeight).second;
+
+		StopWatch st;
+
+		double srcRate = srcWidth * 1.0 / srcHeight;
+		if (destRate < srcRate) {
+			int mabyeWidth = destHeight * 1.0 / srcHeight * srcWidth + 0.5;//图片应该这么宽才对
+			int offset = mabyeWidth - destWidth;
+			EBitmap temp(mabyeWidth, destHeight);
+			Gdiplus::Graphics gp(temp.GetHDC());
+			gp.DrawImage(img, 0, 0, mabyeWidth, destHeight);
+			//RECT l{ 0,0,mabyeWidth, destHeight };
+			//SaveHDCToFile(temp.GetHDC(),&l, L"image/jpeg", L"d:/test.jpg");
+			::BitBlt(DC, 0, 0, destWidth, destHeight, temp.GetHDC(), offset / 2, 0, SRCCOPY);
+
+
+
+			Debug::Log("slow %d ms", st.ElapsedMilliseconds());
+		}
+		else {
+			//1000 * 200 客户端
+		   //1000  * 300 图片
+			int mabyeHeight = destWidth * 1.0 / srcWidth * srcHeight + 0.5;//图片应该这么宽才对
+			int offset = mabyeHeight - destHeight;
+			EBitmap temp(destWidth, mabyeHeight);
+			Gdiplus::Graphics gp(temp.GetHDC());
+			gp.DrawImage(img, 0, 0, destWidth, mabyeHeight);
+			//RECT l{ 0,0,mabyeHeight, destHeight };
+			//SaveHDCToFile(temp.GetHDC(),&l, L"image/jpeg", L"d:/test.jpg");
+			::BitBlt(DC, 0, 0, destWidth, destHeight, temp.GetHDC(), 0, offset / 2, SRCCOPY);
+			Debug::Log("slow %d ms", st.ElapsedMilliseconds());
+		}
+	}
+	__super::OnPaint(DC, rect);
+	//::StretchBlt(DC, 0, 0, destWidth, destHeight, hdc, 0, 0, 1000, 800, SRCCOPY);
+	//::BitBlt(DC, 0, 0, destWidth, destHeight, hdc, srcHeight-aa,0, SRCCOPY);
 }

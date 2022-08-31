@@ -8,7 +8,47 @@
 #pragma comment(lib, "gdiplus.lib")
 #pragma comment(lib, "Msimg32.lib")
 namespace EzUI {
-
+	struct EBitmap {
+	private:
+		HDC _hdc = NULL;
+		HGDIOBJ _hgdiobj = NULL;
+		EBitmap(const EBitmap& hBitmap) {}
+		EBitmap operator=(const EBitmap& hBitmap) {}
+	public:
+		HBITMAP _bitmap = NULL;
+		WORD Width;
+		WORD Height;
+		void* point = NULL;
+		BITMAPINFO bmi;
+		EBitmap(WORD width, WORD height, BYTE bitCount = 24) {//默认24位不透明位图
+			this->Width = width;
+			this->Height = height;
+			memset(&bmi, 0, sizeof(BITMAPINFO));
+			BITMAPINFOHEADER& bmih = bmi.bmiHeader;
+			bmih.biSize = sizeof(BITMAPINFOHEADER);
+			bmih.biBitCount = bitCount;
+			bmih.biCompression = BI_RGB;
+			bmih.biPlanes = 1;
+			bmih.biWidth = width;
+			bmih.biHeight = -height;
+			bmih.biSizeImage = width * height * bitCount;
+			_bitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, &point, NULL, 0);
+		}
+		HDC& GetHDC() {
+			if (!_hdc) {
+				_hdc = ::CreateCompatibleDC(NULL);
+				_hgdiobj = ::SelectObject(_hdc, _bitmap);
+			}
+			return _hdc;
+		}
+		virtual ~EBitmap() {
+			if (_hdc) {
+				::SelectObject(_hdc, _hgdiobj);
+				::DeleteDC(_hdc);
+				::DeleteBitmap(_bitmap);
+			}
+		}
+	};
 	using Bitmap = Gdiplus::Bitmap;
 	//using Rect = Gdiplus::Rect;
 	using RectF = Gdiplus::RectF;
@@ -48,9 +88,24 @@ namespace EzUI {
 			return *this;
 		}
 	}Rect;
-
 	class UI_EXPORT  Image :public  Gdiplus::Image {
 	public:
+		enum class SizeMode {
+			//
+			// 摘要:
+			//     System.Windows.Forms.PictureBox 中的图像被拉伸或收缩，以适合 System.Windows.Forms.PictureBox
+			//     的大小。
+			StretchImage = 1,
+			// 摘要:
+			//     如果 System.Windows.Forms.PictureBox 比图像大，则图像将居中显示。如果图像比 System.Windows.Forms.PictureBox
+			//     大，则图片将居于 System.Windows.Forms.PictureBox 中心，而外边缘将被剪裁掉。
+			CenterImage = 3,
+			//
+			// 摘要:
+			//     图像大小按其原有的大小比例被增加或减小。
+			Zoom = 4
+		};
+		Image::SizeMode SizeMode = Image::SizeMode::StretchImage;
 		Bitmap* BufBitmap = NULL;//预绘制
 		Rect Box;//指定图片绘制在什么位置 //不指定就自动拉伸到当前控件上
 		Image(const EString& filename, int radius = 0);
@@ -58,7 +113,6 @@ namespace EzUI {
 		Image(Gdiplus::GpImage* nativeImage, Gdiplus::Status status) :Gdiplus::Image(nativeImage, status) {}
 		Image* Clone();
 	};
-
 	//class HImage {
 	//private:
 	//	void Clone(const Image* img);
@@ -75,13 +129,10 @@ namespace EzUI {
 	//	~HImage();
 	//};
 
-
 #define HImage Tuple<Image*>
-
 	void HighQualityMode(Gdiplus::Graphics* graphics);
 	void CreateRectangle(GraphicsPath& path, const Rect& rect, int radius);//申明
 	void ClipImage(Image* img, const Size& sz, int _radius, Bitmap** outBitmap);//
-
 #define Align_Top  1
 #define Align_Bottom  2
 #define Align_Left  4
