@@ -98,7 +98,8 @@ public:
 		if (!s.MvHash.empty()) {
 			mv.SetAttribute("mvhash", s.MvHash);
 			mv.Style.ForeImage = mvicon;
-			mv.Style.ForeImage.value->Box = Rect(8, 8, 19, 19);
+			mv.Style.ForeImage.value->Margin = 8;
+			//mv.Style.ForeImage.value->Box = Rect(8, 8, 19, 19);
 			mv.Cursor = Cursor::HAND;
 
 		}
@@ -153,7 +154,7 @@ namespace global {
 	inline std::vector<Song> SearchSongs(const EString& keyword) {
 		char buf[999]{ 0 };
 		EString resp;
-		sprintf(buf, "https://songsearch.kugou.com/song_search_v2?pagesize=%d&page=%d&keyword=%s", pageSize, page, HttpUtility::UrlEncode(keyword).c_str());
+		sprintf(buf, "https://songsearch.kugou.com/song_search_v2?platform=WebFilter&pagesize=%d&page=%d&keyword=%s", pageSize, page, HttpUtility::UrlEncode(keyword).c_str());
 		HttpGet(buf, resp);
 
 		JObject json(resp);

@@ -37,7 +37,7 @@ void MainFrm::InitForm() {
 	FindControl("vlcDock")->AddControl(&player);
 	SongView();
 }
-MainFrm::MainFrm() :Form(1004, 670)
+MainFrm::MainFrm() :Form(1000, 670)
 {
 	InitForm();
 }
@@ -120,6 +120,7 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 
 				bkImage = new Image(file);
 				bkImage->SizeMode = Image::SizeMode::CenterImage;
+
 
 				Song* tag = (Song*)sender->Tag;
 				SongItem* it = new SongItem(tag->SongName, toTimeStr(tag->Duration));
@@ -225,81 +226,36 @@ void  MainFrm::LrcView() {
 	center->Style.ForeColor = Color::White;
 	main->Refresh();
 }
-
-
-
-#include <cmath>
-using namespace std;
-
-int gcd(int a, int b)
-{
-	if (b == 0) { return a; }
-	return gcd(b, a % b);
-}
-std::pair<int, int> ratioFunc(int a, int b)
-{
-	std::pair<int, int> ret;
-	if (a == 0)
-	{
-		ret.first = 0; ret.second = b;
-	}
-	else
-	{
-		int gc = gcd(abs(a), abs(b));
-		a /= gc; b /= gc;
-		ret.first = a; ret.second = b;
-	}
-	return ret;
-}
 void MainFrm::OnPaint(HDC DC, const Rect& rect) {
-	
+
 	if (0) {
 		Painter pt(DC);
-		//static Bitmap* img = Gdiplus::Bitmap::FromFile(L"d:\\dd.png");
-		auto img = bkImage;
+		static Bitmap* image = Gdiplus::Bitmap::FromFile(L"d:\\test.jpg");
 		//客户端数据
-		auto& _rect = GetRect();
-		int destWidth = _rect.Width;
-		int destHeight = _rect.Height;
-		//auto destRatioWidth = ratioFunc(destWidth, destHeight).first;
-		//auto destRatioHeight = ratioFunc(destWidth, destHeight).second;
-		double destRate = destWidth * 1.0 / destHeight;
+		const int& clientWidth = rect.Width;
+		const int& clientHeight = rect.Height;
+		double clientRate = clientWidth * 1.0 / clientHeight;
 		//图片数据
-		int srcWidth = img->GetWidth();
-		int srcHeight = img->GetHeight();
-		//auto srctRatioWidth = ratioFunc(srcWidth, srcHeight).first;
-		//auto srcRatioHeight = ratioFunc(srcWidth, srcHeight).second;
-
-		StopWatch st;
-
-		double srcRate = srcWidth * 1.0 / srcHeight;
-		if (destRate < srcRate) {
-			int mabyeWidth = destHeight * 1.0 / srcHeight * srcWidth + 0.5;//图片应该这么宽才对
-			int offset = mabyeWidth - destWidth;
-			EBitmap temp(mabyeWidth, destHeight);
-			Gdiplus::Graphics gp(temp.GetHDC());
-			gp.DrawImage(img, 0, 0, mabyeWidth, destHeight);
-			//RECT l{ 0,0,mabyeWidth, destHeight };
-			//SaveHDCToFile(temp.GetHDC(),&l, L"image/jpeg", L"d:/test.jpg");
-			::BitBlt(DC, 0, 0, destWidth, destHeight, temp.GetHDC(), offset / 2, 0, SRCCOPY);
-
-
-
-			Debug::Log("slow %d ms", st.ElapsedMilliseconds());
+		int imgWidth = image->GetWidth();
+		int imgHeight = image->GetHeight();
+		double imgRate = imgWidth * 1.0 / imgHeight;
+		if (clientRate < imgRate) {
+			//1000 670 客户端
+			//1000 300 图片
+			//2233 670     缩放后的图片大小 
+			int mabyeWidth = clientHeight * 1.0 / imgHeight * imgWidth + 0.5;//图片应该这么宽才对
+			int x = (mabyeWidth - clientWidth) * 1.0 / 2 + 0.5;
+			pt.DrawImage(image, { rect.X - x,rect.Y,mabyeWidth,clientHeight });
 		}
 		else {
-			//1000 * 200 客户端
-		   //1000  * 300 图片
-			int mabyeHeight = destWidth * 1.0 / srcWidth * srcHeight + 0.5;//图片应该这么宽才对
-			int offset = mabyeHeight - destHeight;
-			EBitmap temp(destWidth, mabyeHeight);
-			Gdiplus::Graphics gp(temp.GetHDC());
-			gp.DrawImage(img, 0, 0, destWidth, mabyeHeight);
-			//RECT l{ 0,0,mabyeHeight, destHeight };
-			//SaveHDCToFile(temp.GetHDC(),&l, L"image/jpeg", L"d:/test.jpg");
-			::BitBlt(DC, 0, 0, destWidth, destHeight, temp.GetHDC(), 0, offset / 2, SRCCOPY);
-			Debug::Log("slow %d ms", st.ElapsedMilliseconds());
+			//1000 600 客户端
+			//400  600 图片
+			//1000 1500     缩放后的图片大小 
+			int mabyeHeight = clientWidth * 1.0 / imgWidth * imgHeight + 0.5;//图片应该这么高才对
+			int y = (mabyeHeight - clientHeight) * 1.0 / 2 + 0.5;
+			pt.DrawImage(image, { rect.X,  rect.Y - y  , clientWidth, mabyeHeight });
 		}
+		return;
 	}
 	__super::OnPaint(DC, rect);
 	//::StretchBlt(DC, 0, 0, destWidth, destHeight, hdc, 0, 0, 1000, 800, SRCCOPY);

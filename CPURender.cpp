@@ -18,23 +18,8 @@ namespace EzUI {
 		Gdiplus::Font* _bufFont = new Gdiplus::Font(&ff, (float)fontSize);
 		return _bufFont;
 	}
-	Image::Image(const EString& filename, int radius) :Gdiplus::Image(filename.utf16().c_str()) {
-		if (radius > 0) {
-			ClipImage(this, Size{ (int)GetWidth(), (int)GetHeight() }, radius, &BufBitmap);
-		}
-	}
-	Image* Image::Clone() {
-		Gdiplus::GpImage* cloneimage = NULL;
-		SetStatus(Gdiplus::DllExports::GdipCloneImage(nativeImage, &cloneimage));
-		Image* newImage = new Image(cloneimage, lastResult);
-		newImage->Box = Box;
-		//newImage->BufBitmap = BufBitmap;
-		return newImage;
-	}
+	Image::Image(const EString& filename) :Gdiplus::Image(filename.utf16().c_str()) {}
 	Image::~Image() {
-		if (BufBitmap) {
-			delete BufBitmap;
-		}
 	}
 
 	void RenderInitialize()
@@ -52,7 +37,7 @@ namespace EzUI {
 		graphics->SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);//抗锯齿
 		graphics->SetPixelOffsetMode(Gdiplus::PixelOffsetMode::PixelOffsetModeHalf);//像素偏移模式
 		graphics->SetTextRenderingHint(Gdiplus::TextRenderingHint::TextRenderingHintClearTypeGridFit);//文字
-		graphics->SetInterpolationMode(Gdiplus::InterpolationMode::InterpolationModeHighQuality);//图像
+		//graphics->SetInterpolationMode(Gdiplus::InterpolationMode::InterpolationModeHighQuality);//图像
 	}
 	void CreateRectangle(GraphicsPath& path, const Rect& rect, int radius)
 	{
@@ -75,23 +60,6 @@ namespace EzUI {
 		arcRect.X = rect.GetLeft();
 		path.AddArc(arcRect, 90, 90);
 		path.CloseFigure();
-	}
-	void ClipImage(Image* img, const Size& sz, int _radius, Bitmap** outBitmap)
-	{
-		int width = img->GetWidth();
-		int height = img->GetHeight();
-
-		Bitmap* bitmap = new Bitmap(width, height);
-		Gdiplus::Graphics g(bitmap);
-		HighQualityMode(&g);
-		double rate = width * 1.0 / sz.Width;
-		float radius = _radius * rate;
-
-		Gdiplus::GraphicsPath path;
-		CreateRectangle(path, Rect{ 0,0,width,height }, radius);
-		g.SetClip(&path);
-		g.DrawImage(img, 0, 0, sz.Width, sz.Height);
-		*outBitmap = bitmap;
 	}
 
 	CPURender::CPURender(Bitmap* image)
@@ -299,80 +267,95 @@ namespace EzUI {
 		Rect rect = _rect;
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
-		if (image->Box.X != 0) {
-			rect.X += image->Box.X;
-		}
-		if (image->Box.Y != 0) {
-			rect.Y += image->Box.Y;
-		}
-		if (!image->Box.IsEmptyArea()) {
-			rect.Width = image->Box.Width;
-			rect.Height = image->Box.Height;
-		}
-		if (image->BufBitmap) {
-			base->DrawImage(image->BufBitmap, RectF(rect.X, rect.Y, rect.Width, rect.Height));
-			return;
-		}
+
+		rect.X += image->Margin.Left;
+		rect.Y += image->Margin.Top;
+		rect.Width -= image->Margin.Right * 2;
+		rect.Height -= image->Margin.Bottom * 2;
+
 		if (image->SizeMode == Image::SizeMode::StretchImage) {
 			base->DrawImage(image, rect);
 			return;
 		}
-		if (image->SizeMode == Image::SizeMode::CenterImage) {
+		if (image->SizeMode == Image::SizeMode::Zoom) {
 			//客户端数据
-			int destWidth = rect.Width;
-			int destHeight = rect.Height;
-			double destRate = destWidth * 1.0 / destHeight;
+			const int& clientWidth = rect.Width;
+			const int& clientHeight = rect.Height;
+			double clientRate = clientWidth * 1.0 / clientHeight;
 			//图片数据
-			int srcWidth = image->GetWidth();
-			int srcHeight = image->GetHeight();
-			double srcRate = srcWidth * 1.0 / srcHeight;
-			if (destRate < srcRate) {
-				int mabyeWidth = destHeight * 1.0 / srcHeight * srcWidth + 0.5;//图片应该这么宽才对
-				int offset = mabyeWidth - destWidth;
-				EBitmap temp(mabyeWidth, destHeight);
-				Gdiplus::Graphics gp(temp.GetHDC());
-				gp.DrawImage(image, 0, 0, mabyeWidth, destHeight);
-				::BitBlt(DC, rect.X, rect.Y, destWidth, destHeight, temp.GetHDC(), offset / 2, 0, SRCCOPY);
+			int imgWidth = image->GetWidth();
+			int imgHeight = image->GetHeight();
+			double imgRate = imgWidth * 1.0 / imgHeight;
+			if (clientRate < imgRate) {
+				double zoomHeight = clientWidth * 1.0 / imgWidth * imgHeight + 0.5;
+				Size sz{ clientWidth,(INT)zoomHeight };
+				int y = (clientHeight - sz.Height) / 2 + rect.Y;
+				base->DrawImage(image, Rect{ rect.X  ,y, sz.Width, sz.Height });
 			}
 			else {
-				int mabyeHeight = destWidth * 1.0 / srcWidth * srcHeight + 0.5;//图片应该这么高才对
-				int offset = mabyeHeight - destHeight;
-				EBitmap temp(destWidth, mabyeHeight);
-				Gdiplus::Graphics gp(temp.GetHDC());
-				gp.DrawImage(image, 0, 0, destWidth, mabyeHeight);
-				::BitBlt(DC, rect.X, rect.Y, destWidth, destHeight, temp.GetHDC(), 0, offset / 2, SRCCOPY);
+				double zoomWidth = clientHeight * 1.0 / imgHeight * imgWidth + 0.5;
+				Size sz{ (INT)zoomWidth,clientHeight };
+				int x = (clientWidth - sz.Width) / 2 + rect.X;
+				base->DrawImage(image, Rect{ x  , rect.Y, sz.Width, sz.Height });
+			}
+			return;
+		}
+		if (image->SizeMode == Image::SizeMode::CenterImage) {
+			//客户端数据
+			const int& clientWidth = rect.Width;
+			const int& clientHeight = rect.Height;
+			double clientRate = clientWidth * 1.0 / clientHeight;
+			//图片数据
+			int imgWidth = image->GetWidth();
+			int imgHeight = image->GetHeight();
+			double imgRate = imgWidth * 1.0 / imgHeight;
+			if (clientRate < imgRate) {
+				//1000 670 客户端
+				//1000 300 图片
+				//2233 670     缩放后的图片大小 
+				int zoomWidth = clientHeight * 1.0 / imgHeight * imgWidth + 0.5;//图片应该这么宽才对
+				int x = (zoomWidth - clientWidth) * 1.0 / 2 + 0.5;
+				base->DrawImage(image, Rect{ rect.X - x,rect.Y,zoomWidth,clientHeight });
+			}
+			else {
+				//1000 600 客户端
+				//400  600 图片
+				//1000 1500     缩放后的图片大小 
+				int zoomHeight = clientWidth * 1.0 / imgWidth * imgHeight + 0.5;//图片应该这么高才对
+				int y = (zoomHeight - clientHeight) * 1.0 / 2 + 0.5;
+				base->DrawImage(image, Rect{ rect.X,  rect.Y - y  , clientWidth, zoomHeight });
 			}
 			return;
 		}
 
 		if (radius > 0) {
-			Bitmap* bitmap(0);
-			ClipImage(image, { rect.Width,rect.Height }, radius, &bitmap);
-			base->DrawImage(bitmap, rect);
-			//#if 1 //GDI+绘制
-			//#else //Gdi绘制
-			//		HBITMAP outHMap;
-			//		bitmap->GetHBITMAP(Color::Transparent, &outHMap);
-			//		HDC hdc = ::CreateCompatibleDC(DC);
-			//		HGDIOBJ	_hgdiobj = ::SelectObject(hdc, outHMap);
-			//		int srcWidth = bitmap->GetWidth();
-			//		int srcHeight = bitmap->GetHeight();
-			//		int srcX = Layer.X > rect.X ? srcWidth - Layer.Width : 0;
-			//		int srcY = Layer.Y > rect.Y ? srcHeight - Layer.Height : 0;
-			//		//::BitBlt(DC, Layer.X, Layer.Y, Layer.Width, Layer.Height, hdc, srcX, srcY, SRCCOPY);
-			//		BLENDFUNCTION blend;
-			//		blend.BlendOp = AC_SRC_OVER;
-			//		blend.BlendFlags = 0;
-			//		blend.AlphaFormat = AC_SRC_ALPHA;
-			//		blend.SourceConstantAlpha = 255;
-			//		//::AlphaBlend(DC, Layer.X, Layer.Y, Layer.Width, Layer.Height, hdc, srcX, srcY, Layer.Width, Layer.Height, blend);
-			//		::StretchBlt(DC, Layer.X, Layer.Y, Layer.Width, Layer.Height, hdc, srcX, srcY, srcWidth, srcHeight, SRCCOPY);
-			//
-			//		::SelectObject(hdc, _hgdiobj);
-			//		::DeleteDC(hdc);
-			//		::DeleteBitmap(outHMap);
-			//#endif
-			delete bitmap;
+			/*	Bitmap* bitmap(0);
+				ClipImage(image, { rect.Width,rect.Height }, radius, &bitmap);
+				base->DrawImage(bitmap, rect);*/
+				//#if 1 //GDI+绘制
+				//#else //Gdi绘制
+				//		HBITMAP outHMap;
+				//		bitmap->GetHBITMAP(Color::Transparent, &outHMap);
+				//		HDC hdc = ::CreateCompatibleDC(DC);
+				//		HGDIOBJ	_hgdiobj = ::SelectObject(hdc, outHMap);
+				//		int srcWidth = bitmap->GetWidth();
+				//		int srcHeight = bitmap->GetHeight();
+				//		int srcX = Layer.X > rect.X ? srcWidth - Layer.Width : 0;
+				//		int srcY = Layer.Y > rect.Y ? srcHeight - Layer.Height : 0;
+				//		//::BitBlt(DC, Layer.X, Layer.Y, Layer.Width, Layer.Height, hdc, srcX, srcY, SRCCOPY);
+				//		BLENDFUNCTION blend;
+				//		blend.BlendOp = AC_SRC_OVER;
+				//		blend.BlendFlags = 0;
+				//		blend.AlphaFormat = AC_SRC_ALPHA;
+				//		blend.SourceConstantAlpha = 255;
+				//		//::AlphaBlend(DC, Layer.X, Layer.Y, Layer.Width, Layer.Height, hdc, srcX, srcY, Layer.Width, Layer.Height, blend);
+				//		::StretchBlt(DC, Layer.X, Layer.Y, Layer.Width, Layer.Height, hdc, srcX, srcY, srcWidth, srcHeight, SRCCOPY);
+				//
+				//		::SelectObject(hdc, _hgdiobj);
+				//		::DeleteDC(hdc);
+				//		::DeleteBitmap(outHMap);
+				//#endif
+				//delete bitmap;
 			return;
 		}
 		//int srcWidth = image->GetWidth();

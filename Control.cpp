@@ -452,14 +452,40 @@ Event(this , ##__VA_ARGS__); \
 #ifdef DEBUGPAINT
 			WindowData* wndData = (WindowData*)UI_GetUserData(_hWnd);
 			if (wndData->Debug) {
+				/*auto tempRect = GetClientRect();
+				tempRect.Width = 5;
+				tempRect.Height = 5;
+				int size = tempRect.Width * tempRect.Height;
+				unsigned long long r = 0;
+				unsigned long long g = 0;
+				unsigned long long b = 0;
+				unsigned long long pos = 0;
+				for (size_t y = 0; y < tempRect.GetBottom(); y++)
+				{
+					for (size_t x = 0; x < tempRect.GetRight(); x++)
+					{
+						COLORREF  color = ::GetPixel(args.Painter.DC, x, y);
+						r += GetRValue(color);
+						g += GetGValue(color);
+						b += GetBValue(color);
+						pos++;
+					}
+				}
+				double r1 = r * 1.0 / size;
+				double g1 = g * 1.0 / size;
+				double b1 = b * 1.0 / size;*/
+
+				auto bkColor = GetBackgroundColor();
+				Color color(255 - bkColor.GetR(), 255 - bkColor.GetG(), 255 - bkColor.GetB());
+
 				if (this->State == ControlState::Hover) {
-					pt.DrawRectangle(Color(255, 0, 0), Rect{ 0,0,_rect.Width,_rect.Height });
+					pt.DrawRectangle(color, Rect{ 0,0,_rect.Width,_rect.Height });
 				}
 				else {
-					pt.DrawRectangle(Color(100, 255, 255, 255), Rect{ 0,0,_rect.Width,_rect.Height });
+					pt.DrawRectangle(color, Rect{ 0,0,_rect.Width,_rect.Height });
 				}
 				if (!Name.empty()) {
-					pt.DrawString(Name, GetFontFamily(), GetFontSize(), GetForeColor(), RectF(0, 0, Width(), Height()), TextAlign::MiddleLeft);
+					pt.DrawString(Name, GetFontFamily(), GetFontSize(), color, RectF(0, 0, Width(), Height()), TextAlign::MiddleLeft);
 				}
 			}
 #endif

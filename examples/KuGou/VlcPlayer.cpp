@@ -54,9 +54,29 @@ namespace EzUI {
 	void VlcPlayer::OnBackgroundPaint(PaintEventArgs& pArg) {
 		__super::OnBackgroundPaint(pArg);
 		if (BuffBitmap) {
-			auto bitMap = Gdiplus::Bitmap::FromBITMAPINFO(&BuffBitmap->bmi, BuffBitmap->point);
-			pArg.Painter.DrawImage(bitMap, GetRect());
-			delete bitMap;
+			auto image = Gdiplus::Bitmap::FromBITMAPINFO(&BuffBitmap->bmi, BuffBitmap->point);
+			auto& rect = GetRect();
+			//客户端数据
+			const int& clientWidth = rect.Width;
+			const int& clientHeight = rect.Height;
+			double clientRate = clientWidth * 1.0 / clientHeight;
+			//图片数据
+			int imgWidth = image->GetWidth();
+			int imgHeight = image->GetHeight();
+			double imgRate = imgWidth * 1.0 / imgHeight;
+			if (clientRate < imgRate) {
+				double zoomHeight = clientWidth * 1.0 / imgWidth * imgHeight + 0.5;
+				Size sz{ clientWidth,(INT)zoomHeight };
+				int y = (clientHeight - sz.Height) / 2 + rect.Y;
+				pArg.Painter.DrawImage(image, Rect{ rect.X  ,y, sz.Width, sz.Height });
+			}
+			else {
+				double zoomWidth = clientHeight * 1.0 / imgHeight * imgWidth + 0.5;
+				Size sz{ (INT)zoomWidth,clientHeight };
+				int x = (clientWidth - sz.Width) / 2 + rect.X;
+				pArg.Painter.DrawImage(image, Rect{ x  , rect.Y, sz.Width, sz.Height });
+			}
+			delete image;
 		}
 	}
 	void VlcPlayer::SetConfig()
