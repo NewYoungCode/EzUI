@@ -43,7 +43,7 @@ namespace EzUI {
 			fontHeight = (int)box.Height - 2;
 			int x = fontHeight + Indent;
 			int cx = Width() - x;
-			args.Painter.DrawString(_text, GetFontFamily(this->State), GetFontSize(this->State), GetForeColor(this->State), RectF(x, 0, cx, (float)_rect.Height), TextAlign, _underline);
+			args.Painter.DrawString(_text, GetFontFamily(this->State), GetFontSize(this->State), GetForeColor(this->State), Rect(x, 0, cx, (float)_rect.Height), TextAlign, _underline);
 		}
 		int y = (Height() - fontHeight) / 2;
 		args.Painter.FillRectangle(Color::White, Rect(0, y, fontHeight, fontHeight), fontHeight);

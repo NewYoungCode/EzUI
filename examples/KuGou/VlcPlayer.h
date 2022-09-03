@@ -1,13 +1,14 @@
 #pragma once
 #include "Control.h"
 #include  "Form.h"
+#include "Label.h"
 #include <mutex>
 
 #include "vlc/vlc.h"
 #pragma comment(lib,"libvlc.lib")
 #pragma comment(lib,"libvlccore.lib")
 namespace EzUI {
-	class VlcPlayer :public Control
+	class VlcPlayer :public Label
 	{
 	private:
 		libvlc_instance_t* vlc_inst = NULL;
@@ -33,5 +34,6 @@ namespace EzUI {
 		void Pause();
 		long long Duration();
 		long long Position();
+		libvlc_state_t GetState();
 	};
 }

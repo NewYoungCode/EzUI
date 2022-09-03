@@ -2,7 +2,7 @@
  * vlc_picture.h: picture definitions
  *****************************************************************************
  * Copyright (C) 1999 - 2009 VLC authors and VideoLAN
- * $Id: dea3f7f0c608416e89b75197430dd66db61e0639 $
+ * $Id: d3e3b99c1f8f5ad6c6b4ca63a1c80ba8357889d0 $
  *
  * Authors: Vincent Seguin <seguin@via.ecp.fr>
  *          Samuel Hocevar <sam@via.ecp.fr>
@@ -102,11 +102,7 @@ struct picture_t
     /** This way the picture_Release can be overloaded */
     struct
     {
-#if (defined (__LIBVLC__) && !defined (__PLUGIN__))
         atomic_uintptr_t refcount;
-#else
-        uintptr_t refcount_placeholder_keep_off;
-#endif
         void (*pf_destroy)( picture_t * );
         picture_gc_sys_t *p_sys;
     } gc;

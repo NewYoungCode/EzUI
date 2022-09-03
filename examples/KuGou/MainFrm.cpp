@@ -6,6 +6,11 @@ void MainFrm::InitForm() {
 	auto main2 = FindControl("main2");
 	main2->Style.BackgroundColor = Color(120, 0, 0, 0);
 
+
+	FindControl("lrcView2")->AddControl(&lrcCtl);//添加歌词控件
+	lrcCtl._hWnd = _hWnd;
+
+
 	localList = (VList*)this->FindControl("playList");
 	searchList = (VList*)this->FindControl("searchList");
 	searchEdit = (Edit*)FindControl("searchEdit");
@@ -34,8 +39,15 @@ void MainFrm::InitForm() {
 		NextPage(a, b);
 	};
 
+	player.Style.FontSize = 15;
+	player.Style.ForeColor = Color::White;
+	player.TextAlign = TextAlign::TopLeft;
+	player.SetText(L"EzUI框架QQ群:758485934");
+
 	FindControl("vlcDock")->AddControl(&player);
 	SongView();
+
+	SetTimer(10);
 }
 MainFrm::MainFrm() :Form(1000, 670)
 {
@@ -137,7 +149,9 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 			else {
 				::MessageBoxW(Hwnd(), L"歌曲收费", L"ERROR", 0);
 			}
-			//global::GetSongLrc(hash);
+			EString lrcData = global::GetSongLrc(hash);
+			lrcCtl.LoadLrc(lrcData);
+
 		}
 	}
 	if (args.EventType == Event::OnMouseClick) {
@@ -171,6 +185,12 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 	}
 	return __super::OnNotify(sender, args);
 }
+void MainFrm::OnTimer() {
+	if (player.GetState() == libvlc_state_t::libvlc_Playing) {
+		lrcCtl.ChangePostion(player.Position());
+	}
+}
+
 void MainFrm::NextPage(int a, int b) {
 
 	Debug::Log("%d %d", a, b);

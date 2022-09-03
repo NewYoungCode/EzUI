@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClCompile Include="base64.cpp" />
     <ClCompile Include="global.cpp" />
+    <ClCompile Include="LrcControl.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="VlcPlayer.cpp" />
@@ -161,6 +162,7 @@
   <ItemGroup>
     <ClInclude Include="base64.h" />
     <ClInclude Include="global.h" />
+    <ClInclude Include="LrcControl.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="VlcPlayer.h" />
   </ItemGroup>

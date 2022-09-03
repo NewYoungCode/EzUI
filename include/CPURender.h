@@ -327,7 +327,7 @@ namespace EzUI {
 		virtual ~CPURender();
 		void DrawRectangle(const Color& color, const Rect& rect, int width = 1, int radius = 0);
 		void FillRectangle(const Color& color, const Rect& rect, int radius = 0);
-		void DrawString(const EString& text, const EString& fontFamily, int fontSize, const Color& color, const RectF& rect, TextAlign textAlign, bool underLine = false);
+		void DrawString(const EString& text, const EString& fontFamily, int fontSize, const Color& color, const Rect& rect, TextAlign textAlign, bool underLine = false);
 		void MeasureString(const EString& _text, const EString& fontf, int fontSize, RectF& outBox);
 		//Œ¥º∆À„∆´“∆ ‘§¡Ù‘›≤ª π”√
 		//void MeasureString(const EString& text, const EString& fontFamily, int fontSize, const Color& color, const RectF& _rect, TextAlign textAlign, RectF& outBox);

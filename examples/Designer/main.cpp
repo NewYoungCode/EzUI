@@ -9,7 +9,7 @@ class GameItem :public VBox {
 public:
 	Label ctlImg, ctlName;
 	GameItem(Image* img, const EString& game) {
-		img->Box = Rect(13, 8, 40, 40);
+		img->Margin = 40;
 		this->SetFixedHeight(67);
 		this->SetFixedWidth(67);
 		ctlName.SetFixedHeight(20);

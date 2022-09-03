@@ -17,7 +17,7 @@ namespace EzUI {
 		__super::OnForePaint(args);
 		if (!_text.empty()) {
 			//args.Painter.MeasureString(_text, GetFontFamily(this->State), GetFontSize(this->State), fontBox);
-			args.Painter.DrawString(_text, GetFontFamily(this->State), GetFontSize(this->State), GetForeColor(this->State), RectF(0, 0, (float)_rect.Width, (float)_rect.Height), TextAlign, _underline);
+			args.Painter.DrawString(_text, GetFontFamily(this->State), GetFontSize(this->State), GetForeColor(this->State), Rect(0, 0, (float)_rect.Width, (float)_rect.Height), TextAlign, _underline);
 		}
 	}
 	Size Label::GetFontWidth() {

@@ -186,8 +186,6 @@ namespace global {
 		HttpGet(url, resp);
 		JObject json(resp);
 
-		return "";
-
 		EString id = (*json["candidates"].begin())["id"].asString();
 		EString accesskey = (*json["candidates"].begin())["accesskey"].asString();
 		resp.clear();

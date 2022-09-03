@@ -75,7 +75,7 @@ namespace EzUI {
 				Size sz{ (INT)zoomWidth,clientHeight };
 				int x = (clientWidth - sz.Width) / 2 + rect.X;
 				pArg.Painter.DrawImage(image, Rect{ x  , rect.Y, sz.Width, sz.Height });
-			}            
+			}
 			delete image;
 		}
 	}
@@ -131,5 +131,12 @@ namespace EzUI {
 	long long  VlcPlayer::Position() {
 		libvlc_time_t play_time = libvlc_media_player_get_time(vlc_player);
 		return play_time;
+	}
+
+	libvlc_state_t VlcPlayer::GetState() {
+		if (!vlc_player) {
+			return libvlc_state_t::libvlc_Error;
+		}
+		return libvlc_media_player_get_state(vlc_player);
 	}
 }

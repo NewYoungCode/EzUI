@@ -485,7 +485,7 @@ Event(this , ##__VA_ARGS__); \
 					pt.DrawRectangle(color, Rect{ 0,0,_rect.Width,_rect.Height });
 				}
 				if (!Name.empty()) {
-					pt.DrawString(Name, GetFontFamily(), GetFontSize(), color, RectF(0, 0, Width(), Height()), TextAlign::MiddleLeft);
+					pt.DrawString(Name, GetFontFamily(), GetFontSize(), color,_rect, TextAlign::MiddleLeft);
 				}
 			}
 #endif

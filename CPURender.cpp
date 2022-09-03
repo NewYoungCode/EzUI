@@ -203,9 +203,9 @@ namespace EzUI {
 			base->FillRectangle(brush, rect);
 		}
 	}
-	void CPURender::DrawString(const EString& text, const EString& fontFamily, int fontSize, const Color& color, const RectF& _rect, TextAlign textAlign, bool underLine)
+	void CPURender::DrawString(const EString& text, const EString& fontFamily, int fontSize, const Color& color, const Rect& _rect, TextAlign textAlign, bool underLine)
 	{
-		RectF rect = _rect;
+		RectF rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 		SafeObject<Gdiplus::Font> font(CreateFont(fontFamily, fontSize));
