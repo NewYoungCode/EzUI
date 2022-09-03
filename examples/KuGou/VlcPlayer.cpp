@@ -75,7 +75,7 @@ namespace EzUI {
 				Size sz{ (INT)zoomWidth,clientHeight };
 				int x = (clientWidth - sz.Width) / 2 + rect.X;
 				pArg.Painter.DrawImage(image, Rect{ x  , rect.Y, sz.Width, sz.Height });
-			}
+			}            
 			delete image;
 		}
 	}

@@ -103,24 +103,27 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 				}
 
 
+
 				if (bkImage) {
 					delete bkImage;
 				}
 
-				WCHAR buf[513]{ 0 };
-				::GetTempPathW(512, buf);
-				std::wstring file(buf);
-				Path::Create(EString(file + L"KuGou"));
-				file += L"KuGou\\a.png";
-
-				WebClient wc2;
-				wc2.DownloadFile(bkurl, EString(file).c_str());
+				if (!bkurl.empty()) {
+					WCHAR buf[513]{ 0 };
+					::GetTempPathW(512, buf);
+					std::wstring file(buf);
+					Path::Create(EString(file + L"KuGou"));
+					file += L"KuGou\\a.png";
+					WebClient wc2;
+					wc2.DownloadFile(bkurl, EString(file).c_str());
+					bkImage = new Image(file);
+				}
+				else {
+					bkImage = new Image(L"imgs/defaultBackground.png");
+				}
 
 				auto main = FindControl("main");
-
-				bkImage = new Image(file);
 				bkImage->SizeMode = Image::SizeMode::CenterImage;
-
 
 				Song* tag = (Song*)sender->Tag;
 				SongItem* it = new SongItem(tag->SongName, toTimeStr(tag->Duration));

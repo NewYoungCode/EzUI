@@ -287,7 +287,7 @@ namespace EzUI {
 				_lastPoint = point;
 				OnMove(point);
 			}
-			
+
 			return TRUE;
 		}
 
@@ -418,7 +418,6 @@ namespace EzUI {
 
 	void Window::OnPaint(HDC winHDC, const Rect& rePaintRect)
 	{
-		//StopWatch stopWatch;
 		EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height, 24);//
 		Painter pt(memBitmap.GetHDC());
 		PaintEventArgs args(pt);
@@ -426,10 +425,6 @@ namespace EzUI {
 		args.HWnd = _hWnd;
 		MainLayout->OnEvent(Event::OnPaint, &args);//
 		::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetHDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//
-		//time_t ms = stopWatch.ElapsedMilliseconds();//
-		//CHAR buf[256]{ 0 };
-		//sprintf_s(buf, "GDIPaint %d %d   %d ms \n", rePaintRect.Width, rePaintRect.Height, (int)ms);
-		//OutputDebugStringA(buf);
 	}
 
 	bool Window::IsInWindow(Control& pControl, Control& it) {

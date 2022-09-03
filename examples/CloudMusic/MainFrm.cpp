@@ -167,7 +167,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	songName.SetRect({ 73,15 , 155, 23 });
 	songName.SetText(L"Smile Again한국어");
 	songName.Style.FontSize = (10);
-	songName.TextAlign=(TextAlign::MiddleLeft);
+	songName.TextAlign = (TextAlign::MiddleLeft);
 	bottom_left.AddControl(&songName);
 
 	singer.SetRect({ 73,39 , 165, 23 });
@@ -260,12 +260,22 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	SetLayout(&laout);
 }
 
+void MainFrm::OnSize(const Size& sz)
+{
+	StopWatch sw;
+	__super::OnSize(sz);
+	char buf[256]{ 0 };
+	sprintf_s(buf, "OnSize %dms\n", sw.ElapsedMilliseconds());
+	OutputDebugStringA(buf);
+}
+
 void MainFrm::OnPaint(HDC hdc, const Rect& _rect)
 {
-	__super::OnPaint(hdc, _rect);
 	StopWatch sw;
 	__super::OnPaint(hdc, _rect);
-	Debug::Log("Paint %dms", sw.ElapsedMilliseconds());
+	char buf[256]{ 0 };
+	sprintf_s(buf, "OnPaint %dms\n", sw.ElapsedMilliseconds());
+	OutputDebugStringA(buf);
 }
 
 void MainFrm::OnDestroy()

@@ -21,7 +21,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	StopWatch sw;
 	MainFrm form(1022, 670);
 	form.Zoom = true;
-	form.CloseShadow();//关闭窗口阴影
+	//form.CloseShadow();//关闭窗口阴影
 
 	//form.SetLayout(UIManager::LoadLayout(utf8("../html/layout.html")));
 	//form.MainLayout->Style.BackgroundColor = "rgb(255,100,255)";
