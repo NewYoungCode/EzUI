@@ -105,6 +105,15 @@ namespace EzUI {
 			StringToRect(rect);
 			return *this;
 		}
+		_Rect(const RECT& winRect) {
+			X = winRect.left;
+			Y = winRect.top;
+			Width = winRect.right - winRect.left;
+			Height = winRect.bottom - winRect.top;
+		}
+		RECT WinRECT() {
+			return RECT{ X,Y,GetRight(),GetBottom() };
+		}
 	}Rect;
 
 	class UI_EXPORT _Bitamp :public  Gdiplus::Bitmap {

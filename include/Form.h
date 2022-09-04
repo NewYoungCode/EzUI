@@ -2,7 +2,7 @@
 #include "Window.h"
 #include "BoxShadow.h"
 namespace EzUI {
-#define SHADOWWIDTH 12
+#define SHADOWWIDTH 20
 	//经典带边框WIN32窗口样式
 	class UI_EXPORT FrameWindow :public Window
 	{
@@ -49,5 +49,5 @@ namespace EzUI {
 		LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
 		virtual void Show(int cmdShow = SW_SHOW);
 	};
-	using Form = BorderlessWindow;
+	using Form = LayeredWindow;
 };

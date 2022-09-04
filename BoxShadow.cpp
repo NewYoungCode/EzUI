@@ -130,6 +130,9 @@ namespace EzUI {
 		}
 #endif
 
+		auto rectWin = rect.WinRECT();
+		SaveHDCToFile(_bufBitmap->GetHDC(), &rectWin, L"image/png", L"d:/bb.png");
+
 		POINT point{ 0,0 };
 		SIZE size{ rect.Width,  rect.Height };
 		BLENDFUNCTION blend;

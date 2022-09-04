@@ -33,6 +33,9 @@
     <ClCompile Include="LrcControl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="main222.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="global.h">

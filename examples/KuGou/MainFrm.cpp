@@ -1,7 +1,7 @@
 #include "MainFrm.h"
 void MainFrm::InitForm() {
 	this->Zoom = true;
-	//CloseShadow();
+	CloseShadow();
 	this->SetLayout(ui::UIManager::LoadLayout("xml/main.htm"));
 	auto main2 = FindControl("main2");
 	main2->Style.BackgroundColor = Color(120, 0, 0, 0);

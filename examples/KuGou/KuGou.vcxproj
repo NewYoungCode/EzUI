@@ -151,6 +151,7 @@
     <ClCompile Include="global.cpp" />
     <ClCompile Include="LrcControl.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="main222.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="VlcPlayer.cpp" />
   </ItemGroup>
