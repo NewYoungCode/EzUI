@@ -46,12 +46,12 @@ namespace EzUI {
 			args.Painter.DrawString(_text, GetFontFamily(this->State), GetFontSize(this->State), GetForeColor(this->State), Rect(x, 0, cx, (float)_rect.Height), TextAlign, _underline);
 		}
 		int y = (Height() - fontHeight) / 2;
-		args.Painter.FillRectangle(Color::White, Rect(0, y, fontHeight, fontHeight), fontHeight);
+		args.Painter.FillRectangle(Rect(0, y, fontHeight, fontHeight), Color::White,  fontHeight);
 		if (!_checked) {
-			args.Painter.FillRectangle(Color::Gray, Rect(0 + 2, y + 2, fontHeight - 4, fontHeight - 4), fontHeight - 4);
+			args.Painter.FillRectangle(Rect(0 + 2, y + 2, fontHeight - 4, fontHeight - 4), Color::Gray,  fontHeight - 4);
 		}
 		else {
-			args.Painter.FillRectangle(Color(200, 0, 160, 0), Rect(0 + 2, y + 2, fontHeight - 4, fontHeight - 4), fontHeight - 4);
+			args.Painter.FillRectangle(Rect(0 + 2, y + 2, fontHeight - 4, fontHeight - 4), Color(200, 0, 160, 0),  fontHeight - 4);
 		}
 
 	}

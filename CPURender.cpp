@@ -18,9 +18,6 @@ namespace EzUI {
 		Gdiplus::Font* _bufFont = new Gdiplus::Font(&ff, (float)fontSize);
 		return _bufFont;
 	}
-	Image::Image(const EString& filename) :Gdiplus::Image(filename.utf16().c_str()) {}
-	Image::~Image() {
-	}
 
 	void RenderInitialize()
 	{
@@ -62,11 +59,7 @@ namespace EzUI {
 		path.CloseFigure();
 	}
 
-	CPURender::CPURender(Bitmap* image)
-	{
-		base = new  Gdiplus::Graphics(image);
-		HighQualityMode(base);
-	}
+
 	CPURender::CPURender(HDC hdc)
 	{
 		DC = hdc;
@@ -165,7 +158,7 @@ namespace EzUI {
 		}
 	}
 
-	void CPURender::DrawRectangle(const Color& color, const Rect& _rect, int width, int radius)
+	void CPURender::DrawRectangle(const Rect& _rect, const Color& color,  int width, int radius)
 	{
 		if (color.GetA() == 0) {
 			return;
@@ -184,7 +177,7 @@ namespace EzUI {
 			base->DrawRectangle(pen, rect);
 		}
 	}
-	void CPURender::FillRectangle(const Color& color, const Rect& _rect, int radius)
+	void CPURender::FillRectangle(const Rect& _rect, const Color& color,  int radius)
 	{
 		if (color.GetA() == 0) {
 			return;
@@ -205,6 +198,7 @@ namespace EzUI {
 	}
 	void CPURender::DrawString(const EString& text, const EString& fontFamily, int fontSize, const Color& color, const Rect& _rect, TextAlign textAlign, bool underLine)
 	{
+		//return;
 		RectF rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
@@ -254,30 +248,19 @@ namespace EzUI {
 		base->DrawLine(pen, A, B);
 	}
 
-	void CPURender::DrawImage(Bitmap* image, const Rect& _rect) {
-		if (!image || image->GetLastStatus() != Gdiplus::Status::Ok) return;
-		Rect rect = _rect;
-		rect.X += OffsetX;
-		rect.Y += OffsetY;
-		base->DrawImage(image, RectF(rect.X, rect.Y, rect.Width, rect.Height));
-	}
-	void CPURender::DrawImage(Image* image, const Rect& _rect, int radius)
+	void CPURender::DrawImage(Gdiplus::Image* image, const Rect& _rect, const ImageSizeMode& imageSizeMode, const Margin& margin)
 	{
 		if (!image || image->GetLastStatus() != Gdiplus::Status::Ok) return;
 		Rect rect = _rect;
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 
-		rect.X += image->Margin.Left;
-		rect.Y += image->Margin.Top;
-		rect.Width -= image->Margin.Right * 2;
-		rect.Height -= image->Margin.Bottom * 2;
+		rect.X += margin.Left;
+		rect.Y += margin.Top;
+		rect.Width -= margin.Right * 2;
+		rect.Height -= margin.Bottom * 2;
 
-		if (image->SizeMode == Image::SizeMode::StretchImage) {
-			base->DrawImage(image, rect);
-			return;
-		}
-		if (image->SizeMode == Image::SizeMode::Zoom) {
+		if (imageSizeMode == ImageSizeMode::Zoom) {
 			//客户端数据
 			const int& clientWidth = rect.Width;
 			const int& clientHeight = rect.Height;
@@ -300,7 +283,7 @@ namespace EzUI {
 			}
 			return;
 		}
-		if (image->SizeMode == Image::SizeMode::CenterImage) {
+		if (imageSizeMode == ImageSizeMode::CenterImage) {
 			//客户端数据
 			const int& clientWidth = rect.Width;
 			const int& clientHeight = rect.Height;
@@ -328,47 +311,9 @@ namespace EzUI {
 			return;
 		}
 
-		if (radius > 0) {
-			/*	Bitmap* bitmap(0);
-				ClipImage(image, { rect.Width,rect.Height }, radius, &bitmap);
-				base->DrawImage(bitmap, rect);*/
-				//#if 1 //GDI+绘制
-				//#else //Gdi绘制
-				//		HBITMAP outHMap;
-				//		bitmap->GetHBITMAP(Color::Transparent, &outHMap);
-				//		HDC hdc = ::CreateCompatibleDC(DC);
-				//		HGDIOBJ	_hgdiobj = ::SelectObject(hdc, outHMap);
-				//		int srcWidth = bitmap->GetWidth();
-				//		int srcHeight = bitmap->GetHeight();
-				//		int srcX = Layer.X > rect.X ? srcWidth - Layer.Width : 0;
-				//		int srcY = Layer.Y > rect.Y ? srcHeight - Layer.Height : 0;
-				//		//::BitBlt(DC, Layer.X, Layer.Y, Layer.Width, Layer.Height, hdc, srcX, srcY, SRCCOPY);
-				//		BLENDFUNCTION blend;
-				//		blend.BlendOp = AC_SRC_OVER;
-				//		blend.BlendFlags = 0;
-				//		blend.AlphaFormat = AC_SRC_ALPHA;
-				//		blend.SourceConstantAlpha = 255;
-				//		//::AlphaBlend(DC, Layer.X, Layer.Y, Layer.Width, Layer.Height, hdc, srcX, srcY, Layer.Width, Layer.Height, blend);
-				//		::StretchBlt(DC, Layer.X, Layer.Y, Layer.Width, Layer.Height, hdc, srcX, srcY, srcWidth, srcHeight, SRCCOPY);
-				//
-				//		::SelectObject(hdc, _hgdiobj);
-				//		::DeleteDC(hdc);
-				//		::DeleteBitmap(outHMap);
-				//#endif
-				//delete bitmap;
-			return;
+		if (imageSizeMode == ImageSizeMode::StretchImage || true) {
+			base->DrawImage(image, rect);
 		}
-		//int srcWidth = image->GetWidth();
-		//int srcHeight = image->GetHeight();
-		//if (srcWidth == rect.Width && srcHeight == rect.Height) {
-		//	base->DrawImage(image, rect.X, rect.Y);
-		//	return;
-		//}
-		//if (srcWidth ==48 && srcHeight == 46) {
-		//	int pause = 0;
-		//}
-		//base->DrawImage(image, rect);
-		base->DrawImage(image, rect);
 	}
 
 	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)

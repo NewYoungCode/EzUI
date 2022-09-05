@@ -8,7 +8,7 @@
 #pragma comment(lib,"libvlc.lib")
 #pragma comment(lib,"libvlccore.lib")
 namespace EzUI {
-	class VlcPlayer :public Label
+	class VlcPlayer :public Control
 	{
 	private:
 		libvlc_instance_t* vlc_inst = NULL;

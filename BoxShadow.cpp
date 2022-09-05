@@ -20,7 +20,7 @@ namespace EzUI {
 		iSize = (int)iSize < max_size ? iSize : max_size;
 		double piAngle = 3.1415926;
 		int iSizeB = 4 * iSize;
-		double fN = piAngle / iSize / 4.1;//设置四条边外模糊度
+		double fN = piAngle / iSize / 5;//设置四条边外模糊度
 		double lN = 1.0 / iSize;
 		int iAplpha = 0;
 		int Left = iSize + radius,
@@ -119,7 +119,7 @@ namespace EzUI {
 #if D2DPAINT
 		SetShadow(rect.Width, rect.Height, _shadowWidth);
 #else
-		Painter pt(_bufBitmap->GetHDC());
+		Painter pt(_bufBitmap->GetDC());
 		if (BackgroundImage) {//用于异形窗口
 			pt.CreateLayer(clipRect, ClipMode::Invalid);
 			pt.DrawImage(BackgroundImage, rect);
@@ -129,10 +129,6 @@ namespace EzUI {
 			SetShadow(rect.Width, rect.Height, _shadowWidth);
 		}
 #endif
-
-		auto rectWin = rect.WinRECT();
-		SaveHDCToFile(_bufBitmap->GetHDC(), &rectWin, L"image/png", L"d:/bb.png");
-
 		POINT point{ 0,0 };
 		SIZE size{ rect.Width,  rect.Height };
 		BLENDFUNCTION blend;
@@ -140,25 +136,16 @@ namespace EzUI {
 		blend.BlendFlags = 0;
 		blend.AlphaFormat = AC_SRC_ALPHA;
 		blend.SourceConstantAlpha = 255;
-		UpdateLayeredWindow(_hWnd, NULL, NULL, &size, _bufBitmap->GetHDC(), &point, 0, &blend, ULW_ALPHA);//。。。。。。更新分层窗口
-
-
-
+		UpdateLayeredWindow(_hWnd, NULL, NULL, &size, _bufBitmap->GetDC(), &point, 0, &blend, ULW_ALPHA);//。。。。。。更新分层窗口
 
 	}
 
 	BoxShadow::~BoxShadow()
 	{
 		::SendMessage(_hWnd, WM_DESTROY, 0, 0);
-
-
-
 		if (_bufBitmap) {
 			delete _bufBitmap;
 		}
-
-
-
 	}
 
 };

@@ -52,7 +52,7 @@ namespace EzUI {
 		if (_sliderHeight >= _rect.Height) {
 			return;
 		}
-		e.Painter.FillRectangle(GetBackgroundColor(), Rect{ 0,0,_rect.Width,_rect.Height });
+		e.Painter.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height },GetBackgroundColor());
 	}
 
 	void VScrollBar::OnLayout(const Size& size, bool fast) {
@@ -77,7 +77,7 @@ namespace EzUI {
 		if (radius > sliderRect.Height) {
 			radius = sliderRect.Height;
 		}
-		args.Painter.FillRectangle(GetForeColor(this->State), sliderRect, radius);
+		args.Painter.FillRectangle(sliderRect, GetForeColor(this->State), radius);
 	}
 
 	void VScrollBar::OnMouseDown(MouseButton mBtn, const Point& point) {

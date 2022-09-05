@@ -12,6 +12,9 @@ void LrcControl::ChangePostion(int postion)
 	if (this->GetRect().IsEmptyArea()) {
 		return;
 	}
+	if (LrcNow == NULL) {
+		return;
+	}
 	VerticalCenter = this->Height() / 2 - (marginVertical + FontHeight) / 2;
 	offsetY = LrcNow->point.Y - VerticalCenter;
 }
@@ -22,7 +25,7 @@ void LrcControl::OnTimer()
 		return;
 	}
 	offsetY = LrcNow->point.Y - VerticalCenter;
-	if (std::abs(offsetY) <=3)
+	if (std::abs(offsetY) <=2)
 	{
 		return;
 	}
@@ -31,11 +34,11 @@ void LrcControl::OnTimer()
 		Lrc* lrc = item;
 		if (offsetY < 0)
 		{
-			lrc->point.Y += 3;
+			lrc->point.Y += 2;
 		}
 		else
 		{
-			lrc->point.Y -= 3;
+			lrc->point.Y -= 2;
 		}
 	}
 	Refresh();
@@ -111,7 +114,7 @@ void LrcControl::LoadLrc(const EString& lrcData)
 	if (LrcList.size() > 0)
 	{
 	
-		SetTimer(10);
+		SetTimer(2);
 		LrcNow = LrcList[0];//如果有一句歌词默认是第一句歌词变色
 	}
 }

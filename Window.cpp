@@ -419,12 +419,12 @@ namespace EzUI {
 	void Window::OnPaint(HDC winHDC, const Rect& rePaintRect)
 	{
 		EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height, 24);//
-		Painter pt(memBitmap.GetHDC());
+		Painter pt(memBitmap.GetDC());
 		PaintEventArgs args(pt);
 		args.InvalidRectangle = rePaintRect;
 		args.HWnd = _hWnd;
 		MainLayout->OnEvent(Event::OnPaint, &args);//
-		::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetHDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//
+		::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//
 	}
 
 	bool Window::IsInWindow(Control& pControl, Control& it) {

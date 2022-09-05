@@ -52,7 +52,7 @@ namespace EzUI {
 			bmih.biSizeImage = width * height * _bitCount;
 			_bitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, &point, NULL, 0);
 		}
-		HDC& GetHDC() {
+		HDC& GetDC() {
 			if (!_hdc) {
 				_hdc = ::CreateCompatibleDC(NULL);
 				_hgdiobj = ::SelectObject(_hdc, _bitmap);
@@ -67,7 +67,7 @@ namespace EzUI {
 			}
 		}
 	};
-	using Bitmap = Gdiplus::Bitmap;
+	//using Bitmap = Gdiplus::Bitmap;
 	//using Rect = Gdiplus::Rect;
 	using RectF = Gdiplus::RectF;
 	using Size = Gdiplus::Size;
@@ -116,55 +116,39 @@ namespace EzUI {
 		}
 	}Rect;
 
-	class UI_EXPORT _Bitamp :public  Gdiplus::Bitmap {
-	public:
-		_Bitamp(const EBitmap& eBitmap) :Gdiplus::Bitmap(&eBitmap.bmi, eBitmap.point) {}
+
+	enum class ImageSizeMode {
+		//
+		// 摘要:
+		//     Owner控件 中的图像被拉伸或收缩，以适合 Owner控件
+		//     的大小。
+		StretchImage = 1,
+		// 摘要:
+		//     如果 Owner控件 比图像大，则图像将居中显示。如果图像比 Owner控件
+		//     大，则图片将居于 Owner控件 中心，而外边缘将被剪裁掉。
+		CenterImage = 3,
+		//
+		// 摘要:
+		//     图像大小按其原有的大小比例被增加或减小。
+		Zoom = 4
 	};
 
-	class UI_EXPORT  Image :public  Gdiplus::Image {
+	class UI_EXPORT UIImageBase {
 	public:
-		//边距
-		EzUI::Margin Margin;
-		enum class SizeMode {
-			//
-			// 摘要:
-			//     Owner控件 中的图像被拉伸或收缩，以适合 Owner控件
-			//     的大小。
-			StretchImage = 1,
-			// 摘要:
-			//     如果 Owner控件 比图像大，则图像将居中显示。如果图像比 Owner控件
-			//     大，则图片将居于 Owner控件 中心，而外边缘将被剪裁掉。
-			CenterImage = 3,
-			//
-			// 摘要:
-			//     图像大小按其原有的大小比例被增加或减小。
-			Zoom = 4
-		};
-		//图像显示模式
-		Image::SizeMode SizeMode = Image::SizeMode::Zoom;
-		Image(const EString& filename);
-		virtual ~Image();
-		Image(Gdiplus::GpImage* nativeImage, Gdiplus::Status status) :Gdiplus::Image(nativeImage, status) {}
+		EzUI::Margin Margin;// 控件与图片的距离 该数值越大 图片将越小
+		ImageSizeMode SizeMode = ImageSizeMode::Zoom;// 图像显示模式
 	};
-	//class HImage {
-	//private:
-	//	void Clone(const Image* img);
-	//public:
-	//	int ref = 0;
-	//	bool valid = false;
-	//	Image* value = NULL;
-	//	HImage(const HImage& img);
-	//	HImage& operator=(const HImage& img);
-	//	HImage();
-	//	void operator=(const Image* img);
-	//	operator Image* ();
-	//	Image* operator->();
-	//	~HImage();
-	//};
-
+	typedef class UI_EXPORT _Bitmap :public Gdiplus::Bitmap, public UIImageBase {
+	public:
+		virtual ~_Bitmap() {}
+		_Bitmap(const EString& fileName) :Gdiplus::Bitmap(fileName.utf16().c_str()) {}
+		_Bitmap(const EBitmap* eBitmap) :Gdiplus::Bitmap(&eBitmap->bmi, eBitmap->point) {}
+		_Bitmap(INT width, INT height, Gdiplus::PixelFormat pixelFormat = PixelFormat32bppARGB) :Gdiplus::Bitmap(width, height, pixelFormat) {}
+	} Image;
 #define HImage Tuple<Image*>
-	void HighQualityMode(Gdiplus::Graphics* graphics);
-	void CreateRectangle(GraphicsPath& path, const Rect& rect, int radius);//申明
+
+	extern void HighQualityMode(Gdiplus::Graphics* graphics);
+	extern void CreateRectangle(GraphicsPath& path, const Rect& rect, int radius);//申明
 #define Align_Top  1
 #define Align_Bottom  2
 #define Align_Left  4
@@ -218,13 +202,6 @@ namespace EzUI {
 		//     内容在垂直方向上底边对齐，在水平方向上右边对齐。
 		BottomRight = Align_Bottom | Align_Right
 	};
-	enum class ImageSizeMode {
-		Normal,//
-		StretchImage,//拉伸
-		Zoom,//自动根据比例居中
-		Clip//根据宽高自动裁剪
-	};
-
 
 	typedef struct _Color :Gdiplus::Color {
 	public:
@@ -330,12 +307,11 @@ namespace EzUI {
 		HDC DC = NULL;
 		int OffsetX = 0;
 		int OffsetY = 0;
-		CPURender(Bitmap* image);
 		CPURender(HDC hdc);
 		CPURender(HWND hWnd);
 		virtual ~CPURender();
-		void DrawRectangle(const Color& color, const Rect& rect, int width = 1, int radius = 0);
-		void FillRectangle(const Color& color, const Rect& rect, int radius = 0);
+		void DrawRectangle(const Rect& rect, const Color& color,  int width = 1, int radius = 0);
+		void FillRectangle(const Rect& rect, const Color& color,int radius = 0);
 		void DrawString(const EString& text, const EString& fontFamily, int fontSize, const Color& color, const Rect& rect, TextAlign textAlign, bool underLine = false);
 		void MeasureString(const EString& _text, const EString& fontf, int fontSize, RectF& outBox);
 		//未计算偏移 预留暂不使用
@@ -343,8 +319,7 @@ namespace EzUI {
 		void CreateLayer(const Rect& rect, ClipMode clipMode = ClipMode::Valid, int radius = 0);
 		void PopLayer();
 		void DrawLine(const Color& color, const Point& A, const Point& B, int width = 1);
-		void DrawImage(Bitmap* image, const Rect& _rect);
-		void DrawImage(Image* image, const Rect& rect, int radius = 0);
+		void DrawImage(Gdiplus::Image* image, const Rect& rect, const ImageSizeMode& imageSizeMode = ImageSizeMode::Zoom, const Margin& margin = 0);
 		void SaveImage(const WCHAR* format, const WCHAR* fileName, const Size& size);
 	};
 	void RenderInitialize();

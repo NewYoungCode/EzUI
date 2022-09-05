@@ -36,7 +36,7 @@ public:
 	SongItem(const EString& _songName, const EString& _songTime = "03:56") {
 		songName.SetText(_songName);
 		songName.TextAlign = TextAlign::MiddleLeft;
-		songName.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
+		songName.MousePassThrough = Event::OnHover | Event::OnActive;
 
 		time.SetFixedWidth(50);
 		time.SetText(_songTime);

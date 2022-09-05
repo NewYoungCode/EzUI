@@ -9,6 +9,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	ui::Application app;
 	mvicon = new Image(L"imgs/mvicon.png");
+	
 
 	MainFrm frm;
 	frm.Show();

@@ -1,15 +1,13 @@
 #include "MainFrm.h"
 void MainFrm::InitForm() {
 	this->Zoom = true;
-	CloseShadow();
+	//CloseShadow();
 	this->SetLayout(ui::UIManager::LoadLayout("xml/main.htm"));
 	auto main2 = FindControl("main2");
 	main2->Style.BackgroundColor = Color(120, 0, 0, 0);
 
-
 	FindControl("lrcView2")->AddControl(&lrcCtl);//添加歌词控件
 	lrcCtl._hWnd = _hWnd;
-
 
 	localList = (VList*)this->FindControl("playList");
 	searchList = (VList*)this->FindControl("searchList");
@@ -39,15 +37,10 @@ void MainFrm::InitForm() {
 		NextPage(a, b);
 	};
 
-	player.Style.FontSize = 15;
-	player.Style.ForeColor = Color::White;
-	player.TextAlign = TextAlign::TopLeft;
-	player.SetText(L"EzUI框架QQ群:758485934");
-
 	FindControl("vlcDock")->AddControl(&player);
 	SongView();
 
-	SetTimer(10);
+	SetTimer(100);
 }
 MainFrm::MainFrm() :Form(1000, 670)
 {
@@ -135,7 +128,7 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 				}
 
 				auto main = FindControl("main");
-				bkImage->SizeMode = Image::SizeMode::CenterImage;
+				bkImage->SizeMode = ImageSizeMode::CenterImage;
 
 				Song* tag = (Song*)sender->Tag;
 				SongItem* it = new SongItem(tag->SongName, toTimeStr(tag->Duration));
@@ -250,36 +243,6 @@ void  MainFrm::LrcView() {
 	main->Refresh();
 }
 void MainFrm::OnPaint(HDC DC, const Rect& rect) {
-
-	if (0) {
-		Painter pt(DC);
-		static Bitmap* image = Gdiplus::Bitmap::FromFile(L"d:\\test.jpg");
-		//客户端数据
-		const int& clientWidth = rect.Width;
-		const int& clientHeight = rect.Height;
-		double clientRate = clientWidth * 1.0 / clientHeight;
-		//图片数据
-		int imgWidth = image->GetWidth();
-		int imgHeight = image->GetHeight();
-		double imgRate = imgWidth * 1.0 / imgHeight;
-		if (clientRate < imgRate) {
-			//1000 670 客户端
-			//1000 300 图片
-			//2233 670     缩放后的图片大小 
-			int mabyeWidth = clientHeight * 1.0 / imgHeight * imgWidth + 0.5;//图片应该这么宽才对
-			int x = (mabyeWidth - clientWidth) * 1.0 / 2 + 0.5;
-			pt.DrawImage(image, { rect.X - x,rect.Y,mabyeWidth,clientHeight });
-		}
-		else {
-			//1000 600 客户端
-			//400  600 图片
-			//1000 1500     缩放后的图片大小 
-			int mabyeHeight = clientWidth * 1.0 / imgWidth * imgHeight + 0.5;//图片应该这么高才对
-			int y = (mabyeHeight - clientHeight) * 1.0 / 2 + 0.5;
-			pt.DrawImage(image, { rect.X,  rect.Y - y  , clientWidth, mabyeHeight });
-		}
-		return;
-	}
 	__super::OnPaint(DC, rect);
 	//::StretchBlt(DC, 0, 0, destWidth, destHeight, hdc, 0, 0, 1000, 800, SRCCOPY);
 	//::BitBlt(DC, 0, 0, destWidth, destHeight, hdc, srcHeight-aa,0, SRCCOPY);

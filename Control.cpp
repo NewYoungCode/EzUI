@@ -51,17 +51,17 @@ Event(this , ##__VA_ARGS__); \
 		HImage backgroundImage = GetBackgroundImage();
 		UI_Int radius = GetRadius();
 		if (backgroundColor.valid) {
-			e.Painter.FillRectangle(backgroundColor, Rect{ 0,0,_rect.Width,_rect.Height }, radius);
+			e.Painter.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height },backgroundColor, radius);
 		}
 		if (backgroundImage.valid) {
-			e.Painter.DrawImage(backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, radius);
+			e.Painter.DrawImage(backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height } , backgroundImage.value->SizeMode, backgroundImage.value->Margin);
 		}
 	}
 	void Control::OnForePaint(PaintEventArgs& e) {
 		HImage foreImage = GetForeImage();
 		UI_Int radius = GetRadius();
 		if (foreImage.valid) {
-			e.Painter.DrawImage(foreImage, Rect{ 0,0,_rect.Width,_rect.Height }, radius);
+			e.Painter.DrawImage(foreImage, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage.value->SizeMode, foreImage.value->Margin);
 		}
 	}
 	void Control::OnBorderPaint(PaintEventArgs& e)
@@ -79,7 +79,7 @@ Event(this , ##__VA_ARGS__); \
 		if (!hasBorder) return;//±ß¿òÎª0²»»æÖÆ
 
 		if (radius > 0 && hasBorder) {
-			e.Painter.DrawRectangle(borderColor, Rect{ 0,0,_rect.Width,_rect.Height }, borderLeft, radius);
+			e.Painter.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, borderColor, borderLeft, radius);
 			return;
 		}
 		if (borderLeft > 0) {
