@@ -66,7 +66,6 @@ public:
 	MainFrm(int width, int height);
 	//WS_OVERLAPPEDWINDOW
 	void OnSize(const Size& sz) override;
-	void OnPaint(HDC hdc, const Rect& rect) override;
 	void OnDestroy();
 };
 

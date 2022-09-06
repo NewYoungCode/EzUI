@@ -28,7 +28,14 @@ namespace EzUI {
 		_boxShadow = new BoxShadow(width, height, _hWnd);
 		_boxShadow->Update(_shadowWidth);
 	}
-
+	void BorderlessWindow::OnPaint(HDC hdc, const Rect& _rect)
+	{
+		StopWatch sw;
+		__super::OnPaint(hdc, _rect);
+		char buf[128]{ 0 };
+		sprintf_s(buf, "%d * %d OnPaint %dms\n", _rect.Width, _rect.Height,sw.ElapsedMilliseconds());
+		OutputDebugStringA(buf);
+	}
 	void BorderlessWindow::SetShadow(int width)
 	{
 		_shadowWidth = width;
@@ -152,7 +159,7 @@ namespace EzUI {
 		blend.BlendFlags = 0;
 		blend.AlphaFormat = AC_SRC_ALPHA;
 		blend.SourceConstantAlpha = 255;
-		UpdateLayeredWindow(_hWnd, NULL, NULL, &size, hdc, &point, 0, &blend, LWA_ALPHA);//
+		UpdateLayeredWindow(_hWnd, NULL, NULL, &size, hdc, &point, 0, &blend, ULW_OPAQUE);//
 	}
 
 	MenuWindow::MenuWindow(int cx, int cy, HWND owner) :BorderlessWindow(cx, cy, owner)

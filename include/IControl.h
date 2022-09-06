@@ -24,30 +24,6 @@ namespace EzUI {
 		Active,
 		Disable
 	};
-
-	enum AnchorStyle : int
-	{
-		//
-	  // 摘要:
-	  //     该控件不锚定到其容器的任何边缘。
-		None = 0,
-		//
-		// 摘要:
-		//     该控件定位到其容器上边缘。
-		Top = 1,
-		//
-		// 摘要:
-		//     该控件定位到其容器的下边缘。
-		Bottom = 2,
-		//
-		// 摘要:
-		//     该控件定位到其容器左边缘。
-		Left = 4,
-		//
-		// 摘要:
-		//     控件定位到其容器的右边缘。
-		Right = 8
-	};
 	enum class DockStyle {
 		// 摘要:
 		//未设置

@@ -269,14 +269,7 @@ void MainFrm::OnSize(const Size& sz)
 	OutputDebugStringA(buf);
 }
 
-void MainFrm::OnPaint(HDC hdc, const Rect& _rect)
-{
-	StopWatch sw;
-	__super::OnPaint(hdc, _rect);
-	char buf[256]{ 0 };
-	sprintf_s(buf, "OnPaint %dms\n", sw.ElapsedMilliseconds());
-	OutputDebugStringA(buf);
-}
+
 
 void MainFrm::OnDestroy()
 {

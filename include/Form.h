@@ -10,6 +10,7 @@ namespace EzUI {
 	protected:
 		void OnRect(const Rect& rect) override;
 		LRESULT  WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
+		void OnPaint(HDC hdc, const Rect& _rect) override;
 	public:
 		BoxShadow* _boxShadow = NULL;
 		void SetShadow(int width);
@@ -47,5 +48,5 @@ namespace EzUI {
 	//Window 经典带边框WIN32窗口样式
 	//BorderlessWindow 无边框带阴影的窗口 常规接受WM_PAINT消息
 	//LayeredWindow //无边框 带阴影 分层窗口 不接受WM_PAINT消息 与常规窗口绘制消息不同 优点:屏幕外拖入窗体不会卡顿,不使用双缓冲 不闪烁 缺点:窗口大小发生改变时候会剧烈抖动(因为OnSize的时候会马上刷新)
-	using Form = Window;
+	using Form = BorderlessWindow;
 };

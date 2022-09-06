@@ -16,7 +16,7 @@ public:
 class LrcControl :
 	public Control
 {
-	int offsetY = 0;
+	float offsetY = 0;
 	Lrc* LrcNow = NULL;
 	/// <summary>
 	 /// 上下居中的Y坐标值

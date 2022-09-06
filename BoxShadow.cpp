@@ -116,9 +116,7 @@ namespace EzUI {
 		Rect rect{ 0,0,width, height };
 		////绘图
 
-#if D2DPAINT
-		SetShadow(rect.Width, rect.Height, _shadowWidth);
-#else
+
 		Painter pt(_bufBitmap->GetDC());
 		if (BackgroundImage) {//用于异形窗口
 			pt.CreateLayer(clipRect, ClipMode::Invalid);
@@ -128,7 +126,7 @@ namespace EzUI {
 		else {
 			SetShadow(rect.Width, rect.Height, _shadowWidth);
 		}
-#endif
+
 		POINT point{ 0,0 };
 		SIZE size{ rect.Width,  rect.Height };
 		BLENDFUNCTION blend;

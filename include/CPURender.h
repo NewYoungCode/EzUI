@@ -111,7 +111,7 @@ namespace EzUI {
 			Width = winRect.right - winRect.left;
 			Height = winRect.bottom - winRect.top;
 		}
-		RECT WinRECT() {
+		RECT WinRECT() const {
 			return RECT{ X,Y,GetRight(),GetBottom() };
 		}
 	}Rect;
@@ -149,14 +149,23 @@ namespace EzUI {
 
 	extern void HighQualityMode(Gdiplus::Graphics* graphics);
 	extern void CreateRectangle(GraphicsPath& path, const Rect& rect, int radius);//申明
+
+#if 0 //GDI+
 #define Align_Top  1
 #define Align_Bottom  2
 #define Align_Left  4
 #define Align_Right  8
 #define Align_Mid  16
 #define Align_Center  32
-
-	enum class  Align :int
+#else //GDI
+#define Align_Top  DT_TOP
+#define Align_Bottom  DT_BOTTOM
+#define Align_Left  DT_LEFT
+#define Align_Right  DT_RIGHT
+#define Align_Mid   DT_VCENTER
+#define Align_Center   DT_CENTER
+#endif
+	enum class Align :int
 	{
 		Top = Align_Top,
 		Bottom = Align_Bottom,
@@ -165,7 +174,7 @@ namespace EzUI {
 		Mid = Align_Mid,
 		Center = Align_Center
 	};
-	enum class TextAlign :int {
+	enum  class TextAlign :int {
 		// 摘要: 
 		   //     内容在垂直方向上顶部对齐，在水平方向上左边对齐。
 		TopLeft = Align_Top | Align_Left,
@@ -310,8 +319,8 @@ namespace EzUI {
 		CPURender(HDC hdc);
 		CPURender(HWND hWnd);
 		virtual ~CPURender();
-		void DrawRectangle(const Rect& rect, const Color& color,  int width = 1, int radius = 0);
-		void FillRectangle(const Rect& rect, const Color& color,int radius = 0);
+		void DrawRectangle(const Rect& rect, const Color& color, int width = 1, int radius = 0);
+		void FillRectangle(const Rect& rect, const Color& color, int radius = 0);
 		void DrawString(const EString& text, const EString& fontFamily, int fontSize, const Color& color, const Rect& rect, TextAlign textAlign, bool underLine = false);
 		void MeasureString(const EString& _text, const EString& fontf, int fontSize, RectF& outBox);
 		//未计算偏移 预留暂不使用
