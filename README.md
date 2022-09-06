@@ -15,7 +15,7 @@
 
 #include "VList.h"
 
-using namespace EzUi;
+using namespace EzUI;
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 _In_opt_ HINSTANCE hPrevInstance,
@@ -26,7 +26,7 @@ _In_opt_ HINSTANCE hPrevInstance,
 
 	Application app;
 
-	FrameWindow frm(800, 600);
+	Window frm(800, 600);
 	Layout layout;
 	layout.Style.BackgroundColor = Color::White;
 	TileLayout tile;
