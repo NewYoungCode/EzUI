@@ -51,17 +51,17 @@ Event(this , ##__VA_ARGS__); \
 		HImage backgroundImage = GetBackgroundImage();
 		UI_Int radius = GetRadius();
 		if (backgroundColor.valid) {
-			e.Painter.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height },backgroundColor, radius);
+			e.Painter.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, backgroundColor, radius);
 		}
 		if (backgroundImage.valid) {
-			e.Painter.DrawImage(backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height } , backgroundImage.value->SizeMode, backgroundImage.value->Margin);
+			e.Painter.DrawImage(backgroundImage.value, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage.value->SizeMode, backgroundImage.value->Margin);
 		}
 	}
 	void Control::OnForePaint(PaintEventArgs& e) {
 		HImage foreImage = GetForeImage();
 		UI_Int radius = GetRadius();
 		if (foreImage.valid) {
-			e.Painter.DrawImage(foreImage, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage.value->SizeMode, foreImage.value->Margin);
+			e.Painter.DrawImage(foreImage.value, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage.value->SizeMode, foreImage.value->Margin);
 		}
 	}
 	void Control::OnBorderPaint(PaintEventArgs& e)
@@ -315,6 +315,8 @@ Event(this , ##__VA_ARGS__); \
 	}
 	//专门处理鼠标消息的
 	void Control::OnMouseEvent(const MouseEventArgs& _args) {
+		if (_hWnd == NULL) return;
+		WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
 		MouseEventArgs& args = (MouseEventArgs&)_args;
 		if (CheckEventPassThrough(args.EventType)) {//检查鼠标穿透
 			this->Parent->OnMouseEvent(args);//如果设置了穿透就直接发送给上一层控件
@@ -322,19 +324,19 @@ Event(this , ##__VA_ARGS__); \
 		switch (args.EventType)
 		{
 		case Event::OnMouseWheel: {
-			if (!::SendMessage(_hWnd, WM_USER + 0x04, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+			if (!winData->Notify(WM_USER + 0x04, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 				OnMouseWheel(args.Delta, args.Location);
 			}
 			break;
 		}
 		case Event::OnMouseClick: {
-			if (!::SendMessage(_hWnd, WM_USER + 0x05, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+			if (!winData->Notify(WM_USER + 0x05, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 				OnMouseClick(args.Button, args.Location);
 			}
 			break;
 		}
 		case Event::OnMouseEnter: {
-			if (!::SendMessage(_hWnd, WM_USER + 0x06, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+			if (!winData->Notify(WM_USER + 0x06, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 				OnMouseEnter(args.Location);
 			}
 			break;
@@ -345,20 +347,20 @@ Event(this , ##__VA_ARGS__); \
 				OnMouseEvent(args);
 				_mouseIn = true;
 			}
-			if (!::SendMessage(_hWnd, WM_USER + 0x07, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+			if (!winData->Notify(WM_USER + 0x07, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 				OnMouseMove(args.Location);
 			}
 			break;
 		}
 		case Event::OnMouseDoubleClick: {
-			if (!::SendMessage(_hWnd, WM_USER + 0x08, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+			if (!winData->Notify(WM_USER + 0x08, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 				OnMouseDoubleClick(args.Button, args.Location);
 			}
 			break;
 		}
 		case Event::OnMouseDown: {
 			_mouseDown = true;
-			if (!::SendMessage(_hWnd, WM_USER + 0x09, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+			if (!winData->Notify(WM_USER + 0x09, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 				OnMouseDown(args.Button, args.Location);
 			}
 			break;
@@ -366,7 +368,7 @@ Event(this , ##__VA_ARGS__); \
 		case Event::OnMouseUp: {
 			bool isDown = _mouseDown;
 			_mouseDown = false;
-			if (!::SendMessage(_hWnd, WM_USER + 0x0a, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+			if (!winData->Notify(WM_USER + 0x0a, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 				OnMouseUp(args.Button, args.Location);
 			}
 			if (isDown) {
@@ -377,7 +379,7 @@ Event(this , ##__VA_ARGS__); \
 		}
 		case Event::OnMouseLeave: {
 			_mouseIn = false;
-			if (!::SendMessage(_hWnd, WM_USER + 0x0b, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+			if (!winData->Notify(WM_USER + 0x0b, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 				OnMouseLeave();
 			}
 			break;
@@ -479,13 +481,13 @@ Event(this , ##__VA_ARGS__); \
 				Color color(255 - bkColor.GetR(), 255 - bkColor.GetG(), 255 - bkColor.GetB());
 
 				if (this->State == ControlState::Hover) {
-					pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height },color);
+					pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, color);
 				}
 				else {
-					pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height },color);
+					pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, color);
 				}
 				if (!Name.empty()) {
-					pt.DrawString(Name, GetFontFamily(), GetFontSize(), color,_rect, TextAlign::MiddleLeft);
+					pt.DrawString(Name, GetFontFamily(), GetFontSize(), color, _rect, TextAlign::MiddleLeft);
 				}
 			}
 #endif
@@ -511,19 +513,19 @@ Event(this , ##__VA_ARGS__); \
 		this->ComputeClipRect();//这里要重新计算基于父控件的裁剪区域
 		OnSize(outSize);//然后才开始触发自身的特性 //布局控件会重载这个函数 对子控件调整rect
 		if (rePaint) {
-			Refresh();
+			Invalidate();
 		}
 	}
 	const Rect& Control::GetRect()
 	{
 		return _rect;
 	}
-	void Control::SetFixedWidth(int fixedWidth)
+	void Control::SetFixedWidth(const int& fixedWidth)
 	{
 		_rect.Width = fixedWidth;
 		_fixedWidth = fixedWidth;
 	}
-	void Control::SetFixedHeight(int fixedHeight)
+	void Control::SetFixedHeight(const int& fixedHeight)
 	{
 		_rect.Height = fixedHeight;
 		_fixedHeight = fixedHeight;
@@ -555,29 +557,38 @@ Event(this , ##__VA_ARGS__); \
 		}
 		_spacer.clear();
 	}
-	void Control::SetX(int X) {
+	void Control::SetX(const int& X) {
 		Move({ X,Y() });
 	}
-	void Control::SetY(int Y) {
+	void Control::SetY(const int& Y) {
 		Move({ X(),Y });
 	}
 	void Control::Move(const Point& pt) {
 		SetRect(Rect(pt.X, pt.Y, Width(), Height()));
 	}
-	void Control::SetWidth(int width) {
+	void Control::SetWidth(const int& width) {
 		ReSize({ width,Height() });
 	}
-	void Control::SetHeight(int height) {
+	void Control::SetHeight(const int& height) {
 		ReSize({ Width(),height });
 	}
 	void Control::ReSize(const Size& size)
 	{
 		SetRect({ X(),Y(),size.Width,size.Height });
 	}
+	void Control::Invalidate() {
+		if (_hWnd || ::IsWindow(_hWnd)) {
+			WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
+			Rect r = GetClientRect();
+			winData->InvalidateRect(&r);
+		}
+	}
 	void Control::Refresh() {
-		if (_hWnd) {
-			//WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
-			::SendMessage(_hWnd, UI_CONTROL_REFRESH, (WPARAM)this, NULL);
+		if (_hWnd || ::IsWindow(_hWnd)) {
+			WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
+			Rect r = GetClientRect();
+			winData->InvalidateRect(&r);
+			winData->UpdateWindow();//立即更新全部无效区域
 		}
 	}
 	Rect Control::GetClientRect() {
@@ -722,7 +733,7 @@ Event(this , ##__VA_ARGS__); \
 	{
 		if (HoverStyle.IsValid()) {
 			this->State = ControlState::Hover;
-			Refresh();
+			Invalidate();
 		}
 		else {
 			Control* pControl = this->Parent;
@@ -731,7 +742,7 @@ Event(this , ##__VA_ARGS__); \
 			{
 				_style = &pControl->HoverStyle;
 				if (_style && _style->IsValid()) {
-					Refresh();
+					Invalidate();
 					break;
 				}
 				pControl = pControl->Parent;
@@ -751,7 +762,7 @@ Event(this , ##__VA_ARGS__); \
 	{
 		this->State = ControlState::Active;
 		if (ActiveStyle.IsValid()) {
-			Refresh();
+			Invalidate();
 		}
 		else {
 			Control* pControl = this->Parent;
@@ -760,7 +771,7 @@ Event(this , ##__VA_ARGS__); \
 			{
 				_style = &pControl->ActiveStyle;
 				if (_style && _style->IsValid()) {
-					Refresh();
+					Invalidate();
 					break;
 				}
 				pControl = pControl->Parent;
@@ -772,11 +783,11 @@ Event(this , ##__VA_ARGS__); \
 	{
 		if (this->State != ControlState::None && Rect(0, 0, _rect.Width, _rect.Height).Contains(point)) {
 			this->State = ControlState::Hover;
-			Refresh();
+			Invalidate();
 		}
 		else if (this->State != ControlState::None) {
 			this->State = ControlState::None;
-			Refresh();
+			Invalidate();
 		}
 		UI_TRIGGER(MouseUp, mbtn, point);
 	}
@@ -784,7 +795,7 @@ Event(this , ##__VA_ARGS__); \
 	{
 		if (this->State != ControlState::None) {
 			this->State = ControlState::None;//重置状态
-			Refresh();//重置状态之后刷新
+			Invalidate();//重置状态之后刷新
 		}
 		else {
 			this->State = ControlState::None;//鼠标离开无论如何都要重置状态

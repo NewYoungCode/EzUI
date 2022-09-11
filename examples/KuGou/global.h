@@ -13,6 +13,7 @@
 #include "JsonCpp.h"
 #include "HttpUtility.h"
 #include "base64.h"
+#include "ConfigIni.h"
 
 using namespace EzUI;
 struct Song {
@@ -36,7 +37,7 @@ public:
 	SongItem(const EString& _songName, const EString& _songTime = "03:56") {
 		songName.SetText(_songName);
 		songName.TextAlign = TextAlign::MiddleLeft;
-		songName.MousePassThrough = Event::OnHover | Event::OnActive;
+		songName.MousePassThrough = time.MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseDoubleClick;
 
 		time.SetFixedWidth(50);
 		time.SetText(_songTime);
@@ -54,7 +55,7 @@ public:
 	}
 };
 
-inline EString toTimeStr( long dur) {
+inline EString toTimeStr(long dur) {
 	EString fen = std::to_string(dur / 60);
 	if (fen.size() <= 1) fen = "0" + fen;
 	EString yu = std::to_string(dur % 60);
@@ -185,6 +186,10 @@ namespace global {
 		EString resp;
 		HttpGet(url, resp);
 		JObject json(resp);
+
+		if (json["status"].asInt() != 200) {
+			return utf8("[00:00.00]¿á¹¶ÒôÀÖ");
+		}
 
 		EString id = (*json["candidates"].begin())["id"].asString();
 		EString accesskey = (*json["candidates"].begin())["accesskey"].asString();

@@ -19,13 +19,13 @@ void LrcControl::ChangePostion(int postion)
 	offsetY = LrcNow->point.Y - VerticalCenter;
 }
 
-void LrcControl::OnTimer()
+void LrcControl::Task()
 {
-	if (this->GetRect().IsEmptyArea() || LrcNow==NULL) {
+	if (this->GetRect().IsEmptyArea() || LrcNow == NULL) {
 		return;
 	}
 	offsetY = LrcNow->point.Y - VerticalCenter;
-	if (std::abs(offsetY) <=2)
+	if (std::abs(offsetY) <= 1)
 	{
 		return;
 	}
@@ -34,14 +34,15 @@ void LrcControl::OnTimer()
 		Lrc* lrc = item;
 		if (offsetY < 0)
 		{
-			lrc->point.Y += 2;
+			lrc->point.Y += 1;
 		}
 		else
 		{
-			lrc->point.Y -= 2;
+			lrc->point.Y -= 1;
 		}
 	}
-	Refresh();
+	Invalidate();
+	//Refresh();
 }
 void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
 
@@ -52,7 +53,7 @@ void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
 		Rect rectangle(lrc.point.X, lrc.point.Y, Width(), (int)FontHeight);
 		Rect drawRec(GetRect());
 		//arg.Painter.DrawRectangle(Color::Gray, drawRec);
-		if ( GetRect().Contains(rectangle))
+		if (GetRect().Contains(rectangle))
 		{ //包含在此区域内的歌词才可以绘制
 			if (LrcNow == &lrc)
 			{
@@ -70,14 +71,14 @@ void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
 
 void LrcControl::Clear()
 {
-	KillTimer();
+
+	timer->Stop();
 	LrcNow = NULL;
 	for (auto& it : LrcList) {
 		delete it;
 	}
 	LrcList.clear();
 	VerticalCenter = Height() / 2 - (marginVertical + FontHeight) / 2;
-	this->Refresh();
 }
 
 LrcControl::~LrcControl()
@@ -85,15 +86,20 @@ LrcControl::~LrcControl()
 	Clear();
 }
 
+LrcControl::LrcControl()
+{
+	timer = new Timer;
+	timer->Interval = 2;
+	timer->Tick = [=]() {
+		Task();
+	};
+}
+
 void LrcControl::LoadLrc(const EString& lrcData)
 {
 	Clear();
-
 	auto lrc = lrcData.Split("\n");
-	VerticalCenter = Height() / 2 - (marginVertical + FontHeight) / 2;
-
 	auto gbk = Text::UTF8ToANSI(lrcData);
-
 	for (auto&& it : lrc) {
 		if (it.empty()) continue;
 		int pos1 = it.find("[");
@@ -113,8 +119,7 @@ void LrcControl::LoadLrc(const EString& lrcData)
 
 	if (LrcList.size() > 0)
 	{
-	
-		SetTimer(2);
 		LrcNow = LrcList[0];//如果有一句歌词默认是第一句歌词变色
+		timer->Start();
 	}
 }

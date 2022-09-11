@@ -6,13 +6,13 @@ namespace EzUI {
 		if (wParam == VK_BACK) { //ÍË¸ñ¼ü
 			if (buf.size() > 0) {
 				buf.erase(buf.size() - 1, 1);
-				Refresh();
+				Invalidate();
 			}
 		}
 		if (wParam < 32)return;//¿ØÖÆ×Ö·û
 		WCHAR&& _char = (WCHAR)wParam;
 		buf += _char;
-		Refresh();
+		Invalidate();
 	}
 	void Edit::MoveCaret(int X) {
 		if (_focus) {

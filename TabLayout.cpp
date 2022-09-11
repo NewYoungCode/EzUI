@@ -34,9 +34,9 @@ namespace EzUI {
 		return _index;
 	}
 
-	void TabLayout::RefreshLayout()
+	void TabLayout::ResumeLayout()
 	{
-		Refresh();
+		Invalidate();
 	}
 
 	void TabLayout::OnSize(const Size& sz)

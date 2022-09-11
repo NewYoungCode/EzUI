@@ -13,7 +13,26 @@ namespace EzUI {
 		_hWnd = ::CreateWindowEx(ExStyle | WS_EX_ACCEPTFILES, UI_CLASSNAME, UI_CLASSNAME, dStyle,
 			_rect.X, _rect.Y, width, height, owner, NULL, GetModuleHandle(NULL), NULL);
 		_winData.Window = this;
+
+		if ((ExStyle & WS_EX_LAYERED) != WS_EX_LAYERED) {
+			_winData.InvalidateRect = [=](void*_rect)->void {
+				RECT r = ((Rect*)_rect)->WinRECT();
+				::InvalidateRect(_hWnd, &r, FALSE);
+			};
+			_winData.UpdateWindow = [=]()->void {
+				::UpdateWindow(_hWnd);
+			};
+		}
+		_winData.Notify = [=](UINT uMsg, WPARAM wParam, LPARAM lParam)->bool {
+			if (uMsg >= (WM_USER + 0x04) && uMsg <= (WM_USER + 0x0c)) { //
+				MouseEventArgs* args = (MouseEventArgs*)lParam;
+				return OnNotify((Control*)(wParam), *args);
+			}
+			return FALSE;
+		};
+
 		UI_SetUserData(_hWnd, &_winData);
+
 	}
 	Window::~Window()
 	{
@@ -217,18 +236,6 @@ namespace EzUI {
 		case WM_ERASEBKGND: {
 			return TRUE;
 		}
-		case UI_CONTROL_REFRESH: {
-			Control* ctl = (Control*)wParam;
-			Rect clienRect = ctl->GetClientRect();
-			RECT wRect;
-			wRect.left = clienRect.X;
-			wRect.top = clienRect.Y;
-			wRect.right = clienRect.GetRight();
-			wRect.bottom = clienRect.GetBottom();
-			::InvalidateRect(_hWnd, &wRect, FALSE);
-			//::UpdateWindow(_hWnd);//刷新 立即响应WM_PAINT消息 
-			return TRUE;
-		}
 		case WM_PAINT:
 		{
 			if (!_load) {
@@ -287,21 +294,8 @@ namespace EzUI {
 				_lastPoint = point;
 				OnMove(point);
 			}
-
 			return TRUE;
 		}
-
-								//case WM_SIZE: {
-								//	UINT width = LOWORD(lParam);
-								//	UINT height = HIWORD(lParam);
-								//	RECT rect;
-								//	::GetClientRect(_hWnd, &rect);
-								//	Point point{ rect.left,rect.top };
-								//	OnSize({ (int)width ,(int)height });
-								//	OnRect({ point ,{ (int)width ,(int)height } });
-								//	break;
-								//}
-
 		case WM_CLOSE:
 		{
 			bool Cancel = false;
@@ -329,7 +323,7 @@ namespace EzUI {
 		{
 			if (wParam == VK_F11) {
 				_winData.Debug = !_winData.Debug;
-				MainLayout->Refresh();
+				MainLayout->Invalidate();
 			}
 			OnKeyDown(wParam);
 			break;
@@ -352,19 +346,8 @@ namespace EzUI {
 			}
 			break;
 		}
-		//case WM_LBUTTONDBLCLK: {
-		//	OnMouseDoubleClick(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
-		//	break;
-		//}
-		//case WM_RBUTTONDBLCLK: {
-		//	OnMouseDoubleClick(MouseButton::Right, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
-		//	break;
-		//}
 		case WM_LBUTTONDOWN:
 		{
-			/*	char buff[256]{ 0 };
-				sprintf_s(buff, "X:%d Y:%d LParam:%d\n", GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), lParam);
-				OutputDebugStringA(buff);*/
 			OnMouseDown(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 			break;
 		}
@@ -406,10 +389,7 @@ namespace EzUI {
 		}
 		default:
 		{
-			if (uMsg >= (WM_USER + 0x04) && uMsg <= (WM_USER + 0x0c)) { //
-				MouseEventArgs* args = (MouseEventArgs*)lParam;
-				return OnNotify((Control*)(wParam), *args);
-			}
+		
 			break;
 		}
 		}
@@ -546,8 +526,7 @@ namespace EzUI {
 			args.Location = point;
 			args.EventType = Event::OnMouseWheel;
 			scrollBar->Trigger(args);
-
-			::UpdateWindow(_hWnd);
+			_winData.UpdateWindow();
 			POINT p1{ 0 };
 			::GetCursorPos(&p1);
 			::ScreenToClient(_hWnd, &p1);
@@ -584,7 +563,7 @@ namespace EzUI {
 			auto diff = _time - _lastDownTime;
 			auto timeOffset = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//
 			_lastDownTime = _time;
-			if (timeOffset < 200) {//200毫秒之内单机两次算双击消息
+			if (timeOffset < 300) {//300毫秒之内单机两次算双击消息
 				_lastDownCtl = outCtl;
 				_lastDownTime = std::chrono::system_clock::from_time_t(0);
 				_mouseDbClick = &relativePoint;
@@ -707,7 +686,7 @@ namespace EzUI {
 				TabLayout* tabLayout = dynamic_cast<TabLayout*>(FindControl(ctlName));
 				if (tabLayout) {
 					tabLayout->SetPageIndex(sender->Index());
-					tabLayout->Refresh();
+					tabLayout->Invalidate();
 				}
 			}
 		}

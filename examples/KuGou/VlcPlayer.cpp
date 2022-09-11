@@ -16,8 +16,7 @@ namespace EzUI {
 	void display(void* opaque, void* picture)
 	{
 		VlcPlayer* vp = (VlcPlayer*)opaque;
-		vp->Refresh();
-		//::UpdateWindow(vp->_hWnd);//应该立即绘制
+		vp->Invalidate();
 	}
 	unsigned setup(void** opaque, char* chroma, unsigned* width, unsigned* height, unsigned* pitches, unsigned* lines)
 	{
@@ -72,7 +71,7 @@ namespace EzUI {
 		}
 		vlc_media = libvlc_media_new_path(vlc_inst, file.c_str());
 		libvlc_media_parse(vlc_media);//解析
-		duration = libvlc_media_get_duration(vlc_media);//获取媒体时长
+		_Duration = libvlc_media_get_duration(vlc_media);//获取媒体时长
 		vlc_player = libvlc_media_player_new_from_media(vlc_media);//设置媒体
 		libvlc_video_set_format_callbacks(vlc_player, setup, (libvlc_video_cleanup_cb)this);
 		libvlc_video_set_callbacks(vlc_player, lock, unlock, display, this);
@@ -89,7 +88,7 @@ namespace EzUI {
 		}
 		vlc_media = libvlc_media_new_location(vlc_inst, url.c_str());
 		libvlc_media_parse(vlc_media);//解析
-		duration = libvlc_media_get_duration(vlc_media);//获取媒体时长
+		_Duration = libvlc_media_get_duration(vlc_media);//获取媒体时长
 		vlc_player = libvlc_media_player_new_from_media(vlc_media);//设置媒体
 		libvlc_video_set_format_callbacks(vlc_player, setup, (libvlc_video_cleanup_cb)this);
 		libvlc_video_set_callbacks(vlc_player, lock, unlock, display, this);
@@ -104,11 +103,26 @@ namespace EzUI {
 		libvlc_media_player_pause(vlc_player);
 	}
 	long long  VlcPlayer::Duration() {
-		return duration;
+		return _Duration;
+	}
+	void VlcPlayer::SetDuration(int dur)
+	{
+		_Duration = dur;
 	}
 	long long  VlcPlayer::Position() {
-		libvlc_time_t play_time = libvlc_media_player_get_time(vlc_player);
-		return play_time;
+		if (vlc_player) {
+			libvlc_time_t play_time = libvlc_media_player_get_time(vlc_player);
+			return play_time;
+		}
+		return 0;
+	}
+
+	void VlcPlayer::SetPosition(float f_pos)
+	{
+		if (vlc_player) {
+			//不知道为什么 设置进度就播放不了了 暂时没研究
+			libvlc_media_player_set_position(vlc_player, f_pos);
+		}
 	}
 
 	libvlc_state_t VlcPlayer::GetState() {

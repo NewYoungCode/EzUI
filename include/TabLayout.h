@@ -1,10 +1,10 @@
 #pragma once
-#include "Container.h"
+#include "Layout.h"
 
 namespace EzUI {
 
 	class UI_EXPORT TabLayout :
-		public Container
+		public Layout
 	{
 	protected:
 		int _index = 0;
@@ -14,7 +14,7 @@ namespace EzUI {
 		void SetPageIndex(int index);
 		virtual void AddControl(Control* ctl);
 		int PageIndex();
-		virtual void RefreshLayout();
+		virtual void ResumeLayout();
 		virtual void OnSize(const Size& sz);
 	};
 };

@@ -9,6 +9,7 @@
 #include <string>
 #include <map>
 #include <memory>
+#include <functional>
 #include <SDKDDKVer.h>
 #define WIN32_LEAN_AND_MEAN            
 #include <windows.h>
@@ -68,7 +69,7 @@
 
 #define UI_NOTIFYICON WM_USER+0x01 //
 #define UI_CONTROL_DELETE WM_USER+0x02 //
-#define UI_CONTROL_REFRESH WM_USER+0x03 //
+#define UI_PAINT WM_USER+0x03 //
 
 #define WM_UIMESSAGE  WM_USER+20   
 #ifdef _WINDLL
@@ -115,13 +116,14 @@ namespace EzUI {
 			if (ptr) delete ptr;
 		}
 	};
-
 	struct WindowData {
 		void* Window = NULL;
-		void* Styles = NULL;
 		void* HoverStyles = NULL;
 		void* ActiveStyles = NULL;
 		bool Debug = false;
+		std::function<void(void*)> InvalidateRect = NULL;
+		std::function<void()> UpdateWindow = NULL;
+		std::function<bool(UINT, WPARAM, LPARAM)> Notify = NULL;
 	};
 
 #define UI_Float Tuple<float>

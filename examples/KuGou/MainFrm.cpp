@@ -1,4 +1,7 @@
 #include "MainFrm.h"
+#define refreshImage WM_UIMESSAGE+1
+#define delImage WM_UIMESSAGE+2
+
 void MainFrm::InitForm() {
 	this->Zoom = true;
 	//CloseShadow();
@@ -28,11 +31,18 @@ void MainFrm::InitForm() {
 	$(this->FindControl("btns")->GetControls()).Css("font-family:\"Marlett\";font-size:13;color:#dddddd;");
 	$(this->FindControl("btns")->GetControls()).Css("hover{font-size:13;color:#ffffff;}");
 
-	for (size_t i = 0; i < 5; i++)
-	{
-		SongItem* it = new SongItem(utf8("TG小辉-女孩(DJ版)"));
+	cfg = new ConfigIni(Path::StartPath() + "\\list.ini");
+
+	for (auto&& _it : cfg->GetSections()) {
+		EString name = cfg->ReadString("name", "", _it);
+		int  dur = cfg->ReadInt("dur", 0, _it);
+		EString  singer = cfg->ReadString("singer", "", _it);
+		SongItem* it = new SongItem(name, toTimeStr(dur));
+		it->SetAttribute("FileHash", _it);
+		it->SetAttribute("SingerName", singer);
 		localList->AddControl(it);
 	}
+
 	searchList->ScrollBar->Rolling = [=](int a, int b)->void {
 		NextPage(a, b);
 	};
@@ -40,17 +50,101 @@ void MainFrm::InitForm() {
 	FindControl("vlcDock")->AddControl(&player);
 	SongView();
 
-	SetTimer(100);
+	playerBar = FindControl("playerBar");
+	playerBar2 = playerBar->GetControl(0);
+	playerBar2->MousePassThrough = Event::OnHover | Event::OnActive;
+
+	time = (Label*)FindControl("time");
+	singer = (Label*)FindControl("singer");
+
+	headImg = new Image(L"imgs/headImg.jpg");
+	headImg->SizeMode = ImageSizeMode::CenterImage;
+	singer->Style.BackgroundImage = headImg;
+
+	timer = new Timer;
+	timer->Interval = 10;
+	timer->Tick = [=]() {
+		Task();
+	};
 }
-MainFrm::MainFrm() :Form(1000, 670)
+MainFrm::MainFrm() :Form(1022, 670)
 {
 	InitForm();
 }
 MainFrm::~MainFrm()
 {
+
+	timer->Stop();
+	if (downloadTask) {
+		downloadTask->join();
+		delete downloadTask;
+	}
+
 }
 void MainFrm::OnClose(bool& cal) {
 	Application::exit(0);
+}
+void MainFrm::DownLoadImage(EString SingerName, EString headImageUrl)
+{
+
+	::SendMessageW(_hWnd, delImage, 0, 0);
+
+	//下载歌手头像
+	{
+		EString cache = Application::StartPath() + L"\\Cache";
+		::CreateDirectoryW(cache.utf16().c_str(), NULL);
+		EString singerBkImg = cache + "\\" + SingerName + "_headImg.jpg";
+		WebClient wc2;
+		auto code = wc2.DownloadFile(headImageUrl.Replace("{size}", "400"), Text::UTF8ToANSI(singerBkImg).c_str());
+		if (code == 200) {
+			headImg = new Image(singerBkImg);
+		}
+		else
+		{
+			headImg = new Image(L"imgs/headImg.jpg");
+		}
+	}
+
+	::SendMessageW(_hWnd, refreshImage, 0, 0);
+
+	{
+		//下载歌手写真
+		auto rect = GetClientRect();
+		EString imageUrl = "https://artistpicserver.kuwo.cn/pic.web?type=big_artist_pic&pictype=url&content=list&&id=0&name=" + HttpUtility::UrlEncode(SingerName) + "&from=pc&json=1&version=1&width=" + std::to_string(1920) + "&height=" + std::to_string(1080);
+		EString resp;
+		WebClient wc;
+		wc.HttpGet(imageUrl, resp);
+		JObject json(resp);
+		EString bkurl;
+		/*	for (auto&& it : json["array"]) {
+				if (!it["wpurl"].isNull()) {
+					bkurl = it["wpurl"].asString();
+					break;
+				}
+			}*/
+		if (bkurl.empty()) {
+			for (auto&& it : json["array"]) {
+				if (!it["bkurl"].isNull()) {
+					bkurl = it["bkurl"].asString();
+					break;
+				}
+			}
+		}
+
+		if (!bkurl.empty()) {
+			EString cache = Application::StartPath() + L"\\Cache";
+			::CreateDirectoryW(cache.utf16().c_str(), NULL);
+			EString singerBkImg = cache + "\\" + SingerName + ".jpg";
+			WebClient wc2;
+			wc2.DownloadFile(bkurl, Text::UTF8ToANSI(singerBkImg).c_str());
+			bkImage = new Image(singerBkImg);
+		}
+		else {
+			bkImage = new Image(L"imgs/defaultBackground.jpg");
+		}
+		bkImage->SizeMode = ImageSizeMode::CenterImage;
+	}
+
 }
 void MainFrm::OnKeyDown(WPARAM wparam)
 {
@@ -65,8 +159,8 @@ void MainFrm::OnKeyDown(WPARAM wparam)
 			SongItem2* sit = new SongItem2(it);
 			searchList->AddControl(sit);
 		}
-		searchList->RefreshLayout();
-		searchList->Refresh();
+		searchList->ResumeLayout();
+		searchList->Invalidate();
 	}
 	__super::OnKeyDown(wparam);
 }
@@ -78,73 +172,49 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 			EString::Replace(url, "{hash}", hash);
 			EString resp;
 			global::HttpGet(url, resp);
-
+			auto gb = Text::UTF8ToANSI(resp);
+			auto id = std::this_thread::get_id();
+			int idd = *(int*)&id;
+			timer->Stop();
 			JObject json(resp);
+			int dur=json["timeLength"].asInt();
 			EString playUrl = json["url"].asCString();
 			if (!playUrl.empty()) {
-
 				EString SingerName = sender->GetAttribute("SingerName");
-				auto rect = GetClientRect();
-				EString imageUrl = "https://artistpicserver.kuwo.cn/pic.web?type=big_artist_pic&pictype=url&content=list&&id=0&name=" + HttpUtility::UrlEncode(SingerName) + "&from=pc&json=1&version=1&width=" + std::to_string(1920) + "&height=" + std::to_string(1080);
+				if (downloadTask) {
+					downloadTask->join();
+					delete downloadTask;
+				}
+				downloadTask = new std::thread(&MainFrm::DownLoadImage, this, SingerName, json["imgUrl"].asString());
+				if (dynamic_cast<SongItem2*>(sender)) {
+					Song* tag = (Song*)sender->Tag;
+					SongItem* it = new SongItem(tag->SongName, toTimeStr(dur));
+					it->SetAttribute("FileHash", hash);
+					it->SetAttribute("SingerName", SingerName);
+					localList->AddControl(it);
+					localList->ResumeLayout();
+					localList->ScrollBar->Move(localList->ScrollBar->RollingTotal());
+					localList->Invalidate();
 
-				EString resp;
-				WebClient wc;
-				wc.HttpGet(imageUrl, resp);
-				JObject json(resp);
-				EString bkurl;
-				/*	for (auto&& it : json["array"]) {
-						if (!it["wpurl"].isNull()) {
-							bkurl = it["wpurl"].asString();
-							break;
-						}
-					}*/
-				if (bkurl.empty()) {
-					for (auto&& it : json["array"]) {
-						if (!it["bkurl"].isNull()) {
-							bkurl = it["bkurl"].asString();
-							break;
-						}
-					}
+					cfg->WriteValue("name", tag->SongName, hash);
+					cfg->WriteValue("singer", tag->SingerName, hash);
+					cfg->WriteValue("dur", std::to_string(dur), hash);
 				}
 
-
-
-				if (bkImage) {
-					delete bkImage;
-				}
-
-				if (!bkurl.empty()) {
-					WCHAR buf[513]{ 0 };
-					::GetTempPathW(512, buf);
-					std::wstring file(buf);
-					Path::Create(EString(file + L"KuGou"));
-					file += L"KuGou\\a.png";
-					WebClient wc2;
-					wc2.DownloadFile(bkurl, EString(file).c_str());
-					bkImage = new Image(file);
-				}
-				else {
-					bkImage = new Image(L"imgs/defaultBackground.png");
-				}
-
-				auto main = FindControl("main");
-				bkImage->SizeMode = ImageSizeMode::CenterImage;
-
-				Song* tag = (Song*)sender->Tag;
-				SongItem* it = new SongItem(tag->SongName, toTimeStr(tag->Duration));
-				localList->AddControl(it);
-				localList->RefreshLayout();
-				localList->ScrollBar->Move(localList->ScrollBar->RollingTotal());
-				localList->Refresh();
+				this->SetText(json["fileName"].asString());
+				FindControl("lrcView")->Trigger(Event::OnMouseClick);
 				player.OpenUrl(playUrl);
+				player.SetDuration(dur);
 				player.Play();
+
 			}
 			else {
 				::MessageBoxW(Hwnd(), L"歌曲收费", L"ERROR", 0);
+				return 0;
 			}
 			EString lrcData = global::GetSongLrc(hash);
 			lrcCtl.LoadLrc(lrcData);
-
+			timer->Start();
 		}
 	}
 	if (args.EventType == Event::OnMouseClick) {
@@ -160,6 +230,7 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 			}
 		}
 		if (!sender->GetAttribute("mvhash").empty()) {
+			timer->Stop();
 			EString resp;
 			WebClient wc;
 			wc.HttpGet("http://m.kugou.com/app/i/mv.php?cmd=100&hash=" + sender->GetAttribute("mvhash") + "&ismp3=1&ext=mp4", resp);
@@ -169,18 +240,44 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 			for (auto&& it : json["mvdata"]) {
 				urls.push_back(it["downurl"].asString());
 			}
-
 			FindControl("mvView")->Trigger(Event::OnMouseClick);
 			player.OpenUrl(urls[urls.size() - 1]);
-			//player.OpenPath("D:\\aa.mp4");
 			player.Play();
+			timer->Start();
+		}
+		if (sender == playerBar) {
+			const MouseEventArgs& arg = (MouseEventArgs&)args;
+			double f_pos = arg.Location.X * 1.0 / playerBar->Width() * (player.Duration());
+			player.SetPosition(f_pos);
 		}
 	}
 	return __super::OnNotify(sender, args);
 }
-void MainFrm::OnTimer() {
+void MainFrm::Task() {
 	if (player.GetState() == libvlc_state_t::libvlc_Playing) {
-		lrcCtl.ChangePostion(player.Position());
+		long long position = player.Position();
+		double rate = position / (player.Duration() * 1000.0);
+		int w = playerBar->Width() * rate;
+		lrcCtl.ChangePostion(position);
+		EString f1 = toTimeStr(position / 1000);
+		EString f2 = toTimeStr(player.Duration());
+		EString fen = f1 + "/" + f2;
+
+		if (fen != lastFen) {
+			lastFen = fen;
+			time->SetText(fen);
+			time->Invalidate();
+
+			auto id = std::this_thread::get_id();
+			int idd = *(int*)&id;
+			int pause = 0;
+		}
+		if (w != lastWidth) {
+			lastWidth = w;
+			playerBar2->SetFixedWidth(w);
+			((Layout*)playerBar)->ResumeLayout();
+			playerBar->Invalidate();
+		}
 	}
 }
 
@@ -204,8 +301,8 @@ void MainFrm::NextPage(int a, int b) {
 			end->SetText(L"已经没有更多数据");
 			searchList->AddControl(end);
 		}
-		searchList->RefreshLayout();
-		searchList->Refresh();
+		searchList->ResumeLayout();
+		searchList->Invalidate();
 	}
 }
 void  MainFrm::SongView() {
@@ -223,7 +320,7 @@ void  MainFrm::SongView() {
 	searchEdit->Style.BackgroundColor = Color::White;
 	center->Style.BackgroundColor = Color::White;
 	center->Style.ForeColor = Color::Black;
-	main->Refresh();
+	main->Invalidate();
 }
 void  MainFrm::LrcView() {
 	auto main = FindControl("main");
@@ -240,10 +337,33 @@ void  MainFrm::LrcView() {
 	searchEdit->Style.BackgroundColor = Color(200, 250, 250, 250);
 	center->Style.BackgroundColor = Color(0, 0, 0, 0);
 	center->Style.ForeColor = Color::White;
-	main->Refresh();
+	main->Invalidate();
 }
+
 void MainFrm::OnPaint(HDC DC, const Rect& rect) {
 	__super::OnPaint(DC, rect);
-	//::StretchBlt(DC, 0, 0, destWidth, destHeight, hdc, 0, 0, 1000, 800, SRCCOPY);
-	//::BitBlt(DC, 0, 0, destWidth, destHeight, hdc, srcHeight-aa,0, SRCCOPY);
+}
+
+LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
+{
+	if (delImage == msg) {
+		if (headImg) {
+			singer->Style.BackgroundImage = NULL;
+			delete headImg;
+			headImg = NULL;
+		}
+		if (bkImage) {
+			auto main = FindControl("main");
+			main->Style.BackgroundImage = NULL;
+			delete bkImage;
+			bkImage = NULL;
+		}
+	}
+	if (refreshImage == msg) {
+		headImg->SizeMode = ImageSizeMode::CenterImage;
+		singer->Style.BackgroundImage = headImg;
+		singer->Invalidate();
+		return 0;
+	}
+	return __super::WndProc(msg, W, L);
 }

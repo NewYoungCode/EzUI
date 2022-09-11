@@ -12,7 +12,7 @@ namespace EzUI {
 	public:
 		void AddControl(Control* ctl) override;
 		void OnSize(const Size& size)override;
-		void RefreshLayout()override;
+		void ResumeLayout()override;
 	};
 	using VBox = VLayout;
 };

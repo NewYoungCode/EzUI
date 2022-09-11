@@ -1,9 +1,9 @@
 #pragma once
-#include "Container.h"
+#include "Layout.h"
 #include "VScrollBar.h"
 namespace EzUI {
 	class UI_EXPORT VList :
-		public Container
+		public Layout
 	{
 	private:
 		VScrollBar* vScrollBar = NULL;
@@ -13,7 +13,7 @@ namespace EzUI {
 		VList();
 		virtual ~VList();
 		virtual	void SetMargin(int margin);
-		virtual void RefreshLayout()override;
+		virtual void ResumeLayout()override;
 		virtual	void AddControl(Control* ctl) override;
 		virtual ControlIterator RemoveControl(Control* ctl)override;
 		virtual void Clear(bool freeChilds = false);

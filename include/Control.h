@@ -120,19 +120,20 @@ namespace EzUI {
 		void Move(const Point& pt);//移动相对与父控件的位置
 		const int& X();
 		const int& Y();
-		void SetX(int X);
-		void SetY(int Y);
+		void SetX(const int& X);
+		void SetY(const int& Y);
 		void ReSize(const Size& size); //当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
-		void SetWidth(int width);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
-		void SetHeight(int height);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
+		void SetWidth(const int& width);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
+		void SetHeight(const int& height);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
 		const int& Width();
 		const int& Height();
 		void ComputeClipRect();//计算基于父控件的裁剪区域
-		void SetFixedWidth(int fixedWidth);//设置绝对宽度
-		void SetFixedHeight(int fixedHeight);//设置绝对高度
+		void SetFixedWidth(const int& fixedWidth);//设置绝对宽度
+		void SetFixedHeight(const int& fixedHeight);//设置绝对高度
 		const int& GetFixedWidth();//获取绝对宽度
 		const int& GetFixedHeight();//获取绝对高度
-		virtual void Refresh();// 刷新当前控件
+		virtual void Invalidate();// 使当前控件的区域为无效区域
+		virtual void Refresh();// 使当前控件区域为无效区域并且立即更新全部的无效区域
 		Rect GetClientRect();//获取基于客户端的矩形
 		virtual void SetRect(const Rect& rect, bool rePaint = false);//设置相对父控件矩形
 		const Rect& GetRect();//获取相对与父控件矩形

@@ -59,10 +59,10 @@ void VLayout::OnSize(const Size&size) {
 	Sort();
 }
 
-void VLayout::RefreshLayout()
+void VLayout::ResumeLayout()
 {
 	Sort();
-	Refresh();
+	Invalidate();
 }
 
 };

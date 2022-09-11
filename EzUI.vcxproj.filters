@@ -39,9 +39,6 @@
     <ClInclude Include="include\Painter.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\Container.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\Layout.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -111,6 +108,15 @@
     <ClInclude Include="include\Edit.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="include\Timer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BorderlessWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LayeredWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Control.cpp">
@@ -135,9 +141,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CPURender.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Container.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="VLayout.cpp">
@@ -204,6 +207,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Edit.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BorderlessWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LayeredWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

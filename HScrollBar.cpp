@@ -107,7 +107,7 @@ namespace EzUI {
 			sliderX += offsetX;
 			pointX = point.X;
 			Move(sliderX);
-			::UpdateWindow(_hWnd);//用户拖动鼠标的时候 需要提高响应速度 显得丝滑
+			Refresh();//用户拖动鼠标的时候 需要提高响应速度 显得丝滑
 		}
 	}
 
@@ -127,13 +127,13 @@ namespace EzUI {
 			for (auto& it : *_controlsLocationX) { //挨个移动坐标
 				it.first->SetRect({ (int)(it.second - offsetX), it.first->Y(), it.first->Width(),it.first->Height() });
 			}
-			Parent->Refresh();
+			Parent->Invalidate();
 		}
 		else if (Parent) {//当滚动条不可用的的时候
 			for (auto& it : *_controlsLocationX) { //使用原坐标
 				it.first->SetRect({ (int)(it.second), it.first->Y(), it.first->Width(),it.first->Height() });
 			}
-			Parent->Refresh();
+			Parent->Invalidate();
 		}
 		if (Rolling) {
 			Rolling(RollingCurrent(), RollingTotal());

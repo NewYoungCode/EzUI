@@ -2,11 +2,9 @@
 #include "Control.h"
 
 namespace EzUI {
-
-	class ComBox :
+	class UI_EXPORT ComBox :
 		public Control
 	{
 
 	};
-
 };

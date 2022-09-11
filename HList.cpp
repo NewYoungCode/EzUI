@@ -19,7 +19,7 @@ namespace EzUI {
 		Margin = margin;
 	}
 
-	void HList::RefreshLayout() {
+	void HList::ResumeLayout() {
 		_maxRight = 0;
 		for (auto& it : _controls) {
 			if (it->Width() <= 0 || it->Visible == false) continue;

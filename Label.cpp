@@ -1,5 +1,5 @@
 #include "Label.h"
-#include "Container.h"
+#include "Layout.h"
 namespace EzUI {
 
 	Label::Label()
@@ -45,9 +45,9 @@ namespace EzUI {
 				SetFixedHeight(autoH);
 			}
 			::ReleaseDC(NULL, dc);
-			Container* pCtl = dynamic_cast<Container*>(Parent);
+			Layout* pCtl = dynamic_cast<Layout*>(Parent);
 			if (pCtl) {
-				pCtl->RefreshLayout();
+				pCtl->ResumeLayout();
 			}
 		}
 	}

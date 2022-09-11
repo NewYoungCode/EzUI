@@ -81,10 +81,6 @@ namespace EzUI {
 					ctl = new TabLayout;
 					break;
 				}
-				if (valueStr == "container") {
-					ctl = new Container;
-					break;
-				}
 				if (valueStr == "spacer") {
 					ctl = new Spacer();
 					break;
@@ -347,10 +343,10 @@ namespace EzUI {
 	_Selector& _Selector::Refresh()
 	{
 		for (auto& it : this->ctls) {
-			it->Refresh();
+			it->Invalidate();
 		}
 		if (ctl) {
-			ctl->Refresh();
+			ctl->Invalidate();
 		}
 		return *this;
 	}

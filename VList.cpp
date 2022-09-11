@@ -17,7 +17,7 @@ namespace EzUI {
 	{
 		Margin = margin;
 	}
-	void VList::RefreshLayout() {
+	void VList::ResumeLayout() {
 		_maxBottom = 0;
 		for (auto& it : _controls) {
 			if (it->Width() <= 0 || it->Visible == false) continue;

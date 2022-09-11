@@ -4,9 +4,7 @@
 #include "IControl.h"
 #include "Control.h"
 #include "Layout.h"
-#include "Layout.h"
 #include "Edit.h"
-#include "Container.h"
 namespace EzUI {
 
 	class UI_EXPORT Window :public IControl

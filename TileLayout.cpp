@@ -2,7 +2,57 @@
 
 namespace EzUI {
 
-	void TileLayout::Sort()
+	
+
+	void TileLayout::Clear(bool freeChilds)
+	{
+		__super::Clear(freeChilds);
+		_controlsLocationY.clear();
+		_MaxBottom = 0;
+		if (vScrollBar) {
+			vScrollBar->SetMaxBottom(_MaxBottom);
+		}
+	}
+
+	TileLayout::TileLayout()
+	{
+		this->ScrollBar = new VScrollBar;
+		vScrollBar = (VScrollBar*)this->ScrollBar;
+		if (vScrollBar) {
+			vScrollBar->ReSize({ 10,Height() });//滚动条宽度
+			vScrollBar->Parent = this;
+			vScrollBar->_controlsLocationY = &_controlsLocationY;
+		}
+	}
+	TileLayout::~TileLayout()
+	{
+	}
+	void TileLayout::OnSize(const Size& sz)
+	{
+		ResumeLayout();
+		if (vScrollBar) {
+			vScrollBar->OnLayout(sz);
+			vScrollBar->SetMaxBottom(_MaxBottom);
+		}
+	}
+	void TileLayout::OnChildPaint(Controls& controls, PaintEventArgs& args) {
+		VisibleControls.clear();
+		auto rect = Rect(0, 0, _rect.Width, _rect.Height);
+		//绘制子控件
+		for (auto i = controls.begin(); i != controls.end(); i++)
+		{
+			auto& it = **i;
+			if (rect.IntersectsWith(it.GetRect())) {
+				VisibleControls.push_back(*i);
+				it.OnEvent(Event::OnPaint, &args);
+			}
+			if (it.Y() >= _rect.Height) { //纵向列表控件超出则不再绘制后面的控件 优化鼠标操作的性能
+				break;
+			}
+		}
+		//子控件绘制完毕
+	}
+	void TileLayout::ResumeLayout()
 	{
 		if (_rect.IsEmptyArea()) return;
 		_controlsLocationY.clear();
@@ -39,62 +89,6 @@ namespace EzUI {
 		}
 
 		_MaxBottom += MarginTop;
-	}
-
-	void TileLayout::Clear(bool freeChilds)
-	{
-		__super::Clear(freeChilds);
-		_controlsLocationY.clear();
-		_MaxBottom = 0;
-		if (vScrollBar) {
-			vScrollBar->SetMaxBottom(_MaxBottom);
-		}
-	}
-
-	TileLayout::TileLayout()
-	{
-		this->ScrollBar = new VScrollBar;
-		vScrollBar = (VScrollBar*)this->ScrollBar;
-		if (vScrollBar) {
-			vScrollBar->ReSize({ 10,Height() });//滚动条宽度
-			vScrollBar->Parent = this;
-			vScrollBar->_controlsLocationY = &_controlsLocationY;
-		}
-	}
-
-	TileLayout::~TileLayout()
-	{
-	}
-
-	void TileLayout::OnSize(const Size& sz)
-	{
-		Sort();
-		if (vScrollBar) {
-			vScrollBar->OnLayout(sz);
-			vScrollBar->SetMaxBottom(_MaxBottom);
-		}
-	}
-
-	void TileLayout::OnChildPaint(Controls& controls, PaintEventArgs& args) {
-		VisibleControls.clear();
-		auto rect = Rect(0, 0, _rect.Width, _rect.Height);
-		//绘制子控件
-		for (auto i = controls.begin(); i != controls.end(); i++)
-		{
-			auto& it = **i;
-			if (rect.IntersectsWith(it.GetRect())) {
-				VisibleControls.push_back(*i);
-				it.OnEvent(Event::OnPaint, &args);
-			}
-			if (it.Y() >= _rect.Height) { //纵向列表控件超出则不再绘制后面的控件 优化鼠标操作的性能
-				break;
-			}
-		}
-		//子控件绘制完毕
-	}
-	void TileLayout::RefreshLayout()
-	{
-		Sort();
 	}
 
 };

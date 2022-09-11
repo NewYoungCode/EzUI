@@ -20,11 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Application.h" />
+    <ClInclude Include="include\BorderlessWindow.h" />
     <ClInclude Include="include\BoxShadow.h" />
     <ClInclude Include="include\Button.h" />
     <ClInclude Include="include\CheckBox.h" />
     <ClInclude Include="include\ComBox.h" />
-    <ClInclude Include="include\Container.h" />
     <ClInclude Include="include\Control.h" />
     <ClInclude Include="include\CPURender.h" />
     <ClInclude Include="include\Edit.h" />
@@ -35,6 +35,7 @@
     <ClInclude Include="include\HScrollBar.h" />
     <ClInclude Include="include\IControl.h" />
     <ClInclude Include="include\Label.h" />
+    <ClInclude Include="include\LayeredWindow.h" />
     <ClInclude Include="include\Layout.h" />
     <ClInclude Include="include\Menu.h" />
     <ClInclude Include="include\NotifyIcon.h" />
@@ -42,6 +43,7 @@
     <ClInclude Include="include\RadioButton.h" />
     <ClInclude Include="include\TabLayout.h" />
     <ClInclude Include="include\TileLayout.h" />
+    <ClInclude Include="include\Timer.h" />
     <ClInclude Include="include\ui.h" />
     <ClInclude Include="include\UIManager.h" />
     <ClInclude Include="include\VLayout.h" />
@@ -53,11 +55,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="BorderlessWindow.cpp" />
     <ClCompile Include="BoxShadow.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="CheckBox.cpp" />
     <ClCompile Include="ComBox.cpp" />
-    <ClCompile Include="Container.cpp" />
     <ClCompile Include="Control.cpp" />
     <ClCompile Include="CPURender.cpp" />
     <ClCompile Include="Edit.cpp" />
@@ -68,6 +70,7 @@
     <ClCompile Include="HScrollBar.cpp" />
     <ClCompile Include="IControl.cpp" />
     <ClCompile Include="Label.cpp" />
+    <ClCompile Include="LayeredWindow.cpp" />
     <ClCompile Include="Layout.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="NotifyIcon.cpp" />

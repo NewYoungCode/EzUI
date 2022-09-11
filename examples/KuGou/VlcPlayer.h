@@ -14,11 +14,9 @@ namespace EzUI {
 		libvlc_instance_t* vlc_inst = NULL;
 		libvlc_media_player_t* vlc_player = NULL;
 		libvlc_media_t* vlc_media = NULL;
-		long long duration = 0;
+		libvlc_time_t _Duration = 0;
 	public:
 		std::mutex mtx;
-
-		std::mutex mtx2;
 		unsigned int IMG_WIDTH = 0;
 		unsigned int IMG_HEIGHT = 0;
 		EBitmap* BuffBitmap = NULL;
@@ -33,7 +31,9 @@ namespace EzUI {
 		void Play();
 		void Pause();
 		long long Duration();
+		void SetDuration(int dur);
 		long long Position();
+		void SetPosition(float f_pos);
 		libvlc_state_t GetState();
 	};
 }

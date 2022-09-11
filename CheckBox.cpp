@@ -16,7 +16,7 @@ namespace EzUI {
 	void CheckBox::SetCheck(bool checked)
 	{
 		_checked = checked;
-		Refresh();
+		Invalidate();
 	}
 
 	bool CheckBox::GetCheck()

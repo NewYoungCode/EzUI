@@ -15,7 +15,7 @@ namespace EzUI {
 	void RadioButton::SetCheck(bool checked)
 	{
 		_checked = checked;
-		Refresh();
+		Invalidate();
 	}
 
 	bool RadioButton::GetCheck()

@@ -11,7 +11,7 @@ namespace EzUI {
 	public:
 		void AddControl(Control* ctl) override;
 		void OnSize(const Size& size)override;
-		void RefreshLayout()override;
+		void ResumeLayout() override;
 	};
 	using HBox = HLayout;
 };

@@ -53,9 +53,9 @@ namespace EzUI {
 		Sort();
 	}
 
-	void HLayout::RefreshLayout()
+	void HLayout::ResumeLayout()
 	{
 		Sort();
-		Refresh();
+		Invalidate();
 	}
 };
