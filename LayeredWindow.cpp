@@ -41,7 +41,7 @@ namespace EzUI {
 				if (!_InvalidateRect.IsEmptyArea()) {
 					::SendMessage(_hWnd, UI_PAINT, NULL, NULL);
 				}
-				Sleep(5);//检测无效区域的延时
+				Sleep(5);//检测无效区域的延时 200fps
 			}
 			});
 	}
@@ -75,7 +75,13 @@ namespace EzUI {
 		}
 	}
 	void LayeredWindow::InvalidateRect(const Rect& _rect) {
-		Rect::Union(_InvalidateRect, _InvalidateRect, _rect);
+		if (_InvalidateRect.IsEmptyArea()) {
+			_InvalidateRect = _rect;
+		}
+		else
+		{
+			Rect::Union(_InvalidateRect, _InvalidateRect, _rect);
+		}
 	}
 	void LayeredWindow::OnSize(const Size& sz) {
 		auto rect = this->GetClientRect();
@@ -98,7 +104,7 @@ namespace EzUI {
 	}
 	LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		if (uMsg == WM_PAINT) 
+		if (uMsg == WM_PAINT)
 		{
 			return FALSE;
 		}

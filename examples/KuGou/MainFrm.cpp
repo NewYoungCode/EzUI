@@ -105,7 +105,6 @@ void MainFrm::DownLoadImage(EString SingerName, EString headImageUrl)
 		}
 	}
 
-	::SendMessageW(_hWnd, refreshImage, 0, 0);
 
 	{
 		//下载歌手写真
@@ -145,6 +144,7 @@ void MainFrm::DownLoadImage(EString SingerName, EString headImageUrl)
 		bkImage->SizeMode = ImageSizeMode::CenterImage;
 	}
 
+	::SendMessageW(_hWnd, refreshImage, 0, 0);
 }
 void MainFrm::OnKeyDown(WPARAM wparam)
 {
@@ -202,11 +202,10 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 				}
 
 				this->SetText(json["fileName"].asString());
-				FindControl("lrcView")->Trigger(Event::OnMouseClick);
+				
 				player.OpenUrl(playUrl);
 				player.SetDuration(dur);
 				player.Play();
-
 			}
 			else {
 				::MessageBoxW(Hwnd(), L"歌曲收费", L"ERROR", 0);
@@ -358,11 +357,14 @@ LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
 			delete bkImage;
 			bkImage = NULL;
 		}
+		FindControl("lrcView")->Trigger(Event::OnMouseClick);
 	}
 	if (refreshImage == msg) {
 		headImg->SizeMode = ImageSizeMode::CenterImage;
 		singer->Style.BackgroundImage = headImg;
 		singer->Invalidate();
+		FindControl("lrcView")->Trigger(Event::OnMouseClick);
+
 		return 0;
 	}
 	return __super::WndProc(msg, W, L);

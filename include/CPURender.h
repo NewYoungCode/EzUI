@@ -51,6 +51,7 @@ namespace EzUI {
 			bmih.biHeight = -height;
 			bmih.biSizeImage = width * height * _bitCount;
 			_bitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, &point, NULL, 0);
+			this->GetDC();
 		}
 		HDC& GetDC() {
 			if (!_hdc) {
