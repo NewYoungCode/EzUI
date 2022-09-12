@@ -7,33 +7,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ LPWSTR    lpCmdLine,
 	_In_ int       nCmdShow)
 {
-
-
-
 	Curl_Global_Init();
-	//Timer* t = new Timer;
-	//t->Interval = 500;
-
-	//t->Tick = [=]() {
-	//	OutputDebugString(L"timer \n");
-	//};
-	//t->Start();
-	//Sleep(5000);
-	//t->Stop();
-
+	
 	ui::Application app;
 	mvicon = new Image(L"imgs/mvicon.png");
-	
-
 	MainFrm frm;
-
-
-	Layout l;
-
-	l.Style.BackgroundColor = Color::Pink;
-	l.ActiveStyle.BackgroundColor = Color::Red;
-
-	frm.SetLayout(&l);
 	frm.Show();
 
 	app.exec();
