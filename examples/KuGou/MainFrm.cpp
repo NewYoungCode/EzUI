@@ -9,6 +9,7 @@ void MainFrm::InitForm() {
 	auto main2 = FindControl("main2");
 	main2->Style.BackgroundColor = Color(120, 0, 0, 0);
 
+
 	FindControl("lrcView2")->AddControl(&lrcCtl);//Ìí¼Ó¸è´Ê¿Ø¼þ
 	lrcCtl._hWnd = _hWnd;
 
@@ -56,6 +57,9 @@ void MainFrm::InitForm() {
 
 	time = (Label*)FindControl("time");
 	singer = (Label*)FindControl("singer");
+
+	bkImage = new Image(L"imgs/defaultBackground.jpg");
+	bkImage->SizeMode = ImageSizeMode::CenterImage;
 
 	headImg = new Image(L"imgs/headImg.jpg");
 	headImg->SizeMode = ImageSizeMode::CenterImage;
