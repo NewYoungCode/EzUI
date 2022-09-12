@@ -47,6 +47,9 @@ public:
 		this->Dock = DockStyle::Horizontal;
 		HoverStyle.BackgroundColor = Color(100, 230, 230, 230);
 
+		ActiveStyle.BackgroundColor = Color(100, 255, 230, 230);
+
+
 		AddControl(new HSpacer(15));
 		AddControl(&songName);
 		AddControl(&time);

@@ -26,6 +26,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	
 
 	MainFrm frm;
+
+
+	Layout l;
+
+	l.Style.BackgroundColor = Color::Pink;
+	l.ActiveStyle.BackgroundColor = Color::Red;
+
+	frm.SetLayout(&l);
 	frm.Show();
 
 	app.exec();

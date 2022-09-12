@@ -584,7 +584,7 @@ namespace EzUI {
 	}
 
 	void Window::MoveWindow() {
-		::ReleaseCapture();
+		::ReleaseCapture();//»áµ¼ÖÂavtiveStyleÊ§Ð§
 		SendMessage(_hWnd, 161, 2, NULL);
 		SendMessage(_hWnd, 0x0202, 0, NULL);
 	}
@@ -661,7 +661,7 @@ namespace EzUI {
 			}
 			if (sender->Action == ControlAction::Mini) {
 				::ShowWindow(_hWnd, SW_MINIMIZE);
-				return true;
+				return false;
 			}
 			if (sender->Action == ControlAction::Max) {
 				if (!IsZoomed(_hWnd)) {
@@ -670,14 +670,14 @@ namespace EzUI {
 				else {
 					::ShowWindow(_hWnd, SW_SHOWNORMAL);
 				}
-				return true;
+				return false;
 			}
 			if (sender->Action == ControlAction::Close) {
 				MouseEventArgs args;
 				args.EventType = Event::OnMouseLeave;
 				sender->Trigger(args);
 				this->Close();
-				return true;
+				return false;
 			}
 		}
 		if (args.EventType == Event::OnMouseClick) {
