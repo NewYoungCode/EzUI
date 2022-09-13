@@ -3,7 +3,7 @@
 #include <usp10.h>
 #pragma comment (lib, "usp10.lib")
 namespace EzUI {
-	class Edit :
+	class UI_EXPORT Edit :
 		public Control
 	{
 	private:

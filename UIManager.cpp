@@ -209,27 +209,23 @@ namespace EzUI {
 			str = bufStr;
 			delete bufStr;
 		}
-		std::vector<Control*> LoadControl(const EString& filename)
+		std::vector<Control*> LoadControls(const EString& filename)
 		{
-			//FILE* file(0);
-			//_wfopen_s(&file, filename.utf16().c_str(), L"rb+");
-			//if (!doc.LoadFile(file, TiXmlEncoding::TIXML_ENCODING_UTF8)) {//the file code page must utf8
-			//	ASSERT(0);
-			//}
-			//::fclose(file);
-			std::ifstream ifs(filename.utf16().c_str());
+			FILE* file(0);
+			_wfopen_s(&file, filename.utf16().c_str(), L"rb+");
+			std::ifstream ifs(file);
 			std::stringstream ss;
 			ss << ifs.rdbuf();
 			ifs.close();
+			::fclose(file);
 
 			std::vector<Control*> controls;
 			LoadControl(ss.str(), controls);
-
 			return controls;
 		}
 		Layout* LoadLayout(const EString& filename)
 		{
-			return (Layout*)LoadControl(filename).at(0);
+			return (Layout*)LoadControls(filename)[0];
 		}
 		void LoadControl(const EString& xmlRaw, std::vector<Control*>& controls)
 		{
