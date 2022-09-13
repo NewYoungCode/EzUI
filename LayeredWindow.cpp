@@ -106,7 +106,11 @@ namespace EzUI {
 	{
 		if (uMsg == WM_PAINT)
 		{
-			return FALSE;
+			PAINTSTRUCT pst;//也许这样能避免锁屏之后一直发送WM_PAINT消息的问题
+			BeginPaint(_hWnd, &pst);
+			RECT& r = pst.rcPaint;
+			EndPaint(_hWnd, &pst);
+			return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
 		}
 		if (uMsg == UI_PAINT) //layeredWindow
 		{
