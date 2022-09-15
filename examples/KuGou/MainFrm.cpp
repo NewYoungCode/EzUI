@@ -343,9 +343,16 @@ void  MainFrm::LrcView() {
 	main->Invalidate();
 }
 
-void MainFrm::OnPaint(HDC DC, const Rect& rect) {
-	__super::OnPaint(DC, rect);
+
+void MainFrm::OnPaint(HDC winHDC, const Rect& rePaintRect)
+{
+	StopWatch sw;
+	__super::OnPaint(winHDC, rePaintRect);
+	char buf[256]{ 0 };
+	sprintf_s(buf, "Opaint %dms\n", sw.ElapsedMilliseconds());
+	OutputDebugStringA(buf);
 }
+
 
 LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
 {

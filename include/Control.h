@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "IControl.h"
 #include "Painter.h"
+
 namespace EzUI {
 	class Control;
 	class ScrollBar;
@@ -37,6 +38,7 @@ namespace EzUI {
 		Tuple<LPTSTR> _LastCursor;
 		Controls _spacer;//存储控件下布局的的弹簧集合
 	public:
+		int ShadowWidth = 0;//控件阴影宽度
 		Cursor Cursor = Cursor::None;//鼠标样式
 		int MousePassThrough = 0;
 		bool IsXmlControl = false;//是否是xml加载进来的
@@ -88,7 +90,7 @@ namespace EzUI {
 	public:
 		void Trigger(const MouseEventArgs& args);//触发鼠标相关消息
 	protected:
-		ControlStyle& GetStyle(ControlState &_state);//获取当前控件状态下的样式信息
+		ControlStyle& GetStyle(ControlState& _state);//获取当前控件状态下的样式信息
 	public:
 		Control();
 		virtual ~Control();
@@ -117,12 +119,12 @@ namespace EzUI {
 		virtual void AddControl(Control* ctl);//添加控件
 		virtual ControlIterator RemoveControl(Control* ctl);//删除控件 返回下一个迭代器
 		virtual void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件
-		void Move(const Point& pt);//移动相对与父控件的位置
+		void SetLocation(const Point& pt);//移动相对与父控件的位置
 		const int& X();
 		const int& Y();
 		void SetX(const int& X);
 		void SetY(const int& Y);
-		void ReSize(const Size& size); //当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
+		void SetSize(const Size& size); //当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
 		void SetWidth(const int& width);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
 		void SetHeight(const int& height);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
 		const int& Width();

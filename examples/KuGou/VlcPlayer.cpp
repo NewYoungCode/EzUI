@@ -24,7 +24,7 @@ namespace EzUI {
 		int h = *height;
 		VlcPlayer* vp = (VlcPlayer*)*opaque;
 		if (vp->BuffBitmap == NULL) {
-			vp->BuffBitmap = new EBitmap(w, h, 32);
+			vp->BuffBitmap = new EBitmap(w, h, EBitmap::PixelFormat::PixelFormatARGB);
 		}
 		memcpy(chroma, "RV32", 4);
 		*pitches = w * 4;

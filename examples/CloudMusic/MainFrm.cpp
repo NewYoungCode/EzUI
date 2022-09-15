@@ -27,16 +27,14 @@ public:
 	void OnMouseUp(MouseButton mbtn, const Point& point)override {
 		__super::OnMouseUp(mbtn, point);
 	}
-	void OnPaint(PaintEventArgs& args)override {
-		__super::OnPaint(args);
-	}
+
 };
 
 MainFrm::MainFrm(int width, int height) :Form(width, height)
 {
 	//::SetParent(::CreateWindowW(L"Button", L"hello word", WS_VISIBLE |WS_POPUP, 100, 30, 120, 35, _hWnd, NULL, GetModuleHandle(NULL), NULL),_hWnd);
 	laout.Style.BackgroundColor = { 35,35,38 };
-	top.ReSize({ laout.Width(),60 });
+	top.SetSize({ laout.Width(),60 });
 	//Image *imgx = new Image("D:\\hd(3).png");
 	//top.Style.BackgroundImage = (imgx);
 	top.SetFixedHeight(60);
@@ -62,18 +60,18 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	edit.Style.Radius = (30);
 	top.AddControl(&edit);
 
-	redBar.ReSize({ laout.Width(),2 });
+	redBar.SetSize({ laout.Width(),2 });
 	redBar.SetFixedHeight(2);
 	redBar.Style.BackgroundColor = { 173,32,32 };
 	laout.AddControl(&redBar);
 	redBar.Dock = DockStyle::Horizontal;
 
-	centerLayout.ReSize({ laout.Width(),10 });
+	centerLayout.SetSize({ laout.Width(),10 });
 	centerLayout.Style.BackgroundColor = { 43,43,43 };
 	laout.AddControl(&centerLayout);
 	centerLayout.Dock = DockStyle::Horizontal;
 
-	menu.ReSize({ 200,centerLayout.Height() });
+	menu.SetSize({ 200,centerLayout.Height() });
 	menu.SetFixedWidth(200);
 	menu.Style.ForeColor = (Color::White);
 	menu.Style.SetBorder(Color(68, 68, 68), 1);
@@ -83,7 +81,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	centerLayout.AddControl(&menu);
 	menu.Dock = DockStyle::Vertical;
 
-	musicList.ReSize({ 200,centerLayout.Height() });
+	musicList.SetSize({ 200,centerLayout.Height() });
 	centerLayout.AddControl(&musicList);
 	musicList.Dock = DockStyle::Vertical;
 
@@ -120,37 +118,37 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	}
 
 	btn1.SetText(utf8("发现音乐"));
-	btn1.ReSize({ 200,63 });
+	btn1.SetSize({ 200,63 });
 	menu.AddControl(&btn1);
 
 	btn2.SetText(utf8("博客"));
-	btn2.ReSize({ 200,63 });
+	btn2.SetSize({ 200,63 });
 	menu.AddControl(&btn2);
 
 	btn3.SetText(utf8("视频"));
-	btn3.ReSize({ 200,63 });
+	btn3.SetSize({ 200,63 });
 	menu.AddControl(&btn3);
 
 	btn4.SetText(utf8("朋友"));
-	btn4.ReSize({ 200,63 });
+	btn4.SetSize({ 200,63 });
 	menu.AddControl(&btn4);
 
 	btn5.SetText(utf8("直播"));
-	btn5.ReSize({ 200,63 });
+	btn5.SetSize({ 200,63 });
 	menu.AddControl(&btn5);
 
 	btn6.SetText(utf8("诗人FM"));
-	btn6.ReSize({ 200,63 });
+	btn6.SetSize({ 200,63 });
 	menu.AddControl(&btn6);
 
-	bottom.ReSize({ laout.Width(),73 });
+	bottom.SetSize({ laout.Width(),73 });
 	bottom.SetFixedHeight({ 72 });
 	bottom.Style.BackgroundColor = { 33,33,36 };
 	//bottom.Style.SetBorder({ 59,59,62 }, 1);
 	laout.AddControl(&bottom);
 	bottom.Dock = DockStyle::Horizontal;
 
-	bottom_left.ReSize({ 222 ,100 });
+	bottom_left.SetSize({ 222 ,100 });
 	bottom_left.SetFixedWidth(222);
 	bottom_left.Dock = DockStyle::Vertical;
 	bottom_left.Style.ForeColor = (Color::White);
@@ -179,35 +177,35 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	aixin.SetRect({ 156,15,22,22 });
 	bottom_left.AddControl(&aixin);
 
-	bottom_center.ReSize({ 1,74 });
+	bottom_center.SetSize({ 1,74 });
 	bottom_center.Style.ForeColor = (Color::White);
 	bottom.AddControl(&bottom_center);
 
-	sp1.ReSize({ 1,1 });
+	sp1.SetSize({ 1,1 });
 	bottom_center.AddControl(&sp1);
 
-	Label1.ReSize({ 70,15 });
-	Label1.Move({ 0,50 });
+	Label1.SetSize({ 70,15 });
+	Label1.SetLocation({ 0,50 });
 	Label1.SetFixedWidth(70);
 	Label1.SetText(utf8("00:00"));
 	bottom_center.AddControl(&Label1);
 
-	prog.ReSize({ 1,3 });
-	prog.Move({ 0,55 });
+	prog.SetSize({ 1,3 });
+	prog.SetLocation({ 0,55 });
 	prog.SetFixedWidth(360);
 	prog.Style.BackgroundColor = { 236,65,65 };
 	bottom_center.AddControl(&prog);
 
-	Label2.ReSize({ 70,15 });
-	Label2.Move({ 0,50 });
+	Label2.SetSize({ 70,15 });
+	Label2.SetLocation({ 0,50 });
 	Label2.SetFixedWidth(70);
 	Label2.SetText(utf8("03:50"));
 	bottom_center.AddControl(&Label2);
 
-	sp2.ReSize({ 1,1 });
+	sp2.SetSize({ 1,1 });
 	bottom_center.AddControl(&sp2);
 
-	bottom_right.ReSize({ 219,74 });
+	bottom_right.SetSize({ 219,74 });
 	bottom_right.SetFixedWidth(219);
 	bottom.AddControl(&bottom_right);
 
@@ -217,7 +215,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	yz_std.Style.ForeImage = (&std_img);
 	bottom_right.AddControl(&yz_std);
 
-	space1.ReSize({ 1,1 });
+	space1.SetSize({ 1,1 });
 	bottom_right.AddControl(&space1);
 
 	yx.SetRect({ 0,26,20,20 });
@@ -226,7 +224,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	yx.Style.ForeImage = (&yx_img);
 	bottom_right.AddControl(&yx);
 
-	space1.ReSize({ 1,1 });
+	space1.SetSize({ 1,1 });
 	bottom_right.AddControl(&space2);
 
 	yl.SetRect({ 0,26,21,21 });
@@ -234,7 +232,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	yl.Style.ForeImage = (&yl_img);
 	bottom_right.AddControl(&yl);
 
-	space3.ReSize({ 1,1 });
+	space3.SetSize({ 1,1 });
 	bottom_right.AddControl(&space3);
 
 	hy.SetRect({ 0,24,22,22 });
@@ -243,7 +241,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	hy.Style.ForeImage = (&hy_img);
 	bottom_right.AddControl(&hy);
 
-	space4.ReSize({ 1,1 });
+	space4.SetSize({ 1,1 });
 	bottom_right.AddControl(&space4);
 
 	lb.SetRect({ 0,24,22,22 });
@@ -252,7 +250,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	lb.Style.ForeImage = (&lb_img);
 	bottom_right.AddControl(&lb);
 
-	space5.ReSize({ 1,1 });
+	space5.SetSize({ 1,1 });
 	bottom_right.AddControl(&space5);
 
 	//设置布局显示窗口
@@ -266,6 +264,15 @@ void MainFrm::OnSize(const Size& sz)
 	__super::OnSize(sz);
 	char buf[256]{ 0 };
 	sprintf_s(buf, "OnSize %dms\n", sw.ElapsedMilliseconds());
+	OutputDebugStringA(buf);
+}
+
+void MainFrm::OnPaint(HDC winHDC, const Rect& rePaintRect)
+{
+	StopWatch sw;
+	__super::OnPaint(winHDC, rePaintRect);
+	char buf[256]{ 0 };
+	sprintf_s(buf, "Opaint %dms\n", sw.ElapsedMilliseconds());
 	OutputDebugStringA(buf);
 }
 

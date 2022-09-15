@@ -24,43 +24,6 @@ namespace EzUI {
 			}
 		}
 	};
-	struct SafeFont {
-	public:
-		HDC DC = NULL;
-		HFONT hFont = NULL;
-		HGDIOBJ OLDFONT = NULL;
-		SafeFont(const HDC& _DC, const EString& fontFamily, int fontSize, const Color& color, bool underLine) {
-			this->DC = _DC;
-			LOGFONTW lf = { 0 };
-			GetObject(GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONTW), &lf);
-			wcsncpy_s(lf.lfFaceName, fontFamily.utf16().c_str(), LF_FACESIZE);
-			lf.lfCharSet = DEFAULT_CHARSET;
-			lf.lfHeight = -MulDiv(fontSize, GetDeviceCaps(DC, LOGPIXELSY), 72);
-			//if (0) lf.lfWeight += FW_BOLD;		//粗体
-			lf.lfUnderline = underLine;				//下划线
-			//if (0) lf.lfItalic = TRUE;				//斜体
-			SetTextColor(DC, RGB(color.GetR(), color.GetG(), color.GetB()));
-			hFont = CreateFontIndirectW(&lf);
-			OLDFONT = SelectObject(DC, hFont);
-		}
-		virtual ~SafeFont() {
-			if (hFont) {
-				SelectObject(DC, OLDFONT);
-				DeleteFont(hFont);
-			}
-		}
-	};
-	///*if (Layer.size() > 0) {
-	//			SafeClipRegion clipRgb(DC, (*(Layer.rbegin()))->WinRECT());
-	//			SafeFont font(DC, fontFamily, fontSize, color, underLine);
-	//			Rect rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
-	//			rect.X += OffsetX;
-	//			rect.Y += OffsetY;
-	//			RECT winRect = rect.WinRECT();
-	//			std::wstring wStr = text.utf16();
-	//			DrawTextW(DC, wStr.c_str(), wStr.size(), &winRect, DT_SINGLELINE | (int)textAlign);
-	//		}*/
-
 
 	SolidBrush* CreateBrush(const Color& color) {
 		SolidBrush* _bufBrush = new SolidBrush(color);
@@ -126,12 +89,24 @@ namespace EzUI {
 
 	CPURender::CPURender(HWND hWnd)
 	{
-		base = new  Gdiplus::Graphics(hWnd);
+		_hwnd = hWnd;
+		DC = ::GetDC(hWnd);
+		base = new  Gdiplus::Graphics(DC);
+		SetBkMode(DC, TRANSPARENT);
+		HighQualityMode(base);
+	}
+
+	CPURender::CPURender(Gdiplus::Image* image)
+	{
+		base = new  Gdiplus::Graphics(image);
 		HighQualityMode(base);
 	}
 
 	CPURender::~CPURender()
 	{
+		if (_hwnd) {
+			::ReleaseDC(_hwnd, DC);
+		}
 		delete base;
 	}
 
@@ -252,53 +227,45 @@ namespace EzUI {
 		else {
 			base->FillRectangle(brush, rect);
 		}
-	}
 
+	}
 
 	void CPURender::DrawString(const EString& text, const EString& fontFamily, int fontSize, const Color& color, const Rect& _rect, TextAlign textAlign, bool underLine)
 	{
-		Rect rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
-		rect.X += OffsetX;
-		rect.Y += OffsetY;
-
-		HRGN clipRgn = NULL;
-		HFONT hFont = NULL;
-		HGDIOBJ oldFont = NULL;
-
-		LOGFONTW lf{ 0 };
-		GetObjectW(GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONTW), &lf);
-		wcsncpy_s(lf.lfFaceName, fontFamily.utf16().c_str(), LF_FACESIZE);
-		lf.lfCharSet = DEFAULT_CHARSET;
-		lf.lfHeight = -MulDiv(fontSize, GetDeviceCaps(DC, LOGPIXELSY), 72);
-		//if (0) lf.lfWeight += FW_BOLD;		//粗体
-		lf.lfUnderline = underLine;				//下划线
-		//if (0) lf.lfItalic = TRUE;				//斜体
-		hFont = CreateFontIndirectW(&lf);
-		oldFont = SelectFont(DC, hFont);
-		if (Layer.size() > 0) {
-			RECT winClip = (*(Layer.rbegin()))->WinRECT();
-			clipRgn = ::CreateRectRgn(winClip.left, winClip.top, winClip.right, winClip.bottom);
-			::SelectClipRgn(DC, clipRgn);
+		if (DC != NULL) {//使用GDI绘制文字
+			Rect rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
+			rect.X += OffsetX;
+			rect.Y += OffsetY;
+			HFONT hFont = NULL;
+			HGDIOBJ oldFont = NULL;
+			LOGFONTW lf{ 0 };
+			GetObjectW(GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONTW), &lf);
+			wcsncpy_s(lf.lfFaceName, fontFamily.utf16().c_str(), LF_FACESIZE);
+			lf.lfCharSet = DEFAULT_CHARSET;
+			lf.lfHeight = -MulDiv(fontSize, GetDeviceCaps(DC, LOGPIXELSY), 72);
+			//lf.lfWeight += FW_BOLD;		//粗体
+			lf.lfUnderline = underLine;				//下划线
+			//lf.lfItalic = TRUE;				//斜体
+			hFont = CreateFontIndirectW(&lf);
+			oldFont = SelectFont(DC, hFont);
+			std::wstring wStr = text.utf16();
+			RECT winRECT = rect.WinRECT();
+			SetTextColor(DC, RGB(color.GetR(), color.GetG(), color.GetB()));
+			DrawTextW(DC, wStr.c_str(), wStr.size(), &winRECT, DT_SINGLELINE | (int)textAlign);
+			if (hFont) {
+				SelectFont(DC, oldFont);
+				DeleteFont(hFont);
+			}
 		}
-
-		std::wstring wStr = text.utf16();
-		RECT winRECT = rect.WinRECT();
-		SetTextColor(DC, RGB(color.GetR(), color.GetG(), color.GetB()));
-		DrawTextW(DC, wStr.c_str(), wStr.size(), &winRECT, DT_SINGLELINE | (int)textAlign);
-		if (clipRgn) {
-			::SelectClipRgn(DC, NULL);
-			::DeleteRgn(clipRgn);
+		else
+		{
+			//使用GDI+绘制文字
+			RectF rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
+			rect.X += OffsetX;
+			rect.Y += OffsetY;
+			SafeObject<Gdiplus::Font> font(CreateFont(fontFamily, fontSize));
+			this->DrawString(text.utf16(), font, color, rect, textAlign, underLine);
 		}
-		if (hFont) {
-			SelectFont(DC, oldFont);
-			DeleteFont(hFont);
-		}
-
-		/*RectF rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
-		rect.X += OffsetX;
-		rect.Y += OffsetY;
-		SafeObject<Gdiplus::Font> font(CreateFont(fontFamily, fontSize));
-		this->DrawString(text.utf16(), font, color, rect, textAlign, underLine);*/
 	}
 
 	void CPURender::MeasureString(const EString& _text, const EString& fontf, int fontSize, RectF& outBox) {
@@ -318,15 +285,30 @@ namespace EzUI {
 	void CPURender::CreateLayer(const Rect& rect, ClipMode clipMode, int radius)
 	{
 		Layer.push_back(&rect);
+
+		if (DC) {
+			HRGN _rgn = ::CreateRectRgn(rect.X, rect.Y, rect.GetRight(), rect.GetBottom());
+			::SelectClipRgn(DC, _rgn);
+			DeleteRgn(_rgn);
+		}
 		base->SetClip(rect, (Gdiplus::CombineMode)clipMode);
 	}
 	void CPURender::PopLayer()
 	{
+		if (DC) {
+			::SelectClipRgn(DC, NULL);
+		}
 		base->ResetClip();
 		if (!Layer.empty()) {
 			Layer.pop_back();
 			if (!Layer.empty()) {
 				auto it = Layer.back();
+				if (DC) {
+					auto& rect = *(Rect*)it;
+					HRGN _rgn = ::CreateRectRgn(rect.X, rect.Y, rect.GetRight(), rect.GetBottom());
+					::SelectClipRgn(DC, _rgn);
+					DeleteRgn(_rgn);
+				}
 				base->SetClip(*(Rect*)it);
 			}
 		}
@@ -342,7 +324,10 @@ namespace EzUI {
 		SafeObject<Pen> pen(CreatePen(color, width));
 		base->DrawLine(pen, A, B);
 	}
-
+	void CPURender::DrawImage(Gdiplus::Image* image, const Rect& destRect, const Rect& srcRect)
+	{
+		base->DrawImage(image, destRect, srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, Gdiplus::Unit::UnitPixel);
+	}
 	void CPURender::DrawImage(Gdiplus::Image* image, const Rect& _rect, const ImageSizeMode& imageSizeMode, const Margin& margin)
 	{
 		if (!image || image->GetLastStatus() != Gdiplus::Status::Ok) return;
@@ -437,7 +422,6 @@ namespace EzUI {
 				return j;  // Success
 			}
 		}
-
 		free(pImageCodecInfo);
 		return -1;  // Failure
 	}
@@ -477,6 +461,41 @@ namespace EzUI {
 			RECT rect{ 0,0,size.Width,size.Height };
 			SaveHDCToFile(DC, &rect, format, fileName);
 		}
+	}
+
+	void _Bitmap::Save(const EString& fileName)
+	{
+		size_t pos = fileName.rfind(".");
+		//L"image/bmp" L"image/jpeg"  L"image/gif" L"image/tiff" L"image/png"
+		WCHAR format[15]{ L"image/bmp" };
+		if (pos != EString::npos) {
+			EString ext2 = fileName.substr(pos);
+			ext2 = ext2.Tolower();
+			do
+			{
+				if (ext2 == ".jpg") {
+					StrCpyW(format, L"image/jpeg");
+					break;
+				}
+				if (ext2 == ".png") {
+					StrCpyW(format, L"image/png");
+					break;
+				}
+				if (ext2 == ".gif") {
+					StrCpyW(format, L"image/gif");
+					break;
+				}
+				if (ext2 == ".tiff") {
+					StrCpyW(format, L"image/tiff");
+					break;
+				}
+
+			} while (false);
+		}
+
+		CLSID pngClsid;
+		GetEncoderClsid(format, &pngClsid);
+		__super::Save(fileName.utf16().c_str(), &pngClsid);
 	}
 
 };

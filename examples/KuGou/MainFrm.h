@@ -35,6 +35,5 @@ public:
 	MainFrm();
 	virtual ~MainFrm();
 	void OnClose(bool& b) override;
-
 };
 

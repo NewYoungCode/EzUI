@@ -1,15 +1,15 @@
-#include "BoxShadow.h"
+#include "ShadowWindow.h"
 
 namespace EzUI {
 
-	BoxShadow::BoxShadow(int cx, int cy, HWND hwnd)
+	ShadowWindow::ShadowWindow(int cx, int cy, HWND hwnd)
 	{
 		DWORD dwFlags = WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT;
 		_hWnd = CreateWindowEx(dwFlags, UI_CLASSNAME, TEXT("BoxShadow"), WS_POPUP, 0, 0, cx, cy, hwnd, NULL, GetModuleHandle(NULL), NULL);
 		ASSERT(_hWnd);
 	}
 
-	bool BoxShadow::SetShadow(int m_Width, int m_Height, size_t iSize) {
+	bool ShadowWindow::SetShadow(int m_Width, int m_Height, size_t iSize) {
 		int width = m_Width < m_Height ? m_Width : m_Height;
 		int radius = 3;//半径
 		int max_size = width / 2 - radius;
@@ -74,14 +74,17 @@ namespace EzUI {
 		return true;
 	}
 
-	void BoxShadow::setA(int x, int y, BYTE a) {
+	void ShadowWindow::setA(const int& x, const int& y, const BYTE& a) {
 		if (clipRect.Contains(x, y)) { //不允许绘制在OWner窗口区域
 			return;
 		}
 		DWORD* point = (DWORD*)_bufBitmap->point + (x + y * _bufBitmap->Width);//起始地址+坐标偏移
 		((BYTE*)point)[3] = a;//修改A通道数值
+		//((BYTE*)point)[2] = 0;//修改R通道数值
+		//((BYTE*)point)[1] = 10;//修改G通道数值
+		//((BYTE*)point)[0] = 10;//修改B通道数值
 	}
-	void BoxShadow::Update(int _shadowWidth) {
+	void ShadowWindow::Update(int _shadowWidth) {
 
 
 		HWND OwnerWnd = ::GetWindowOwner(_hWnd);
@@ -111,7 +114,7 @@ namespace EzUI {
 			delete _bufBitmap;
 			_bufBitmap = NULL;
 		}
-		_bufBitmap = new EBitmap(width, height, 32);//32位透明图
+		_bufBitmap = new EBitmap(width, height,EBitmap::PixelFormat::PixelFormatARGB);//32位透明图
 		Debug::Log(TEXT("Update BoxShadow"));
 		Rect rect{ 0,0,width, height };
 		////绘图
@@ -119,7 +122,7 @@ namespace EzUI {
 
 		Painter pt(_bufBitmap->GetDC());
 		if (BackgroundImage) {//用于异形窗口
-			pt.CreateLayer(clipRect, ClipMode::Invalid);
+			pt.CreateLayer(clipRect, Painter::ClipMode::Invalid);
 			pt.DrawImage(BackgroundImage, rect);
 			pt.PopLayer();
 		}
@@ -138,7 +141,7 @@ namespace EzUI {
 
 	}
 
-	BoxShadow::~BoxShadow()
+	ShadowWindow::~ShadowWindow()
 	{
 		::SendMessage(_hWnd, WM_DESTROY, 0, 0);
 		if (_bufBitmap) {

@@ -161,6 +161,10 @@ namespace EzUI {
 			}
 			return count;
 		}
+
+		EString Tolower()const;
+		EString Toupper()const;
+
 	};
 #define utf8(szbuf)  EString(szbuf,EString::ANSI)
 	//#define utf8(szbuf)  EString(szbuf,EString::UTF8)

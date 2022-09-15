@@ -15,7 +15,7 @@ namespace EzUI {
 		_winData.Window = this;
 
 		if ((ExStyle & WS_EX_LAYERED) != WS_EX_LAYERED) {
-			_winData.InvalidateRect = [=](void*_rect)->void {
+			_winData.InvalidateRect = [=](void* _rect)->void {
 				RECT r = ((Rect*)_rect)->WinRECT();
 				::InvalidateRect(_hWnd, &r, FALSE);
 			};
@@ -109,10 +109,10 @@ namespace EzUI {
 	{
 		ASSERT(MainLayout);
 		::ShowWindow(_hWnd, cmdShow);
-		//MONITORINFO oMonitor = {};
-		//oMonitor.cbSize = sizeof(oMonitor);
-		//::GetMonitorInfo(::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST), &oMonitor);
-		//rcArea = oMonitor.rcWork;
+		//MONITORINFO oMonitor{ 0 };
+		//oMonitor.cbSize = sizeof(MONITORINFO);
+		//::GetMonitorInfo(::MonitorFromWindow(_hWnd, MONITOR_DEFAULTTONEAREST), &oMonitor);
+		//RECT r = oMonitor.rcWork;
 	}
 	int Window::ShowModal(bool wait)
 	{
@@ -235,6 +235,15 @@ namespace EzUI {
 		}
 		case WM_ERASEBKGND: {
 			return TRUE;
+		/*	Rect rect(GetRect());
+			MONITORINFO oMonitor{ 0 };
+			oMonitor.cbSize = sizeof(MONITORINFO);
+			::GetMonitorInfo(::MonitorFromWindow(_hWnd, MONITOR_DEFAULTTONEAREST), &oMonitor);
+			Rect workRect = oMonitor.rcWork;
+			if (!workRect.Contains(rect)) {
+				return TRUE;
+			}
+			break;*/
 		}
 		case WM_PAINT:
 		{
@@ -389,7 +398,7 @@ namespace EzUI {
 		}
 		default:
 		{
-		
+
 			break;
 		}
 		}
@@ -398,7 +407,7 @@ namespace EzUI {
 
 	void Window::OnPaint(HDC winHDC, const Rect& rePaintRect)
 	{
-		EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height, 24);//
+		EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height);//
 		Painter pt(memBitmap.GetDC());
 		PaintEventArgs args(pt);
 		args.InvalidRectangle = rePaintRect;

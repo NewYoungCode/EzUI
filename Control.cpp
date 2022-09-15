@@ -1,4 +1,5 @@
 #include "Control.h"
+#include "BoxShadow.h"
 namespace EzUI {
 	Control::Control() {}
 	Control::Control(const Control&) {}
@@ -157,11 +158,11 @@ Event(this , ##__VA_ARGS__); \
 				break;
 			}
 			if (attrName == "x") {
-				this->Move({ std::stoi(attrValue) ,this->GetRect().Y });
+				this->SetLocation({ std::stoi(attrValue) ,this->GetRect().Y });
 				break;
 			}
 			if (attrName == "y") {
-				this->Move({ this->GetRect().X, std::stoi(attrValue) });
+				this->SetLocation({ this->GetRect().X, std::stoi(attrValue) });
 				break;
 			}
 			if (attrName == "width") {//如果单独设置了宽高那就是绝对宽高了
@@ -412,24 +413,33 @@ Event(this , ##__VA_ARGS__); \
 			//设置绘制偏移
 			pt.OffsetX = clientRect.X; //设置偏移
 			pt.OffsetY = clientRect.Y;//设置偏移
-#if 1
 
-		//int r = 0;
-		//if ((r = GetRadius()) > 0) {//圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分)
-		//	auto &base = *pt->base;
-		//	GraphicsPath gp;//控件本身的光栅化路径
-		//	Region * region = Painter::IntersectRound(clientRect, r, _ClipRect);
-		//	base.SetClip(region);//设置裁剪区域
-		//	delete region;
-		//	/*BYTE *buf = new BYTE[region1.GetDataSize()]{0};
-		//	region1.GetData(buf, region1.GetDataSize());*/
-		//	/*Rect rectf;
-		//	region1.GetBounds(&rectf, pt->base);
-		//	int a = 0;
-		//	SolidBrush sb(Color::White);
-		//	pt->base->FillRectangle(&sb, rectf);*/
-		//}
-		//else {
+			if (ShadowWidth > 0) {
+				BoxShadow bs(Width(), Height(), ShadowWidth);
+				auto sz = bs.GetSize();
+				BLENDFUNCTION blendFunc{ 0 };
+				blendFunc.SourceConstantAlpha = 255;
+				blendFunc.BlendOp = AC_SRC_OVER;
+				blendFunc.AlphaFormat = AC_SRC_ALPHA;
+				::AlphaBlend(pt.DC, pt.OffsetX - ShadowWidth, pt.OffsetY - ShadowWidth, sz.Width, sz.Height, bs._bufBitmap->GetDC(), 0, 0, sz.Width, sz.Height, blendFunc);
+			}
+#if 1
+			//int r = 0;
+			//if ((r = GetRadius()) > 0) {//圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分)
+			//	auto &base = *pt.base;
+			//	GraphicsPath gp;//控件本身的光栅化路径
+			//	Region * region = Painter::IntersectRound(clientRect, r, _ClipRect);
+			//	base.SetClip(region);//设置裁剪区域
+			//	delete region;
+			//	/*BYTE *buf = new BYTE[region1.GetDataSize()]{0};
+			//	region1.GetData(buf, region1.GetDataSize());*/
+			//	/*Rect rectf;
+			//	region1.GetBounds(&rectf, pt->base);
+			//	int a = 0;
+			//	SolidBrush sb(Color::White);
+			//	pt->base->FillRectangle(&sb, rectf);*/
+			//}
+			//else {
 			pt.CreateLayer(_ClipRect);// //控件内部进行 光栅化 做圆角 但是内部绘图没传入radius的话 绘制会超出圆角部分,但是不会超出矩形部分
 		//}
 #endif // 
@@ -450,44 +460,14 @@ Event(this , ##__VA_ARGS__); \
 			pt.OffsetX = clientRect.X; //设置偏移
 			pt.OffsetY = clientRect.Y;//设置偏移
 			this->OnBorderPaint(args);//绘制边框
-
 #ifdef DEBUGPAINT
 			WindowData* wndData = (WindowData*)UI_GetUserData(_hWnd);
 			if (wndData->Debug) {
-				/*auto tempRect = GetClientRect();
-				tempRect.Width = 5;
-				tempRect.Height = 5;
-				int size = tempRect.Width * tempRect.Height;
-				unsigned long long r = 0;
-				unsigned long long g = 0;
-				unsigned long long b = 0;
-				unsigned long long pos = 0;
-				for (size_t y = 0; y < tempRect.GetBottom(); y++)
-				{
-					for (size_t x = 0; x < tempRect.GetRight(); x++)
-					{
-						COLORREF  color = ::GetPixel(args.Painter.DC, x, y);
-						r += GetRValue(color);
-						g += GetGValue(color);
-						b += GetBValue(color);
-						pos++;
-					}
-				}
-				double r1 = r * 1.0 / size;
-				double g1 = g * 1.0 / size;
-				double b1 = b * 1.0 / size;*/
-
-				auto bkColor = GetBackgroundColor();
-				Color color(255 - bkColor.GetR(), 255 - bkColor.GetG(), 255 - bkColor.GetB());
-
 				if (this->State == ControlState::Hover) {
-					pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, color);
+					pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, Color::Red);
 				}
 				else {
-					pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, color);
-				}
-				if (!Name.empty()) {
-					pt.DrawString(Name, GetFontFamily(), GetFontSize(), color, _rect, TextAlign::MiddleLeft);
+					pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, Color::White);
 				}
 			}
 #endif
@@ -558,21 +538,21 @@ Event(this , ##__VA_ARGS__); \
 		_spacer.clear();
 	}
 	void Control::SetX(const int& X) {
-		Move({ X,Y() });
+		SetLocation({ X,Y() });
 	}
 	void Control::SetY(const int& Y) {
-		Move({ X(),Y });
+		SetLocation({ X(),Y });
 	}
-	void Control::Move(const Point& pt) {
+	void Control::SetLocation(const Point& pt) {
 		SetRect(Rect(pt.X, pt.Y, Width(), Height()));
 	}
 	void Control::SetWidth(const int& width) {
-		ReSize({ width,Height() });
+		SetSize({ width,Height() });
 	}
 	void Control::SetHeight(const int& height) {
-		ReSize({ Width(),height });
+		SetSize({ Width(),height });
 	}
-	void Control::ReSize(const Size& size)
+	void Control::SetSize(const Size& size)
 	{
 		SetRect({ X(),Y(),size.Width,size.Height });
 	}

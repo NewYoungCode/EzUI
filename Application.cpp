@@ -22,7 +22,7 @@ namespace EzUI {
 		wc.hInstance = hInstance;
 		wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = NULL;// (HBRUSH)(COLOR_WINDOW + 1);;
+		wc.hbrBackground = NULL;// (HBRUSH)(COLOR_WINDOW + 1);
 		wc.lpszMenuName = NULL;
 		wc.lpszClassName = UI_CLASSNAME;
 		if (!RegisterClass(&wc)) //×¢²á´°¿Ú

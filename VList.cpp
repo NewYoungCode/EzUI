@@ -4,7 +4,7 @@ namespace EzUI {
 	{
 		this->ScrollBar = vScrollBar = new VScrollBar;
 		if (vScrollBar) {
-			vScrollBar->ReSize({ 10,Height() });//滚动条宽度
+			vScrollBar->SetSize({ 10,Height() });//滚动条宽度
 			vScrollBar->Parent = this;
 			vScrollBar->_controlsLocationY = &_controlsLocationY;
 		}
@@ -31,7 +31,7 @@ namespace EzUI {
 	void VList::AddControl(Control* ctl)
 	{
 		__super::AddControl(ctl);
-		ctl->Move({ ctl->X(), _maxBottom });
+		ctl->SetLocation({ ctl->X(), _maxBottom });
 		_maxBottom += ctl->Height();
 		_maxBottom += Margin;
 		_controlsLocationY.insert(std::pair<Control*, int>(ctl, ctl->Y()));

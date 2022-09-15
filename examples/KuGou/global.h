@@ -49,6 +49,7 @@ public:
 
 		ActiveStyle.BackgroundColor = Color(100, 255, 230, 230);
 
+		Style.Radius = 33;
 
 		AddControl(new HSpacer(15));
 		AddControl(&songName);

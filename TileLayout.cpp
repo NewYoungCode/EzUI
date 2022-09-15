@@ -19,7 +19,7 @@ namespace EzUI {
 		this->ScrollBar = new VScrollBar;
 		vScrollBar = (VScrollBar*)this->ScrollBar;
 		if (vScrollBar) {
-			vScrollBar->ReSize({ 10,Height() });//滚动条宽度
+			vScrollBar->SetSize({ 10,Height() });//滚动条宽度
 			vScrollBar->Parent = this;
 			vScrollBar->_controlsLocationY = &_controlsLocationY;
 		}
@@ -77,7 +77,7 @@ namespace EzUI {
 				_lineCount++;
 			}
 			it.OnLayout({ Width(),Height() }, false);//触发原始布局特性
-			it.Move({ _right,_bottom });
+			it.SetLocation({ _right,_bottom });
 			_controlsLocationY.insert(std::pair<Control*, int>(&it, it.Y()));
 			_right += it.Width() + MarginRight;
 			if (maxHeight < it.Height()) {

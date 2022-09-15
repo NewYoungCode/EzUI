@@ -25,7 +25,7 @@ namespace EzUI {
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
 	LayeredWindow::LayeredWindow(int cx, int cy, HWND owner) :Window(cx, cy, owner, WS_POPUP | WS_MINIMIZEBOX, WS_EX_LAYERED)
 	{
-		_boxShadow = new BoxShadow(cx, cy, _hWnd);
+		_boxShadow = new ShadowWindow(cx, cy, _hWnd);
 		UpdateShadow();
 		_winData.InvalidateRect = [=](void* _rect) ->void {
 			this->InvalidateRect(*(Rect*)_rect);
@@ -90,7 +90,7 @@ namespace EzUI {
 		if (_winBitmap) {
 			delete _winBitmap;
 		}
-		_winBitmap = new EBitmap(rect.Width, rect.Height, 24);
+		_winBitmap = new EBitmap(rect.Width, rect.Height);
 		this->InvalidateRect(rect);
 	}
 	void LayeredWindow::OnPaint(HDC _hdc, const Rect& rePaintRect) {

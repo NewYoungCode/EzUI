@@ -105,6 +105,30 @@ namespace EzUI {
 		EString::Replace(newStr, oldText, newText);
 		return newStr;
 	}
+	EString EString::Tolower() const
+	{
+		EString str(*this);
+		for (size_t i = 0; i < str.size(); i++)
+		{
+			char& ch = (char&)str.c_str()[i];
+			if (ch >= 65 && ch <= 90) {
+				ch += 32;
+			}
+		}
+		return str;
+	}
+	EString EString::Toupper() const
+	{
+		EString str(*this);
+		for (size_t i = 0; i < str.size(); i++)
+		{
+			char& ch = (char&)str.c_str()[i];
+			if (ch >= 97 && ch <= 120) {
+				ch -= 32;
+			}
+		}
+		return str;
+	}
 	std::wstring EString::utf16() const {
 		int textlen = MultiByteToWideChar(CP_UTF8, 0, this->c_str(), this->size(), NULL, 0);
 		std::wstring wstr;

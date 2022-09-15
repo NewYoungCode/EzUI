@@ -9,12 +9,13 @@ class GameItem :public VBox {
 public:
 	Label ctlImg, ctlName;
 	GameItem(Image* img, const EString& game) {
-		img->Margin = 40;
+		//img->Margin = 40;
 		this->SetFixedHeight(67);
 		this->SetFixedWidth(67);
 		ctlName.SetFixedHeight(20);
 		ctlName.SetText(utf8("сно╥1"));
-		ctlImg.Style.ForeImage = img;
+
+		ctlImg.Style.BackgroundImage = img;
 		AddControl(&ctlImg);
 		AddControl(&ctlName);
 		ctlImg.MousePassThrough = ctlName.MousePassThrough = Event::OnMouseEnter | Event::OnMouseLeave;
@@ -27,7 +28,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ int       nCmdShow)
 {
 	Application app;
-	FrameWindow form(1022, 670);
+	Window form(1022, 670);
 	VBox box;
 	form.SetLayout(&box);
 
@@ -38,10 +39,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	box.AddControl(&list);
 	box.Style.BackgroundColor = Color::Pink;
 	form.Zoom = true;
-	Image img = EString(L"Images/icon1.png");
+	Image img = EString(L"images/yxx.jpg");
+	//img.SizeMode = ImageSizeMode::CenterImage;
+
 	for (size_t i = 0; i < 50; i++)
 	{
 		GameItem* it = new GameItem(&img, "");
+		it->ShadowWidth = 15;
+		it->Name = "test";
 		list.AddControl(it);
 	}
 	form.Show();

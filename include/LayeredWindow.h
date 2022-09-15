@@ -1,6 +1,6 @@
 #pragma once
 #include "Window.h"
-#include "BoxShadow.h"
+#include "ShadowWindow.h"
 #include <thread>
 #include <mutex>
 namespace EzUI {
@@ -21,7 +21,7 @@ namespace EzUI {
 		void OnRect(const Rect& rect);
 		LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
 	public:
-		BoxShadow* _boxShadow = NULL;
+		ShadowWindow* _boxShadow = NULL;
 		LayeredWindow(int cx, int cy, HWND owner = NULL);
 		void UpdateShadow();
 		void CloseShadow();

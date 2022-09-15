@@ -25,6 +25,10 @@ namespace EzUI {
 	};
 
 	struct EBitmap {
+		enum class PixelFormat :int {
+			PixelFormatRGB = 24,
+			PixelFormatARGB = 32
+		};
 	private:
 		HDC _hdc = NULL;
 		HGDIOBJ _hgdiobj = NULL;
@@ -37,19 +41,19 @@ namespace EzUI {
 		void* point = NULL;
 		BITMAPINFO bmi;
 		byte biteCount = 0;
-		EBitmap(WORD width, WORD height, BYTE _bitCount = 24) {//默认24位不透明位图
-			biteCount = _bitCount;
+		EBitmap(WORD width, WORD height, PixelFormat piexlFormat = PixelFormat::PixelFormatRGB) {//默认24位不透明位图
+			biteCount = (byte)piexlFormat;
 			this->Width = width;
 			this->Height = height;
 			memset(&bmi, 0, sizeof(BITMAPINFO));
 			BITMAPINFOHEADER& bmih = bmi.bmiHeader;
 			bmih.biSize = sizeof(BITMAPINFOHEADER);
-			bmih.biBitCount = _bitCount;
+			bmih.biBitCount = biteCount;
 			bmih.biCompression = BI_RGB;
 			bmih.biPlanes = 1;
 			bmih.biWidth = width;
 			bmih.biHeight = -height;
-			bmih.biSizeImage = width * height * _bitCount;
+			bmih.biSizeImage = width * height * biteCount;
 			_bitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, &point, NULL, 0);
 			this->GetDC();
 		}
@@ -144,12 +148,13 @@ namespace EzUI {
 		virtual ~_Bitmap() {}
 		_Bitmap(const EString& fileName) :Gdiplus::Bitmap(fileName.utf16().c_str()) {}
 		_Bitmap(const EBitmap* eBitmap) :Gdiplus::Bitmap(&eBitmap->bmi, eBitmap->point) {}
+		//_Bitmap(const EBitmap* eBitmap) :Gdiplus::Bitmap(eBitmap->_bitmap, NULL) {}
 		_Bitmap(INT width, INT height, Gdiplus::PixelFormat pixelFormat = PixelFormat32bppARGB) :Gdiplus::Bitmap(width, height, pixelFormat) {}
+		void Save(const EString& fileName);
 	} Image;
 #define HImage Tuple<Image*>
 
-	extern void HighQualityMode(Gdiplus::Graphics* graphics);
-	extern void CreateRectangle(GraphicsPath& path, const Rect& rect, int radius);//申明
+
 
 #if 0 //GDI+
 #define Align_Top  1
@@ -287,19 +292,24 @@ namespace EzUI {
 			valid = true;
 			return *this;
 		}
+		COLORREF COLORRE() const {
+			byte r = GetR(), g = GetG(), b = GetB();
+			return RGB(r, g, b);
+		}
 	}Color;
-
-	enum ClipMode {
-		Valid = Gdiplus::CombineMode::CombineModeReplace,//设置有效区域
-		Invalid = Gdiplus::CombineMode::CombineModeExclude,//设置无效区域
-	};
 
 	class UI_EXPORT CPURender
 	{
+	public:
+		enum ClipMode {
+			Valid = Gdiplus::CombineMode::CombineModeReplace,//设置有效区域
+			Invalid = Gdiplus::CombineMode::CombineModeExclude,//设置无效区域
+		};
 	protected:
 		//函数供内部使用 没有设置偏移所不可直接访问 
 		void DrawString(const std::wstring& text, const Gdiplus::Font* font, const Color& color, const RectF& rect, TextAlign textAlign, bool underLine = false);
 		void CreateFormat(TextAlign textAlign, Gdiplus::StringFormat& outStrFormat);
+		HWND _hwnd = NULL;
 	public:
 		static Region* IntersectRound(const Rect& clientRect, int r, const Rect& _ClipRect) {
 			GraphicsPath gp;//控件本身的光栅化路径
@@ -319,22 +329,24 @@ namespace EzUI {
 		int OffsetY = 0;
 		CPURender(HDC hdc);
 		CPURender(HWND hWnd);
+		CPURender(Gdiplus::Image* image);
 		virtual ~CPURender();
 		void DrawRectangle(const Rect& rect, const Color& color, int width = 1, int radius = 0);
 		void FillRectangle(const Rect& rect, const Color& color, int radius = 0);
 		void DrawString(const EString& text, const EString& fontFamily, int fontSize, const Color& color, const Rect& rect, TextAlign textAlign, bool underLine = false);
 		void MeasureString(const EString& _text, const EString& fontf, int fontSize, RectF& outBox);
-		//未计算偏移 预留暂不使用
-		//void MeasureString(const EString& text, const EString& fontFamily, int fontSize, const Color& color, const RectF& _rect, TextAlign textAlign, RectF& outBox);
 		void CreateLayer(const Rect& rect, ClipMode clipMode = ClipMode::Valid, int radius = 0);
 		void PopLayer();
 		void DrawLine(const Color& color, const Point& A, const Point& B, int width = 1);
+		void DrawImage(Gdiplus::Image* image, const Rect& destRect, const Rect& srcRect);
 		void DrawImage(Gdiplus::Image* image, const Rect& rect, const ImageSizeMode& imageSizeMode = ImageSizeMode::Zoom, const Margin& margin = 0);
 		void SaveImage(const WCHAR* format, const WCHAR* fileName, const Size& size);
 	};
-	void RenderInitialize();
-	void RenderUnInitialize();
 
-	extern int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
-	extern BOOL SaveHDCToFile(HDC hDC, LPRECT lpRect, const WCHAR* format, const WCHAR* filename);
+	UI_EXPORT void RenderInitialize();
+	UI_EXPORT void RenderUnInitialize();
+	UI_EXPORT void HighQualityMode(Gdiplus::Graphics* graphics);
+	UI_EXPORT void CreateRectangle(GraphicsPath& path, const Rect& rect, int radius);//申明
+	UI_EXPORT int GetEncoderClsid(const WCHAR* format, CLSID* pClsid);
+	UI_EXPORT BOOL SaveHDCToFile(HDC hDC, LPRECT lpRect, const WCHAR* format, const WCHAR* filename);
 };

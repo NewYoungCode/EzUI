@@ -117,6 +117,12 @@
     <ClInclude Include="include\LayeredWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="include\GDIRender.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ShadowWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Control.cpp">
@@ -153,9 +159,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Application.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="BoxShadow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Button.cpp">
@@ -213,6 +216,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="LayeredWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GDIRender.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -5,7 +5,7 @@ namespace EzUI {
 	{
 		this->ScrollBar = hScrollBar = new HScrollBar;
 		if (hScrollBar) {
-			hScrollBar->ReSize({ Width(),10 });//滚动条宽度
+			hScrollBar->SetSize({ Width(),10 });//滚动条宽度
 			hScrollBar->Parent = this;
 			hScrollBar->_controlsLocationX = &_controlsLocationX;
 		}
@@ -34,7 +34,7 @@ namespace EzUI {
 	void HList::AddControl(Control* ctl)
 	{
 		__super::AddControl(ctl);
-		ctl->Move({ _maxRight, ctl->Y() });
+		ctl->SetLocation({ _maxRight, ctl->Y() });
 		_maxRight += ctl->Width();
 		_maxRight += Margin;
 		_controlsLocationX.insert(std::pair<Control*, int>(ctl, ctl->X()));
