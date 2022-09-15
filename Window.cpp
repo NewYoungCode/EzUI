@@ -412,7 +412,7 @@ namespace EzUI {
 		PaintEventArgs args(pt);
 		args.InvalidRectangle = rePaintRect;
 		args.HWnd = _hWnd;
-		MainLayout->OnEvent(Event::OnPaint, &args);//
+		MainLayout->Rending(args);//
 		::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//
 	}
 

@@ -99,7 +99,7 @@ namespace EzUI {
 		PaintEventArgs args(pt);
 		args.InvalidRectangle = rePaintRect;//
 		args.HWnd = _hWnd;
-		MainLayout->OnEvent(Event::OnPaint, &args);//
+		MainLayout->Rending(args);//
 		PushDC(_hdc);//updatelaredwindow
 	}
 	LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)

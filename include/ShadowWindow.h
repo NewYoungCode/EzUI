@@ -1,6 +1,6 @@
 #pragma once
 #include "Window.h"
-#define SHADOWWIDTH 10
+#define SHADOWWIDTH 11
 
 namespace EzUI {
 	class UI_EXPORT ShadowWindow

@@ -4,7 +4,7 @@
 namespace EzUI {
 
 	class UI_EXPORT  TileLayout :
-		public Layout
+		public Layout, public IScroll
 	{
 	private:
 		int _lineCount = 0;

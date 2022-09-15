@@ -5,25 +5,6 @@ namespace EzUI {
 #ifdef CreateFont
 #undef CreateFont
 #endif
-	struct SafeClipRegion {
-	public:
-		HDC DC = NULL;
-		HRGN Clip = NULL;
-		SafeClipRegion(const HDC& _DC, const Rect& clip) {
-			this->DC = _DC;
-			if (!clip.IsEmptyArea()) {
-				RECT r = clip.WinRECT();
-				Clip = ::CreateRectRgn(r.left, r.top, r.right, r.bottom);
-				::SelectClipRgn(DC, Clip);
-			}
-		}
-		virtual ~SafeClipRegion() {
-			if (Clip) {
-				::SelectClipRgn(DC, NULL);
-				::DeleteObject(Clip);
-			}
-		}
-	};
 
 	SolidBrush* CreateBrush(const Color& color) {
 		SolidBrush* _bufBrush = new SolidBrush(color);
@@ -274,14 +255,6 @@ namespace EzUI {
 		base->MeasureString(_wtext.c_str(), _wtext.length(), font, { 0,0 }, &outBox);
 	}
 
-	//未计算偏移 暂不使用
-	//void CPURender::MeasureString(const EString& _text, const EString& fontFamily, int fontSize, const Color& color, const RectF& _rect, TextAlign textAlign, RectF& outBox) {
-	//	std::wstring _wtext = _text.utf16();
-	//	SafeObject<Gdiplus::Font> font(CreateFont(fontFamily, fontSize));
-	//	Gdiplus::StringFormat sf;
-	//	CreateFormat(textAlign, sf);
-	//	base->MeasureString(_wtext.c_str(), _wtext.length(), font, _rect, &sf, &outBox);
-	//}
 	void CPURender::CreateLayer(const Rect& rect, ClipMode clipMode, int radius)
 	{
 		Layer.push_back(&rect);
@@ -466,7 +439,6 @@ namespace EzUI {
 	void _Bitmap::Save(const EString& fileName)
 	{
 		size_t pos = fileName.rfind(".");
-		//L"image/bmp" L"image/jpeg"  L"image/gif" L"image/tiff" L"image/png"
 		WCHAR format[15]{ L"image/bmp" };
 		if (pos != EString::npos) {
 			EString ext2 = fileName.substr(pos);

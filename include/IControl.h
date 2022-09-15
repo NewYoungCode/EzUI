@@ -38,7 +38,6 @@ namespace EzUI {
 		// 铺满整个父控件
 		Fill
 	};
-
 	enum class MouseButton {
 		// 摘要: 
 		  //     未曾按下鼠标按钮。
@@ -84,13 +83,11 @@ namespace EzUI {
 		UPARROW = (ULONG_PTR)IDC_UPARROW,// 垂直箭头
 		WAIT = (ULONG_PTR)IDC_WAIT// 沙漏，Windows7下会显示为选择的圆圈表示等待
 	};
-
 	// 摘要: 
 	//基础事件
 	struct EventArgs {
 		Event EventType;
 	};
-
 	// 摘要: 
 	//为鼠标事件提供基础数据
 	struct MouseEventArgs :public EventArgs {
@@ -108,20 +105,6 @@ namespace EzUI {
 			this->Location = location;
 		}
 	};
-
-	// 摘要: 
-	// 为 OnPaint 事件提供数据。
-	struct PaintEventArgs :public EventArgs {
-		using _Painter_ = Painter;//预防重命名
-		Painter& Painter;//画家
-		Rect InvalidRectangle;//WM_PAINT里面的无效区域
-		HWND HWnd;//父窗口句柄
-		PaintEventArgs(_Painter_& painter) :Painter(painter) {
-			EventType = Event::OnPaint;
-		}
-		virtual ~PaintEventArgs() {}
-	};
-
 	//控件样式
 	class UI_EXPORT ControlStyle {
 	public:
@@ -158,8 +141,98 @@ namespace EzUI {
 		Max,//最大化|恢复
 		Close//关闭
 	};
+
+#define UIFunc std::function
+#define EventMouseMove  UIFunc<void(Control*,const Point&)>  //移动事件
+#define EventMouseEnter  UIFunc<void( Control*, const Point&)>//移入事件
+#define EventMouseWheel   UIFunc<void( Control*, short, const Point&)>//滚轮事件
+#define EventMouseLeave  UIFunc<void( Control*)>//鼠标离开事件
+#define EventMouseDown  UIFunc<void( Control*, MouseButton, const Point&)> //鼠标按下事件
+#define EventMouseUp  UIFunc<void ( Control*, MouseButton, const Point&)>//鼠标抬起
+#define EventMouseClick   UIFunc<void( Control*, MouseButton, const Point&)>//鼠标单击
+#define EventMouseDoubleClick   UIFunc<void( Control*, MouseButton, const Point&)>//鼠标双击
+#define EventScrollRolling   UIFunc<void(int, int)>//滚动条滚动事件
+
 	typedef std::map<EString, EString> Attributes;
 	typedef std::map<EString, EString>::iterator AttributeIterator;
+	class Control;
+	class ScrollBar;
+	class Spacer;
+	typedef std::list<Control*> Controls;
+	typedef std::list<Control*>::iterator ControlIterator;
+
+	//坐标系
+	class UI_EXPORT IRect {
+	protected:
+		Rect _rect;
+		int _fixedWidth = 0;
+		int _fixedHeight = 0;
+	public:
+		DockStyle Dock = DockStyle::None;//dock样式
+	public:
+		const Rect ClipRect;//控件在窗口中的可见区域
+		const int& X();
+		const int& Y();
+		void SetX(const int& X);
+		void SetY(const int& Y);
+		void SetLocation(const Point& pt);//移动相对与父控件的位置
+		void SetSize(const Size& size); //当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
+		void SetWidth(const int& width);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
+		void SetHeight(const int& height);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
+		const int& Width();
+		const int& Height();
+		void SetFixedWidth(const int& fixedWidth);//设置绝对宽度
+		void SetFixedHeight(const int& fixedHeight);//设置绝对高度
+		const int& GetFixedWidth();//获取绝对宽度
+		const int& GetFixedHeight();//获取绝对高度
+		const Rect& GetRect();//获取相对与父控件矩形
+		virtual void OnLayout(const Size& parentRect, bool instantly = true);//父控件大小改变事件  instantly立即生效
+	public:
+		virtual void ComputeClipRect() = 0;//计算基于父控件的裁剪区域
+		virtual Rect GetClientRect() = 0;//获取基于客户端的矩形
+		virtual void SetRect(const Rect& rect, bool rePaint = false) = 0;//设置相对父控件矩形
+	public:
+		virtual ~IRect() {};
+	};
+	//鼠标键盘系
+	class UI_EXPORT IMouseKeyBoard {
+	protected:
+		Tuple<LPTSTR> _LastCursor;
+	public:
+		int MousePassThrough = 0;
+		Cursor Cursor = Cursor::None;//鼠标样式
+	public:
+		//鼠标事件相关
+		EventMouseMove MouseMove;//移动事件
+		EventMouseEnter MouseEnter;//移入事件
+		EventMouseWheel MouseWheel;//滚轮事件
+		EventMouseLeave MouseLeave;//鼠标离开事件
+		EventMouseDown MouseDown;//鼠标按下事件
+		EventMouseUp MouseUp;//鼠标抬起
+		EventMouseClick MouseClick;//鼠标单击
+		EventMouseDoubleClick MouseDoubleClick;//鼠标双击
+	public:
+		virtual ~IMouseKeyBoard() {};
+		bool CheckEventPassThrough(Event eventType);
+	};
+
+	class UI_EXPORT  IScroll {
+	public:
+		int Margin = 0;//如果是水平列表那就是 右边距 ,垂直滚动条就是下边距
+		std::map<Control*, int> LocationX;
+		std::map<Control*, int> LocationY;
+		virtual ~IScroll() {};
+	};
+	class UI_EXPORT IScrollBar {
+	public:
+		virtual void Move(double pos) = 0;
+		virtual Rect GetSliderRect() = 0;//
+		virtual  int RollingCurrent() = 0;
+		virtual int RollingTotal() = 0;//
+		EventScrollRolling Rolling = NULL;
+		virtual ~IScrollBar() {};
+	};
+
 	class  UI_EXPORT IControl {
 	protected:
 		bool _load = false;
@@ -192,4 +265,5 @@ namespace EzUI {
 		virtual UINT_PTR SetTimer(size_t interval);
 		virtual void KillTimer();
 	};
+
 };

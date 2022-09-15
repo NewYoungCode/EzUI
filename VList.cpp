@@ -6,7 +6,7 @@ namespace EzUI {
 		if (vScrollBar) {
 			vScrollBar->SetSize({ 10,Height() });//滚动条宽度
 			vScrollBar->Parent = this;
-			vScrollBar->_controlsLocationY = &_controlsLocationY;
+			vScrollBar->_controlsLocationY = &LocationY;
 		}
 	}
 
@@ -34,7 +34,7 @@ namespace EzUI {
 		ctl->SetLocation({ ctl->X(), _maxBottom });
 		_maxBottom += ctl->Height();
 		_maxBottom += Margin;
-		_controlsLocationY.insert(std::pair<Control*, int>(ctl, ctl->Y()));
+		LocationY.insert(std::pair<Control*, int>(ctl, ctl->Y()));
 	}
 
 	ControlIterator VList::RemoveControl(Control* ctl)
@@ -44,12 +44,12 @@ namespace EzUI {
 		if (_controls.size() < before) {//如果控件数量比开始少 则 删除成功
 			int outHeight = (Margin + ctl->Height());//删除控件留出来的空白区域宽度
 			_maxBottom -= outHeight;//减去空白区域高度
-			_controlsLocationY.erase(ctl);//将记录Y坐标的map也要删除控件
+			LocationY.erase(ctl);//将记录Y坐标的map也要删除控件
 			for (auto i = nextIt; i != _controls.end(); i++)//从删除的下一个控件开始往前移动X坐标
 			{
 				Control* it = *i;
 				it->SetRect(Rect(it->X(), it->Y() - outHeight, it->Width(), it->Height()));//自身移动
-				int& locationY = _controlsLocationY[it] -= outHeight;//记录的坐标也要移动
+				int& locationY = LocationY[it] -= outHeight;//记录的坐标也要移动
 			}
 			if (vScrollBar) {
 				vScrollBar->SetMaxBottom(_maxBottom);//通知滚动条容器最大边界值已经改变
@@ -60,7 +60,7 @@ namespace EzUI {
 
 	void VList::Clear(bool freeChilds) {
 		__super::Clear(freeChilds);
-		_controlsLocationY.clear();
+		LocationY.clear();
 		_maxBottom = 0;
 		if (vScrollBar) {
 			vScrollBar->SetMaxBottom(_maxBottom);
@@ -84,7 +84,7 @@ namespace EzUI {
 			auto& it = **i;
 			if (rect.IntersectsWith(it.GetRect())) {
 				VisibleControls.push_back(*i);
-				it.OnEvent(Event::OnPaint, &args);
+				it.Rending(args);
 			}
 			if (it.Y() >= _rect.Height) { //纵向列表控件超出则不再绘制后面的控件 优化
 				break;

@@ -197,6 +197,7 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 					it->SetAttribute("SingerName", SingerName);
 					localList->AddControl(it);
 					localList->ResumeLayout();
+
 					localList->ScrollBar->Move(localList->ScrollBar->RollingTotal());
 					localList->Invalidate();
 

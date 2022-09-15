@@ -93,10 +93,10 @@ namespace EzUI {
 		//	e.Painter.DrawRectangle(Color(100, 200, 200, 200), rect);
 		//}
 		e.Painter.DrawString(EString(buf), GetFontFamily(), GetFontSize(), GetForeColor(), Rect(x, 0, width, Height()), TextAlign::MiddleLeft);
-		RectF box;
-		e.Painter.MeasureString(EString(buf), GetFontFamily(), GetFontSize(), box);
+		//RectF box;
+		//e.Painter.MeasureString(EString(buf), GetFontFamily(), GetFontSize(), box);
 		/*RectF box2;
 		e.Painter.MeasureString(EString(buf), GetFontFamily(), GetFontSize(), GetForeColor(), RectF(x, 0, width, Height()), TextAlign::MiddleCenter, box2);*/
-		MoveCaret(box.Width + x);
+		//MoveCaret(box.Width + x);
 	}
 }

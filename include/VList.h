@@ -3,7 +3,7 @@
 #include "VScrollBar.h"
 namespace EzUI {
 	class UI_EXPORT VList :
-		public Layout
+		public Layout, public IScroll
 	{
 	private:
 		VScrollBar* vScrollBar = NULL;

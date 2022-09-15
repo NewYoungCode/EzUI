@@ -92,8 +92,101 @@ namespace EzUI {
 		} while (false);
 	}
 
+
+	const int& IRect::X()
+	{
+		return _rect.X;
+	}
+	const int& IRect::Y()
+	{
+		return _rect.Y;
+	}
+	const int& IRect::Width()
+	{
+		return _rect.Width;
+	}
+	const int& IRect::Height()
+	{
+		return _rect.Height;
+	}
+	void IRect::SetX(const int& X) {
+		SetLocation({ X,Y() });
+	}
+	void IRect::SetY(const int& Y) {
+		SetLocation({ X(),Y });
+	}
+	void IRect::SetLocation(const Point& pt) {
+		SetRect(Rect(pt.X, pt.Y, Width(), Height()));
+	}
+	void IRect::SetWidth(const int& width) {
+		SetSize({ width,Height() });
+	}
+	void IRect::SetHeight(const int& height) {
+		SetSize({ Width(),height });
+	}
+	void IRect::SetSize(const Size& size)
+	{
+		SetRect({ X(),Y(),size.Width,size.Height });
+	}
+	const Rect& IRect::GetRect()
+	{
+		return _rect;
+	}
+	void IRect::OnLayout(const Size& pRect, bool instantly)
+	{
+		while (Dock != DockStyle::None)
+		{
+			if (Dock == DockStyle::Fill) {
+				_rect = { 0,0,pRect.Width,pRect.Height };
+				break;
+			}
+			if (Dock == DockStyle::Vertical) {
+				_rect = { X(),0,Width(),pRect.Height };
+				break;
+			}
+			if (Dock == DockStyle::Horizontal) {
+				_rect = { 0,Y(),pRect.Width,Height() };
+				break;
+			}
+			break;
+		}
+		if (instantly) {
+			SetRect(_rect);
+		}
+	}
+	void IRect::SetFixedWidth(const int& fixedWidth)
+	{
+		_rect.Width = fixedWidth;
+		_fixedWidth = fixedWidth;
+	}
+	void IRect::SetFixedHeight(const int& fixedHeight)
+	{
+		_rect.Height = fixedHeight;
+		_fixedHeight = fixedHeight;
+	}
+	const int& IRect::GetFixedWidth()
+	{
+		return _fixedWidth;
+	}
+	const int& IRect::GetFixedHeight()
+	{
+		return _fixedHeight;
+	}
+	bool IMouseKeyBoard::CheckEventPassThrough(Event eventType)
+	{
+		if ((MousePassThrough & eventType) == eventType) {
+			return true;
+		}
+		return false;
+	}
+
+
 	IControl::IControl() {}
-	IControl::~IControl() {}
+	IControl::~IControl() {
+		if (_hasTimer) {
+			KillTimer();
+		}
+	}
 	void IControl::OnTimer() {}
 	UINT_PTR IControl::SetTimer(size_t interval)
 	{
@@ -109,7 +202,6 @@ namespace EzUI {
 	}
 	void IControl::SetStyleSheet(const EString& styleStr)
 	{
-
 
 	}
 	void IControl::SetAttribute(const EString& attrName, const EString& attrValue) {
@@ -128,4 +220,5 @@ namespace EzUI {
 		}
 		return "";
 	}
+
 };

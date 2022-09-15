@@ -7,7 +7,7 @@ namespace EzUI {
 	void TileLayout::Clear(bool freeChilds)
 	{
 		__super::Clear(freeChilds);
-		_controlsLocationY.clear();
+		LocationY.clear();
 		_MaxBottom = 0;
 		if (vScrollBar) {
 			vScrollBar->SetMaxBottom(_MaxBottom);
@@ -21,7 +21,7 @@ namespace EzUI {
 		if (vScrollBar) {
 			vScrollBar->SetSize({ 10,Height() });//滚动条宽度
 			vScrollBar->Parent = this;
-			vScrollBar->_controlsLocationY = &_controlsLocationY;
+			vScrollBar->_controlsLocationY = &LocationY;
 		}
 	}
 	TileLayout::~TileLayout()
@@ -44,7 +44,7 @@ namespace EzUI {
 			auto& it = **i;
 			if (rect.IntersectsWith(it.GetRect())) {
 				VisibleControls.push_back(*i);
-				it.OnEvent(Event::OnPaint, &args);
+				it.Rending(args);
 			}
 			if (it.Y() >= _rect.Height) { //纵向列表控件超出则不再绘制后面的控件 优化鼠标操作的性能
 				break;
@@ -55,7 +55,7 @@ namespace EzUI {
 	void TileLayout::ResumeLayout()
 	{
 		if (_rect.IsEmptyArea()) return;
-		_controlsLocationY.clear();
+		LocationY.clear();
 		int _right = MarginRight;//右边距
 		int _bottom = MarginTop;//上边距
 		int maxHeight = 0;//每行最高的那个
@@ -78,7 +78,7 @@ namespace EzUI {
 			}
 			it.OnLayout({ Width(),Height() }, false);//触发原始布局特性
 			it.SetLocation({ _right,_bottom });
-			_controlsLocationY.insert(std::pair<Control*, int>(&it, it.Y()));
+			LocationY.insert(std::pair<Control*, int>(&it, it.Y()));
 			_right += it.Width() + MarginRight;
 			if (maxHeight < it.Height()) {
 				maxHeight = it.Height();

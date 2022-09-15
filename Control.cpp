@@ -36,7 +36,7 @@ Event(this , ##__VA_ARGS__); \
 	{
 		//绘制子控件
 		for (auto& it : controls) {
-			it->OnEvent(Event::OnPaint, &args);
+			it->Rending(args);
 		}
 		//子控件绘制完毕
 	}
@@ -285,21 +285,32 @@ Event(this , ##__VA_ARGS__); \
 		}
 		return _ForeColor;
 	}
-	const int& Control::X()
-	{
-		return _rect.X;
+	Rect Control::GetClientRect() {
+		Control* pCtrl = this;
+		int x = _rect.X;
+		int y = _rect.Y;
+		while ((pCtrl = pCtrl->Parent))
+		{
+			x += pCtrl->X();
+			y += pCtrl->Y();
+		}
+		return Rect{ x,y,_rect.Width,_rect.Height };
 	}
-	const int& Control::Y()
+	void Control::SetRect(const Rect& rect, bool rePaint)
 	{
-		return _rect.Y;
-	}
-	const int& Control::Width()
-	{
-		return _rect.Width;
-	}
-	const int& Control::Height()
-	{
-		return _rect.Height;
+		_rect = rect;
+		Size outSize{ _rect.Width,_rect.Height };
+		if (_fixedWidth) {
+			_rect.Width = _fixedWidth;
+		}
+		if (_fixedHeight) {
+			_rect.Height = _fixedHeight;
+		}
+		this->ComputeClipRect();//这里要重新计算基于父控件的裁剪区域
+		OnSize(outSize);//然后才开始触发自身的特性 //布局控件会重载这个函数 对子控件调整rect
+		if (rePaint) {
+			Invalidate();
+		}
 	}
 	void Control::ComputeClipRect()
 	{
@@ -307,12 +318,6 @@ Event(this , ##__VA_ARGS__); \
 			Rect& ClipRectRef = *(Rect*)(&this->ClipRect);//引用父控件的裁剪区域
 			Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->ClipRect);//自身和父控件对比较裁剪区域
 		}
-	}
-	bool Control::CheckEventPassThrough(Event eventType) {
-		if ((MousePassThrough & eventType) == eventType) {
-			return true;
-		}
-		return false;
 	}
 	//专门处理鼠标消息的
 	void Control::OnMouseEvent(const MouseEventArgs& _args) {
@@ -390,134 +395,84 @@ Event(this , ##__VA_ARGS__); \
 		}
 
 	}
-	void Control::OnEvent(Event eventType, void* param) {
-		switch (eventType)
-		{
-		case Event::OnPaint: {
+	void Control::Rending(PaintEventArgs& args) {
+		this->_hWnd = args.HWnd;
+		if (!_load) {
+			OnLoad();
+			_load = true;
+		}
+		if (!Visible) { return; }//如果控件设置为不可见直接不绘制
+		auto clientRect = this->GetClientRect();//获取基于父窗口的最表
+		if (clientRect.IsEmptyArea()) { return; }
+		auto& invalidRect = args.InvalidRectangle;
+		auto& pt = args.Painter;
+		Rect _ClipRect;
+		if (!Rect::Intersect(_ClipRect, this->ClipRect, invalidRect)) {//和重绘区域进行裁剪
+			return;
+		}
+		//设置绘制偏移
+		pt.OffsetX = clientRect.X; //设置偏移
+		pt.OffsetY = clientRect.Y;//设置偏移
+		if (ShadowWidth > 0) {
+			BoxShadow bs(Width(), Height(), ShadowWidth);
+			auto sz = bs.GetSize();
+			BLENDFUNCTION blendFunc{ 0 };
+			blendFunc.SourceConstantAlpha = 255;
+			blendFunc.BlendOp = AC_SRC_OVER;
+			blendFunc.AlphaFormat = AC_SRC_ALPHA;
+			::AlphaBlend(pt.DC, pt.OffsetX - ShadowWidth, pt.OffsetY - ShadowWidth, sz.Width, sz.Height, bs._bufBitmap->GetDC(), 0, 0, sz.Width, sz.Height, blendFunc);
+		}
 #if 1
-			PaintEventArgs& args = *(PaintEventArgs*)param;
-			this->_hWnd = args.HWnd;
-			if (!_load) {
-				OnLoad();
-				_load = true;
-			}
-			if (!Visible) { return; }//如果控件设置为不可见直接不绘制
-			auto clientRect = this->GetClientRect();//获取基于父窗口的最表
-			if (clientRect.IsEmptyArea()) { return; }
-			auto& invalidRect = args.InvalidRectangle;
-			auto& pt = args.Painter;
-			Rect _ClipRect;
-			if (!Rect::Intersect(_ClipRect, this->ClipRect, invalidRect)) {//和重绘区域进行裁剪
-				return;
-			}
-			//设置绘制偏移
-			pt.OffsetX = clientRect.X; //设置偏移
-			pt.OffsetY = clientRect.Y;//设置偏移
-
-			if (ShadowWidth > 0) {
-				BoxShadow bs(Width(), Height(), ShadowWidth);
-				auto sz = bs.GetSize();
-				BLENDFUNCTION blendFunc{ 0 };
-				blendFunc.SourceConstantAlpha = 255;
-				blendFunc.BlendOp = AC_SRC_OVER;
-				blendFunc.AlphaFormat = AC_SRC_ALPHA;
-				::AlphaBlend(pt.DC, pt.OffsetX - ShadowWidth, pt.OffsetY - ShadowWidth, sz.Width, sz.Height, bs._bufBitmap->GetDC(), 0, 0, sz.Width, sz.Height, blendFunc);
-			}
-#if 1
-			//int r = 0;
-			//if ((r = GetRadius()) > 0) {//圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分)
-			//	auto &base = *pt.base;
-			//	GraphicsPath gp;//控件本身的光栅化路径
-			//	Region * region = Painter::IntersectRound(clientRect, r, _ClipRect);
-			//	base.SetClip(region);//设置裁剪区域
-			//	delete region;
-			//	/*BYTE *buf = new BYTE[region1.GetDataSize()]{0};
-			//	region1.GetData(buf, region1.GetDataSize());*/
-			//	/*Rect rectf;
-			//	region1.GetBounds(&rectf, pt->base);
-			//	int a = 0;
-			//	SolidBrush sb(Color::White);
-			//	pt->base->FillRectangle(&sb, rectf);*/
-			//}
-			//else {
-			pt.CreateLayer(_ClipRect);// //控件内部进行 光栅化 做圆角 但是内部绘图没传入radius的话 绘制会超出圆角部分,但是不会超出矩形部分
+		//int r = 0;
+		//if ((r = GetRadius()) > 0) {//圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分)
+		//	auto &base = *pt.base;
+		//	GraphicsPath gp;//控件本身的光栅化路径
+		//	Region * region = Painter::IntersectRound(clientRect, r, _ClipRect);
+		//	base.SetClip(region);//设置裁剪区域
+		//	delete region;
+		//	/*BYTE *buf = new BYTE[region1.GetDataSize()]{0};
+		//	region1.GetData(buf, region1.GetDataSize());*/
+		//	/*Rect rectf;
+		//	region1.GetBounds(&rectf, pt->base);
+		//	int a = 0;
+		//	SolidBrush sb(Color::White);
+		//	pt->base->FillRectangle(&sb, rectf);*/
 		//}
+		//else {
+		pt.CreateLayer(_ClipRect);// //控件内部进行 光栅化 做圆角 但是内部绘图没传入radius的话 绘制会超出圆角部分,但是不会超出矩形部分
+	//}
 #endif // 
 			//开始绘制
-			this->OnPaint(args);//绘制基本上下文
-			//创建分层 避免 滚动条和边框超出本控件
-			//绘制滚动条
-			EzUI::ScrollBar* scrollbar = NULL;
-			if (scrollbar = this->ScrollBar) {
-				scrollbar->_hWnd = args.HWnd;
-				Rect barRect = scrollbar->GetClientRect();
-				pt.OffsetX = barRect.X; //设置偏移
-				pt.OffsetY = barRect.Y;//设置偏移
-				scrollbar->OnEvent(Event::OnPaint, &args);
-			}
-			//绘制边框
-			//args.ClipRectangle = parentClipRect;//将裁剪区域重置
-			pt.OffsetX = clientRect.X; //设置偏移
-			pt.OffsetY = clientRect.Y;//设置偏移
-			this->OnBorderPaint(args);//绘制边框
+		this->OnPaint(args);//绘制基本上下文
+		//创建分层 避免 滚动条和边框超出本控件
+		//绘制滚动条
+		EzUI::ScrollBar* scrollbar = NULL;
+		if (scrollbar = this->ScrollBar) {
+			scrollbar->_hWnd = args.HWnd;
+			Rect barRect = scrollbar->GetClientRect();
+			pt.OffsetX = barRect.X; //设置偏移
+			pt.OffsetY = barRect.Y;//设置偏移
+			scrollbar->Rending(args);
+		}
+		//绘制边框
+		//args.ClipRectangle = parentClipRect;//将裁剪区域重置
+		pt.OffsetX = clientRect.X; //设置偏移
+		pt.OffsetY = clientRect.Y;//设置偏移
+		this->OnBorderPaint(args);//绘制边框
 #ifdef DEBUGPAINT
-			WindowData* wndData = (WindowData*)UI_GetUserData(_hWnd);
-			if (wndData->Debug) {
-				if (this->State == ControlState::Hover) {
-					pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, Color::Red);
-				}
-				else {
-					pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, Color::White);
-				}
+		WindowData* wndData = (WindowData*)UI_GetUserData(_hWnd);
+		if (wndData->Debug) {
+			if (this->State == ControlState::Hover) {
+				pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, Color::Red);
 			}
+			else {
+				pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, Color::White);
+			}
+		}
 #endif
-			pt.PopLayer();//弹出分层
-			return;
-#else
-#endif
-		}
-		default:
-			break;
-		}
+		pt.PopLayer();//弹出分层
 	}
-	void Control::SetRect(const Rect& rect, bool rePaint)
-	{
-		_rect = rect;
-		Size outSize{ _rect.Width,_rect.Height };
-		if (_fixedWidth) {
-			_rect.Width = _fixedWidth;
-		}
-		if (_fixedHeight) {
-			_rect.Height = _fixedHeight;
-		}
-		this->ComputeClipRect();//这里要重新计算基于父控件的裁剪区域
-		OnSize(outSize);//然后才开始触发自身的特性 //布局控件会重载这个函数 对子控件调整rect
-		if (rePaint) {
-			Invalidate();
-		}
-	}
-	const Rect& Control::GetRect()
-	{
-		return _rect;
-	}
-	void Control::SetFixedWidth(const int& fixedWidth)
-	{
-		_rect.Width = fixedWidth;
-		_fixedWidth = fixedWidth;
-	}
-	void Control::SetFixedHeight(const int& fixedHeight)
-	{
-		_rect.Height = fixedHeight;
-		_fixedHeight = fixedHeight;
-	}
-	const int& Control::GetFixedWidth()
-	{
-		return _fixedWidth;
-	}
-	const int& Control::GetFixedHeight()
-	{
-		return _fixedHeight;
-	}
+	
 	Control::~Control()
 	{
 		//if (Parent) {
@@ -537,51 +492,7 @@ Event(this , ##__VA_ARGS__); \
 		}
 		_spacer.clear();
 	}
-	void Control::SetX(const int& X) {
-		SetLocation({ X,Y() });
-	}
-	void Control::SetY(const int& Y) {
-		SetLocation({ X(),Y });
-	}
-	void Control::SetLocation(const Point& pt) {
-		SetRect(Rect(pt.X, pt.Y, Width(), Height()));
-	}
-	void Control::SetWidth(const int& width) {
-		SetSize({ width,Height() });
-	}
-	void Control::SetHeight(const int& height) {
-		SetSize({ Width(),height });
-	}
-	void Control::SetSize(const Size& size)
-	{
-		SetRect({ X(),Y(),size.Width,size.Height });
-	}
-	void Control::Invalidate() {
-		if (_hWnd || ::IsWindow(_hWnd)) {
-			WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
-			Rect r = GetClientRect();
-			winData->InvalidateRect(&r);
-		}
-	}
-	void Control::Refresh() {
-		if (_hWnd || ::IsWindow(_hWnd)) {
-			WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
-			Rect r = GetClientRect();
-			winData->InvalidateRect(&r);
-			winData->UpdateWindow();//立即更新全部无效区域
-		}
-	}
-	Rect Control::GetClientRect() {
-		Control* pCtrl = this;
-		int x = _rect.X;
-		int y = _rect.Y;
-		while ((pCtrl = pCtrl->Parent))
-		{
-			x += pCtrl->X();
-			y += pCtrl->Y();
-		}
-		return Rect{ x,y,_rect.Width,_rect.Height };
-	}
+	
 	size_t Control::Index()
 	{
 		Controls& pControls = Parent->GetControls();
@@ -657,6 +568,21 @@ Event(this , ##__VA_ARGS__); \
 			}
 		}
 		return ctls;
+	}
+	void Control::Invalidate() {
+		if (_hWnd || ::IsWindow(_hWnd)) {
+			WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
+			Rect r = GetClientRect();
+			winData->InvalidateRect(&r);
+		}
+	}
+	void Control::Refresh() {
+		if (_hWnd || ::IsWindow(_hWnd)) {
+			WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
+			Rect r = GetClientRect();
+			winData->InvalidateRect(&r);
+			winData->UpdateWindow();//立即更新全部无效区域
+		}
 	}
 	Controls& Control::GetControls()
 	{
@@ -795,25 +721,5 @@ Event(this , ##__VA_ARGS__); \
 	void Control::OnKillFocus()
 	{
 	}
-	void Control::OnLayout(const Size& pRect, bool instantly) {
-		while (Dock != DockStyle::None)
-		{
-			if (Dock == DockStyle::Fill) {
-				_rect = { 0,0,pRect.Width,pRect.Height };
-				break;
-			}
-			if (Dock == DockStyle::Vertical) {
-				_rect = { X(),0,Width(),pRect.Height };
-				break;
-			}
-			if (Dock == DockStyle::Horizontal) {
-				_rect = { 0,Y(),pRect.Width,Height() };
-				break;
-			}
-			break;
-		}
-		if (instantly) {
-			SetRect(_rect);
-		}
-	}
+	
 };
