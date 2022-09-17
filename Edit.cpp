@@ -92,7 +92,7 @@ namespace EzUI {
 		//	Rect rect(x, 0, width, Height()); //文字可绘制范围内
 		//	e.Painter.DrawRectangle(Color(100, 200, 200, 200), rect);
 		//}
-		e.Painter.DrawString(EString(buf), GetFontFamily(), GetFontSize(), GetForeColor(), Rect(x, 0, width, Height()), TextAlign::MiddleLeft);
+		e.Painter.DrawString(EString(buf).utf16(), GetFontFamily().utf16(), GetFontSize(), GetForeColor(), Rect(x, 0, width, Height()), TextAlign::MiddleLeft);
 		//RectF box;
 		//e.Painter.MeasureString(EString(buf), GetFontFamily(), GetFontSize(), box);
 		/*RectF box2;

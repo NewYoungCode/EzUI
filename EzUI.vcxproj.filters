@@ -63,7 +63,7 @@
     <ClInclude Include="include\CheckBox.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\CPURender.h">
+    <ClInclude Include="include\GdiplusRender.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\Form.h">
@@ -117,10 +117,16 @@
     <ClInclude Include="include\LayeredWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\GDIRender.h">
+    <ClInclude Include="include\ShadowWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\ShadowWindow.h">
+    <ClInclude Include="include\RenderExType.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RenderType.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Direct2DRender.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -146,7 +152,7 @@
     <ClCompile Include="EzUI.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="CPURender.cpp">
+    <ClCompile Include="GdiplusRender.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="VLayout.cpp">
@@ -218,10 +224,10 @@
     <ClCompile Include="LayeredWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="GDIRender.cpp">
+    <ClCompile Include="ShadowWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ShadowWindow.cpp">
+    <ClCompile Include="Direct2DRender.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

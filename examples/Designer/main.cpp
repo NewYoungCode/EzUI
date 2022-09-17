@@ -39,9 +39,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	box.AddControl(&list);
 	box.Style.BackgroundColor = Color::Pink;
 	form.Zoom = true;
-	Image img = EString(L"images/yxx.jpg");
+	Image img(L"images/yxx.jpg");
 	//img.SizeMode = ImageSizeMode::CenterImage;
-
 	for (size_t i = 0; i < 50; i++)
 	{
 		GameItem* it = new GameItem(&img, "");

@@ -1,17 +1,17 @@
-#include "CPURender.h"
-
+#include "GdiplusRender.h"
+#ifdef USED_GDIPLUS
+#pragma comment(lib, "gdiplus.lib")
 namespace EzUI {
 	ULONG_PTR _gdiplusToken = NULL;
 #ifdef CreateFont
 #undef CreateFont
 #endif
-
-	SolidBrush* CreateBrush(const Color& color) {
-		SolidBrush* _bufBrush = new SolidBrush(color);
+	Gdiplus::SolidBrush* CreateBrush(const Gdiplus::Color& color) {
+		Gdiplus::SolidBrush* _bufBrush = new Gdiplus::SolidBrush(color);
 		return _bufBrush;
 	}
-	Pen* CreatePen(const Color& color, int width) {
-		Pen* pen = new Pen(color, (float)width);
+	Gdiplus::Pen* CreatePen(const Gdiplus::Color& color, int width) {
+		Gdiplus::Pen* pen = new Gdiplus::Pen(color, (float)width);
 		return pen;
 	}
 	Gdiplus::Font* CreateFont(const EString& fontFamily, int fontSize) {
@@ -37,15 +37,16 @@ namespace EzUI {
 		graphics->SetTextRenderingHint(Gdiplus::TextRenderingHint::TextRenderingHintClearTypeGridFit);//文字
 		//graphics->SetInterpolationMode(Gdiplus::InterpolationMode::InterpolationModeHighQuality);//图像
 	}
-	void CreateRectangle(GraphicsPath& path, const Rect& rect, int radius)
+	void CreateRectangle(Gdiplus::GraphicsPath& path, const  Gdiplus::Rect& rect, int radius)
 	{
+
 		if (radius <= 0) {
 			path.AddRectangle(rect);
 			path.CloseFigure();
 			return;
 		}
 		int diameter = radius;
-		Rect arcRect(rect.X, rect.Y, diameter, diameter);// = new Rect(rect.Location, new Size(diameter, diameter));
+		Gdiplus::Rect arcRect(rect.X, rect.Y, diameter, diameter);// = new Rect(rect.Location, new Size(diameter, diameter));
 		//   左上角      
 		path.AddArc(arcRect, 180, 90);
 		//   右上角      
@@ -60,7 +61,7 @@ namespace EzUI {
 		path.CloseFigure();
 	}
 
-	CPURender::CPURender(HDC hdc)
+	GdiplusRender::GdiplusRender(HDC hdc, int Width, int Height )
 	{
 		DC = hdc;
 		SetBkMode(DC, TRANSPARENT);
@@ -68,7 +69,7 @@ namespace EzUI {
 		HighQualityMode(base);
 	}
 
-	CPURender::CPURender(HWND hWnd)
+	GdiplusRender::GdiplusRender(HWND hWnd)
 	{
 		_hwnd = hWnd;
 		DC = ::GetDC(hWnd);
@@ -77,13 +78,13 @@ namespace EzUI {
 		HighQualityMode(base);
 	}
 
-	CPURender::CPURender(Gdiplus::Image* image)
+	GdiplusRender::GdiplusRender(Gdiplus::Image* image)
 	{
 		base = new  Gdiplus::Graphics(image);
 		HighQualityMode(base);
 	}
 
-	CPURender::~CPURender()
+	GdiplusRender::~GdiplusRender()
 	{
 		if (_hwnd) {
 			::ReleaseDC(_hwnd, DC);
@@ -91,7 +92,7 @@ namespace EzUI {
 		delete base;
 	}
 
-	void CPURender::CreateFormat(TextAlign textAlign, Gdiplus::StringFormat& outStrFormat) {
+	void GdiplusRender::CreateFormat(TextAlign textAlign, Gdiplus::StringFormat& outStrFormat) {
 		switch (textAlign)
 		{
 		case TextAlign::TopLeft:
@@ -153,25 +154,26 @@ namespace EzUI {
 		}
 	}
 
-	void CPURender::DrawString(const std::wstring& text, const Gdiplus::Font* font, const Color& color, const RectF& rect, TextAlign textAlign, bool underLine)
+	void GdiplusRender::DrawString(const std::wstring& text, const Gdiplus::Font* font, const Color& color, const RectF& _rect, TextAlign textAlign, bool underLine)
 	{
 		Gdiplus::StringFormat sf;
 		CreateFormat(textAlign, sf);
 
-		SafeObject<SolidBrush> brush(CreateBrush(color));
+		SafeObject<Gdiplus::SolidBrush> brush(CreateBrush(ToColor(color)));
 
+		Gdiplus::RectF rect;
 		base->DrawString(text.c_str(), text.length(), font, rect, &sf, brush);
 		if (underLine) {
-			RectF box;
+			Gdiplus::RectF box;
 			base->MeasureString(text.c_str(), text.length(), font, rect, &sf, &box);
-			PointF p1(box.X, box.GetBottom());
-			PointF p2(box.GetRight(), box.GetBottom());
-			SafeObject<Pen> pen(CreatePen(color, 1));
-			base->DrawLine(pen, p1, p2);
+			PointF A(box.X, box.GetBottom());
+			PointF B(box.GetRight(), box.GetBottom());
+			SafeObject<Gdiplus::Pen> pen(CreatePen(ToColor(color), 1));
+			base->DrawLine(pen, A.X, A.Y, B.X, B.Y);
 		}
 	}
 
-	void CPURender::DrawRectangle(const Rect& _rect, const Color& color, int width, int radius)
+	void GdiplusRender::DrawRectangle(const Rect& _rect, const Color& color, int width, int radius)
 	{
 		if (color.GetA() == 0) {
 			return;
@@ -180,17 +182,17 @@ namespace EzUI {
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 
-		SafeObject<Pen> pen(CreatePen(color, width));
+		SafeObject<Gdiplus::Pen> pen(CreatePen(ToColor(color), width));
 		if (radius > 0) {
 			Gdiplus::GraphicsPath path;
-			CreateRectangle(path, rect, radius);
+			CreateRectangle(path, ToRect(rect), radius);
 			base->DrawPath(pen, &path);
 		}
 		else {
-			base->DrawRectangle(pen, rect);
+			base->DrawRectangle(pen, ToRect(rect));
 		}
 	}
-	void CPURender::FillRectangle(const Rect& _rect, const Color& color, int radius)
+	void GdiplusRender::FillRectangle(const Rect& _rect, const Color& color, int radius)
 	{
 		if (color.GetValue() == 0) {
 			return;
@@ -199,19 +201,19 @@ namespace EzUI {
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 
-		SafeObject<SolidBrush> brush(CreateBrush(color));
+		SafeObject<Gdiplus::SolidBrush> brush(CreateBrush(ToColor(color)));
 		if (radius > 0) {
 			Gdiplus::GraphicsPath path;
-			CreateRectangle(path, rect, radius);
+			CreateRectangle(path, ToRect(rect), radius);
 			base->FillPath(brush, &path);
 		}
 		else {
-			base->FillRectangle(brush, rect);
+			base->FillRectangle(brush, ToRect(rect));
 		}
 
 	}
 
-	void CPURender::DrawString(const EString& text, const EString& fontFamily, int fontSize, const Color& color, const Rect& _rect, TextAlign textAlign, bool underLine)
+	void GdiplusRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const Color& color, const Rect& _rect, TextAlign textAlign, bool underLine)
 	{
 		if (DC != NULL) {//使用GDI绘制文字
 			Rect rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
@@ -221,7 +223,7 @@ namespace EzUI {
 			HGDIOBJ oldFont = NULL;
 			LOGFONTW lf{ 0 };
 			GetObjectW(GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONTW), &lf);
-			wcsncpy_s(lf.lfFaceName, fontFamily.utf16().c_str(), LF_FACESIZE);
+			wcsncpy_s(lf.lfFaceName, fontFamily.c_str(), LF_FACESIZE);
 			lf.lfCharSet = DEFAULT_CHARSET;
 			lf.lfHeight = -MulDiv(fontSize, GetDeviceCaps(DC, LOGPIXELSY), 72);
 			//lf.lfWeight += FW_BOLD;		//粗体
@@ -229,10 +231,10 @@ namespace EzUI {
 			//lf.lfItalic = TRUE;				//斜体
 			hFont = CreateFontIndirectW(&lf);
 			oldFont = SelectFont(DC, hFont);
-			std::wstring wStr = text.utf16();
+
 			RECT winRECT = rect.WinRECT();
 			SetTextColor(DC, RGB(color.GetR(), color.GetG(), color.GetB()));
-			DrawTextW(DC, wStr.c_str(), wStr.size(), &winRECT, DT_SINGLELINE | (int)textAlign);
+			DrawTextW(DC, text.c_str(), text.size(), &winRECT, DT_SINGLELINE | (int)textAlign);
 			if (hFont) {
 				SelectFont(DC, oldFont);
 				DeleteFont(hFont);
@@ -245,48 +247,84 @@ namespace EzUI {
 			rect.X += OffsetX;
 			rect.Y += OffsetY;
 			SafeObject<Gdiplus::Font> font(CreateFont(fontFamily, fontSize));
-			this->DrawString(text.utf16(), font, color, rect, textAlign, underLine);
+			this->DrawString(text.c_str(), font, color, rect, textAlign, underLine);
 		}
 	}
 
-	void CPURender::MeasureString(const EString& _text, const EString& fontf, int fontSize, RectF& outBox) {
-		std::wstring _wtext = _text.utf16();
-		SafeObject<Gdiplus::Font> font(CreateFont(fontf, fontSize));
-		base->MeasureString(_wtext.c_str(), _wtext.length(), font, { 0,0 }, &outBox);
+	void GdiplusRender::MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, RectF& _outBox) {
+		SafeObject<Gdiplus::Font> font(CreateFont(fontf.c_str(), fontSize));
+
+		Gdiplus::RectF outBox;
+		_outBox.X = outBox.X;
+		_outBox.Y = outBox.X;
+		_outBox.Width = outBox.Width;
+		_outBox.Height = outBox.Height;
+		base->MeasureString(_text.c_str(), _text.length(), font, { 0,0 }, &outBox);
 	}
 
-	void CPURender::CreateLayer(const Rect& rect, ClipMode clipMode, int radius)
+	void GdiplusRender::CreateLayer(const Layer* layer, ClipMode clipMode)
 	{
-		Layer.push_back(&rect);
-
+		Layers.push_back((Layer*)layer);
 		if (DC) {
-			HRGN _rgn = ::CreateRectRgn(rect.X, rect.Y, rect.GetRight(), rect.GetBottom());
-			::SelectClipRgn(DC, _rgn);
-			DeleteRgn(_rgn);
+			if (layer->ClipRect) {
+				auto& rect = *layer->ClipRect;
+				HRGN _rgn = ::CreateRectRgn(rect.X, rect.Y, rect.GetRight(), rect.GetBottom());
+				::SelectClipRgn(DC, _rgn);
+				DeleteRgn(_rgn);
+			}
+			else {
+				::SelectClipRgn(DC, layer->RGN);
+			}
 		}
-		base->SetClip(rect, (Gdiplus::CombineMode)clipMode);
+
+		if (layer->ClipRect) {
+			auto& _rect = *layer->ClipRect;
+			Gdiplus::Rect rect{ _rect.X,_rect.Y,_rect.Width,_rect.Height };
+			base->SetClip(rect, (Gdiplus::CombineMode)clipMode);
+		}
+		else {
+			base->SetClip(layer->RGN, (Gdiplus::CombineMode)clipMode);
+		}
 	}
-	void CPURender::PopLayer()
+
+	void GdiplusRender::PopLayer()
 	{
 		if (DC) {
 			::SelectClipRgn(DC, NULL);
 		}
 		base->ResetClip();
-		if (!Layer.empty()) {
-			Layer.pop_back();
-			if (!Layer.empty()) {
-				auto it = Layer.back();
+		if (!Layers.empty()) {
+			Layers.pop_back();
+			if (!Layers.empty()) {
+				Layer& it = *(Layers.back());
+
 				if (DC) {
-					auto& rect = *(Rect*)it;
-					HRGN _rgn = ::CreateRectRgn(rect.X, rect.Y, rect.GetRight(), rect.GetBottom());
-					::SelectClipRgn(DC, _rgn);
-					DeleteRgn(_rgn);
+					if (it.ClipRect) {
+						auto& rect = *it.ClipRect;
+						HRGN _rgn = ::CreateRectRgn(rect.X, rect.Y, rect.GetRight(), rect.GetBottom());
+						::SelectClipRgn(DC, _rgn);
+						DeleteRgn(_rgn);
+					}
+					else
+					{
+						::SelectClipRgn(DC, it.RGN);
+					}
 				}
-				base->SetClip(*(Rect*)it);
+				if (it.ClipRect) {
+					auto& _rect = *it.ClipRect;
+					Gdiplus::Rect rect{ _rect.X,_rect.Y,_rect.Width,_rect.Height };
+					base->SetClip(rect);
+				}
+				else
+				{
+					base->SetClip(it.RGN);
+				}
 			}
 		}
 	}
-	void CPURender::DrawLine(const Color& color, const Point& _A, const Point& _B, int width)
+
+
+	void GdiplusRender::DrawLine(const Color& color, const Point& _A, const Point& _B, int width)
 	{
 		Point A = _A;
 		A.X += OffsetX;
@@ -294,15 +332,18 @@ namespace EzUI {
 		Point B = _B;
 		B.X += OffsetX;
 		B.Y += OffsetY;
-		SafeObject<Pen> pen(CreatePen(color, width));
-		base->DrawLine(pen, A, B);
+		SafeObject<Gdiplus::Pen> pen(CreatePen(ToColor(color), width));
+		base->DrawLine(pen, A.X, A.Y, B.X, B.Y);
 	}
-	void CPURender::DrawImage(Gdiplus::Image* image, const Rect& destRect, const Rect& srcRect)
+	void GdiplusRender::DrawImage(IImage* _image, const Rect& destRect, const Rect& srcRect)
 	{
-		base->DrawImage(image, destRect, srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, Gdiplus::Unit::UnitPixel);
+		GdiplusImage* image = (GdiplusImage*)_image;
+		base->DrawImage(image, ToRect(destRect), srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, Gdiplus::Unit::UnitPixel);
 	}
-	void CPURender::DrawImage(Gdiplus::Image* image, const Rect& _rect, const ImageSizeMode& imageSizeMode, const Margin& margin)
+	void GdiplusRender::DrawImage(IImage* _image, const Rect& _rect, const ImageSizeMode& imageSizeMode, const Margin& margin)
 	{
+		GdiplusImage* image = (GdiplusImage*)_image;
+
 		if (!image || image->GetLastStatus() != Gdiplus::Status::Ok) return;
 		Rect rect = _rect;
 		rect.X += OffsetX;
@@ -326,13 +367,13 @@ namespace EzUI {
 				double zoomHeight = clientWidth * 1.0 / imgWidth * imgHeight + 0.5;
 				Size sz{ clientWidth,(INT)zoomHeight };
 				int y = (clientHeight - sz.Height) / 2 + rect.Y;
-				base->DrawImage(image, Rect{ rect.X  ,y, sz.Width, sz.Height });
+				base->DrawImage(image, Gdiplus::Rect{ rect.X  ,y, sz.Width, sz.Height });
 			}
 			else {
 				double zoomWidth = clientHeight * 1.0 / imgHeight * imgWidth + 0.5;
 				Size sz{ (INT)zoomWidth,clientHeight };
 				int x = (clientWidth - sz.Width) / 2 + rect.X;
-				base->DrawImage(image, Rect{ x  , rect.Y, sz.Width, sz.Height });
+				base->DrawImage(image, Gdiplus::Rect{ x  , rect.Y, sz.Width, sz.Height });
 			}
 			return;
 		}
@@ -351,7 +392,7 @@ namespace EzUI {
 				//2233 670     缩放后的图片大小 
 				int zoomWidth = clientHeight * 1.0 / imgHeight * imgWidth + 0.5;//图片应该这么宽才对
 				int x = (zoomWidth - clientWidth) * 1.0 / 2 + 0.5;
-				base->DrawImage(image, Rect{ rect.X - x,rect.Y,zoomWidth,clientHeight });
+				base->DrawImage(image, Gdiplus::Rect{ rect.X - x,rect.Y,zoomWidth,clientHeight });
 			}
 			else {
 				//1000 600 客户端
@@ -359,13 +400,15 @@ namespace EzUI {
 				//1000 1500     缩放后的图片大小 
 				int zoomHeight = clientWidth * 1.0 / imgWidth * imgHeight + 0.5;//图片应该这么高才对
 				int y = (zoomHeight - clientHeight) * 1.0 / 2 + 0.5;
-				base->DrawImage(image, Rect{ rect.X,  rect.Y - y  , clientWidth, zoomHeight });
+				base->DrawImage(image, Gdiplus::Rect{ rect.X,  rect.Y - y  , clientWidth, zoomHeight });
 			}
 			return;
 		}
 
 		if (imageSizeMode == ImageSizeMode::StretchImage || true) {
-			base->DrawImage(image, rect);
+
+
+			base->DrawImage(image, ToRect(rect));
 		}
 	}
 
@@ -427,7 +470,7 @@ namespace EzUI {
 		DeleteObject(hBmp);
 		return bRet;
 	}
-	void CPURender::SaveImage(const WCHAR* format, const WCHAR* fileName, const Size& size)
+	void GdiplusRender::SaveImage(const WCHAR* format, const WCHAR* fileName, const Size& size)
 	{
 		if (DC) {
 			::DeleteFileW(fileName);
@@ -436,28 +479,36 @@ namespace EzUI {
 		}
 	}
 
-	void _Bitmap::Save(const EString& fileName)
+	void GdiplusRender::BeginDraw()
 	{
-		size_t pos = fileName.rfind(".");
+	}
+
+	void GdiplusRender::EndDraw()
+	{
+	}
+
+	void GdiplusImage::Save(const std::wstring& fileName)
+	{
+		size_t pos = fileName.rfind(L".");
 		WCHAR format[15]{ L"image/bmp" };
-		if (pos != EString::npos) {
-			EString ext2 = fileName.substr(pos);
-			ext2 = ext2.Tolower();
+		if (pos != size_t(-1)) {
+			std::wstring ext2 = fileName.substr(pos);
+			//std::wstring = ext2.Tolower();
 			do
 			{
-				if (ext2 == ".jpg") {
+				if (ext2 == L".jpg") {
 					StrCpyW(format, L"image/jpeg");
 					break;
 				}
-				if (ext2 == ".png") {
+				if (ext2 == L".png") {
 					StrCpyW(format, L"image/png");
 					break;
 				}
-				if (ext2 == ".gif") {
+				if (ext2 == L".gif") {
 					StrCpyW(format, L"image/gif");
 					break;
 				}
-				if (ext2 == ".tiff") {
+				if (ext2 == L".tiff") {
 					StrCpyW(format, L"image/tiff");
 					break;
 				}
@@ -467,7 +518,7 @@ namespace EzUI {
 
 		CLSID pngClsid;
 		GetEncoderClsid(format, &pngClsid);
-		__super::Save(fileName.utf16().c_str(), &pngClsid);
+		__super::Save(fileName.c_str(), &pngClsid);
 	}
-
 };
+#endif

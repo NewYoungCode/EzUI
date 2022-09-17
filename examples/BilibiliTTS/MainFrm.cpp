@@ -55,7 +55,7 @@ void MainFrm::OnTimer()
 			lb->Style.BorderColor = Color::Black;
 			lb->Style.BorderBottom = 1;
 
-			lb->SetTextAlign(TextAlign::MiddleLeft);
+			lb->TextAlign=(TextAlign::MiddleLeft);
 			lb->SetFixedHeight(30);
 			lb->Dock = DockStyle::Horizontal;
 			lb->SetText(nickName + " : " + text);

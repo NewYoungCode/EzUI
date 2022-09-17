@@ -114,17 +114,18 @@ namespace EzUI {
 			delete _bufBitmap;
 			_bufBitmap = NULL;
 		}
-		_bufBitmap = new EBitmap(width, height,EBitmap::PixelFormat::PixelFormatARGB);//32位透明图
+		_bufBitmap = new EBitmap(width, height, EBitmap::PixelFormat::PixelFormatARGB);//32位透明图
 		Debug::Log(TEXT("Update BoxShadow"));
 		Rect rect{ 0,0,width, height };
 		////绘图
 
-
-		Painter pt(_bufBitmap->GetDC());
+		Painter pt(_bufBitmap->GetDC(), _bufBitmap->Width, _bufBitmap->Height);
 		if (BackgroundImage) {//用于异形窗口
-			pt.CreateLayer(clipRect, Painter::ClipMode::Invalid);
+			Layer layer(clipRect);
+			pt.CreateLayer(&layer, ClipMode::Invalid);
 			pt.DrawImage(BackgroundImage, rect);
 			pt.PopLayer();
+			pt.EndDraw();//必须结束绘制
 		}
 		else {
 			SetShadow(rect.Width, rect.Height, _shadowWidth);

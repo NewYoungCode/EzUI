@@ -23,7 +23,7 @@ namespace EzUI {
 		return HTCLIENT;//ָ
 	}
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
-	LayeredWindow::LayeredWindow(int cx, int cy, HWND owner) :Window(cx, cy, owner, WS_POPUP | WS_MINIMIZEBOX, WS_EX_LAYERED)
+	LayeredWindow::LayeredWindow(int cx, int cy, HWND owner) :Window(cx, cy, owner, WS_POPUP | WS_MINIMIZEBOX, WS_EX_LAYERED )
 	{
 		_boxShadow = new ShadowWindow(cx, cy, _hWnd);
 		UpdateShadow();
@@ -90,16 +90,17 @@ namespace EzUI {
 		if (_winBitmap) {
 			delete _winBitmap;
 		}
-		_winBitmap = new EBitmap(rect.Width, rect.Height);
+		_winBitmap = new EBitmap(rect.Width, rect.Height,EBitmap::PixelFormat::PixelFormatARGB);
 		this->InvalidateRect(rect);
 	}
 	void LayeredWindow::OnPaint(HDC _hdc, const Rect& rePaintRect) {
 		Rect& clientRect = GetClientRect();//
-		Painter pt(_hdc);//
+		Painter pt(_hdc, clientRect.Width, clientRect.Height);//
 		PaintEventArgs args(pt);
 		args.InvalidRectangle = rePaintRect;//
 		args.HWnd = _hWnd;
 		MainLayout->Rending(args);//
+		pt.EndDraw();//D2D的话必须要先结束绘制才能将最终图像放到DC里面
 		PushDC(_hdc);//updatelaredwindow
 	}
 	LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -131,11 +132,12 @@ namespace EzUI {
 	void LayeredWindow::PushDC(HDC hdc) {
 		POINT point{ _rectClient.X,_rectClient.Y };
 		SIZE size{ _rectClient.Width,  _rectClient.Height };
-		BLENDFUNCTION blend;
-		blend.BlendOp = AC_SRC_OVER;
-		blend.BlendFlags = 0;
-		blend.AlphaFormat = AC_SRC_ALPHA;
-		blend.SourceConstantAlpha = 255;
-		UpdateLayeredWindow(_hWnd, NULL, NULL, &size, hdc, &point, 0, &blend, ULW_OPAQUE);//
+
+		BLENDFUNCTION blendFunc{ 0 };
+		blendFunc.SourceConstantAlpha = 255;
+		blendFunc.BlendOp = AC_SRC_OVER;
+		blendFunc.AlphaFormat = AC_SRC_ALPHA;
+		UpdateLayeredWindow(_hWnd, NULL, NULL, &size, hdc, &point, 0, &blendFunc, ULW_OPAQUE);//
+		//SetLayeredWindowAttributes(_hWnd, RGB(0, 0, 0), 150, LWA_COLORKEY);
 	}
 }

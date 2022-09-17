@@ -235,15 +235,6 @@ namespace EzUI {
 		}
 		case WM_ERASEBKGND: {
 			return TRUE;
-		/*	Rect rect(GetRect());
-			MONITORINFO oMonitor{ 0 };
-			oMonitor.cbSize = sizeof(MONITORINFO);
-			::GetMonitorInfo(::MonitorFromWindow(_hWnd, MONITOR_DEFAULTTONEAREST), &oMonitor);
-			Rect workRect = oMonitor.rcWork;
-			if (!workRect.Contains(rect)) {
-				return TRUE;
-			}
-			break;*/
 		}
 		case WM_PAINT:
 		{
@@ -407,6 +398,7 @@ namespace EzUI {
 
 	void Window::OnPaint(HDC winHDC, const Rect& rePaintRect)
 	{
+#ifdef USED_GDIPLUS
 		EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height);//
 		Painter pt(memBitmap.GetDC());
 		PaintEventArgs args(pt);
@@ -414,6 +406,14 @@ namespace EzUI {
 		args.HWnd = _hWnd;
 		MainLayout->Rending(args);//
 		::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//
+#endif
+#ifdef USED_Direct2D
+		Painter pt(winHDC, GetClientRect().Width, GetClientRect().Height);
+		PaintEventArgs args(pt);
+		args.InvalidRectangle = rePaintRect;
+		args.HWnd = _hWnd;
+		MainLayout->Rending(args);//
+#endif
 	}
 
 	bool Window::IsInWindow(Control& pControl, Control& it) {
@@ -702,4 +702,4 @@ namespace EzUI {
 		return false;
 	}
 
-};
+	};

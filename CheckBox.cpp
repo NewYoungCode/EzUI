@@ -34,11 +34,11 @@ namespace EzUI {
 		int fontHeight = Height();
 		if (!_text.empty()) {
 			RectF box;
-			args.Painter.MeasureString(_text, GetFontFamily(this->State), GetFontSize(this->State), box);
+			args.Painter.MeasureString(_wstr, GetFontFamily(this->State).utf16(), GetFontSize(this->State), box);
 			fontHeight = (int)box.Height - 2;
 			int x = fontHeight + Indent;
 			int cx = Width() - x;
-			args.Painter.DrawString(_text, GetFontFamily(this->State), GetFontSize(this->State), GetForeColor(this->State), Rect(x, 0, cx, (float)_rect.Height), TextAlign, _underline);
+			args.Painter.DrawString(_wstr, GetFontFamily(this->State).utf16(), GetFontSize(this->State), GetForeColor(this->State), Rect(x, 0, cx, (float)_rect.Height), TextAlign, _underline);
 		}
 		int y = (Height() - fontHeight) / 2;
 		args.Painter.FillRectangle({ 0,y,fontHeight,fontHeight },Color(200, 255, 255, 255));

@@ -1,5 +1,4 @@
-﻿#include "framework.h"
-#include "Resource.h"
+﻿
 #include <thread>
 #include "ezui.h"
 #include "VLayout.h"
@@ -22,7 +21,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	MainFrm form(1022, 670);
 	form.Zoom = true;
 	//form.CloseShadow();//关闭窗口阴影
-
 	//form.SetLayout(UIManager::LoadLayout(utf8("../html/layout.html")));
 	//form.MainLayout->Style.BackgroundColor = "rgb(255,100,255)";
 	//form.FindControl("title")->Style.ForeColor = "rgb(0,0,0,0.8)";

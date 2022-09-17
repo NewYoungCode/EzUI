@@ -410,9 +410,11 @@ Event(this , ##__VA_ARGS__); \
 		if (!Rect::Intersect(_ClipRect, this->ClipRect, invalidRect)) {//和重绘区域进行裁剪
 			return;
 		}
+
 		//设置绘制偏移
 		pt.OffsetX = clientRect.X; //设置偏移
 		pt.OffsetY = clientRect.Y;//设置偏移
+
 		if (ShadowWidth > 0) {
 			BoxShadow bs(Width(), Height(), ShadowWidth);
 			auto sz = bs.GetSize();
@@ -423,26 +425,24 @@ Event(this , ##__VA_ARGS__); \
 			::AlphaBlend(pt.DC, pt.OffsetX - ShadowWidth, pt.OffsetY - ShadowWidth, sz.Width, sz.Height, bs._bufBitmap->GetDC(), 0, 0, sz.Width, sz.Height, blendFunc);
 		}
 #if 1
-		//int r = 0;
-		//if ((r = GetRadius()) > 0) {//圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分)
-		//	auto &base = *pt.base;
-		//	GraphicsPath gp;//控件本身的光栅化路径
-		//	Region * region = Painter::IntersectRound(clientRect, r, _ClipRect);
-		//	base.SetClip(region);//设置裁剪区域
-		//	delete region;
-		//	/*BYTE *buf = new BYTE[region1.GetDataSize()]{0};
-		//	region1.GetData(buf, region1.GetDataSize());*/
-		//	/*Rect rectf;
-		//	region1.GetBounds(&rectf, pt->base);
-		//	int a = 0;
-		//	SolidBrush sb(Color::White);
-		//	pt->base->FillRectangle(&sb, rectf);*/
-		//}
-		//else {
-		pt.CreateLayer(_ClipRect);// //控件内部进行 光栅化 做圆角 但是内部绘图没传入radius的话 绘制会超出圆角部分,但是不会超出矩形部分
-	//}
+
+		Layer* layer;
+		int r = GetRadius();
+		if (r == 0 || true) {
+			layer = new Layer(_ClipRect);//绘图时 不会超过矩形部分 但是会超过父控件圆角部分
+		}
+		else {
+			//圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分)
+			HRGN clientRgn = ::CreateRoundRectRgn(clientRect.X, clientRect.Y, clientRect.GetRight(), clientRect.GetBottom(), r, r);
+			HRGN clipRectRgn = ::CreateRectRgn(_ClipRect.X, _ClipRect.Y, _ClipRect.GetRight(), _ClipRect.GetBottom());
+			::IntersectRgn(clipRectRgn, clientRgn, clipRectRgn);
+			DeleteRgn(clientRgn);
+			layer = new Layer(clipRectRgn);
+		}
+
+		pt.CreateLayer(layer);
 #endif // 
-			//开始绘制
+		//开始绘制
 		this->OnPaint(args);//绘制基本上下文
 		//创建分层 避免 滚动条和边框超出本控件
 		//绘制滚动条
@@ -471,8 +471,9 @@ Event(this , ##__VA_ARGS__); \
 		}
 #endif
 		pt.PopLayer();//弹出分层
+		delete layer;
 	}
-	
+
 	Control::~Control()
 	{
 		//if (Parent) {
@@ -492,7 +493,7 @@ Event(this , ##__VA_ARGS__); \
 		}
 		_spacer.clear();
 	}
-	
+
 	size_t Control::Index()
 	{
 		Controls& pControls = Parent->GetControls();
@@ -721,5 +722,5 @@ Event(this , ##__VA_ARGS__); \
 	void Control::OnKillFocus()
 	{
 	}
-	
+
 };

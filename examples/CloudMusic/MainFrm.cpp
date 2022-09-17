@@ -157,7 +157,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	head.SetRect({ 13,13,50,50 });
 	head.Style.Radius = (10);
 
-	head.Style.BackgroundImage = (&img);
+	head.Style.BackgroundImage = (img);
 	head.Action = ControlAction::Max;
 
 	bottom_left.AddControl(&head);
@@ -173,7 +173,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	singer.TextAlign = (TextAlign::MiddleLeft);
 	bottom_left.AddControl(&singer);
 
-	aixin.Style.BackgroundImage = (&ax);
+	aixin.Style.BackgroundImage = (ax);
 	aixin.SetRect({ 156,15,22,22 });
 	bottom_left.AddControl(&aixin);
 
@@ -212,7 +212,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	yz_std.SetRect({ 0,13,48,48 });
 	yz_std.SetFixedWidth(48);
 
-	yz_std.Style.ForeImage = (&std_img);
+	yz_std.Style.ForeImage = (std_img);
 	bottom_right.AddControl(&yz_std);
 
 	space1.SetSize({ 1,1 });
@@ -221,7 +221,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	yx.SetRect({ 0,26,20,20 });
 	yx.SetFixedWidth(20);
 
-	yx.Style.ForeImage = (&yx_img);
+	yx.Style.ForeImage = (yx_img);
 	bottom_right.AddControl(&yx);
 
 	space1.SetSize({ 1,1 });
@@ -229,7 +229,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 
 	yl.SetRect({ 0,26,21,21 });
 	yl.SetFixedWidth(21);
-	yl.Style.ForeImage = (&yl_img);
+	yl.Style.ForeImage = (yl_img);
 	bottom_right.AddControl(&yl);
 
 	space3.SetSize({ 1,1 });
@@ -238,7 +238,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	hy.SetRect({ 0,24,22,22 });
 	hy.SetFixedWidth(22);
 
-	hy.Style.ForeImage = (&hy_img);
+	hy.Style.ForeImage = (hy_img);
 	bottom_right.AddControl(&hy);
 
 	space4.SetSize({ 1,1 });
@@ -247,7 +247,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	lb.SetRect({ 0,24,22,22 });
 	lb.SetFixedWidth(22);
 
-	lb.Style.ForeImage = (&lb_img);
+	lb.Style.ForeImage = (lb_img);
 	bottom_right.AddControl(&lb);
 
 	space5.SetSize({ 1,1 });

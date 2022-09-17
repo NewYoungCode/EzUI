@@ -36,12 +36,12 @@ namespace EzUI {
 			}
 			if (key == "background-image") {
 				value = value.Erase('"');//É¾³ýË«ÒýºÅ;
-				style->BackgroundImage = new Image(value);
+				style->BackgroundImage = new Image(value.utf16());
 				break;
 			}
 			if (key == "fore-image") {
 				value = value.Erase('"');//É¾³ýË«ÒýºÅ;
-				style->ForeImage = new Image(value);
+				style->ForeImage = new Image(value.utf16());
 				break;
 			}
 			if (key == "border-color") {

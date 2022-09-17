@@ -5,13 +5,13 @@ VisualStudioVersion = 16.0.31829.152
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EzUI", "EzUI.vcxproj", "{BE15257D-96DD-4376-8270-403DD4E16783}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CloudMusic", "examples\CloudMusic\CloudMusic.vcxproj", "{F2982709-24BE-469D-9EA9-36E5D34A5400}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BilibiliTTS", "examples\BilibiliTTS\BilibiliTTS.vcxproj", "{EE5A46D6-24FA-4416-9F3C-D5348F62BABF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Designer", "examples\Designer\Designer.vcxproj", "{5882A56F-F9AA-4395-BC92-E4D669C1D60F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KuGou", "examples\KuGou\KuGou.vcxproj", "{0B03FCC7-4480-48CD-A159-34D8ED89B108}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CloudMusic", "examples\CloudMusic\CloudMusic.vcxproj", "{1ADF21C4-DE73-4847-8523-4421D33E0E15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,14 +29,6 @@ Global
 		{BE15257D-96DD-4376-8270-403DD4E16783}.Release|x64.Build.0 = Release|x64
 		{BE15257D-96DD-4376-8270-403DD4E16783}.Release|x86.ActiveCfg = Release|Win32
 		{BE15257D-96DD-4376-8270-403DD4E16783}.Release|x86.Build.0 = Release|Win32
-		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Debug|x64.ActiveCfg = Debug|x64
-		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Debug|x64.Build.0 = Debug|x64
-		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Debug|x86.ActiveCfg = Debug|Win32
-		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Debug|x86.Build.0 = Debug|Win32
-		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Release|x64.ActiveCfg = Release|x64
-		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Release|x64.Build.0 = Release|x64
-		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Release|x86.ActiveCfg = Release|Win32
-		{F2982709-24BE-469D-9EA9-36E5D34A5400}.Release|x86.Build.0 = Release|Win32
 		{EE5A46D6-24FA-4416-9F3C-D5348F62BABF}.Debug|x64.ActiveCfg = Debug|x64
 		{EE5A46D6-24FA-4416-9F3C-D5348F62BABF}.Debug|x64.Build.0 = Debug|x64
 		{EE5A46D6-24FA-4416-9F3C-D5348F62BABF}.Debug|x86.ActiveCfg = Debug|Win32
@@ -61,6 +53,14 @@ Global
 		{0B03FCC7-4480-48CD-A159-34D8ED89B108}.Release|x64.Build.0 = Release|x64
 		{0B03FCC7-4480-48CD-A159-34D8ED89B108}.Release|x86.ActiveCfg = Release|Win32
 		{0B03FCC7-4480-48CD-A159-34D8ED89B108}.Release|x86.Build.0 = Release|Win32
+		{1ADF21C4-DE73-4847-8523-4421D33E0E15}.Debug|x64.ActiveCfg = Debug|x64
+		{1ADF21C4-DE73-4847-8523-4421D33E0E15}.Debug|x64.Build.0 = Debug|x64
+		{1ADF21C4-DE73-4847-8523-4421D33E0E15}.Debug|x86.ActiveCfg = Debug|Win32
+		{1ADF21C4-DE73-4847-8523-4421D33E0E15}.Debug|x86.Build.0 = Debug|Win32
+		{1ADF21C4-DE73-4847-8523-4421D33E0E15}.Release|x64.ActiveCfg = Release|x64
+		{1ADF21C4-DE73-4847-8523-4421D33E0E15}.Release|x64.Build.0 = Release|x64
+		{1ADF21C4-DE73-4847-8523-4421D33E0E15}.Release|x86.ActiveCfg = Release|Win32
+		{1ADF21C4-DE73-4847-8523-4421D33E0E15}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

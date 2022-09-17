@@ -70,10 +70,13 @@ void MainFrm::InitForm() {
 	timer->Tick = [=]() {
 		Task();
 	};
+
 }
 MainFrm::MainFrm() :Form(1022, 670)
 {
 	InitForm();
+	//MainLayout->Style.Radius = 50;
+	//CloseShadow();
 }
 MainFrm::~MainFrm()
 {
@@ -93,22 +96,24 @@ void MainFrm::DownLoadImage(EString SingerName, EString headImageUrl)
 
 	::SendMessageW(_hWnd, delImage, 0, 0);
 
+	WCHAR temp[256]{ 0 };
+	::GetTempPathW(256, temp);
+	EString cache = EString(temp) + "KuGou_Cache";
+	::CreateDirectoryW(cache.utf16().c_str(), NULL);
+
 	//下载歌手头像
 	{
-		EString cache = Application::StartPath() + L"\\Cache";
-		::CreateDirectoryW(cache.utf16().c_str(), NULL);
 		EString singerBkImg = cache + "\\" + SingerName + "_headImg.jpg";
 		WebClient wc2;
 		auto code = wc2.DownloadFile(headImageUrl.Replace("{size}", "400"), Text::UTF8ToANSI(singerBkImg).c_str());
 		if (code == 200) {
-			headImg = new Image(singerBkImg);
+			headImg = new Image(singerBkImg.utf16());
 		}
 		else
 		{
 			headImg = new Image(L"imgs/headImg.jpg");
 		}
 	}
-
 
 	{
 		//下载歌手写真
@@ -135,12 +140,10 @@ void MainFrm::DownLoadImage(EString SingerName, EString headImageUrl)
 		}
 
 		if (!bkurl.empty()) {
-			EString cache = Application::StartPath() + L"\\Cache";
-			::CreateDirectoryW(cache.utf16().c_str(), NULL);
 			EString singerBkImg = cache + "\\" + SingerName + ".jpg";
 			WebClient wc2;
 			wc2.DownloadFile(bkurl, Text::UTF8ToANSI(singerBkImg).c_str());
-			bkImage = new Image(singerBkImg);
+			bkImage = new Image(singerBkImg.utf16());
 		}
 		else {
 			bkImage = new Image(L"imgs/defaultBackground.jpg");
@@ -181,7 +184,7 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 			int idd = *(int*)&id;
 			timer->Stop();
 			JObject json(resp);
-			int dur=json["timeLength"].asInt();
+			int dur = json["timeLength"].asInt();
 			EString playUrl = json["url"].asCString();
 			if (!playUrl.empty()) {
 				EString SingerName = sender->GetAttribute("SingerName");
@@ -207,7 +210,7 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 				}
 
 				this->SetText(json["fileName"].asString());
-				
+
 				player.OpenUrl(playUrl);
 				player.SetDuration(dur);
 				player.Play();
@@ -350,6 +353,8 @@ void MainFrm::OnPaint(HDC winHDC, const Rect& rePaintRect)
 	StopWatch sw;
 	__super::OnPaint(winHDC, rePaintRect);
 	char buf[256]{ 0 };
+	//Painter pt(winHDC, GetClientRect().Width, GetClientRect().Height);
+	//pt.DrawString(L"(LayeredWindow) This is a sample program", L"", 20, Color::Green, GetClientRect(), TextAlign::MiddleCenter);
 	sprintf_s(buf, "Opaint %dms\n", sw.ElapsedMilliseconds());
 	OutputDebugStringA(buf);
 }

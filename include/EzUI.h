@@ -10,8 +10,7 @@
 #include <map>
 #include <memory>
 #include <functional>
-#include <SDKDDKVer.h>
-#define WIN32_LEAN_AND_MEAN            
+
 #include <windows.h>
 #include <windowsx.h>
 #include <time.h>
@@ -232,4 +231,9 @@ namespace EzUI {
 		//	return strFilename;
 		//}
 	}
+
+	//下面的渲染方式只能选一个
+//#define USED_GDIPLUS
+#define USED_Direct2D
+
 };

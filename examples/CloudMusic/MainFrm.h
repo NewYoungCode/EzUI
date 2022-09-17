@@ -1,5 +1,7 @@
 #pragma once
 #include "ui.h"
+
+#include "EzUI.h"
 #include "Form.h"
 #include "Label.h"
 #include "Layout.h"
@@ -11,11 +13,22 @@
 #include "Button.h"
 
 #include "Edit.h"
+
+#include "Painter.h"
+
 using namespace ui;
 
 class MainFrm :public Form
 {
 private:
+	Image *yl_img;
+	Image* hy_img;
+	Image* lb_img;
+	Image* yx_img;
+	Image* std_img;
+	Image* ax;
+	Image* img;
+
 	VLayout laout;//垂直布局器
 	Label title;//标题
 	Edit edit;//搜索框
@@ -55,13 +68,8 @@ private:
 	Label hy;
 	Control space4;
 	Control space5;
-	Image yl_img = (L"D:\\wyy\\yl.png");
-	Image hy_img = (L"D:\\wyy\\hy.png");
-	Image lb_img = (L"D:\\wyy\\lb.png");
-	Image yx_img = (L"D:\\wyy\\yx.png");
-	Image std_img = (L"D:\\wyy\\std.png");
-	Image ax = (L"D:\\wyy\\ax.png");
-	Image img = (L"D:\\wyy\\hd2.png");
+
+	
 public:
 	MainFrm(int width, int height);
 	//WS_OVERLAPPEDWINDOW

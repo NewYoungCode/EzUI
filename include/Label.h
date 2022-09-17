@@ -7,6 +7,7 @@ namespace EzUI {
 	{
 	protected:
 		EString _text;
+		std::wstring _wstr;
 		bool _underline = false;
 		RectF fontBox;
 	protected:

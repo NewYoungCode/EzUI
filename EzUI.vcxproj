@@ -26,15 +26,16 @@
     <ClInclude Include="include\CheckBox.h" />
     <ClInclude Include="include\ComBox.h" />
     <ClInclude Include="include\Control.h" />
-    <ClInclude Include="include\CPURender.h" />
+    <ClInclude Include="include\Direct2DRender.h" />
+    <ClInclude Include="include\GdiplusRender.h" />
     <ClInclude Include="include\Edit.h" />
     <ClInclude Include="include\EzUI.h" />
     <ClInclude Include="include\Form.h" />
-    <ClInclude Include="include\GDIRender.h" />
     <ClInclude Include="include\HLayout.h" />
     <ClInclude Include="include\HList.h" />
     <ClInclude Include="include\HScrollBar.h" />
     <ClInclude Include="include\IControl.h" />
+    <ClInclude Include="include\RenderExType.h" />
     <ClInclude Include="include\Label.h" />
     <ClInclude Include="include\LayeredWindow.h" />
     <ClInclude Include="include\Layout.h" />
@@ -46,6 +47,7 @@
     <ClInclude Include="include\TabLayout.h" />
     <ClInclude Include="include\TileLayout.h" />
     <ClInclude Include="include\Timer.h" />
+    <ClInclude Include="include\RenderType.h" />
     <ClInclude Include="include\ui.h" />
     <ClInclude Include="include\UIManager.h" />
     <ClInclude Include="include\VLayout.h" />
@@ -62,11 +64,11 @@
     <ClCompile Include="CheckBox.cpp" />
     <ClCompile Include="ComBox.cpp" />
     <ClCompile Include="Control.cpp" />
-    <ClCompile Include="CPURender.cpp" />
+    <ClCompile Include="Direct2DRender.cpp" />
+    <ClCompile Include="GdiplusRender.cpp" />
     <ClCompile Include="Edit.cpp" />
     <ClCompile Include="EzUI.cpp" />
     <ClCompile Include="Form.cpp" />
-    <ClCompile Include="GDIRender.cpp" />
     <ClCompile Include="HLayout.cpp" />
     <ClCompile Include="HList.cpp" />
     <ClCompile Include="HScrollBar.cpp" />
@@ -98,7 +100,7 @@
     <ProjectGuid>{BE15257D-96DD-4376-8270-403DD4E16783}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>EzUI</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -148,7 +150,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>$(ProjectName)_D</TargetName>
-    <OutDir>lib</OutDir>
+    <OutDir>$(SolutionDir)\build</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -156,7 +158,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>$(ProjectName)</TargetName>
-    <OutDir>lib</OutDir>
+    <OutDir>$(SolutionDir)\build</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
