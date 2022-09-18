@@ -4,9 +4,9 @@
 #pragma comment(lib,"d2d1.lib")
 #pragma comment(lib,"Windowscodecs.lib")
 namespace EzUI {
-	ID2D1Factory* m_pDirect2dFactory = NULL;
-	IDWriteFactory* g_write_factory = NULL;
-	IWICImagingFactory* g_image_factory = NULL;
+	ID2D1Factory* g_Direct2dFactory = NULL;
+	IDWriteFactory* g_WriteFactory = NULL;
+	IWICImagingFactory* g_ImageFactory = NULL;
 
 	template<class Interface>
 	inline void SafeRelease(
@@ -23,29 +23,35 @@ namespace EzUI {
 	{
 		HRESULT hr = S_OK;
 		// Create a Direct2D factory.
-		hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_pDirect2dFactory);
-		if (!m_pDirect2dFactory) {
+		hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &g_Direct2dFactory);
+		if (!g_Direct2dFactory) {
 			::MessageBoxW(NULL, L"Failed to create ID2D1Factory", L"Error", 0);
 		}
-		hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&g_write_factory));
-		if (!g_write_factory) {
+		hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&g_WriteFactory));
+		if (!g_WriteFactory) {
 			::MessageBoxW(NULL, L"Failed to create IDWriteFactory", L"Error", 0);
 		}
-		hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, __uuidof(IWICImagingFactory), (LPVOID*)&g_image_factory);
-		if (!g_image_factory) {
-			::MessageBoxW(NULL, L"Failed to create IWICImagingFactory", L"Error", 0);
+		hr = CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, __uuidof(IWICImagingFactory), (LPVOID*)&g_ImageFactory);
+		if (!g_ImageFactory) {
+			//如果默认SDK的_GUID创建不了 有可能是用的win7系统 则使用win7的 GUID创建
+			_GUID imageFactoryWin7{ 0xcacaf262, 0x9370, 0x4615, 0xa1, 0x3b, 0x9f, 0x55, 0x39, 0xda, 0x4c, 0xa };
+			hr = CoCreateInstance(imageFactoryWin7, NULL, CLSCTX_INPROC_SERVER, __uuidof(IWICImagingFactory), (LPVOID*)&g_ImageFactory);
+			if (!g_ImageFactory) {
+				::MessageBoxW(NULL, L"Failed to create IWICImagingFactory", L"Error", 0);
+			}
 		}
 	}
+
 	void RenderUnInitialize()
 	{
-		if (m_pDirect2dFactory) {
-			SafeRelease(&m_pDirect2dFactory);
+		if (g_Direct2dFactory) {
+			SafeRelease(&g_Direct2dFactory);
 		}
-		if (g_write_factory) {
-			SafeRelease(&g_write_factory);
+		if (g_WriteFactory) {
+			SafeRelease(&g_WriteFactory);
 		}
-		if (g_image_factory) {
-			SafeRelease(&g_image_factory);
+		if (g_ImageFactory) {
+			SafeRelease(&g_ImageFactory);
 		}
 	}
 
@@ -72,20 +78,20 @@ namespace EzUI {
 
 	D2DImage::D2DImage(const std::wstring& filew)
 	{
-		if (g_image_factory) {
-			g_image_factory->CreateDecoderFromFilename(filew.c_str(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &bitmapdecoder);//
+		if (g_ImageFactory) {
+			g_ImageFactory->CreateDecoderFromFilename(filew.c_str(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &bitmapdecoder);//
 		}
 		if (bitmapdecoder) {
 			bitmapdecoder->GetFrame(0, &pframe);
-			g_image_factory->CreateFormatConverter(&fmtcovter);
+			g_ImageFactory->CreateFormatConverter(&fmtcovter);
 			fmtcovter->Initialize(pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
 			pframe->GetSize(&Width, &Height);
 		}
 	}
 
 	D2DImage::D2DImage(HBITMAP hBitmap) {
-		if (g_image_factory) {
-			g_image_factory->CreateBitmapFromHBITMAP(hBitmap, NULL, WICBitmapUsePremultipliedAlpha, &bitMap);
+		if (g_ImageFactory) {
+			g_ImageFactory->CreateBitmapFromHBITMAP(hBitmap, NULL, WICBitmapUsePremultipliedAlpha, &bitMap);
 			bitMap->GetSize(&Width, &Height);
 		}
 	}
@@ -129,7 +135,7 @@ namespace EzUI {
 			D2D1_RENDER_TARGET_USAGE_NONE,
 			D2D1_FEATURE_LEVEL_DEFAULT
 		);
-		HRESULT	hr = m_pDirect2dFactory->CreateDCRenderTarget(&defaultOption, (ID2D1DCRenderTarget**)&d2dRender);
+		HRESULT	hr = g_Direct2dFactory->CreateDCRenderTarget(&defaultOption, (ID2D1DCRenderTarget**)&d2dRender);
 		RECT rc{ 0,0,Width ,Height };
 		((ID2D1DCRenderTarget*)d2dRender)->BindDC(DC, &rc);
 		this->BeginDraw();
@@ -139,11 +145,11 @@ namespace EzUI {
 	{
 		D2D1_SIZE_U size = D2D1::SizeU(Width, Height);
 		// Create a Direct2D render target.
-		HRESULT hr = m_pDirect2dFactory->CreateHwndRenderTarget(
+		HRESULT hr = g_Direct2dFactory->CreateHwndRenderTarget(
 			D2D1::RenderTargetProperties(),
 			D2D1::HwndRenderTargetProperties(hWnd, size),
 			(ID2D1HwndRenderTarget**)&d2dRender);
-		DC=::GetDC(hWnd);
+		DC = ::GetDC(hWnd);
 		this->BeginDraw();
 	}
 
@@ -211,8 +217,8 @@ namespace EzUI {
 		rect.Y += OffsetY;
 
 		IDWriteTextFormat* format;
-		auto fh =  MulDiv(fontSize, GetDeviceCaps(DC, LOGPIXELSY), 72);
-		g_write_factory->CreateTextFormat(fontFamily.c_str(), NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fh, L"", &format);
+		auto fh = MulDiv(fontSize, GetDeviceCaps(DC, LOGPIXELSY), 72);
+		g_WriteFactory->CreateTextFormat(fontFamily.c_str(), NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fh, L"", &format);
 
 #define __Top DWRITE_PARAGRAPH_ALIGNMENT_NEAR
 #define	__Bottom DWRITE_PARAGRAPH_ALIGNMENT_FAR
@@ -283,21 +289,58 @@ namespace EzUI {
 	}
 	void Direct2DRender::CreateLayer(const Layer* layer, ClipMode clipMode)
 	{
-		Layers.push_back((Layer*)layer);
+		auto& rect = *layer->ClipRect;
+		D2D1_RECT_F rectF{ (float)rect.X,(float)rect.Y,(float)rect.GetRight(),(float)rect.GetBottom() };
+		d2dRender->PushAxisAlignedClip(rectF, D2D1_ANTIALIAS_MODE::D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+
+		//Rect r1{ 100,100,150,70 };
+		//D2D1_ROUNDED_RECT rr1{ pt.ToRectF(r1),35,35 };
+		//D2D1_RECT_F rr2{ pt.ToRectF({ 130,135,200,70 }) };
+		//ID2D1RoundedRectangleGeometry* roundedRectangleGeometry1;
+		//m_pDirect2dFactory->CreateRoundedRectangleGeometry(rr1, &roundedRectangleGeometry1);
+		//ID2D1RectangleGeometry* rect2;
+		//m_pDirect2dFactory->CreateRectangleGeometry(rr2, &rect2);
+		///*pt.DrawGeometry(roundedRectangleGeometry1, Color::Red);
+		//pt.DrawGeometry(rect2, Color::Black);*/
+		//ID2D1PathGeometry* clipPathGeometry = NULL;
+		//m_pDirect2dFactory->CreatePathGeometry(&clipPathGeometry);
+		//ID2D1GeometrySink* geometrySink = NULL;
+		//clipPathGeometry->Open(&geometrySink);
+		//HRESULT ret = roundedRectangleGeometry1->CombineWithGeometry(rect2, D2D1_COMBINE_MODE::D2D1_COMBINE_MODE_INTERSECT, NULL, geometrySink);
+		//geometrySink->Close();
+		//pt.d2dRender->PushLayer(D2D1::LayerParameters(pt.ToRectF(GetClientRect()), clipPathGeometry), NULL);//放入layer
+		////pt.FillGeometry(pathGeometry, Color(100,255,0,0));//交集区域
+		//pt.FillRectangle(GetClientRect(), Color(100, 255, 0, 0));//理论上只会填充在clipPathGeometry里面
+		//clipPathGeometry->Release();
+		//geometrySink->Release();
+		//roundedRectangleGeometry1->Release();
+		//rect2->Release();
+		//pt.d2dRender->PopLayer();//弹出layer
+
+
+		//auto& rect = *layer->ClipRect;
+		//D2D1_RECT_F rectF{ (float)rect.X,(float)rect.Y,(float)rect.GetRight(),(float)rect.GetBottom() };
+		//d2dRender->PushLayer(D2D1::LayerParameters(rectF), NULL);
+		return;
+		//Layers.push_back((Layer*)layer);
 		if (layer->ClipRect) {
 			auto& rect = *layer->ClipRect;
 			D2D1_RECT_F rectF{ (float)rect.X,(float)rect.Y,(float)rect.GetRight(),(float)rect.GetBottom() };
 			d2dRender->PushLayer(D2D1::LayerParameters(rectF), NULL);
 		}
+		/*D2D1_LAYER_PARAMETERS layerParams{ 0 };
+		d2dRender->PushLayer(&layerParams, NULL);*/
 		//else {
 		//	//::SelectClipRgn(DC, layer->RGN);
 		//}
 	}
 	void Direct2DRender::PopLayer()
 	{
+		d2dRender->PopAxisAlignedClip();
+		return;
 		d2dRender->PopLayer();
-		if (!Layers.empty()) {
-			Layers.pop_back();
+		/*if (!Layers.empty()) {
+			Layers.pop_back();*/
 			//if (!Layers.empty()) {
 			//	Layer& it = *(Layers.back());
 			//	if (it.ClipRect) {
@@ -310,7 +353,7 @@ namespace EzUI {
 			//		//base->SetClip(it.RGN);
 			//	}
 			//}
-		}
+		//}
 	}
 	void Direct2DRender::DrawLine(const Color& color, const Point& _A, const Point& _B, int width)
 	{
@@ -414,6 +457,20 @@ namespace EzUI {
 			beginDraw = true;
 		}
 	}
+	void Direct2DRender::FillGeometry(ID2D1Geometry* geometry, const Color& color)
+	{
+		ID2D1SolidColorBrush* sb;
+		auto hr = d2dRender->CreateSolidColorBrush(ToColorF(color), &sb);
+		d2dRender->FillGeometry(geometry, sb);
+		SafeRelease(&sb);
+	}
+	void Direct2DRender::DrawGeometry(ID2D1Geometry* geometry, const Color& color, int width)
+	{
+		ID2D1SolidColorBrush* sb;
+		auto hr = d2dRender->CreateSolidColorBrush(ToColorF(color), &sb);
+		d2dRender->DrawGeometry(geometry, sb);
+		SafeRelease(&sb);
+	}
 	void Direct2DRender::EndDraw()
 	{
 		if (beginDraw) {
@@ -421,6 +478,8 @@ namespace EzUI {
 			beginDraw = false;
 		}
 	}
+
+
 
 
 }

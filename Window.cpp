@@ -702,4 +702,4 @@ namespace EzUI {
 		return false;
 	}
 
-	};
+};

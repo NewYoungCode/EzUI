@@ -573,16 +573,20 @@ Event(this , ##__VA_ARGS__); \
 	void Control::Invalidate() {
 		if (_hWnd || ::IsWindow(_hWnd)) {
 			WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
-			Rect r = GetClientRect();
-			winData->InvalidateRect(&r);
+			if (winData) {
+				Rect r = GetClientRect();
+				winData->InvalidateRect(&r);
+			}
 		}
 	}
 	void Control::Refresh() {
 		if (_hWnd || ::IsWindow(_hWnd)) {
 			WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
-			Rect r = GetClientRect();
-			winData->InvalidateRect(&r);
-			winData->UpdateWindow();//立即更新全部无效区域
+			if (winData) {
+				Rect r = GetClientRect();
+				winData->InvalidateRect(&r);
+				winData->UpdateWindow();//立即更新全部无效区域
+			}
 		}
 	}
 	Controls& Control::GetControls()
