@@ -8,8 +8,8 @@ void MainFrm::InitForm() {
 	this->SetLayout(ui::UIManager::LoadLayout("xml/main.htm"));
 	auto main2 = FindControl("main2");
 	main2->Style.BackgroundColor = Color(120, 0, 0, 0);
-
-
+	  
+	 //this is test
 	FindControl("lrcView2")->AddControl(&lrcCtl);//Ìí¼Ó¸è´Ê¿Ø¼þ
 	lrcCtl._hWnd = _hWnd;
 
