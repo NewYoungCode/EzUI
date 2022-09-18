@@ -71,10 +71,25 @@ void MainFrm::InitForm() {
 		Task();
 	};
 
+	auto main = FindControl("main");
+	player.Tag = (UINT_PTR)main;
 }
 MainFrm::MainFrm() :Form(1022, 670)
 {
 	InitForm();
+
+	auto main = FindControl("main");
+	main->BackgroundPainting = [=](PaintEventArgs& arg)->bool {
+		if (player.BuffBitmap) {
+			Image img(player.BuffBitmap->_bitmap);
+			arg.Painter.DrawImage(&img, main->GetRect(), ImageSizeMode::CenterImage);
+			return true;
+		}
+		return false;
+
+	};
+
+
 	//MainLayout->Style.Radius = 50;
 	//CloseShadow();
 }
@@ -100,7 +115,6 @@ void MainFrm::DownLoadImage(EString SingerName, EString headImageUrl)
 	::GetTempPathW(256, temp);
 	EString cache = EString(temp) + "KuGou_Cache";
 	::CreateDirectoryW(cache.utf16().c_str(), NULL);
-
 	//œ¬‘ÿ∏Ë ÷Õ∑œÒ
 	{
 		EString singerBkImg = cache + "\\" + SingerName + "_headImg.jpg";

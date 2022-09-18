@@ -153,6 +153,11 @@ namespace EzUI {
 #define EventMouseDoubleClick   UIFunc<void( Control*, MouseButton, const Point&)>//鼠标双击
 #define EventScrollRolling   UIFunc<void(int, int)>//滚动条滚动事件
 
+#define EventPaint UIFunc<bool(PaintEventArgs& args)>
+#define EventBackgroundPaint  UIFunc<bool(PaintEventArgs& args)>
+#define EventForePaint  UIFunc<bool(PaintEventArgs& args)>
+
+
 	typedef std::map<EString, EString> Attributes;
 	typedef std::map<EString, EString>::iterator AttributeIterator;
 	class Control;

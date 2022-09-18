@@ -25,6 +25,9 @@ namespace EzUI {
 		bool Visible = true;//控件是否可见
 		Control* Parent = NULL;//父控件
 		Controls VisibleControls;//基于控件中的可见控件
+		EventPaint Painting = NULL;
+		EventBackgroundPaint  BackgroundPainting = NULL;
+		EventForePaint  ForePainting = NULL;
 	public:
 		virtual void OnChar(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
 		virtual void OnKeyDown(WPARAM wParam) override;//WM_CAHR消息

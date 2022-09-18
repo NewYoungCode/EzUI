@@ -42,12 +42,18 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::OnPaint(PaintEventArgs& args)
 	{
+		if (Painting && Painting(args) == true) {
+			return;
+		}
 		OnBackgroundPaint(args);//先绘制背景
 		OnForePaint(args);//再绘制前景
 		OnChildPaint(this->_controls, args);//绘制子控件
 	}
 	void Control::OnBackgroundPaint(PaintEventArgs& e)
 	{
+		if (BackgroundPainting && BackgroundPainting(e) == true) {
+			return;
+		}
 		Color backgroundColor = GetBackgroundColor();
 		HImage backgroundImage = GetBackgroundImage();
 		UI_Int radius = GetRadius();
@@ -59,6 +65,9 @@ Event(this , ##__VA_ARGS__); \
 		}
 	}
 	void Control::OnForePaint(PaintEventArgs& e) {
+		if (ForePainting && ForePainting(e) == true) {
+			return;
+		}
 		HImage foreImage = GetForeImage();
 		UI_Int radius = GetRadius();
 		if (foreImage.valid) {

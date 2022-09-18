@@ -143,13 +143,14 @@ namespace EzUI {
 
 	Direct2DRender::Direct2DRender(HWND hWnd, int Width, int Height)
 	{
+		this->hWnd = hWnd;
+		DC = ::GetDC(hWnd);
 		D2D1_SIZE_U size = D2D1::SizeU(Width, Height);
 		// Create a Direct2D render target.
 		HRESULT hr = g_Direct2dFactory->CreateHwndRenderTarget(
 			D2D1::RenderTargetProperties(),
 			D2D1::HwndRenderTargetProperties(hWnd, size),
 			(ID2D1HwndRenderTarget**)&d2dRender);
-		DC = ::GetDC(hWnd);
 		this->BeginDraw();
 	}
 

@@ -16,7 +16,9 @@ namespace EzUI {
 	void display(void* opaque, void* picture)
 	{
 		VlcPlayer* vp = (VlcPlayer*)opaque;
-		vp->Invalidate();
+		//vp->Invalidate();
+		((Control*)vp->Tag)->Invalidate();
+
 	}
 	unsigned setup(void** opaque, char* chroma, unsigned* width, unsigned* height, unsigned* pitches, unsigned* lines)
 	{
