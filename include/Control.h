@@ -118,9 +118,10 @@ namespace EzUI {
 	class  ScrollBar :public Control, public IScrollBar {
 	public:
 		ScrollBar() {
-			Style.BackgroundColor = { 90,127,127,127 };//the bar backgroundcolor
-			Style.ForeColor = { 127,127,127,127 };//the slider color
-			ActiveStyle.ForeColor = { 170,127,127,127 };//the slider color
+			Style.ForeColor = { 200,255,255,255 };//the bar backgroundcolor
+			Style.BackgroundColor = { 200,200,200,200 };//the bar backgroundcolor
+			SetWidth(7);//¹ö¶¯Ìõ¿í¶È
+			Style.Radius = 7;
 		}
 		virtual ~ScrollBar() {}
 	};

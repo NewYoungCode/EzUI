@@ -3,7 +3,7 @@
 #include "Label.h"
 #include "Form.h"
 #include "VLayout.h"
-#include "TileLayout.h"
+#include "TileList.h"
 #include "Button.h"
 #include "VList.h"
 #include "HList.h"
@@ -73,8 +73,8 @@ namespace EzUI {
 					ctl = new Layout;
 					break;
 				}
-				if (valueStr == "tilelayout") {
-					ctl = new TileLayout;
+				if (valueStr == "tilelist") {
+					ctl = new TileList;
 					break;
 				}
 				if (valueStr == "tablayout") {
@@ -123,7 +123,7 @@ namespace EzUI {
 							h = (int)Align::Center;
 						}
 						if (v && h) {
-							((Label*)ctl)->TextAlign=((TextAlign)(v | h));
+							((Label*)ctl)->TextAlign = ((TextAlign)(v | h));
 						}
 						else if (v && !h) {
 							((Label*)ctl)->TextAlign = ((TextAlign)(v));

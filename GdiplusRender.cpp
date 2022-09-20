@@ -61,20 +61,15 @@ namespace EzUI {
 		path.CloseFigure();
 	}
 
-	GdiplusRender::GdiplusRender(HDC hdc, int Width, int Height )
+	GdiplusRender::GdiplusRender(HDC hdc, int Width, int Height)
 	{
-		DC = hdc;
-		SetBkMode(DC, TRANSPARENT);
 		base = new  Gdiplus::Graphics(hdc);
 		HighQualityMode(base);
 	}
 
 	GdiplusRender::GdiplusRender(HWND hWnd)
 	{
-		_hwnd = hWnd;
-		DC = ::GetDC(hWnd);
-		base = new  Gdiplus::Graphics(DC);
-		SetBkMode(DC, TRANSPARENT);
+		base = new  Gdiplus::Graphics(hWnd);
 		HighQualityMode(base);
 	}
 
@@ -86,9 +81,10 @@ namespace EzUI {
 
 	GdiplusRender::~GdiplusRender()
 	{
-		if (_hwnd) {
-			::ReleaseDC(_hwnd, DC);
+		for (auto& it : CacheFont) {
+			DeleteFont(it.second);
 		}
+		CacheFont.clear();
 		delete base;
 	}
 
@@ -215,45 +211,40 @@ namespace EzUI {
 
 	void GdiplusRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const Color& color, const Rect& _rect, TextAlign textAlign, bool underLine)
 	{
-		if (DC != NULL) {//使用GDI绘制文字
-			Rect rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
-			rect.X += OffsetX;
-			rect.Y += OffsetY;
-			HFONT hFont = NULL;
-			HGDIOBJ oldFont = NULL;
-			LOGFONTW lf{ 0 };
-			GetObjectW(GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONTW), &lf);
-			wcsncpy_s(lf.lfFaceName, fontFamily.c_str(), LF_FACESIZE);
-			lf.lfCharSet = DEFAULT_CHARSET;
-			lf.lfHeight = -MulDiv(fontSize, GetDeviceCaps(DC, LOGPIXELSY), 72);
-			//lf.lfWeight += FW_BOLD;		//粗体
-			lf.lfUnderline = underLine;				//下划线
-			//lf.lfItalic = TRUE;				//斜体
-			hFont = CreateFontIndirectW(&lf);
-			oldFont = SelectFont(DC, hFont);
+		Rect rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
+		rect.X += OffsetX;
+		rect.Y += OffsetY;
 
-			RECT winRECT = rect.WinRECT();
-			SetTextColor(DC, RGB(color.GetR(), color.GetG(), color.GetB()));
-			DrawTextW(DC, text.c_str(), text.size(), &winRECT, DT_SINGLELINE | (int)textAlign);
-			if (hFont) {
-				SelectFont(DC, oldFont);
-				DeleteFont(hFont);
+		HDC DC = base->GetHDC();
+		//设定裁剪区域
+		HRGN clip = NULL;
+		if (!Layers.empty()) {
+			if (!Layers.empty()) {
+				Rect& it = *(Layers.back());
+				clip = ::CreateRectRgn(it.X, it.Y, it.GetRight(), it.GetBottom());
+				SelectClipRgn(DC, clip);
 			}
 		}
-		else
-		{
-			//使用GDI+绘制文字
-			RectF rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
-			rect.X += OffsetX;
-			rect.Y += OffsetY;
-			SafeObject<Gdiplus::Font> font(CreateFont(fontFamily, fontSize));
-			this->DrawString(text.c_str(), font, color, rect, textAlign, underLine);
+		//设定基本参数
+		int lastMode = ::GetBkMode(DC);
+		::SetBkMode(DC, TRANSPARENT);
+		HGDIOBJ oldFont = SelectFont(DC, CreateSafeFont(fontFamily, fontSize, DC, underLine));
+		//绘制文字
+		RECT winRECT = rect.WinRECT();
+		SetTextColor(DC, RGB(color.GetR(), color.GetG(), color.GetB()));
+		DrawTextW(DC, text.c_str(), text.size(), &winRECT, DT_SINGLELINE | (int)textAlign);
+		//善后工作
+		SelectFont(DC, oldFont);
+		::SetBkMode(DC, lastMode);
+		if (clip) {
+			SelectClipRgn(DC, NULL);
+			DeleteObject(clip);
 		}
+		base->ReleaseHDC(DC);
 	}
 
 	void GdiplusRender::MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, RectF& _outBox) {
 		SafeObject<Gdiplus::Font> font(CreateFont(fontf.c_str(), fontSize));
-
 		Gdiplus::RectF outBox;
 		_outBox.X = outBox.X;
 		_outBox.Y = outBox.X;
@@ -262,65 +253,43 @@ namespace EzUI {
 		base->MeasureString(_text.c_str(), _text.length(), font, { 0,0 }, &outBox);
 	}
 
-	void GdiplusRender::CreateLayer(const Layer* layer, ClipMode clipMode)
+	void GdiplusRender::PushLayer(const Rect& rect, ClipMode clipMode)
 	{
-		Layers.push_back((Layer*)layer);
-		if (DC) {
-			if (layer->ClipRect) {
-				auto& rect = *layer->ClipRect;
-				HRGN _rgn = ::CreateRectRgn(rect.X, rect.Y, rect.GetRight(), rect.GetBottom());
-				::SelectClipRgn(DC, _rgn);
-				DeleteRgn(_rgn);
-			}
-			else {
-				::SelectClipRgn(DC, layer->RGN);
-			}
-		}
-
-		if (layer->ClipRect) {
-			auto& _rect = *layer->ClipRect;
-			Gdiplus::Rect rect{ _rect.X,_rect.Y,_rect.Width,_rect.Height };
-			base->SetClip(rect, (Gdiplus::CombineMode)clipMode);
-		}
-		else {
-			base->SetClip(layer->RGN, (Gdiplus::CombineMode)clipMode);
-		}
+		Layers.push_back((Rect*)&rect);
+		base->SetClip(ToRect(rect), (Gdiplus::CombineMode)clipMode);
 	}
 
 	void GdiplusRender::PopLayer()
 	{
-		if (DC) {
-			::SelectClipRgn(DC, NULL);
-		}
 		base->ResetClip();
 		if (!Layers.empty()) {
 			Layers.pop_back();
 			if (!Layers.empty()) {
-				Layer& it = *(Layers.back());
-
-				if (DC) {
-					if (it.ClipRect) {
-						auto& rect = *it.ClipRect;
-						HRGN _rgn = ::CreateRectRgn(rect.X, rect.Y, rect.GetRight(), rect.GetBottom());
-						::SelectClipRgn(DC, _rgn);
-						DeleteRgn(_rgn);
-					}
-					else
-					{
-						::SelectClipRgn(DC, it.RGN);
-					}
-				}
-				if (it.ClipRect) {
-					auto& _rect = *it.ClipRect;
-					Gdiplus::Rect rect{ _rect.X,_rect.Y,_rect.Width,_rect.Height };
-					base->SetClip(rect);
-				}
-				else
-				{
-					base->SetClip(it.RGN);
-				}
+				Rect& it = *(Layers.back());
+				base->SetClip(ToRect(it), (Gdiplus::CombineMode)ClipMode::Valid);
 			}
 		}
+	}
+
+	HFONT GdiplusRender::CreateSafeFont(const std::wstring& fontFamily, int fontSize, HDC DC, bool lfUnderline)
+	{
+		WCHAR key[LF_FACESIZE + 10]{ 0 };
+		swprintf_s(key, L"%s_%d_%d", fontFamily.c_str(), fontSize, lfUnderline);
+		auto itor = CacheFont.find(key);
+		if (itor != CacheFont.end()) {
+			return (*itor).second;//从缓存中返回TextFormat
+		}
+		LOGFONTW lf{ 0 };
+		GetObjectW(GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONTW), &lf);
+		wcsncpy_s(lf.lfFaceName, fontFamily.c_str(), LF_FACESIZE);
+		lf.lfCharSet = DEFAULT_CHARSET;
+		lf.lfHeight = -MulDiv(fontSize, GetDeviceCaps(DC, LOGPIXELSY), 72);
+		//lf.lfWeight += FW_BOLD; //粗体
+		lf.lfUnderline = lfUnderline; //下划线
+		//lf.lfItalic = TRUE; //斜体
+		HFONT hFont = CreateFontIndirectW(&lf);
+		CacheFont.insert(std::pair<std::wstring, HFONT>(key, hFont));//加入缓存
+		return hFont;
 	}
 
 
@@ -441,6 +410,39 @@ namespace EzUI {
 		free(pImageCodecInfo);
 		return -1;  // Failure
 	}
+
+	BOOL SaveHDCToFile(HDC hDC, const Rect& rect, const std::wstring& fileName) {
+		size_t pos = fileName.rfind(L".");
+		WCHAR format[15]{ L"image/bmp" };
+		if (pos != size_t(-1)) {
+			std::wstring ext2 = fileName.substr(pos);
+			do
+			{
+				if (ext2 == L".jpg") {
+					StrCpyW(format, L"image/jpeg");
+					break;
+				}
+				if (ext2 == L".png") {
+					StrCpyW(format, L"image/png");
+					break;
+				}
+				if (ext2 == L".gif") {
+					StrCpyW(format, L"image/gif");
+					break;
+				}
+				if (ext2 == L".tiff") {
+					StrCpyW(format, L"image/tiff");
+					break;
+				}
+			} while (false);
+		}
+		CLSID pngClsid;
+		GetEncoderClsid(format, &pngClsid);
+		RECT r = rect.WinRECT();
+		return SaveHDCToFile(hDC, &r, format, fileName.c_str());
+	}
+
+
 	BOOL SaveHDCToFile(HDC hDC, LPRECT lpRect, const WCHAR* format, const WCHAR* filename)
 	{
 		BOOL bRet = FALSE;
@@ -470,21 +472,38 @@ namespace EzUI {
 		DeleteObject(hBmp);
 		return bRet;
 	}
+
+	GdiplusImage* ClipImage(GdiplusImage* img, const Size& sz, int _radius)
+	{
+		GdiplusImage* bitmap = new  GdiplusImage(sz.Width, sz.Height);
+		Gdiplus::Graphics g(bitmap);
+		//g.SetInterpolationMode(Gdiplus::InterpolationMode::InterpolationModeHighQualityBicubic);//图像
+		//g.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeHighQuality);//抗锯齿
+		g.SetPixelOffsetMode(Gdiplus::PixelOffsetMode::PixelOffsetModeHighQuality);//像素偏移模式
+		Gdiplus::GraphicsPath path;
+		CreateRectangle(path, Gdiplus::Rect{ 0,0,sz.Width, sz.Height }, _radius);
+		g.SetClip(&path);
+		g.DrawImage(img, 0, 0);
+		return bitmap;
+	}
+
 	void GdiplusRender::SaveImage(const WCHAR* format, const WCHAR* fileName, const Size& size)
 	{
-		if (DC) {
-			::DeleteFileW(fileName);
-			RECT rect{ 0,0,size.Width,size.Height };
-			SaveHDCToFile(DC, &rect, format, fileName);
-		}
+		/*	if (DC) {
+				::DeleteFileW(fileName);
+				RECT rect{ 0,0,size.Width,size.Height };
+				SaveHDCToFile(DC, &rect, format, fileName);
+			}*/
 	}
 
 	void GdiplusRender::BeginDraw()
 	{
+		//base->BeginContainer();
 	}
 
 	void GdiplusRender::EndDraw()
 	{
+		base->Flush();
 	}
 
 	void GdiplusImage::Save(const std::wstring& fileName)

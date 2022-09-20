@@ -121,8 +121,12 @@ namespace EzUI {
 
 		Painter pt(_bufBitmap->GetDC(), _bufBitmap->Width, _bufBitmap->Height);
 		if (BackgroundImage) {//用于异形窗口
-			Layer layer(clipRect);
-			pt.CreateLayer(&layer, ClipMode::Invalid);
+
+#ifdef USED_Direct2D
+			pt.PushLayer(clipRect, ClipMode::Invalid);
+#else
+			pt.PushLayer(clipRect, ClipMode::Invalid);
+#endif // USED_Direct2D
 			pt.DrawImage(BackgroundImage, rect);
 			pt.PopLayer();
 			pt.EndDraw();//必须结束绘制

@@ -58,7 +58,7 @@ Event(this , ##__VA_ARGS__); \
 		HImage backgroundImage = GetBackgroundImage();
 		UI_Int radius = GetRadius();
 		if (backgroundColor.valid) {
-			e.Painter.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, backgroundColor, radius);
+			e.Painter.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, backgroundColor);
 		}
 		if (backgroundImage.valid) {
 			e.Painter.DrawImage(backgroundImage.value, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage.value->SizeMode, backgroundImage.value->Margin);
@@ -69,7 +69,6 @@ Event(this , ##__VA_ARGS__); \
 			return;
 		}
 		HImage foreImage = GetForeImage();
-		UI_Int radius = GetRadius();
 		if (foreImage.valid) {
 			e.Painter.DrawImage(foreImage.value, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage.value->SizeMode, foreImage.value->Margin);
 		}
@@ -89,7 +88,7 @@ Event(this , ##__VA_ARGS__); \
 		if (!hasBorder) return;//边框为0不绘制
 
 		if (radius > 0 && hasBorder) {
-			e.Painter.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, borderColor, borderLeft, radius);
+			e.Painter.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, borderColor, borderLeft);
 			return;
 		}
 		if (borderLeft > 0) {
@@ -419,40 +418,55 @@ Event(this , ##__VA_ARGS__); \
 		if (!Rect::Intersect(_ClipRect, this->ClipRect, invalidRect)) {//和重绘区域进行裁剪
 			return;
 		}
-
+		this->_lastDrawRect = clientRect;//记录最后一次绘制的区域
 		//设置绘制偏移
 		pt.OffsetX = clientRect.X; //设置偏移
 		pt.OffsetY = clientRect.Y;//设置偏移
 
 		if (ShadowWidth > 0) {
+			//pt.EndDraw();//如果是Direct2D绘制那么必须先结束绘制 相当于先Flush画面到DC里面
 			BoxShadow bs(Width(), Height(), ShadowWidth);
 			auto sz = bs.GetSize();
 			BLENDFUNCTION blendFunc{ 0 };
 			blendFunc.SourceConstantAlpha = 255;
 			blendFunc.BlendOp = AC_SRC_OVER;
 			blendFunc.AlphaFormat = AC_SRC_ALPHA;
-			::AlphaBlend(pt.DC, pt.OffsetX - ShadowWidth, pt.OffsetY - ShadowWidth, sz.Width, sz.Height, bs._bufBitmap->GetDC(), 0, 0, sz.Width, sz.Height, blendFunc);
+			//::AlphaBlend(args., pt.OffsetX - ShadowWidth, pt.OffsetY - ShadowWidth, sz.Width, sz.Height, bs._bufBitmap->GetDC(), 0, 0, sz.Width, sz.Height, blendFunc);
+			//pt.BeginDraw();//继续绘制剩下的内容
 		}
-#if 1
 
-		Layer* layer;
+#ifdef USED_GDIPLUS 
+		pt.PushLayer(_ClipRect);
 		int r = GetRadius();
-		if (r == 0 || true) {
-			layer = new Layer(_ClipRect);//绘图时 不会超过矩形部分 但是会超过父控件圆角部分
+#define AntiAlias
+#ifdef AntiAlias
+		EBitmap* buckBkImg = NULL;//绘制前先备份一下底部背景
+		if (r > 0) {
+			buckBkImg = new EBitmap(clientRect.Width, clientRect.Height);
+			::BitBlt(buckBkImg->GetDC(), 0, 0, clientRect.Width, clientRect.Height, args.DC, clientRect.X, clientRect.Y, SRCCOPY);
+		}
+#endif
+
+#endif // 
+
+#ifdef USED_Direct2D
+		int r = GetRadius();
+		if (r > 0) {
+			//处理圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分) 带抗锯齿
+			DxGeometry roundRect(clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height, r);
+			DxGeometry clientRect(_ClipRect);
+			DxGeometry outClipRect;
+			DxGeometry::Intersect(outClipRect, roundRect, clientRect);
+			pt.PushLayer(outClipRect);
 		}
 		else {
-			//圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分)
-			HRGN clientRgn = ::CreateRoundRectRgn(clientRect.X, clientRect.Y, clientRect.GetRight(), clientRect.GetBottom(), r, r);
-			HRGN clipRectRgn = ::CreateRectRgn(_ClipRect.X, _ClipRect.Y, _ClipRect.GetRight(), _ClipRect.GetBottom());
-			::IntersectRgn(clipRectRgn, clientRgn, clipRectRgn);
-			DeleteRgn(clientRgn);
-			layer = new Layer(clipRectRgn);
+			//针对矩形控件
+			pt.PushLayer(_ClipRect);
 		}
-
-		pt.CreateLayer(layer);
-#endif // 
+#endif
 		//开始绘制
 		this->OnPaint(args);//绘制基本上下文
+
 		//创建分层 避免 滚动条和边框超出本控件
 		//绘制滚动条
 		EzUI::ScrollBar* scrollbar = NULL;
@@ -464,10 +478,26 @@ Event(this , ##__VA_ARGS__); \
 			scrollbar->Rending(args);
 		}
 		//绘制边框
-		//args.ClipRectangle = parentClipRect;//将裁剪区域重置
 		pt.OffsetX = clientRect.X; //设置偏移
 		pt.OffsetY = clientRect.Y;//设置偏移
 		this->OnBorderPaint(args);//绘制边框
+
+#ifdef USED_GDIPLUS 
+#ifdef AntiAlias
+		if (r > 0) {
+			EBitmap bufBitmap(clientRect.Width, clientRect.Height);//绘制好的内容
+			::BitBlt(bufBitmap.GetDC(), 0, 0, clientRect.Width, clientRect.Height, args.DC, clientRect.X, clientRect.Y, SRCCOPY);//将绘制好的放到bufBitmap里面
+			GdiplusImage img(bufBitmap._bitmap);
+			GdiplusImage* outBitmap = ClipImage(&img, { clientRect.Width, clientRect.Height }, r);
+			::BitBlt(args.DC, clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height, buckBkImg->GetDC(), 0, 0, SRCCOPY);//把备份的背景贴回去
+			pt.base->DrawImage(outBitmap, clientRect.X, clientRect.Y);//将裁剪好的贴回去
+			delete buckBkImg;
+			delete outBitmap;
+		}
+#undef AntiAlias
+#endif
+#endif
+		pt.PopLayer();//弹出
 #ifdef DEBUGPAINT
 		WindowData* wndData = (WindowData*)UI_GetUserData(_hWnd);
 		if (wndData->Debug) {
@@ -479,8 +509,6 @@ Event(this , ##__VA_ARGS__); \
 			}
 		}
 #endif
-		pt.PopLayer();//弹出分层
-		delete layer;
 	}
 
 	Control::~Control()
@@ -583,8 +611,9 @@ Event(this , ##__VA_ARGS__); \
 		if (_hWnd || ::IsWindow(_hWnd)) {
 			WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
 			if (winData) {
-				Rect r = GetClientRect();
-				winData->InvalidateRect(&r);
+				Rect _InvalidateRect;
+				Rect::Union(_InvalidateRect, _lastDrawRect, GetClientRect());
+				winData->InvalidateRect(&_InvalidateRect);
 			}
 		}
 	}
@@ -592,8 +621,9 @@ Event(this , ##__VA_ARGS__); \
 		if (_hWnd || ::IsWindow(_hWnd)) {
 			WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
 			if (winData) {
-				Rect r = GetClientRect();
-				winData->InvalidateRect(&r);
+				Rect _InvalidateRect;
+				Rect::Union(_InvalidateRect, _lastDrawRect, GetClientRect());
+				winData->InvalidateRect(&_InvalidateRect);
 				winData->UpdateWindow();//立即更新全部无效区域
 			}
 		}

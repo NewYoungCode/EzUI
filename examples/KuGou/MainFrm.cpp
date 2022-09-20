@@ -8,8 +8,8 @@ void MainFrm::InitForm() {
 	this->SetLayout(ui::UIManager::LoadLayout("xml/main.htm"));
 	auto main2 = FindControl("main2");
 	main2->Style.BackgroundColor = Color(120, 0, 0, 0);
-	  
-	 //this is test
+
+	//this is test
 	FindControl("lrcView2")->AddControl(&lrcCtl);//Ìí¼Ó¸è´Ê¿Ø¼þ
 	lrcCtl._hWnd = _hWnd;
 
@@ -261,10 +261,15 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 			for (auto&& it : json["mvdata"]) {
 				urls.push_back(it["downurl"].asString());
 			}
-			FindControl("mvView")->Trigger(Event::OnMouseClick);
-			player.OpenUrl(urls[urls.size() - 1]);
-			player.Play();
-			timer->Start();
+
+			VlcPlayer* deskPlayer = (VlcPlayer*)Tag;
+			deskPlayer->OpenUrl(urls[urls.size() - 1]);
+			deskPlayer->Play();
+
+			/*	FindControl("mvView")->Trigger(Event::OnMouseClick);
+				player.OpenUrl(urls[urls.size() - 1]);
+				player.Play();
+				timer->Start();*/
 		}
 		if (sender == playerBar) {
 			const MouseEventArgs& arg = (MouseEventArgs&)args;
@@ -369,6 +374,7 @@ void MainFrm::OnPaint(HDC winHDC, const Rect& rePaintRect)
 	char buf[256]{ 0 };
 	//Painter pt(winHDC, GetClientRect().Width, GetClientRect().Height);
 	//pt.DrawString(L"(LayeredWindow) This is a sample program", L"", 20, Color::Green, GetClientRect(), TextAlign::MiddleCenter);
+
 	sprintf_s(buf, "Opaint %dms\n", sw.ElapsedMilliseconds());
 	OutputDebugStringA(buf);
 }

@@ -17,6 +17,7 @@ namespace EzUI {
 	protected:
 		virtual void OnForePaint(PaintEventArgs& args) override;
 		virtual void OnMouseDown(MouseButton mBtn, const Point& point)override;
+		virtual void OnMouseEnter(const Point& pt)override;
 		virtual void OnMouseUp(MouseButton mBtn, const Point& point)override;
 		virtual void OnMouseLeave()override;
 		virtual void OnMouseMove(const Point& point)override;

@@ -45,7 +45,7 @@
     <ClInclude Include="include\RadioButton.h" />
     <ClInclude Include="include\ShadowWindow.h" />
     <ClInclude Include="include\TabLayout.h" />
-    <ClInclude Include="include\TileLayout.h" />
+    <ClInclude Include="include\TileList.h" />
     <ClInclude Include="include\Timer.h" />
     <ClInclude Include="include\RenderType.h" />
     <ClInclude Include="include\ui.h" />
@@ -81,7 +81,7 @@
     <ClCompile Include="RadioButton.cpp" />
     <ClCompile Include="ShadowWindow.cpp" />
     <ClCompile Include="TabLayout.cpp" />
-    <ClCompile Include="TileLayout.cpp" />
+    <ClCompile Include="TileList.cpp" />
     <ClCompile Include="tinyxml\tinystr.cpp" />
     <ClCompile Include="tinyxml\tinyxml.cpp" />
     <ClCompile Include="tinyxml\tinyxmlerror.cpp" />

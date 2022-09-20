@@ -3,7 +3,7 @@
 #include "VScrollBar.h"
 namespace EzUI {
 
-	class UI_EXPORT  TileLayout :
+	class UI_EXPORT  TileList :
 		public Layout, public IScroll
 	{
 	private:
@@ -12,8 +12,8 @@ namespace EzUI {
 		VScrollBar* vScrollBar = NULL;
 		int Margin = 0;
 	public:
-		TileLayout();
-		virtual ~TileLayout();
+		TileList();
+		virtual ~TileList();
 		int MarginTop = 35;
 		int MarginRight = 36;
 		virtual void Clear(bool freeList = false)override;

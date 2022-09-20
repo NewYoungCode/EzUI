@@ -398,10 +398,12 @@ namespace EzUI {
 
 	void Window::OnPaint(HDC winHDC, const Rect& rePaintRect)
 	{
+		StopWatch sw;
 #ifdef USED_GDIPLUS
 		EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height);//
 		Painter pt(memBitmap.GetDC());
 		PaintEventArgs args(pt);
+		args.DC = memBitmap.GetDC();
 		args.InvalidRectangle = rePaintRect;
 		args.HWnd = _hWnd;
 		MainLayout->Rending(args);//
@@ -410,10 +412,14 @@ namespace EzUI {
 #ifdef USED_Direct2D
 		Painter pt(winHDC, GetClientRect().Width, GetClientRect().Height);
 		PaintEventArgs args(pt);
+		args.DC = winHDC;
 		args.InvalidRectangle = rePaintRect;
 		args.HWnd = _hWnd;
 		MainLayout->Rending(args);//
 #endif
+		char buf[256]{ 0 };
+		sprintf_s(buf, "Opaint %dms\n", sw.ElapsedMilliseconds());
+		OutputDebugStringA(buf);
 	}
 
 	bool Window::IsInWindow(Control& pControl, Control& it) {
@@ -426,12 +432,12 @@ namespace EzUI {
 		auto clientRect = it.GetClientRect();//
 		if (!winClientRect.IntersectsWith(clientRect)) {
 			return false;
-		}
+	}
 		if (!pControl.GetClientRect().IntersectsWith(clientRect)) {
 			return false;
 		}
 		return true;
-	}
+}
 
 	Control* Window::FindControl(const Point& clientPoint, Point& outPoint) {
 		outPoint = clientPoint;

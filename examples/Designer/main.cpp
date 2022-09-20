@@ -1,55 +1,50 @@
-#include "ezui.h"
-#include "VLayout.h"
-#include "Form.h" 
+//WIN32 desktop application UI framework
+
+//email:718987717@qq.com //qq»∫: 758485934
+
+#include "EzUI.h"
+
+#include "Application.h"
+
+#include "Form.h"
+
 #include "Button.h"
-#include "UIManager.h"
-#include "TileLayout.h"
-using namespace ui;
-class GameItem :public VBox {
-public:
-	Label ctlImg, ctlName;
-	GameItem(Image* img, const EString& game) {
-		//img->Margin = 40;
-		this->SetFixedHeight(67);
-		this->SetFixedWidth(67);
-		ctlName.SetFixedHeight(20);
-		ctlName.SetText(utf8("”Œœ∑1"));
 
-		ctlImg.Style.BackgroundImage = img;
-		AddControl(&ctlImg);
-		AddControl(&ctlName);
-		ctlImg.MousePassThrough = ctlName.MousePassThrough = Event::OnMouseEnter | Event::OnMouseLeave;
-		HoverStyle.SetBorder(Color::HotPink, 1);
-	}
-};
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-	_In_opt_ HINSTANCE hPrevInstance,
-	_In_ LPWSTR    lpCmdLine,
-	_In_ int       nCmdShow)
+#include "TileList.h"
+
+#include "VList.h"
+
+#include <Windows.h>
+using namespace EzUI;
+
+int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+
 	Application app;
-	Window form(1022, 670);
-	VBox box;
-	form.SetLayout(&box);
 
-	ui::Control ctl;
-	ctl.Action = ui::ControlAction::MoveWindow;
+	EzUI::Window frm(800, 600);
+	Layout layout;
+	layout.Style.BackgroundColor = Color::White;
+	TileList tile;
+	tile.Dock = DockStyle::Fill;
+	tile.MarginRight = 1;
+	tile.MarginTop = 1;
 
-	TileLayout list;
-	box.AddControl(&list);
-	box.Style.BackgroundColor = Color::Pink;
-	form.Zoom = true;
-	Image img(L"images/yxx.jpg");
-	//img.SizeMode = ImageSizeMode::CenterImage;
-	for (size_t i = 0; i < 50; i++)
+	for (size_t i = 0; i < 999; i++)
 	{
-		GameItem* it = new GameItem(&img, "");
-		it->ShadowWidth = 15;
-		it->Name = "test";
-		list.AddControl(it);
+		Button* btn = new Button;
+		btn->ShadowWidth = 5;
+		btn->SetSize({ 100,20 });
+		btn->SetText("btn98789789789" + std::to_string(i));
+		btn->SetLocation({ 100, 30 });
+		tile.AddControl(btn);
 	}
-	form.Show();
-	return	app.exec();
+
+	//tile.ResumeLayout();
+	layout.AddControl(&tile);
+	frm.SetLayout(&layout);
+	frm.Show();
+
+	return app.exec();
+
 }
-
-

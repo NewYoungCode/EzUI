@@ -5,7 +5,7 @@ namespace EzUI {
 	{
 		this->ScrollBar = hScrollBar = new HScrollBar;
 		if (hScrollBar) {
-			hScrollBar->SetSize({ Width(),10 });//滚动条宽度
+			hScrollBar->SetWidth(Width());//滚动条宽度
 			hScrollBar->Parent = this;
 			hScrollBar->_controlsLocationX = &LocationX;
 		}

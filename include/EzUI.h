@@ -160,10 +160,8 @@ namespace EzUI {
 			}
 			return count;
 		}
-
 		EString Tolower()const;
 		EString Toupper()const;
-
 	};
 #define utf8(szbuf)  EString(szbuf,EString::ANSI)
 	//#define utf8(szbuf)  EString(szbuf,EString::UTF8)
@@ -235,5 +233,4 @@ namespace EzUI {
 	//下面的渲染方式只能选一个
 //#define USED_GDIPLUS
 #define USED_Direct2D
-
 };

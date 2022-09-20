@@ -52,7 +52,7 @@ namespace EzUI {
 		if (_sliderHeight >= _rect.Height) {
 			return;
 		}
-		e.Painter.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height },GetBackgroundColor());
+		e.Painter.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, GetBackgroundColor());
 	}
 
 	void VScrollBar::OnLayout(const Size& size, bool fast) {
@@ -90,6 +90,18 @@ namespace EzUI {
 			this->pointY = point.Y;
 		}
 	}
+
+	void VScrollBar::OnMouseEnter(const Point& pt) {
+		__super::OnMouseEnter(pt);
+
+		//{//滚动条效果
+		//	SetWidth(8);
+		//	Style.Radius = 8;
+		//	OnLayout(Size(Parent->Width(), Parent->Height()), true);
+		//	Invalidate();
+		//}
+	}
+
 	void VScrollBar::OnMouseUp(MouseButton mBtn, const Point& point)
 	{
 		__super::OnMouseUp(mBtn, point);
@@ -100,6 +112,13 @@ namespace EzUI {
 	{
 		__super::OnMouseLeave();
 		mouseDown = false;
+	
+		//{//滚动条效果
+		//	SetWidth(5);
+		//	Style.Radius = 5;
+		//	OnLayout(Size(Parent->Width(), Parent->Height()), true);
+		//	Invalidate();
+		//}
 	}
 
 	void VScrollBar::OnMouseMove(const Point& point)

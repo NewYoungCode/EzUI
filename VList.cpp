@@ -4,7 +4,7 @@ namespace EzUI {
 	{
 		this->ScrollBar = vScrollBar = new VScrollBar;
 		if (vScrollBar) {
-			vScrollBar->SetSize({ 10,Height() });//滚动条宽度
+			vScrollBar->SetHeight(Height());//滚动条宽度
 			vScrollBar->Parent = this;
 			vScrollBar->_controlsLocationY = &LocationY;
 		}

@@ -170,8 +170,10 @@ namespace EzUI {
 	class UI_EXPORT IRect {
 	protected:
 		Rect _rect;
+		Rect _lastDrawRect;//最后一次显示的位置
 		int _fixedWidth = 0;
 		int _fixedHeight = 0;
+		bool _pendLayout = true;//布局是否被挂起 当Addcontrol或者RemoveControl的时候此标志为true 当调用ResumeLayout()之后此标志为false
 	public:
 		DockStyle Dock = DockStyle::None;//dock样式
 	public:

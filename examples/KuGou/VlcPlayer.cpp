@@ -16,8 +16,13 @@ namespace EzUI {
 	void display(void* opaque, void* picture)
 	{
 		VlcPlayer* vp = (VlcPlayer*)opaque;
-		//vp->Invalidate();
-		((Control*)vp->Tag)->Invalidate();
+
+		if ((Control*)vp->Tag) {
+			((Control*)vp->Tag)->Invalidate();
+		}
+		else {
+			vp->Invalidate();
+		}
 
 	}
 	unsigned setup(void** opaque, char* chroma, unsigned* width, unsigned* height, unsigned* pitches, unsigned* lines)
@@ -55,7 +60,7 @@ namespace EzUI {
 		__super::OnBackgroundPaint(pArg);
 		if (BuffBitmap) {
 			Image img(BuffBitmap->_bitmap);
-			pArg.Painter.DrawImage(&img, GetRect(), ImageSizeMode::Zoom);
+			pArg.Painter.DrawImage(&img, GetRect(), ImageSizeMode::CenterImage);
 		}
 	}
 	void VlcPlayer::SetConfig()

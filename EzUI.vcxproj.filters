@@ -90,7 +90,7 @@
     <ClInclude Include="include\TabLayout.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\TileLayout.h">
+    <ClInclude Include="include\TileList.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\UIManager.h">
@@ -200,7 +200,7 @@
     <ClCompile Include="TabLayout.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="TileLayout.cpp">
+    <ClCompile Include="TileList.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="UIManager.cpp">

@@ -22,7 +22,7 @@ namespace EzUI {
 		class RectF;
 		class CharacterRange;
 
-		
+
 		class SizeF
 		{
 		public:
@@ -577,6 +577,15 @@ namespace EzUI {
 				IN const Rect& a,
 				IN const Rect& b)
 			{
+				if (a.IsEmptyArea()) {
+					c = b;
+					return !c.IsEmptyArea();
+				}
+				else if (b.IsEmptyArea()) {
+					c = a;
+					return !c.IsEmptyArea();
+				}
+
 				INT right = max(a.GetRight(), b.GetRight());
 				INT bottom = max(a.GetBottom(), b.GetBottom());
 				INT left = min(a.GetLeft(), b.GetLeft());
@@ -975,28 +984,6 @@ namespace EzUI {
 
 			ARGB Argb;
 		};
-	};
-
-	class Layer
-	{
-	public:
-		RenderType::Rect* ClipRect = NULL;
-		HRGN RGN = NULL;
-	private:
-		Layer() {}
-	public:
-		Layer(const RenderType::Rect& rect) {
-			this->ClipRect = (RenderType::Rect*)&rect;
-		}
-		Layer(const HRGN& rgn) {
-			this->RGN = rgn;
-		}
-		virtual ~Layer() {
-			if (RGN) {
-				DeleteRgn(RGN);
-				RGN = NULL;
-			}
-		}
 	};
 
 	struct Margin {

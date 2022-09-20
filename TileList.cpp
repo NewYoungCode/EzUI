@@ -1,10 +1,8 @@
-#include "TileLayout.h"
+#include "TileList.h"
 
 namespace EzUI {
 
-	
-
-	void TileLayout::Clear(bool freeChilds)
+	void TileList::Clear(bool freeChilds)
 	{
 		__super::Clear(freeChilds);
 		LocationY.clear();
@@ -14,20 +12,20 @@ namespace EzUI {
 		}
 	}
 
-	TileLayout::TileLayout()
+	TileList::TileList()
 	{
 		this->ScrollBar = new VScrollBar;
 		vScrollBar = (VScrollBar*)this->ScrollBar;
 		if (vScrollBar) {
-			vScrollBar->SetSize({ 10,Height() });//滚动条宽度
+			vScrollBar->SetHeight(Height());
 			vScrollBar->Parent = this;
 			vScrollBar->_controlsLocationY = &LocationY;
 		}
 	}
-	TileLayout::~TileLayout()
+	TileList::~TileList()
 	{
 	}
-	void TileLayout::OnSize(const Size& sz)
+	void TileList::OnSize(const Size& sz)
 	{
 		ResumeLayout();
 		if (vScrollBar) {
@@ -35,7 +33,7 @@ namespace EzUI {
 			vScrollBar->SetMaxBottom(_MaxBottom);
 		}
 	}
-	void TileLayout::OnChildPaint(Controls& controls, PaintEventArgs& args) {
+	void TileList::OnChildPaint(Controls& controls, PaintEventArgs& args) {
 		VisibleControls.clear();
 		auto rect = Rect(0, 0, _rect.Width, _rect.Height);
 		//绘制子控件
@@ -52,7 +50,7 @@ namespace EzUI {
 		}
 		//子控件绘制完毕
 	}
-	void TileLayout::ResumeLayout()
+	void TileList::ResumeLayout()
 	{
 		if (_rect.IsEmptyArea()) return;
 		LocationY.clear();
