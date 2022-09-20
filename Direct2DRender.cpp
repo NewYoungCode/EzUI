@@ -22,25 +22,20 @@ namespace EzUI {
 	template<typename T>
 	class DxSafeObject {
 	public:
-		T*& value;
-		DxSafeObject(T* v) :value(v) {
-
-		}
+		T* value=NULL;
+		DxSafeObject(T* v) :value(v) {}
 		operator T* () {
 			return value;
 		}
 		~DxSafeObject() {
-
+			if (value) {
+				value->Release();
+			}
 		}
 	};
 
 	void RenderInitialize()
 	{
-
-		int* ii = new int;
-		DxSafeObject<int> dx(ii);
-
-
 
 		HRESULT hr = S_OK;
 		// Create a Direct2D factory.
@@ -213,7 +208,7 @@ namespace EzUI {
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 
-		ID2D1Brush* sb = CreateSafeSolidBrush(color);
+		DxSafeObject<ID2D1Brush> sb(CreateSolidBrush(color));
 		if (radius > 0) {
 			radius = radius / 2.0;
 			D2D1_ROUNDED_RECT roundRect{ ToRectF(rect), radius, radius };
@@ -233,7 +228,7 @@ namespace EzUI {
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 
-		ID2D1Brush* sb = CreateSafeSolidBrush(color);
+		DxSafeObject<ID2D1Brush> sb(CreateSolidBrush(color));
 		if (radius > 0) {
 			radius = radius / 2.0;
 			D2D1_ROUNDED_RECT roundRect{ ToRectF(rect), radius, radius };
@@ -312,7 +307,7 @@ namespace EzUI {
 			}
 		} while (0);
 
-		ID2D1Brush* sb = CreateSafeSolidBrush(color);
+		DxSafeObject<ID2D1Brush> sb(CreateSolidBrush(color));
 		d2dRender->DrawTextW(text.c_str(), text.size(), format, ToRectF(rect), sb);
 	}
 	void Direct2DRender::MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, DX_RectF& outBox)
@@ -349,7 +344,7 @@ namespace EzUI {
 		B.X += OffsetX;
 		B.Y += OffsetY;
 
-		ID2D1Brush* sb = CreateSafeSolidBrush(color);
+		DxSafeObject<ID2D1Brush> sb(CreateSolidBrush(color));
 		d2dRender->DrawLine(D2D1_POINT_2F{ (float)A.X,(float)A.Y }, D2D1_POINT_2F{ (float)B.X,(float)B.Y }, sb);
 
 	}
@@ -441,21 +436,28 @@ namespace EzUI {
 	}
 	void Direct2DRender::FillGeometry(ID2D1Geometry* geometry, const DX_Color& color)
 	{
-		ID2D1Brush* sb = CreateSafeSolidBrush(color);
+		DxSafeObject<ID2D1Brush> sb(CreateSolidBrush(color));
 		d2dRender->FillGeometry(geometry, sb);
 	}
-	ID2D1Brush* Direct2DRender::CreateSafeSolidBrush(const DX_Color& _color)
+	//ID2D1Brush* Direct2DRender::CreateSafeSolidBrush(const DX_Color& _color)
+	//{
+	//	auto key = _color.GetValue();
+	//	auto itor = CacheBrush.find(key);
+	//	if (itor != CacheBrush.end()) {
+	//		return (*itor).second;//从缓存中返回ID2D1Brush
+	//	}
+	//	ID2D1SolidColorBrush* sb = NULL;
+	//	d2dRender->CreateSolidColorBrush(ToColorF(_color), &sb);//
+	//	CacheBrush.insert(std::pair<DX_ARGB, ID2D1Brush*>(key, sb));//加入缓存
+	//	return sb;
+	//}
+	ID2D1Brush* Direct2DRender::CreateSolidBrush(const DX_Color& _color)
 	{
-		auto key = _color.GetValue();
-		auto itor = CacheBrush.find(key);
-		if (itor != CacheBrush.end()) {
-			return (*itor).second;//从缓存中返回ID2D1Brush
-		}
 		ID2D1SolidColorBrush* sb = NULL;
 		d2dRender->CreateSolidColorBrush(ToColorF(_color), &sb);//
-		CacheBrush.insert(std::pair<DX_ARGB, ID2D1Brush*>(key, sb));//加入缓存
 		return sb;
 	}
+
 	IDWriteTextFormat* Direct2DRender::CreateSafeTextFormat(const std::wstring& fontFamily, int fontSize)
 	{
 		WCHAR key[LF_FACESIZE + 10]{ 0 };
@@ -473,7 +475,7 @@ namespace EzUI {
 
 	void Direct2DRender::DrawGeometry(ID2D1Geometry* geometry, const DX_Color& color, int width)
 	{
-		ID2D1Brush* sb = CreateSafeSolidBrush(color);
+		DxSafeObject<ID2D1Brush> sb(CreateSolidBrush(color));
 		d2dRender->DrawGeometry(geometry, sb);
 	}
 	void Direct2DRender::EndDraw()

@@ -607,25 +607,30 @@ Event(this , ##__VA_ARGS__); \
 		}
 		return ctls;
 	}
-	void Control::Invalidate() {
+
+	bool Control::Invalidate() {
 		if (_hWnd || ::IsWindow(_hWnd)) {
+			/*if (Parent) {
+				ILayout* l = dynamic_cast<ILayout*>(Parent);
+				if (l) {
+					l->ResumeLayout();
+					return Parent->Invalidate();
+				}
+			}*/
 			WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
 			if (winData) {
 				Rect _InvalidateRect;
 				Rect::Union(_InvalidateRect, _lastDrawRect, GetClientRect());
 				winData->InvalidateRect(&_InvalidateRect);
+				return true;
 			}
 		}
+		return false;
 	}
 	void Control::Refresh() {
-		if (_hWnd || ::IsWindow(_hWnd)) {
+		if (Invalidate()) {
 			WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
-			if (winData) {
-				Rect _InvalidateRect;
-				Rect::Union(_InvalidateRect, _lastDrawRect, GetClientRect());
-				winData->InvalidateRect(&_InvalidateRect);
-				winData->UpdateWindow();//立即更新全部无效区域
-			}
+			winData->UpdateWindow();//立即更新全部无效区域
 		}
 	}
 	Controls& Control::GetControls()

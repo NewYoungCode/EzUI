@@ -301,8 +301,8 @@ void MainFrm::Task() {
 		if (w != lastWidth) {
 			lastWidth = w;
 			playerBar2->SetFixedWidth(w);
-			((Layout*)playerBar)->ResumeLayout();
-			playerBar->Invalidate();
+			//((Layout*)playerBar)->ResumeLayout();
+			playerBar2->Invalidate();
 		}
 	}
 }

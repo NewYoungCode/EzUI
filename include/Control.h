@@ -82,7 +82,7 @@ namespace EzUI {
 		virtual ControlIterator RemoveControl(Control* ctl);//删除控件 返回下一个迭代器
 		virtual void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件
 		virtual void Rending(PaintEventArgs& args);//绘制函数
-		virtual void Invalidate();// 使当前控件的区域为无效区域
+		virtual bool Invalidate();// 使当前控件的区域为无效区域
 		virtual void Refresh();// 使当前控件区域为无效区域并且立即更新全部的无效区域
 		Rect GetClientRect();//获取基于客户端的矩形
 		void ComputeClipRect();//计算基于父控件的裁剪区域

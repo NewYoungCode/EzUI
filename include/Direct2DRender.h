@@ -161,8 +161,9 @@ namespace EzUI {
 		virtual void FillGeometry(const DxGeometry& geometry, const  DX_Color& color) {
 			FillGeometry(geometry.Geometry, color);
 		}
-		virtual ID2D1Brush* CreateSafeSolidBrush(const DX_Color& color);
-		virtual IDWriteTextFormat* CreateSafeTextFormat(const std::wstring& fontFamily, int fontSize);
+		// ID2D1Brush* CreateSafeSolidBrush(const DX_Color& color);
+		ID2D1Brush* Direct2DRender::CreateSolidBrush(const DX_Color& _color);
+		IDWriteTextFormat* CreateSafeTextFormat(const std::wstring& fontFamily, int fontSize);
 		void BeginDraw();
 		void EndDraw();
 	};

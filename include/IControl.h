@@ -222,6 +222,11 @@ namespace EzUI {
 		virtual ~IMouseKeyBoard() {};
 		bool CheckEventPassThrough(Event eventType);
 	};
+	class ILayout {
+	public:
+		virtual void ResumeLayout() = 0;
+		virtual ~ILayout() {};
+	};
 
 	class UI_EXPORT  IScroll {
 	public:
