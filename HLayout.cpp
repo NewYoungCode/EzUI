@@ -2,7 +2,7 @@
 
 namespace EzUI {
 
-	void HLayout::Sort()
+	void HLayout::ResumeLayout()
 	{
 		int fixedWidth = 0;
 		int fixedTotal = 0;
@@ -36,26 +36,30 @@ namespace EzUI {
 				maxRight += autoWidth;
 			}
 		}
+		this->PendLayout = false;
 	}
 
 	void HLayout::AddControl(Control* ctl)
 	{
 		Control::AddControl(ctl);
+		PendLayout = true;
 		if (ctl->Height() == 0 && ctl->Y() == 0) {
 			ctl->Dock = DockStyle::Vertical;
 		}
 		if (ctl->Visible == true) {
-			Sort();
+			ResumeLayout();
 		}
 	}
 
-	void HLayout::OnSize(const Size& size) {
-		Sort();
+	ControlIterator HLayout::RemoveControl(Control* ctl)
+	{
+		ControlIterator it = __super::RemoveControl(ctl);
+		PendLayout = true;
+		return it;
 	}
 
-	void HLayout::ResumeLayout()
-	{
-		Sort();
-		Invalidate();
+	void HLayout::OnSize(const Size& size) {
+		ResumeLayout();
 	}
+	
 };

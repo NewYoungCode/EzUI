@@ -130,10 +130,10 @@ namespace EzUI {
 		virtual void DrawBitmap(ID2D1Bitmap* d2dBitmap, const  __Rect& rect);
 	public:
 		static D2D_COLOR_F ToColorF(const  __Color& color) {
-			FLOAT&& aF = color.GetA() == 255 ? 1.0 : FLOAT(color.GetA() * 0.003921568627451);
-			FLOAT&& rF = FLOAT(color.GetR() * 0.003921568627451);
-			FLOAT&& gF = FLOAT(color.GetG() * 0.003921568627451);
-			FLOAT&& bF = FLOAT(color.GetB() * 0.003921568627451);
+			FLOAT&& aF = color.GetA() == 255 ? 1.0 : FLOAT(color.GetA() * 0.003921);
+			FLOAT&& rF = FLOAT(color.GetR() * 0.003921);
+			FLOAT&& gF = FLOAT(color.GetG() * 0.003921);
+			FLOAT&& bF = FLOAT(color.GetB() * 0.003921);
 			return D2D1::ColorF(rF, gF, bF, aF);
 		}
 		static D2D_RECT_F ToRectF(const __Rect& rect) {

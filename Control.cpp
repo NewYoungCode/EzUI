@@ -294,7 +294,6 @@ Event(this , ##__VA_ARGS__); \
 		return _ForeColor;
 	}
 
-
 	const int& Control::X()
 	{
 		return _rect.X;
@@ -404,17 +403,9 @@ Event(this , ##__VA_ARGS__); \
 		if (_fixedHeight) {
 			_rect.Height = _fixedHeight;
 		}
-		this->ComputeClipRect();//这里要重新计算基于父控件的裁剪区域
 		OnSize(outSize);//然后才开始触发自身的特性 //布局控件会重载这个函数 对子控件调整rect
 		if (rePaint) {
 			Invalidate();
-		}
-	}
-	void Control::ComputeClipRect()
-	{
-		if (Parent) {
-			Rect& ClipRectRef = *(Rect*)(&this->ClipRect);//引用父控件的裁剪区域
-			Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->ClipRect);//自身和父控件对比较裁剪区域
 		}
 	}
 	//专门处理鼠标消息的
@@ -504,11 +495,19 @@ Event(this , ##__VA_ARGS__); \
 		if (clientRect.IsEmptyArea()) { return; }
 		auto& invalidRect = args.InvalidRectangle;
 		auto& pt = args.Painter;
-		Rect _ClipRect;
-		if (!Rect::Intersect(_ClipRect, this->ClipRect, invalidRect)) {//和重绘区域进行裁剪
+
+		Rect _ClipRect = clientRect;
+		//和重绘区域进行裁剪
+		if (!Rect::Intersect(_ClipRect, _ClipRect, invalidRect)) {
 			return;
 		}
-		this->_lastDrawRect = clientRect;//记录最后一次绘制的区域
+		if (Parent) {
+			//自身和父控件对比较裁剪区域
+			if (!Rect::Intersect(_ClipRect, _ClipRect, Parent->GetClientRect())) {
+				return;
+			}
+		}
+		this->_lastDrawRect = _ClipRect;//记录最后一次绘制的区域
 		//设置绘制偏移
 		pt.OffsetX = clientRect.X; //设置偏移
 		pt.OffsetY = clientRect.Y;//设置偏移

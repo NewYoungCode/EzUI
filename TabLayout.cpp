@@ -7,6 +7,13 @@ namespace EzUI {
 	TabLayout::~TabLayout()
 	{
 	}
+
+	void TabLayout::ResumeLayout()
+	{
+		SetPageIndex(_index);
+		PendLayout = false;
+	}
+
 	void TabLayout::SetPageIndex(int index)
 	{
 		int pos = 0;
@@ -26,22 +33,26 @@ namespace EzUI {
 
 	void TabLayout::AddControl(Control* ctl) {
 		__super::AddControl(ctl);
-		SetPageIndex(_index);
+		PendLayout = true;
+		if (ctl->Visible == true) {
+			//ResumeLayout();
+		}
+	}
+
+	ControlIterator TabLayout::RemoveControl(Control* ctl)
+	{
+		ControlIterator it = __super::RemoveControl(ctl);
+		PendLayout = true;
+		return it;
 	}
 
 	int TabLayout::PageIndex()
 	{
 		return _index;
 	}
-
-	void TabLayout::ResumeLayout()
-	{
-		Invalidate();
-	}
-
+	
 	void TabLayout::OnSize(const Size& sz)
 	{
-		__super::OnSize(sz);
-		SetPageIndex(_index);
+		ResumeLayout();
 	}
 };

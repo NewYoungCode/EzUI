@@ -646,7 +646,6 @@ namespace EzUI {
 #ifdef COUNT_ONSIZE
 		StopWatch sw;
 #endif 
-		* ((Rect*)(&MainLayout->ClipRect)) = this->GetClientRect();//
 		MainLayout->SetRect(this->GetClientRect(), true);
 #ifdef COUNT_ONSIZE
 		char buf[50]{ 0 };

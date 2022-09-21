@@ -7,11 +7,10 @@ namespace EzUI {
 		public Layout
 	{
 	public:
-		void Sort();
-	public:
 		void AddControl(Control* ctl) override;
+		ControlIterator RemoveControl(Control* ctl)override;
 		void OnSize(const Size& size)override;
-		void ResumeLayout() override;
+		void ResumeLayout()override;
 	};
 	using HBox = HLayout;
 };

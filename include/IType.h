@@ -252,6 +252,7 @@ namespace EzUI {
 		HDC DC = NULL;
 		Painter& Painter;//画家
 		Rect InvalidRectangle;//WM_PAINT里面的无效区域
+		Rect ClipRect;//上一个可见裁剪区域
 		HWND HWnd;//父窗口句柄
 		PaintEventArgs(__Painter& painter) :Painter(painter) {}
 		virtual ~PaintEventArgs() {}
@@ -310,7 +311,9 @@ namespace EzUI {
 	};
 	class UI_EXPORT ILayout {
 	public:
-		virtual void ResumeLayout() = 0;
+		bool PendLayout = true;//布局是否被挂起 当Addcontrol或者RemoveControl的时候此标志为true 当调用ResumeLayout()之后此标志为false
+	public:
+		virtual void ResumeLayout() = 0;//调用此函数之后请将 PendLayout 设置成false
 		virtual ~ILayout() {};
 	};
 	class UI_EXPORT IScroll {

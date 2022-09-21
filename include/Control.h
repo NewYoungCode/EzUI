@@ -13,12 +13,10 @@ namespace EzUI {
 		Rect _lastDrawRect;//最后一次显示的位置
 		int _fixedWidth = 0;//绝对宽度
 		int _fixedHeight = 0;//绝对高度
-		bool _pendLayout = true;//布局是否被挂起 当Addcontrol或者RemoveControl的时候此标志为true 当调用ResumeLayout()之后此标志为false
 		Tuple<LPTSTR> _LastCursor;//上一次鼠标的样式
 	public:
 		EzUI::Cursor Cursor = EzUI::Cursor::None;//鼠标样式
 		int MousePassThrough = 0;//忽略的鼠标消息
-		const Rect ClipRect;//控件在窗口中的可见区域
 		int ShadowWidth = 0;//控件阴影宽度
 		bool IsXmlControl = false;//是否是xml加载进来的
 		EString Name;//控件的ObjectName
@@ -62,7 +60,6 @@ namespace EzUI {
 		const Rect& GetRect();//获取相对与父控件矩形
 		virtual void OnLayout(const Size& parentRect, bool instantly = true);//父控件大小改变事件  instantly立即生效
 		Rect GetClientRect();//获取基于客户端的矩形
-		virtual void ComputeClipRect();//计算基于父控件的裁剪区域
 		bool CheckEventPassThrough(Event eventType);
 		virtual void SetRect(const Rect& rect, bool rePaint = false);//设置相对父控件矩形
 	public:

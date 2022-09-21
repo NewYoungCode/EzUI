@@ -22,7 +22,7 @@ namespace EzUI {
 	template<typename T>
 	class DxSafeObject {
 	public:
-		T* value=NULL;
+		T* value = NULL;
 		DxSafeObject(T* v) :value(v) {}
 		operator T* () {
 			return value;
@@ -48,7 +48,8 @@ namespace EzUI {
 			::MessageBoxW(NULL, L"Failed to create IDWriteFactory", L"Error", MB_ICONSTOP);
 		}
 
-		_GUID WICImagingFactoryId = CLSID_WICImagingFactory;
+		_GUID imageFactoryWin7{ 0xcacaf262, 0x9370, 0x4615, 0xa1, 0x3b, 0x9f, 0x55, 0x39, 0xda, 0x4c, 0xa };//win7
+		_GUID WICImagingFactoryId = CLSID_WICImagingFactory;//当前平台
 	ImagingFactory:
 		hr = CoCreateInstance(WICImagingFactoryId, NULL, CLSCTX_INPROC_SERVER, __uuidof(IWICImagingFactory), (LPVOID*)&g_ImageFactory);
 		if (hr != S_OK) {
@@ -57,7 +58,6 @@ namespace EzUI {
 			//	goto ImagingFactory;
 			//}
 			if (hr == 0x80040154) {//没有注册类 不用win7的sdk生成的程序在下win7系统上运行会出现此错误
-				_GUID imageFactoryWin7{ 0xcacaf262, 0x9370, 0x4615, 0xa1, 0x3b, 0x9f, 0x55, 0x39, 0xda, 0x4c, 0xa };
 				WICImagingFactoryId = imageFactoryWin7;
 				goto ImagingFactory;
 			}
@@ -382,9 +382,7 @@ namespace EzUI {
 				double zoomHeight = clientWidth * 1.0 / imgWidth * imgHeight + 0.5;
 				__Size sz{ clientWidth,(INT)zoomHeight };
 				int y = (clientHeight - sz.Height) / 2 + rect.Y;
-
 				this->DrawBitmap(image->d2dBitmap, __Rect{ rect.X  ,y, sz.Width, sz.Height });
-
 			}
 			else {
 				double zoomWidth = clientHeight * 1.0 / imgHeight * imgWidth + 0.5;

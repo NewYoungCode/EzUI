@@ -13,6 +13,7 @@ namespace EzUI {
 		virtual ~TabLayout();
 		void SetPageIndex(int index);
 		virtual void AddControl(Control* ctl);
+		ControlIterator RemoveControl(Control* ctl);
 		int PageIndex();
 		virtual void ResumeLayout();
 		virtual void OnSize(const Size& sz);

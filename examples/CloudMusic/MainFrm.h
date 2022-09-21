@@ -12,7 +12,7 @@
 #include "Button.h"
 
 #include "Edit.h"
-
+#include "Application.h"
 
 using namespace ui;
 

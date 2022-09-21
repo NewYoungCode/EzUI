@@ -25,23 +25,38 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	EzUI::Window frm(800, 600);
 	Layout layout;
 	layout.Style.BackgroundColor = Color::White;
-	TileList tile;
-	tile.Dock = DockStyle::Fill;
-	tile.MarginRight = 1;
-	tile.MarginTop = 1;
 
-	for (size_t i = 0; i < 999; i++)
-	{
-		Button* btn = new Button;
-		btn->ShadowWidth = 5;
-		btn->SetSize({ 100,20 });
-		btn->SetText("btn98789789789" + std::to_string(i));
-		btn->SetLocation({ 100, 30 });
-		tile.AddControl(btn);
-	}
+	Control c;
+	c.SetRect({ 100,-100,400,200 });
+	c.Style.BackgroundColor = Color(255, 200, 0, 255);
 
-	//tile.ResumeLayout();
-	layout.AddControl(&tile);
+	Control c1;
+	c1.Style.Radius = 200;
+	c1.SetRect({ 100,200,400,200 });
+	c1.Style.BackgroundColor = Color(255, 200, 250, 0);
+
+	c1.AddControl(&c);
+
+	layout.AddControl(&c1);
+
+
+	//TileList tile;
+	//tile.Dock = DockStyle::Fill;
+	//tile.MarginRight = 1;
+	//tile.MarginTop = 1;
+
+	//for (size_t i = 0; i < 999; i++)
+	//{
+	//	Button* btn = new Button;
+	//	btn->ShadowWidth = 5;
+	//	btn->SetSize({ 100,20 });
+	//	btn->SetText("btn98789789789" + std::to_string(i));
+	//	btn->SetLocation({ 100, 30 });
+	//	tile.AddControl(btn);
+	//}
+
+	////tile.ResumeLayout();
+	//layout.AddControl(&tile);
 	frm.SetLayout(&layout);
 	frm.Show();
 

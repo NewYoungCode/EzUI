@@ -268,6 +268,7 @@ void MainFrm::OnPaint(HDC winHDC, const Rect& rePaintRect)
 	__super::OnPaint(winHDC, rePaintRect);
 }
 
+
 void MainFrm::OnDestroy()
 {
 	Application::exit();
