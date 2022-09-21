@@ -48,7 +48,7 @@ namespace EzUI {
 		GetCursorPos(&mousePos);
 		POINT clientPos = mousePos;
 		ScreenToClient(Owner, &clientPos);
-		Debug::Log("%d %d", clientPos.x, clientPos.y);
+		//Debug::Log("%d %d", clientPos.x, clientPos.y);
 
 		int height = OwnerRect.bottom - OwnerRect.top;
 		//if (rect.Height>height  ) {

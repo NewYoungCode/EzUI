@@ -260,23 +260,13 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 
 void MainFrm::OnSize(const Size& sz)
 {
-	StopWatch sw;
 	__super::OnSize(sz);
-	char buf[256]{ 0 };
-	sprintf_s(buf, "OnSize %dms\n", sw.ElapsedMilliseconds());
-	OutputDebugStringA(buf);
 }
 
 void MainFrm::OnPaint(HDC winHDC, const Rect& rePaintRect)
 {
-	StopWatch sw;
 	__super::OnPaint(winHDC, rePaintRect);
-	char buf[256]{ 0 };
-	sprintf_s(buf, "Opaint %dms\n", sw.ElapsedMilliseconds());
-	OutputDebugStringA(buf);
 }
-
-
 
 void MainFrm::OnDestroy()
 {

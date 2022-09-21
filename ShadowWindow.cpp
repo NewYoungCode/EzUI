@@ -115,7 +115,7 @@ namespace EzUI {
 			_bufBitmap = NULL;
 		}
 		_bufBitmap = new EBitmap(width, height, EBitmap::PixelFormat::PixelFormatARGB);//32Î»Í¸Ã÷Í¼
-		Debug::Log(TEXT("Update BoxShadow"));
+		//Debug::Log(TEXT("Update BoxShadow"));
 		Rect rect{ 0,0,width, height };
 		////»æÍ¼
 

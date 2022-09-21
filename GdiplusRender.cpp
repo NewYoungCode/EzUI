@@ -1,23 +1,38 @@
 #include "GdiplusRender.h"
 #ifdef USED_GDIPLUS
+#pragma comment(lib,"Shlwapi.lib")
 #pragma comment(lib, "gdiplus.lib")
 namespace EzUI {
+
+	template<typename T>
+	struct GdiPSafeObject {
+	private:
+		GdiPSafeObject(const GdiPSafeObject& right) {}
+		GdiPSafeObject& operator=(const GdiPSafeObject& right) {}
+	public:
+		T* ptr = NULL;
+		GdiPSafeObject(T* _ptr) {
+			ptr = _ptr;
+		}
+		operator T* () {
+			return ptr;
+		}
+		~GdiPSafeObject() {
+			if (ptr) delete ptr;
+		}
+	};
+
 	ULONG_PTR _gdiplusToken = NULL;
 #ifdef CreateFont
 #undef CreateFont
 #endif
-	Gdiplus::SolidBrush* CreateBrush(const Gdiplus::Color& color) {
-		Gdiplus::SolidBrush* _bufBrush = new Gdiplus::SolidBrush(color);
+	Gdiplus::SolidBrush* CreateBrush(const __Color& color) {
+		Gdiplus::SolidBrush* _bufBrush = new Gdiplus::SolidBrush(color.GetValue());
 		return _bufBrush;
 	}
-	Gdiplus::Pen* CreatePen(const Gdiplus::Color& color, int width) {
-		Gdiplus::Pen* pen = new Gdiplus::Pen(color, (float)width);
+	Gdiplus::Pen* CreatePen(const __Color& color, int width) {
+		Gdiplus::Pen* pen = new Gdiplus::Pen(color.GetValue(), (float)width);
 		return pen;
-	}
-	Gdiplus::Font* CreateFont(const EString& fontFamily, int fontSize) {
-		Gdiplus::FontFamily ff(fontFamily.utf16().c_str());
-		Gdiplus::Font* _bufFont = new Gdiplus::Font(&ff, (float)fontSize);
-		return _bufFont;
 	}
 
 	void RenderInitialize()
@@ -37,11 +52,11 @@ namespace EzUI {
 		graphics->SetTextRenderingHint(Gdiplus::TextRenderingHint::TextRenderingHintClearTypeGridFit);//ÎÄ×Ö
 		//graphics->SetInterpolationMode(Gdiplus::InterpolationMode::InterpolationModeHighQuality);//Í¼Ïñ
 	}
-	void CreateRectangle(Gdiplus::GraphicsPath& path, const  Gdiplus::Rect& rect, int radius)
+	void CreateRectangle(Gdiplus::GraphicsPath& path, const  __Rect& rect, int radius)
 	{
 
 		if (radius <= 0) {
-			path.AddRectangle(rect);
+			path.AddRectangle(Gdiplus::Rect{ rect.X,rect.Y,rect.Width,rect.Height });
 			path.CloseFigure();
 			return;
 		}
@@ -82,7 +97,7 @@ namespace EzUI {
 	GdiplusRender::~GdiplusRender()
 	{
 		for (auto& it : CacheFont) {
-			DeleteFont(it.second);
+			DeleteObject(it.second);
 		}
 		CacheFont.clear();
 		delete base;
@@ -150,57 +165,57 @@ namespace EzUI {
 		}
 	}
 
-	void GdiplusRender::DrawString(const std::wstring& text, const Gdiplus::Font* font, const Color& color, const RectF& _rect, TextAlign textAlign, bool underLine)
+	void GdiplusRender::DrawString(const std::wstring& text, const Gdiplus::Font* font, const __Color& color, const __RectF& _rect, TextAlign textAlign, bool underLine)
 	{
 		Gdiplus::StringFormat sf;
 		CreateFormat(textAlign, sf);
 
-		SafeObject<Gdiplus::SolidBrush> brush(CreateBrush(ToColor(color)));
+		GdiPSafeObject<Gdiplus::SolidBrush> brush(CreateBrush((color)));
 
 		Gdiplus::RectF rect;
 		base->DrawString(text.c_str(), text.length(), font, rect, &sf, brush);
 		if (underLine) {
 			Gdiplus::RectF box;
 			base->MeasureString(text.c_str(), text.length(), font, rect, &sf, &box);
-			PointF A(box.X, box.GetBottom());
-			PointF B(box.GetRight(), box.GetBottom());
-			SafeObject<Gdiplus::Pen> pen(CreatePen(ToColor(color), 1));
+			__PointF A(box.X, box.GetBottom());
+			__PointF B(box.GetRight(), box.GetBottom());
+			GdiPSafeObject<Gdiplus::Pen> pen(CreatePen((color), 1));
 			base->DrawLine(pen, A.X, A.Y, B.X, B.Y);
 		}
 	}
 
-	void GdiplusRender::DrawRectangle(const Rect& _rect, const Color& color, int width, int radius)
+	void GdiplusRender::DrawRectangle(const __Rect& _rect, const __Color& color, int width, int radius)
 	{
 		if (color.GetA() == 0) {
 			return;
 		}
-		Rect rect = _rect;
+		__Rect rect = _rect;
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 
-		SafeObject<Gdiplus::Pen> pen(CreatePen(ToColor(color), width));
+		GdiPSafeObject<Gdiplus::Pen> pen(CreatePen((color), width));
 		if (radius > 0) {
 			Gdiplus::GraphicsPath path;
-			CreateRectangle(path, ToRect(rect), radius);
+			CreateRectangle(path, rect, radius);
 			base->DrawPath(pen, &path);
 		}
 		else {
 			base->DrawRectangle(pen, ToRect(rect));
 		}
 	}
-	void GdiplusRender::FillRectangle(const Rect& _rect, const Color& color, int radius)
+	void GdiplusRender::FillRectangle(const __Rect& _rect, const __Color& color, int radius)
 	{
 		if (color.GetValue() == 0) {
 			return;
 		}
-		Rect rect = _rect;
+		__Rect rect = _rect;
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 
-		SafeObject<Gdiplus::SolidBrush> brush(CreateBrush(ToColor(color)));
+		GdiPSafeObject<Gdiplus::SolidBrush> brush(CreateBrush((color)));
 		if (radius > 0) {
 			Gdiplus::GraphicsPath path;
-			CreateRectangle(path, ToRect(rect), radius);
+			CreateRectangle(path, rect, radius);
 			base->FillPath(brush, &path);
 		}
 		else {
@@ -209,9 +224,9 @@ namespace EzUI {
 
 	}
 
-	void GdiplusRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const Color& color, const Rect& _rect, TextAlign textAlign, bool underLine)
+	void GdiplusRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& _rect, TextAlign textAlign, bool underLine)
 	{
-		Rect rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
+		__Rect rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 
@@ -220,7 +235,7 @@ namespace EzUI {
 		HRGN clip = NULL;
 		if (!Layers.empty()) {
 			if (!Layers.empty()) {
-				Rect& it = *(Layers.back());
+				__Rect& it = *(Layers.back());
 				clip = ::CreateRectRgn(it.X, it.Y, it.GetRight(), it.GetBottom());
 				SelectClipRgn(DC, clip);
 			}
@@ -243,19 +258,13 @@ namespace EzUI {
 		base->ReleaseHDC(DC);
 	}
 
-	void GdiplusRender::MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, RectF& _outBox) {
-		SafeObject<Gdiplus::Font> font(CreateFont(fontf.c_str(), fontSize));
-		Gdiplus::RectF outBox;
-		_outBox.X = outBox.X;
-		_outBox.Y = outBox.X;
-		_outBox.Width = outBox.Width;
-		_outBox.Height = outBox.Height;
-		base->MeasureString(_text.c_str(), _text.length(), font, { 0,0 }, &outBox);
+	void GdiplusRender::MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, __RectF& _outBox) {
+
 	}
 
-	void GdiplusRender::PushLayer(const Rect& rect, ClipMode clipMode)
+	void GdiplusRender::PushLayer(const __Rect& rect, ClipMode clipMode)
 	{
-		Layers.push_back((Rect*)&rect);
+		Layers.push_back((__Rect*)&rect);
 		base->SetClip(ToRect(rect), (Gdiplus::CombineMode)clipMode);
 	}
 
@@ -265,7 +274,7 @@ namespace EzUI {
 		if (!Layers.empty()) {
 			Layers.pop_back();
 			if (!Layers.empty()) {
-				Rect& it = *(Layers.back());
+				__Rect& it = *(Layers.back());
 				base->SetClip(ToRect(it), (Gdiplus::CombineMode)ClipMode::Valid);
 			}
 		}
@@ -293,28 +302,28 @@ namespace EzUI {
 	}
 
 
-	void GdiplusRender::DrawLine(const Color& color, const Point& _A, const Point& _B, int width)
+	void GdiplusRender::DrawLine(const __Color& color, const __Point& _A, const  __Point& _B, int width)
 	{
-		Point A = _A;
+		__Point A = _A;
 		A.X += OffsetX;
 		A.Y += OffsetY;
-		Point B = _B;
+		__Point B = _B;
 		B.X += OffsetX;
 		B.Y += OffsetY;
-		SafeObject<Gdiplus::Pen> pen(CreatePen(ToColor(color), width));
+		GdiPSafeObject<Gdiplus::Pen> pen(CreatePen((color), width));
 		base->DrawLine(pen, A.X, A.Y, B.X, B.Y);
 	}
-	void GdiplusRender::DrawImage(IImage* _image, const Rect& destRect, const Rect& srcRect)
+	void GdiplusRender::DrawImage(IImage* _image, const __Rect& destRect, const __Rect& srcRect)
 	{
 		GdiplusImage* image = (GdiplusImage*)_image;
 		base->DrawImage(image, ToRect(destRect), srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, Gdiplus::Unit::UnitPixel);
 	}
-	void GdiplusRender::DrawImage(IImage* _image, const Rect& _rect, const ImageSizeMode& imageSizeMode, const Margin& margin)
+	void GdiplusRender::DrawImage(IImage* _image, const __Rect& _rect, const ImageSizeMode& imageSizeMode, const Margin& margin)
 	{
 		GdiplusImage* image = (GdiplusImage*)_image;
 
 		if (!image || image->GetLastStatus() != Gdiplus::Status::Ok) return;
-		Rect rect = _rect;
+		__Rect rect = _rect;
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 
@@ -334,13 +343,13 @@ namespace EzUI {
 			double imgRate = imgWidth * 1.0 / imgHeight;
 			if (clientRate < imgRate) {
 				double zoomHeight = clientWidth * 1.0 / imgWidth * imgHeight + 0.5;
-				Size sz{ clientWidth,(INT)zoomHeight };
+				__Size sz{ clientWidth,(INT)zoomHeight };
 				int y = (clientHeight - sz.Height) / 2 + rect.Y;
 				base->DrawImage(image, Gdiplus::Rect{ rect.X  ,y, sz.Width, sz.Height });
 			}
 			else {
 				double zoomWidth = clientHeight * 1.0 / imgHeight * imgWidth + 0.5;
-				Size sz{ (INT)zoomWidth,clientHeight };
+				__Size sz{ (INT)zoomWidth,clientHeight };
 				int x = (clientWidth - sz.Width) / 2 + rect.X;
 				base->DrawImage(image, Gdiplus::Rect{ x  , rect.Y, sz.Width, sz.Height });
 			}
@@ -411,7 +420,7 @@ namespace EzUI {
 		return -1;  // Failure
 	}
 
-	BOOL SaveHDCToFile(HDC hDC, const Rect& rect, const std::wstring& fileName) {
+	BOOL SaveHDCToFile(HDC hDC, const __Rect& rect, const std::wstring& fileName) {
 		size_t pos = fileName.rfind(L".");
 		WCHAR format[15]{ L"image/bmp" };
 		if (pos != size_t(-1)) {
@@ -473,7 +482,7 @@ namespace EzUI {
 		return bRet;
 	}
 
-	GdiplusImage* ClipImage(GdiplusImage* img, const Size& sz, int _radius)
+	GdiplusImage* ClipImage(GdiplusImage* img, const __Size& sz, int _radius)
 	{
 		GdiplusImage* bitmap = new  GdiplusImage(sz.Width, sz.Height);
 		Gdiplus::Graphics g(bitmap);
@@ -481,13 +490,13 @@ namespace EzUI {
 		//g.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeHighQuality);//¿¹¾â³Ý
 		g.SetPixelOffsetMode(Gdiplus::PixelOffsetMode::PixelOffsetModeHighQuality);//ÏñËØÆ«ÒÆÄ£Ê½
 		Gdiplus::GraphicsPath path;
-		CreateRectangle(path, Gdiplus::Rect{ 0,0,sz.Width, sz.Height }, _radius);
+		CreateRectangle(path, __Rect{ 0,0,sz.Width, sz.Height }, _radius);
 		g.SetClip(&path);
 		g.DrawImage(img, 0, 0);
 		return bitmap;
 	}
 
-	void GdiplusRender::SaveImage(const WCHAR* format, const WCHAR* fileName, const Size& size)
+	void GdiplusRender::SaveImage(const WCHAR* format, const WCHAR* fileName, const __Size& size)
 	{
 		/*	if (DC) {
 				::DeleteFileW(fileName);

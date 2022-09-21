@@ -1,5 +1,5 @@
 #pragma once
-#include "EzUI.h"
+#include "UIDef.h"
 #ifdef USED_Direct2D
 #ifndef UI_EXPORT
 #define UI_EXPORT 
@@ -22,14 +22,14 @@
 #include "RenderType.h"
 namespace EzUI {
 	extern ID2D1Factory* g_Direct2dFactory;
-#define DX_Rect RenderType::Rect
-#define DX_RectF RenderType::RectF
-#define DX_Color RenderType::Color
-#define DX_Point RenderType::Point
-#define DX_PointF RenderType::PointF
-#define DX_ARGB RenderType::ARGB
-#define DX_Size RenderType::Size
-#define DX_SizeF RenderType::SizeF
+#define __Rect RenderType::Rect
+#define __RectF RenderType::RectF
+#define __Color RenderType::Color
+#define __Point RenderType::Point
+#define __PointF RenderType::PointF
+#define __ARGB RenderType::ARGB
+#define __Size RenderType::Size
+#define __SizeF RenderType::SizeF
 
 	class DxGeometry
 	{
@@ -53,7 +53,7 @@ namespace EzUI {
 			D2D_RECT_F rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) };
 			g_Direct2dFactory->CreateRectangleGeometry(rectF, (ID2D1RectangleGeometry**)&Geometry);
 		}
-		DxGeometry(const DX_Rect& rect) :DxGeometry(rect.X, rect.Y, rect.Width, rect.Height) {};
+		DxGeometry(const __Rect& rect) :DxGeometry(rect.X, rect.Y, rect.Width, rect.Height) {};
 		DxGeometry(int x, int y, int width, int height, int radius) {
 			radius = radius / 2.0;
 			D2D1_ROUNDED_RECT rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) ,radius ,radius };
@@ -124,45 +124,45 @@ namespace EzUI {
 		HDC DC = NULL;
 		int OffsetX = 0;
 		int OffsetY = 0;
-		std::map<DX_ARGB, ID2D1Brush*> CacheBrush;
+		//std::map<__ARGB, ID2D1Brush*> CacheBrush;
 		std::map<std::wstring, IDWriteTextFormat*> CacheTextFormat;
 	protected:
-		virtual void DrawBitmap(ID2D1Bitmap* d2dBitmap, const  DX_Rect& rect);
+		virtual void DrawBitmap(ID2D1Bitmap* d2dBitmap, const  __Rect& rect);
 	public:
-		static D2D_COLOR_F ToColorF(const  DX_Color& color) {
+		static D2D_COLOR_F ToColorF(const  __Color& color) {
 			FLOAT&& aF = color.GetA() == 255 ? 1.0 : FLOAT(color.GetA() * 0.003921568627451);
 			FLOAT&& rF = FLOAT(color.GetR() * 0.003921568627451);
 			FLOAT&& gF = FLOAT(color.GetG() * 0.003921568627451);
 			FLOAT&& bF = FLOAT(color.GetB() * 0.003921568627451);
 			return D2D1::ColorF(rF, gF, bF, aF);
 		}
-		static D2D_RECT_F ToRectF(const DX_Rect& rect) {
+		static D2D_RECT_F ToRectF(const __Rect& rect) {
 			return D2D_RECT_F{ (FLOAT)rect.X,(FLOAT)rect.Y,(FLOAT)rect.GetRight(),(FLOAT)rect.GetBottom() };
 		}
 	public:
 		Direct2DRender(HDC _dc, int Width = 0, int Height = 0);
 		Direct2DRender(HWND hWnd, int Width = 0, int Height = 0);
 		virtual ~Direct2DRender();
-		virtual void DrawRectangle(const  DX_Rect& rect, const  DX_Color& color, int width = 1, int radius = 0);
-		virtual void FillRectangle(const  DX_Rect& rect, const  DX_Color& color, int radius = 0);
-		virtual void DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const  DX_Color& color, const  DX_Rect& rect, EzUI::TextAlign textAlign, bool underLine = false);
-		virtual void MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, DX_RectF& outBox);
+		virtual void DrawRectangle(const  __Rect& rect, const  __Color& color, int width = 1, int radius = 0);
+		virtual void FillRectangle(const  __Rect& rect, const  __Color& color, int radius = 0);
+		virtual void DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const  __Color& color, const  __Rect& rect, EzUI::TextAlign textAlign, bool underLine = false);
+		virtual void MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, __RectF& outBox);
 		virtual void PushLayer(const DxGeometry& dxGeometry, EzUI::ClipMode clipMode = EzUI::ClipMode::Valid);//不规则裁剪区域
-		virtual void PushLayer(const DX_Rect& layer, ClipMode clipMode);//矩形裁剪区域
+		virtual void PushLayer(const __Rect& layer, EzUI::ClipMode clipMode);//矩形裁剪区域
 		virtual void PopLayer();
-		virtual void DrawLine(const  DX_Color& color, const  DX_Point& A, const  DX_Point& B, int width = 1);
-		virtual void DrawImage(IImage* image, const  DX_Rect& destRect, const DX_Rect& srcRect);
-		virtual void DrawImage(IImage* image, const  DX_Rect& rect, const EzUI::ImageSizeMode& imageSizeMode = EzUI::ImageSizeMode::Zoom, const EzUI::Margin& margin = 0);
-		virtual void DrawGeometry(ID2D1Geometry* geometry, const  DX_Color& color, int width = 1);
-		virtual void FillGeometry(ID2D1Geometry* geometry, const  DX_Color& color);
-		virtual void DrawGeometry(const DxGeometry& geometry, const  DX_Color& color, int width = 1) {
+		virtual void DrawLine(const  __Color& color, const  __Point& A, const  __Point& B, int width = 1);
+		virtual void DrawImage(IImage* image, const  __Rect& destRect, const __Rect& srcRect);
+		virtual void DrawImage(IImage* image, const  __Rect& rect, const EzUI::ImageSizeMode& imageSizeMode = EzUI::ImageSizeMode::Zoom, const EzUI::Margin& margin = 0);
+		virtual void DrawGeometry(ID2D1Geometry* geometry, const  __Color& color, int width = 1);
+		virtual void FillGeometry(ID2D1Geometry* geometry, const  __Color& color);
+		virtual void DrawGeometry(const DxGeometry& geometry, const  __Color& color, int width = 1) {
 			DrawGeometry(geometry.Geometry, color);
 		}
-		virtual void FillGeometry(const DxGeometry& geometry, const  DX_Color& color) {
+		virtual void FillGeometry(const DxGeometry& geometry, const  __Color& color) {
 			FillGeometry(geometry.Geometry, color);
 		}
-		// ID2D1Brush* CreateSafeSolidBrush(const DX_Color& color);
-		ID2D1Brush* Direct2DRender::CreateSolidBrush(const DX_Color& _color);
+		// ID2D1Brush* CreateSafeSolidBrush(const __Color& color);
+		ID2D1Brush* Direct2DRender::CreateSolidBrush(const __Color& _color);
 		IDWriteTextFormat* CreateSafeTextFormat(const std::wstring& fontFamily, int fontSize);
 		void BeginDraw();
 		void EndDraw();

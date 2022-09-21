@@ -1,11 +1,6 @@
 #include "Control.h"
 #include "BoxShadow.h"
 namespace EzUI {
-	Control::Control() {}
-	Control::Control(const Control&) {}
-	Control& Control::operator=(const Control&) {
-		return *this;
-	}
 
 #define UI_BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed()  { \
 if(this->State==ControlState::None){return  Style. ##_filed; }\
@@ -15,7 +10,10 @@ if (this->State != ControlState::None &&style. ##_filed.valid) { \
 }\
 return Style. ##_filed; \
 }
-
+	//触发事件宏
+#define UI_TRIGGER(Event,...)  if( ##Event){ \
+Event(this , ##__VA_ARGS__); \
+}
 	UI_BINDFUNC(UI_Int, Radius);
 	UI_BINDFUNC(UI_Int, BorderLeft);
 	UI_BINDFUNC(UI_Int, BorderTop);
@@ -28,10 +26,12 @@ return Style. ##_filed; \
 	UI_BINDFUNC(HImage, ForeImage);
 	UI_BINDFUNC(HImage, BackgroundImage);
 
-	//触发事件宏
-#define UI_TRIGGER(Event,...)  if( ##Event){ \
-Event(this , ##__VA_ARGS__); \
-}
+
+	Control::Control() {}
+	Control::Control(const Control&) {}
+	Control& Control::operator=(const Control&) {
+		return *this;
+	}
 	void Control::OnChildPaint(Controls& controls, PaintEventArgs& args)
 	{
 		//绘制子控件
@@ -501,12 +501,7 @@ Event(this , ##__VA_ARGS__); \
 #ifdef DEBUGPAINT
 		WindowData* wndData = (WindowData*)UI_GetUserData(_hWnd);
 		if (wndData->Debug) {
-			if (this->State == ControlState::Hover) {
-				pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, Color::Red);
-			}
-			else {
-				pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, Color::White);
-			}
+			pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, Color::White);
 		}
 #endif
 	}

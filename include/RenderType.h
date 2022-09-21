@@ -548,6 +548,9 @@ namespace EzUI {
 			{
 				return Intersect(*this, *this, rect);
 			}
+			RECT WinRECT() const {
+				return RECT{ X,Y,GetRight(),GetBottom() };
+			}
 
 			static BOOL Intersect(OUT Rect& c,
 				IN const Rect& a,

@@ -369,14 +369,7 @@ void  MainFrm::LrcView() {
 
 void MainFrm::OnPaint(HDC winHDC, const Rect& rePaintRect)
 {
-	StopWatch sw;
 	__super::OnPaint(winHDC, rePaintRect);
-	char buf[256]{ 0 };
-	//Painter pt(winHDC, GetClientRect().Width, GetClientRect().Height);
-	//pt.DrawString(L"(LayeredWindow) This is a sample program", L"", 20, Color::Green, GetClientRect(), TextAlign::MiddleCenter);
-
-	sprintf_s(buf, "Opaint %dms\n", sw.ElapsedMilliseconds());
-	OutputDebugStringA(buf);
 }
 
 

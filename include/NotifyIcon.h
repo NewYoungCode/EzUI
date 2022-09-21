@@ -1,9 +1,6 @@
 #pragma once
-#include "EzUI.h"
 #include "Menu.h"
 namespace EzUI {
-
-
 	class UI_EXPORT  NotifyIcon
 	{
 	public:

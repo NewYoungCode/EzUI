@@ -1,5 +1,4 @@
 #pragma once
-#include "ui.h"
 
 #include "EzUI.h"
 #include "Form.h"
@@ -9,12 +8,11 @@
 #include "VLayout.h"
 #include "Edit.h"
 #include "VList.h"
-#include "TileLayout.h"
+#include "TileList.h"
 #include "Button.h"
 
 #include "Edit.h"
 
-#include "Painter.h"
 
 using namespace ui;
 

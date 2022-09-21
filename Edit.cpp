@@ -57,7 +57,7 @@ namespace EzUI {
 	void Edit::OnKeyDown(WPARAM wParam)
 	{
 		__super::OnKeyDown(wParam);
-		Debug::Log(utf8("按下了%d"), wParam);
+		//Debug::Log(utf8("按下了%d"), wParam);
 	}
 	void Edit::OnMouseDown(MouseButton mbtn, const Point& point) {
 		__super::OnMouseDown(mbtn, point);

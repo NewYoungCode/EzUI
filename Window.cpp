@@ -287,7 +287,7 @@ namespace EzUI {
 				OnSize(size);
 			}
 			else if (rePaint) {
-				Debug::Log("SWP_NOCOPYBITS!");
+				//Debug::Log("SWP_NOCOPYBITS!");
 				OnSize(size);
 			}
 			if (!_lastPoint.Equals(point)) {
@@ -398,7 +398,11 @@ namespace EzUI {
 
 	void Window::OnPaint(HDC winHDC, const Rect& rePaintRect)
 	{
+
+#ifdef COUNT_ONPAINT
 		StopWatch sw;
+#endif // COUNT_ONPAINT
+
 #ifdef USED_GDIPLUS
 		EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height);//
 		Painter pt(memBitmap.GetDC());
@@ -407,6 +411,11 @@ namespace EzUI {
 		args.InvalidRectangle = rePaintRect;
 		args.HWnd = _hWnd;
 		MainLayout->Rending(args);//
+#ifdef DEBUGPAINT
+		if (_winData.Debug) {
+			pt.DrawRectangle(rePaintRect, Color::Red);
+		}
+#endif
 		::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//
 #endif
 #ifdef USED_Direct2D
@@ -416,10 +425,20 @@ namespace EzUI {
 		args.InvalidRectangle = rePaintRect;
 		args.HWnd = _hWnd;
 		MainLayout->Rending(args);//
+#ifdef DEBUGPAINT
+		if (_winData.Debug) {
+			pt.DrawRectangle(rePaintRect, Color::Red);
+		}
 #endif
-		char buf[256]{ 0 };
-		sprintf_s(buf, "Opaint %dms\n", sw.ElapsedMilliseconds());
+
+#endif
+
+#ifdef COUNT_ONPAINT
+		char buf[100]{ 0 };
+		sprintf_s(buf, "OnPaint (%d,%d,%d,%d) %dms \n", rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, sw.ElapsedMilliseconds());
 		OutputDebugStringA(buf);
+#endif // COUNT_ONPAINT
+
 	}
 
 	bool Window::IsInWindow(Control& pControl, Control& it) {
@@ -432,12 +451,12 @@ namespace EzUI {
 		auto clientRect = it.GetClientRect();//
 		if (!winClientRect.IntersectsWith(clientRect)) {
 			return false;
-	}
+		}
 		if (!pControl.GetClientRect().IntersectsWith(clientRect)) {
 			return false;
 		}
 		return true;
-}
+	}
 
 	Control* Window::FindControl(const Point& clientPoint, Point& outPoint) {
 		outPoint = clientPoint;
@@ -624,8 +643,16 @@ namespace EzUI {
 	}
 	void Window::OnSize(const Size& sz)
 	{
-		*((Rect*)(&MainLayout->ClipRect)) = this->GetClientRect();//
+#ifdef COUNT_ONSIZE
+		StopWatch sw;
+#endif 
+		* ((Rect*)(&MainLayout->ClipRect)) = this->GetClientRect();//
 		MainLayout->SetRect(this->GetClientRect(), true);
+#ifdef COUNT_ONSIZE
+		char buf[50]{ 0 };
+		sprintf_s(buf, "OnSize (%d,%d) %dms\n", sz.Width, sz.Height, sw.ElapsedMilliseconds());
+		OutputDebugStringA(buf);
+#endif
 	}
 
 	void Window::OnRect(const Rect& rect)

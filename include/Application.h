@@ -1,5 +1,5 @@
 #pragma once
-#include "EzUI.h"
+#include "Window.h"
 namespace EzUI {
 	extern LRESULT CALLBACK EzUI_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 	class UI_EXPORT Application

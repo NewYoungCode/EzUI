@@ -30,13 +30,7 @@
     <ClInclude Include="include\EzUI.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\IControl.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ui.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Painter.h">
+    <ClInclude Include="include\IType.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\Layout.h">
@@ -120,13 +114,16 @@
     <ClInclude Include="include\ShadowWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\RenderExType.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\RenderType.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\Direct2DRender.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EString.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UIDef.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -134,7 +131,7 @@
     <ClCompile Include="Control.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="IControl.cpp">
+    <ClCompile Include="IType.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="tinyxml\tinyxmlparser.cpp">
@@ -148,9 +145,6 @@
     </ClCompile>
     <ClCompile Include="tinyxml\tinystr.cpp">
       <Filter>tinyxml</Filter>
-    </ClCompile>
-    <ClCompile Include="EzUI.cpp">
-      <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="GdiplusRender.cpp">
       <Filter>源文件</Filter>
@@ -228,6 +222,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Direct2DRender.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="EString.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

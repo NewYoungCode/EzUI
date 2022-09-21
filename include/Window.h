@@ -1,7 +1,4 @@
 #pragma once
-#include "EzUI.h"
-#include "Painter.h"
-#include "IControl.h"
 #include "Control.h"
 #include "Layout.h"
 #include "Edit.h"

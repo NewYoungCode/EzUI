@@ -1,5 +1,5 @@
 #include "Application.h"
-#include "Window.h"
+
 namespace EzUI {
 
 	LRESULT CALLBACK EzUI_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {

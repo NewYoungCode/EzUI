@@ -141,7 +141,7 @@ namespace EzUI {
 		}
 	}
 
-	void Direct2DRender::DrawBitmap(ID2D1Bitmap* d2dBitmap, const  DX_Rect& rect)
+	void Direct2DRender::DrawBitmap(ID2D1Bitmap* d2dBitmap, const  __Rect& rect)
 	{
 		if (d2dBitmap == NULL) return;
 		D2D1_RECT_F rectF = ToRectF(rect);
@@ -182,10 +182,10 @@ namespace EzUI {
 
 	Direct2DRender::~Direct2DRender()
 	{
-		for (auto& it : CacheBrush) {
-			it.second->Release();
-		}
-		CacheBrush.clear();
+		//for (auto& it : CacheBrush) {
+		//	it.second->Release();
+		//}
+		//CacheBrush.clear();
 		for (auto& it : CacheTextFormat) {
 			it.second->Release();
 		}
@@ -199,12 +199,12 @@ namespace EzUI {
 	}
 
 
-	void Direct2DRender::DrawRectangle(const  DX_Rect& _rect, const  DX_Color& color, int width, int radius)
+	void Direct2DRender::DrawRectangle(const  __Rect& _rect, const  __Color& color, int width, int radius)
 	{
 		if (color.GetValue() == 0) {
 			return;
 		}
-		DX_Rect rect = _rect;
+		__Rect rect = _rect;
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 
@@ -219,12 +219,12 @@ namespace EzUI {
 		}
 
 	}
-	void Direct2DRender::FillRectangle(const DX_Rect& _rect, const DX_Color& color, int radius)
+	void Direct2DRender::FillRectangle(const __Rect& _rect, const __Color& color, int radius)
 	{
 		if (color.GetValue() == 0) {
 			return;
 		}
-		DX_Rect rect = _rect;
+		__Rect rect = _rect;
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 
@@ -238,14 +238,14 @@ namespace EzUI {
 			d2dRender->FillRectangle(ToRectF(rect), sb);
 		}
 	}
-	void Direct2DRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const DX_Color& color, const DX_Rect& _rect, EzUI::TextAlign textAlign, bool underLine)
+	void Direct2DRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& _rect, EzUI::TextAlign textAlign, bool underLine)
 	{
 		if (text == L"0") {
 
 			int pause0 = 0;
 		}
 
-		DX_Rect rect = _rect;
+		__Rect rect = _rect;
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 
@@ -310,7 +310,7 @@ namespace EzUI {
 		DxSafeObject<ID2D1Brush> sb(CreateSolidBrush(color));
 		d2dRender->DrawTextW(text.c_str(), text.size(), format, ToRectF(rect), sb);
 	}
-	void Direct2DRender::MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, DX_RectF& outBox)
+	void Direct2DRender::MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, __RectF& outBox)
 	{
 
 	}
@@ -323,7 +323,7 @@ namespace EzUI {
 		SafeRelease(&layer);
 	}
 
-	void Direct2DRender::PushLayer(const DX_Rect& rectBounds, ClipMode clipMode)
+	void Direct2DRender::PushLayer(const __Rect& rectBounds, ClipMode clipMode)
 	{
 		ID2D1Layer* layer;
 		d2dRender->CreateLayer(&layer);
@@ -335,12 +335,12 @@ namespace EzUI {
 	{
 		d2dRender->PopLayer();
 	}
-	void Direct2DRender::DrawLine(const DX_Color& color, const DX_Point& _A, const DX_Point& _B, int width)
+	void Direct2DRender::DrawLine(const __Color& color, const __Point& _A, const __Point& _B, int width)
 	{
-		DX_Point A = _A;
+		__Point A = _A;
 		A.X += OffsetX;
 		A.Y += OffsetY;
-		DX_Point B = _B;
+		__Point B = _B;
 		B.X += OffsetX;
 		B.Y += OffsetY;
 
@@ -348,17 +348,17 @@ namespace EzUI {
 		d2dRender->DrawLine(D2D1_POINT_2F{ (float)A.X,(float)A.Y }, D2D1_POINT_2F{ (float)B.X,(float)B.Y }, sb);
 
 	}
-	void Direct2DRender::DrawImage(IImage* _image, const DX_Rect& destRect, const DX_Rect& srcRect)
+	void Direct2DRender::DrawImage(IImage* _image, const __Rect& destRect, const __Rect& srcRect)
 	{
 		DXImage* image = (DXImage*)_image;
 
 	}
-	void Direct2DRender::DrawImage(IImage* _image, const DX_Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Margin& margin)
+	void Direct2DRender::DrawImage(IImage* _image, const __Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Margin& margin)
 	{
 		if (_image == NULL) return;
 		DXImage* image = (DXImage*)_image;
 
-		DX_Rect rect = _rect;
+		__Rect rect = _rect;
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 
@@ -380,17 +380,17 @@ namespace EzUI {
 			double imgRate = imgWidth * 1.0 / imgHeight;
 			if (clientRate < imgRate) {
 				double zoomHeight = clientWidth * 1.0 / imgWidth * imgHeight + 0.5;
-				DX_Size sz{ clientWidth,(INT)zoomHeight };
+				__Size sz{ clientWidth,(INT)zoomHeight };
 				int y = (clientHeight - sz.Height) / 2 + rect.Y;
 
-				this->DrawBitmap(image->d2dBitmap, DX_Rect{ rect.X  ,y, sz.Width, sz.Height });
+				this->DrawBitmap(image->d2dBitmap, __Rect{ rect.X  ,y, sz.Width, sz.Height });
 
 			}
 			else {
 				double zoomWidth = clientHeight * 1.0 / imgHeight * imgWidth + 0.5;
-				DX_Size sz{ (INT)zoomWidth,clientHeight };
+				__Size sz{ (INT)zoomWidth,clientHeight };
 				int x = (clientWidth - sz.Width) / 2 + rect.X;
-				this->DrawBitmap(image->d2dBitmap, DX_Rect{ x  , rect.Y, sz.Width, sz.Height });
+				this->DrawBitmap(image->d2dBitmap, __Rect{ x  , rect.Y, sz.Width, sz.Height });
 			}
 			return;
 		}
@@ -409,7 +409,7 @@ namespace EzUI {
 				//2233 670     缩放后的图片大小 
 				int zoomWidth = clientHeight * 1.0 / imgHeight * imgWidth + 0.5;//图片应该这么宽才对
 				int x = (zoomWidth - clientWidth) * 1.0 / 2 + 0.5;
-				this->DrawBitmap(image->d2dBitmap, DX_Rect{ rect.X - x,rect.Y,zoomWidth,clientHeight });
+				this->DrawBitmap(image->d2dBitmap, __Rect{ rect.X - x,rect.Y,zoomWidth,clientHeight });
 			}
 			else {
 				//1000 600 客户端
@@ -417,7 +417,7 @@ namespace EzUI {
 				//1000 1500     缩放后的图片大小 
 				int zoomHeight = clientWidth * 1.0 / imgWidth * imgHeight + 0.5;//图片应该这么高才对
 				int y = (zoomHeight - clientHeight) * 1.0 / 2 + 0.5;
-				this->DrawBitmap(image->d2dBitmap, DX_Rect{ rect.X,  rect.Y - y  , clientWidth, zoomHeight });
+				this->DrawBitmap(image->d2dBitmap, __Rect{ rect.X,  rect.Y - y  , clientWidth, zoomHeight });
 			}
 			return;
 		}
@@ -434,12 +434,12 @@ namespace EzUI {
 			beginDraw = true;
 		}
 	}
-	void Direct2DRender::FillGeometry(ID2D1Geometry* geometry, const DX_Color& color)
+	void Direct2DRender::FillGeometry(ID2D1Geometry* geometry, const __Color& color)
 	{
 		DxSafeObject<ID2D1Brush> sb(CreateSolidBrush(color));
 		d2dRender->FillGeometry(geometry, sb);
 	}
-	//ID2D1Brush* Direct2DRender::CreateSafeSolidBrush(const DX_Color& _color)
+	//ID2D1Brush* Direct2DRender::CreateSafeSolidBrush(const __Color& _color)
 	//{
 	//	auto key = _color.GetValue();
 	//	auto itor = CacheBrush.find(key);
@@ -448,10 +448,10 @@ namespace EzUI {
 	//	}
 	//	ID2D1SolidColorBrush* sb = NULL;
 	//	d2dRender->CreateSolidColorBrush(ToColorF(_color), &sb);//
-	//	CacheBrush.insert(std::pair<DX_ARGB, ID2D1Brush*>(key, sb));//加入缓存
+	//	CacheBrush.insert(std::pair<__ARGB, ID2D1Brush*>(key, sb));//加入缓存
 	//	return sb;
 	//}
-	ID2D1Brush* Direct2DRender::CreateSolidBrush(const DX_Color& _color)
+	ID2D1Brush* Direct2DRender::CreateSolidBrush(const __Color& _color)
 	{
 		ID2D1SolidColorBrush* sb = NULL;
 		d2dRender->CreateSolidColorBrush(ToColorF(_color), &sb);//
@@ -473,7 +473,7 @@ namespace EzUI {
 		return format;
 	}
 
-	void Direct2DRender::DrawGeometry(ID2D1Geometry* geometry, const DX_Color& color, int width)
+	void Direct2DRender::DrawGeometry(ID2D1Geometry* geometry, const __Color& color, int width)
 	{
 		DxSafeObject<ID2D1Brush> sb(CreateSolidBrush(color));
 		d2dRender->DrawGeometry(geometry, sb);

@@ -1,8 +1,5 @@
 #pragma once
-#include "Application.h"
-#include "IControl.h"
-#include "Painter.h"
-
+#include "IType.h"
 namespace EzUI {
 	class UI_EXPORT Control :public IControl, public IRect, public IMouseKeyBoard
 	{
