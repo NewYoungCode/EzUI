@@ -293,6 +293,96 @@ Event(this , ##__VA_ARGS__); \
 		}
 		return _ForeColor;
 	}
+
+
+	const int& Control::X()
+	{
+		return _rect.X;
+	}
+	const int& Control::Y()
+	{
+		return _rect.Y;
+	}
+	const int& Control::Width()
+	{
+		return _rect.Width;
+	}
+	const int& Control::Height()
+	{
+		return _rect.Height;
+	}
+	void Control::SetX(const int& X) {
+		SetLocation({ X,Y() });
+	}
+	void Control::SetY(const int& Y) {
+		SetLocation({ X(),Y });
+	}
+	void Control::SetLocation(const Point& pt) {
+		SetRect(Rect(pt.X, pt.Y, Width(), Height()));
+	}
+	void Control::SetWidth(const int& width) {
+		SetSize({ width,Height() });
+	}
+	void Control::SetHeight(const int& height) {
+		SetSize({ Width(),height });
+	}
+	void Control::SetSize(const Size& size)
+	{
+		SetRect({ X(),Y(),size.Width,size.Height });
+	}
+	const Rect& Control::GetRect()
+	{
+		return _rect;
+	}
+	void Control::OnLayout(const Size& pRect, bool instantly)
+	{
+		while (Dock != DockStyle::None)
+		{
+			if (Dock == DockStyle::Fill) {
+				_rect = { 0,0,pRect.Width,pRect.Height };
+				break;
+			}
+			if (Dock == DockStyle::Vertical) {
+				_rect = { X(),0,Width(),pRect.Height };
+				break;
+			}
+			if (Dock == DockStyle::Horizontal) {
+				_rect = { 0,Y(),pRect.Width,Height() };
+				break;
+			}
+			break;
+		}
+		if (instantly) {
+			SetRect(_rect);
+		}
+	}
+	void Control::SetFixedWidth(const int& fixedWidth)
+	{
+		_rect.Width = fixedWidth;
+		_fixedWidth = fixedWidth;
+	}
+	void Control::SetFixedHeight(const int& fixedHeight)
+	{
+		_rect.Height = fixedHeight;
+		_fixedHeight = fixedHeight;
+	}
+	const int& Control::GetFixedWidth()
+	{
+		return _fixedWidth;
+	}
+	const int& Control::GetFixedHeight()
+	{
+		return _fixedHeight;
+	}
+
+	bool Control::CheckEventPassThrough(Event eventType)
+	{
+		if ((MousePassThrough & eventType) == eventType) {
+			return true;
+		}
+		return false;
+	}
+
 	Rect Control::GetClientRect() {
 		Control* pCtrl = this;
 		int x = _rect.X;

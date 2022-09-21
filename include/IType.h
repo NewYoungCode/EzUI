@@ -308,60 +308,6 @@ namespace EzUI {
 		void SetStyleSheet(const EString& styleStr);
 		void SetStyle(const EString& key, const EString& value);
 	};
-	class UI_EXPORT IRect {
-	protected:
-		Rect _rect;
-		Rect _lastDrawRect;//最后一次显示的位置
-		int _fixedWidth = 0;
-		int _fixedHeight = 0;
-		bool _pendLayout = true;//布局是否被挂起 当Addcontrol或者RemoveControl的时候此标志为true 当调用ResumeLayout()之后此标志为false
-	public:
-		DockStyle Dock = DockStyle::None;//dock样式
-	public:
-		const Rect ClipRect;//控件在窗口中的可见区域
-		const int& X();
-		const int& Y();
-		void SetX(const int& X);
-		void SetY(const int& Y);
-		void SetLocation(const Point& pt);//移动相对与父控件的位置
-		void SetSize(const Size& size); //当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
-		void SetWidth(const int& width);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
-		void SetHeight(const int& height);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
-		const int& Width();
-		const int& Height();
-		void SetFixedWidth(const int& fixedWidth);//设置绝对宽度
-		void SetFixedHeight(const int& fixedHeight);//设置绝对高度
-		const int& GetFixedWidth();//获取绝对宽度
-		const int& GetFixedHeight();//获取绝对高度
-		const Rect& GetRect();//获取相对与父控件矩形
-		virtual void OnLayout(const Size& parentRect, bool instantly = true);//父控件大小改变事件  instantly立即生效
-	public:
-		virtual void ComputeClipRect() = 0;//计算基于父控件的裁剪区域
-		virtual Rect GetClientRect() = 0;//获取基于客户端的矩形
-		virtual void SetRect(const Rect& rect, bool rePaint = false) = 0;//设置相对父控件矩形
-	public:
-		virtual ~IRect() {};
-	};
-	class UI_EXPORT IMouseKeyBoard {
-	protected:
-		Tuple<LPTSTR> _LastCursor;
-	public:
-		int MousePassThrough = 0;
-		Cursor Cursor = Cursor::None;//鼠标样式
-	public:
-		//鼠标事件相关
-		EventMouseMove MouseMove;//移动事件
-		EventMouseEnter MouseEnter;//移入事件
-		EventMouseWheel MouseWheel;//滚轮事件
-		EventMouseLeave MouseLeave;//鼠标离开事件
-		EventMouseDown MouseDown;//鼠标按下事件
-		EventMouseUp MouseUp;//鼠标抬起
-		EventMouseClick MouseClick;//鼠标单击
-		EventMouseDoubleClick MouseDoubleClick;//鼠标双击
-	public:
-		virtual ~IMouseKeyBoard() {};
-		bool CheckEventPassThrough(Event eventType);
-	};
 	class UI_EXPORT ILayout {
 	public:
 		virtual void ResumeLayout() = 0;

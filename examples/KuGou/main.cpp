@@ -41,7 +41,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//HWND workWnd = GetWorkerW();
 	//::ShowWindow(workWnd, SW_HIDE);
 
-	HWND wnd = GetWorkerW();
+	/*HWND wnd = GetWorkerW();
 
 	DesktopWallper dw(1920, 1080, wnd);
 	dw.SetText(L"EzUI Wallper");
@@ -55,7 +55,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	dw.SetLayout(&l);
 
 	::SetWindowPos(wnd, HWND_TOP, 0, 0, 1920, 1080, SWP_SHOWWINDOW);
-	dw.Show();
+	dw.Show();*/
 
 	/*player.OpenPath("E:\\CloudMusic\\MV\\x.mp4");
 	player.Play();*/
@@ -77,7 +77,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	mvicon = new Image(L"imgs/mvicon.png");
 	MainFrm frm;
-	frm.Tag = (UINT_PTR)&player;
+	//frm.Tag = (UINT_PTR)&player;
 	frm.Show();
 
 	app.exec();

@@ -1,15 +1,24 @@
 #pragma once
 #include "IType.h"
 namespace EzUI {
-	class UI_EXPORT Control :public IControl, public IRect, public IMouseKeyBoard
+	class UI_EXPORT Control :public IControl
 	{
 	private:
 		Control(const Control&);
 		Control& operator=(const Control&);
 	protected:
-		Controls _controls;
+		Controls _controls;//子控件
 		Controls _spacer;//存储控件下布局的的弹簧集合
+		Rect _rect;//控件矩形区域(基于父控件)
+		Rect _lastDrawRect;//最后一次显示的位置
+		int _fixedWidth = 0;//绝对宽度
+		int _fixedHeight = 0;//绝对高度
+		bool _pendLayout = true;//布局是否被挂起 当Addcontrol或者RemoveControl的时候此标志为true 当调用ResumeLayout()之后此标志为false
+		Tuple<LPTSTR> _LastCursor;//上一次鼠标的样式
 	public:
+		EzUI::Cursor Cursor = EzUI::Cursor::None;//鼠标样式
+		int MousePassThrough = 0;//忽略的鼠标消息
+		const Rect ClipRect;//控件在窗口中的可见区域
 		int ShadowWidth = 0;//控件阴影宽度
 		bool IsXmlControl = false;//是否是xml加载进来的
 		EString Name;//控件的ObjectName
@@ -22,9 +31,40 @@ namespace EzUI {
 		bool Visible = true;//控件是否可见
 		Control* Parent = NULL;//父控件
 		Controls VisibleControls;//基于控件中的可见控件
+		DockStyle Dock = DockStyle::None;//dock样式
+	public:
+		EventMouseMove MouseMove;//移动事件
+		EventMouseEnter MouseEnter;//移入事件
+		EventMouseWheel MouseWheel;//滚轮事件
+		EventMouseLeave MouseLeave;//鼠标离开事件
+		EventMouseDown MouseDown;//鼠标按下事件
+		EventMouseUp MouseUp;//鼠标抬起
+		EventMouseClick MouseClick;//鼠标单击
+		EventMouseDoubleClick MouseDoubleClick;//鼠标双击
 		EventPaint Painting = NULL;
 		EventBackgroundPaint  BackgroundPainting = NULL;
 		EventForePaint  ForePainting = NULL;
+	public:
+		const int& X();
+		const int& Y();
+		const int& Width();
+		const int& Height();
+		void SetX(const int& X);
+		void SetY(const int& Y);
+		void SetLocation(const Point& pt);//移动相对与父控件的位置
+		void SetSize(const Size& size); //当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
+		void SetWidth(const int& width);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
+		void SetHeight(const int& height);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
+		void SetFixedWidth(const int& fixedWidth);//设置绝对宽度
+		void SetFixedHeight(const int& fixedHeight);//设置绝对高度
+		const int& GetFixedWidth();//获取绝对宽度
+		const int& GetFixedHeight();//获取绝对高度
+		const Rect& GetRect();//获取相对与父控件矩形
+		virtual void OnLayout(const Size& parentRect, bool instantly = true);//父控件大小改变事件  instantly立即生效
+		Rect GetClientRect();//获取基于客户端的矩形
+		virtual void ComputeClipRect();//计算基于父控件的裁剪区域
+		bool CheckEventPassThrough(Event eventType);
+		virtual void SetRect(const Rect& rect, bool rePaint = false);//设置相对父控件矩形
 	public:
 		virtual void OnChar(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
 		virtual void OnKeyDown(WPARAM wParam) override;//WM_CAHR消息
@@ -81,9 +121,6 @@ namespace EzUI {
 		virtual void Rending(PaintEventArgs& args);//绘制函数
 		virtual bool Invalidate();// 使当前控件的区域为无效区域
 		virtual void Refresh();// 使当前控件区域为无效区域并且立即更新全部的无效区域
-		Rect GetClientRect();//获取基于客户端的矩形
-		void ComputeClipRect();//计算基于父控件的裁剪区域
-		virtual void SetRect(const Rect& rect, bool rePaint = false);//设置相对父控件矩形
 	};
 
 	//添加弹簧无需用户手动释放,
