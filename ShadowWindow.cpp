@@ -123,7 +123,7 @@ namespace EzUI {
 		if (BackgroundImage) {//用于异形窗口
 
 #ifdef USED_Direct2D
-			pt.PushLayer(clipRect, ClipMode::Invalid);
+			pt.PushAxisAlignedClip(clipRect, ClipMode::Invalid);
 #else
 			pt.PushLayer(clipRect, ClipMode::Invalid);
 #endif // USED_Direct2D

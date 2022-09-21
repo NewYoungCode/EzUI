@@ -53,7 +53,7 @@ namespace EzUI {
 			D2D_RECT_F rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) };
 			g_Direct2dFactory->CreateRectangleGeometry(rectF, (ID2D1RectangleGeometry**)&Geometry);
 		}
-		DxGeometry(const __Rect& rect) :DxGeometry(rect.X, rect.Y, rect.Width, rect.Height) {};
+		/*	DxGeometry(const __Rect& rect) :DxGeometry(rect.X, rect.Y, rect.Width, rect.Height) {};*/
 		DxGeometry(int x, int y, int width, int height, int radius) {
 			radius = radius / 2.0;
 			D2D1_ROUNDED_RECT rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) ,radius ,radius };
@@ -143,31 +143,31 @@ namespace EzUI {
 		Direct2DRender(HDC _dc, int Width = 0, int Height = 0);
 		Direct2DRender(HWND hWnd, int Width = 0, int Height = 0);
 		virtual ~Direct2DRender();
-		virtual void DrawRectangle(const  __Rect& rect, const  __Color& color, int width = 1, int radius = 0);
-		virtual void FillRectangle(const  __Rect& rect, const  __Color& color, int radius = 0);
-		virtual void DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const  __Color& color, const  __Rect& rect, EzUI::TextAlign textAlign, bool underLine = false);
-		virtual void MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, __RectF& outBox);
-		virtual void PushLayer(const DxGeometry& dxGeometry, EzUI::ClipMode clipMode = EzUI::ClipMode::Valid);//不规则裁剪区域
-		virtual void PushLayer(const __Rect& layer, EzUI::ClipMode clipMode);//矩形裁剪区域
-		virtual void PopLayer();
-		virtual void DrawLine(const  __Color& color, const  __Point& A, const  __Point& B, int width = 1);
-		virtual void DrawImage(IImage* image, const  __Rect& destRect, const __Rect& srcRect);
-		virtual void DrawImage(IImage* image, const  __Rect& rect, const EzUI::ImageSizeMode& imageSizeMode = EzUI::ImageSizeMode::Zoom, const EzUI::Margin& margin = 0);
-		virtual void DrawGeometry(ID2D1Geometry* geometry, const  __Color& color, int width = 1);
-		virtual void FillGeometry(ID2D1Geometry* geometry, const  __Color& color);
-		virtual void DrawGeometry(const DxGeometry& geometry, const  __Color& color, int width = 1) {
+		void DrawRectangle(const  __Rect& rect, const  __Color& color, int width = 1, int radius = 0);
+		void FillRectangle(const  __Rect& rect, const  __Color& color, int radius = 0);
+		void DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const  __Color& color, const  __Rect& rect, EzUI::TextAlign textAlign, bool underLine = false);
+		void MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, __RectF& outBox);
+		void DrawLine(const  __Color& color, const  __Point& A, const  __Point& B, int width = 1);
+		void DrawImage(IImage* image, const  __Rect& destRect, const __Rect& srcRect);
+		void DrawImage(IImage* image, const  __Rect& rect, const EzUI::ImageSizeMode& imageSizeMode = EzUI::ImageSizeMode::Zoom, const EzUI::Margin& margin = 0);
+		void DrawGeometry(ID2D1Geometry* geometry, const  __Color& color, int width = 1);
+		void FillGeometry(ID2D1Geometry* geometry, const  __Color& color);
+		void DrawGeometry(const DxGeometry& geometry, const  __Color& color, int width = 1) {
 			DrawGeometry(geometry.Geometry, color);
 		}
-		virtual void FillGeometry(const DxGeometry& geometry, const  __Color& color) {
+		void FillGeometry(const DxGeometry& geometry, const  __Color& color) {
 			FillGeometry(geometry.Geometry, color);
 		}
+		void PushLayer(const DxGeometry& dxGeometry, EzUI::ClipMode clipMode = EzUI::ClipMode::Valid);
+		void PopLayer();
+		void PushAxisAlignedClip(const __Rect& rectBounds, EzUI::ClipMode clipMode = EzUI::ClipMode::Valid);
+		void PopAxisAlignedClip();
 		// ID2D1Brush* CreateSafeSolidBrush(const __Color& color);
 		ID2D1Brush* Direct2DRender::CreateSolidBrush(const __Color& _color);
 		IDWriteTextFormat* CreateSafeTextFormat(const std::wstring& fontFamily, int fontSize);
 		void BeginDraw();
 		void EndDraw();
 	};
-
 	UI_EXPORT void RenderInitialize();//全局初始化direct2d
 	UI_EXPORT void RenderUnInitialize();//释放direct2d
 };

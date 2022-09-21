@@ -48,9 +48,9 @@ namespace EzUI {
 			::MessageBoxW(NULL, L"Failed to create IDWriteFactory", L"Error", MB_ICONSTOP);
 		}
 
-		_GUID imageFactoryWin7{ 0xcacaf262, 0x9370, 0x4615, 0xa1, 0x3b, 0x9f, 0x55, 0x39, 0xda, 0x4c, 0xa };//win7
+		_GUID imageFactoryOld{ 0xcacaf262, 0x9370, 0x4615, 0xa1, 0x3b, 0x9f, 0x55, 0x39, 0xda, 0x4c, 0xa };//xp  win7 旧版
 		_GUID WICImagingFactoryId = CLSID_WICImagingFactory;//当前平台
-	ImagingFactory:
+	ImagingFactoryInit:
 		hr = CoCreateInstance(WICImagingFactoryId, NULL, CLSCTX_INPROC_SERVER, __uuidof(IWICImagingFactory), (LPVOID*)&g_ImageFactory);
 		if (hr != S_OK) {
 			//if (hr == 0x800401F0) {//未初始化com 自己在全局初始化一下就好了 (自己控制初始化时机)
@@ -58,8 +58,8 @@ namespace EzUI {
 			//	goto ImagingFactory;
 			//}
 			if (hr == 0x80040154) {//没有注册类 不用win7的sdk生成的程序在下win7系统上运行会出现此错误
-				WICImagingFactoryId = imageFactoryWin7;
-				goto ImagingFactory;
+				WICImagingFactoryId = imageFactoryOld;
+				goto ImagingFactoryInit;
 			}
 			CHAR buf[256]{ 0 };
 			sprintf_s(buf, "Code 0x%p", hr);
@@ -240,11 +240,6 @@ namespace EzUI {
 	}
 	void Direct2DRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& _rect, EzUI::TextAlign textAlign, bool underLine)
 	{
-		if (text == L"0") {
-
-			int pause0 = 0;
-		}
-
 		__Rect rect = _rect;
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
@@ -315,6 +310,7 @@ namespace EzUI {
 
 	}
 
+	//layer巨tm的耗性能!!! 但是可以异形抗锯齿裁剪
 	void Direct2DRender::PushLayer(const DxGeometry& dxGeometry, EzUI::ClipMode clipMode)
 	{
 		ID2D1Layer* layer;
@@ -322,18 +318,16 @@ namespace EzUI {
 		d2dRender->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.Geometry), layer);//放入layer
 		SafeRelease(&layer);
 	}
-
-	void Direct2DRender::PushLayer(const __Rect& rectBounds, ClipMode clipMode)
-	{
-		ID2D1Layer* layer;
-		d2dRender->CreateLayer(&layer);
-		d2dRender->PushLayer(D2D1::LayerParameters(ToRectF(rectBounds)), NULL);//放入layer
-		SafeRelease(&layer);
-	}
-
-	void Direct2DRender::PopLayer()
+	void Direct2DRender::PopLayer()//弹出最后一个裁剪
 	{
 		d2dRender->PopLayer();
+	}
+	//正规矩形速度快!!! 不支持异形抗锯齿裁剪
+	void Direct2DRender::PushAxisAlignedClip(const __Rect& rectBounds, EzUI::ClipMode clipMode) {
+		d2dRender->PushAxisAlignedClip(ToRectF(rectBounds), D2D1_ANTIALIAS_MODE::D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+	}
+	void Direct2DRender::PopAxisAlignedClip() {//弹出最后一个裁剪
+		d2dRender->PopAxisAlignedClip();
 	}
 	void Direct2DRender::DrawLine(const __Color& color, const __Point& _A, const __Point& _B, int width)
 	{
@@ -455,7 +449,6 @@ namespace EzUI {
 		d2dRender->CreateSolidColorBrush(ToColorF(_color), &sb);//
 		return sb;
 	}
-
 	IDWriteTextFormat* Direct2DRender::CreateSafeTextFormat(const std::wstring& fontFamily, int fontSize)
 	{
 		WCHAR key[LF_FACESIZE + 10]{ 0 };
@@ -470,7 +463,6 @@ namespace EzUI {
 		CacheTextFormat.insert(std::pair<std::wstring, IDWriteTextFormat*>(key, format));//加入缓存
 		return format;
 	}
-
 	void Direct2DRender::DrawGeometry(ID2D1Geometry* geometry, const __Color& color, int width)
 	{
 		DxSafeObject<ID2D1Brush> sb(CreateSolidBrush(color));
@@ -483,7 +475,6 @@ namespace EzUI {
 			beginDraw = false;
 		}
 	}
-
 }
 
 

@@ -25,7 +25,6 @@ private:
 protected:
 	virtual void OnKeyDown(WPARAM wparam)override;
 	bool OnNotify(Control* sender, const EventArgs& args)override;
-	void OnPaint(HDC hdc, const Rect& rect) override;
 	LRESULT WndProc(UINT msg, WPARAM W, LPARAM L) override;
 	void NextPage(int a, int b);
 	void SongView();

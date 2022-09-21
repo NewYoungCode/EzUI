@@ -543,14 +543,14 @@ Event(this , ##__VA_ARGS__); \
 		if (r > 0) {
 			//处理圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分) 带抗锯齿
 			DxGeometry roundRect(clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height, r);
-			DxGeometry clientRect(_ClipRect);
+			DxGeometry clientRect(_ClipRect.X, _ClipRect.Y, _ClipRect.Width, _ClipRect.Height);
 			DxGeometry outClipRect;
 			DxGeometry::Intersect(outClipRect, roundRect, clientRect);
 			pt.PushLayer(outClipRect);
 		}
 		else {
 			//针对矩形控件
-			pt.PushLayer(_ClipRect);
+			pt.PushAxisAlignedClip(_ClipRect);
 		}
 #endif
 		//开始绘制
@@ -586,7 +586,20 @@ Event(this , ##__VA_ARGS__); \
 #undef AntiAlias
 #endif
 #endif
+
+#ifdef USED_GDIPLUS
 		pt.PopLayer();//弹出
+#endif
+
+#ifdef USED_Direct2D
+		if (r > 0) {
+			pt.PopLayer();//弹出
+		}
+		else {
+			pt.PopAxisAlignedClip();
+		}
+#endif
+
 #ifdef DEBUGPAINT
 		WindowData* wndData = (WindowData*)UI_GetUserData(_hWnd);
 		if (wndData->Debug) {

@@ -80,11 +80,11 @@ MainFrm::MainFrm() :Form(1022, 670)
 
 	auto main = FindControl("main");
 	main->BackgroundPainting = [=](PaintEventArgs& arg)->bool {
-		if (player.BuffBitmap) {
+		/*if (player.BuffBitmap) {
 			Image img(player.BuffBitmap->_bitmap);
 			arg.Painter.DrawImage(&img, main->GetRect(), ImageSizeMode::CenterImage);
 			return true;
-		}
+		}*/
 		return false;
 
 	};
@@ -367,10 +367,6 @@ void  MainFrm::LrcView() {
 }
 
 
-void MainFrm::OnPaint(HDC winHDC, const Rect& rePaintRect)
-{
-	__super::OnPaint(winHDC, rePaintRect);
-}
 
 
 LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
