@@ -1024,13 +1024,21 @@ namespace EzUI {
 		Zoom = 4
 	};
 
+#if 1
+#define Align_Top  1
+#define Align_Bottom  2
+#define Align_Left  4
+#define Align_Right  8
+#define Align_Mid  16
+#define Align_Center  32
+#else //GDI
 #define Align_Top  DT_TOP
 #define Align_Bottom  DT_BOTTOM
 #define Align_Left  DT_LEFT
 #define Align_Right  DT_RIGHT
 #define Align_Mid   DT_VCENTER
 #define Align_Center   DT_CENTER
-
+#endif
 	enum class Align :int
 	{
 		Top = Align_Top,

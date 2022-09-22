@@ -21,6 +21,8 @@ namespace EzUI {
 
 
 	namespace UIManager {
+		//去除空格或者其他符号 双引号内的空格不会去除
+		void TrimStyle(EString& str, CHAR _char = ' ');
 		const EString Attribute(TiXmlElement* node, const char* szstr);
 		void LoadControl(TiXmlElement* node, Control* control);
 		Control* BuildControl(TiXmlElement* node);
@@ -160,6 +162,25 @@ namespace EzUI {
 			do
 			{
 				if (!attr)break;
+				auto attrName = attr->Name();
+				if (std::strcmp(attrName, "style") == 0) {
+					EString attrValue(attr->Value());
+					TrimStyle(attrValue);
+					ctl->SetAttribute(attrName, attrValue);
+					continue;
+				}
+				if (std::strcmp(attrName, "hover") == 0) {
+					EString attrValue(attr->Value());
+					TrimStyle(attrValue);
+					ctl->SetAttribute(attrName, attrValue);
+					continue;
+				}
+				if (std::strcmp(attrName, "active") == 0) {
+					EString attrValue(attr->Value());
+					TrimStyle(attrValue);
+					ctl->SetAttribute(attrName, attrValue);
+					continue;
+				}
 				ctl->SetAttribute(attr->Name(), attr->Value());
 			} while ((attr = attr->Next()));
 
@@ -191,8 +212,8 @@ namespace EzUI {
 			}
 		}
 		//去除空格或者其他符号 双引号内的空格不会去除
-		void TrimStyle(EString& str, TCHAR _char = ' ') {
-			TCHAR* bufStr = new TCHAR[str.size() + 1]{ 0 };
+		void TrimStyle(EString& str, CHAR _char) {
+			CHAR* bufStr = new CHAR[str.size() + 1]{ 0 };
 			size_t pos = 0;
 			char count = 0;
 			for (auto& it : str) {

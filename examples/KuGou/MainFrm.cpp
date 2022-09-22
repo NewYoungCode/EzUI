@@ -224,6 +224,7 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 				}
 
 				this->SetText(json["fileName"].asString());
+				((Label*)FindControl("songName"))->SetText(json["fileName"].asString());
 
 				player.OpenUrl(playUrl);
 				player.SetDuration(dur);
@@ -255,6 +256,10 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 			EString resp;
 			WebClient wc;
 			wc.HttpGet("http://m.kugou.com/app/i/mv.php?cmd=100&hash=" + sender->GetAttribute("mvhash") + "&ismp3=1&ext=mp4", resp);
+
+
+			auto cn = resp.utf16();
+
 			JObject json(resp);
 			std::vector<EString> urls;
 			urls.reserve(6);
@@ -262,14 +267,19 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 				urls.push_back(it["downurl"].asString());
 			}
 
-			VlcPlayer* deskPlayer = (VlcPlayer*)Tag;
+			/*VlcPlayer* deskPlayer = (VlcPlayer*)Tag;
 			deskPlayer->OpenUrl(urls[urls.size() - 1]);
-			deskPlayer->Play();
+			deskPlayer->Play();*/
 
-			/*	FindControl("mvView")->Trigger(Event::OnMouseClick);
-				player.OpenUrl(urls[urls.size() - 1]);
-				player.Play();
-				timer->Start();*/
+			FindControl("mvView")->Trigger(Event::OnMouseClick);
+			player.OpenUrl(urls[urls.size() - 1]);
+			player.Play();
+
+			((Label*)FindControl("songName"))->SetText(json["songname"].asString());
+			((Label*)FindControl("songName"))->Invalidate();
+
+			player.SetDuration(json["timelength"].asInt()/1000);
+			timer->Start();
 		}
 		if (sender == playerBar) {
 			const MouseEventArgs& arg = (MouseEventArgs&)args;

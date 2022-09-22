@@ -247,7 +247,56 @@ namespace EzUI {
 		//绘制文字
 		RECT winRECT = rect.WinRECT();
 		SetTextColor(DC, RGB(color.GetR(), color.GetG(), color.GetB()));
-		DrawTextW(DC, text.c_str(), text.size(), &winRECT, DT_SINGLELINE | (int)textAlign);
+
+#define __Top  DT_TOP
+#define __Bottom  DT_BOTTOM
+#define __Left  DT_LEFT
+#define __Right  DT_RIGHT
+#define __Middle   DT_VCENTER
+#define __Center   DT_CENTER
+
+		int textFormat = 0;
+		do
+		{
+			if (textAlign == TextAlign::BottomCenter) {
+				textFormat = __Bottom | __Center;
+				break;
+			}
+			if (textAlign == TextAlign::BottomLeft) {
+				textFormat = __Bottom | __Left;
+				break;
+			}
+			if (textAlign == TextAlign::BottomRight) {
+				textFormat = __Bottom | __Right;
+				break;
+			}
+			if (textAlign == TextAlign::MiddleCenter) {
+				textFormat = __Middle | __Center;
+				break;
+			}
+			if (textAlign == TextAlign::MiddleLeft) {
+				textFormat = __Middle | __Left;
+				break;
+			}
+			if (textAlign == TextAlign::MiddleRight) {
+				textFormat = __Middle | __Right;
+				break;
+			}
+			if (textAlign == TextAlign::TopCenter) {
+				textFormat = __Top | __Center;
+				break;
+			}
+			if (textAlign == TextAlign::TopLeft) {
+				textFormat = __Top | __Left;
+				break;
+			}
+			if (textAlign == TextAlign::TopRight) {
+				textFormat = __Top | __Right;
+				break;
+			}
+		} while (0);
+
+		DrawTextW(DC, text.c_str(), text.size(), &winRECT, DT_SINGLELINE | textFormat);
 		//善后工作
 		SelectFont(DC, oldFont);
 		::SetBkMode(DC, lastMode);

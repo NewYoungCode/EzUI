@@ -1,6 +1,6 @@
 #include "IType.h"
 namespace EzUI {
-	EBitmap::EBitmap(WORD width, WORD height, PixelFormat piexlFormat ) {//默认24位不透明位图
+	EBitmap::EBitmap(WORD width, WORD height, PixelFormat piexlFormat) {//默认24位不透明位图
 		biteCount = (byte)piexlFormat;
 		this->Width = width;
 		this->Height = height;
@@ -176,7 +176,7 @@ namespace EzUI {
 				style->ForeColor = value;
 				break;
 			}
-			if (key == "radius") {
+			if (key == "radius" || key == "border-radius") {
 				style->Radius = std::stoi(value);
 				break;
 			}

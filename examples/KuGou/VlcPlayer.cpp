@@ -59,7 +59,7 @@ namespace EzUI {
 		__super::OnBackgroundPaint(pArg);
 		if (BuffBitmap) {
 			Image img(BuffBitmap->_bitmap);
-			pArg.Painter.DrawImage(&img, GetRect(), ImageSizeMode::CenterImage);
+			pArg.Painter.DrawImage(&img, GetRect(), ImageSizeMode::Zoom);
 		}
 	}
 	void VlcPlayer::SetConfig()
