@@ -1,5 +1,5 @@
 #include "Direct2DRender.h"
-#ifdef USED_Direct2D
+#if USED_Direct2D
 #pragma comment(lib,"dwrite.lib")
 #pragma comment(lib,"d2d1.lib")
 #pragma comment(lib,"Windowscodecs.lib")

@@ -403,7 +403,7 @@ namespace EzUI {
 		StopWatch sw;
 #endif // COUNT_ONPAINT
 
-#ifdef USED_GDIPLUS
+#if USED_GDIPLUS
 		EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height);//
 		Painter pt(memBitmap.GetDC());
 		PaintEventArgs args(pt);
@@ -418,7 +418,7 @@ namespace EzUI {
 #endif
 		::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//
 #endif
-#ifdef USED_Direct2D
+#if USED_Direct2D
 		Painter pt(winHDC, GetClientRect().Width, GetClientRect().Height);
 		PaintEventArgs args(pt);
 		args.DC = winHDC;
@@ -646,6 +646,7 @@ namespace EzUI {
 #ifdef COUNT_ONSIZE
 		StopWatch sw;
 #endif 
+		* ((Rect*)(&MainLayout->ClipRect)) = this->GetClientRect();//
 		MainLayout->SetRect(this->GetClientRect(), true);
 #ifdef COUNT_ONSIZE
 		char buf[50]{ 0 };

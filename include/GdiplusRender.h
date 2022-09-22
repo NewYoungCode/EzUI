@@ -1,6 +1,6 @@
 #pragma once
 #include "UIDef.h"
-#ifdef USED_GDIPLUS
+#if USED_GDIPLUS
 #include <string>
 #include <list>
 #include <map>

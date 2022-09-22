@@ -237,11 +237,11 @@ namespace EzUI {
 		}
 	};
 
-#ifdef USED_GDIPLUS
+#if USED_GDIPLUS
 	using Painter = GdiplusRender;
 	using Image = GdiplusImage;
 #endif
-#ifdef USED_Direct2D
+#if USED_Direct2D
 	using Painter = Direct2DRender;
 	using Image = DXImage;
 #endif

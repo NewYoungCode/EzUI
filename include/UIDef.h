@@ -84,8 +84,8 @@
 //#define COUNT_ONSIZE //统计OnSize耗时
 //#define COUNT_ONPAINT//统计绘制耗时
 
-	//下面的渲染方式只能选一个
-//#define USED_GDIPLUS
-#define USED_Direct2D
+//下面的渲染方式只能选一个
+#define USED_GDIPLUS 1
+#define USED_Direct2D 0
 
 #define ui EzUI

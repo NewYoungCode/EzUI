@@ -30,6 +30,7 @@ namespace EzUI {
 		Control* Parent = NULL;//父控件
 		Controls VisibleControls;//基于控件中的可见控件
 		DockStyle Dock = DockStyle::None;//dock样式
+		const Rect ClipRect;//控件在窗口中的可见区域
 	public:
 		EventMouseMove MouseMove;//移动事件
 		EventMouseEnter MouseEnter;//移入事件
@@ -118,6 +119,7 @@ namespace EzUI {
 		virtual void Rending(PaintEventArgs& args);//绘制函数
 		virtual bool Invalidate();// 使当前控件的区域为无效区域
 		virtual void Refresh();// 使当前控件区域为无效区域并且立即更新全部的无效区域
+		void ComputeClipRect();//计算基于父控件的裁剪区域
 	};
 
 	//添加弹簧无需用户手动释放,

@@ -1,6 +1,6 @@
 #pragma once
 #include "UIDef.h"
-#ifdef USED_Direct2D
+#if USED_Direct2D
 #ifndef UI_EXPORT
 #define UI_EXPORT 
 #endif

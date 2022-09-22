@@ -403,6 +403,7 @@ Event(this , ##__VA_ARGS__); \
 		if (_fixedHeight) {
 			_rect.Height = _fixedHeight;
 		}
+		this->ComputeClipRect();//这里要重新计算基于父控件的裁剪区域
 		OnSize(outSize);//然后才开始触发自身的特性 //布局控件会重载这个函数 对子控件调整rect
 		if (rePaint) {
 			Invalidate();
@@ -497,15 +498,19 @@ Event(this , ##__VA_ARGS__); \
 		auto& pt = args.Painter;
 
 		Rect _ClipRect = clientRect;
-		//和重绘区域进行裁剪
-		if (!Rect::Intersect(_ClipRect, _ClipRect, invalidRect)) {
+		////和重绘区域进行裁剪 已弃用
+		//if (!Rect::Intersect(_ClipRect, _ClipRect, invalidRect)) {
+		//	return;
+		//}
+		//if (Parent) {
+		//	//自身和父控件对比较裁剪区域
+		//	if (!Rect::Intersect(_ClipRect, _ClipRect, Parent->GetClientRect())) {
+		//		return;
+		//	}
+		//}
+		this->ComputeClipRect();//重新计算基于父亲的裁剪区域
+		if (!Rect::Intersect(_ClipRect, this->ClipRect, invalidRect)) {//和重绘区域进行裁剪
 			return;
-		}
-		if (Parent) {
-			//自身和父控件对比较裁剪区域
-			if (!Rect::Intersect(_ClipRect, _ClipRect, Parent->GetClientRect())) {
-				return;
-			}
 		}
 		this->_lastDrawRect = _ClipRect;//记录最后一次绘制的区域
 		//设置绘制偏移
@@ -524,7 +529,7 @@ Event(this , ##__VA_ARGS__); \
 			//pt.BeginDraw();//继续绘制剩下的内容
 		}
 
-#ifdef USED_GDIPLUS 
+#if USED_GDIPLUS 
 		pt.PushLayer(_ClipRect);
 		int r = GetRadius();
 #define AntiAlias
@@ -538,7 +543,7 @@ Event(this , ##__VA_ARGS__); \
 
 #endif // 
 
-#ifdef USED_Direct2D
+#if USED_Direct2D
 		int r = GetRadius();
 		if (r > 0) {
 			//处理圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分) 带抗锯齿
@@ -571,7 +576,7 @@ Event(this , ##__VA_ARGS__); \
 		pt.OffsetY = clientRect.Y;//设置偏移
 		this->OnBorderPaint(args);//绘制边框
 
-#ifdef USED_GDIPLUS 
+#if USED_GDIPLUS 
 #ifdef AntiAlias
 		if (r > 0) {
 			EBitmap bufBitmap(clientRect.Width, clientRect.Height);//绘制好的内容
@@ -587,11 +592,11 @@ Event(this , ##__VA_ARGS__); \
 #endif
 #endif
 
-#ifdef USED_GDIPLUS
+#if USED_GDIPLUS
 		pt.PopLayer();//弹出
 #endif
 
-#ifdef USED_Direct2D
+#if USED_Direct2D
 		if (r > 0) {
 			pt.PopLayer();//弹出
 		}
@@ -728,6 +733,13 @@ Event(this , ##__VA_ARGS__); \
 		if (Invalidate()) {
 			WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
 			winData->UpdateWindow();//立即更新全部无效区域
+		}
+	}
+	void Control::ComputeClipRect()
+	{
+		if (Parent) {
+			Rect& ClipRectRef = *(Rect*)(&this->ClipRect);//引用父控件的裁剪区域
+			Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->ClipRect);//自身和父控件对比较裁剪区域
 		}
 	}
 	Controls& Control::GetControls()

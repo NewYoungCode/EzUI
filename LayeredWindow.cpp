@@ -85,6 +85,7 @@ namespace EzUI {
 	}
 	void LayeredWindow::OnSize(const Size& sz) {
 		auto rect = this->GetClientRect();
+		*((Rect*)(&MainLayout->ClipRect)) = rect;//
 		MainLayout->SetRect(rect, false);
 		if (_winBitmap) {
 			delete _winBitmap;
