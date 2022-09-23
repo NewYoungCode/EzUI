@@ -50,7 +50,7 @@ public:
 		ActiveStyle.BackgroundColor = Color(100, 255, 230, 230);
 
 		//Style.BackgroundColor = Color(100, 255, 20, 0);
-		//Style.Radius = 33;
+		Style.Radius = 33;
 
 		AddControl(new HSpacer(15));
 		AddControl(&songName);
@@ -83,7 +83,6 @@ public:
 		SetAttribute("SingerName", s.SingerName);
 
 		SetTips(s.SongName);
-
 		SetFixedHeight(35);
 		Dock = DockStyle::Horizontal;
 		Style.BorderBottom = 1;
@@ -127,6 +126,8 @@ public:
 		del.SetText("X");
 		del.HoverStyle.BackgroundColor = Color::Red;
 		del.Cursor = Cursor::HAND;
+
+		
 
 		AddControl(new HSpacer(15));
 		AddControl(&songName);

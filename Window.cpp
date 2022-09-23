@@ -378,7 +378,7 @@ namespace EzUI {
 		Painter pt(memBitmap.GetDC());
 		PaintEventArgs args(pt);
 		args.DC = memBitmap.GetDC();
-		args.OWnerData = &_winData;
+		args.PublicData = &PublicData;
 		args.InvalidRectangle = rePaintRect;
 		args.HWnd = _hWnd;
 		MainLayout->Rending(args);//
