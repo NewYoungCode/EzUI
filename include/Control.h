@@ -13,8 +13,10 @@ namespace EzUI {
 		Rect _lastDrawRect;//最后一次显示的位置
 		int _fixedWidth = 0;//绝对宽度
 		int _fixedHeight = 0;//绝对高度
-		Tuple<LPTSTR> _LastCursor;//上一次鼠标的样式
+		std::wstring _tipsText;//鼠标悬浮的提示文字
+		Cursor _LastCursor = EzUI::Cursor::None;//上一次鼠标的样式
 	public:
+		WindowData* PublicData = NULL;//窗口上的公共数据
 		EzUI::Cursor Cursor = EzUI::Cursor::None;//鼠标样式
 		int MousePassThrough = 0;//忽略的鼠标消息
 		int ShadowWidth = 0;//控件阴影宽度
@@ -63,6 +65,7 @@ namespace EzUI {
 		Rect GetClientRect();//获取基于客户端的矩形
 		bool CheckEventPassThrough(Event eventType);
 		virtual void SetRect(const Rect& rect, bool rePaint = false);//设置相对父控件矩形
+		virtual void SetTips(const EString& text);
 	public:
 		virtual void OnChar(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
 		virtual void OnKeyDown(WPARAM wParam) override;//WM_CAHR消息
@@ -74,6 +77,7 @@ namespace EzUI {
 		virtual void OnLoad();//控件第一次加载 警告 此函数在LayerWindow里面不允许在函数内添加控件 但是允许设置控件参数  
 		virtual void OnSize(const Size& size);//大小发生改变
 		virtual void OnKillFocus();//失去焦点的时候发生
+		virtual void OnRemove();//被移除该做的事情
 	protected:
 		virtual void OnMouseEvent(const MouseEventArgs& args);//鼠标事件消息
 		virtual void OnMouseMove(const Point& point);//鼠标在控件上移动

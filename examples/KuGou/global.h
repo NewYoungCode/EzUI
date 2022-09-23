@@ -74,12 +74,15 @@ class SongItem2 :public HBox {
 	Label mv;
 	Label time;
 	Song song;
+	Label del;
 public:
 	SongItem2(const Song& s) {
 		song = s;
 		this->Tag = (UINT_PTR)&song;
 		SetAttribute("FileHash", s.hash);
 		SetAttribute("SingerName", s.SingerName);
+
+		SetTips(s.SongName);
 
 		SetFixedHeight(35);
 		Dock = DockStyle::Horizontal;
@@ -119,11 +122,19 @@ public:
 		time.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
 		time.Style.ForeColor = Color(150, 150, 150);
 
+		del.SetFixedWidth(33);
+		del.Name = "del";
+		del.SetText("X");
+		del.HoverStyle.BackgroundColor = Color::Red;
+		del.Cursor = Cursor::HAND;
+
 		AddControl(new HSpacer(15));
 		AddControl(&songName);
 		AddControl(&AlbumName);
 		AddControl(&mv);
 		AddControl(&time);
+
+		AddControl(&del);
 		AddControl(new HSpacer(15));
 
 	}

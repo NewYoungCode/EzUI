@@ -2,6 +2,8 @@
 #include "Control.h"
 #include "Layout.h"
 #include "Edit.h"
+#include <commctrl.h>
+#pragma comment(lib, "comctl32.lib")
 namespace EzUI {
 
 	class UI_EXPORT Window :public IControl
@@ -14,17 +16,20 @@ namespace EzUI {
 		Point _lastPoint;//上一次移动的坐标
 		int _closeCode = 0;
 		HWND _OwnerHwnd = NULL;
+		HWND  _hWndTip = NULL;
+		void InitData(const DWORD& ExStyle);
 	protected:
-		WindowData _winData;
+		HWND _hWnd = NULL;
 		Rect _rect;//基于桌面的坐标
 		Rect _rectClient;//客户绘图区域
 		Control* _focusControl = NULL;//具有焦点的控件
 		Control* _inputControl = NULL;//输入框
+	public:
+		WindowData PublicData;//存储公共数据
 	private:
 		Window(const Window&) {};
 		bool IsInWindow(Control& pControl, Control& it);//控件是否在窗口的可见区域
 		Control* FindControl(const Point& clientPoint, Point& outPoint);//根据坐标获取控件
-		void EmptyControl(Controls* controls);
 	protected:
 		void MoveWindow();//鼠标按下移动窗口
 		virtual void OnMouseMove(const Point& point);

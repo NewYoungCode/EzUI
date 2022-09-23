@@ -4,38 +4,29 @@ namespace EzUI {
 
 	Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 	{
-		int sw = GetSystemMetrics(SM_CXFULLSCREEN);
-		int sh = GetSystemMetrics(SM_CYFULLSCREEN);
-		_rect.X = (sw - width) / 2;
-		_rect.Y = (sh - height) / 2;
+		MONITORINFO monitor{ 0 };
+		monitor.cbSize = sizeof(MONITORINFO);
+		::GetMonitorInfo(::MonitorFromWindow(_hWnd, MONITOR_DEFAULTTONEAREST), &monitor);
+
+		const RECT& rcWork = monitor.rcWork;
+		int sw = rcWork.right - rcWork.left;//当前工作区域的宽
+		int sh = rcWork.bottom - rcWork.top;//当前工作区域的高
+		_rect.X = rcWork.left + (sw - width) / 2;//保证左右居中
+		_rect.Y = rcWork.top + (sh - height) / 2;//保证上下居中
 		_rect.Width = width;
 		_rect.Height = height;
+
 		_hWnd = ::CreateWindowEx(ExStyle | WS_EX_ACCEPTFILES, UI_CLASSNAME, UI_CLASSNAME, dStyle,
 			_rect.X, _rect.Y, width, height, owner, NULL, GetModuleHandle(NULL), NULL);
-		_winData.Window = this;
 
-		if ((ExStyle & WS_EX_LAYERED) != WS_EX_LAYERED) {
-			_winData.InvalidateRect = [=](void* _rect)->void {
-				RECT r = ((Rect*)_rect)->WinRECT();
-				::InvalidateRect(_hWnd, &r, FALSE);
-			};
-			_winData.UpdateWindow = [=]()->void {
-				::UpdateWindow(_hWnd);
-			};
-		}
-		_winData.Notify = [=](UINT uMsg, WPARAM wParam, LPARAM lParam)->bool {
-			if (uMsg >= (WM_USER + 0x04) && uMsg <= (WM_USER + 0x0c)) { //
-				MouseEventArgs* args = (MouseEventArgs*)lParam;
-				return OnNotify((Control*)(wParam), *args);
-			}
-			return FALSE;
-		};
-
-		UI_SetUserData(_hWnd, &_winData);
-
+		InitData(ExStyle);//设置基本数据
 	}
+
 	Window::~Window()
 	{
+		if (::IsWindow(_hWndTip)) {
+			::DestroyWindow(_hWndTip);
+		}
 		if (::IsWindow(_hWnd)) {
 			::DestroyWindow(_hWnd);
 		}
@@ -98,7 +89,7 @@ namespace EzUI {
 		if (!MainLayout->Style.ForeColor.valid) {
 			MainLayout->Style.ForeColor = Color::Black;
 		}
-		MainLayout->_hWnd = _hWnd;
+		MainLayout->PublicData = &PublicData;
 		MainLayout->SetRect(this->GetClientRect());
 	}
 	void Window::Close(int code) {
@@ -109,10 +100,6 @@ namespace EzUI {
 	{
 		ASSERT(MainLayout);
 		::ShowWindow(_hWnd, cmdShow);
-		//MONITORINFO oMonitor{ 0 };
-		//oMonitor.cbSize = sizeof(MONITORINFO);
-		//::GetMonitorInfo(::MonitorFromWindow(_hWnd, MONITOR_DEFAULTTONEAREST), &oMonitor);
-		//RECT r = oMonitor.rcWork;
 	}
 	int Window::ShowModal(bool wait)
 	{
@@ -150,20 +137,7 @@ namespace EzUI {
 			Hide();
 		}
 	}
-	void Window::EmptyControl(Controls* controls) {
-		for (auto it : *controls) {
-			if (_focusControl == it) {
-				_focusControl->Trigger(Event::OnMouseLeave);
-				_focusControl = NULL;
-				//Debug::Log("EmptyControl %p", it);
-			}
-			if (_inputControl == it) {
-				_inputControl->OnKillFocus();
-				_inputControl = NULL;
-			}
-			EmptyControl(&(it->GetControls()));
-		}
-	}
+
 	//#pragma comment(lib,"odbc32.lib")
 	//#pragma comment(lib,"odbccp32.lib")
 #pragma comment(lib,"imm32.lib")
@@ -250,20 +224,14 @@ namespace EzUI {
 			EndPaint(_hWnd, &pst);
 			break;
 		}
-		case  UI_CONTROL_DELETE:
-		{
-			Control* delControl = (Control*)wParam;
-			if (_focusControl == delControl) {
-				_focusControl = NULL;
-				return TRUE;
+		case WM_NOTIFY: {
+			LPNMTTDISPINFO lpnmttdi = (LPNMTTDISPINFO)lParam;
+			if (lpnmttdi->hdr.code == TTN_GETDISPINFO) {
+				//拦截冒泡提示文字
 			}
-			if (_inputControl == delControl) {
-				_inputControl = NULL;
-				return TRUE;
-			}
-			EmptyControl(&(delControl->GetControls()));
-			return TRUE;
+			break;
 		}
+
 		case WM_WINDOWPOSCHANGED: {
 			bool rePaint = false;
 			WINDOWPOS* wPos = (WINDOWPOS*)(void*)lParam;
@@ -322,7 +290,7 @@ namespace EzUI {
 		case WM_KEYDOWN:
 		{
 			if (wParam == VK_F11) {
-				_winData.Debug = !_winData.Debug;
+				PublicData.Debug = !PublicData.Debug;
 				MainLayout->Invalidate();
 			}
 			OnKeyDown(wParam);
@@ -344,6 +312,8 @@ namespace EzUI {
 			if (_mouseIn == false) {
 				_mouseIn = true;
 			}
+			//给hwndTip发送消息告诉现在移动到什么位置了
+			SendMessage(_hWndTip, TTM_TRACKPOSITION, 0, lParam);
 			break;
 		}
 		case WM_LBUTTONDOWN:
@@ -408,6 +378,7 @@ namespace EzUI {
 		Painter pt(memBitmap.GetDC());
 		PaintEventArgs args(pt);
 		args.DC = memBitmap.GetDC();
+		args.OWnerData = &_winData;
 		args.InvalidRectangle = rePaintRect;
 		args.HWnd = _hWnd;
 		MainLayout->Rending(args);//
@@ -422,11 +393,12 @@ namespace EzUI {
 		Painter pt(winHDC, GetClientRect().Width, GetClientRect().Height);
 		PaintEventArgs args(pt);
 		args.DC = winHDC;
+		args.PublicData = &PublicData;
 		args.InvalidRectangle = rePaintRect;
 		args.HWnd = _hWnd;
 		MainLayout->Rending(args);//
 #ifdef DEBUGPAINT
-		if (_winData.Debug) {
+		if (PublicData.Debug) {
 			pt.DrawRectangle(rePaintRect, Color::Red);
 		}
 #endif
@@ -439,6 +411,95 @@ namespace EzUI {
 		OutputDebugStringA(buf);
 #endif // COUNT_ONPAINT
 
+	}
+
+	void Window::InitData(const DWORD& ExStyle)
+	{
+		PublicData.HANDLE = _hWnd;
+		PublicData.Window = this;
+
+		if ((ExStyle & WS_EX_LAYERED) != WS_EX_LAYERED) {
+			PublicData.InvalidateRect = [=](void* _rect)->void {
+				RECT r = ((Rect*)_rect)->WinRECT();
+				::InvalidateRect(_hWnd, &r, FALSE);
+			};
+			PublicData.UpdateWindow = [=]()->void {
+				::UpdateWindow(_hWnd);
+			};
+		}
+
+		PublicData.RemoveControl = [=](Control* delControl)->void {
+			/*	char buf[100]{ 0 };
+				sprintf_s(buf, "RemoveControl %p\n", delControl);
+				OutputDebugStringA(buf);*/
+			if (_focusControl == delControl) {
+				_focusControl->Trigger(Event::OnMouseLeave);
+				_focusControl = NULL;
+				return;
+			}
+			if (_inputControl == delControl) {
+				_inputControl->OnKillFocus();
+				_inputControl = NULL;
+				return;
+			}
+		};
+
+		PublicData.Notify = [=](UINT uMsg, WPARAM wParam, LPARAM lParam)->bool {
+			if (uMsg >= (WM_USER + 0x04) && uMsg <= (WM_USER + 0x0c)) { //
+				MouseEventArgs* args = (MouseEventArgs*)lParam;
+				return OnNotify((Control*)(wParam), *args);
+			}
+			return FALSE;
+		};
+		PublicData.SetTips = [=](Control* ctl, const std::wstring& text)->void {
+			TOOLINFO	tti{ 0 };
+			tti.cbSize = sizeof(TOOLINFO);
+			tti.uFlags = TTF_SUBCLASS;
+			tti.hwnd = _hWnd;
+			tti.rect = ctl->ClipRect.WinRECT();
+			tti.uId = (UINT_PTR)ctl;
+			tti.lpszText = (LPWSTR)text.c_str();
+			//添加一个tips信息
+			SendMessage(_hWndTip, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
+		};
+		PublicData.DelTips = [=](Control* ctl)->void {
+			TOOLINFO	tti{ 0 };
+			tti.cbSize = sizeof(TOOLINFO);
+			tti.hwnd = _hWnd;
+			tti.uId = (UINT_PTR)ctl;
+			//移除
+			SendMessage(_hWndTip, TTM_DELTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
+		};
+
+		PublicData.GetCursor = [=]()->Cursor {
+			return (Cursor)::GetClassLongPtr(_hWnd, GCL_HCURSOR);//获取鼠标状态
+		};
+
+		PublicData.SetCursor = [=](Cursor cursor)->void {
+			if (((ULONG)Cursor::ALL & (ULONG)cursor) == (ULONG)cursor) {//判断在不在预设中
+				::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)::LoadCursor(NULL, (LPTSTR)(cursor)));//设置鼠标样式
+			}
+			else {
+				::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)cursor);//
+			}
+		};
+
+		//创建冒泡提示窗口
+		_hWndTip = CreateWindowEx(WS_EX_TOPMOST,
+			TOOLTIPS_CLASS,
+			NULL,
+			WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
+			CW_USEDEFAULT,
+			CW_USEDEFAULT,
+			CW_USEDEFAULT,
+			CW_USEDEFAULT,
+			_hWnd,
+			NULL,
+			::GetModuleHandle(NULL),
+			NULL
+		);
+
+		UI_SetUserData(_hWnd, &PublicData);
 	}
 
 	bool Window::IsInWindow(Control& pControl, Control& it) {
@@ -560,7 +621,7 @@ namespace EzUI {
 			args.Location = point;
 			args.EventType = Event::OnMouseWheel;
 			scrollBar->Trigger(args);
-			_winData.UpdateWindow();
+			PublicData.UpdateWindow();
 			POINT p1{ 0 };
 			::GetCursorPos(&p1);
 			::ScreenToClient(_hWnd, &p1);

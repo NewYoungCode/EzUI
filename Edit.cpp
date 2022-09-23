@@ -18,10 +18,10 @@ namespace EzUI {
 		if (_focus) {
 			::DestroyCaret();
 			int careHeight = _rect.Height * 0.6;//光标高度
-			::CreateCaret(_hWnd, NULL, 1, careHeight);
+			//::CreateCaret(_hWnd, NULL, 1, careHeight);
 			auto&& clientRect = GetClientRect();
 			::SetCaretPos(clientRect.X + X, clientRect.Y + (Height() - careHeight) / 2);
-			::ShowCaret(_hWnd);
+			//::ShowCaret(_hWnd);
 		}
 	}
 	void Edit::Analysis()

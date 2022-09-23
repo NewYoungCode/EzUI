@@ -409,10 +409,14 @@ Event(this , ##__VA_ARGS__); \
 			Invalidate();
 		}
 	}
+	void Control::SetTips(const EString& text)
+	{
+		_tipsText = text.utf16();
+	}
 	//专门处理鼠标消息的
 	void Control::OnMouseEvent(const MouseEventArgs& _args) {
-		if (_hWnd == NULL) return;
-		WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
+		if (PublicData == NULL) return;
+		WindowData* winData = PublicData;
 		MouseEventArgs& args = (MouseEventArgs&)_args;
 		if (CheckEventPassThrough(args.EventType)) {//检查鼠标穿透
 			this->Parent->OnMouseEvent(args);//如果设置了穿透就直接发送给上一层控件
@@ -434,6 +438,9 @@ Event(this , ##__VA_ARGS__); \
 		case Event::OnMouseEnter: {
 			if (!winData->Notify(WM_USER + 0x06, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
 				OnMouseEnter(args.Location);
+				if (!_tipsText.empty()) {
+					winData->SetTips(this, _tipsText);
+				}
 			}
 			break;
 		}
@@ -486,31 +493,20 @@ Event(this , ##__VA_ARGS__); \
 
 	}
 	void Control::Rending(PaintEventArgs& args) {
-		this->_hWnd = args.HWnd;
-		if (!_load) {
-			OnLoad();
-			_load = true;
-		}
+		this->PublicData = args.PublicData;
 		if (!Visible) { return; }//如果控件设置为不可见直接不绘制
 		auto clientRect = this->GetClientRect();//获取基于父窗口的最表
 		if (clientRect.IsEmptyArea()) { return; }
 		auto& invalidRect = args.InvalidRectangle;
 		auto& pt = args.Painter;
-
 		Rect _ClipRect = clientRect;
-		////和重绘区域进行裁剪 已弃用
-		//if (!Rect::Intersect(_ClipRect, _ClipRect, invalidRect)) {
-		//	return;
-		//}
-		//if (Parent) {
-		//	//自身和父控件对比较裁剪区域
-		//	if (!Rect::Intersect(_ClipRect, _ClipRect, Parent->GetClientRect())) {
-		//		return;
-		//	}
-		//}
 		this->ComputeClipRect();//重新计算基于父亲的裁剪区域
 		if (!Rect::Intersect(_ClipRect, this->ClipRect, invalidRect)) {//和重绘区域进行裁剪
 			return;
+		}
+		if (!_load) {
+			OnLoad();
+			_load = true;
 		}
 		this->_lastDrawRect = _ClipRect;//记录最后一次绘制的区域
 		//设置绘制偏移
@@ -565,7 +561,7 @@ Event(this , ##__VA_ARGS__); \
 		//绘制滚动条
 		EzUI::ScrollBar* scrollbar = NULL;
 		if (scrollbar = this->ScrollBar) {
-			scrollbar->_hWnd = args.HWnd;
+			scrollbar->PublicData = args.PublicData;
 			Rect barRect = scrollbar->GetClientRect();
 			pt.OffsetX = barRect.X; //设置偏移
 			pt.OffsetY = barRect.Y;//设置偏移
@@ -606,8 +602,7 @@ Event(this , ##__VA_ARGS__); \
 #endif
 
 #ifdef DEBUGPAINT
-		WindowData* wndData = (WindowData*)UI_GetUserData(_hWnd);
-		if (wndData->Debug) {
+		if (PublicData->Debug) {
 			pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, Color::White);
 		}
 #endif
@@ -615,9 +610,11 @@ Event(this , ##__VA_ARGS__); \
 
 	Control::~Control()
 	{
-		//if (Parent) {
-		//	Parent->RemoveControl(this);
-		//}
+#ifdef _DEBUG
+		//销毁控件前请先将控件从父容器中移除
+		bool Please_remove_the_control_from_the_container_first = Parent;
+		ASSERT(!Please_remove_the_control_from_the_container_first);
+#endif
 		if (this->ScrollBar) {
 			delete ScrollBar;
 		}
@@ -651,7 +648,7 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::AddControl(Control* ctl) {
 		_controls.push_back(ctl);
-		ctl->_hWnd = this->_hWnd;
+		ctl->PublicData = this->PublicData;
 		ctl->Parent = this;
 		Size sz{ _rect.Width,_rect.Height };
 		//新添加的控件必须先触发 自身布局特性
@@ -666,11 +663,7 @@ Event(this , ##__VA_ARGS__); \
 		ControlIterator nextIt;
 		ControlIterator it1 = ::std::find(_controls.begin(), _controls.end(), ctl);
 		if (it1 != _controls.end()) {
-			if (::IsWindow(_hWnd)) { //移除控件之前先通知父窗口
-				::SendMessage(_hWnd, UI_CONTROL_DELETE, (WPARAM)ctl, NULL);
-			}
-			ctl->_hWnd = NULL;
-			ctl->Parent = NULL;
+			ctl->OnRemove();
 			nextIt = _controls.erase(it1);
 			ControlIterator it2 = ::std::find(VisibleControls.begin(), VisibleControls.end(), ctl);
 			if (it2 != VisibleControls.end()) {
@@ -678,6 +671,18 @@ Event(this , ##__VA_ARGS__); \
 			}
 		}
 		return nextIt;
+	}
+	void Control::OnRemove()
+	{
+		if (PublicData) {
+			PublicData->DelTips(this);//移除tips文字绑定
+			PublicData->RemoveControl(this);
+			PublicData = NULL;
+		}
+		for (auto& it : _controls) {
+			it->OnRemove();
+		}
+		Parent = NULL;
 	}
 	Control* Control::FindControl(const EString& objectName)
 	{
@@ -711,15 +716,8 @@ Event(this , ##__VA_ARGS__); \
 	}
 
 	bool Control::Invalidate() {
-		if (_hWnd || ::IsWindow(_hWnd)) {
-			/*if (Parent) {
-				ILayout* l = dynamic_cast<ILayout*>(Parent);
-				if (l) {
-					l->ResumeLayout();
-					return Parent->Invalidate();
-				}
-			}*/
-			WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
+		if (PublicData) {
+			WindowData* winData = PublicData;
 			if (winData) {
 				Rect _InvalidateRect;
 				Rect::Union(_InvalidateRect, _lastDrawRect, GetClientRect());
@@ -731,8 +729,7 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::Refresh() {
 		if (Invalidate()) {
-			WindowData* winData = (WindowData*)UI_GetUserData(_hWnd);
-			winData->UpdateWindow();//立即更新全部无效区域
+			PublicData->UpdateWindow();//立即更新全部无效区域
 		}
 	}
 	void Control::ComputeClipRect()
@@ -762,12 +759,8 @@ Event(this , ##__VA_ARGS__); \
 		Controls temp = _controls;
 		for (auto i = temp.begin(); i != temp.end(); i++)
 		{
-			if (::IsWindow(_hWnd)) { //移除控件之前先通知父窗口
-				//Debug::Log("WM_CONTROL_DELETE %p", *i);
-				::SendMessage(_hWnd, UI_CONTROL_DELETE, (WPARAM)*i, NULL);
-			}
-
-			if (freeControls && !dynamic_cast<Spacer*>(*i)) {//弹簧不能删除 弹簧必须使用DestroySpacers()函数删除
+			(*i)->OnRemove();
+			if (freeControls && !(dynamic_cast<Spacer*>(*i))) {//弹簧不能删除 弹簧必须使用DestroySpacers()函数删除
 				delete* i;
 			}
 		}
@@ -813,8 +806,8 @@ Event(this , ##__VA_ARGS__); \
 			}
 		}
 		if (Cursor != Cursor::None) {//鼠标移入的时候判断是否有设置状态
-			_LastCursor = (LPTSTR)::GetClassLongPtr(_hWnd, GCL_HCURSOR);//记录之前的状态
-			::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)::LoadCursor(NULL, (LPTSTR)Cursor));//设置状态
+			_LastCursor = PublicData->GetCursor();//记录之前的状态
+			PublicData->SetCursor(Cursor);//设置状态
 		}
 		UI_TRIGGER(MouseEnter, point);
 	}
@@ -864,9 +857,9 @@ Event(this , ##__VA_ARGS__); \
 		else {
 			this->State = ControlState::None;//鼠标离开无论如何都要重置状态
 		}
-		if (_LastCursor) {//如果此控件已经设置过鼠标指针样式 则 鼠标移出 的时候需要恢复成之前的状态
-			::SetClassLongPtrW(_hWnd, GCL_HCURSOR, (UINT_PTR)_LastCursor.value);
-			_LastCursor = NULL;
+		if (_LastCursor != Cursor::None) {//如果此控件已经设置过鼠标指针样式 则 鼠标移出 的时候需要恢复成之前的状态
+			PublicData->SetCursor(_LastCursor);
+			_LastCursor = Cursor::None;
 		}
 		UI_TRIGGER(MouseLeave);
 	}
@@ -879,5 +872,6 @@ Event(this , ##__VA_ARGS__); \
 	void Control::OnKillFocus()
 	{
 	}
+
 
 };

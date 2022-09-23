@@ -27,10 +27,10 @@ namespace EzUI {
 	{
 		_boxShadow = new ShadowWindow(cx, cy, _hWnd);
 		UpdateShadow();
-		_winData.InvalidateRect = [=](void* _rect) ->void {
+		PublicData.InvalidateRect = [=](void* _rect) ->void {
 			this->InvalidateRect(*(Rect*)_rect);
 		};
-		_winData.UpdateWindow = [=]()->void {
+		PublicData.UpdateWindow = [=]()->void {
 			if (!_InvalidateRect.IsEmptyArea()) {
 				::SendMessage(_hWnd, UI_PAINT, NULL, NULL);
 			}

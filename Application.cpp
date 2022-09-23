@@ -11,6 +11,12 @@ namespace EzUI {
 	}
 
 	Application::Application() {
+		//确保加载公共控件 DLL （Comctl32.dll），并从 DLL 注册特定的公共控件类
+		INITCOMMONCONTROLSEX iccex;
+		iccex.dwSize = sizeof(INITCOMMONCONTROLSEX);
+		iccex.dwICC = ICC_WIN95_CLASSES;
+		::InitCommonControlsEx(&iccex);
+
 		//设计窗口
 		::HINSTANCE hInstance = GetModuleHandle(NULL);
 		::WNDCLASS     wc;

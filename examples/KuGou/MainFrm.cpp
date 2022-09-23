@@ -11,7 +11,6 @@ void MainFrm::InitForm() {
 
 	//this is test
 	FindControl("lrcView2")->AddControl(&lrcCtl);//Ìí¼Ó¸è´Ê¿Ø¼ş
-	lrcCtl._hWnd = _hWnd;
 
 	localList = (VList*)this->FindControl("playList");
 	searchList = (VList*)this->FindControl("searchList");
@@ -41,6 +40,8 @@ void MainFrm::InitForm() {
 		SongItem* it = new SongItem(name, toTimeStr(dur));
 		it->SetAttribute("FileHash", _it);
 		it->SetAttribute("SingerName", singer);
+
+		it->SetTips(name);
 		localList->AddControl(it);
 	}
 
@@ -240,6 +241,12 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 		}
 	}
 	if (args.EventType == Event::OnMouseClick) {
+		if (sender->Name == "del") {
+			searchList->RemoveControl(sender->Parent);
+			delete sender->Parent;
+			return false;
+		}
+
 		if (sender->GetAttribute("tablayout") == "rightView") {
 			$(sender->Parent->GetControls()).Not(sender).Css("border-bottom:0").Refresh();
 			$(sender).Css("border-bottom:3;border-color:rgb(55,174,254)").Refresh();
@@ -278,7 +285,7 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 			((Label*)FindControl("songName"))->SetText(json["songname"].asString());
 			((Label*)FindControl("songName"))->Invalidate();
 
-			player.SetDuration(json["timelength"].asInt()/1000);
+			player.SetDuration(json["timelength"].asInt() / 1000);
 			timer->Start();
 		}
 		if (sender == playerBar) {

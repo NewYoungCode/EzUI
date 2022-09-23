@@ -13,6 +13,11 @@ namespace EzUI {
 	using PointF = RenderType::PointF;
 	using ARGB = RenderType::ARGB;
 
+	class Control;
+	class Spacer;
+	class ScrollBar;
+	enum class Cursor :ULONG_PTR;
+
 	struct UI_EXPORT Rect :public RenderType::Rect {
 	private:
 		void StringToRect(const EString& str);
@@ -74,7 +79,7 @@ namespace EzUI {
 			this->value = value;
 			valid = true;
 		}
-		operator T& () {
+		operator T () {
 			return value;
 		}
 		T& operator->() {
@@ -100,13 +105,19 @@ namespace EzUI {
 	};
 
 	struct WindowData {
-		void* Window = NULL;
+		void* Window = NULL;//窗口类实例
 		void* HoverStyles = NULL;
-		void* ActiveStyles = NULL;
-		bool Debug = false;
-		UIFunc<void(void*)> InvalidateRect = NULL;
-		UIFunc<void()> UpdateWindow = NULL;
-		UIFunc<bool(UINT, WPARAM, LPARAM)> Notify = NULL;
+		void* ActiveStyles = NULL;//
+		bool Debug = false;//是否开启debug模式
+		HWND HANDLE = NULL;//窗口句柄
+		UIFunc<void(void*)> InvalidateRect = NULL;//使一个区域无效
+		UIFunc<void()> UpdateWindow = NULL;//立即更新全部无效区域
+		UIFunc<bool(UINT, WPARAM, LPARAM)> Notify = NULL;//
+		UIFunc<void(Control*, const std::wstring&)> SetTips = NULL;//设置悬浮提示文字
+		UIFunc<void(Control*)> DelTips = NULL;//移除悬浮提示文字
+		UIFunc<Cursor()> GetCursor = NULL;//获取鼠标样式
+		UIFunc<void(Cursor)> SetCursor = NULL;//设置鼠标样式
+		UIFunc<void(Control*)> RemoveControl = NULL;//清空控件标记等等...
 	};
 	struct StopWatch {
 	private:
@@ -212,7 +223,8 @@ namespace EzUI {
 		SIZENWSE = (ULONG_PTR)IDC_SIZENWSE,// 双箭头指向西北和东南
 		SIZEWE = (ULONG_PTR)IDC_SIZEWE,// 双箭头指向东西
 		UPARROW = (ULONG_PTR)IDC_UPARROW,// 垂直箭头
-		WAIT = (ULONG_PTR)IDC_WAIT// 沙漏，Windows7下会显示为选择的圆圈表示等待
+		WAIT = (ULONG_PTR)IDC_WAIT,// 沙漏，Windows7下会显示为选择的圆圈表示等待
+		ALL = APPSTARTING | ARROW | CROSS | HAND | HELP | IBEAM | ICON | NO | SIZE | SIZEALL | SIZENESW | SIZENS | SIZENWSE | SIZEWE | UPARROW | WAIT
 	};
 	// 摘要: 
 	//基础事件
@@ -249,6 +261,7 @@ namespace EzUI {
 	// 为 OnPaint 事件提供数据。
 	using __Painter = Painter;
 	struct PaintEventArgs {
+		WindowData* PublicData = NULL;
 		HDC DC = NULL;
 		Painter& Painter;//画家
 		Rect InvalidRectangle;//WM_PAINT里面的无效区域
@@ -258,9 +271,7 @@ namespace EzUI {
 		virtual ~PaintEventArgs() {}
 	};
 
-	class Control;
-	class Spacer;
-	class ScrollBar;
+
 	typedef Tuple<float> UI_Float;
 	typedef Tuple<int> UI_Int;
 	typedef Tuple<size_t> UI_UInt;//
@@ -337,11 +348,9 @@ namespace EzUI {
 		bool _load = false;
 		bool _mouseIn = false;
 		bool _mouseDown = false;//鼠标是否已经按下
-		bool _hasTimer = false;
 		Attributes _attrs;
 	public:
 		UINT_PTR Tag = NULL;
-		HWND _hWnd = NULL;//if son is control,the hwnd is parent window handle
 	public:
 		IControl();
 		virtual ~IControl();
@@ -361,8 +370,6 @@ namespace EzUI {
 		virtual void SetStyleSheet(const EString& styleStr);//设置style
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//设置属性
 		virtual EString GetAttribute(const EString& attrName);//获取属性
-		virtual UINT_PTR SetTimer(size_t interval);
-		virtual void KillTimer();
 	};
 
 };

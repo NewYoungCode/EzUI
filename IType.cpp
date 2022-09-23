@@ -219,15 +219,10 @@ namespace EzUI {
 
 	IControl::IControl() {}
 	IControl::~IControl() {
-		if (_hasTimer) {
-			KillTimer();
-		}
+		
 	}
 	void IControl::OnTimer() {}
-	void IControl::KillTimer() {
-		::KillTimer(_hWnd, (UINT_PTR)this);
-		_hasTimer = false;
-	}
+	
 	void IControl::SetStyleSheet(const EString& styleStr)
 	{
 
@@ -248,12 +243,5 @@ namespace EzUI {
 		}
 		return "";
 	}
-	UINT_PTR IControl::SetTimer(size_t interval)
-	{
-		if (_hasTimer) {
-			return (UINT_PTR)this;
-		}
-		_hasTimer = true;
-		return ::SetTimer(_hWnd, (UINT_PTR)this, interval, NULL);
-	}
+	
 };

@@ -36,7 +36,7 @@
 #endif
 
 #ifndef GCL_HCURSOR
-#define GCL_HCURSOR -12
+#define GCLP_HCURSOR -12
 #endif
 
 #ifdef _WIN64
@@ -64,9 +64,7 @@
 
 #define UI_CLASSNAME TEXT("EzUI_Win32")
 #define UI_NotifyIcon_CLASSNAME TEXT("EzUI_NotifyIcon_Class")
-
 #define UI_NOTIFYICON WM_USER+0x01 //
-#define UI_CONTROL_DELETE WM_USER+0x02 //
 #define UI_PAINT WM_USER+0x03 //
 
 #define WM_UIMESSAGE  WM_USER+20   

@@ -10,8 +10,6 @@ namespace EzUI {
 	{
 
 	}
-
-
 	void Label::OnForePaint(PaintEventArgs& args)
 	{
 		__super::OnForePaint(args);
