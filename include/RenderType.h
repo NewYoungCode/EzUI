@@ -1085,6 +1085,17 @@ namespace EzUI {
 		//     内容在垂直方向上底边对齐，在水平方向上右边对齐。
 		BottomRight = Align_Bottom | Align_Right
 	};
+
+	enum class FontStyle :int {
+		NORMAL=0
+		/*DWRITE_FONT_STYLE_NORMAL
+		字体样式 ：正常。
+		DWRITE_FONT_STYLE_OBLIQUE
+		字体样式 ：倾斜。
+		DWRITE_FONT_STYLE_ITALIC
+		字体样式 ：斜体。*/
+	};
+
 	class  IImage {
 	public:
 		Margin Margin;// 控件与图片的距离 该数值越大 图片将越小

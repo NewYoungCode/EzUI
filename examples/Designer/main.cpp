@@ -13,6 +13,7 @@
 #include "TileList.h"
 
 #include "VList.h"
+#include "HLayout.h"
 
 #include <Windows.h>
 using namespace EzUI;
@@ -23,15 +24,17 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	Application app;
 
 	EzUI::Window frm(800, 600);
-	Layout layout;
+	HLayout layout;
 	layout.Style.BackgroundColor = Color::White;
 
 	Control c;
 	c.SetRect({ 100,-100,400,200 });
-	c.Style.BackgroundColor = Color(255, 200, 0, 255);
+	c.Style.BackgroundColor = Color(100, 200, 0, 255);
 
-	Control c1;
+	Label c1;
 	c1.Style.Radius = 200;
+
+	c1.SetText("hello世界!撒大苏打撒旦sadasdasdas撒大苏打呱呱呱呱呱呱韩国飒飒撒旦哈哈哈哈哈哈66");
 	c1.SetRect({ 100,200,400,200 });
 	c1.Style.BackgroundColor = Color(255, 200, 250, 0);
 

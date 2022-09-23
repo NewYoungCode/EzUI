@@ -380,7 +380,6 @@ namespace EzUI {
 		args.DC = memBitmap.GetDC();
 		args.PublicData = &PublicData;
 		args.InvalidRectangle = rePaintRect;
-		args.HWnd = _hWnd;
 		MainLayout->Rending(args);//
 #ifdef DEBUGPAINT
 		if (_winData.Debug) {
@@ -395,7 +394,6 @@ namespace EzUI {
 		args.DC = winHDC;
 		args.PublicData = &PublicData;
 		args.InvalidRectangle = rePaintRect;
-		args.HWnd = _hWnd;
 		MainLayout->Rending(args);//
 #ifdef DEBUGPAINT
 		if (PublicData.Debug) {

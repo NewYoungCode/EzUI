@@ -32,6 +32,9 @@ namespace EzUI {
 				value->Release();
 			}
 		}
+		T* operator->() {
+			return value;
+		}
 	};
 
 	void RenderInitialize()
@@ -238,13 +241,18 @@ namespace EzUI {
 			d2dRender->FillRectangle(ToRectF(rect), sb);
 		}
 	}
-	void Direct2DRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& _rect, EzUI::TextAlign textAlign, bool underLine)
-	{
-		__Rect rect = _rect;
-		rect.X += OffsetX;
-		rect.Y += OffsetY;
 
-		IDWriteTextFormat* format = CreateSafeTextFormat(fontFamily, fontSize);
+	IDWriteTextLayout* Direct2DRender::CreateTextLayout(const std::wstring& text, __SizeF maxSize, IDWriteTextFormat* pTextFormat) {
+		D2D1_SIZE_F size;
+		// 使用IDWriteTextLayout获取文本大小
+		HRESULT hr = S_OK;
+		IDWriteTextLayout* pTextLayout = NULL;
+		// 创建文本布局 
+		hr = g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), pTextFormat, maxSize.Width, maxSize.Height, &pTextLayout);
+		return pTextLayout;
+	}
+
+	void Direct2DRender::SetTextAlign(IDWriteTextFormat* format, EzUI::TextAlign textAlign) {
 
 #define __Top DWRITE_PARAGRAPH_ALIGNMENT_NEAR
 #define	__Bottom DWRITE_PARAGRAPH_ALIGNMENT_FAR
@@ -301,10 +309,29 @@ namespace EzUI {
 				break;
 			}
 		} while (0);
+	}
+	void Direct2DRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& _rect, EzUI::TextAlign textAlign, bool underLine)
+	{
+		__Rect rect = _rect;
+		rect.X += OffsetX;
+		rect.Y += OffsetY;
+
+		IDWriteTextFormat* format = CreateSafeTextFormat(fontFamily, fontSize);
+		this->SetTextAlign(format, textAlign);
 
 		DxSafeObject<ID2D1Brush> sb(CreateSolidBrush(color));
-		d2dRender->DrawTextW(text.c_str(), text.size(), format, ToRectF(rect), sb);
+		//d2dRender->DrawTextW(text.c_str(), text.size(), format, ToRectF(rect), sb);
+		DxSafeObject<IDWriteTextLayout> textLayout(CreateTextLayout(text, __SizeF((float)rect.Width, (float)rect.Height), format));
+		// 获取文本尺寸  
+	/*	DWRITE_TEXT_METRICS textMetrics;
+		textLayout->GetMetrics(&textMetrics);
+		D2D1_SIZE_F size = D2D1::SizeF(ceil(textMetrics.widthIncludingTrailingWhitespace), ceil(textMetrics.height));
+		textLayout->SetUnderline(TRUE, { 0,text.size() });*/
+		d2dRender->DrawTextLayout(D2D1_POINT_2F{ rect.X + 0.0f,rect.Y + 0.0f }, textLayout, sb);
+		//DrawRectangle(__Rect{ (int)(textMetrics.left + 0.5),(int)(textMetrics.top + 0.5)  ,(INT)size.width, (INT)size.height}, __Color::Red);
 	}
+
+
 	void Direct2DRender::MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, __RectF& outBox)
 	{
 

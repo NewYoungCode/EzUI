@@ -165,6 +165,8 @@ namespace EzUI {
 		// ID2D1Brush* CreateSafeSolidBrush(const __Color& color);
 		ID2D1Brush* Direct2DRender::CreateSolidBrush(const __Color& _color);
 		IDWriteTextFormat* CreateSafeTextFormat(const std::wstring& fontFamily, int fontSize);
+		IDWriteTextLayout* CreateTextLayout(const std::wstring& text, __SizeF maxSize, IDWriteTextFormat* pTextFormat);
+		void SetTextAlign(IDWriteTextFormat* format, EzUI::TextAlign textAlign);
 		void BeginDraw();
 		void EndDraw();
 	};

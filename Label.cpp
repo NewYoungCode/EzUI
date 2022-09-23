@@ -13,7 +13,7 @@ namespace EzUI {
 	void Label::OnForePaint(PaintEventArgs& args)
 	{
 		__super::OnForePaint(args);
-		if (!_text.empty()) {
+		if (!_wstr.empty()) {
 			//args.Painter.MeasureString(_text, GetFontFamily(this->State), GetFontSize(this->State), fontBox);
 			args.Painter.DrawString(_wstr, GetFontFamily(this->State).utf16(), GetFontSize(this->State), GetForeColor(this->State), Rect(0, 0, (float)_rect.Width, (float)_rect.Height), TextAlign, _underline);
 		}

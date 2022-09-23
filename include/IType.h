@@ -82,7 +82,7 @@ namespace EzUI {
 		operator T () {
 			return value;
 		}
-		T& operator->() {
+		T* operator->() {
 			return value;
 		}
 	};
@@ -265,8 +265,6 @@ namespace EzUI {
 		HDC DC = NULL;
 		Painter& Painter;//画家
 		Rect InvalidRectangle;//WM_PAINT里面的无效区域
-		Rect ClipRect;//上一个可见裁剪区域
-		HWND HWnd;//父窗口句柄
 		PaintEventArgs(__Painter& painter) :Painter(painter) {}
 		virtual ~PaintEventArgs() {}
 	};
