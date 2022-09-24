@@ -11,7 +11,7 @@ public:
 HWND _workerw = nullptr;
 
 inline BOOL CALLBACK EnumWindowsProc(_In_ HWND tophandle, _In_ LPARAM topparamhandle)
-{
+{ 
 	HWND defview = FindWindowEx(tophandle, 0, L"SHELLDLL_DefView", nullptr);
 	if (defview != nullptr)
 	{
