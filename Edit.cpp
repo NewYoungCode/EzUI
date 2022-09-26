@@ -1,102 +1,140 @@
 #include "Edit.h"
-
+//#include "EzUI.h"
 namespace EzUI {
+	Point HitTestPoint(const Point& pt, IDWriteTextLayout* textLayout) {
+		DWRITE_HIT_TEST_METRICS hitTestMetrics;
+		BOOL isTrailingHit;
+		BOOL isInside;
+		{
+			FLOAT x = (FLOAT)pt.X, y = (FLOAT)pt.Y;
+			textLayout->HitTestPoint(
+				(FLOAT)x,
+				(FLOAT)y,
+				&isTrailingHit,
+				&isInside,
+				&hitTestMetrics
+			);
+		}
+		////绘制光标
+		int posX = (int)(hitTestMetrics.left + 0.5);
+		if (isTrailingHit) {//判断前侧还是尾侧
+			posX += (int)(hitTestMetrics.width + 0.5);
+		}
+		return Point{ posX,(int)(hitTestMetrics.top + 0.5) };
+	}
+	/*Edit::~Edit() {
+		if (textFormat) delete textFormat;
+		if (textLayout) delete textLayout;
+	}*/
 	void Edit::OnChar(WPARAM wParam, LPARAM lParam)
 	{
 		if (wParam == VK_BACK) { //退格键
 			if (buf.size() > 0) {
 				buf.erase(buf.size() - 1, 1);
+				Analysis();
 				Invalidate();
 			}
 		}
 		if (wParam < 32)return;//控制字符
 		WCHAR&& _char = (WCHAR)wParam;
 		buf += _char;
+		Analysis();
 		Invalidate();
-	}
-	void Edit::MoveCaret(int X) {
-		if (_focus) {
-			::DestroyCaret();
-			int careHeight = _rect.Height * 0.6;//光标高度
-			//::CreateCaret(_hWnd, NULL, 1, careHeight);
-			auto&& clientRect = GetClientRect();
-			::SetCaretPos(clientRect.X + X, clientRect.Y + (Height() - careHeight) / 2);
-			//::ShowCaret(_hWnd);
-		}
-	}
-	void Edit::Analysis()
-	{
-		//if (_Analysis) {
-		//	ScriptStringFree(&_Analysis);
-		//}
-		//SCRIPT_STATE ScriptState;
-		//SCRIPT_CONTROL ScriptControl;
-		//ZeroMemory(&ScriptState, sizeof(ScriptState));
-		//ZeroMemory(&ScriptControl, sizeof(ScriptControl));
-		//ScriptApplyDigitSubstitution(NULL, &ScriptControl, &ScriptState);
-		//HRESULT hr = ScriptStringAnalyse(e.Painter.DC,
-		//	buf.c_str(),
-		//	buf.length() + 1,
-		//	buf.length() * 3 / 2 + 16,
-		//	-1,
-		//	SSA_BREAK | SSA_GLYPHS | SSA_FALLBACK | SSA_LINK,
-		//	0,
-		//	&ScriptControl,
-		//	&ScriptState,
-		//	NULL,
-		//	NULL,
-		//	NULL,
-		//	&_Analysis);
-		//
-		//int pX = 0;
-		//ScriptStringCPtoX(_Analysis,
-		//	m_nCaret,		//字符在字符串中的位置
-		//	false,				//false表示字符前端 true表示后端
-		//	&pX);
 	}
 	void Edit::OnKeyDown(WPARAM wParam)
 	{
 		__super::OnKeyDown(wParam);
 		//Debug::Log(utf8("按下了%d"), wParam);
 	}
+	void Edit::Analysis()
+	{
+		selectRect = Rect();
+		careRect = Rect();
+		if (buf.empty() || GetRect().IsEmptyArea()) return;
+		if (textFormat) delete textFormat;
+		textFormat = new DxTextFormat(GetFontFamily().utf16(), GetFontSize(), TextAlign::MiddleLeft);
+		if (textLayout) delete textLayout;
+		textLayout = new DxTextLayout(buf, { 16777216, Height() }, textFormat->value);
+		FontHeight = textLayout->GetFontSize().Height;
+	}
 	void Edit::OnMouseDown(MouseButton mbtn, const Point& point) {
 		__super::OnMouseDown(mbtn, point);
-		_focus = true;
 		if (mbtn == MouseButton::Left) {
+			_focus = true;
 			Point pointF{ point.X,point.Y };
+			point_Start = pointF;
+
+			if (textLayout) {
+				selectRect = Rect();
+
+				Point a = HitTestPoint(point_Start, textLayout->value);
+				careRect.X = a.X;
+				careRect.Y = a.Y;
+				careRect.Width = 1;
+				careRect.Height = FontHeight;
+			}
+			Invalidate();
 		}
+	}
+	void Edit::OnMouseMove(const Point& point)
+	{
+		if (_focus) {
+			point_End = point;
+			//Debug::Log("%d %d", point_End.X, point_End.Y);
+			if (textLayout) {
+				selectRect = Rect();
+				
+				Point a = HitTestPoint(point_Start, textLayout->value);
+				Point b = HitTestPoint(point_End, textLayout->value);
+				Rect& rect = selectRect;
+				rect.X = a.X;
+				rect.Y = a.Y;
+				rect.Height = FontHeight;
+				rect.Width = b.X - a.X;
+				if (rect.Width < 0) {
+					rect.X = b.X;
+					rect.Y = b.Y;
+					rect.Width = -rect.Width;
+				}
+				Invalidate();
+			}
+		}
+	}
+	void Edit::OnMouseUp(MouseButton mbtn, const Point& point)
+	{
+		_focus = false;
+		Invalidate();
+		this;
 	}
 	void Edit::OnKillFocus()
 	{
 		__super::OnKillFocus();
 		_focus = false;
-		::DestroyCaret();
-	}
-	void Edit::SetText(const EString& text)
-	{
-		buf = text.utf16();
 	}
 	EString Edit::GetText()
 	{
 		return EString(buf);
 	}
-	void Edit::OnBackgroundPaint(PaintEventArgs& e) {
-		__super::OnBackgroundPaint(e);
-		int radius = GetRadius() / 2;
-		int x = radius, width = Width() - radius * 2;
-		if (buf.empty()) {
-			MoveCaret(x);
-			return;
+	void Edit::SetText(const EString& text)
+	{
+		buf = text.utf16();
+		Analysis();
+	}
+	void Edit::OnSize(const Size& sz) {
+		__super::OnSize(sz);
+		Analysis();
+	}
+
+	void Edit::OnForePaint(PaintEventArgs& e) {
+		if (textLayout) {
+			e.Painter.DrawTextLayout({ 0,0 }, textLayout->value, GetForeColor());
 		}
-		//{
-		//	Rect rect(x, 0, width, Height()); //文字可绘制范围内
-		//	e.Painter.DrawRectangle(Color(100, 200, 200, 200), rect);
-		//}
-		e.Painter.DrawString(EString(buf).utf16(), GetFontFamily().utf16(), GetFontSize(), GetForeColor(), Rect(x, 0, width, Height()), TextAlign::MiddleLeft);
-		//RectF box;
-		//e.Painter.MeasureString(EString(buf), GetFontFamily(), GetFontSize(), box);
-		/*RectF box2;
-		e.Painter.MeasureString(EString(buf), GetFontFamily(), GetFontSize(), GetForeColor(), RectF(x, 0, width, Height()), TextAlign::MiddleCenter, box2);*/
-		//MoveCaret(box.Width + x);
+		if (!selectRect.IsEmptyArea()) {
+			e.Painter.FillRectangle(selectRect, Color(100, 255, 0, 0));
+		}
+		if (!careRect.IsEmptyArea()) {
+			e.Painter.FillRectangle(careRect, Color(255, 0, 0, 0));
+		}
+
 	}
 }

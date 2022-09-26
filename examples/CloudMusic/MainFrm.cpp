@@ -57,7 +57,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	edit.Style.BackgroundColor = { 41,41,44 };
 	edit.Style.SetBorder({ 41,41,44 }, 1);
 	edit.Style.ForeColor = (Color::White);
-	edit.Style.Radius = (30);
+	//edit.Style.Radius = (30);
 	top.AddControl(&edit);
 
 	redBar.SetSize({ laout.Width(),2 });

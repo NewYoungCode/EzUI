@@ -382,7 +382,7 @@ namespace EzUI {
 		args.InvalidRectangle = rePaintRect;
 		MainLayout->Rending(args);//
 #ifdef DEBUGPAINT
-		if (_winData.Debug) {
+		if (PublicData.Debug) {
 			pt.DrawRectangle(rePaintRect, Color::Red);
 		}
 #endif

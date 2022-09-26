@@ -256,6 +256,12 @@ namespace EzUI {
 				Width = width;
 				Height = height;
 			}
+	/*		RectF(const Rect& rect) {
+				X = (FLOAT)rect.X;
+				Y = (FLOAT)rect.Y;
+				Width = (FLOAT)rect.Width;
+				Height = (FLOAT)rect.Height;
+			}*/
 
 			RectF(IN const PointF& location,
 				IN const SizeF& size)
@@ -1087,7 +1093,7 @@ namespace EzUI {
 	};
 
 	enum class FontStyle :int {
-		NORMAL=0
+		NORMAL = 0
 		/*DWRITE_FONT_STYLE_NORMAL
 		字体样式 ：正常。
 		DWRITE_FONT_STYLE_OBLIQUE

@@ -7,6 +7,7 @@ namespace EzUI {
 	ID2D1Factory* g_Direct2dFactory = NULL;
 	IDWriteFactory* g_WriteFactory = NULL;
 	IWICImagingFactory* g_ImageFactory = NULL;
+	int Dpi = 0;
 
 	template<class Interface>
 	inline void SafeRelease(
@@ -19,26 +20,12 @@ namespace EzUI {
 		}
 	}
 
-	template<typename T>
-	class DxSafeObject {
-	public:
-		T* value = NULL;
-		DxSafeObject(T* v) :value(v) {}
-		operator T* () {
-			return value;
-		}
-		~DxSafeObject() {
-			if (value) {
-				value->Release();
-			}
-		}
-		T* operator->() {
-			return value;
-		}
-	};
+
+
 
 	void RenderInitialize()
 	{
+		Dpi = ::GetDpiForSystem();
 
 		HRESULT hr = S_OK;
 		// Create a Direct2D factory.
@@ -185,22 +172,19 @@ namespace EzUI {
 
 	Direct2DRender::~Direct2DRender()
 	{
-		//for (auto& it : CacheBrush) {
-		//	it.second->Release();
-		//}
-		//CacheBrush.clear();
+		if (SolidColorBrush) {
+			SafeRelease(&SolidColorBrush);
+		}
 		for (auto& it : CacheTextFormat) {
 			it.second->Release();
 		}
 		CacheTextFormat.clear();
-
 		d2dRender->EndDraw();
 		SafeRelease(&d2dRender);
 		if (hWnd && DC) {
 			::ReleaseDC(hWnd, DC);
 		}
 	}
-
 
 	void Direct2DRender::DrawRectangle(const  __Rect& _rect, const  __Color& color, int width, int radius)
 	{
@@ -211,7 +195,7 @@ namespace EzUI {
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 
-		DxSafeObject<ID2D1Brush> sb(CreateSolidBrush(color));
+		auto sb = GetSolidColorBrush(color);
 		if (radius > 0) {
 			radius = radius / 2.0;
 			D2D1_ROUNDED_RECT roundRect{ ToRectF(rect), radius, radius };
@@ -231,7 +215,7 @@ namespace EzUI {
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 
-		DxSafeObject<ID2D1Brush> sb(CreateSolidBrush(color));
+		auto sb = GetSolidColorBrush(color);
 		if (radius > 0) {
 			radius = radius / 2.0;
 			D2D1_ROUNDED_RECT roundRect{ ToRectF(rect), radius, radius };
@@ -242,13 +226,13 @@ namespace EzUI {
 		}
 	}
 
-	IDWriteTextLayout* Direct2DRender::CreateTextLayout(const std::wstring& text, __SizeF maxSize, IDWriteTextFormat* pTextFormat) {
+	IDWriteTextLayout* Direct2DRender::CreateTextLayout(const std::wstring& text, __Size maxSize, IDWriteTextFormat* pTextFormat) {
 		D2D1_SIZE_F size;
 		// 使用IDWriteTextLayout获取文本大小
 		HRESULT hr = S_OK;
 		IDWriteTextLayout* pTextLayout = NULL;
 		// 创建文本布局 
-		hr = g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), pTextFormat, maxSize.Width, maxSize.Height, &pTextLayout);
+		hr = g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), pTextFormat, (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &pTextLayout);
 		return pTextLayout;
 	}
 
@@ -310,6 +294,7 @@ namespace EzUI {
 			}
 		} while (0);
 	}
+
 	void Direct2DRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& _rect, EzUI::TextAlign textAlign, bool underLine)
 	{
 		__Rect rect = _rect;
@@ -319,22 +304,22 @@ namespace EzUI {
 		IDWriteTextFormat* format = CreateSafeTextFormat(fontFamily, fontSize);
 		this->SetTextAlign(format, textAlign);
 
-		DxSafeObject<ID2D1Brush> sb(CreateSolidBrush(color));
-		//d2dRender->DrawTextW(text.c_str(), text.size(), format, ToRectF(rect), sb);
-		DxSafeObject<IDWriteTextLayout> textLayout(CreateTextLayout(text, __SizeF((float)rect.Width, (float)rect.Height), format));
-		// 获取文本尺寸  
-	/*	DWRITE_TEXT_METRICS textMetrics;
-		textLayout->GetMetrics(&textMetrics);
-		D2D1_SIZE_F size = D2D1::SizeF(ceil(textMetrics.widthIncludingTrailingWhitespace), ceil(textMetrics.height));
-		textLayout->SetUnderline(TRUE, { 0,text.size() });*/
-		d2dRender->DrawTextLayout(D2D1_POINT_2F{ rect.X + 0.0f,rect.Y + 0.0f }, textLayout, sb);
-		//DrawRectangle(__Rect{ (int)(textMetrics.left + 0.5),(int)(textMetrics.top + 0.5)  ,(INT)size.width, (INT)size.height}, __Color::Red);
+		DxSafeObject<IDWriteTextLayout> textLayout(CreateTextLayout(text, __Size((float)rect.Width, (float)rect.Height), format));
+		if (underLine) {
+			textLayout->SetUnderline(TRUE, { 0,text.size() });
+		}
+		this->DrawTextLayout({ _rect.X,_rect.Y }, textLayout, color);
 	}
-
 
 	void Direct2DRender::MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, __RectF& outBox)
 	{
 
+	}
+
+	void Direct2DRender::DrawTextLayout(const __Point& startLacation, IDWriteTextLayout* textLayout, const __Color& color)
+	{
+		auto sb = GetSolidColorBrush(color);
+		d2dRender->DrawTextLayout(D2D1_POINT_2F{ (FLOAT)(startLacation.X + OffsetX) ,(FLOAT)(startLacation.Y + OffsetY) }, textLayout, sb);
 	}
 
 	//layer巨tm的耗性能!!! 但是可以异形抗锯齿裁剪
@@ -365,7 +350,7 @@ namespace EzUI {
 		B.X += OffsetX;
 		B.Y += OffsetY;
 
-		DxSafeObject<ID2D1Brush> sb(CreateSolidBrush(color));
+		auto sb = GetSolidColorBrush(color);
 		d2dRender->DrawLine(D2D1_POINT_2F{ (float)A.X,(float)A.Y }, D2D1_POINT_2F{ (float)B.X,(float)B.Y }, sb);
 
 	}
@@ -455,7 +440,7 @@ namespace EzUI {
 	}
 	void Direct2DRender::FillGeometry(ID2D1Geometry* geometry, const __Color& color)
 	{
-		DxSafeObject<ID2D1Brush> sb(CreateSolidBrush(color));
+		auto sb = GetSolidColorBrush(color);
 		d2dRender->FillGeometry(geometry, sb);
 	}
 	//ID2D1Brush* Direct2DRender::CreateSafeSolidBrush(const __Color& _color)
@@ -470,11 +455,15 @@ namespace EzUI {
 	//	CacheBrush.insert(std::pair<__ARGB, ID2D1Brush*>(key, sb));//加入缓存
 	//	return sb;
 	//}
-	ID2D1Brush* Direct2DRender::CreateSolidBrush(const __Color& _color)
+	ID2D1SolidColorBrush* Direct2DRender::GetSolidColorBrush(const __Color& _color)
 	{
-		ID2D1SolidColorBrush* sb = NULL;
-		d2dRender->CreateSolidColorBrush(ToColorF(_color), &sb);//
-		return sb;
+		if (SolidColorBrush) {
+			SolidColorBrush->SetColor(ToColorF(_color));
+		}
+		else {
+			d2dRender->CreateSolidColorBrush(ToColorF(_color), &SolidColorBrush);
+		}
+		return SolidColorBrush;
 	}
 	IDWriteTextFormat* Direct2DRender::CreateSafeTextFormat(const std::wstring& fontFamily, int fontSize)
 	{
@@ -485,14 +474,14 @@ namespace EzUI {
 			return (*itor).second;//从缓存中返回TextFormat
 		}
 		IDWriteTextFormat* format = NULL;
-		auto fh = MulDiv(fontSize, GetDeviceCaps(DC, LOGPIXELSY), 72);
+		auto fh = MulDiv(fontSize, Dpi, 72);
 		g_WriteFactory->CreateTextFormat(fontFamily.c_str(), NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fh, L"", &format);
 		CacheTextFormat.insert(std::pair<std::wstring, IDWriteTextFormat*>(key, format));//加入缓存
 		return format;
 	}
 	void Direct2DRender::DrawGeometry(ID2D1Geometry* geometry, const __Color& color, int width)
 	{
-		DxSafeObject<ID2D1Brush> sb(CreateSolidBrush(color));
+		auto sb = GetSolidColorBrush(color);
 		d2dRender->DrawGeometry(geometry, sb);
 	}
 	void Direct2DRender::EndDraw()
