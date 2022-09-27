@@ -1,16 +1,14 @@
 #pragma once
 #include "Control.h"
 #include "Timer.h"
-#include <usp10.h>
-#pragma comment (lib, "usp10.lib")
+
 namespace EzUI {
 	class UI_EXPORT Edit :
 		public Control
 	{
 	private:
-		std::wstring buf;//文字缓冲
+		std::wstring text;//文字缓冲
 		bool _focus = false;//是否具有焦点中
-		SCRIPT_STRING_ANALYSIS _Analysis;	//字符串分析结果
 		void Analysis();
 	protected:
 		Point point_Start;
@@ -18,8 +16,18 @@ namespace EzUI {
 		Rect selectRect;//选中的字符矩形
 		Rect careRect;//光标位置
 		int FontHeight = 0;
-		DxTextLayout* textLayout = NULL;
-		DxTextFormat* textFormat = NULL;
+		TextLayout* textLayout = NULL;
+		TextFormat* textFormat = NULL;
+	public:
+		int TextPos = 0;
+
+		Point A;
+		BOOL A_isTrailingHit;//如果是1表示是字符的后半边
+		int A_TextPos = 0;//点击了第几个字符
+
+		Point B;
+		BOOL B_isTrailingHit;//如果是1表示是字符的后半边
+		int B_TextPos = 0;//点击了第几个字符
 	protected:
 		virtual void OnSize(const Size& size)override;
 		virtual void OnForePaint(PaintEventArgs& e) override;
@@ -29,9 +37,11 @@ namespace EzUI {
 		virtual void OnMouseMove(const Point& point) override;
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point)override;
 		virtual void OnKillFocus() override;
+	protected:
+		void BuildCare(int TextPos);
 	public:
+		virtual ~Edit();
 		void SetText(const EString& text);
 		EString GetText();
-		//virtual ~Edit();
 	};
 };

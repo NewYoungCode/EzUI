@@ -13,6 +13,8 @@
 #include <gdiplusimaging.h>
 #include <gdiplusimageattributes.h>
 #include <shlwapi.h>
+#include <usp10.h>
+#pragma comment (lib, "usp10.lib")
 #include "RenderType.h"
 namespace EzUI {
 
@@ -24,6 +26,67 @@ namespace EzUI {
 #define __ARGB RenderType::ARGB
 #define __Size RenderType::Size
 #define __SizeF RenderType::SizeF
+
+	class TextFormat {
+	public:
+		std::wstring fontFamilly; int fontSize; TextAlign textAlign;
+	public:
+		TextFormat(const std::wstring& fontFamilly, int fontSize, TextAlign textAlign)
+		{
+			this->fontFamilly = fontFamilly;
+			this->fontSize = fontSize;
+			this->textAlign = textAlign;
+		}
+	};
+	class TextLayout {
+	public:
+		SCRIPT_STRING_ANALYSIS m_Analysis = NULL;	//×Ö·û´®·ÖÎö½á¹û;
+		std::wstring text;
+		__Size maxSize;
+		TextFormat* textFormat;
+		SCRIPT_STATE ScriptState{ 0 };
+		SCRIPT_CONTROL ScriptControl{ 0 };
+	public:
+		TextLayout(const std::wstring& _text, __Size _maxSize, TextFormat* _textFormat) {
+			text = _text;
+			maxSize = _maxSize;
+			textFormat = _textFormat;
+			::ScriptApplyDigitSubstitution(NULL, &ScriptControl, &ScriptState);
+			HDC m_hDc = ::GetDC(NULL);
+			HRESULT hr = ::ScriptStringAnalyse(m_hDc,
+				text.c_str(),
+				text.length() + 1,
+				text.length() * 3 / 2 + 16,
+				-1,
+				SSA_GLYPHS | SSA_BREAK | SSA_FALLBACK | SSA_LINK,
+				0,
+				&ScriptControl,
+				&ScriptState,
+				NULL,
+				NULL,
+				NULL,
+				&m_Analysis);
+			::ReleaseDC(NULL, m_hDc);
+		}
+		__Point HitTestTextPosition(int textPos, BOOL A_isTrailingHit) {
+			return { 0,0 };
+		}
+		__Point HitTestPoint(__Point point_Start, int& A_TextPos, BOOL& A_isTrailingHit) {
+			::ScriptStringXtoCP(m_Analysis, point_Start.X, &A_TextPos, &A_isTrailingHit);
+			int outX = 0;
+			::ScriptStringCPtoX(m_Analysis, A_TextPos, A_isTrailingHit, &outX);
+			return { outX,0 };
+		}
+		__Size GetFontSize() {
+			const SIZE* sz = ::ScriptString_pSize(m_Analysis);
+			return __Size{ sz->cx,sz->cy };
+		}
+		virtual ~TextLayout() {
+			if (m_Analysis) {
+				ScriptStringFree(&m_Analysis);
+			}
+		}
+	};
 
 	class UI_EXPORT GdiplusImage :public Gdiplus::Bitmap, public IImage {
 	public:
@@ -81,6 +144,7 @@ namespace EzUI {
 		void DrawRectangle(const __Rect& rect, const __Color& color, int width = 1, int radius = 0);
 		void FillRectangle(const __Rect& rect, const __Color& color, int radius = 0);
 		void DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& rect, TextAlign textAlign, bool underLine = false);
+		void DrawTextLayout(const __Point& pt, TextLayout* textLayout, const __Color& color);
 		void MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, __RectF& outBox);
 		void PushLayer(const __Rect& rect, ClipMode clipMode = ClipMode::Valid);
 		void PopLayer();

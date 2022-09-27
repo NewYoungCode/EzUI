@@ -183,7 +183,10 @@ namespace EzUI {
 			base->DrawLine(pen, A.X, A.Y, B.X, B.Y);
 		}
 	}
-
+	void GdiplusRender::DrawTextLayout(const __Point& pt, TextLayout* textLayout, const __Color& color) {
+		__Rect rect{ pt.X,pt.Y,textLayout->maxSize.Width,textLayout->maxSize.Height };
+		this->DrawString(textLayout->text, textLayout->textFormat->fontFamilly, textLayout->textFormat->fontSize, color, rect, textLayout->textFormat->textAlign);
+	}
 	void GdiplusRender::DrawRectangle(const __Rect& _rect, const __Color& color, int width, int radius)
 	{
 		if (color.GetA() == 0) {

@@ -51,11 +51,11 @@ namespace EzUI {
 		}
 	};
 
-	class DxTextFormat {
+	class TextFormat {
 	public:
 		IDWriteTextFormat* value = NULL;
 	public:
-		DxTextFormat(std::wstring& fontFamily, int fontSize, TextAlign textAlign) {
+		TextFormat(const std::wstring& fontFamily, int fontSize, TextAlign textAlign) {
 			auto fh = MulDiv(fontSize, Dpi, 72);
 			g_WriteFactory->CreateTextFormat(fontFamily.c_str(), NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fh, L"", &value);
 #define __Top DWRITE_PARAGRAPH_ALIGNMENT_NEAR
@@ -125,18 +125,46 @@ namespace EzUI {
 		operator IDWriteTextFormat* () {
 			return value;
 		}
-		virtual ~DxTextFormat() {
+		virtual ~TextFormat() {
 			if (value) {
 				value->Release();
 			}
 		}
 	};
-	class DxTextLayout {
+	class TextLayout {
 	public:
 		IDWriteTextLayout* value = NULL;
 	public:
-		DxTextLayout(const std::wstring& text, __Size maxSize, IDWriteTextFormat* pTextFormat) {
-			g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), pTextFormat, (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &value);
+		TextLayout(const std::wstring& text, __Size maxSize, TextFormat* pTextFormat) {
+			g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), pTextFormat->value, (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &value);
+		}
+		__Point HitTestPoint(const __Point& pt, int& textPos, BOOL& isTrailingHit) {
+			DWRITE_HIT_TEST_METRICS hitTestMetrics;
+			//BOOL isTrailingHit;
+			BOOL isInside;
+			{
+				FLOAT x = (FLOAT)pt.X, y = (FLOAT)pt.Y;
+				value->HitTestPoint(
+					(FLOAT)x,
+					(FLOAT)y,
+					&isTrailingHit,
+					&isInside,
+					&hitTestMetrics
+				);
+			}
+			////绘制光标
+			int posX = (int)(hitTestMetrics.left + 0.5);
+			if (isTrailingHit) {//判断前侧还是尾侧
+				posX += (int)(hitTestMetrics.width + 0.5);
+			}
+			textPos = hitTestMetrics.textPosition;
+			return __Point{ posX,(int)(hitTestMetrics.top + 0.5) };
+		}
+		__Point HitTestTextPosition(int textPos, BOOL isTrailingHit) {
+			DWRITE_HIT_TEST_METRICS hitTestMetrics;
+			FLOAT X, Y;
+			value->HitTestTextPosition(textPos, isTrailingHit, &X, &Y, &hitTestMetrics);
+			return __Point((int)(X + 0.5), (int)(Y + 0.5));
 		}
 		__Size GetFontSize() {
 			DWRITE_TEXT_METRICS textMetrics;
@@ -150,7 +178,7 @@ namespace EzUI {
 		operator IDWriteTextLayout* () {
 			return value;
 		}
-		virtual ~DxTextLayout() {
+		virtual ~TextLayout() {
 			if (value) {
 				value->Release();
 			}
@@ -241,6 +269,8 @@ namespace EzUI {
 		DXImage() {}
 		virtual ~DXImage();
 	};
+
+
 	class UI_EXPORT Direct2DRender {
 	protected:
 		HWND hWnd = NULL;
@@ -250,7 +280,6 @@ namespace EzUI {
 		HDC DC = NULL;
 		int OffsetX = 0;
 		int OffsetY = 0;
-		std::map<std::wstring, IDWriteTextFormat*> CacheTextFormat;
 		ID2D1SolidColorBrush* SolidColorBrush = NULL;
 	protected:
 		virtual void DrawBitmap(ID2D1Bitmap* d2dBitmap, const  __Rect& rect);
@@ -274,6 +303,9 @@ namespace EzUI {
 		void DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const  __Color& color, const  __Rect& rect, EzUI::TextAlign textAlign, bool underLine = false);
 		void MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, __RectF& outBox);
 		void DrawTextLayout(const __Point&, IDWriteTextLayout* textLayout, const __Color& color);
+		void DrawTextLayout(const __Point&pt, TextLayout* textLayout, const __Color& color) {
+			DrawTextLayout(pt, textLayout->value, color);
+		}
 		void DrawLine(const  __Color& color, const  __Point& A, const  __Point& B, int width = 1);
 		void DrawImage(IImage* image, const  __Rect& destRect, const __Rect& srcRect);
 		void DrawImage(IImage* image, const  __Rect& rect, const EzUI::ImageSizeMode& imageSizeMode = EzUI::ImageSizeMode::Zoom, const EzUI::Margin& margin = 0);
@@ -290,9 +322,6 @@ namespace EzUI {
 		void PushAxisAlignedClip(const __Rect& rectBounds, EzUI::ClipMode clipMode = EzUI::ClipMode::Valid);
 		void PopAxisAlignedClip();
 		ID2D1SolidColorBrush* Direct2DRender::GetSolidColorBrush(const __Color& _color);
-		IDWriteTextFormat* CreateSafeTextFormat(const std::wstring& fontFamily, int fontSize);
-		IDWriteTextLayout* CreateTextLayout(const std::wstring& text, __Size maxSize, IDWriteTextFormat* pTextFormat);
-		void SetTextAlign(IDWriteTextFormat* format, EzUI::TextAlign textAlign);
 		void BeginDraw();
 		void EndDraw();
 	};

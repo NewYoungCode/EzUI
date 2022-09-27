@@ -21,8 +21,6 @@ namespace EzUI {
 	}
 
 
-
-
 	void RenderInitialize()
 	{
 		Dpi = ::GetDpiForSystem();
@@ -57,7 +55,6 @@ namespace EzUI {
 		}
 
 	}
-
 	void RenderUnInitialize()
 	{
 		if (g_Direct2dFactory) {
@@ -84,14 +81,12 @@ namespace EzUI {
 			render->CreateBitmapFromWicBitmap(bitMap, &d2dBitmap);
 		}
 	}
-
 	UINT DXImage::GetWidth() {
 		return Width;
 	}
 	UINT DXImage::GetHeight() {
 		return Height;
 	}
-
 	DXImage::DXImage(const std::wstring& filew)
 	{
 		if (g_ImageFactory) {
@@ -104,14 +99,12 @@ namespace EzUI {
 			pframe->GetSize(&Width, &Height);
 		}
 	}
-
 	DXImage::DXImage(HBITMAP hBitmap) {
 		if (g_ImageFactory) {
 			g_ImageFactory->CreateBitmapFromHBITMAP(hBitmap, NULL, WICBitmapUsePremultipliedAlpha, &bitMap);
 			bitMap->GetSize(&Width, &Height);
 		}
 	}
-
 	DXImage::~DXImage()
 	{
 		if (d2dBitmap) {
@@ -131,13 +124,13 @@ namespace EzUI {
 		}
 	}
 
+
 	void Direct2DRender::DrawBitmap(ID2D1Bitmap* d2dBitmap, const  __Rect& rect)
 	{
 		if (d2dBitmap == NULL) return;
 		D2D1_RECT_F rectF = ToRectF(rect);
 		d2dRender->DrawBitmap(d2dBitmap, &rectF);
 	}
-
 	Direct2DRender::Direct2DRender(HDC _dc, int Width, int Height)
 	{
 		this->DC = _dc;
@@ -156,7 +149,6 @@ namespace EzUI {
 		((ID2D1DCRenderTarget*)d2dRender)->BindDC(DC, &rc);
 		this->BeginDraw();
 	}
-
 	Direct2DRender::Direct2DRender(HWND hWnd, int Width, int Height)
 	{
 		this->hWnd = hWnd;
@@ -169,23 +161,17 @@ namespace EzUI {
 			(ID2D1HwndRenderTarget**)&d2dRender);
 		this->BeginDraw();
 	}
-
 	Direct2DRender::~Direct2DRender()
 	{
 		if (SolidColorBrush) {
 			SafeRelease(&SolidColorBrush);
 		}
-		for (auto& it : CacheTextFormat) {
-			it.second->Release();
-		}
-		CacheTextFormat.clear();
 		d2dRender->EndDraw();
 		SafeRelease(&d2dRender);
 		if (hWnd && DC) {
 			::ReleaseDC(hWnd, DC);
 		}
 	}
-
 	void Direct2DRender::DrawRectangle(const  __Rect& _rect, const  __Color& color, int width, int radius)
 	{
 		if (color.GetValue() == 0) {
@@ -204,7 +190,6 @@ namespace EzUI {
 		else {
 			d2dRender->DrawRectangle(ToRectF(rect), sb);
 		}
-
 	}
 	void Direct2DRender::FillRectangle(const __Rect& _rect, const __Color& color, int radius)
 	{
@@ -225,103 +210,28 @@ namespace EzUI {
 			d2dRender->FillRectangle(ToRectF(rect), sb);
 		}
 	}
-
-	IDWriteTextLayout* Direct2DRender::CreateTextLayout(const std::wstring& text, __Size maxSize, IDWriteTextFormat* pTextFormat) {
-		D2D1_SIZE_F size;
-		// 使用IDWriteTextLayout获取文本大小
-		HRESULT hr = S_OK;
-		IDWriteTextLayout* pTextLayout = NULL;
-		// 创建文本布局 
-		hr = g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), pTextFormat, (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &pTextLayout);
-		return pTextLayout;
-	}
-
-	void Direct2DRender::SetTextAlign(IDWriteTextFormat* format, EzUI::TextAlign textAlign) {
-
-#define __Top DWRITE_PARAGRAPH_ALIGNMENT_NEAR
-#define	__Bottom DWRITE_PARAGRAPH_ALIGNMENT_FAR
-#define	__Left DWRITE_TEXT_ALIGNMENT_LEADING
-#define	__Right DWRITE_TEXT_ALIGNMENT_TRAILING
-#define	__Middle DWRITE_PARAGRAPH_ALIGNMENT_CENTER
-#define __Center DWRITE_TEXT_ALIGNMENT_CENTER
-
-		do
-		{
-			if (textAlign == TextAlign::BottomCenter) {
-				format->SetParagraphAlignment(__Bottom);
-				format->SetTextAlignment(__Center);
-				break;
-			}
-			if (textAlign == TextAlign::BottomLeft) {
-				format->SetParagraphAlignment(__Bottom);
-				format->SetTextAlignment(__Left);
-				break;
-			}
-			if (textAlign == TextAlign::BottomRight) {
-				format->SetParagraphAlignment(__Bottom);
-				format->SetTextAlignment(__Right);
-				break;
-			}
-			if (textAlign == TextAlign::MiddleCenter) {
-				format->SetParagraphAlignment(__Middle);
-				format->SetTextAlignment(__Center);
-				break;
-			}
-			if (textAlign == TextAlign::MiddleLeft) {
-				format->SetParagraphAlignment(__Middle);
-				format->SetTextAlignment(__Left);
-				break;
-			}
-			if (textAlign == TextAlign::MiddleRight) {
-				format->SetParagraphAlignment(__Middle);
-				format->SetTextAlignment(__Right);
-				break;
-			}
-			if (textAlign == TextAlign::TopCenter) {
-				format->SetParagraphAlignment(__Top);
-				format->SetTextAlignment(__Center);
-				break;
-			}
-			if (textAlign == TextAlign::TopLeft) {
-				format->SetParagraphAlignment(__Top);
-				format->SetTextAlignment(__Left);
-				break;
-			}
-			if (textAlign == TextAlign::TopRight) {
-				format->SetParagraphAlignment(__Top);
-				format->SetTextAlignment(__Right);
-				break;
-			}
-		} while (0);
-	}
-
 	void Direct2DRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& _rect, EzUI::TextAlign textAlign, bool underLine)
 	{
 		__Rect rect = _rect;
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 
-		IDWriteTextFormat* format = CreateSafeTextFormat(fontFamily, fontSize);
-		this->SetTextAlign(format, textAlign);
-
-		DxSafeObject<IDWriteTextLayout> textLayout(CreateTextLayout(text, __Size((float)rect.Width, (float)rect.Height), format));
+		TextFormat textFormat(fontFamily, fontSize, textAlign);
+		TextLayout textLayout(text, __Size{ rect.Width, rect.Height }, &textFormat);
 		if (underLine) {
 			textLayout->SetUnderline(TRUE, { 0,text.size() });
 		}
 		this->DrawTextLayout({ _rect.X,_rect.Y }, textLayout, color);
 	}
-
 	void Direct2DRender::MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, __RectF& outBox)
 	{
 
 	}
-
 	void Direct2DRender::DrawTextLayout(const __Point& startLacation, IDWriteTextLayout* textLayout, const __Color& color)
 	{
 		auto sb = GetSolidColorBrush(color);
 		d2dRender->DrawTextLayout(D2D1_POINT_2F{ (FLOAT)(startLacation.X + OffsetX) ,(FLOAT)(startLacation.Y + OffsetY) }, textLayout, sb);
 	}
-
 	//layer巨tm的耗性能!!! 但是可以异形抗锯齿裁剪
 	void Direct2DRender::PushLayer(const DxGeometry& dxGeometry, EzUI::ClipMode clipMode)
 	{
@@ -425,11 +335,9 @@ namespace EzUI {
 			}
 			return;
 		}
-
 		if (imageSizeMode == ImageSizeMode::StretchImage || true) {
 			this->DrawBitmap(image->d2dBitmap, rect);
 		}
-
 	}
 	void Direct2DRender::BeginDraw()
 	{
@@ -443,18 +351,6 @@ namespace EzUI {
 		auto sb = GetSolidColorBrush(color);
 		d2dRender->FillGeometry(geometry, sb);
 	}
-	//ID2D1Brush* Direct2DRender::CreateSafeSolidBrush(const __Color& _color)
-	//{
-	//	auto key = _color.GetValue();
-	//	auto itor = CacheBrush.find(key);
-	//	if (itor != CacheBrush.end()) {
-	//		return (*itor).second;//从缓存中返回ID2D1Brush
-	//	}
-	//	ID2D1SolidColorBrush* sb = NULL;
-	//	d2dRender->CreateSolidColorBrush(ToColorF(_color), &sb);//
-	//	CacheBrush.insert(std::pair<__ARGB, ID2D1Brush*>(key, sb));//加入缓存
-	//	return sb;
-	//}
 	ID2D1SolidColorBrush* Direct2DRender::GetSolidColorBrush(const __Color& _color)
 	{
 		if (SolidColorBrush) {
@@ -464,20 +360,6 @@ namespace EzUI {
 			d2dRender->CreateSolidColorBrush(ToColorF(_color), &SolidColorBrush);
 		}
 		return SolidColorBrush;
-	}
-	IDWriteTextFormat* Direct2DRender::CreateSafeTextFormat(const std::wstring& fontFamily, int fontSize)
-	{
-		WCHAR key[LF_FACESIZE + 10]{ 0 };
-		swprintf_s(key, L"%s_%d", fontFamily.c_str(), fontSize);
-		auto itor = CacheTextFormat.find(key);
-		if (itor != CacheTextFormat.end()) {
-			return (*itor).second;//从缓存中返回TextFormat
-		}
-		IDWriteTextFormat* format = NULL;
-		auto fh = MulDiv(fontSize, Dpi, 72);
-		g_WriteFactory->CreateTextFormat(fontFamily.c_str(), NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fh, L"", &format);
-		CacheTextFormat.insert(std::pair<std::wstring, IDWriteTextFormat*>(key, format));//加入缓存
-		return format;
 	}
 	void Direct2DRender::DrawGeometry(ID2D1Geometry* geometry, const __Color& color, int width)
 	{
@@ -492,6 +374,5 @@ namespace EzUI {
 		}
 	}
 }
-
 
 #endif

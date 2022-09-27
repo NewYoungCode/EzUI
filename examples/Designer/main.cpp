@@ -18,8 +18,31 @@
 #include <Windows.h>
 using namespace EzUI;
 
+
+enum Animali
+{
+	Bird,
+	Cat,
+	Dog
+};
+
+
+void Say(Animali type) {
+	if (type == Animali::Bird) {
+		::MessageBoxW(NULL, L"是鸟!",L"", 0);
+	}
+	if (type == Animali::Cat) {
+		::MessageBoxW(NULL, L"是猫!", L"", 0);
+	}
+	if (type == Animali::Dog) {
+		::MessageBoxW(NULL, L"是狗!", L"", 0);
+	}
+}
+
+
 int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+	//Say(Animali::Bird);
 
 	Application app;
 
