@@ -21,11 +21,9 @@ namespace EzUI {
 			if (ptr) delete ptr;
 		}
 	};
-
+	int Dpi = 0;
 	ULONG_PTR _gdiplusToken = NULL;
-#ifdef CreateFont
-#undef CreateFont
-#endif
+
 	Gdiplus::SolidBrush* CreateBrush(const __Color& color) {
 		Gdiplus::SolidBrush* _bufBrush = new Gdiplus::SolidBrush(color.GetValue());
 		return _bufBrush;
@@ -37,6 +35,7 @@ namespace EzUI {
 
 	void RenderInitialize()
 	{
+		Dpi = ::GetDpiForSystem();
 		Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 		Gdiplus::GdiplusStartup(&_gdiplusToken, &gdiplusStartupInput, NULL);//初始化gdi+
 	}
@@ -49,7 +48,7 @@ namespace EzUI {
 	{
 		graphics->SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);//抗锯齿
 		graphics->SetPixelOffsetMode(Gdiplus::PixelOffsetMode::PixelOffsetModeHalf);//像素偏移模式
-		graphics->SetTextRenderingHint(Gdiplus::TextRenderingHint::TextRenderingHintClearTypeGridFit);//文字
+		//graphics->SetTextRenderingHint(Gdiplus::TextRenderingHint::TextRenderingHintClearTypeGridFit);//文字
 		//graphics->SetInterpolationMode(Gdiplus::InterpolationMode::InterpolationModeHighQuality);//图像
 	}
 	void CreateRectangle(Gdiplus::GraphicsPath& path, const  __Rect& rect, int radius)
@@ -75,25 +74,22 @@ namespace EzUI {
 		path.AddArc(arcRect, 90, 90);
 		path.CloseFigure();
 	}
-
 	GdiplusRender::GdiplusRender(HDC hdc, int Width, int Height)
 	{
+		this->DC = hdc;
 		base = new  Gdiplus::Graphics(hdc);
 		HighQualityMode(base);
 	}
-
 	GdiplusRender::GdiplusRender(HWND hWnd)
 	{
 		base = new  Gdiplus::Graphics(hWnd);
 		HighQualityMode(base);
 	}
-
 	GdiplusRender::GdiplusRender(Gdiplus::Image* image)
 	{
 		base = new  Gdiplus::Graphics(image);
 		HighQualityMode(base);
 	}
-
 	GdiplusRender::~GdiplusRender()
 	{
 		for (auto& it : CacheFont) {
@@ -101,87 +97,6 @@ namespace EzUI {
 		}
 		CacheFont.clear();
 		delete base;
-	}
-
-	void GdiplusRender::CreateFormat(TextAlign textAlign, Gdiplus::StringFormat& outStrFormat) {
-		switch (textAlign)
-		{
-		case TextAlign::TopLeft:
-		{
-			outStrFormat.SetLineAlignment(Gdiplus::StringAlignment::StringAlignmentNear);
-			outStrFormat.SetAlignment(Gdiplus::StringAlignment::StringAlignmentNear);
-			break;
-		}
-		case TextAlign::TopCenter:
-		{
-			outStrFormat.SetAlignment(Gdiplus::StringAlignment::StringAlignmentCenter);
-			outStrFormat.SetLineAlignment(Gdiplus::StringAlignment::StringAlignmentNear);
-			break;
-		}
-		case TextAlign::TopRight:
-		{
-			outStrFormat.SetAlignment(Gdiplus::StringAlignment::StringAlignmentFar);
-			outStrFormat.SetLineAlignment(Gdiplus::StringAlignment::StringAlignmentNear);
-			break;
-		}
-		case TextAlign::MiddleLeft:
-		{
-			outStrFormat.SetLineAlignment(Gdiplus::StringAlignment::StringAlignmentCenter);
-			outStrFormat.SetAlignment(Gdiplus::StringAlignment::StringAlignmentNear);
-			break;
-		}
-		case TextAlign::MiddleCenter:
-		{
-			outStrFormat.SetLineAlignment(Gdiplus::StringAlignment::StringAlignmentCenter);
-			outStrFormat.SetAlignment(Gdiplus::StringAlignment::StringAlignmentCenter);
-			break;
-		}
-		case TextAlign::MiddleRight:
-		{
-			outStrFormat.SetAlignment(Gdiplus::StringAlignment::StringAlignmentFar);
-			outStrFormat.SetLineAlignment(Gdiplus::StringAlignment::StringAlignmentCenter);
-			break;
-		}
-		case TextAlign::BottomLeft:
-		{
-			outStrFormat.SetLineAlignment(Gdiplus::StringAlignment::StringAlignmentFar);
-			outStrFormat.SetAlignment(Gdiplus::StringAlignment::StringAlignmentNear);
-			break;
-		}
-		case TextAlign::BottomCenter:
-		{
-			outStrFormat.SetLineAlignment(Gdiplus::StringAlignment::StringAlignmentFar);
-			outStrFormat.SetAlignment(Gdiplus::StringAlignment::StringAlignmentCenter);
-			break;
-		}
-		case TextAlign::BottomRight:
-		{
-			outStrFormat.SetLineAlignment(Gdiplus::StringAlignment::StringAlignmentFar);
-			outStrFormat.SetAlignment(Gdiplus::StringAlignment::StringAlignmentFar);
-			break;
-		}
-		default:
-			break;
-		}
-	}
-
-	void GdiplusRender::DrawString(const std::wstring& text, const Gdiplus::Font* font, const __Color& color, const __RectF& _rect, TextAlign textAlign, bool underLine)
-	{
-		Gdiplus::StringFormat sf;
-		CreateFormat(textAlign, sf);
-
-		GdiPSafeObject<Gdiplus::SolidBrush> brush(CreateBrush((color)));
-
-		Gdiplus::RectF rect;
-		base->DrawString(text.c_str(), text.length(), font, rect, &sf, brush);
-		if (underLine) {
-			Gdiplus::RectF box;
-			base->MeasureString(text.c_str(), text.length(), font, rect, &sf, &box);
-			__PointF A(box.X, box.GetBottom());
-			__PointF B(box.GetRight(), box.GetBottom());
-			GdiPSafeObject<Gdiplus::Pen> pen(CreatePen((color), 1));
-			base->DrawLine(pen, A.X, A.Y, B.X, B.Y);
-		}
 	}
 	void GdiplusRender::DrawTextLayout(const __Point& pt, TextLayout* textLayout, const __Color& color) {
 		__Rect rect{ pt.X,pt.Y,textLayout->maxSize.Width,textLayout->maxSize.Height };
@@ -226,7 +141,6 @@ namespace EzUI {
 		}
 
 	}
-
 	void GdiplusRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& _rect, TextAlign textAlign, bool underLine)
 	{
 		__Rect rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
@@ -300,7 +214,7 @@ namespace EzUI {
 		} while (0);
 
 		DrawTextW(DC, text.c_str(), text.size(), &winRECT, DT_SINGLELINE | textFormat);
-		//善后工作
+		//清理工作
 		SelectFont(DC, oldFont);
 		::SetBkMode(DC, lastMode);
 		if (clip) {
@@ -309,18 +223,12 @@ namespace EzUI {
 		}
 		base->ReleaseHDC(DC);
 	}
-
-	void GdiplusRender::MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, __RectF& _outBox) {
-
-	}
-
-	void GdiplusRender::PushLayer(const __Rect& rect, ClipMode clipMode)
+	void GdiplusRender::PushAxisAlignedClip(const __Rect& rect, ClipMode clipMode)
 	{
 		Layers.push_back((__Rect*)&rect);
 		base->SetClip(ToRect(rect), (Gdiplus::CombineMode)clipMode);
 	}
-
-	void GdiplusRender::PopLayer()
+	void GdiplusRender::PopAxisAlignedClip()
 	{
 		base->ResetClip();
 		if (!Layers.empty()) {
@@ -331,7 +239,10 @@ namespace EzUI {
 			}
 		}
 	}
-
+	void GdiplusRender::FillGeometry(const Geometry& geometry, const  __Color& color) {
+		GdiPSafeObject<Gdiplus::SolidBrush> brush(CreateBrush((color)));
+		base->FillRegion(brush, geometry.rgn);
+	}
 	HFONT GdiplusRender::CreateSafeFont(const std::wstring& fontFamily, int fontSize, HDC DC, bool lfUnderline)
 	{
 		WCHAR key[LF_FACESIZE + 10]{ 0 };
@@ -344,7 +255,7 @@ namespace EzUI {
 		GetObjectW(GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONTW), &lf);
 		wcsncpy_s(lf.lfFaceName, fontFamily.c_str(), LF_FACESIZE);
 		lf.lfCharSet = DEFAULT_CHARSET;
-		lf.lfHeight = -MulDiv(fontSize, GetDeviceCaps(DC, LOGPIXELSY), 72);
+		lf.lfHeight = -MulDiv(fontSize, Dpi, 72);
 		//lf.lfWeight += FW_BOLD; //粗体
 		lf.lfUnderline = lfUnderline; //下划线
 		//lf.lfItalic = TRUE; //斜体
@@ -352,8 +263,6 @@ namespace EzUI {
 		CacheFont.insert(std::pair<std::wstring, HFONT>(key, hFont));//加入缓存
 		return hFont;
 	}
-
-
 	void GdiplusRender::DrawLine(const __Color& color, const __Point& _A, const  __Point& _B, int width)
 	{
 		__Point A = _A;
@@ -441,7 +350,6 @@ namespace EzUI {
 			base->DrawImage(image, ToRect(rect));
 		}
 	}
-
 	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
 	{
 		UINT  num = 0;          // number of image encoders
@@ -471,7 +379,6 @@ namespace EzUI {
 		free(pImageCodecInfo);
 		return -1;  // Failure
 	}
-
 	BOOL SaveHDCToFile(HDC hDC, const __Rect& rect, const std::wstring& fileName) {
 		size_t pos = fileName.rfind(L".");
 		WCHAR format[15]{ L"image/bmp" };
@@ -502,8 +409,6 @@ namespace EzUI {
 		RECT r = rect.WinRECT();
 		return SaveHDCToFile(hDC, &r, format, fileName.c_str());
 	}
-
-
 	BOOL SaveHDCToFile(HDC hDC, LPRECT lpRect, const WCHAR* format, const WCHAR* filename)
 	{
 		BOOL bRet = FALSE;
@@ -533,21 +438,18 @@ namespace EzUI {
 		DeleteObject(hBmp);
 		return bRet;
 	}
-
 	GdiplusImage* ClipImage(GdiplusImage* img, const __Size& sz, int _radius)
 	{
 		GdiplusImage* bitmap = new  GdiplusImage(sz.Width, sz.Height);
 		Gdiplus::Graphics g(bitmap);
-		//g.SetInterpolationMode(Gdiplus::InterpolationMode::InterpolationModeHighQualityBicubic);//图像
-		//g.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeHighQuality);//抗锯齿
-		g.SetPixelOffsetMode(Gdiplus::PixelOffsetMode::PixelOffsetModeHighQuality);//像素偏移模式
+		g.SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);//抗锯齿
+		g.SetPixelOffsetMode(Gdiplus::PixelOffsetMode::PixelOffsetModeHalf);//像素偏移模式
+		Gdiplus::TextureBrush tb(img);
 		Gdiplus::GraphicsPath path;
 		CreateRectangle(path, __Rect{ 0,0,sz.Width, sz.Height }, _radius);
-		g.SetClip(&path);
-		g.DrawImage(img, 0, 0);
+		g.FillPath(&tb, &path);
 		return bitmap;
 	}
-
 	void GdiplusRender::SaveImage(const WCHAR* format, const WCHAR* fileName, const __Size& size)
 	{
 		/*	if (DC) {
@@ -556,17 +458,14 @@ namespace EzUI {
 				SaveHDCToFile(DC, &rect, format, fileName);
 			}*/
 	}
-
 	void GdiplusRender::BeginDraw()
 	{
 		//base->BeginContainer();
 	}
-
 	void GdiplusRender::EndDraw()
 	{
 		base->Flush();
 	}
-
 	void GdiplusImage::Save(const std::wstring& fileName)
 	{
 		size_t pos = fileName.rfind(L".");

@@ -223,21 +223,18 @@ namespace EzUI {
 		}
 		this->DrawTextLayout({ _rect.X,_rect.Y }, textLayout, color);
 	}
-	void Direct2DRender::MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, __RectF& outBox)
-	{
 
-	}
 	void Direct2DRender::DrawTextLayout(const __Point& startLacation, IDWriteTextLayout* textLayout, const __Color& color)
 	{
 		auto sb = GetSolidColorBrush(color);
 		d2dRender->DrawTextLayout(D2D1_POINT_2F{ (FLOAT)(startLacation.X + OffsetX) ,(FLOAT)(startLacation.Y + OffsetY) }, textLayout, sb);
 	}
 	//layer巨tm的耗性能!!! 但是可以异形抗锯齿裁剪
-	void Direct2DRender::PushLayer(const DxGeometry& dxGeometry, EzUI::ClipMode clipMode)
+	void Direct2DRender::PushLayer(const Geometry& dxGeometry, EzUI::ClipMode clipMode)
 	{
 		ID2D1Layer* layer;
 		d2dRender->CreateLayer(&layer);
-		d2dRender->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.Geometry), layer);//放入layer
+		d2dRender->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.rgn), layer);//放入layer
 		SafeRelease(&layer);
 	}
 	void Direct2DRender::PopLayer()//弹出最后一个裁剪

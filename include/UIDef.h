@@ -80,10 +80,10 @@
 #endif
 
 //#define COUNT_ONSIZE //统计OnSize耗时
-#define COUNT_ONPAINT//统计绘制耗时
+//#define COUNT_ONPAINT//统计绘制耗时
 
 //下面的渲染方式只能选一个
-#define USED_GDIPLUS 0
-#define USED_Direct2D 1
+#define USED_GDIPLUS 0 //CPU绘制 绘制略慢 内存占用低
+#define USED_Direct2D 1 //显卡绘制 性能好 内存高占用 
 
 #define ui EzUI

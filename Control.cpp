@@ -88,7 +88,7 @@ Event(this , ##__VA_ARGS__); \
 		if (!hasBorder) return;//边框为0不绘制
 
 		if (radius > 0 && hasBorder) {
-			e.Painter.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, borderColor, borderLeft);
+			e.Painter.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, borderColor, borderLeft, radius);
 			return;
 		}
 		if (borderLeft > 0) {
@@ -525,39 +525,32 @@ Event(this , ##__VA_ARGS__); \
 			//pt.BeginDraw();//继续绘制剩下的内容
 		}
 
-#if USED_GDIPLUS 
-		pt.PushLayer(_ClipRect);
 		int r = GetRadius();
-#define AntiAlias
-#ifdef AntiAlias
-		EBitmap* buckBkImg = NULL;//绘制前先备份一下底部背景
-		if (r > 0) {
-			buckBkImg = new EBitmap(clientRect.Width, clientRect.Height);
-			::BitBlt(buckBkImg->GetDC(), 0, 0, clientRect.Width, clientRect.Height, args.DC, clientRect.X, clientRect.Y, SRCCOPY);
-		}
-#endif
-
-#endif // 
-
-#if USED_Direct2D
-		int r = GetRadius();
+#if USED_GDIPLUS
+		Layer* layer = NULL;
 		if (r > 0) {
 			//处理圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分) 带抗锯齿
-			DxGeometry roundRect(clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height, r);
-			DxGeometry clientRect(_ClipRect.X, _ClipRect.Y, _ClipRect.Width, _ClipRect.Height);
-			DxGeometry outClipRect;
-			DxGeometry::Intersect(outClipRect, roundRect, clientRect);
+			layer = new Layer(clientRect, r, args.DC, pt.base);
+		}
+		pt.PushAxisAlignedClip(_ClipRect);
+#endif 
+
+#if USED_Direct2D
+		if (r > 0) {
+			//处理圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分) 带抗锯齿
+			Geometry roundRect(clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height, r);
+			Geometry _clientRect(_ClipRect.X, _ClipRect.Y, _ClipRect.Width, _ClipRect.Height);
+			Geometry outClipRect;
+			Geometry::Intersect(outClipRect, roundRect, _clientRect);
 			pt.PushLayer(outClipRect);
 		}
 		else {
 			//针对矩形控件
 			pt.PushAxisAlignedClip(_ClipRect);
 		}
-#endif
+#endif 
 		//开始绘制
 		this->OnPaint(args);//绘制基本上下文
-
-		//创建分层 避免 滚动条和边框超出本控件
 		//绘制滚动条
 		EzUI::ScrollBar* scrollbar = NULL;
 		if (scrollbar = this->ScrollBar) {
@@ -572,26 +565,13 @@ Event(this , ##__VA_ARGS__); \
 		pt.OffsetY = clientRect.Y;//设置偏移
 		this->OnBorderPaint(args);//绘制边框
 
-#if USED_GDIPLUS 
-#ifdef AntiAlias
-		if (r > 0) {
-			EBitmap bufBitmap(clientRect.Width, clientRect.Height);//绘制好的内容
-			::BitBlt(bufBitmap.GetDC(), 0, 0, clientRect.Width, clientRect.Height, args.DC, clientRect.X, clientRect.Y, SRCCOPY);//将绘制好的放到bufBitmap里面
-			GdiplusImage img(bufBitmap._bitmap);
-			GdiplusImage* outBitmap = ClipImage(&img, { clientRect.Width, clientRect.Height }, r);
-			::BitBlt(args.DC, clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height, buckBkImg->GetDC(), 0, 0, SRCCOPY);//把备份的背景贴回去
-			pt.base->DrawImage(outBitmap, clientRect.X, clientRect.Y);//将裁剪好的贴回去
-			delete buckBkImg;
-			delete outBitmap;
-		}
-#undef AntiAlias
-#endif
-#endif
-
 #if USED_GDIPLUS
-		pt.PopLayer();//弹出
-#endif
-
+		if (r > 0) {
+			layer->PopLayer();
+			delete layer;
+		}
+		pt.PopAxisAlignedClip();
+#endif 
 #if USED_Direct2D
 		if (r > 0) {
 			pt.PopLayer();//弹出
@@ -599,7 +579,7 @@ Event(this , ##__VA_ARGS__); \
 		else {
 			pt.PopAxisAlignedClip();
 		}
-#endif
+#endif 
 
 #ifdef DEBUGPAINT
 		if (PublicData->Debug) {
@@ -610,11 +590,7 @@ Event(this , ##__VA_ARGS__); \
 
 	Control::~Control()
 	{
-#ifdef _DEBUG
 		//销毁控件前请先将控件从父容器中移除
-		bool Please_remove_the_control_from_the_container_first = Parent;
-		ASSERT(!Please_remove_the_control_from_the_container_first);
-#endif
 		if (this->ScrollBar) {
 			delete ScrollBar;
 		}
@@ -674,6 +650,7 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::OnRemove()
 	{
+		_load = false;
 		if (PublicData) {
 			PublicData->DelTips(this);//移除tips文字绑定
 			PublicData->RemoveControl(this);

@@ -19,18 +19,16 @@ namespace EzUI {
 	HDC& EBitmap::GetDC() {
 		if (!_hdc) {
 			_hdc = ::CreateCompatibleDC(NULL);
-			_hgdiobj = ::SelectObject(_hdc, _bitmap);
+			::SelectObject(_hdc, _bitmap);
 		}
 		return _hdc;
 	}
 	EBitmap::~EBitmap() {
 		if (_hdc) {
-			::SelectObject(_hdc, _hgdiobj);
 			::DeleteDC(_hdc);
 			::DeleteBitmap(_bitmap);
 		}
 	}
-
 
 	void Rect::StringToRect(const EString& str) {
 		auto rectStr = str.Split(",");

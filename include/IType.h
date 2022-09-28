@@ -53,7 +53,6 @@ namespace EzUI {
 		};
 	private:
 		HDC _hdc = NULL;
-		HGDIOBJ _hgdiobj = NULL;
 		EBitmap(const EBitmap& hBitmap) {}
 		void operator=(const EBitmap& hBitmap) {}
 	public:

@@ -185,66 +185,67 @@ namespace EzUI {
 		}
 	};
 
-	class DxGeometry
+	class Geometry
 	{
 	public:
 		bool Ref = false;
-		ID2D1Geometry* Geometry = NULL;
+		ID2D1Geometry* rgn = NULL;
 	protected:
-		void Copy(const DxGeometry& _copy) {
-			((DxGeometry&)(_copy)).Ref = true;
-			this->Geometry = ((DxGeometry&)(_copy)).Geometry;
+		void Copy(const Geometry& _copy) {
+			((Geometry&)(_copy)).Ref = true;
+			this->rgn = ((Geometry&)(_copy)).rgn;
 		}
 	public:
-		DxGeometry() {}
-		DxGeometry(const DxGeometry& _copy) {
+		Geometry() {}
+		Geometry(const Geometry& _copy) {
 			Copy(_copy);
 		}
-		DxGeometry& operator =(const DxGeometry& _right) {
+		Geometry& operator =(const Geometry& _right) {
 			Copy(_right);
+			return *this;
 		}
-		DxGeometry(int x, int y, int width, int height) {
+		Geometry(int x, int y, int width, int height) {
 			D2D_RECT_F rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) };
-			g_Direct2dFactory->CreateRectangleGeometry(rectF, (ID2D1RectangleGeometry**)&Geometry);
+			g_Direct2dFactory->CreateRectangleGeometry(rectF, (ID2D1RectangleGeometry**)&rgn);
 		}
-		/*	DxGeometry(const __Rect& rect) :DxGeometry(rect.X, rect.Y, rect.Width, rect.Height) {};*/
-		DxGeometry(int x, int y, int width, int height, int radius) {
+		/*	Geometry(const __Rect& rect) :Geometry(rect.X, rect.Y, rect.Width, rect.Height) {};*/
+		Geometry(int x, int y, int width, int height, int radius) {
 			radius = radius / 2.0;
 			D2D1_ROUNDED_RECT rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) ,radius ,radius };
-			g_Direct2dFactory->CreateRoundedRectangleGeometry(rectF, (ID2D1RoundedRectangleGeometry**)&Geometry);
+			g_Direct2dFactory->CreateRoundedRectangleGeometry(rectF, (ID2D1RoundedRectangleGeometry**)&rgn);
 		}
-		virtual ~DxGeometry() {
-			if (Geometry && !Ref) {
-				Geometry->Release();
+		virtual ~Geometry() {
+			if (rgn && !Ref) {
+				rgn->Release();
 			}
 		}
 	public:
-		static void Combine(DxGeometry& out, const DxGeometry& a, const DxGeometry& b, D2D1_COMBINE_MODE COMBINE_MODE)
+		static void Combine(Geometry& out, const Geometry& a, const Geometry& b, D2D1_COMBINE_MODE COMBINE_MODE)
 		{
 			ID2D1PathGeometry* outPathGeometry = NULL;
 			g_Direct2dFactory->CreatePathGeometry(&outPathGeometry);
 			ID2D1GeometrySink* geometrySink = NULL;
 			outPathGeometry->Open(&geometrySink);
-			HRESULT ret = a.Geometry->CombineWithGeometry(b.Geometry, COMBINE_MODE, NULL, geometrySink);
+			HRESULT ret = a.rgn->CombineWithGeometry(b.rgn, COMBINE_MODE, NULL, geometrySink);
 			geometrySink->Close();
-			if (out.Geometry) {
-				out.Geometry->Release();
+			if (out.rgn) {
+				out.rgn->Release();
 			}
-			out.Geometry = outPathGeometry;
+			out.rgn = outPathGeometry;
 			geometrySink->Release();
 		}
 		//两块区域取最大边界
-		static void Union(DxGeometry& out, const DxGeometry& a, const DxGeometry& b) {
+		static void Union(Geometry& out, const Geometry& a, const Geometry& b) {
 			Combine(out, a, b, D2D1_COMBINE_MODE::D2D1_COMBINE_MODE_UNION);
 		}
 		//两块区域有交集的部分
-		static void Intersect(DxGeometry& out, const DxGeometry& a, const DxGeometry& b) {
+		static void Intersect(Geometry& out, const Geometry& a, const Geometry& b) {
 			Combine(out, a, b, D2D1_COMBINE_MODE::D2D1_COMBINE_MODE_INTERSECT);
 		}
-		static void Xor(DxGeometry& out, const DxGeometry& a, const DxGeometry& b) {
+		static void Xor(Geometry& out, const Geometry& a, const Geometry& b) {
 			Combine(out, a, b, D2D1_COMBINE_MODE::D2D1_COMBINE_MODE_XOR);
 		}
-		static void Exclude(DxGeometry& out, const DxGeometry& a, const DxGeometry& b) {
+		static void Exclude(Geometry& out, const Geometry& a, const Geometry& b) {
 			Combine(out, a, b, D2D1_COMBINE_MODE::D2D1_COMBINE_MODE_EXCLUDE);
 		}
 	};
@@ -301,7 +302,6 @@ namespace EzUI {
 		void DrawRectangle(const  __Rect& rect, const  __Color& color, int width = 1, int radius = 0);
 		void FillRectangle(const  __Rect& rect, const  __Color& color, int radius = 0);
 		void DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const  __Color& color, const  __Rect& rect, EzUI::TextAlign textAlign, bool underLine = false);
-		void MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, __RectF& outBox);
 		void DrawTextLayout(const __Point&, IDWriteTextLayout* textLayout, const __Color& color);
 		void DrawTextLayout(const __Point&pt, TextLayout* textLayout, const __Color& color) {
 			DrawTextLayout(pt, textLayout->value, color);
@@ -311,13 +311,13 @@ namespace EzUI {
 		void DrawImage(IImage* image, const  __Rect& rect, const EzUI::ImageSizeMode& imageSizeMode = EzUI::ImageSizeMode::Zoom, const EzUI::Margin& margin = 0);
 		void DrawGeometry(ID2D1Geometry* geometry, const  __Color& color, int width = 1);
 		void FillGeometry(ID2D1Geometry* geometry, const  __Color& color);
-		void DrawGeometry(const DxGeometry& geometry, const  __Color& color, int width = 1) {
-			DrawGeometry(geometry.Geometry, color);
+		void DrawGeometry(const Geometry& geometry, const  __Color& color, int width = 1) {
+			DrawGeometry(geometry.rgn, color);
 		}
-		void FillGeometry(const DxGeometry& geometry, const  __Color& color) {
-			FillGeometry(geometry.Geometry, color);
+		void FillGeometry(const Geometry& geometry, const  __Color& color) {
+			FillGeometry(geometry.rgn, color);
 		}
-		void PushLayer(const DxGeometry& dxGeometry, EzUI::ClipMode clipMode = EzUI::ClipMode::Valid);
+		void PushLayer(const Geometry& Geometry, EzUI::ClipMode clipMode = EzUI::ClipMode::Valid);
 		void PopLayer();
 		void PushAxisAlignedClip(const __Rect& rectBounds, EzUI::ClipMode clipMode = EzUI::ClipMode::Valid);
 		void PopAxisAlignedClip();

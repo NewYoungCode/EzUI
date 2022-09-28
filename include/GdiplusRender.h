@@ -27,6 +27,8 @@ namespace EzUI {
 #define __Size RenderType::Size
 #define __SizeF RenderType::SizeF
 
+	extern int Dpi;
+
 	class TextFormat {
 	public:
 		std::wstring fontFamilly; int fontSize; TextAlign textAlign;
@@ -93,68 +95,92 @@ namespace EzUI {
 		virtual ~GdiplusImage() {}
 		GdiplusImage(const std::wstring& fileName) :Gdiplus::Bitmap(fileName.c_str()) {}
 		GdiplusImage(HBITMAP hBitmap) :Gdiplus::Bitmap(hBitmap, NULL) {}
+		GdiplusImage(BITMAPINFO* gdiBitmapInfo, void* gdiBitmapData) :Gdiplus::Bitmap(gdiBitmapInfo, gdiBitmapData) {}
 		GdiplusImage(INT width, INT height, Gdiplus::PixelFormat pixelFormat = PixelFormat32bppARGB) :Gdiplus::Bitmap(width, height, pixelFormat) {}
 		void Save(const  std::wstring& fileName);
 	};
 
-	class UI_EXPORT GdiplusRender
-	{
+	class Geometry {
+	public:
+		bool Ref = false;
+		Gdiplus::Region* rgn = NULL;
+		Gdiplus::GraphicsPath Path;
 	protected:
-		//函数供内部使用 没有设置偏移所不可直接访问 
-		void DrawString(const std::wstring& text, const Gdiplus::Font* font, const __Color& color, const __RectF& rect, TextAlign textAlign, bool underLine = false);
-		void CreateFormat(TextAlign textAlign, Gdiplus::StringFormat& outStrFormat);
+		void Copy(const Geometry& _copy) {
+			((Geometry&)(_copy)).Ref = true;
+		}
 	public:
-		std::list<__Rect*> Layers;
-		int OffsetX = 0;
-		int OffsetY = 0;
-	public:
-		//static Region* IntersectRound(const __Rect& clientRect, int r, const __Rect& _ClipRect) {
-		//	GraphicsPath gp;//控件本身的光栅化路径
-		//	gp.AddArc(clientRect.X, clientRect.Y, r, r, 180, 90);//左上角
-		//	gp.AddArc(clientRect.Width + clientRect.X - r, clientRect.Y, r, r, 270, 90);//右上角
-		//	gp.AddArc(clientRect.Width + clientRect.X - r, clientRect.Y + clientRect.Height - r, r, r, 0, 90);//右下角
-		//	gp.AddArc(clientRect.X, clientRect.Y + clientRect.Height - r, r, r, 90, 90);//左下角
-		//	gp.CloseFigure();
-		//	Region* region1 = new Region(&gp);
-		//	region1->Intersect(_ClipRect);//控件本身区域 和交集 区域做 交集处理 
-		//	return region1;
-		//}
-		////圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分) 无抗锯齿
-		//	HRGN clientRgn = ::CreateRoundRectRgn(clientRect.X, clientRect.Y, clientRect.GetRight(), clientRect.GetBottom(), r, r);
-		//	HRGN clipRectRgn = ::CreateRectRgn(_ClipRect.X, _ClipRect.Y, _ClipRect.GetRight(), _ClipRect.GetBottom());
-		//	::IntersectRgn(clipRectRgn, clientRgn, clipRectRgn);
-		//	DeleteRgn(clientRgn);
-		//	layer.RGN = clipRectRgn;
-
-		Gdiplus::Rect ToRect(const __Rect& _rect) {
-			return Gdiplus::Rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
+		Geometry() {}
+		Geometry(int x, int y, int w, int h) {
+			rgn = new Gdiplus::Region(Gdiplus::Rect{ x,y,w,h });
+		}
+		Geometry(int x, int y, int w, int h, int radius) {
+			Gdiplus::Rect Rect{ x,y,w,h };
+			if (radius <= 0) {
+				Path.AddRectangle(Rect);
+				Path.CloseFigure();
+				return;
+			}
+			int diameter = radius;
+			Gdiplus::Rect arcRect(Rect.X, Rect.Y, diameter, diameter);// = new Rect(rect.Location, new Size(diameter, diameter));
+			//   左上角      
+			Path.AddArc(arcRect, 180, 90);
+			//   右上角      
+			arcRect.X = Rect.GetRight() - diameter;
+			Path.AddArc(arcRect, 270, 90);
+			//   右下角      
+			arcRect.Y = Rect.GetBottom() - diameter;
+			Path.AddArc(arcRect, 0, 90);
+			//   左下角      
+			arcRect.X = Rect.GetLeft();
+			Path.AddArc(arcRect, 90, 90);
+			Path.CloseFigure();
+			rgn = new Gdiplus::Region(&Path);
 		}
 
-		Gdiplus::Color ToColor(const __Color& color) {
-			return  Gdiplus::Color(color.GetValue());
+		Geometry(const Geometry& _copy) {
+			Copy(_copy);
 		}
-
-		Gdiplus::Graphics* base = NULL;
-		std::map<std::wstring, HFONT> CacheFont;
-
-		GdiplusRender(HDC hdc, int Width = 0, int Height = 0);
-		GdiplusRender(HWND hWnd);
-		GdiplusRender(Gdiplus::Image* image);
-		virtual ~GdiplusRender();
-		void DrawRectangle(const __Rect& rect, const __Color& color, int width = 1, int radius = 0);
-		void FillRectangle(const __Rect& rect, const __Color& color, int radius = 0);
-		void DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& rect, TextAlign textAlign, bool underLine = false);
-		void DrawTextLayout(const __Point& pt, TextLayout* textLayout, const __Color& color);
-		void MeasureString(const std::wstring& _text, const std::wstring& fontf, int fontSize, __RectF& outBox);
-		void PushLayer(const __Rect& rect, ClipMode clipMode = ClipMode::Valid);
-		void PopLayer();
-		HFONT CreateSafeFont(const std::wstring& fontFamily, int fontSize, HDC DC, bool lfUnderline = false);
-		void DrawLine(const __Color& color, const __Point& A, const __Point& B, int width = 1);
-		void DrawImage(IImage* image, const __Rect& destRect, const __Rect& srcRect);
-		void DrawImage(IImage* image, const __Rect& rect, const ImageSizeMode& imageSizeMode = ImageSizeMode::Zoom, const Margin& margin = 0);
-		void SaveImage(const WCHAR* format, const WCHAR* fileName, const __Size& size);
-		void BeginDraw();
-		void EndDraw();
+		Geometry& operator =(const Geometry& _right) {
+			Copy(_right);
+			return *this;
+		}
+		virtual ~Geometry() {
+			if (rgn && !Ref) {
+				delete rgn;
+			}
+		}
+	public:
+		//两块区域取最大边界
+		static void Union(Geometry& out, const Geometry& a, const Geometry& b) {
+			if (out.rgn) {
+				delete out.rgn;
+			}
+			out.rgn = a.rgn->Clone();
+			out.rgn->Union(b.rgn);
+		}
+		//两块区域有交集的部分
+		static void Intersect(Geometry& out, const Geometry& a, const Geometry& b) {
+			if (out.rgn) {
+				delete out.rgn;
+			}
+			out.rgn = a.rgn->Clone();
+			out.rgn->Intersect(b.rgn);
+		}
+		static void Xor(Geometry& out, const Geometry& a, const Geometry& b) {
+			if (out.rgn) {
+				delete out.rgn;
+			}
+			out.rgn = a.rgn->Clone();
+			out.rgn->Xor(b.rgn);
+		}
+		static void Exclude(Geometry& out, const Geometry& a, const Geometry& b) {
+			if (out.rgn) {
+				delete out.rgn;
+			}
+			out.rgn = a.rgn->Clone();
+			out.rgn->Exclude(b.rgn);
+		}
 	};
 
 	UI_EXPORT void RenderInitialize();
@@ -166,6 +192,88 @@ namespace EzUI {
 	UI_EXPORT BOOL SaveHDCToFile(HDC hDC, const __Rect& rect, const std::wstring& fileName);
 	UI_EXPORT GdiplusImage* ClipImage(GdiplusImage* img, const __Size& sz, int _radius);
 
-};
+	class Layer {
+	public:
+		__Rect Bound;
+		HBITMAP Bitmap = NULL;
+		HDC DC = NULL;//临时DC
+		HDC SRCDC = NULL;//源DC
+		int Radius = 0;
+		Gdiplus::Graphics* render = NULL;
+	public:
+		Layer(const __Rect& rect, int radius, HDC srcDC, Gdiplus::Graphics* render) {
+			this->render = render;
+			this->Bound = rect;
+			this->Radius = radius;
+			this->SRCDC = srcDC;
+			this->Bitmap = ::CreateCompatibleBitmap(SRCDC, rect.Width, rect.Height);
+			this->DC = ::CreateCompatibleDC(NULL);
+			::SelectObject(DC, Bitmap);
+			::BitBlt(this->DC, 0, 0, Bound.Width, Bound.Height, SRCDC, Bound.X, Bound.Y, SRCCOPY);//备份背景
+		}
+		void PopLayer() {
+			//把绘制好的备份下来 准备做裁剪
+			HBITMAP bitmap = ::CreateCompatibleBitmap(this->DC, Bound.Width, Bound.Height);
+			HDC  hdc = ::CreateCompatibleDC(NULL);
+			::SelectObject(hdc, bitmap);
+			::BitBlt(hdc, 0, 0, Bound.Width, Bound.Height, SRCDC, Bound.X, Bound.Y, SRCCOPY);
+			//把背景贴上去
+			::BitBlt(SRCDC, Bound.X, Bound.Y, Bound.Width, Bound.Height, this->DC, 0, 0, SRCCOPY);
 
+			//纹理裁剪再绘制上去
+			Gdiplus::Bitmap img(bitmap, NULL);
+			Gdiplus::TextureBrush tb(&img);
+			Gdiplus::GraphicsPath path;
+			CreateRectangle(path, Bound, Radius);//申明
+			tb.TranslateTransform(Bound.X, Bound.Y);//纹理偏移
+			render->FillPath(&tb, &path);
+
+			//清理工作
+			::DeleteDC(hdc);
+			::DeleteObject(bitmap);
+		}
+		virtual ~Layer() {
+			if (Bitmap || DC) {
+				::DeleteDC(DC);
+				::DeleteObject(Bitmap);
+			}
+		}
+	};
+	class UI_EXPORT GdiplusRender
+	{
+	public:
+		std::list<__Rect*> Layers;
+		Layer* layer = NULL;
+		HDC DC = NULL;
+		int OffsetX = 0;
+		int OffsetY = 0;
+		Gdiplus::Graphics* base = NULL;
+		std::map<std::wstring, HFONT> CacheFont;
+	public:
+		Gdiplus::Rect ToRect(const __Rect& _rect) {
+			return Gdiplus::Rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
+		}
+		Gdiplus::Color ToColor(const __Color& color) {
+			return  Gdiplus::Color(color.GetValue());
+		}
+		GdiplusRender(HDC hdc, int Width = 0, int Height = 0);
+		GdiplusRender(HWND hWnd);
+		GdiplusRender(Gdiplus::Image* image);
+		virtual ~GdiplusRender();
+		void DrawRectangle(const __Rect& rect, const __Color& color, int width = 1, int radius = 0);
+		void FillRectangle(const __Rect& rect, const __Color& color, int radius = 0);
+		void DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& rect, TextAlign textAlign, bool underLine = false);
+		void DrawTextLayout(const __Point& pt, TextLayout* textLayout, const __Color& color);
+		void PushAxisAlignedClip(const __Rect& rect, ClipMode clipMode = ClipMode::Valid);
+		void PopAxisAlignedClip();
+		HFONT CreateSafeFont(const std::wstring& fontFamily, int fontSize, HDC DC, bool lfUnderline = false);
+		void DrawLine(const __Color& color, const __Point& A, const __Point& B, int width = 1);
+		void DrawImage(IImage* image, const __Rect& destRect, const __Rect& srcRect);
+		void DrawImage(IImage* image, const __Rect& rect, const ImageSizeMode& imageSizeMode = ImageSizeMode::Zoom, const Margin& margin = 0);
+		void SaveImage(const WCHAR* format, const WCHAR* fileName, const __Size& size);
+		void FillGeometry(const Geometry& geometry, const  __Color& color);
+		void BeginDraw();
+		void EndDraw();
+	};
+};
 #endif

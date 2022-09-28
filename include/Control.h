@@ -157,8 +157,9 @@ namespace EzUI {
 		ScrollBar() {
 			Style.ForeColor = { 200,255,255,255 };//the bar backgroundcolor
 			Style.BackgroundColor = { 200,200,200,200 };//the bar backgroundcolor
-			SetWidth(7);//滚动条宽度
-			Style.Radius = 7;
+			SetWidth(10);//滚动条高度
+			SetHeight(10);//滚动条宽度
+			Style.Radius = 10;
 		}
 		virtual ~ScrollBar() {}
 	};
