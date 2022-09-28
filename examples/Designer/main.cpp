@@ -19,30 +19,9 @@
 using namespace EzUI;
 
 
-enum Animali
-{
-	Bird,
-	Cat,
-	Dog
-};
-
-
-void Say(Animali type) {
-	if (type == Animali::Bird) {
-		::MessageBoxW(NULL, L"是鸟!",L"", 0);
-	}
-	if (type == Animali::Cat) {
-		::MessageBoxW(NULL, L"是猫!", L"", 0);
-	}
-	if (type == Animali::Dog) {
-		::MessageBoxW(NULL, L"是狗!", L"", 0);
-	}
-}
-
 
 int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
-	//Say(Animali::Bird);
 
 	Application app;
 
@@ -63,10 +42,8 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	c1.SetRect({ 100,200,400,200 });
 	c1.Style.BackgroundColor = Color(255, 200, 250, 0);
 
-	//c1.AddControl(&c);
-
+	c1.AddControl(&c);
 	layout.AddControl(&c1);
-
 
 	//TileList tile;
 	//tile.Dock = DockStyle::Fill;

@@ -1,5 +1,6 @@
 #pragma once
 #include "global.h"
+#include "Application.h"
 class MainFrm :
     public Form
 {

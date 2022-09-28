@@ -6,6 +6,11 @@ void MainFrm::InitForm() {
 	this->Zoom = true;
 	//CloseShadow();
 	this->SetLayout(ui::UIManager::LoadLayout("xml/main.htm"));
+
+	//如果你仍需要使用win32原生控件请给窗口设置 主布局 然后就可以添加win32原生控件了(注:layeredwindow不支持原生控件)
+	/*HWND btn = ::CreateWindowW(DATETIMEPICK_CLASS, L"hello world", WS_POPUP | WS_VISIBLE, 600, 10, 100, 30, NULL, NULL, GetModuleHandle(NULL), 0);
+	::SetParent(btn, Hwnd());*/
+
 	auto main2 = FindControl("main2");
 	main2->Style.BackgroundColor = Color(120, 0, 0, 0);
 

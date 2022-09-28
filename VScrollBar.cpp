@@ -112,7 +112,7 @@ namespace EzUI {
 	{
 		__super::OnMouseLeave();
 		mouseDown = false;
-	
+
 		//{//滚动条效果
 		//	SetWidth(5);
 		//	Style.Radius = 5;

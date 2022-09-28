@@ -1,5 +1,6 @@
 #include "GdiplusRender.h"
 #if USED_GDIPLUS
+#pragma comment (lib, "usp10.lib")
 #pragma comment(lib,"Shlwapi.lib")
 #pragma comment(lib, "gdiplus.lib")
 namespace EzUI {

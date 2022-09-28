@@ -14,7 +14,6 @@
 #include <gdiplusimageattributes.h>
 #include <shlwapi.h>
 #include <usp10.h>
-#pragma comment (lib, "usp10.lib")
 #include "RenderType.h"
 namespace EzUI {
 
@@ -85,7 +84,7 @@ namespace EzUI {
 		}
 		virtual ~TextLayout() {
 			if (m_Analysis) {
-				ScriptStringFree(&m_Analysis);
+				::ScriptStringFree(&m_Analysis);
 			}
 		}
 	};

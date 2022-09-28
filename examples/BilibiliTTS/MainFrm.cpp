@@ -19,7 +19,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height) {
 }
 
 void MainFrm::OnLoad() {
-	SetTimer(2000);
+	//SetTimer(2000);
 }
 
 //ШЅжи
