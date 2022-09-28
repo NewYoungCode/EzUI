@@ -54,7 +54,7 @@ namespace EzUI {
 			size_t Interval = -1;
 			UINT_PTR TimerId = 0;
 		private:
-			static void  CALLBACK TimeProc(HWND hwnd, UINT message, UINT iTimerID, DWORD dwTime)
+			static void  CALLBACK TimeProc(HWND hwnd, UINT message, UINT_PTR iTimerID, DWORD dwTime)
 			{
 				Timer* timer = (Timer*)_timers[iTimerID];
 				if (timer && timer->Tick) {

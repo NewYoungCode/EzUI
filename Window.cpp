@@ -456,7 +456,7 @@ namespace EzUI {
 			tti.hwnd = _hWnd;
 			tti.rect = ctl->ClipRect.WinRECT();
 			tti.uId = (UINT_PTR)ctl;
-			tti.lpszText = (LPWSTR)text.c_str();
+			tti.lpszText = (LPTSTR)text.c_str();
 			//添加一个tips信息
 			SendMessage(_hWndTip, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
 		};

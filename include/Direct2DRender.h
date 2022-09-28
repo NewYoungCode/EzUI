@@ -321,7 +321,7 @@ namespace EzUI {
 		void PopLayer();
 		void PushAxisAlignedClip(const __Rect& rectBounds, EzUI::ClipMode clipMode = EzUI::ClipMode::Valid);
 		void PopAxisAlignedClip();
-		ID2D1SolidColorBrush* Direct2DRender::GetSolidColorBrush(const __Color& _color);
+		ID2D1SolidColorBrush* GetSolidColorBrush(const __Color& _color);
 		void BeginDraw();
 		void EndDraw();
 	};

@@ -219,7 +219,7 @@ namespace EzUI {
 		TextFormat textFormat(fontFamily, fontSize, textAlign);
 		TextLayout textLayout(text, __Size{ rect.Width, rect.Height }, &textFormat);
 		if (underLine) {
-			textLayout->SetUnderline(TRUE, { 0,text.size() });
+			textLayout->SetUnderline(TRUE, { 0,(UINT32)text.size() });
 		}
 		this->DrawTextLayout({ _rect.X,_rect.Y }, textLayout, color);
 	}
