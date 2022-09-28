@@ -98,6 +98,8 @@ namespace EzUI {
 		Painter pt(_hdc, clientRect.Width, clientRect.Height);//
 		PaintEventArgs args(pt);
 		args.InvalidRectangle = rePaintRect;//
+		args.PublicData = &PublicData;
+		args.DC = _hdc;
 		MainLayout->Rending(args);//
 		pt.EndDraw();//D2D的话必须要先结束绘制才能将最终图像放到DC里面
 		PushDC(_hdc);//updatelaredwindow
