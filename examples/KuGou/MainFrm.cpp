@@ -49,6 +49,7 @@ void MainFrm::InitForm() {
 		it->SetTips(name);
 		localList->AddControl(it);
 	}
+	//localList->ResumeLayout();
 
 	searchList->ScrollBar->Rolling = [=](int a, int b)->void {
 		NextPage(a, b);

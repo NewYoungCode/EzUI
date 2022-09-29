@@ -27,7 +27,7 @@ namespace EzUI {
 		VScrollBar();
 		virtual ~VScrollBar();
 		virtual void Move(double posY);
-		virtual void OnLayout(const Size& sz, bool fast = true)override;
+		virtual void ParentSize(const Size& parentSize)override;
 		void SetMaxBottom(int maxBottom);
 		virtual Rect GetSliderRect();
 

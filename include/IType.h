@@ -317,13 +317,6 @@ namespace EzUI {
 		void SetStyleSheet(const EString& styleStr);
 		void SetStyle(const EString& key, const EString& value);
 	};
-	class UI_EXPORT ILayout {
-	public:
-		bool PendLayout = true;//布局是否被挂起 当Addcontrol或者RemoveControl的时候此标志为true 当调用ResumeLayout()之后此标志为false
-	public:
-		virtual void ResumeLayout() = 0;//调用此函数之后请将 PendLayout 设置成false
-		virtual ~ILayout() {};
-	};
 	class UI_EXPORT IScroll {
 	public:
 		int Margin = 0;//如果是水平列表那就是 右边距 ,垂直滚动条就是下边距
@@ -337,6 +330,7 @@ namespace EzUI {
 		virtual Rect GetSliderRect() = 0;//
 		virtual  int RollingCurrent() = 0;
 		virtual int RollingTotal() = 0;//
+		virtual void ParentSize(const Size& parentSize) = 0;
 		EventScrollRolling Rolling = NULL;
 		virtual ~IScrollBar() {};
 	};
@@ -358,7 +352,7 @@ namespace EzUI {
 		virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point) = 0;
 		virtual void OnMouseDown(MouseButton mbtn, const Point& point) = 0;
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point) = 0;
-		virtual void OnSize(const Size& size) = 0;
+		virtual bool OnSize(const Size& size) = 0;
 		virtual void OnLoad() = 0;
 		virtual void OnChar(WPARAM wParam, LPARAM lParam) = 0;
 		virtual void OnKeyDown(WPARAM wParam) = 0;

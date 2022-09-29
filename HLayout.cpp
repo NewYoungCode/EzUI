@@ -1,7 +1,5 @@
 #include "HLayout.h"
-
 namespace EzUI {
-
 	void HLayout::ResumeLayout()
 	{
 		int fixedWidth = 0;
@@ -26,7 +24,6 @@ namespace EzUI {
 		//ÅÅÐò
 		for (auto& it : _controls) {
 			if (it->Visible == false) continue;
-			it->OnLayout({ Width(),Height() }, false);
 			if (it->GetFixedWidth() > 0) {
 				it->SetRect({ (int)maxRight ,it->GetRect().Y,it->GetFixedWidth() ,it->GetRect().Height });
 				maxRight += it->Width();
@@ -38,28 +35,28 @@ namespace EzUI {
 		}
 		this->PendLayout = false;
 	}
-
 	void HLayout::AddControl(Control* ctl)
 	{
 		Control::AddControl(ctl);
-		PendLayout = true;
 		if (ctl->Height() == 0 && ctl->Y() == 0) {
 			ctl->Dock = DockStyle::Vertical;
 		}
 		if (ctl->Visible == true) {
 			ResumeLayout();
 		}
+		this->PendLayout = true;
 	}
-
 	ControlIterator HLayout::RemoveControl(Control* ctl)
 	{
 		ControlIterator it = __super::RemoveControl(ctl);
 		PendLayout = true;
 		return it;
 	}
-
-	void HLayout::OnSize(const Size& size) {
-		ResumeLayout();
+	bool HLayout::OnSize(const Size& size) {
+		if (__super::OnSize(size)) {
+			ResumeLayout();
+			return true;
+		}
+		return false;
 	}
-	
 };

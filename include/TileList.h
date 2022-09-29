@@ -17,7 +17,7 @@ namespace EzUI {
 		int MarginTop = 35;
 		int MarginRight = 36;
 		virtual void Clear(bool freeList = false)override;
-		virtual void OnSize(const Size& sz) override;
+		virtual bool OnSize(const Size& sz) override;
 		virtual void OnChildPaint(Controls& controls, PaintEventArgs& args)override;
 		virtual void ResumeLayout()override;
 	};

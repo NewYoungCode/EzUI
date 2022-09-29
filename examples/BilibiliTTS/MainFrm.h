@@ -5,7 +5,11 @@ class MainFrm :
     public Form
 {
 protected:
-    Label title;
+
+    Label b1;
+    Label b2;
+
+    HLayout title;
     VLayout layout;
     VList list;
     std::map<EString, EString> maps;

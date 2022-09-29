@@ -50,9 +50,14 @@ namespace EzUI {
 	{
 		return _index;
 	}
-	
-	void TabLayout::OnSize(const Size& sz)
+
+	bool TabLayout::OnSize(const Size& sz)
 	{
-		ResumeLayout();
+		if (__super::OnSize(sz)) {
+			ResumeLayout();
+			return true;
+		}
+		return false;
+
 	}
 };

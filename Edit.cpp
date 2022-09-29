@@ -150,9 +150,12 @@ namespace EzUI {
 		text = _text.utf16();
 		Analysis();
 	}
-	void Edit::OnSize(const Size& sz) {
-		__super::OnSize(sz);
-		Analysis();
+	bool Edit::OnSize(const Size& sz) {
+		if (__super::OnSize(sz)) {
+			Analysis();
+			return true;
+		}
+		return false;
 	}
 
 	void Edit::OnForePaint(PaintEventArgs& e) {

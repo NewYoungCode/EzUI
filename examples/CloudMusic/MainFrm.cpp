@@ -258,10 +258,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	SetLayout(&laout);
 }
 
-void MainFrm::OnSize(const Size& sz)
-{
-	__super::OnSize(sz);
-}
+
 
 void MainFrm::OnPaint(HDC winHDC, const Rect& rePaintRect)
 {

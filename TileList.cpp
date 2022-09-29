@@ -25,13 +25,17 @@ namespace EzUI {
 	TileList::~TileList()
 	{
 	}
-	void TileList::OnSize(const Size& sz)
+	bool TileList::OnSize(const Size& sz)
 	{
-		ResumeLayout();
-		if (vScrollBar) {
-			vScrollBar->OnLayout(sz);
-			vScrollBar->SetMaxBottom(_MaxBottom);
+		if (__super::OnSize(sz)) {
+			ResumeLayout();
+			if (vScrollBar) {
+				vScrollBar->SetMaxBottom(_MaxBottom);
+			}
+			return true;
 		}
+		return false;
+		
 	}
 	void TileList::OnChildPaint(Controls& controls, PaintEventArgs& args) {
 		VisibleControls.clear();
@@ -74,7 +78,6 @@ namespace EzUI {
 				maxHeight = 0;
 				_lineCount++;
 			}
-			it.OnLayout({ Width(),Height() }, false);//触发原始布局特性
 			it.SetLocation({ _right,_bottom });
 			LocationY.insert(std::pair<Control*, int>(&it, it.Y()));
 			_right += it.Width() + MarginRight;
@@ -87,6 +90,8 @@ namespace EzUI {
 		}
 
 		_MaxBottom += MarginTop;
+
+		this->PendLayout = false;
 	}
 
 };

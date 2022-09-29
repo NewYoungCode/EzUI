@@ -30,7 +30,6 @@ namespace EzUI {
 		//排序
 		for (auto& it : _controls) {
 			if (it->Visible == false)continue;
-			it->OnLayout({ Width(),Height() }, false);//触发原始布局特性
 			if (it->GetFixedHeight() > 0) {
 				it->SetRect({ it->X(), (int)maxBottom,it->Width(), it->GetFixedHeight() });
 				maxBottom += it->Height();
@@ -60,10 +59,13 @@ namespace EzUI {
 		PendLayout = true;
 		return it;
 	}
-	void VLayout::OnSize(const Size& size) {
-		PendLayout = true;
-		ResumeLayout();
-	}
 
+	bool VLayout::OnSize(const Size& sz) {
+		if (__super::OnSize(sz)) {
+			ResumeLayout();
+			return true;
+		}
+		return false;
+	}
 
 };

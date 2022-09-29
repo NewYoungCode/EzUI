@@ -24,7 +24,7 @@ namespace EzUI {
 	public:
 		HScrollBar();
 		virtual ~HScrollBar();
-		virtual void OnLayout(const Size& sz, bool fast = true)override;
+		virtual void ParentSize(const Size& parentSize)override;
 		virtual Rect GetSliderRect();
 		virtual void Move(double posX)override;
 		void SetMaxRight(int maxRight);

@@ -2,7 +2,7 @@
 #include "Control.h"
 namespace EzUI {
 	class UI_EXPORT  Layout :
-		public Control, public ILayout
+		public Control
 	{
 	public:
 		Layout();

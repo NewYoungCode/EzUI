@@ -333,28 +333,7 @@ Event(this , ##__VA_ARGS__); \
 	{
 		return _rect;
 	}
-	void Control::OnLayout(const Size& pRect, bool instantly)
-	{
-		while (Dock != DockStyle::None)
-		{
-			if (Dock == DockStyle::Fill) {
-				_rect = { 0,0,pRect.Width,pRect.Height };
-				break;
-			}
-			if (Dock == DockStyle::Vertical) {
-				_rect = { X(),0,Width(),pRect.Height };
-				break;
-			}
-			if (Dock == DockStyle::Horizontal) {
-				_rect = { 0,Y(),pRect.Width,Height() };
-				break;
-			}
-			break;
-		}
-		if (instantly) {
-			SetRect(_rect);
-		}
-	}
+
 	void Control::SetFixedWidth(const int& fixedWidth)
 	{
 		_rect.Width = fixedWidth;
@@ -373,7 +352,6 @@ Event(this , ##__VA_ARGS__); \
 	{
 		return _fixedHeight;
 	}
-
 	bool Control::CheckEventPassThrough(Event eventType)
 	{
 		if ((MousePassThrough & eventType) == eventType) {
@@ -381,7 +359,6 @@ Event(this , ##__VA_ARGS__); \
 		}
 		return false;
 	}
-
 	Rect Control::GetClientRect() {
 		Control* pCtrl = this;
 		int x = _rect.X;
@@ -393,25 +370,43 @@ Event(this , ##__VA_ARGS__); \
 		}
 		return Rect{ x,y,_rect.Width,_rect.Height };
 	}
-	void Control::SetRect(const Rect& rect, bool rePaint)
+	void Control::SetRect(const Rect& rect)
 	{
-		_rect = rect;
-		Size outSize{ _rect.Width,_rect.Height };
+		this->_rect = rect;
 		if (_fixedWidth) {
 			_rect.Width = _fixedWidth;
 		}
 		if (_fixedHeight) {
 			_rect.Height = _fixedHeight;
 		}
-		this->ComputeClipRect();//这里要重新计算基于父控件的裁剪区域
-		OnSize(outSize);//然后才开始触发自身的特性 //布局控件会重载这个函数 对子控件调整rect
-		if (rePaint) {
-			Invalidate();
+		if (this->Parent) {
+			Rect pRect = Parent->GetRect();
+			while (Dock != DockStyle::None)
+			{
+				if (Dock == DockStyle::Fill) {
+					_rect = { 0,0,pRect.Width,pRect.Height };
+					break;
+				}
+				if (Dock == DockStyle::Vertical) {
+					_rect = { X(),0,Width(),pRect.Height };
+					break;
+				}
+				if (Dock == DockStyle::Horizontal) {
+					_rect = { 0,Y(),pRect.Width,Height() };
+					break;
+				}
+				break;
+			}
 		}
+		this->ComputeClipRect();//这里要重新计算基于父控件的裁剪区域
+		OnSize(Size(_rect.Width, _rect.Height));//然后才开始触发自身的特性 //布局控件会重载这个函数 对子控件调整rect
 	}
 	void Control::SetTips(const EString& text)
 	{
 		_tipsText = text.utf16();
+	}
+	void Control::ResumeLayout()
+	{
 	}
 	//专门处理鼠标消息的
 	void Control::OnMouseEvent(const MouseEventArgs& _args) {
@@ -495,6 +490,11 @@ Event(this , ##__VA_ARGS__); \
 	void Control::Rending(PaintEventArgs& args) {
 		this->PublicData = args.PublicData;
 		if (!Visible) { return; }//如果控件设置为不可见直接不绘制
+
+		if (this->PendLayout) {//绘制的时候会检查时候有挂起的布局 如果有 立即让布局生效并重置布局标志
+			this->ResumeLayout();
+		}
+
 		auto clientRect = this->GetClientRect();//获取基于父窗口的最表
 		if (clientRect.IsEmptyArea()) { return; }
 		auto& invalidRect = args.InvalidRectangle;
@@ -580,7 +580,6 @@ Event(this , ##__VA_ARGS__); \
 			pt.PopAxisAlignedClip();
 		}
 #endif 
-
 #ifdef DEBUGPAINT
 		if (PublicData->Debug) {
 			pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, Color::White);
@@ -627,8 +626,6 @@ Event(this , ##__VA_ARGS__); \
 		ctl->PublicData = this->PublicData;
 		ctl->Parent = this;
 		Size sz{ _rect.Width,_rect.Height };
-		//新添加的控件必须先触发 自身布局特性
-		ctl->OnLayout(sz);
 		//如果控件是一个弹簧对象
 		if (dynamic_cast<Spacer*>(ctl)) {
 			_spacer.push_back(ctl);//控件内收集弹簧对象 当本控件执行析构函数的时候 自动会释放控件内弹簧对象
@@ -714,6 +711,10 @@ Event(this , ##__VA_ARGS__); \
 		if (Parent) {
 			Rect& ClipRectRef = *(Rect*)(&this->ClipRect);//引用父控件的裁剪区域
 			Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->ClipRect);//自身和父控件对比较裁剪区域
+		}
+		else {
+			Rect& ClipRectRef = *(Rect*)(&this->ClipRect);//引用父控件的裁剪区域
+			ClipRectRef = this->GetClientRect();
 		}
 	}
 	Controls& Control::GetControls()
@@ -840,15 +841,21 @@ Event(this , ##__VA_ARGS__); \
 		}
 		UI_TRIGGER(MouseLeave);
 	}
-	void Control::OnSize(const Size& size)
+	bool Control::OnSize(const Size& size)
 	{
-		for (auto& it : _controls) {
-			it->OnLayout(size);//让子控件触发布局特性 进行调整rect
+		if (size == _lastSize) {
+			return false;
 		}
+		_lastSize = size;
+		if (_lastSize.Empty()) {
+			return false;
+		}
+		if (ScrollBar) {
+			ScrollBar->ParentSize(size);
+		}
+		return true;
 	}
 	void Control::OnKillFocus()
 	{
 	}
-
-
 };

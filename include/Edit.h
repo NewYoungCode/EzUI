@@ -29,7 +29,7 @@ namespace EzUI {
 		BOOL B_isTrailingHit;//如果是1表示是字符的后半边
 		int B_TextPos = 0;//点击了第几个字符
 	protected:
-		virtual void OnSize(const Size& size)override;
+		virtual bool OnSize(const Size& size)override;
 		virtual void OnForePaint(PaintEventArgs& e) override;
 		virtual void OnChar(WPARAM wParam, LPARAM lParam) override;
 		virtual void OnKeyDown(WPARAM wParam)override;

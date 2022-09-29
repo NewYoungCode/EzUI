@@ -9,7 +9,6 @@ namespace EzUI {
 			vScrollBar->_controlsLocationY = &LocationY;
 		}
 	}
-
 	VList::~VList()
 	{
 	}
@@ -27,6 +26,7 @@ namespace EzUI {
 		if (vScrollBar) {
 			vScrollBar->SetMaxBottom(_maxBottom);
 		}
+		this->PendLayout = false;
 	}
 	void VList::AddControl(Control* ctl)
 	{
@@ -35,6 +35,8 @@ namespace EzUI {
 		_maxBottom += ctl->Height();
 		_maxBottom += Margin;
 		LocationY.insert(std::pair<Control*, int>(ctl, ctl->Y()));
+
+		this->PendLayout = true;
 	}
 
 	ControlIterator VList::RemoveControl(Control* ctl)
@@ -67,12 +69,14 @@ namespace EzUI {
 		}
 	}
 
-	void VList::OnSize(const Size& size) {
-		__super::OnSize(size);
-		if (vScrollBar) {
-			vScrollBar->OnLayout(size);
-			vScrollBar->SetMaxBottom(_maxBottom);
+	bool VList::OnSize(const Size& size) {
+		if (__super::OnSize(size)) {
+			if (vScrollBar) {
+				vScrollBar->SetMaxBottom(_maxBottom);
+			}
+			return true;
 		}
+		return false;
 	}
 
 	void VList::OnChildPaint(Controls& controls, PaintEventArgs& args) {

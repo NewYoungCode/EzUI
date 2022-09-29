@@ -11,7 +11,7 @@ namespace EzUI {
 	public:
 		void AddControl(Control* ctl) override;
 		ControlIterator RemoveControl(Control* ctl)override;
-		void OnSize(const Size& size)override;
+		bool OnSize(const Size& size)override;
 		void ResumeLayout()override;
 	};
 	using VBox = VLayout;

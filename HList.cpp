@@ -29,6 +29,7 @@ namespace EzUI {
 		if (hScrollBar) {
 			hScrollBar->SetMaxRight(_maxRight);
 		}
+		this->PendLayout = false;
 	}
 
 	void HList::AddControl(Control* ctl)
@@ -38,6 +39,7 @@ namespace EzUI {
 		_maxRight += ctl->Width();
 		_maxRight += Margin;
 		LocationX.insert(std::pair<Control*, int>(ctl, ctl->X()));
+		this->PendLayout = true;
 	}
 	ControlIterator HList::RemoveControl(Control* ctl)
 	{
@@ -69,12 +71,14 @@ namespace EzUI {
 		}
 	}
 
-	void HList::OnSize(const Size& size) {
-		__super::OnSize(size);
-		if (hScrollBar) {
-			hScrollBar->OnLayout(size);
-			hScrollBar->SetMaxRight(_maxRight);
+	bool HList::OnSize(const Size& size) {
+		if (__super::OnSize(size)) {
+			if (hScrollBar) {
+				hScrollBar->SetMaxRight(_maxRight);
+			}
+			return true;
 		}
+		return false;
 	}
 
 	void HList::OnChildPaint(Controls& controls, PaintEventArgs& args) {

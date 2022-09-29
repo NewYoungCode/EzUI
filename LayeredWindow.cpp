@@ -23,7 +23,7 @@ namespace EzUI {
 		return HTCLIENT;//ָ
 	}
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
-	LayeredWindow::LayeredWindow(int cx, int cy, HWND owner) :Window(cx, cy, owner, WS_POPUP | WS_MINIMIZEBOX, WS_EX_LAYERED )
+	LayeredWindow::LayeredWindow(int cx, int cy, HWND owner) :Window(cx, cy, owner, WS_POPUP | WS_MINIMIZEBOX, WS_EX_LAYERED)
 	{
 		_boxShadow = new ShadowWindow(cx, cy, _hWnd);
 		UpdateShadow();
@@ -83,15 +83,14 @@ namespace EzUI {
 			Rect::Union(_InvalidateRect, _InvalidateRect, _rect);
 		}
 	}
-	void LayeredWindow::OnSize(const Size& sz) {
-		auto rect = this->GetClientRect();
-		*((Rect*)(&MainLayout->ClipRect)) = rect;//
-		MainLayout->SetRect(rect, false);
+	bool LayeredWindow::OnSize(const Size& sz) {
 		if (_winBitmap) {
 			delete _winBitmap;
 		}
-		_winBitmap = new EBitmap(rect.Width, rect.Height,EBitmap::PixelFormat::PixelFormatARGB);
-		this->InvalidateRect(rect);
+		_winBitmap = new EBitmap(sz.Width, sz.Height, EBitmap::PixelFormat::PixelFormatARGB);
+		MainLayout->SetRect(this->GetClientRect());
+		MainLayout->Invalidate();
+		return  true;
 	}
 	void LayeredWindow::OnPaint(HDC _hdc, const Rect& rePaintRect) {
 		Rect& clientRect = GetClientRect();//

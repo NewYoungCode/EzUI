@@ -153,23 +153,6 @@ namespace EzUI {
 
 	LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		//if (_ChildModalWnd) {
-		//	if (uMsg == WM_SETFOCUS) {
-		//		FLASHWINFO info;
-		//		info.cbSize = sizeof(FLASHWINFO);
-		//		info.hwnd = _ChildModalWnd;
-		//		info.dwFlags = FLASHW_ALL;
-		//		info.dwTimeout = 100;
-		//		info.uCount = 5;
-		//		::FlashWindowEx(&info);
-		//		::SetFocus(_ChildModalWnd);
-		//		::MessageBeep(MB_ICONWARNING);//发出咚咚咚的声音
-		//	}
-		//	if (uMsg == WM_MOUSEWHEEL || uMsg == WM_MOUSEMOVE) {
-		//		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
-		//	}
-		//} //已经解决owner闪烁的问题 不需要再拦截这些信息来实现 阻塞对话框
-
 		if (WM_COMMAND == uMsg) {
 
 		}
@@ -700,18 +683,19 @@ namespace EzUI {
 			}
 		}
 	}
-	void Window::OnSize(const Size& sz)
+	bool Window::OnSize(const Size& sz)
 	{
 #ifdef COUNT_ONSIZE
 		StopWatch sw;
-#endif 
-		* ((Rect*)(&MainLayout->ClipRect)) = this->GetClientRect();//
-		MainLayout->SetRect(this->GetClientRect(), true);
+#endif
+		MainLayout->SetRect(this->GetClientRect());
+		MainLayout->Invalidate();
 #ifdef COUNT_ONSIZE
 		char buf[50]{ 0 };
 		sprintf_s(buf, "OnSize (%d,%d) %dms\n", sz.Width, sz.Height, sw.ElapsedMilliseconds());
 		OutputDebugStringA(buf);
 #endif
+		return true;
 	}
 
 	void Window::OnRect(const Rect& rect)

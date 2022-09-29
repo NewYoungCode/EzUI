@@ -53,9 +53,8 @@ namespace EzUI {
 		e.Painter.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height },GetBackgroundColor());
 	}
 
-	void HScrollBar::OnLayout(const Size& size, bool fast) {
-
-		this->SetRect({ 0,size.Height - this->Height(),Parent->Width(),Height() });
+	void HScrollBar::ParentSize(const Size& parentSize) {
+		this->SetRect({ 0,parentSize.Height - this->Height(),Parent->Width(),Height() });
 	}
 
 	void HScrollBar::OnForePaint(PaintEventArgs& args)

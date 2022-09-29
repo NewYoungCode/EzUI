@@ -109,6 +109,11 @@ namespace EzUI {
 					Height - sz.Height);
 			}
 
+			bool operator==(IN const Size& _right) const
+			{
+				return (Width == _right.Width && Height == _right.Height);
+			}
+
 			BOOL Equals(IN const Size& sz) const
 			{
 				return (Width == sz.Width) && (Height == sz.Height);
@@ -256,12 +261,12 @@ namespace EzUI {
 				Width = width;
 				Height = height;
 			}
-	/*		RectF(const Rect& rect) {
-				X = (FLOAT)rect.X;
-				Y = (FLOAT)rect.Y;
-				Width = (FLOAT)rect.Width;
-				Height = (FLOAT)rect.Height;
-			}*/
+			/*		RectF(const Rect& rect) {
+						X = (FLOAT)rect.X;
+						Y = (FLOAT)rect.Y;
+						Width = (FLOAT)rect.Width;
+						Height = (FLOAT)rect.Height;
+					}*/
 
 			RectF(IN const PointF& location,
 				IN const SizeF& size)
@@ -475,6 +480,10 @@ namespace EzUI {
 			{
 				size->Width = Width;
 				size->Height = Height;
+			}
+			Size GetSize() const
+			{
+				return Size{ Width,Height };
 			}
 
 			VOID GetBounds(OUT Rect* rect) const

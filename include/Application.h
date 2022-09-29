@@ -20,5 +20,4 @@ namespace EzUI {
 			return exeFullPathw.substr(0, pos);
 		}
 	};
-
 };
