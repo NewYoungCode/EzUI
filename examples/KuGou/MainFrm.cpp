@@ -4,7 +4,8 @@
 
 void MainFrm::InitForm() {
 	this->Zoom = true;
-	//CloseShadow();
+
+
 	this->SetLayout(ui::UIManager::LoadLayout("xml/main.htm"));
 
 	//如果你仍需要使用win32原生控件请给窗口设置 主布局 然后就可以添加win32原生控件了(注:layeredwindow不支持原生控件)
@@ -13,6 +14,10 @@ void MainFrm::InitForm() {
 
 	auto main2 = FindControl("main2");
 	main2->Style.BackgroundColor = Color(120, 0, 0, 0);
+
+	MainLayout->Style.Radius =50;//圆角窗口
+	CloseShadow();//关闭窗口阴影
+
 
 	//this is test
 	FindControl("lrcView2")->AddControl(&lrcCtl);//添加歌词控件

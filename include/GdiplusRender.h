@@ -240,9 +240,10 @@ namespace EzUI {
 	};
 	class UI_EXPORT GdiplusRender
 	{
+	protected:
+		Gdiplus::SolidBrush* SolidBrush = NULL;
 	public:
 		std::list<__Rect*> Layers;
-		Layer* layer = NULL;
 		HDC DC = NULL;
 		int OffsetX = 0;
 		int OffsetY = 0;
@@ -263,6 +264,7 @@ namespace EzUI {
 		void FillRectangle(const __Rect& rect, const __Color& color, int radius = 0);
 		void DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& rect, TextAlign textAlign, bool underLine = false);
 		void DrawTextLayout(const __Point& pt, TextLayout* textLayout, const __Color& color);
+		Gdiplus::SolidBrush* GetSolidBrush(const __Color& color);
 		void PushAxisAlignedClip(const __Rect& rect, ClipMode clipMode = ClipMode::Valid);
 		void PopAxisAlignedClip();
 		HFONT CreateSafeFont(const std::wstring& fontFamily, int fontSize, HDC DC, bool lfUnderline = false);

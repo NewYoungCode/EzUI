@@ -5,23 +5,6 @@
 #pragma comment(lib, "gdiplus.lib")
 namespace EzUI {
 
-	template<typename T>
-	struct GdiPSafeObject {
-	private:
-		GdiPSafeObject(const GdiPSafeObject& right) {}
-		GdiPSafeObject& operator=(const GdiPSafeObject& right) {}
-	public:
-		T* ptr = NULL;
-		GdiPSafeObject(T* _ptr) {
-			ptr = _ptr;
-		}
-		operator T* () {
-			return ptr;
-		}
-		~GdiPSafeObject() {
-			if (ptr) delete ptr;
-		}
-	};
 	int Dpi = 0;
 	ULONG_PTR _gdiplusToken = NULL;
 
@@ -97,6 +80,11 @@ namespace EzUI {
 			DeleteObject(it.second);
 		}
 		CacheFont.clear();
+
+		if (this->SolidBrush) {
+			delete this->SolidBrush;
+		}
+
 		delete base;
 	}
 	void GdiplusRender::DrawTextLayout(const __Point& pt, TextLayout* textLayout, const __Color& color) {
@@ -112,16 +100,27 @@ namespace EzUI {
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 
-		GdiPSafeObject<Gdiplus::Pen> pen(CreatePen((color), width));
+		Gdiplus::Pen pen(GetSolidBrush(color), (float)width);
 		if (radius > 0) {
 			Gdiplus::GraphicsPath path;
 			CreateRectangle(path, rect, radius);
-			base->DrawPath(pen, &path);
+			base->DrawPath(&pen, &path);
 		}
 		else {
-			base->DrawRectangle(pen, ToRect(rect));
+			base->DrawRectangle(&pen, ToRect(rect));
 		}
 	}
+
+	Gdiplus::SolidBrush* GdiplusRender::GetSolidBrush(const __Color& color) {
+		if (this->SolidBrush == NULL) {
+			this->SolidBrush = new Gdiplus::SolidBrush(ToColor(color));
+		}
+		else {
+			this->SolidBrush->SetColor(ToColor(color));
+		}
+		return this->SolidBrush;
+	}
+
 	void GdiplusRender::FillRectangle(const __Rect& _rect, const __Color& color, int radius)
 	{
 		if (color.GetValue() == 0) {
@@ -131,7 +130,7 @@ namespace EzUI {
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
 
-		GdiPSafeObject<Gdiplus::SolidBrush> brush(CreateBrush((color)));
+		auto brush = GetSolidBrush(color);
 		if (radius > 0) {
 			Gdiplus::GraphicsPath path;
 			CreateRectangle(path, rect, radius);
@@ -241,7 +240,7 @@ namespace EzUI {
 		}
 	}
 	void GdiplusRender::FillGeometry(const Geometry& geometry, const  __Color& color) {
-		GdiPSafeObject<Gdiplus::SolidBrush> brush(CreateBrush((color)));
+		auto brush = GetSolidBrush(color);
 		base->FillRegion(brush, geometry.rgn);
 	}
 	HFONT GdiplusRender::CreateSafeFont(const std::wstring& fontFamily, int fontSize, HDC DC, bool lfUnderline)
@@ -272,8 +271,9 @@ namespace EzUI {
 		__Point B = _B;
 		B.X += OffsetX;
 		B.Y += OffsetY;
-		GdiPSafeObject<Gdiplus::Pen> pen(CreatePen((color), width));
-		base->DrawLine(pen, A.X, A.Y, B.X, B.Y);
+
+		Gdiplus::Pen pen(GetSolidBrush(color), (float)width);
+		base->DrawLine(&pen, A.X, A.Y, B.X, B.Y);
 	}
 	void GdiplusRender::DrawImage(IImage* _image, const __Rect& destRect, const __Rect& srcRect)
 	{

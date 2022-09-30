@@ -97,6 +97,10 @@ namespace EzUI {
 		if (mbtn == MouseButton::Left) {
 			_focus = true;
 			point_Start = point;
+			
+			if (textLayout == NULL) {
+				Analysis();
+			}
 			if (textLayout) {
 				selectRect = Rect();
 				A = textLayout->HitTestPoint(point_Start, A_TextPos, A_isTrailingHit);

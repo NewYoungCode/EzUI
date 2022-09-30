@@ -137,7 +137,6 @@ namespace EzUI {
 		blendFunc.SourceConstantAlpha = 255;
 		blendFunc.BlendOp = AC_SRC_OVER;
 		blendFunc.AlphaFormat = AC_SRC_ALPHA;
-		UpdateLayeredWindow(_hWnd, NULL, NULL, &size, hdc, &point, 0, &blendFunc, ULW_OPAQUE);//
-		//SetLayeredWindowAttributes(_hWnd, RGB(0, 0, 0), 150, LWA_COLORKEY);
+		UpdateLayeredWindow(_hWnd, NULL, NULL, &size, hdc, &point, 0, &blendFunc, ULW_ALPHA);//
 	}
 }
