@@ -75,13 +75,24 @@ namespace EzUI {
 		}
 	}
 	void LayeredWindow::InvalidateRect(const Rect& _rect) {
-		if (_InvalidateRect.IsEmptyArea()) {
-			_InvalidateRect = _rect;
+		int Width = GetClientRect().Width;
+		int Height = GetClientRect().Height;
+		Rect rect = _rect;
+		if (rect.X < 0) {
+			rect.X = 0;
+			rect.Width += rect.X;
 		}
-		else
-		{
-			Rect::Union(_InvalidateRect, _InvalidateRect, _rect);
+		if (rect.Y < 0) {
+			rect.Y = 0;
+			rect.Height += rect.Y;
 		}
+		if (rect.GetBottom() > Height) {
+			rect.Height = Height - rect.Y;
+		}
+		if (rect.GetRight() > Width) {
+			rect.Width = Width - rect.X;
+		} //这段代码是保证重绘区域一定是在窗口内
+		Rect::Union(_InvalidateRect, _InvalidateRect, rect);
 	}
 	bool LayeredWindow::OnSize(const Size& sz) {
 		if (_winBitmap) {
@@ -100,8 +111,6 @@ namespace EzUI {
 		args.PublicData = &PublicData;
 		args.DC = _hdc;
 		MainLayout->Rending(args);//
-		pt.EndDraw();//D2D的话必须要先结束绘制才能将最终图像放到DC里面
-		PushDC(_hdc);//updatelaredwindow
 	}
 	LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
@@ -116,8 +125,10 @@ namespace EzUI {
 		if (uMsg == UI_PAINT) //layeredWindow
 		{
 			if (_winBitmap) {
-				OnPaint(_winBitmap->GetDC(), _InvalidateRect);
-				_InvalidateRect = { 0,0,0,0 };
+				_winBitmap->Earse(_InvalidateRect);//清除背景
+				OnPaint(_winBitmap->GetDC(), _InvalidateRect);//开始重绘
+				PushDC(_winBitmap->GetDC());//updatelaredwindow 更新窗口
+				_InvalidateRect = { 0,0,0,0 };//重置区域
 			}
 			return FALSE;
 		}
@@ -137,6 +148,6 @@ namespace EzUI {
 		blendFunc.SourceConstantAlpha = 255;
 		blendFunc.BlendOp = AC_SRC_OVER;
 		blendFunc.AlphaFormat = AC_SRC_ALPHA;
-		UpdateLayeredWindow(_hWnd, NULL, NULL, &size, hdc, &point, 0, &blendFunc, ULW_ALPHA);//
+		::UpdateLayeredWindow(_hWnd, NULL, NULL, &size, hdc, &point, 0, &blendFunc, ULW_ALPHA);//
 	}
 }

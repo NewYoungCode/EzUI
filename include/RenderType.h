@@ -527,6 +527,10 @@ namespace EzUI {
 					Height == rect.Height;
 			}
 
+			bool  operator == (const Rect& right) {
+				return Equals(right);
+			}
+
 			BOOL Contains(IN INT x,
 				IN INT y) const
 			{
@@ -539,10 +543,11 @@ namespace EzUI {
 				return Contains(pt.X, pt.Y);
 			}
 
-			BOOL Contains(IN Rect& rect) const
+			BOOL Contains(IN const Rect& rect) const
 			{
 				return (X <= rect.X) && (rect.GetRight() <= GetRight()) &&
 					(Y <= rect.Y) && (rect.GetBottom() <= GetBottom());
+
 			}
 
 			VOID Inflate(IN INT dx,
@@ -620,6 +625,8 @@ namespace EzUI {
 			{
 				Offset(point.X, point.Y);
 			}
+
+
 
 			VOID Offset(IN INT dx,
 				IN INT dy)

@@ -63,6 +63,9 @@ namespace EzUI {
 		BITMAPINFO bmi;
 		byte biteCount = 0;
 		EBitmap(WORD width, WORD height, PixelFormat piexlFormat = PixelFormat::PixelFormatRGB);
+		void SetPixel(int x, int y, const Color& color);
+		Color GetPixel(int x, int y);
+		void Earse(const Rect& rect);//Ä¨³ý¾ØÐÎÄÚÈÝ
 		HDC& GetDC();
 		virtual ~EBitmap();
 	};

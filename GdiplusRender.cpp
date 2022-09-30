@@ -63,6 +63,7 @@ namespace EzUI {
 		this->DC = hdc;
 		base = new  Gdiplus::Graphics(hdc);
 		HighQualityMode(base);
+		
 	}
 	GdiplusRender::GdiplusRender(HWND hWnd)
 	{

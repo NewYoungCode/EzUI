@@ -17,7 +17,6 @@ namespace EzUI {
 	public:
 		ShadowWindow(int cx, int cy, HWND OwnerWnd);//构造函数
 		virtual ~ShadowWindow();
-		Image* BackgroundImage = NULL;//用于做异性窗口
 		virtual void Update(int _marginWidth);//在父窗口发生改变的时候更新阴影区域
 	};
 };

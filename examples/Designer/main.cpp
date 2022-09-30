@@ -37,7 +37,7 @@ public:
 int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
 	Application app;
-	EzUI::Window frm(800, 600);
+	EzUI::LayeredWindow frm(800, 600);
 	frm.SetText("内矩形抗锯齿");
 	HLayout layout;
 	layout.Style.BackgroundColor = Color::White;

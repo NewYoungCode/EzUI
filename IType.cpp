@@ -16,6 +16,50 @@ namespace EzUI {
 		_bitmap = ::CreateDIBSection(NULL, &bmi, DIB_RGB_COLORS, &point, NULL, 0);
 		this->GetDC();
 	}
+
+	void EBitmap::SetPixel(int x, int y, const Color& color) {
+		DWORD* point = (DWORD*)this->point + (x + y * this->Width);//起始地址+坐标偏移	
+		if (biteCount == 32) { //argb
+			((BYTE*)point)[3] = color.GetA();//修改A通道数值
+		}
+		((BYTE*)point)[2] = color.GetR();//修改R通道数值
+		((BYTE*)point)[1] = color.GetG();//修改G通道数值
+		((BYTE*)point)[0] = color.GetB();//修改B通道数值
+	}
+	Color EBitmap::GetPixel(int x, int y) {
+		DWORD* point = (DWORD*)this->point + (x + y * this->Width);//起始地址+坐标偏移
+		BYTE a = 255, r, g, b;
+		if (biteCount == 32) { //argb
+			a = ((BYTE*)point)[3];
+		}
+		r = ((BYTE*)point)[2];//修改R通道数值
+		g = ((BYTE*)point)[1];//修改G通道数值
+		b = ((BYTE*)point)[0];//修改B通道数值
+		return Color(a, r, g, b);
+	}
+
+	void EBitmap::Earse(const Rect& _rect) {
+		Rect rect = _rect;
+		if (rect.X < 0) {
+			rect.X = 0;
+			rect.Width += rect.X;
+		}
+		if (rect.Y < 0) {
+			rect.Y = 0;
+			rect.Height += rect.Y;
+		}
+		if (rect.GetBottom() > Height) {
+			rect.Height = this->Height - rect.Y;
+		}
+		if (rect.GetRight() > Width) {
+			rect.Width = this->Width - rect.X;
+		}
+		for (size_t y = rect.Y; y < rect.GetBottom(); y++)
+		{
+			DWORD* point = (DWORD*)this->point + (rect.X + y * this->Width);//起始地址+坐标偏移
+			::memset(point, 0, rect.Width * 4);//抹除
+		}
+	}
 	HDC& EBitmap::GetDC() {
 		if (!_hdc) {
 			_hdc = ::CreateCompatibleDC(NULL);
@@ -217,10 +261,10 @@ namespace EzUI {
 
 	IControl::IControl() {}
 	IControl::~IControl() {
-		
+
 	}
 	void IControl::OnTimer() {}
-	
+
 	void IControl::SetStyleSheet(const EString& styleStr)
 	{
 
@@ -241,5 +285,5 @@ namespace EzUI {
 		}
 		return "";
 	}
-	
+
 };

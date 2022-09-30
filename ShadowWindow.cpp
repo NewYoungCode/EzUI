@@ -85,8 +85,6 @@ namespace EzUI {
 		//((BYTE*)point)[0] = 10;//修改B通道数值
 	}
 	void ShadowWindow::Update(int _shadowWidth) {
-
-
 		HWND OwnerWnd = ::GetWindowOwner(_hWnd);
 		if (!::IsWindowVisible(OwnerWnd)) {
 			::ShowWindow(_hWnd, SW_HIDE);
@@ -117,18 +115,8 @@ namespace EzUI {
 		_bufBitmap = new EBitmap(width, height, EBitmap::PixelFormat::PixelFormatARGB);//32位透明图
 		//Debug::Log(TEXT("Update BoxShadow"));
 		Rect rect{ 0,0,width, height };
-		////绘图
-
-		Painter pt(_bufBitmap->GetDC(), _bufBitmap->Width, _bufBitmap->Height);
-		if (BackgroundImage) {//用于异形窗口
-			pt.PushAxisAlignedClip(clipRect, ClipMode::Invalid);
-			pt.DrawImage(BackgroundImage, rect);
-			//pt.PopLayer();
-			pt.EndDraw();//必须结束绘制
-		}
-		else {
-			SetShadow(rect.Width, rect.Height, _shadowWidth);
-		}
+		//做异形
+		SetShadow(rect.Width, rect.Height, _shadowWidth);
 
 		POINT point{ 0,0 };
 		SIZE size{ rect.Width,  rect.Height };
@@ -137,10 +125,8 @@ namespace EzUI {
 		blend.BlendFlags = 0;
 		blend.AlphaFormat = AC_SRC_ALPHA;
 		blend.SourceConstantAlpha = 255;
-		UpdateLayeredWindow(_hWnd, NULL, NULL, &size, _bufBitmap->GetDC(), &point, 0, &blend, ULW_ALPHA);//。。。。。。更新分层窗口
-
+		::UpdateLayeredWindow(_hWnd, NULL, NULL, &size, _bufBitmap->GetDC(), &point, 0, &blend, ULW_ALPHA);//。。。。。。更新分层窗口
 	}
-
 	ShadowWindow::~ShadowWindow()
 	{
 		::SendMessage(_hWnd, WM_DESTROY, 0, 0);
@@ -148,5 +134,4 @@ namespace EzUI {
 			delete _bufBitmap;
 		}
 	}
-
 };

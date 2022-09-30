@@ -357,7 +357,7 @@ namespace EzUI {
 #endif // COUNT_ONPAINT
 
 #if USED_GDIPLUS
-		EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height);//
+		EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height,EBitmap::PixelFormat::PixelFormatRGB);//
 		Painter pt(memBitmap.GetDC());
 		PaintEventArgs args(pt);
 		args.DC = memBitmap.GetDC();
