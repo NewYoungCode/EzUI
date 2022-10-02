@@ -77,7 +77,7 @@ namespace EzUI {
 	{
 		::SendMessageW(_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)icon);
 	}
-	void Window::SetLayout(EzUI::Layout* layout) {
+	void Window::SetLayout(EzUI::Control* layout) {
 		ASSERT(layout);
 		MainLayout = layout;
 		if (MainLayout->Style.FontFamily.empty()) {
@@ -333,11 +333,6 @@ namespace EzUI {
 			auto xPos = GET_X_LPARAM(lParam);
 			auto yPos = GET_Y_LPARAM(lParam);
 			OnMouseWheel(zDelta, { xPos,yPos });
-			break;
-		}
-		case WM_TIMER: {
-			IControl* ctl = (IControl*)wParam;
-			ctl->OnTimer();
 			break;
 		}
 		default:

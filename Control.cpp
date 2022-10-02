@@ -61,7 +61,7 @@ Event(this , ##__VA_ARGS__); \
 			e.Painter.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, backgroundColor);
 		}
 		if (backgroundImage.valid) {
-			e.Painter.DrawImage(backgroundImage.value, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage.value->SizeMode, backgroundImage.value->Margin);
+			e.Painter.DrawImage(backgroundImage.value, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage.value->SizeMode, backgroundImage.value->Padding);
 		}
 	}
 	void Control::OnForePaint(PaintEventArgs& e) {
@@ -70,7 +70,7 @@ Event(this , ##__VA_ARGS__); \
 		}
 		HImage foreImage = GetForeImage();
 		if (foreImage.valid) {
-			e.Painter.DrawImage(foreImage.value, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage.value->SizeMode, foreImage.value->Margin);
+			e.Painter.DrawImage(foreImage.value, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage.value->SizeMode, foreImage.value->Padding);
 		}
 	}
 	void Control::OnBorderPaint(PaintEventArgs& e)
@@ -157,12 +157,32 @@ Event(this , ##__VA_ARGS__); \
 		__super::SetAttribute(attrName, attrValue);
 		do
 		{
-			if (attrName == "name") {
+			if (attrName == "name" || attrName == "id") {
 				this->Name = attrValue;
 				break;
 			}
 			if (attrName == "rect") {
 				this->SetRect(Rect(attrValue));
+				break;
+			}
+			if (attrName == "margin") {//遵循web前端的规则
+				auto strs = attrValue.Split(",");
+				if (strs.size() == 1) {
+					this->Margin = std::stoi(strs[0]);
+					break;
+				}
+				if (strs.size() == 2) {
+					this->Margin.Top = this->Margin.Bottom = std::stoi(strs[0]);
+					this->Margin.Left = this->Margin.Right = std::stoi(strs[1]);
+					break;
+				}
+				if (strs.size() == 4) {
+					this->Margin.Top = std::stoi(strs[0]);
+					this->Margin.Right = std::stoi(strs[1]);
+					this->Margin.Bottom = std::stoi(strs[2]);
+					this->Margin.Left = std::stoi(strs[3]);
+					break;
+				}
 				break;
 			}
 			if (attrName == "x") {
@@ -398,6 +418,10 @@ Event(this , ##__VA_ARGS__); \
 				break;
 			}
 		}
+
+		/*	_rect.X += _Margin.Left;
+			_rect.Y += _Margin.Top;*/
+
 		this->ComputeClipRect();//这里要重新计算基于父控件的裁剪区域
 		OnSize(Size(_rect.Width, _rect.Height));//然后才开始触发自身的特性 //布局控件会重载这个函数 对子控件调整rect
 	}
@@ -407,6 +431,7 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::ResumeLayout()
 	{
+		this->PendLayout = false;//布局完成需要将布局标志重置为false
 	}
 	//专门处理鼠标消息的
 	void Control::OnMouseEvent(const MouseEventArgs& _args) {
@@ -526,6 +551,9 @@ Event(this , ##__VA_ARGS__); \
 		}
 
 		int r = GetRadius();
+		bool isScrollBar = dynamic_cast<EzUI::ScrollBar*>(this);
+		r = isScrollBar ? 0 : r;//因为滚动条是不需要有圆角的
+
 #if USED_GDIPLUS
 		Layer* layer = NULL;
 		if (r > 0) {
@@ -585,7 +613,7 @@ Event(this , ##__VA_ARGS__); \
 			pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, Color::White);
 		}
 #endif
-	}
+		}
 
 	Control::~Control()
 	{
@@ -630,6 +658,7 @@ Event(this , ##__VA_ARGS__); \
 		if (dynamic_cast<Spacer*>(ctl)) {
 			_spacer.push_back(ctl);//控件内收集弹簧对象 当本控件执行析构函数的时候 自动会释放控件内弹簧对象
 		}
+		this->PendLayout = true;//添加控件需要将布局重新挂起
 	}
 	ControlIterator Control::RemoveControl(Control* ctl)
 	{
@@ -637,6 +666,7 @@ Event(this , ##__VA_ARGS__); \
 		ControlIterator it1 = ::std::find(_controls.begin(), _controls.end(), ctl);
 		if (it1 != _controls.end()) {
 			ctl->OnRemove();
+			this->PendLayout = true;//移除控件需要将布局重新挂起
 			nextIt = _controls.erase(it1);
 			ControlIterator it2 = ::std::find(VisibleControls.begin(), VisibleControls.end(), ctl);
 			if (it2 != VisibleControls.end()) {
@@ -853,9 +883,10 @@ Event(this , ##__VA_ARGS__); \
 		if (ScrollBar) {
 			ScrollBar->ParentSize(size);
 		}
+		this->PendLayout = true;
 		return true;
 	}
 	void Control::OnKillFocus()
 	{
 	}
-};
+		};

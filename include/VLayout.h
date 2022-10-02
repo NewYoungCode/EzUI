@@ -9,8 +9,6 @@ namespace EzUI {
 	public:
 		virtual ~VLayout();
 	public:
-		void AddControl(Control* ctl) override;
-		ControlIterator RemoveControl(Control* ctl)override;
 		bool OnSize(const Size& size)override;
 		void ResumeLayout()override;
 	};

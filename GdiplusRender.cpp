@@ -159,8 +159,7 @@ namespace EzUI {
 			}
 		}
 		//设定基本参数
-		int lastMode = ::GetBkMode(DC);
-		::SetBkMode(DC, TRANSPARENT);
+		int lastMode=::SetBkMode(DC, TRANSPARENT);
 		HGDIOBJ oldFont = SelectFont(DC, CreateSafeFont(fontFamily, fontSize, DC, underLine));
 		//绘制文字
 		RECT winRECT = rect.WinRECT();

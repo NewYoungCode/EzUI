@@ -6,10 +6,6 @@ namespace EzUI {
 	{
 	public:
 		Layout();
-	/*	void AddControl(Control* ctl) override;
-		virtual ControlIterator RemoveControl(Control* ctl)override;
-		virtual void OnSize(const Size& size)override;*/
-		virtual void ResumeLayout()override;
 		virtual ~Layout();
 	};
 	using Box = Layout;

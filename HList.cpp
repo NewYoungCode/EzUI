@@ -14,39 +14,56 @@ namespace EzUI {
 	HList::~HList()
 	{
 	}
-	void HList::SetMargin(int margin)
-	{
-		Margin = margin;
-	}
+
 
 	void HList::ResumeLayout() {
+		__super::ResumeLayout();
+
 		_maxRight = 0;
 		for (auto& it : _controls) {
-			if (it->Width() <= 0 || it->Visible == false) continue;
+			if (it->Visible == false) continue;
+			//处理y坐标和margin
+			{
+				int height = it->GetFixedHeight();
+				if (height == 0) {
+					height = this->Height() - it->Margin.GetVSpace();
+				}
+				int y = it->Y();
+				if (y == 0) {
+					y = it->Margin.Top;
+				}
+				if (y == 0 && height < this->Height()) {
+					y = int((this->Height() * 1.0 - height) / 2 + 0.5);
+				}
+				it->SetRect(Rect(it->X(), y, it->Width(), height));
+			}
 			_maxRight += it->Width();
-			_maxRight += Margin;
+			_maxRight += it->Margin.GetHSpace();
 		}
 		if (hScrollBar) {
 			hScrollBar->SetMaxRight(_maxRight);
 		}
-		this->PendLayout = false;
 	}
 
 	void HList::AddControl(Control* ctl)
 	{
 		__super::AddControl(ctl);
-		ctl->SetLocation({ _maxRight, ctl->Y() });
-		_maxRight += ctl->Width();
-		_maxRight += Margin;
+
+		_maxRight += ctl->Margin.Left;
+
+		int& x = ((Rect&)ctl->GetRect()).X;
+		x = _maxRight;
+
+		_maxRight += (ctl->Width()+ctl->Margin.Right);
+
 		LocationX.insert(std::pair<Control*, int>(ctl, ctl->X()));
-		this->PendLayout = true;
 	}
 	ControlIterator HList::RemoveControl(Control* ctl)
 	{
 		size_t before = _controls.size();//记录一开始的控件数量
 		ControlIterator nextIt = __super::RemoveControl(ctl);//删除控件
 		if (_controls.size() < before) {//如果控件数量比开始少 则 删除成功
-			int outWidth = (Margin + ctl->Width());//删除控件留出来的空白区域宽度
+			int outWidth = ( ctl->Width() +ctl->Margin.GetHSpace());//删除控件留出来的空白区域宽度
 			_maxRight -= outWidth;//减去空白区域宽度
 			LocationX.erase(ctl);//将记录X坐标的map也要删除控件
 			for (auto i = nextIt; i != _controls.end(); i++)//从删除的下一个控件开始往前移动X坐标

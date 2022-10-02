@@ -23,7 +23,7 @@ namespace EzUI {
 		return HTCLIENT;//ָ
 	}
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
-	LayeredWindow::LayeredWindow(int cx, int cy, HWND owner) :Window(cx, cy, owner, WS_POPUP | WS_MINIMIZEBOX, WS_EX_LAYERED)
+	LayeredWindow::LayeredWindow(int cx, int cy, HWND owner) :Window(cx, cy, owner, WS_POPUP | WS_MINIMIZEBOX, WS_EX_LAYERED )
 	{
 		_boxShadow = new ShadowWindow(cx, cy, _hWnd);
 		UpdateShadow();
@@ -148,6 +148,10 @@ namespace EzUI {
 		blendFunc.SourceConstantAlpha = 255;
 		blendFunc.BlendOp = AC_SRC_OVER;
 		blendFunc.AlphaFormat = AC_SRC_ALPHA;
+		blendFunc.BlendFlags = 0;
 		::UpdateLayeredWindow(_hWnd, NULL, NULL, &size, hdc, &point, 0, &blendFunc, ULW_ALPHA);//
+		//::SetDIBits
+
+		//::SetLayeredWindowAttributes(_hWnd, 0, 255, LWA_ALPHA);
 	}
 }

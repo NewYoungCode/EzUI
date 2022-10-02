@@ -43,7 +43,7 @@ public:
 		time.SetText(_songTime);
 		time.TextAlign = TextAlign::MiddleRight;
 
-		time.Style.Radius = 33;
+		//time.Style.Radius = 33;
 		time.Style.BackgroundColor = Color(100,255, 255, 0);
 
 		this->SetFixedHeight(33);
@@ -53,7 +53,7 @@ public:
 		ActiveStyle.BackgroundColor = Color(100, 255, 230, 230);
 
 		//Style.BackgroundColor = Color(100, 255, 20, 0);
-		Style.Radius = 33;
+		//Style.Radius = 33;
 
 		AddControl(new HSpacer(15));
 		AddControl(&songName);
@@ -80,6 +80,9 @@ class SongItem2 :public HBox {
 	Label del;
 public:
 	SongItem2(const Song& s) {
+
+		Margin.Left = 20;
+
 		song = s;
 		this->Tag = (UINT_PTR)&song;
 		SetAttribute("FileHash", s.hash);
@@ -87,7 +90,7 @@ public:
 
 		SetTips(s.SongName);
 		SetFixedHeight(35);
-		Dock = DockStyle::Horizontal;
+		//Dock = DockStyle::Horizontal;
 		Style.BorderBottom = 1;
 		Style.BorderColor = Color(245, 245, 245);
 		HoverStyle.BackgroundColor = Color(245, 245, 245);
@@ -109,7 +112,7 @@ public:
 		if (!s.MvHash.empty()) {
 			mv.SetAttribute("mvhash", s.MvHash);
 			mv.Style.ForeImage = mvicon;
-			mv.Style.ForeImage.value->Margin = 8;
+			mv.Style.ForeImage.value->Padding = 8;
 			//mv.Style.ForeImage.value->Box = Rect(8, 8, 19, 19);
 			mv.Cursor = Cursor::HAND;
 

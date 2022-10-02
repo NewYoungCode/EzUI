@@ -60,7 +60,6 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	//edit.Style.Radius = (30);
 	top.AddControl(&edit);
 
-	redBar.SetSize({ laout.Width(),2 });
 	redBar.SetFixedHeight(2);
 	redBar.Style.BackgroundColor = { 173,32,32 };
 	laout.AddControl(&redBar);
@@ -189,9 +188,8 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	Label1.SetFixedWidth(70);
 	Label1.SetText(utf8("00:00"));
 	bottom_center.AddControl(&Label1);
-
-	prog.SetSize({ 1,3 });
-	prog.SetLocation({ 0,55 });
+	
+	prog.SetFixedHeight(3);
 	prog.SetFixedWidth(360);
 	prog.Style.BackgroundColor = { 236,65,65 };
 	bottom_center.AddControl(&prog);
@@ -260,10 +258,10 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 
 
 
-void MainFrm::OnPaint(HDC winHDC, const Rect& rePaintRect)
-{
-	__super::OnPaint(winHDC, rePaintRect);
-}
+//void MainFrm::OnPaint(HDC winHDC, const Rect& rePaintRect)
+//{
+//	__super::OnPaint(winHDC, rePaintRect);
+//}
 
 
 void MainFrm::OnDestroy()

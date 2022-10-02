@@ -35,63 +35,48 @@ namespace EzUI {
 			return true;
 		}
 		return false;
-		
+
 	}
-	void TileList::OnChildPaint(Controls& controls, PaintEventArgs& args) {
-		VisibleControls.clear();
-		auto rect = Rect(0, 0, _rect.Width, _rect.Height);
-		//绘制子控件
-		for (auto i = controls.begin(); i != controls.end(); i++)
-		{
-			auto& it = **i;
-			if (rect.IntersectsWith(it.GetRect())) {
-				VisibleControls.push_back(*i);
-				it.Rending(args);
-			}
-			if (it.Y() >= _rect.Height) { //纵向列表控件超出则不再绘制后面的控件 优化鼠标操作的性能
-				break;
-			}
-		}
-		//子控件绘制完毕
-	}
+	
 	void TileList::ResumeLayout()
 	{
-		if (_rect.IsEmptyArea()) return;
+		__super::ResumeLayout();
 		LocationY.clear();
-		int _right = MarginRight;//右边距
-		int _bottom = MarginTop;//上边距
+		_MaxBottom = 0;
+
+		const int& maxWith = this->Width();
 		int maxHeight = 0;//每行最高的那个
-		int _lineCount = 0;//一共有几行
-		int _hCount = 0;//横着一行放了几个
-		_MaxBottom = 0;//滚动条参数
-		ControlIterator itor = _controls.begin();
-		for (; itor != _controls.end(); )
-		{
-			Control& it = **itor;
-			if (_right + it.Width() > Width()) {//换行
-				if (_hCount > 0) {
-					_hCount = 0;
-					continue;
-				}
-				_right = MarginRight;
-				_bottom += maxHeight + MarginTop;
+		int x = 0;
+		int y = 0;
+		for (auto& _it : _controls) {
+
+			Control& it = *_it;
+			int _x = it.Margin.Left + it.Width();
+
+			if (x + _x > maxWith) {
+				//换行
+				x = 0;
+				y += maxHeight;
 				maxHeight = 0;
-				_lineCount++;
 			}
-			it.SetLocation({ _right,_bottom });
-			LocationY.insert(std::pair<Control*, int>(&it, it.Y()));
-			_right += it.Width() + MarginRight;
-			if (maxHeight < it.Height()) {
-				maxHeight = it.Height();
+
+			x += it.Margin.Left;//左边距
+			int& refX = ((Rect&)(it.GetRect())).X;//引用x
+			int& refY = ((Rect&)(it.GetRect())).Y;//引用y
+			refX = x;//设置X坐标
+			refY = y + it.Margin.Top;//设置Y坐标+上边距
+
+			LocationY.insert(std::pair<Control*, int>(&it, refY));
+
+			int itemSpace = it.Height() + it.Margin.GetVSpace();//当前控件垂直占用的空间
+			if (maxHeight < itemSpace) {
+				maxHeight = itemSpace;
 			}
-			_hCount++;
-			itor++;
-			_MaxBottom = maxHeight + it.Y();
+
+			x += it.Margin.Right + it.Width();//右边距
+
+			_MaxBottom = y + maxHeight;
 		}
-
-		_MaxBottom += MarginTop;
-
-		this->PendLayout = false;
 	}
 
 };

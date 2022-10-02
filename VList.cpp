@@ -12,31 +12,45 @@ namespace EzUI {
 	VList::~VList()
 	{
 	}
-	void VList::SetMargin(int margin)
-	{
-		Margin = margin;
-	}
+
 	void VList::ResumeLayout() {
+		__super::ResumeLayout();
+
 		_maxBottom = 0;
 		for (auto& it : _controls) {
-			if (it->Width() <= 0 || it->Visible == false) continue;
+			if (it->Visible == false)continue;
+
+			{
+				//处理margin和x坐标
+				int	width = it->GetFixedWidth();
+				if (width == 0) {
+					width = this->Width() - it->Margin.GetHSpace();
+				}
+				int x = it->X();
+				if (x == 0) {
+					x = it->Margin.Left;
+				}
+				if (x == 0 && width < this->Width()) {
+					x = int((this->Width() * 1.0 - width) / 2 + 0.5);
+				}
+				it->SetRect(Rect{ x,it->Y(),width,it->Height() });
+			}
+
 			_maxBottom += it->Height();
-			_maxBottom += Margin;
+			_maxBottom += it->Margin.GetVSpace();
 		}
 		if (vScrollBar) {
 			vScrollBar->SetMaxBottom(_maxBottom);
 		}
-		this->PendLayout = false;
 	}
 	void VList::AddControl(Control* ctl)
 	{
 		__super::AddControl(ctl);
-		ctl->SetLocation({ ctl->X(), _maxBottom });
-		_maxBottom += ctl->Height();
-		_maxBottom += Margin;
+		_maxBottom += ctl->Margin.Top;
+		int& y = ((Rect&)ctl->GetRect()).Y;
+		y = _maxBottom;
+		_maxBottom += (ctl->Height() + ctl->Margin.Bottom);
 		LocationY.insert(std::pair<Control*, int>(ctl, ctl->Y()));
-
-		this->PendLayout = true;
 	}
 
 	ControlIterator VList::RemoveControl(Control* ctl)
@@ -44,7 +58,8 @@ namespace EzUI {
 		size_t before = _controls.size();//记录一开始的控件数量
 		ControlIterator nextIt = __super::RemoveControl(ctl);//删除控件
 		if (_controls.size() < before) {//如果控件数量比开始少 则 删除成功
-			int outHeight = (Margin + ctl->Height());//删除控件留出来的空白区域宽度
+			int outHeight = (ctl->Height() + ctl->Margin.GetVSpace());//删除控件留出来的空白区域宽度
+
 			_maxBottom -= outHeight;//减去空白区域高度
 			LocationY.erase(ctl);//将记录Y坐标的map也要删除控件
 			for (auto i = nextIt; i != _controls.end(); i++)//从删除的下一个控件开始往前移动X坐标

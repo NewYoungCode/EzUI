@@ -71,7 +71,7 @@ private:
 public:
 	MainFrm(int width, int height);
 	//WS_OVERLAPPEDWINDOW
-	void OnPaint(HDC winHDC, const Rect& rePaintRect)override;
+	//void OnPaint(HDC winHDC, const Rect& rePaintRect)override;
 	void OnDestroy();
 };
 

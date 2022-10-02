@@ -7,7 +7,5 @@ namespace EzUI {
 	Layout::~Layout()
 	{
 	}
-	void Layout::ResumeLayout()
-	{
-	}
+
 };

@@ -18,7 +18,8 @@
 #include <fstream>
 #include <sstream>
 namespace EzUI {
-
+#define ID_STYLE 0
+#define CLASS_STYLE 1
 
 	namespace UIManager {
 		//去除空格或者其他符号 双引号内的空格不会去除
@@ -31,6 +32,10 @@ namespace EzUI {
 		std::map<EString, EString> styles;//默认样式集合
 		std::map<EString, EString> styles_active;//按下样式集合
 		std::map<EString, EString> styles_hover;//鼠标悬浮样式集合
+
+		std::map<EString, EString> class_styles;//默认样式集合 类样式
+		std::map<EString, EString> class_styles_active;//按下样式集合 类样式
+		std::map<EString, EString> class_styles_hover;//鼠标悬浮样式集合 类样式
 	}
 
 	namespace UIManager {
@@ -272,11 +277,25 @@ namespace EzUI {
 			styles_active.clear();
 			styles_hover.clear();
 
+			class_styles.clear();
+			class_styles_active.clear();
+			class_styles_hover.clear();
+
 			EString style = styleStr;
 			TrimStyle(style);
 			while (style.size() > 0) {
+
+
+				byte type = ID_STYLE;//
 				size_t pos = style.find("#");
-				if (pos == -1)break;
+				if (pos == -1) {
+					pos = style.find(".");//类样式
+					type = CLASS_STYLE;
+				}
+				if (pos == -1) {
+					break;
+				}
+
 				size_t pos2 = style.find("}");
 				if (pos2 == -1)break;
 				size_t pos3 = style.find("{");
@@ -288,39 +307,87 @@ namespace EzUI {
 					style_type = name.substr(pos4 + 1);
 					name = name.substr(0, pos4);
 				}
+
 				if (style_type == "hover") {
-					styles_hover.insert(std::pair<EString, EString>(name, str));
+
+					if (type == ID_STYLE) {
+						styles_hover.insert(std::pair<EString, EString>(name, str));
+					}
+					else {
+						class_styles_hover.insert(std::pair<EString, EString>(name, str));
+					}
 				}
 				else if (style_type == "active") {
-					styles_active.insert(std::pair<EString, EString>(name, str));
+					if (type == ID_STYLE) {
+						styles_active.insert(std::pair<EString, EString>(name, str));
+					}
+					else {
+						class_styles_active.insert(std::pair<EString, EString>(name, str));
+					}
 				}
 				else {
-					styles.insert(std::pair<EString, EString>(name, str));
+
+					if (type == ID_STYLE) {
+						styles.insert(std::pair<EString, EString>(name, str));
+					}
+					else {
+						class_styles.insert(std::pair<EString, EString>(name, str));
+					}
 				}
 				style = style.substr(pos2 + 1);
 			}
 		}
 		void LoadStyle(Control* ctl, ControlState styleState) {
-			ControlStyle* style = NULL;
-			std::map<EString, EString>::iterator styleStr;
-			std::map<EString, EString>* _styles = NULL;
-			if (styleState == ControlState::Active) {//按下样式
-				style = &ctl->ActiveStyle;
-				_styles = &styles_active;
-				styleStr = styles_active.find(ctl->Name);
+			EString _class = ctl->GetAttribute("class");
+			EString::Replace(_class, "  ", " ");
+			auto classs = _class.Split(" ");
+			for (auto& className : classs) {
+				//类样式中找
+				ControlStyle* style = NULL;
+				std::map<EString, EString>::iterator styleStr;
+				std::map<EString, EString>* _styles = NULL;
+				if (styleState == ControlState::Active) {//按下样式
+					style = &ctl->ActiveStyle;
+					_styles = &class_styles_active;
+					styleStr = class_styles_active.find(className);
+				}
+				else if (styleState == ControlState::Hover) {//悬浮样式
+					style = &ctl->HoverStyle;
+					_styles = &class_styles_hover;
+					styleStr = class_styles_hover.find(className);
+				}
+				else {//默认样式
+					style = &ctl->Style;
+					_styles = &class_styles;
+					styleStr = class_styles.find(className);
+				}
+				if (styleStr != _styles->end() && styleStr->second.size() > 0) {
+					style->SetStyleSheet(styleStr->second);
+				}
 			}
-			else if (styleState == ControlState::Hover) {//悬浮样式
-				style = &ctl->HoverStyle;
-				_styles = &styles_hover;
-				styleStr = styles_hover.find(ctl->Name);
-			}
-			else {//默认样式
-				style = &ctl->Style;
-				_styles = &styles;
-				styleStr = styles.find(ctl->Name);
-			}
-			if (styleStr != _styles->end() && styleStr->second.size() > 0) {
-				style->SetStyleSheet(styleStr->second);
+
+			{//id样式中找
+				ControlStyle* style = NULL;
+				std::map<EString, EString>::iterator styleStr;
+				std::map<EString, EString>* _styles = NULL;
+				if (styleState == ControlState::Active) {//按下样式
+					style = &ctl->ActiveStyle;
+					_styles = &styles_active;
+					styleStr = styles_active.find(ctl->Name);
+				}
+				else if (styleState == ControlState::Hover) {//悬浮样式
+					style = &ctl->HoverStyle;
+					_styles = &styles_hover;
+					styleStr = styles_hover.find(ctl->Name);
+				}
+				else {//默认样式
+					style = &ctl->Style;
+					_styles = &styles;
+					styleStr = styles.find(ctl->Name);
+				}
+				if (styleStr != _styles->end() && styleStr->second.size() > 0) {
+					style->SetStyleSheet(styleStr->second);
+				}
 			}
 		}
 	}

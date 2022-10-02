@@ -66,6 +66,8 @@ namespace EzUI {
 		void SetPixel(int x, int y, const Color& color);
 		Color GetPixel(int x, int y);
 		void Earse(const Rect& rect);//抹除矩形内容
+		void FillRect(const Rect& rect,const Color& color);//
+
 		HDC& GetDC();
 		virtual ~EBitmap();
 	};
@@ -235,7 +237,7 @@ namespace EzUI {
 	};
 	// 摘要: 
 	//为鼠标事件提供基础数据
-	struct MouseEventArgs :public EventArgs {
+	class MouseEventArgs :public EventArgs {
 	public:
 		MouseButton Button;
 		short Delta;
@@ -251,6 +253,11 @@ namespace EzUI {
 		}
 	};
 
+	class SizeEventArgs :public EventArgs {
+	public:
+		Size Size;
+	};
+
 #if USED_GDIPLUS
 	using Painter = GdiplusRender;
 	using Image = GdiplusImage;
@@ -262,12 +269,14 @@ namespace EzUI {
 	// 摘要: 
 	// 为 OnPaint 事件提供数据。
 	using __Painter = Painter;
-	struct PaintEventArgs {
+	struct PaintEventArgs:public EventArgs {
 		WindowData* PublicData = NULL;
 		HDC DC = NULL;
 		Painter& Painter;//画家
 		Rect InvalidRectangle;//WM_PAINT里面的无效区域
-		PaintEventArgs(__Painter& painter) :Painter(painter) {}
+		PaintEventArgs(__Painter& painter) :Painter(painter) {
+			EventType = Event::OnPaint;
+		}
 		virtual ~PaintEventArgs() {}
 	};
 
@@ -322,7 +331,6 @@ namespace EzUI {
 	};
 	class UI_EXPORT IScroll {
 	public:
-		int Margin = 0;//如果是水平列表那就是 右边距 ,垂直滚动条就是下边距
 		std::map<Control*, int> LocationX;
 		std::map<Control*, int> LocationY;
 		virtual ~IScroll() {};
@@ -359,7 +367,6 @@ namespace EzUI {
 		virtual void OnLoad() = 0;
 		virtual void OnChar(WPARAM wParam, LPARAM lParam) = 0;
 		virtual void OnKeyDown(WPARAM wParam) = 0;
-		virtual void OnTimer();//计时器函数
 	public:
 		virtual void SetStyleSheet(const EString& styleStr);//设置style
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//设置属性

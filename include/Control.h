@@ -6,6 +6,7 @@ namespace EzUI {
 	private:
 		Control(const Control&);
 		Control& operator=(const Control&);
+		bool PendLayout = false;//布局是否被挂起 当AddControl丶RemoveControl丶OnSize时候此标志为true 当调用ResumeLayout()之后此标志为false
 	protected:
 		Controls _controls;//子控件
 		Controls _spacer;//存储控件下布局的的弹簧集合
@@ -17,7 +18,7 @@ namespace EzUI {
 		Cursor _LastCursor = EzUI::Cursor::None;//上一次鼠标的样式
 		Size _lastSize;
 	public:
-		bool PendLayout = false;//布局是否被挂起 当AddControl或者RemoveControl的时候此标志为true 当调用ResumeLayout()之后此标志为false
+		EzUI::Margin Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数
 		WindowData* PublicData = NULL;//窗口上的公共数据
 		EzUI::Cursor Cursor = EzUI::Cursor::None;//鼠标样式
 		int MousePassThrough = 0;//忽略的鼠标消息
@@ -157,8 +158,9 @@ namespace EzUI {
 	class  ScrollBar :public Control, public IScrollBar {
 	public:
 		ScrollBar() {
-			Style.ForeColor = { 200,255,255,255 };//the bar backgroundcolor
-			Style.BackgroundColor = { 200,200,200,200 };//the bar backgroundcolor
+			Style.ForeColor = { 205,205,205 };//the bar backgroundcolor
+			Style.BackgroundColor = { 240,240,240 };//the bar backgroundcolor
+			ActiveStyle.ForeColor = { 166,166,166 };
 			SetWidth(10);//滚动条高度
 			SetHeight(10);//滚动条宽度
 			Style.Radius = 10;

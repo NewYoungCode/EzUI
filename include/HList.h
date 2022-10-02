@@ -12,7 +12,6 @@ namespace EzUI {
 	public:
 		HList();
 		virtual ~HList();
-		virtual	void SetMargin(int margin);
 		virtual void ResumeLayout()override;
 		virtual	void AddControl(Control* ctl) override;
 		virtual ControlIterator RemoveControl(Control* ctl)override;

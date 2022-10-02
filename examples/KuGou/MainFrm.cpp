@@ -15,8 +15,8 @@ void MainFrm::InitForm() {
 	auto main2 = FindControl("main2");
 	main2->Style.BackgroundColor = Color(120, 0, 0, 0);
 
-	MainLayout->Style.Radius =50;//圆角窗口
-	CloseShadow();//关闭窗口阴影
+	//MainLayout->Style.Radius =1;//圆角窗口
+	//CloseShadow();//关闭窗口阴影
 
 
 	//this is test
@@ -191,7 +191,6 @@ void MainFrm::OnKeyDown(WPARAM wparam)
 			SongItem2* sit = new SongItem2(it);
 			searchList->AddControl(sit);
 		}
-		searchList->ResumeLayout();
 		searchList->Invalidate();
 	}
 	__super::OnKeyDown(wparam);
@@ -224,7 +223,6 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 					it->SetAttribute("FileHash", hash);
 					it->SetAttribute("SingerName", SingerName);
 					localList->AddControl(it);
-					localList->ResumeLayout();
 
 					localList->ScrollBar->Move(localList->ScrollBar->RollingTotal());
 					localList->Invalidate();
@@ -354,7 +352,6 @@ void MainFrm::NextPage(int a, int b) {
 			end->SetText(L"已经没有更多数据");
 			searchList->AddControl(end);
 		}
-		searchList->ResumeLayout();
 		searchList->Invalidate();
 	}
 }

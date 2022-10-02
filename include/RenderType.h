@@ -1011,20 +1011,28 @@ namespace EzUI {
 		};
 	};
 
-	struct Margin {
+	typedef struct Distance {
 	public:
 		size_t Left, Top, Right, Bottom;
-		Margin() {
+		Distance() {
 			Left = Top = Right = Bottom = 0;
 		}
-		Margin(const size_t& marginAll) {
-			Left = Top = Right = Bottom = marginAll;
+		Distance(const size_t& distanceAll) {
+			Left = Top = Right = Bottom = distanceAll;
 		}
-		Margin& operator=(const size_t& marginAll) {
-			Left = Top = Right = Bottom = marginAll;
+		Distance& operator=(const size_t& distanceAll) {
+			Left = Top = Right = Bottom = distanceAll;
 			return *this;
 		}
-	};
+		//获取垂直所占空间
+		size_t GetVSpace() {
+			return Top + Bottom;
+		}
+		//获取水平所占空间
+		size_t GetHSpace() {
+			return Left + Right;
+		}
+	} Margin,Padding;
 	enum class ClipMode {
 		Valid = 0,//Gdiplus::CombineMode::CombineModeReplace,//设置有效区域
 		Invalid = 4// Gdiplus::CombineMode::CombineModeExclude,//设置无效区域
@@ -1120,7 +1128,7 @@ namespace EzUI {
 
 	class  IImage {
 	public:
-		Margin Margin;// 控件与图片的距离 该数值越大 图片将越小
+		EzUI::Padding Padding;// 控件与图片的距离 该数值越大 图片将越小 参考web前端
 		ImageSizeMode SizeMode = ImageSizeMode::Zoom;// 图像显示模式
 	public:
 		virtual ~IImage() {}

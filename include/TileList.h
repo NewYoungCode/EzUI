@@ -4,21 +4,16 @@
 namespace EzUI {
 
 	class UI_EXPORT  TileList :
-		public Layout, public IScroll
+		public Control,public  IScroll
 	{
 	private:
-		int _lineCount = 0;
 		int _MaxBottom = 0;
 		VScrollBar* vScrollBar = NULL;
-		int Margin = 0;
 	public:
 		TileList();
 		virtual ~TileList();
-		int MarginTop = 35;
-		int MarginRight = 36;
 		virtual void Clear(bool freeList = false)override;
 		virtual bool OnSize(const Size& sz) override;
-		virtual void OnChildPaint(Controls& controls, PaintEventArgs& args)override;
 		virtual void ResumeLayout()override;
 	};
 };

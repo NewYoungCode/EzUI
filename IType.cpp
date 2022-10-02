@@ -60,6 +60,41 @@ namespace EzUI {
 			::memset(point, 0, rect.Width * 4);//Ä¨³ý
 		}
 	}
+	void EBitmap::FillRect(const Rect& _rect, const Color& color) {
+		Rect rect = _rect;
+		if (rect.X < 0) {
+			rect.X = 0;
+			rect.Width += rect.X;
+		}
+		if (rect.Y < 0) {
+			rect.Y = 0;
+			rect.Height += rect.Y;
+		}
+		if (rect.GetBottom() > Height) {
+			rect.Height = this->Height - rect.Y;
+		}
+		if (rect.GetRight() > Width) {
+			rect.Width = this->Width - rect.X;
+		}
+
+		BYTE a = color.GetA();
+		BYTE r = color.GetR();
+		BYTE g = color.GetG();
+		BYTE b = color.GetB();
+		DWORD c1 = 0;
+		BYTE* c = (BYTE*)&c1;
+		c[3] = a;
+		c[2] = r;
+		c[1] = g;
+		c[0] = b;
+
+		for (size_t y = rect.Y; y < rect.GetBottom(); y++)
+		{
+			DWORD* point = (DWORD*)this->point + (rect.X + y * this->Width);//ÆðÊ¼µØÖ·+×ø±êÆ«ÒÆ
+			::memset(point, 255, rect.Width * 4);//Ä¨³ý
+		}
+	}
+
 	HDC& EBitmap::GetDC() {
 		if (!_hdc) {
 			_hdc = ::CreateCompatibleDC(NULL);
@@ -263,7 +298,6 @@ namespace EzUI {
 	IControl::~IControl() {
 
 	}
-	void IControl::OnTimer() {}
 
 	void IControl::SetStyleSheet(const EString& styleStr)
 	{
