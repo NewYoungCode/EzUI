@@ -55,13 +55,6 @@ namespace EzUI {
 		}
 	}
 
-	void HLayout::AddControl(Control* ctl)
-	{
-		__super::AddControl(ctl);
-		if (ctl->Height() == 0 && ctl->Y() == 0) {
-			//ctl->Dock = DockStyle::Vertical;
-		}
-	}
 	bool HLayout::OnSize(const Size& size) {
 		if (__super::OnSize(size)) {
 			ResumeLayout();

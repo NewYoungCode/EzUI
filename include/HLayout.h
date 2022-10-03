@@ -6,7 +6,6 @@ namespace EzUI {
 		public Layout
 	{
 	public:
-		void AddControl(Control* ctl)override;
 		bool OnSize(const Size& size)override;
 		void ResumeLayout()override;
 	};

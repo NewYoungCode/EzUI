@@ -31,13 +31,30 @@ namespace EzUI {
 	class TextFormat {
 	public:
 		std::wstring fontFamilly; int fontSize; TextAlign textAlign;
+		HFONT Font = NULL;
 	public:
 		TextFormat(const std::wstring& fontFamilly, int fontSize, TextAlign textAlign)
 		{
 			this->fontFamilly = fontFamilly;
 			this->fontSize = fontSize;
 			this->textAlign = textAlign;
+
+			LOGFONTW lf{ 0 };
+			GetObjectW(GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONTW), &lf);
+			wcsncpy_s(lf.lfFaceName, fontFamilly.c_str(), LF_FACESIZE);
+			lf.lfCharSet = DEFAULT_CHARSET;
+			lf.lfHeight = -MulDiv(fontSize, Dpi, 72);
+			//lf.lfWeight += FW_BOLD; //粗体
+			//lf.lfUnderline = lfUnderline; //下划线
+			//lf.lfItalic = TRUE; //斜体
+			Font = CreateFontIndirectW(&lf);
 		}
+		~TextFormat() {
+			if (Font) {
+				::DeleteObject(Font);
+			}
+		}
+
 	};
 	class TextLayout {
 	public:
@@ -53,11 +70,17 @@ namespace EzUI {
 			maxSize = _maxSize;
 			textFormat = _textFormat;
 			::ScriptApplyDigitSubstitution(NULL, &ScriptControl, &ScriptState);
-			HDC m_hDc = ::GetDC(NULL);
+
+			HDC m_hDc=::CreateCompatibleDC(NULL);
+			SelectFont(m_hDc, _textFormat->Font);
+
+			//字符串长度 至少为1
+			int cString = text.length() == 0 ? 1 : text.length();
+
 			HRESULT hr = ::ScriptStringAnalyse(m_hDc,
 				text.c_str(),
-				text.length() + 1,
-				text.length() * 3 / 2 + 16,
+				cString,
+				(1.5 * cString + 16),
 				-1,
 				SSA_GLYPHS | SSA_BREAK | SSA_FALLBACK | SSA_LINK,
 				0,
@@ -67,20 +90,49 @@ namespace EzUI {
 				NULL,
 				NULL,
 				&m_Analysis);
-			::ReleaseDC(NULL, m_hDc);
+
+			::DeleteObject(m_hDc);
 		}
 		__Point HitTestTextPosition(int textPos, BOOL A_isTrailingHit) {
-			return { 0,0 };
+
+			__Size box = GetFontSize();
+			int y = (maxSize.Height - box.Height) / 2.0;//保证上下是居中的
+
+			int x = 0;
+			HRESULT ret=::ScriptStringCPtoX(m_Analysis, textPos, A_isTrailingHit, &x);
+			if (ret != S_OK || text.empty()) {
+				x = box.Width;
+			}
+
+			
+
+			return { x,y };
 		}
 		__Point HitTestPoint(__Point point_Start, int& A_TextPos, BOOL& A_isTrailingHit) {
+
+			__Size box = GetFontSize();
+			int y = (maxSize.Height - box.Height) / 2.0;//保证上下是居中的
+			if (point_Start.X >= box.Width) {//如果超过了边界
+				A_TextPos = text.length()-1;
+				A_isTrailingHit = true;
+				return { box.Width,y };
+			}
 			::ScriptStringXtoCP(m_Analysis, point_Start.X, &A_TextPos, &A_isTrailingHit);
 			int outX = 0;
 			::ScriptStringCPtoX(m_Analysis, A_TextPos, A_isTrailingHit, &outX);
-			return { outX,0 };
+
+			return { outX,y };
 		}
 		__Size GetFontSize() {
 			const SIZE* sz = ::ScriptString_pSize(m_Analysis);
-			return __Size{ sz->cx,sz->cy };
+			int x = sz->cx;
+			int y = sz->cy;
+
+			if (text.empty()) {
+				x = 0;
+			}
+
+			return __Size{ x,y };
 		}
 		virtual ~TextLayout() {
 			if (m_Analysis) {

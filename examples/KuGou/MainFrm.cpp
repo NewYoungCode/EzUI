@@ -367,7 +367,6 @@ void  MainFrm::SongView() {
 	localList->ScrollBar->Style.BackgroundColor = Color(50, 200, 200, 200);
 	localList->ScrollBar->Style.ForeColor = Color(217, 217, 217);
 	localList->ScrollBar->ActiveStyle.ForeColor = Color(191, 191, 191);
-	searchEdit->Style.BackgroundColor = Color::White;
 	center->Style.BackgroundColor = Color::White;
 	center->Style.ForeColor = Color::Black;
 	main->Invalidate();
@@ -384,7 +383,6 @@ void  MainFrm::LrcView() {
 	localList->ScrollBar->Style.ForeColor = Color(100, 255, 255, 255);
 	localList->ScrollBar->ActiveStyle.ForeColor = Color(150, 255, 255, 255);
 	main->Style.BackgroundImage = bkImage;
-	searchEdit->Style.BackgroundColor = Color(200, 250, 250, 250);
 	center->Style.BackgroundColor = Color(0, 0, 0, 0);
 	center->Style.ForeColor = Color::White;
 	main->Invalidate();

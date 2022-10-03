@@ -35,6 +35,9 @@
         fore-image: "imgs/down.png";
     }
 
+    .serachIcon {
+        fore-image: "imgs/search.png";
+    }
 
 </style>
 <vbox style="background-color:#029BE9" id="main">
@@ -44,8 +47,12 @@
             <label id="icon" width="29" height="29"></label>
             <spacer width="15"></spacer>
             <label text="登录" width="40"></label>
-            <spacer width="206"></spacer>
-            <edit id="searchEdit" width="257" height="26" style="background-color:#ffffff;color:#000000;border-radius:26"></edit>
+            <spacer width="210"></spacer>
+
+            <hbox  width="257" height="26" style="background-color:rgb(255,255,255,0.5);color:#ffffff;border-radius:26;font-size:12">
+                <label class="serachIcon" margin="0,5" width="20" height="20" ></label>
+                <edit id="searchEdit" placeholder="搜索音乐"  margin="0,10,0,0"   height="26" ></edit>
+            </hbox>
 
             <spacer></spacer>
             <hbox width="100" id="btns">  <label text="0" action="mini"></label><label text="1" action="max"></label><label text="r" action="close"></label> </hbox>

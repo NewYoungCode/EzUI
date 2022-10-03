@@ -53,6 +53,7 @@ namespace EzUI {
 			std::function<void()> Tick;
 			size_t Interval = -1;
 			UINT_PTR TimerId = 0;
+			bool started = false;
 		private:
 			static void  CALLBACK TimeProc(HWND hwnd, UINT message, UINT_PTR iTimerID, DWORD dwTime)
 			{
@@ -64,15 +65,20 @@ namespace EzUI {
 		public:
 			void Stop() {
 				if (TimerId) {
-					::KillTimer(NULL, TimerId);
+					auto ret = ::KillTimer(NULL, TimerId);
 					_timers.erase(TimerId);
 					TimerId = NULL;
+					started = false;
 				}
 			}
 			void Start() {
+				if (started) {
+					return;
+				}
 				Stop();
-				TimerId = ::SetTimer(NULL, NULL, Interval, Timer::TimeProc);
+				 TimerId = ::SetTimer(NULL, NULL, Interval, Timer::TimeProc);
 				_timers.insert(std::pair<UINT_PTR, UINT_PTR>(TimerId, (UINT_PTR)this));
+				started = true;
 			}
 			Timer() {
 			}

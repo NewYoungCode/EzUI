@@ -1,19 +1,25 @@
 #include "Edit.h"
-//#include "EzUI.h"
 namespace EzUI {
-
 	Edit::~Edit() {
+		timer.Stop();
 		if (textFormat) delete textFormat;
 		if (textLayout) delete textLayout;
+	}
+	Edit::Edit() {
+		timer.Interval = 500;
+		timer.Tick = [&]() {
+			if (!careRect.IsEmptyArea() && _focus) {
+				__i++;
+				this->Invalidate();
+			}
+		};
 	}
 	void Edit::OnChar(WPARAM wParam, LPARAM lParam)
 	{
 		if (wParam == VK_BACK) { //ÍË¸ñ¼ü
 			if (text.size() > 0) {
 				if (!selectRect.IsEmptyArea()) {
-
 					int pos;
-
 					if (A.X < B.X) {
 						int pos1 = A_TextPos;
 						if (A_isTrailingHit == 1) {
@@ -40,24 +46,98 @@ namespace EzUI {
 						int count = std::abs(pos2 - pos1) + 1;
 						text.erase(pos, count);
 					}
+
+					isTrailingHit = FALSE;
+					TextPos = pos;
 					Analysis();
-					BuildCare(pos - 1);
+
 				}
 				else {
-					text.erase(text.size() - 1, 1);
+
+					isTrailingHit = FALSE;
+					TextPos--;
+					if (TextPos > -1) {
+						text.erase(TextPos, 1);
+					}
 					Analysis();
-					BuildCare(text.size() - 1);
+
 				}
 			}
 			Invalidate();
 		}
 		if (wParam < 32)return;//¿ØÖÆ×Ö·û
 		WCHAR&& _char = (WCHAR)wParam;
-		text += _char;
+
+		WCHAR _buf[2]{ _char,0 };
+		Insert(_buf);
+
 		Analysis();
-		BuildCare(text.size());
 		Invalidate();
 	}
+
+	bool Edit::GetSelectedRange(int* outPos, int* outCount) {
+		if (!selectRect.IsEmptyArea()) {
+			int pos, count;
+			if (A.X < B.X) {
+				int pos1 = A_TextPos;
+				if (A_isTrailingHit == 1) {
+					pos1 += 1;
+				}
+				int pos2 = B_TextPos;
+				if (B_isTrailingHit == 0) {
+					pos2 -= 1;
+				}
+				pos = pos1;
+				count = std::abs(pos2 - pos1) + 1;
+			}
+			else {
+				int pos1 = A_TextPos;
+				if (A_isTrailingHit == 0) {
+					pos1 -= 1;
+				}
+				int pos2 = B_TextPos;
+				if (B_isTrailingHit == 1) {
+					pos2 += 1;
+				}
+				pos = pos2;
+				count = std::abs(pos2 - pos1) + 1;
+			}
+			*outPos = pos;
+			*outCount = count;
+			if (outCount > 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+	void Edit::Insert(const std::wstring& str) {
+		if (TextPos < 0)TextPos = 0;
+		if (TextPos > text.size()) {
+			TextPos = text.size();
+		}
+		text.insert(TextPos, str);
+		TextPos += str.size();
+	}
+	void Edit::Delete() {
+
+		if (text.size() <= 0)return;
+		
+		int pos, count;
+		if (GetSelectedRange(&pos, &count)) {//É¾³ýÑ¡ÖÐµÄ
+			isTrailingHit = FALSE;
+			TextPos = pos;
+			text.erase(pos, count);
+		}
+		else {//É¾³ýµ¥¸ö×Ö·û
+			isTrailingHit = FALSE;
+			TextPos--;
+			if (TextPos > -1) {
+				text.erase(TextPos, 1);
+			}
+		}
+
+	}
+
 	void Edit::OnKeyDown(WPARAM wParam)
 	{
 		__super::OnKeyDown(wParam);
@@ -79,25 +159,29 @@ namespace EzUI {
 		if (textLayout) delete textLayout;
 		textLayout = new TextLayout(text, { 16777216, Height() }, textFormat);
 		FontHeight = textLayout->GetFontSize().Height;
-	}
 
-	void Edit::BuildCare(int _TextPos) {
-		if (textLayout) {
-			Point pt = textLayout->HitTestTextPosition(_TextPos, TRUE);
-			TextPos = _TextPos;
-			careRect.X = pt.X;
-			careRect.Y = pt.Y;
-			careRect.Height = FontHeight;
-			careRect.Width = 1;
+		if (TextPos < 0) {
+			TextPos = 0;
+			isTrailingHit = FALSE;
 		}
+		Point pt = textLayout->HitTestTextPosition(TextPos, isTrailingHit);
+		careRect.X = pt.X;
+		careRect.Y = pt.Y;
+		careRect.Height = FontHeight;
+		careRect.Width = 1;
 	}
 
 	void Edit::OnMouseDown(MouseButton mbtn, const Point& point) {
 		__super::OnMouseDown(mbtn, point);
+		_focus = true;
+		Invalidate();
+		__i = 0;
+		timer.Start();
+
 		if (mbtn == MouseButton::Left) {
-			_focus = true;
+			_down = true;
 			point_Start = point;
-			
+
 			if (textLayout == NULL) {
 				Analysis();
 			}
@@ -108,13 +192,18 @@ namespace EzUI {
 				careRect.Y = A.Y;
 				careRect.Width = 1;
 				careRect.Height = FontHeight;
+
+				TextPos = A_TextPos;
+				if (A_isTrailingHit) {
+					TextPos++;
+				}
 			}
 			Invalidate();
 		}
 	}
 	void Edit::OnMouseMove(const Point& point)
 	{
-		if (_focus) {
+		if (_down) {
 			point_End = point;
 			//Debug::Log("%d %d", point_End.X, point_End.Y);
 			if (textLayout) {
@@ -136,14 +225,18 @@ namespace EzUI {
 	}
 	void Edit::OnMouseUp(MouseButton mbtn, const Point& point)
 	{
-		_focus = false;
+		_down = false;
 		Invalidate();
 		this;
 	}
 	void Edit::OnKillFocus()
 	{
 		__super::OnKillFocus();
+		_down = false;
 		_focus = false;
+		__i = 0;
+		timer.Stop();
+		this->Invalidate();
 	}
 	EString Edit::GetText()
 	{
@@ -154,6 +247,12 @@ namespace EzUI {
 		text = _text.utf16();
 		Analysis();
 	}
+	void Edit::SetAttribute(const EString& key, const EString& value) {
+		__super::SetAttribute(key, value);
+		if (key == "placeholder") {
+			Placeholder = value;
+		}
+	}
 	bool Edit::OnSize(const Size& sz) {
 		if (__super::OnSize(sz)) {
 			Analysis();
@@ -163,15 +262,23 @@ namespace EzUI {
 	}
 
 	void Edit::OnForePaint(PaintEventArgs& e) {
+		if (text.empty()) {
+			Color c = GetForeColor();
+			byte r = c.GetR() - 30;
+			byte g = c.GetG() - 30;
+			byte b = c.GetB() - 30;
+			e.Painter.DrawString(Placeholder.utf16(), GetFontFamily().utf16(), GetFontSize(), Color(r, g, b), { 0,0,Width(),Height() }, TextAlign::MiddleLeft);
+		}
 		if (textLayout) {
 			e.Painter.DrawTextLayout({ 0,0 }, textLayout, GetForeColor());
 		}
 		if (!selectRect.IsEmptyArea()) {
 			e.Painter.FillRectangle(selectRect, Color(100, 255, 0, 0));
 		}
-		if (!careRect.IsEmptyArea()) {
-			e.Painter.FillRectangle(careRect, Color(255, 0, 0, 0));
+		if (!careRect.IsEmptyArea() && _focus) {
+			if (__i % 2 == 0) {
+				e.Painter.FillRectangle(careRect, Color(255, 0, 0, 0));
+			}
 		}
-
 	}
 }
