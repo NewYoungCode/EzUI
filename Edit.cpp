@@ -1,4 +1,5 @@
 #include "Edit.h"
+#include "EzUI.h"
 namespace EzUI {
 	Edit::~Edit() {
 		timer.Stop();
@@ -16,63 +17,86 @@ namespace EzUI {
 	}
 	void Edit::OnChar(WPARAM wParam, LPARAM lParam)
 	{
-		if (wParam == VK_BACK) { //退格键
-			if (text.size() > 0) {
-				if (!selectRect.IsEmptyArea()) {
-					int pos;
-					if (A.X < B.X) {
-						int pos1 = A_TextPos;
-						if (A_isTrailingHit == 1) {
-							pos1 += 1;
-						}
-						int pos2 = B_TextPos;
-						if (B_isTrailingHit == 0) {
-							pos2 -= 1;
-						}
-						pos = pos1;
-						int count = std::abs(pos2 - pos1) + 1;
-						text.erase(pos, count);
-					}
-					else {
-						int pos1 = A_TextPos;
-						if (A_isTrailingHit == 0) {
-							pos1 -= 1;
-						}
-						int pos2 = B_TextPos;
-						if (B_isTrailingHit == 1) {
-							pos2 += 1;
-						}
-						pos = pos2;
-						int count = std::abs(pos2 - pos1) + 1;
-						text.erase(pos, count);
-					}
-
-					isTrailingHit = FALSE;
-					TextPos = pos;
-					Analysis();
-
-				}
-				else {
-
-					isTrailingHit = FALSE;
-					TextPos--;
-					if (TextPos > -1) {
-						text.erase(TextPos, 1);
-					}
-					Analysis();
-
-				}
+		//Debug::Log(utf8("按下了%d"), wParam);
+		do
+		{
+			if (wParam == VK_BACK) { //退格键
+				OnBackspace();//退格键的操作在里面
+				Analysis();//重新分析
+				Invalidate();//刷新
+				break;
 			}
-			Invalidate();
-		}
+			if (wParam == 1) {
+				SelectedAll();//全选
+				Invalidate();//刷新
+				break;
+			}
+			if (wParam == 3) {//复制
+				Copy();
+				break;
+			}
+			if (wParam == 24) {//ctrl+x裁剪
+				if (Copy()) {
+					DeleteRange();//因为是剪切 所以要删除选中的这段
+					Analysis();
+					Invalidate();//刷新
+				}
+				break;
+			}
+			if (wParam == 26) {//ctrl+z撤销
+
+				break;
+			}
+			if (wParam == 22) {//粘贴
+				//只接收文本
+				if (!IsClipboardFormatAvailable(CF_TEXT))break;
+				//打开剪贴版
+				if (!OpenClipboard(PublicData->HANDLE))break;
+				//获取剪贴板数据
+				HANDLE hClipboard = GetClipboardData(CF_TEXT);
+				std::string buf((CHAR*)GlobalLock(hClipboard));
+				std::wstring wBuf;
+				EString::ANSIToUniCode(buf, &wBuf);
+				//解锁
+				GlobalUnlock(hClipboard);
+				CloseClipboard();
+
+				DeleteRange();//先删除是否有选中的区域
+				Insert(wBuf);//插入新的字符
+				Analysis();//分析字符串
+				Invalidate();//刷新
+				break;
+			}
+
+
+		} while (false);
+
 		if (wParam < 32)return;//控制字符
-		WCHAR&& _char = (WCHAR)wParam;
 
-		WCHAR _buf[2]{ _char,0 };
-		Insert(_buf);
+		DeleteRange();//先删除是否有选中的区域
+		WCHAR buf[2]{ (WCHAR)wParam ,0 };
+		Insert(buf);//插入新的字符
+		Analysis();//分析字符串
+		Invalidate();//刷新
+	}
 
-		Analysis();
-		Invalidate();
+	bool Edit::SelectedAll() {
+		if (textLayout && !text.empty()) {
+			A = Point{ 0,0 };
+			A_isTrailingHit = FALSE;
+			A_TextPos = 0;
+
+			B = Point{ FontBox.Width ,0 };
+			B_isTrailingHit = TRUE;
+			B_TextPos = text.size() - 1;
+
+			selectRect.X = 0;
+			selectRect.Y = (this->Height() - FontHeight) / 2;
+			selectRect.Width = FontBox.Width;
+			selectRect.Height = FontBox.Height;
+			return true;
+		}
+		return false;
 	}
 
 	bool Edit::GetSelectedRange(int* outPos, int* outCount) {
@@ -118,24 +142,53 @@ namespace EzUI {
 		text.insert(TextPos, str);
 		TextPos += str.size();
 	}
-	void Edit::Delete() {
-
-		if (text.size() <= 0)return;
-		
+	bool Edit::DeleteRange() {
 		int pos, count;
 		if (GetSelectedRange(&pos, &count)) {//删除选中的
 			isTrailingHit = FALSE;
 			TextPos = pos;
 			text.erase(pos, count);
+			return true;
 		}
-		else {//删除单个字符
+		return false;
+	}
+	bool Edit::Copy() {
+		do
+		{
+			int pos, count;
+			if (!GetSelectedRange(&pos, &count))break;
+			std::wstring wBuf(text.substr(pos, count));
+			std::string str;
+			EString::UnicodeToANSI(wBuf, &str);
+
+			//打开剪贴板
+			if (!OpenClipboard(PublicData->HANDLE))break;
+			//清空剪贴板
+			EmptyClipboard();
+			//为剪切板申请内存
+			HGLOBAL clip = GlobalAlloc(GMEM_DDESHARE, (str.size() + 1));
+			memcpy((void*)clip, str.c_str(), (str.size() + 1));
+			//解锁
+			GlobalUnlock(clip);
+			SetClipboardData(CF_TEXT, clip);
+			CloseClipboard();
+			return true;
+		} while (false);
+		return false;
+	}
+
+
+	void Edit::OnBackspace() {
+		if (text.size() <= 0)return;
+
+		if (!DeleteRange()) {//先看看有没有有选中的需要删除
+			//否则删除单个字符
 			isTrailingHit = FALSE;
 			TextPos--;
 			if (TextPos > -1) {
 				text.erase(TextPos, 1);
 			}
 		}
-
 	}
 
 	void Edit::OnKeyDown(WPARAM wParam)
@@ -158,8 +211,16 @@ namespace EzUI {
 		textFormat = new TextFormat(GetFontFamily().utf16(), GetFontSize(), TextAlign::MiddleLeft);
 		if (textLayout) delete textLayout;
 		textLayout = new TextLayout(text, { 16777216, Height() }, textFormat);
-		FontHeight = textLayout->GetFontSize().Height;
 
+		FontBox = textLayout->GetFontSize();
+		FontHeight = FontBox.Height;
+
+		if (FontBox.Width > this->Width()) {
+			x = this->Width() - FontBox.Width;
+		}
+		else {
+			x = 0;
+		}
 		if (TextPos < 0) {
 			TextPos = 0;
 			isTrailingHit = FALSE;
@@ -270,13 +331,16 @@ namespace EzUI {
 			e.Painter.DrawString(Placeholder.utf16(), GetFontFamily().utf16(), GetFontSize(), Color(r, g, b), { 0,0,Width(),Height() }, TextAlign::MiddleLeft);
 		}
 		if (textLayout) {
-			e.Painter.DrawTextLayout({ 0,0 }, textLayout, GetForeColor());
+			e.Painter.DrawTextLayout({ x,0 }, textLayout, GetForeColor());
 		}
 		if (!selectRect.IsEmptyArea()) {
 			e.Painter.FillRectangle(selectRect, Color(100, 255, 0, 0));
 		}
 		if (!careRect.IsEmptyArea() && _focus) {
 			if (__i % 2 == 0) {
+				if (careRect.X>= this->Width()) {
+					careRect.X = this->Width()-1;
+				}
 				e.Painter.FillRectangle(careRect, Color(255, 0, 0, 0));
 			}
 		}

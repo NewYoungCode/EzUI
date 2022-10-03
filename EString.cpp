@@ -135,4 +135,34 @@ namespace EzUI {
 		MultiByteToWideChar(CP_UTF8, 0, this->c_str(), this->size(), (WCHAR*)wstr.c_str(), textlen);
 		return wstr;
 	}
+
+	void EString::ANSIToUniCode(const std::string& str, std::wstring* outStr)
+	{
+		std::wstring& wstrCmd = *outStr;
+		int bytes = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.size(), NULL, 0);
+		wstrCmd.resize(bytes);
+		bytes = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.size(), const_cast<wchar_t*>(wstrCmd.c_str()), wstrCmd.size());
+	}
+	void EString::UnicodeToANSI(const std::wstring& wstr, std::string*outStr)
+	{
+		std::string &strCmd=*outStr;
+		int bytes = ::WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
+		strCmd.resize(bytes);
+		bytes = ::WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), const_cast<char*>(strCmd.data()), strCmd.size(), NULL, NULL);
+	}
+
+	size_t EString::Replace(EString& str, const EString& oldText, const EString& newText)
+	{
+		EString& newStr = str;
+		size_t pos;
+		pos = str.find(oldText);
+		size_t count = 0;
+		for (; pos != std::string::npos;) {
+			newStr.replace(pos, oldText.size(), newText);
+			count++;
+			pos = newStr.find(oldText);
+		}
+		return count;
+	}
+
 };

@@ -170,7 +170,7 @@ namespace EzUI {
 			DWRITE_TEXT_METRICS textMetrics;
 			value->GetMetrics(&textMetrics);
 			D2D1_SIZE_F size = D2D1::SizeF(ceil(textMetrics.widthIncludingTrailingWhitespace), ceil(textMetrics.height));
-			return  __Size{ (int)(size.height / textMetrics.lineCount + 0.5) ,(int)(size.height + 0.5) };
+			return  __Size{ (int)(size.width+ 0.5) ,(int)((size.height / textMetrics.lineCount)+ 0.5)};
 		}
 		IDWriteTextLayout* operator->() {
 			return value;

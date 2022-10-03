@@ -1,5 +1,7 @@
 #pragma once
 #include "UIDef.h"
+#include <codecvt>
+
 namespace EzUI {
 	class  UI_EXPORT EString :public std::string {
 	public:
@@ -22,19 +24,9 @@ namespace EzUI {
 		EString Tolower()const;
 		EString Toupper()const;
 	public:
-		static size_t Replace(EString& str, const EString& oldText, const EString& newText)
-		{
-			EString& newStr = str;
-			size_t pos;
-			pos = str.find(oldText);
-			size_t count = 0;
-			for (; pos != std::string::npos;) {
-				newStr.replace(pos, oldText.size(), newText);
-				count++;
-				pos = newStr.find(oldText);
-			}
-			return count;
-		}
+		static void ANSIToUniCode(const std::string& str, std::wstring* outStr);
+		static void UnicodeToANSI(const std::wstring& wstr, std::string* outStr);
+		static size_t Replace(EString& str, const EString& oldText, const EString& newText);
 	};
 #define utf8(szbuf)  EString(szbuf,EString::ANSI)
 };

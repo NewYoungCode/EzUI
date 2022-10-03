@@ -18,6 +18,7 @@ namespace EzUI {
 		Rect selectRect;//选中的字符矩形
 		Rect careRect;//光标位置
 		int FontHeight = 0;//字符高度
+		Size FontBox;
 		TextFormat* textFormat = NULL;//字体格式
 		TextLayout* textLayout = NULL;//字体布局
 		byte __i = 0;//用于光标闪烁
@@ -33,6 +34,7 @@ namespace EzUI {
 	protected:
 		int TextPos = 0;
 		BOOL isTrailingHit = TRUE;//如果是1表示后边
+		int x = 0;
 	protected:
 		virtual bool OnSize(const Size& size)override;
 		virtual void OnForePaint(PaintEventArgs& e) override;
@@ -42,9 +44,13 @@ namespace EzUI {
 		virtual void OnMouseMove(const Point& point) override;
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point)override;
 		virtual void OnKillFocus() override;
+	private:
 		void Insert(const std::wstring& str);
-		void Delete();
+		bool DeleteRange();
 		bool GetSelectedRange(int* outPos, int* outCount);
+		bool Copy();
+		bool SelectedAll();
+		void OnBackspace();
 	public:
 		Edit();
 		virtual ~Edit();
