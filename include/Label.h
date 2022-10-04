@@ -21,6 +21,6 @@ namespace EzUI {
 		virtual ~Label();
 		void SetText(const EString& text);
 		void SetUnderline(bool enable = true);
-		EString& GetText();
+		const EString& GetText();
 	};
 };

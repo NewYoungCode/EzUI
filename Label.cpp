@@ -56,7 +56,7 @@ namespace EzUI {
 		_underline = enable;
 	}
 
-	EString& Label::GetText()
+	const EString& Label::GetText()
 	{
 		return _text;
 	}

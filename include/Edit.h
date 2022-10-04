@@ -10,7 +10,6 @@ namespace EzUI {
 		EString Placeholder;//placeholder懂得都懂
 		bool _down = false;//是否具有焦点中
 		bool _focus = false;//是否具有焦点中
-		void Analysis();//分析字符串
 		Point point_Start;//开始选中的位置
 		Point point_End;//结束位置
 		Rect selectRect;//选中的字符矩形
@@ -18,18 +17,18 @@ namespace EzUI {
 		Size FontBox;//文字占用空间
 		TextFormat* textFormat = NULL;//字体格式
 		TextLayout* textLayout = NULL;//字体布局
-		byte __i = 0;//用于光标闪烁
-		Windows::Timer timer;//用于光标闪烁
 		Point A;//A点
 		BOOL A_isTrailingHit;//如果是1表示是字符的后半边
 		int A_TextPos = 0;//点击了第几个字符
 		Point B;//B点
 		BOOL B_isTrailingHit;//如果是1表示是字符的后半边
 		int B_TextPos = 0;//点击了第几个字符
-		int TextPos = 0;//当前文字的下标
-		BOOL isTrailingHit = TRUE;//下标偏向 如果是1表示后边 0表示前面
+		int TextPos = 0;//当前文字的下标 0~text.size()
 		int x = 0;//用于滚动
+		Windows::Timer timer;//用于光标闪烁
+		bool _careShow = false;//用于光标闪烁
 	private:
+		void Analysis();//分析字符串
 		void Insert(const std::wstring& str);//插入文字
 		bool DeleteRange();//删除选中内容
 		bool GetSelectedRange(int* outPos, int* outCount);//获取当前被选中的区域 返回下标和个数
@@ -52,8 +51,8 @@ namespace EzUI {
 	public:
 		Edit();
 		virtual ~Edit();
+		const EString& GetText();
 		virtual void SetAttribute(const EString& key, const EString& value)override;
 		void SetText(const EString& text);
-		EString GetText();
 	};
 };

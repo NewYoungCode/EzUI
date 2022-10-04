@@ -11,7 +11,7 @@ namespace EzUI {
 		timer.Interval = 500;
 		timer.Tick = [&]() {
 			if (!careRect.IsEmptyArea() && _focus) {
-				__i++;
+				_careShow=!_careShow;
 				this->Invalidate();
 			}
 		};
@@ -55,8 +55,11 @@ namespace EzUI {
 				if (!OpenClipboard(PublicData->HANDLE))break;
 				//获取剪贴板数据
 				HANDLE hClipboard = GetClipboardData(CF_TEXT);
-				std::string buf((CHAR*)GlobalLock(hClipboard));
+				EString buf((CHAR*)GlobalLock(hClipboard));
+				EString::Replace(buf, "\r", "");//行编辑框不允许有换行符
+				EString::Replace(buf, "\n", "");//行编辑框不允许有换行符
 				std::wstring wBuf;
+
 				EString::ANSIToUniCode(buf, &wBuf);
 				//解锁
 				GlobalUnlock(hClipboard);
@@ -146,7 +149,7 @@ namespace EzUI {
 	bool Edit::DeleteRange() {
 		int pos, count;
 		if (GetSelectedRange(&pos, &count)) {//删除选中的
-			isTrailingHit = FALSE;
+			//isTrailingHit = FALSE;
 			TextPos = pos;
 			text.erase(pos, count);
 			return true;
@@ -183,7 +186,6 @@ namespace EzUI {
 
 		if (!DeleteRange()) {//先看看有没有有选中的需要删除
 			//否则删除单个字符
-			isTrailingHit = FALSE;
 			TextPos--;
 			if (TextPos > -1) {
 				text.erase(TextPos, 1);
@@ -199,14 +201,14 @@ namespace EzUI {
 			}*/
 		if (wParam == VK_LEFT) {
 			TextPos--;
-			__i = 0;
+			_careShow = true;
 			BuildCare();
 			Invalidate();
 			return;
 		}
 		if (wParam == VK_RIGHT) {
 			TextPos++;
-			__i = 0;
+			_careShow = true;
 			BuildCare();
 			Invalidate();
 			return;
@@ -249,17 +251,14 @@ namespace EzUI {
 
 		if (TextPos < 0) {
 			TextPos = 0;
-			isTrailingHit = FALSE;
 		}
 		if (TextPos > text.size()) {
 			TextPos = text.size();
 		}
-
-		char buf[256]{ 0 };
-		sprintf_s(buf, "%d %s \n", TextPos, isTrailingHit ? "true" : "false");
-		OutputDebugStringA(buf);
-
-		Point pt = textLayout->HitTestTextPosition(TextPos, isTrailingHit);
+		/*char buf[256]{ 0 };
+		sprintf_s(buf, "%d TextSize %d \n", TextPos,text.size());
+		OutputDebugStringA(buf);*/
+		Point pt = textLayout->HitTestTextPosition(TextPos, FALSE);
 		careRect.X = pt.X;
 		careRect.Y = pt.Y;
 		careRect.Height = FontHeight;
@@ -270,7 +269,7 @@ namespace EzUI {
 		__super::OnMouseDown(mbtn, point);
 		_focus = true;
 		Invalidate();
-		__i = 0;
+		_careShow = true;
 		timer.Start();
 
 		if (mbtn == MouseButton::Left) {
@@ -346,11 +345,11 @@ namespace EzUI {
 		__super::OnKillFocus();
 		_down = false;
 		_focus = false;
-		__i = 0;
+		_careShow = false;
 		timer.Stop();
 		this->Invalidate();
 	}
-	EString Edit::GetText()
+	const EString& Edit::GetText()
 	{
 		return EString(text);
 	}
@@ -390,7 +389,7 @@ namespace EzUI {
 			e.Painter.FillRectangle(rect, Color(100, 255, 0, 0));
 		}
 		if (!careRect.IsEmptyArea() && _focus) {
-			if (__i % 2 == 0) {
+			if (_careShow) {
 				Rect rect(careRect);
 				rect.X += x;//偏移
 				if (rect.X == this->Width()) {//如果刚好处于边界
