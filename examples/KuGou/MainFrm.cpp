@@ -18,6 +18,8 @@ void MainFrm::InitForm() {
 	//MainLayout->Style.Radius =1;//Ô²½Ç´°¿Ú
 	//CloseShadow();//¹Ø±Õ´°¿ÚÒõÓ°
 
+	
+
 
 	//this is test
 	FindControl("lrcView2")->AddControl(&lrcCtl);//Ìí¼Ó¸è´Ê¿Ø¼þ
@@ -120,7 +122,7 @@ void MainFrm::OnClose(bool& cal) {
 void MainFrm::DownLoadImage(EString SingerName, EString headImageUrl)
 {
 
-	::SendMessageW(_hWnd, delImage, 0, 0);
+	::SendMessageW(Hwnd(), delImage, 0, 0);
 
 	WCHAR temp[256]{ 0 };
 	::GetTempPathW(256, temp);
@@ -176,9 +178,9 @@ void MainFrm::DownLoadImage(EString SingerName, EString headImageUrl)
 		bkImage->SizeMode = ImageSizeMode::CenterImage;
 	}
 
-	::SendMessageW(_hWnd, refreshImage, 0, 0);
+	::SendMessageW(Hwnd(), refreshImage, 0, 0);
 }
-void MainFrm::OnKeyDown(WPARAM wparam)
+void MainFrm::OnKeyDown(WPARAM wparam,LPARAM lParam)
 {
 	if (wparam == 13) {
 		global::page = 1;
@@ -193,7 +195,7 @@ void MainFrm::OnKeyDown(WPARAM wparam)
 		}
 		searchList->Invalidate();
 	}
-	__super::OnKeyDown(wparam);
+	__super::OnKeyDown(wparam,  lParam);
 }
 bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 	if (args.EventType == Event::OnMouseDoubleClick) {

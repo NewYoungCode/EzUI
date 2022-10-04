@@ -49,24 +49,24 @@ namespace EzUI {
 
 	void VScrollBar::OnBackgroundPaint(PaintEventArgs& e) {
 
-		if (_sliderHeight >= _rect.Height) {
+		if (_sliderHeight >= Height()) {
 			return;
 		}
-		e.Painter.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, GetBackgroundColor());
+		e.Painter.FillRectangle(Rect{ 0,0,Width(),Height()}, GetBackgroundColor());
 	}
 
 
-	void VScrollBar::ParentSize(const Size& size) {
+	void VScrollBar::OwnerSize(const Size& size) {
 		this->SetRect({ size.Width - this->Width() ,0,this->GetRect().Width,Parent->Height() });
 	}
 
 	void VScrollBar::OnForePaint(PaintEventArgs& args)
 	{
 		//»¬¿érect
-		Rect sliderRect(0, 0, _rect.Width, _rect.Height);
+		Rect sliderRect(0, 0, Width(), Height());
 		sliderRect.Y = sliderY;
 		sliderRect.Height = _sliderHeight;
-		if (_sliderHeight >= _rect.Height) {
+		if (_sliderHeight >= Height()) {
 			return;
 		}
 		if (sliderRect.Height <= 0) {

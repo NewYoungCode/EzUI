@@ -23,7 +23,7 @@ private:
 	std::thread* downloadTask = NULL;
 	void DownLoadImage(EString SingerName, EString headImageUrl);
 protected:
-	virtual void OnKeyDown(WPARAM wparam)override;
+	virtual void OnKeyDown(WPARAM wparam, LPARAM lParam)override;
 	bool OnNotify(Control* sender, const EventArgs& args)override;
 	LRESULT WndProc(UINT msg, WPARAM W, LPARAM L) override;
 	void NextPage(int a, int b);

@@ -1,6 +1,7 @@
 #include "Edit.h"
 #include "EzUI.h"
 namespace EzUI {
+#define FontHeight  FontBox.Height
 	Edit::~Edit() {
 		timer.Stop();
 		if (textFormat) delete textFormat;
@@ -177,7 +178,6 @@ namespace EzUI {
 		return false;
 	}
 
-
 	void Edit::OnBackspace() {
 		if (text.size() <= 0)return;
 
@@ -191,22 +191,31 @@ namespace EzUI {
 		}
 	}
 
-	void Edit::OnKeyDown(WPARAM wParam)
+	void Edit::OnKeyDown(WPARAM wParam, LPARAM lParam)
 	{
-		__super::OnKeyDown(wParam);
+		__super::OnKeyDown(wParam, lParam);
+		/*	if (wParam == 16) {
+				_down = true;
+			}*/
 		if (wParam == VK_LEFT) {
 			TextPos--;
 			__i = 0;
-			Analysis();
+			BuildCare();
 			Invalidate();
+			return;
 		}
 		if (wParam == VK_RIGHT) {
 			TextPos++;
 			__i = 0;
-			Analysis();
+			BuildCare();
 			Invalidate();
+			return;
 		}
 		//Debug::Log(utf8("°´ÏÂÁË%d"), wParam);
+	}
+
+	void Edit::OnKeyUp(WPARAM wParam, LPARAM lParam) {
+		__super::OnKeyUp(wParam, lParam);
 	}
 	void Edit::Analysis()
 	{
@@ -225,7 +234,6 @@ namespace EzUI {
 		textLayout = new TextLayout(text, { 16777216, Height() }, textFormat);
 
 		FontBox = textLayout->GetFontSize();
-		FontHeight = FontBox.Height;
 
 		if (FontBox.Width > this->Width()) {
 			x = this->Width() - FontBox.Width;
@@ -233,6 +241,12 @@ namespace EzUI {
 		else {
 			x = 0;
 		}
+		BuildCare();
+	}
+
+	void Edit::BuildCare() {
+		if (!textLayout) return;
+
 		if (TextPos < 0) {
 			TextPos = 0;
 			isTrailingHit = FALSE;
@@ -240,6 +254,10 @@ namespace EzUI {
 		if (TextPos > text.size()) {
 			TextPos = text.size();
 		}
+
+		char buf[256]{ 0 };
+		sprintf_s(buf, "%d %s \n", TextPos, isTrailingHit ? "true" : "false");
+		OutputDebugStringA(buf);
 
 		Point pt = textLayout->HitTestTextPosition(TextPos, isTrailingHit);
 		careRect.X = pt.X;

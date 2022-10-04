@@ -8,7 +8,7 @@ namespace EzUI {
 	{
 		if (uMsg == WM_NCPAINT)
 		{
-			HWND hWnd = _hWnd;
+			HWND hWnd = Hwnd();
 			HDC hdc;
 			hdc = GetWindowDC(hWnd);
 			// Paint into this DC
@@ -27,7 +27,7 @@ namespace EzUI {
 		}
 
 		if (uMsg == WM_NCHITTEST) {
-			return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
+			return ::DefWindowProc(Hwnd(), uMsg, wParam, lParam);
 		}
 		if (uMsg == WM_KILLFOCUS) {
 			HWND wnd = (HWND)wParam;
@@ -39,7 +39,7 @@ namespace EzUI {
 	}
 	void MenuWindow::Show(int cmdShow)
 	{
-		HWND Owner = ::GetWindowOwner(_hWnd);
+		HWND Owner = ::GetWindowOwner(Hwnd());
 		RECT OwnerRect;
 		::GetWindowRect(Owner, &OwnerRect);
 		auto rect = GetRect();
@@ -52,12 +52,12 @@ namespace EzUI {
 
 		int height = OwnerRect.bottom - OwnerRect.top;
 		//if (rect.Height>height  ) {
-		::MoveWindow(_hWnd, mousePos.x, mousePos.y, rect.Width, rect.Height, FALSE);
+		::MoveWindow(Hwnd(), mousePos.x, mousePos.y, rect.Width, rect.Height, FALSE);
 		/*}
 		else {
 			::MoveWindow(_hWnd, mousePos.x, mousePos.y- rect.Height, rect.Width, rect.Height, FALSE);
 		}*/
 		__super::Show(cmdShow);
-		::SetForegroundWindow(_hWnd);
+		::SetForegroundWindow(Hwnd());
 	}
 };

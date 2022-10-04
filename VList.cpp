@@ -17,7 +17,7 @@ namespace EzUI {
 		__super::ResumeLayout();
 
 		_maxBottom = 0;
-		for (auto& it : _controls) {
+		for (auto& it : GetControls()) {
 			if (it->Visible == false)continue;
 
 			{
@@ -55,14 +55,14 @@ namespace EzUI {
 
 	ControlIterator VList::RemoveControl(Control* ctl)
 	{
-		size_t before = _controls.size();//记录一开始的控件数量
+		size_t before =  GetControls().size();//记录一开始的控件数量
 		ControlIterator nextIt = __super::RemoveControl(ctl);//删除控件
-		if (_controls.size() < before) {//如果控件数量比开始少 则 删除成功
+		if (GetControls().size() < before) {//如果控件数量比开始少 则 删除成功
 			int outHeight = (ctl->Height() + ctl->Margin.GetVSpace());//删除控件留出来的空白区域宽度
 
 			_maxBottom -= outHeight;//减去空白区域高度
 			LocationY.erase(ctl);//将记录Y坐标的map也要删除控件
-			for (auto i = nextIt; i != _controls.end(); i++)//从删除的下一个控件开始往前移动X坐标
+			for (auto i = nextIt; i != GetControls().end(); i++)//从删除的下一个控件开始往前移动X坐标
 			{
 				Control* it = *i;
 				it->SetRect(Rect(it->X(), it->Y() - outHeight, it->Width(), it->Height()));//自身移动
@@ -94,9 +94,9 @@ namespace EzUI {
 		return false;
 	}
 
-	void VList::OnChildPaint(Controls& controls, PaintEventArgs& args) {
+	void VList::ChildPainting(Controls& controls, PaintEventArgs& args) {
 		VisibleControls.clear();
-		auto rect = Rect(0, 0, _rect.Width, _rect.Height);
+		auto rect = Rect(0, 0,Width(), Height());
 		//绘制子控件
 		for (auto i = controls.begin(); i != controls.end(); i++)
 		{
@@ -105,7 +105,7 @@ namespace EzUI {
 				VisibleControls.push_back(*i);
 				it.Rending(args);
 			}
-			if (it.Y() >= _rect.Height) { //纵向列表控件超出则不再绘制后面的控件 优化
+			if (it.Y() >= Height()) { //纵向列表控件超出则不再绘制后面的控件 优化
 				break;
 			}
 		}

@@ -32,7 +32,7 @@ Event(this , ##__VA_ARGS__); \
 	Control& Control::operator=(const Control&) {
 		return *this;
 	}
-	void Control::OnChildPaint(Controls& controls, PaintEventArgs& args)
+	void Control::ChildPainting(Controls& controls, PaintEventArgs& args)
 	{
 		//绘制子控件
 		for (auto& it : controls) {
@@ -47,7 +47,7 @@ Event(this , ##__VA_ARGS__); \
 		}
 		OnBackgroundPaint(args);//先绘制背景
 		OnForePaint(args);//再绘制前景
-		OnChildPaint(this->_controls, args);//绘制子控件
+		
 	}
 	void Control::OnBackgroundPaint(PaintEventArgs& e)
 	{
@@ -579,6 +579,7 @@ Event(this , ##__VA_ARGS__); \
 #endif 
 		//开始绘制
 		this->OnPaint(args);//绘制基本上下文
+		this->ChildPainting(this->_controls, args);//绘制子控件
 		//绘制滚动条
 		EzUI::ScrollBar* scrollbar = NULL;
 		if (scrollbar = this->ScrollBar) {
@@ -777,7 +778,8 @@ Event(this , ##__VA_ARGS__); \
 		DestroySpacers();//清空弹簧并删除弹簧
 	}
 	void Control::OnChar(WPARAM wParam, LPARAM lParam) {}
-	void Control::OnKeyDown(WPARAM wParam) {}
+	void Control::OnKeyDown(WPARAM wParam, LPARAM lParam) {}
+	void Control::OnKeyUp(WPARAM wParam, LPARAM lParam) {}
 	void Control::OnMouseMove(const Point& point)
 	{
 		UI_TRIGGER(MouseMove, point);
@@ -881,7 +883,7 @@ Event(this , ##__VA_ARGS__); \
 			return false;
 		}
 		if (ScrollBar) {
-			ScrollBar->ParentSize(size);
+			ScrollBar->OwnerSize(size);
 		}
 		this->PendLayout = true;
 		return true;

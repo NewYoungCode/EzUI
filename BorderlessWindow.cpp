@@ -23,7 +23,7 @@ namespace EzUI {
 	}
 	BorderlessWindow::BorderlessWindow(int width, int height, HWND owner) : Window(width, height, owner, WS_POPUP | WS_MINIMIZEBOX, NULL)
 	{
-		_boxShadow = new ShadowWindow(width, height, _hWnd);
+		_boxShadow = new ShadowWindow(width, height, Hwnd());
 		UpdateShadow();
 	}
 	BorderlessWindow::~BorderlessWindow() {
@@ -58,8 +58,8 @@ namespace EzUI {
 		switch (uMsg)
 		{
 		case WM_NCHITTEST: {
-			if (!::IsZoomed(_hWnd) && Zoom) {
-				return __ZoomWindow2(_hWnd, lParam);
+			if (!::IsZoomed(Hwnd()) && Zoom) {
+				return __ZoomWindow2(Hwnd(), lParam);
 			}
 			break;
 		}

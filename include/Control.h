@@ -4,10 +4,10 @@ namespace EzUI {
 	class UI_EXPORT Control :public IControl
 	{
 	private:
-		Control(const Control&);
-		Control& operator=(const Control&);
+		bool _load = false;//是否load
+		bool _mouseIn = false;//鼠标是否在控件里面
+		bool _mouseDown = false;//鼠标是否已经按下
 		bool PendLayout = false;//布局是否被挂起 当AddControl丶RemoveControl丶OnSize时候此标志为true 当调用ResumeLayout()之后此标志为false
-	protected:
 		Controls _controls;//子控件
 		Controls _spacer;//存储控件下布局的的弹簧集合
 		Rect _rect;//控件矩形区域(基于父控件)
@@ -16,7 +16,9 @@ namespace EzUI {
 		int _fixedHeight = 0;//绝对高度
 		std::wstring _tipsText;//鼠标悬浮的提示文字
 		Cursor _LastCursor = EzUI::Cursor::None;//上一次鼠标的样式
-		Size _lastSize;
+		Size _lastSize;//上一次大小
+		Control(const Control&);
+		Control& operator=(const Control&);
 	public:
 		EzUI::Margin Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数
 		WindowData* PublicData = NULL;//窗口上的公共数据
@@ -24,7 +26,7 @@ namespace EzUI {
 		int MousePassThrough = 0;//忽略的鼠标消息
 		int ShadowWidth = 0;//控件阴影宽度
 		bool IsXmlControl = false;//是否是xml加载进来的
-		EString Name;//控件的ObjectName
+		EString Name;//控件的ObjectName ID
 		ScrollBar* ScrollBar = NULL;//垂直滚动条或者水平滚动条 一个控件只允许有一个
 		ControlState State = ControlState::None;//控件状态
 		ControlAction Action = ControlAction::None;//控件行为
@@ -45,9 +47,9 @@ namespace EzUI {
 		EventMouseUp MouseUp;//鼠标抬起
 		EventMouseClick MouseClick;//鼠标单击
 		EventMouseDoubleClick MouseDoubleClick;//鼠标双击
-		EventPaint Painting = NULL;
-		EventBackgroundPaint  BackgroundPainting = NULL;
-		EventForePaint  ForePainting = NULL;
+		EventPaint Painting = NULL;//绘制事件
+		EventBackgroundPaint  BackgroundPainting = NULL;//背景绘制事件
+		EventForePaint  ForePainting = NULL;//前景绘制事件
 	public:
 		const int& X();
 		const int& Y();
@@ -71,9 +73,10 @@ namespace EzUI {
 		virtual void ResumeLayout();//调用此函数之后请将 PendLayout 设置成false
 	public:
 		virtual void OnChar(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
-		virtual void OnKeyDown(WPARAM wParam) override;//WM_CAHR消息
+		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
+		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);//
 		virtual void OnPaint(PaintEventArgs& args);//绘制 
-		virtual void OnChildPaint(Controls& controls, PaintEventArgs& args);//子控件绘制 可以重载此函数优化鼠标操作性能
+		virtual void ChildPainting(Controls& controls, PaintEventArgs& args);//子控件绘制 可以重载此函数优化鼠标操作性能
 		virtual void OnBackgroundPaint(PaintEventArgs& painter);//背景绘制
 		virtual void OnForePaint(PaintEventArgs& e);//前景绘制
 		virtual void OnBorderPaint(PaintEventArgs& painter);//边框绘制

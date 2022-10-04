@@ -47,23 +47,23 @@ namespace EzUI {
 	}
 
 	void HScrollBar::OnBackgroundPaint(PaintEventArgs& e) {
-		if (_sliderWidth >= _rect.Width) {
+		if (_sliderWidth >= Width()) {
 			return;
 		}
-		e.Painter.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height },GetBackgroundColor());
+		e.Painter.FillRectangle(Rect{ 0,0,Width(),Height()}, GetBackgroundColor());
 	}
 
-	void HScrollBar::ParentSize(const Size& parentSize) {
+	void HScrollBar::OwnerSize(const Size& parentSize) {
 		this->SetRect({ 0,parentSize.Height - this->Height(),Parent->Width(),Height() });
 	}
 
 	void HScrollBar::OnForePaint(PaintEventArgs& args)
 	{
 		//»¬¿érect
-		Rect sliderRect(0, 0, _rect.Width, _rect.Height);
+		Rect sliderRect(0, 0,Width(), Height());
 		sliderRect.X = sliderX;
 		sliderRect.Width = _sliderWidth;
-		if (_sliderWidth >= _rect.Width) {
+		if (_sliderWidth >= Width()) {
 			return;
 		}
 		if (sliderRect.Width <= 0) {

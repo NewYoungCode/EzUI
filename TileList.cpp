@@ -48,7 +48,7 @@ namespace EzUI {
 		int maxHeight = 0;//每行最高的那个
 		int x = 0;
 		int y = 0;
-		for (auto& _it : _controls) {
+		for (auto& _it : GetControls()) {
 
 			Control& it = *_it;
 			int _x = it.Margin.Left + it.Width();

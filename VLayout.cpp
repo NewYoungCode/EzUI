@@ -13,7 +13,7 @@ namespace EzUI {
 		int fixedHeight = 0;
 		int fixedTotal = 0;
 		int count = 0;//可见控件总数
-		for (auto& it : _controls) {
+		for (auto& it : GetControls()) {
 			if (it->Visible == false)continue;
 			count++;
 			auto height = it->GetFixedHeight();
@@ -31,7 +31,7 @@ namespace EzUI {
 		double autoHeight = otherHeight / autoTotal;
 		double maxBottom = 0;
 		//排序
-		for (auto& it : _controls) {
+		for (auto& it : GetControls()) {
 			if (it->Visible == false)continue;
 
 			maxBottom += it->Margin.Top;

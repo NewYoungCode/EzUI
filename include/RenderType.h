@@ -527,7 +527,7 @@ namespace EzUI {
 					Height == rect.Height;
 			}
 
-			bool  operator == (const Rect& right) {
+			BOOL  operator == (const Rect& right) {
 				return Equals(right);
 			}
 

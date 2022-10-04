@@ -18,7 +18,7 @@ namespace EzUI {
 	void TabLayout::SetPageIndex(int index)
 	{
 		int pos = 0;
-		for (auto i = _controls.begin(); i != _controls.end(); i++)
+		for (auto i = GetControls().begin(); i != GetControls().end(); i++)
 		{
 			if (pos == index) {
 				(*i)->Visible = true;

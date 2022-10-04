@@ -38,7 +38,7 @@ namespace EzUI {
 	}
 
 
-	HWND Window::Hwnd()
+	HWND& Window::Hwnd()
 	{
 		return _hWnd;
 	}
@@ -276,9 +276,14 @@ namespace EzUI {
 				PublicData.Debug = !PublicData.Debug;
 				MainLayout->Invalidate();
 			}
-			OnKeyDown(wParam);
+			OnKeyDown(wParam, lParam);
 			break;
 		}
+		case WM_KEYUP: {
+			OnKeyUp(wParam, lParam);
+			break;
+		}
+
 		case WM_DESTROY:
 		{
 			OnDestroy();
@@ -352,7 +357,7 @@ namespace EzUI {
 #endif // COUNT_ONPAINT
 
 #if USED_GDIPLUS
-		EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height,EBitmap::PixelFormat::PixelFormatRGB);//
+		EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height, EBitmap::PixelFormat::PixelFormatRGB);//
 		Painter pt(memBitmap.GetDC());
 		PaintEventArgs args(pt);
 		args.DC = memBitmap.GetDC();
@@ -716,28 +721,25 @@ namespace EzUI {
 	{
 
 	}
-
-	void Window::OnKeyDown(WPARAM wParam) {
-
-		if (_inputControl) { //
-			_inputControl->OnKeyDown(wParam);
-			return;
-		}
-		if (_focusControl) {//
-			_focusControl->OnKeyDown(wParam);
-		}
-	}
 	void Window::OnChar(WPARAM wParam, LPARAM lParam)
 	{
 		if (_inputControl) { //
 			_inputControl->OnChar(wParam, lParam);
 			return;
 		}
-		if (_focusControl) {//
-			_focusControl->OnChar(wParam, lParam);
+	}
+	void Window::OnKeyDown(WPARAM wParam, LPARAM lParam) {
+		if (_inputControl) { //
+			_inputControl->OnKeyDown(wParam, lParam);
+			return;
 		}
 	}
-
+	void Window::OnKeyUp(WPARAM wParam, LPARAM lParam) {
+		if (_inputControl) { //
+			_inputControl->OnKeyUp(wParam, lParam);
+			return;
+		}
+	}
 	void Window::OnMove(const Point& point) {
 
 	}

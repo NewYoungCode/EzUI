@@ -339,17 +339,14 @@ namespace EzUI {
 	public:
 		virtual void Move(double pos) = 0;
 		virtual Rect GetSliderRect() = 0;//
-		virtual  int RollingCurrent() = 0;
+		virtual int RollingCurrent() = 0;
 		virtual int RollingTotal() = 0;//
-		virtual void ParentSize(const Size& parentSize) = 0;
-		EventScrollRolling Rolling = NULL;
+		virtual void OwnerSize(const Size& parentSize) = 0;
+		EventScrollRolling Rolling = NULL;//滚动事件
 		virtual ~IScrollBar() {};
 	};
 	class UI_EXPORT IControl {
-	protected:
-		bool _load = false;
-		bool _mouseIn = false;
-		bool _mouseDown = false;//鼠标是否已经按下
+	private:
 		Attributes _attrs;
 	public:
 		UINT_PTR Tag = NULL;
@@ -366,7 +363,8 @@ namespace EzUI {
 		virtual bool OnSize(const Size& size) = 0;
 		virtual void OnLoad() = 0;
 		virtual void OnChar(WPARAM wParam, LPARAM lParam) = 0;
-		virtual void OnKeyDown(WPARAM wParam) = 0;
+		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam) = 0;
+		virtual void OnKeyUp(WPARAM wParam,LPARAM lParam) = 0;
 	public:
 		virtual void SetStyleSheet(const EString& styleStr);//设置style
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//设置属性

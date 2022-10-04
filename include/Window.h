@@ -9,6 +9,9 @@ namespace EzUI {
 	class UI_EXPORT Window :public IControl
 	{
 	private:
+		bool _load = false;
+		bool _mouseIn = false;
+		bool _mouseDown = false;//鼠标是否已经按下
 		std::chrono::system_clock::time_point _lastDownTime = std::chrono::system_clock::from_time_t(0);
 		Control* _lastDownCtl = NULL;
 		Point* _mouseDbClick = NULL;
@@ -17,13 +20,12 @@ namespace EzUI {
 		int _closeCode = 0;
 		HWND _OwnerHwnd = NULL;
 		HWND  _hWndTip = NULL;
-		void InitData(const DWORD& ExStyle);
-	protected:
 		HWND _hWnd = NULL;
 		Rect _rect;//基于桌面的坐标
 		Rect _rectClient;//客户绘图区域
 		Control* _focusControl = NULL;//具有焦点的控件
 		Control* _inputControl = NULL;//输入框
+		void InitData(const DWORD& ExStyle);
 	public:
 		WindowData PublicData;//存储公共数据
 	private:
@@ -45,7 +47,8 @@ namespace EzUI {
 		virtual void OnDestroy();
 		virtual void OnLoad();
 		virtual void OnChar(WPARAM wParam, LPARAM lParam);
-		virtual void OnKeyDown(WPARAM wParam);
+		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam);
+		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);
 		virtual void OnMove(const Point& point);
 		virtual bool OnNotify(Control* sender, const EventArgs& args);//返回true将不再派发给子控件处理 注意:不要在此函数内部删除自身控件
 	public:
@@ -56,7 +59,7 @@ namespace EzUI {
 		Window(int width, int height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
 		virtual ~Window();
 		Control* FindControl(const EString& objectName);
-		HWND Hwnd();
+		HWND& Hwnd();
 		Rect& GetRect();
 		Rect& GetClientRect();
 		void ReSize(const Size& size);
