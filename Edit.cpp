@@ -241,7 +241,7 @@ namespace EzUI {
 
 		if (mbtn == MouseButton::Left) {
 			_down = true;
-			point_Start = point;
+			point_Start = ConvertPoint(point);
 
 			if (textLayout == NULL) {
 				Analysis();
@@ -262,10 +262,17 @@ namespace EzUI {
 			Invalidate();
 		}
 	}
+
+
+	Point Edit::ConvertPoint(const Point& pt) {
+		int _x = -x;
+		return Point{ pt.X+_x,pt.X };
+	}
+
 	void Edit::OnMouseMove(const Point& point)
 	{
 		if (_down) {
-			point_End = point;
+			point_End = ConvertPoint(point);
 			//Debug::Log("%d %d", point_End.X, point_End.Y);
 			if (textLayout) {
 				selectRect = Rect();
@@ -330,18 +337,23 @@ namespace EzUI {
 			byte b = c.GetB() - 30;
 			e.Painter.DrawString(Placeholder.utf16(), GetFontFamily().utf16(), GetFontSize(), Color(r, g, b), { 0,0,Width(),Height() }, TextAlign::MiddleLeft);
 		}
+		
 		if (textLayout) {
 			e.Painter.DrawTextLayout({ x,0 }, textLayout, GetForeColor());
 		}
 		if (!selectRect.IsEmptyArea()) {
-			e.Painter.FillRectangle(selectRect, Color(100, 255, 0, 0));
+			Rect rect(selectRect);
+			rect.X += x;
+			e.Painter.FillRectangle(rect, Color(100, 255, 0, 0));
 		}
 		if (!careRect.IsEmptyArea() && _focus) {
 			if (__i % 2 == 0) {
-				if (careRect.X>= this->Width()) {
-					careRect.X = this->Width()-1;
+				Rect rect(careRect);
+				rect.X += x;
+				if (rect.X == this->Width()) {//如果刚好处于边界
+					rect.X = this->Width() - 1;
 				}
-				e.Painter.FillRectangle(careRect, Color(255, 0, 0, 0));
+				e.Painter.FillRectangle(rect, Color::Black);
 			}
 		}
 	}

@@ -59,14 +59,14 @@ namespace EzUI {
 	class TextLayout {
 	public:
 		SCRIPT_STRING_ANALYSIS m_Analysis = NULL;	//字符串分析结果;
-		std::wstring text;
+		std::wstring *text;
 		__Size maxSize;
 		TextFormat* textFormat;
 		SCRIPT_STATE ScriptState{ 0 };
 		SCRIPT_CONTROL ScriptControl{ 0 };
 	public:
 		TextLayout(const std::wstring& _text, __Size _maxSize, TextFormat* _textFormat) {
-			text = _text;
+			text = (std::wstring*) & _text;
 			maxSize = _maxSize;
 			textFormat = _textFormat;
 			::ScriptApplyDigitSubstitution(NULL, &ScriptControl, &ScriptState);
@@ -75,10 +75,10 @@ namespace EzUI {
 			SelectFont(m_hDc, _textFormat->Font);
 
 			//字符串长度 至少为1
-			int cString = text.length() == 0 ? 1 : text.length();
+			int cString = text->length() == 0 ? 1 : text->length();
 
 			HRESULT hr = ::ScriptStringAnalyse(m_hDc,
-				text.c_str(),
+				text->c_str(),
 				cString,
 				(1.5 * cString + 16),
 				-1,
@@ -100,7 +100,7 @@ namespace EzUI {
 
 			int x = 0;
 			HRESULT ret=::ScriptStringCPtoX(m_Analysis, textPos, A_isTrailingHit, &x);
-			if (ret != S_OK || text.empty()) {
+			if (ret != S_OK || text->empty()) {
 				x = box.Width;
 			}
 
@@ -113,7 +113,7 @@ namespace EzUI {
 			__Size box = GetFontSize();
 			int y = (maxSize.Height - box.Height) / 2.0;//保证上下是居中的
 			if (point_Start.X >= box.Width) {//如果超过了边界
-				A_TextPos = text.length()-1;
+				A_TextPos = text->length()-1;
 				A_isTrailingHit = true;
 				return { box.Width,y };
 			}
@@ -128,7 +128,7 @@ namespace EzUI {
 			int x = sz->cx;
 			int y = sz->cy;
 
-			if (text.empty()) {
+			if (text->empty()) {
 				x = 0;
 			}
 

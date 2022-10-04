@@ -51,6 +51,7 @@ namespace EzUI {
 		bool Copy();
 		bool SelectedAll();
 		void OnBackspace();
+		Point ConvertPoint(const Point& pt);
 	public:
 		Edit();
 		virtual ~Edit();
