@@ -578,6 +578,15 @@ namespace EzUI {
 	void Window::OnMouseWheel(short zDelta, const Point& point)
 	{
 		if (_focusControl == NULL) return;
+
+		if (_inputControl) {
+			MouseEventArgs args;
+			args.Delta = zDelta;
+			args.Location = point;
+			args.EventType = Event::OnMouseWheel;
+			_inputControl->Trigger(args);
+		}
+
 		ScrollBar* scrollBar = NULL;
 		if (_focusControl->ScrollBar) {
 			scrollBar = dynamic_cast<ScrollBar*>(_focusControl->ScrollBar);

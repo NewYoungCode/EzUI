@@ -44,6 +44,7 @@ namespace EzUI {
 		virtual void OnMouseMove(const Point& point) override;
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point)override;
 		virtual void OnKillFocus() override;
+		virtual void OnMouseWheel(short zDelta, const Point& point)override;
 	private:
 		void Insert(const std::wstring& str);
 		bool DeleteRange();

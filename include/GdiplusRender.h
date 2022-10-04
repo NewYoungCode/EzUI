@@ -59,19 +59,19 @@ namespace EzUI {
 	class TextLayout {
 	public:
 		SCRIPT_STRING_ANALYSIS m_Analysis = NULL;	//字符串分析结果;
-		std::wstring *text;
+		std::wstring* text;
 		__Size maxSize;
 		TextFormat* textFormat;
 		SCRIPT_STATE ScriptState{ 0 };
 		SCRIPT_CONTROL ScriptControl{ 0 };
 	public:
 		TextLayout(const std::wstring& _text, __Size _maxSize, TextFormat* _textFormat) {
-			text = (std::wstring*) & _text;
+			text = (std::wstring*)&_text;
 			maxSize = _maxSize;
 			textFormat = _textFormat;
 			::ScriptApplyDigitSubstitution(NULL, &ScriptControl, &ScriptState);
 
-			HDC m_hDc=::CreateCompatibleDC(NULL);
+			HDC m_hDc = ::CreateCompatibleDC(NULL);
 			SelectFont(m_hDc, _textFormat->Font);
 
 			//字符串长度 至少为1
@@ -99,12 +99,12 @@ namespace EzUI {
 			int y = (maxSize.Height - box.Height) / 2.0;//保证上下是居中的
 
 			int x = 0;
-			HRESULT ret=::ScriptStringCPtoX(m_Analysis, textPos, A_isTrailingHit, &x);
+			HRESULT ret = ::ScriptStringCPtoX(m_Analysis, textPos, A_isTrailingHit, &x);
 			if (ret != S_OK || text->empty()) {
 				x = box.Width;
 			}
 
-			
+
 
 			return { x,y };
 		}
@@ -113,7 +113,7 @@ namespace EzUI {
 			__Size box = GetFontSize();
 			int y = (maxSize.Height - box.Height) / 2.0;//保证上下是居中的
 			if (point_Start.X >= box.Width) {//如果超过了边界
-				A_TextPos = text->length()-1;
+				A_TextPos = text->length() - 1;
 				A_isTrailingHit = true;
 				return { box.Width,y };
 			}
@@ -300,7 +300,6 @@ namespace EzUI {
 		int OffsetX = 0;
 		int OffsetY = 0;
 		Gdiplus::Graphics* base = NULL;
-		std::map<std::wstring, HFONT> CacheFont;
 	public:
 		Gdiplus::Rect ToRect(const __Rect& _rect) {
 			return Gdiplus::Rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
@@ -314,12 +313,12 @@ namespace EzUI {
 		virtual ~GdiplusRender();
 		void DrawRectangle(const __Rect& rect, const __Color& color, int width = 1, int radius = 0);
 		void FillRectangle(const __Rect& rect, const __Color& color, int radius = 0);
-		void DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& rect, TextAlign textAlign, bool underLine = false);
+		void DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& rect, TextAlign textAlign, bool underLine = false, HFONT font = NULL);
 		void DrawTextLayout(const __Point& pt, TextLayout* textLayout, const __Color& color);
 		Gdiplus::SolidBrush* GetSolidBrush(const __Color& color);
 		void PushAxisAlignedClip(const __Rect& rect, ClipMode clipMode = ClipMode::Valid);
 		void PopAxisAlignedClip();
-		HFONT CreateSafeFont(const std::wstring& fontFamily, int fontSize, HDC DC, bool lfUnderline = false);
+		HFONT CreateHFont(const std::wstring& fontFamily, int fontSize, HDC DC, bool lfUnderline = false);
 		void DrawLine(const __Color& color, const __Point& A, const __Point& B, int width = 1);
 		void DrawImage(IImage* image, const __Rect& destRect, const __Rect& srcRect);
 		void DrawImage(IImage* image, const __Rect& rect, const ImageSizeMode& imageSizeMode = ImageSizeMode::Zoom, const Margin& margin = 0);

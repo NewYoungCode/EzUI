@@ -77,21 +77,17 @@ namespace EzUI {
 	}
 	GdiplusRender::~GdiplusRender()
 	{
-		for (auto& it : CacheFont) {
-			DeleteObject(it.second);
-		}
-		CacheFont.clear();
-
 		if (this->SolidBrush) {
 			delete this->SolidBrush;
 		}
-
 		delete base;
 	}
+
 	void GdiplusRender::DrawTextLayout(const __Point& pt, TextLayout* textLayout, const __Color& color) {
 		__Rect rect{ pt.X,pt.Y,textLayout->maxSize.Width,textLayout->maxSize.Height };
-		this->DrawString(*textLayout->text, textLayout->textFormat->fontFamilly, textLayout->textFormat->fontSize, color, rect, textLayout->textFormat->textAlign);
+		this->DrawString(*textLayout->text, textLayout->textFormat->fontFamilly, textLayout->textFormat->fontSize, color, rect, textLayout->textFormat->textAlign,false, textLayout->textFormat->Font);
 	}
+
 	void GdiplusRender::DrawRectangle(const __Rect& _rect, const __Color& color, int width, int radius)
 	{
 		if (color.GetA() == 0) {
@@ -142,7 +138,7 @@ namespace EzUI {
 		}
 
 	}
-	void GdiplusRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& _rect, TextAlign textAlign, bool underLine)
+	void GdiplusRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& _rect, TextAlign textAlign, bool underLine, HFONT font )
 	{
 		__Rect rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
 		rect.X += OffsetX;
@@ -160,7 +156,16 @@ namespace EzUI {
 		}
 		//设定基本参数
 		int lastMode=::SetBkMode(DC, TRANSPARENT);
-		HGDIOBJ oldFont = SelectFont(DC, CreateSafeFont(fontFamily, fontSize, DC, underLine));
+		HGDIOBJ oldFont = NULL;
+		HFONT newFont = NULL;
+		if (font) {
+			oldFont=SelectFont(DC, font);
+		}
+		else {
+			newFont = CreateHFont(fontFamily, fontSize, DC, underLine);
+			oldFont=SelectFont(DC, newFont);
+		}
+
 		//绘制文字
 		RECT winRECT = rect.WinRECT();
 		SetTextColor(DC, RGB(color.GetR(), color.GetG(), color.GetB()));
@@ -221,6 +226,9 @@ namespace EzUI {
 			SelectClipRgn(DC, NULL);
 			DeleteObject(clip);
 		}
+		if (newFont) {
+			DeleteFont(newFont);
+		}
 		base->ReleaseHDC(DC);
 	}
 	void GdiplusRender::PushAxisAlignedClip(const __Rect& rect, ClipMode clipMode)
@@ -243,14 +251,8 @@ namespace EzUI {
 		auto brush = GetSolidBrush(color);
 		base->FillRegion(brush, geometry.rgn);
 	}
-	HFONT GdiplusRender::CreateSafeFont(const std::wstring& fontFamily, int fontSize, HDC DC, bool lfUnderline)
+	HFONT GdiplusRender::CreateHFont(const std::wstring& fontFamily, int fontSize, HDC DC, bool lfUnderline)
 	{
-		WCHAR key[LF_FACESIZE + 10]{ 0 };
-		swprintf_s(key, L"%s_%d_%d", fontFamily.c_str(), fontSize, lfUnderline);
-		auto itor = CacheFont.find(key);
-		if (itor != CacheFont.end()) {
-			return (*itor).second;//从缓存中返回TextFormat
-		}
 		LOGFONTW lf{ 0 };
 		GetObjectW(GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONTW), &lf);
 		wcsncpy_s(lf.lfFaceName, fontFamily.c_str(), LF_FACESIZE);
@@ -260,7 +262,6 @@ namespace EzUI {
 		lf.lfUnderline = lfUnderline; //下划线
 		//lf.lfItalic = TRUE; //斜体
 		HFONT hFont = CreateFontIndirectW(&lf);
-		CacheFont.insert(std::pair<std::wstring, HFONT>(key, hFont));//加入缓存
 		return hFont;
 	}
 	void GdiplusRender::DrawLine(const __Color& color, const __Point& _A, const  __Point& _B, int width)

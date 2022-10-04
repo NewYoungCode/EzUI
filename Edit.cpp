@@ -194,6 +194,18 @@ namespace EzUI {
 	void Edit::OnKeyDown(WPARAM wParam)
 	{
 		__super::OnKeyDown(wParam);
+		if (wParam == VK_LEFT) {
+			TextPos--;
+			__i = 0;
+			Analysis();
+			Invalidate();
+		}
+		if (wParam == VK_RIGHT) {
+			TextPos++;
+			__i = 0;
+			Analysis();
+			Invalidate();
+		}
 		//Debug::Log(utf8("按下了%d"), wParam);
 	}
 	void Edit::Analysis()
@@ -225,6 +237,10 @@ namespace EzUI {
 			TextPos = 0;
 			isTrailingHit = FALSE;
 		}
+		if (TextPos > text.size()) {
+			TextPos = text.size();
+		}
+
 		Point pt = textLayout->HitTestTextPosition(TextPos, isTrailingHit);
 		careRect.X = pt.X;
 		careRect.Y = pt.Y;
@@ -262,11 +278,21 @@ namespace EzUI {
 			Invalidate();
 		}
 	}
-
+	void Edit::OnMouseWheel(short zDelta, const Point& point) {
+		__super::OnMouseWheel(zDelta, point);
+		//if (x == 0)return;
+		/*if (zDelta > 0) {
+			x+=4;
+		}
+		else {
+			x-=4;
+		}
+		Invalidate();*/
+	}
 
 	Point Edit::ConvertPoint(const Point& pt) {
 		int _x = -x;
-		return Point{ pt.X+_x,pt.X };
+		return Point{ pt.X + _x,pt.X };
 	}
 
 	void Edit::OnMouseMove(const Point& point)
@@ -337,19 +363,18 @@ namespace EzUI {
 			byte b = c.GetB() - 30;
 			e.Painter.DrawString(Placeholder.utf16(), GetFontFamily().utf16(), GetFontSize(), Color(r, g, b), { 0,0,Width(),Height() }, TextAlign::MiddleLeft);
 		}
-		
 		if (textLayout) {
 			e.Painter.DrawTextLayout({ x,0 }, textLayout, GetForeColor());
 		}
 		if (!selectRect.IsEmptyArea()) {
 			Rect rect(selectRect);
-			rect.X += x;
+			rect.X += x;//偏移
 			e.Painter.FillRectangle(rect, Color(100, 255, 0, 0));
 		}
 		if (!careRect.IsEmptyArea() && _focus) {
 			if (__i % 2 == 0) {
 				Rect rect(careRect);
-				rect.X += x;
+				rect.X += x;//偏移
 				if (rect.X == this->Width()) {//如果刚好处于边界
 					rect.X = this->Width() - 1;
 				}
