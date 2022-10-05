@@ -108,7 +108,7 @@ namespace EzUI {
 		Painter pt(_hdc, clientRect.Width, clientRect.Height);//
 		PaintEventArgs args(pt);
 		args.InvalidRectangle = rePaintRect;//
-		args.PublicData = &PublicData;
+		args.PublicData =&PublicData;
 		args.DC = _hdc;
 		MainLayout->Rending(args);//
 	}

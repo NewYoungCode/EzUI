@@ -10,7 +10,7 @@ namespace EzUI {
 		virtual ~VLayout();
 	public:
 		bool OnSize(const Size& size)override;
-		void ResumeLayout()override;
+		void OnLayout()override;
 	};
 	using VBox = VLayout;
 };

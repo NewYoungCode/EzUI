@@ -113,6 +113,10 @@ namespace EzUI {
 			{
 				return (Width == _right.Width && Height == _right.Height);
 			}
+			bool operator!=(IN const Size& _right) const
+			{
+				return !(Width == _right.Width && Height == _right.Height);
+			}
 
 			BOOL Equals(IN const Size& sz) const
 			{

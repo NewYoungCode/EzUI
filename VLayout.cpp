@@ -6,9 +6,8 @@ namespace EzUI {
 	{
 	}
 
-	void VLayout::ResumeLayout()
+	void VLayout::OnLayout()
 	{
-		__super::ResumeLayout();
 
 		int fixedHeight = 0;
 		int fixedTotal = 0;

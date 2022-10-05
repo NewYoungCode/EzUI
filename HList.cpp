@@ -15,10 +15,7 @@ namespace EzUI {
 	{
 	}
 
-
-	void HList::ResumeLayout() {
-		__super::ResumeLayout();
-
+	void HList::OnLayout() {
 		_maxRight = 0;
 		for (auto& it : GetControls()) {
 			if (it->Visible == false) continue;
@@ -48,14 +45,10 @@ namespace EzUI {
 	void HList::AddControl(Control* ctl)
 	{
 		__super::AddControl(ctl);
-
 		_maxRight += ctl->Margin.Left;
-
-		int& x = ((Rect&)ctl->GetRect()).X;
+		int& x = (int&)ctl->X();
 		x = _maxRight;
-
 		_maxRight += (ctl->Width()+ctl->Margin.Right);
-
 		LocationX.insert(std::pair<Control*, int>(ctl, ctl->X()));
 	}
 	ControlIterator HList::RemoveControl(Control* ctl)

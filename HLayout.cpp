@@ -1,9 +1,7 @@
 #include "HLayout.h"
 namespace EzUI {
-	void HLayout::ResumeLayout()
+	void HLayout::OnLayout()
 	{
-		__super::ResumeLayout();
-
 		int fixedWidth = 0;
 		int fixedTotal = 0;
 		int count = 0;//可见控件总数

@@ -1,6 +1,7 @@
 #pragma once
 #include "global.h"
 #include "Application.h"
+#include "Timer.h"
 class MainFrm :
     public Form
 {
@@ -8,7 +9,7 @@ protected:
 
     Label b1;
     Label b2;
-
+    Thread::Timer* timer = NULL;
     HLayout title;
     VLayout layout;
     VList list;

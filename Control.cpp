@@ -42,18 +42,15 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::OnPaint(PaintEventArgs& args)
 	{
-		if (Painting && Painting(args) == true) {
-			return;
+		if (Painting) {
+			Painting(args);
 		}
 		OnBackgroundPaint(args);//先绘制背景
 		OnForePaint(args);//再绘制前景
-		
+
 	}
 	void Control::OnBackgroundPaint(PaintEventArgs& e)
 	{
-		if (BackgroundPainting && BackgroundPainting(e) == true) {
-			return;
-		}
 		Color backgroundColor = GetBackgroundColor();
 		HImage backgroundImage = GetBackgroundImage();
 		UI_Int radius = GetRadius();
@@ -65,9 +62,6 @@ Event(this , ##__VA_ARGS__); \
 		}
 	}
 	void Control::OnForePaint(PaintEventArgs& e) {
-		if (ForePainting && ForePainting(e) == true) {
-			return;
-		}
 		HImage foreImage = GetForeImage();
 		if (foreImage.valid) {
 			e.Painter.DrawImage(foreImage.value, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage.value->SizeMode, foreImage.value->Padding);
@@ -331,38 +325,48 @@ Event(this , ##__VA_ARGS__); \
 		return _rect.Height;
 	}
 	void Control::SetX(const int& X) {
-		SetLocation({ X,Y() });
+		SetLocation({ X,_rect.Y });
 	}
 	void Control::SetY(const int& Y) {
-		SetLocation({ X(),Y });
+		SetLocation({ _rect.X,Y });
 	}
 	void Control::SetLocation(const Point& pt) {
-		SetRect(Rect(pt.X, pt.Y, Width(), Height()));
+		SetRect(Rect(pt.X, pt.Y, _rect.Width, _rect.Height));
 	}
 	void Control::SetWidth(const int& width) {
-		SetSize({ width,Height() });
+		SetSize({ width,_rect.Height });
 	}
 	void Control::SetHeight(const int& height) {
-		SetSize({ Width(),height });
+		SetSize({ _rect.Width,height });
 	}
 	void Control::SetSize(const Size& size)
 	{
-		SetRect({ X(),Y(),size.Width,size.Height });
+		SetRect({ _rect.X,_rect.Y,size.Width,size.Height });
 	}
 	const Rect& Control::GetRect()
 	{
+		if (Parent && Parent->IsPendLayout()) {
+			Parent->ResumeLayout();
+		}
 		return _rect;
 	}
 
 	void Control::SetFixedWidth(const int& fixedWidth)
 	{
-		_rect.Width = fixedWidth;
 		_fixedWidth = fixedWidth;
+		SetRect({ _rect.X,_rect.Y,fixedWidth,_rect.Height });
+
 	}
 	void Control::SetFixedHeight(const int& fixedHeight)
 	{
-		_rect.Height = fixedHeight;
 		_fixedHeight = fixedHeight;
+		SetRect({ _rect.X,_rect.Y,_rect.Width,fixedHeight });
+	}
+	void Control::SetFixedSize(const Size& size)
+	{
+		_fixedWidth = size.Width;
+		_fixedHeight = size.Height;
+		SetRect({ _rect.X,_rect.Y,size.Width,size.Height });
 	}
 	const int& Control::GetFixedWidth()
 	{
@@ -379,16 +383,28 @@ Event(this , ##__VA_ARGS__); \
 		}
 		return false;
 	}
+
+	const bool& Control::IsPendLayout() {
+		return this->_layoutState == LayoutState::Pend;
+	}
+
+	void Control::TryPendLayout() {
+		if (this->_layoutState == LayoutState::None) {
+			this->_layoutState = LayoutState::Pend;
+		}
+	}
+
 	Rect Control::GetClientRect() {
 		Control* pCtrl = this;
-		int x = _rect.X;
-		int y = _rect.Y;
+		const Rect& rect = GetRect();
+		int x = rect.X;
+		int y = rect.Y;
 		while ((pCtrl = pCtrl->Parent))
 		{
 			x += pCtrl->X();
 			y += pCtrl->Y();
 		}
-		return Rect{ x,y,_rect.Width,_rect.Height };
+		return Rect{ x,y,rect.Width,rect.Height };
 	}
 	void Control::SetRect(const Rect& rect)
 	{
@@ -419,11 +435,13 @@ Event(this , ##__VA_ARGS__); \
 			}
 		}
 
-		/*	_rect.X += _Margin.Left;
-			_rect.Y += _Margin.Top;*/
-
 		this->ComputeClipRect();//这里要重新计算基于父控件的裁剪区域
-		OnSize(Size(_rect.Width, _rect.Height));//然后才开始触发自身的特性 //布局控件会重载这个函数 对子控件调整rect
+		Size newSize(_rect.Width, _rect.Height);
+		//OnSize(newSize);//然后才开始触发自身的特性 //布局控件会重载这个函数 对子控件调整rect
+
+		if (OnSize(newSize) && Parent) {
+			Parent->TryPendLayout();
+		}
 	}
 	void Control::SetTips(const EString& text)
 	{
@@ -431,32 +449,75 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::ResumeLayout()
 	{
-		this->PendLayout = false;//布局完成需要将布局标志重置为false
+		if (this->_layoutState == LayoutState::Layouting) {
+			return;
+		}
+		this->_layoutState = LayoutState::Layouting;//布局中
+		this->OnLayout();
+		this->_layoutState = LayoutState::None;//布局完成需要将布局标志重置
 	}
+	void Control::OnLayout() {}
+	
+	//专门处理键盘消息的
+	void Control::OnKeyBoardEvent(const KeyboardEventArgs& args) {
+		if (PublicData == NULL) return;
+		WindowData* winData = PublicData;
+#define CONTROL_IN_WINDOW (winData->_inputControl || winData->_focusControl)
+		bool b1 = !winData->Notify(this, args);
+		switch (args.EventType)
+		{
+		case Event::OnChar: {
+			if (CONTROL_IN_WINDOW && b1) {
+				OnChar(args.wParam, args.lParam);
+			}
+			break;
+		}
+		case Event::OnKeyDown: {
+			if (CONTROL_IN_WINDOW && b1) {
+				OnKeyDown(args.wParam, args.lParam);
+			}
+			break;
+		}
+		case Event::OnKeyUp: {
+			if (CONTROL_IN_WINDOW && b1) {
+				OnKeyUp(args.wParam, args.lParam);
+			}
+			break;
+		}
+		default:
+			break;
+		}
+	}
+
 	//专门处理鼠标消息的
 	void Control::OnMouseEvent(const MouseEventArgs& _args) {
 		if (PublicData == NULL) return;
 		WindowData* winData = PublicData;
 		MouseEventArgs& args = (MouseEventArgs&)_args;
-		if (CheckEventPassThrough(args.EventType)) {//检查鼠标穿透
+
+#define CONTROL_IN_WINDOW (winData->_inputControl || winData->_focusControl)
+		if (CONTROL_IN_WINDOW && CheckEventPassThrough(args.EventType)) {//检查鼠标穿透
 			this->Parent->OnMouseEvent(args);//如果设置了穿透就直接发送给上一层控件
 		}
 		switch (args.EventType)
 		{
 		case Event::OnMouseWheel: {
-			if (!winData->Notify(WM_USER + 0x04, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+			bool b1 = (!winData->Notify(this, args));
+			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
 				OnMouseWheel(args.Delta, args.Location);
 			}
 			break;
 		}
 		case Event::OnMouseClick: {
-			if (!winData->Notify(WM_USER + 0x05, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+			bool b1 = (!winData->Notify(this, args));
+			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
 				OnMouseClick(args.Button, args.Location);
 			}
 			break;
 		}
 		case Event::OnMouseEnter: {
-			if (!winData->Notify(WM_USER + 0x06, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+			bool b1 = !winData->Notify(this, args);
+			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
 				OnMouseEnter(args.Location);
 				if (!_tipsText.empty()) {
 					winData->SetTips(this, _tipsText);
@@ -465,25 +526,29 @@ Event(this , ##__VA_ARGS__); \
 			break;
 		}
 		case Event::OnMouseMove: {
-			if (!_mouseIn) {
+			bool b1 = !_mouseIn;
+			if (CONTROL_IN_WINDOW && b1) {
 				args.EventType = Event::OnMouseEnter;
 				OnMouseEvent(args);
 				_mouseIn = true;
 			}
-			if (!winData->Notify(WM_USER + 0x07, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+			bool b2 = !winData->Notify(this, args);
+			if (CONTROL_IN_WINDOW && b2) {//如果窗口不做拦截就发给控件处理
 				OnMouseMove(args.Location);
 			}
 			break;
 		}
 		case Event::OnMouseDoubleClick: {
-			if (!winData->Notify(WM_USER + 0x08, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+			bool b1 = !winData->Notify(this, args);
+			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
 				OnMouseDoubleClick(args.Button, args.Location);
 			}
 			break;
 		}
 		case Event::OnMouseDown: {
 			_mouseDown = true;
-			if (!winData->Notify(WM_USER + 0x09, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+			bool b1 = !winData->Notify(this, args);
+			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
 				OnMouseDown(args.Button, args.Location);
 			}
 			break;
@@ -491,10 +556,11 @@ Event(this , ##__VA_ARGS__); \
 		case Event::OnMouseUp: {
 			bool isDown = _mouseDown;
 			_mouseDown = false;
-			if (!winData->Notify(WM_USER + 0x0a, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+			bool b1 = !winData->Notify(this, args);
+			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
 				OnMouseUp(args.Button, args.Location);
 			}
-			if (isDown) {
+			if (CONTROL_IN_WINDOW && isDown) {
 				args.EventType = Event::OnMouseClick;
 				OnMouseEvent(args);
 			}
@@ -502,7 +568,8 @@ Event(this , ##__VA_ARGS__); \
 		}
 		case Event::OnMouseLeave: {
 			_mouseIn = false;
-			if (!winData->Notify(WM_USER + 0x0b, (WPARAM)this, (LPARAM)&args)) {//如果窗口不做拦截就发给控件处理
+			bool b1 = !winData->Notify(this, args);
+			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
 				OnMouseLeave();
 			}
 			break;
@@ -516,7 +583,7 @@ Event(this , ##__VA_ARGS__); \
 		this->PublicData = args.PublicData;
 		if (!Visible) { return; }//如果控件设置为不可见直接不绘制
 
-		if (this->PendLayout) {//绘制的时候会检查时候有挂起的布局 如果有 立即让布局生效并重置布局标志
+		if (this->IsPendLayout()) {//绘制的时候会检查时候有挂起的布局 如果有 立即让布局生效并重置布局标志
 			this->ResumeLayout();
 		}
 
@@ -578,7 +645,10 @@ Event(this , ##__VA_ARGS__); \
 		}
 #endif 
 		//开始绘制
-		this->OnPaint(args);//绘制基本上下文
+		bool isIntercept = this->PublicData->Notify(this, args);//看看那边是否处理
+		if (!isIntercept) {
+			this->OnPaint(args);//绘制基本上下文
+		}
 		this->ChildPainting(this->_controls, args);//绘制子控件
 		//绘制滚动条
 		EzUI::ScrollBar* scrollbar = NULL;
@@ -614,7 +684,7 @@ Event(this , ##__VA_ARGS__); \
 			pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, Color::White);
 		}
 #endif
-		}
+	}
 
 	Control::~Control()
 	{
@@ -659,7 +729,8 @@ Event(this , ##__VA_ARGS__); \
 		if (dynamic_cast<Spacer*>(ctl)) {
 			_spacer.push_back(ctl);//控件内收集弹簧对象 当本控件执行析构函数的时候 自动会释放控件内弹簧对象
 		}
-		this->PendLayout = true;//添加控件需要将布局重新挂起
+
+		this->TryPendLayout();//添加控件需要将布局重新挂起
 	}
 	ControlIterator Control::RemoveControl(Control* ctl)
 	{
@@ -667,7 +738,7 @@ Event(this , ##__VA_ARGS__); \
 		ControlIterator it1 = ::std::find(_controls.begin(), _controls.end(), ctl);
 		if (it1 != _controls.end()) {
 			ctl->OnRemove();
-			this->PendLayout = true;//移除控件需要将布局重新挂起
+			this->TryPendLayout();//移除控件需要将布局重新挂起
 			nextIt = _controls.erase(it1);
 			ControlIterator it2 = ::std::find(VisibleControls.begin(), VisibleControls.end(), ctl);
 			if (it2 != VisibleControls.end()) {
@@ -825,6 +896,10 @@ Event(this , ##__VA_ARGS__); \
 	{
 		OnMouseEvent(args);
 	}
+	void Control::Trigger(const KeyboardEventArgs& args)
+	{
+		OnKeyBoardEvent(args);
+	}
 	void Control::OnMouseDown(MouseButton mbtn, const Point& point)
 	{
 		this->State = ControlState::Active;
@@ -885,10 +960,10 @@ Event(this , ##__VA_ARGS__); \
 		if (ScrollBar) {
 			ScrollBar->OwnerSize(size);
 		}
-		this->PendLayout = true;
+		this->TryPendLayout();//大小发生改变重新挂起
 		return true;
 	}
 	void Control::OnKillFocus()
 	{
 	}
-		};
+};

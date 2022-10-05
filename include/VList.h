@@ -12,7 +12,7 @@ namespace EzUI {
 	public:
 		VList();
 		virtual ~VList();
-		virtual void ResumeLayout()override;
+		virtual void OnLayout()override;
 		virtual	void AddControl(Control* ctl) override;
 		virtual ControlIterator RemoveControl(Control* ctl)override;
 		virtual void Clear(bool freeChilds = false);

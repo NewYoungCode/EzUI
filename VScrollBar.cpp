@@ -37,7 +37,6 @@ namespace EzUI {
 		return (int)sliderY;
 	}
 
-
 	Rect VScrollBar::GetSliderRect() {
 
 		Rect sliderRect(0, 0, Width(), Height());

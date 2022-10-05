@@ -8,9 +8,8 @@ namespace EzUI {
 	{
 	}
 
-	void TabLayout::ResumeLayout()
+	void TabLayout::OnLayout()
 	{
-		__super::ResumeLayout();
 
 		SetPageIndex(_index);
 	}

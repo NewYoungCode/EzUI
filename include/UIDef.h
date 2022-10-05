@@ -66,7 +66,8 @@
 #define UI_NotifyIcon_CLASSNAME TEXT("EzUI_NotifyIcon_Class")
 #define UI_NOTIFYICON WM_USER+0x01 //
 #define UI_PAINT WM_USER+0x03 //
-
+//WM_USER + 0x04 ~ WM_USER + 0x0c 鼠标专用
+//WM_USER + 0x0d ~ WM_USER + 0x0f 键盘专用
 #define WM_UIMESSAGE  WM_USER+20   
 #ifdef _WINDLL
 #define  UI_EXPORT  __declspec(dllexport) 
@@ -83,7 +84,7 @@
 //#define COUNT_ONPAINT//统计绘制耗时
 
 //下面的渲染方式只能选一个
-#define USED_GDIPLUS  0//CPU绘制 绘制略慢 内存占用低
-#define USED_Direct2D 1 //显卡绘制 性能好 内存占用高
+#define USED_GDIPLUS  1//CPU绘制 绘制略慢 内存占用低
+#define USED_Direct2D 0 //显卡绘制 性能好 内存占用高
 
 #define ui EzUI

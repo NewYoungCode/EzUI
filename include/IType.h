@@ -13,6 +13,7 @@ namespace EzUI {
 	using PointF = RenderType::PointF;
 	using ARGB = RenderType::ARGB;
 
+	class EventArgs;
 	class Control;
 	class Spacer;
 	class ScrollBar;
@@ -66,7 +67,7 @@ namespace EzUI {
 		void SetPixel(int x, int y, const Color& color);
 		Color GetPixel(int x, int y);
 		void Earse(const Rect& rect);//抹除矩形内容
-		void FillRect(const Rect& rect,const Color& color);//
+		void FillRect(const Rect& rect, const Color& color);//
 
 		HDC& GetDC();
 		virtual ~EBitmap();
@@ -112,11 +113,13 @@ namespace EzUI {
 		void* Window = NULL;//窗口类实例
 		void* HoverStyles = NULL;
 		void* ActiveStyles = NULL;//
+		Control* _focusControl = NULL;//具有焦点的控件
+		Control* _inputControl = NULL;//输入框
 		bool Debug = false;//是否开启debug模式
 		HWND HANDLE = NULL;//窗口句柄
 		UIFunc<void(void*)> InvalidateRect = NULL;//使一个区域无效
 		UIFunc<void()> UpdateWindow = NULL;//立即更新全部无效区域
-		UIFunc<bool(UINT, WPARAM, LPARAM)> Notify = NULL;//
+		UIFunc<bool(Control*,const EventArgs&)> Notify = NULL;//
 		UIFunc<void(Control*, const std::wstring&)> SetTips = NULL;//设置悬浮提示文字
 		UIFunc<void(Control*)> DelTips = NULL;//移除悬浮提示文字
 		UIFunc<Cursor()> GetCursor = NULL;//获取鼠标样式
@@ -141,7 +144,12 @@ namespace EzUI {
 		}
 	};
 
-	enum Event :int {
+	enum class LayoutState:byte {
+		None, //无状态 (无需布局)
+		Pend,//挂起中
+		Layouting//布局中
+	};
+	enum Event :size_t {
 		OnMouseWheel = 1,
 		OnMouseEnter = 2,
 		OnMouseMove = 4,
@@ -156,6 +164,11 @@ namespace EzUI {
 		OnActive = OnMouseDown | OnMouseUp,
 		OnHover = OnMouseEnter | OnMouseLeave,
 		OnKillFocus = 2048,
+		OnRect= 4096,
+		OnMove= 8192,
+		OnSize= 16384,
+		OnTextChange= 32768,
+		OnChar= 65536
 	};
 	enum class ControlAction {
 		None,
@@ -232,8 +245,10 @@ namespace EzUI {
 	};
 	// 摘要: 
 	//基础事件
-	struct EventArgs {
+	class EventArgs {
+	public:
 		Event EventType;
+		virtual ~EventArgs() {};
 	};
 	// 摘要: 
 	//为鼠标事件提供基础数据
@@ -252,10 +267,17 @@ namespace EzUI {
 			this->Location = location;
 		}
 	};
-
-	class SizeEventArgs :public EventArgs {
+	// 摘要: 
+	//为键盘事件提供基础数据
+	class KeyboardEventArgs :public EventArgs {
 	public:
-		Size Size;
+		WPARAM wParam;
+		LPARAM lParam;
+		KeyboardEventArgs(const Event& eventType, WPARAM wParam, LPARAM lParam) {
+			this->EventType = eventType;
+			this->wParam = wParam;
+			this->lParam = lParam;
+		}
 	};
 
 #if USED_GDIPLUS
@@ -269,10 +291,11 @@ namespace EzUI {
 	// 摘要: 
 	// 为 OnPaint 事件提供数据。
 	using __Painter = Painter;
-	struct PaintEventArgs:public EventArgs {
+	class PaintEventArgs :public EventArgs {
+	public:
 		WindowData* PublicData = NULL;
 		HDC DC = NULL;
-		Painter& Painter;//画家
+		__Painter& Painter;//画家
 		Rect InvalidRectangle;//WM_PAINT里面的无效区域
 		PaintEventArgs(__Painter& painter) :Painter(painter) {
 			EventType = Event::OnPaint;
@@ -298,9 +321,7 @@ namespace EzUI {
 	typedef UIFunc<void(Control*, MouseButton, const Point&)> EventMouseClick;//鼠标单击
 	typedef UIFunc<void(Control*, MouseButton, const Point&)> EventMouseDoubleClick;//鼠标双击
 	typedef UIFunc<void(int, int)> EventScrollRolling;//滚动条滚动事件
-	typedef UIFunc<bool(PaintEventArgs& args)> EventPaint;//绘制
-	typedef UIFunc<bool(PaintEventArgs& args)> EventBackgroundPaint;//背景绘制 背景图片&颜色
-	typedef UIFunc<bool(PaintEventArgs& args)> EventForePaint;//前景绘制 前景图片&文字
+	typedef UIFunc<void(PaintEventArgs& args)> EventPaint;//绘制
 
 	class UI_EXPORT ControlStyle {
 	public:
@@ -364,7 +385,7 @@ namespace EzUI {
 		virtual void OnLoad() = 0;
 		virtual void OnChar(WPARAM wParam, LPARAM lParam) = 0;
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam) = 0;
-		virtual void OnKeyUp(WPARAM wParam,LPARAM lParam) = 0;
+		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam) = 0;
 	public:
 		virtual void SetStyleSheet(const EString& styleStr);//设置style
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//设置属性

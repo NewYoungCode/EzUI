@@ -349,7 +349,7 @@ namespace EzUI {
 		timer.Stop();
 		this->Invalidate();
 	}
-	const EString& Edit::GetText()
+	const EString Edit::GetText()
 	{
 		return EString(text);
 	}

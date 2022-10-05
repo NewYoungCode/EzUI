@@ -38,9 +38,8 @@ namespace EzUI {
 
 	}
 	
-	void TileList::ResumeLayout()
+	void TileList::OnLayout()
 	{
-		__super::ResumeLayout();
 		LocationY.clear();
 		_MaxBottom = 0;
 
@@ -61,8 +60,8 @@ namespace EzUI {
 			}
 
 			x += it.Margin.Left;//左边距
-			int& refX = ((Rect&)(it.GetRect())).X;//引用x
-			int& refY = ((Rect&)(it.GetRect())).Y;//引用y
+			int& refX = (int&)it.X();//引用x
+			int& refY = (int&)it.Y();//引用y
 			refX = x;//设置X坐标
 			refY = y + it.Margin.Top;//设置Y坐标+上边距
 

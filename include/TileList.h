@@ -14,6 +14,6 @@ namespace EzUI {
 		virtual ~TileList();
 		virtual void Clear(bool freeList = false)override;
 		virtual bool OnSize(const Size& sz) override;
-		virtual void ResumeLayout()override;
+		virtual void OnLayout()override;
 	};
 };

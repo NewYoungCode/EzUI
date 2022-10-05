@@ -7,13 +7,14 @@ namespace EzUI {
 		bool _load = false;//是否load
 		bool _mouseIn = false;//鼠标是否在控件里面
 		bool _mouseDown = false;//鼠标是否已经按下
-		bool PendLayout = false;//布局是否被挂起 当AddControl丶RemoveControl丶OnSize时候此标志为true 当调用ResumeLayout()之后此标志为false
 		Controls _controls;//子控件
 		Controls _spacer;//存储控件下布局的的弹簧集合
 		Rect _rect;//控件矩形区域(基于父控件)
 		Rect _lastDrawRect;//最后一次显示的位置
 		int _fixedWidth = 0;//绝对宽度
 		int _fixedHeight = 0;//绝对高度
+		//布局状态AddControl丶RemoveControl丶OnSize时候此标志为挂起 调用ResumeLayout标志为布局中 当调用OnLayout()之后此标志为None
+		EzUI::LayoutState _layoutState = EzUI::LayoutState::None;
 		std::wstring _tipsText;//鼠标悬浮的提示文字
 		Cursor _LastCursor = EzUI::Cursor::None;//上一次鼠标的样式
 		Size _lastSize;//上一次大小
@@ -48,33 +49,8 @@ namespace EzUI {
 		EventMouseClick MouseClick;//鼠标单击
 		EventMouseDoubleClick MouseDoubleClick;//鼠标双击
 		EventPaint Painting = NULL;//绘制事件
-		EventBackgroundPaint  BackgroundPainting = NULL;//背景绘制事件
-		EventForePaint  ForePainting = NULL;//前景绘制事件
-	public:
-		const int& X();
-		const int& Y();
-		const int& Width();
-		const int& Height();
-		void SetX(const int& X);
-		void SetY(const int& Y);
-		void SetLocation(const Point& pt);//移动相对与父控件的位置
-		void SetSize(const Size& size); //当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
-		void SetWidth(const int& width);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
-		void SetHeight(const int& height);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
-		void SetFixedWidth(const int& fixedWidth);//设置绝对宽度
-		void SetFixedHeight(const int& fixedHeight);//设置绝对高度
-		const int& GetFixedWidth();//获取绝对宽度
-		const int& GetFixedHeight();//获取绝对高度
-		const Rect& GetRect();//获取相对与父控件矩形
-		Rect GetClientRect();//获取基于客户端的矩形
-		bool CheckEventPassThrough(Event eventType);
-		virtual void SetRect(const Rect& rect);//设置相对父控件矩形
-		virtual void SetTips(const EString& text);
-		virtual void ResumeLayout();//调用此函数之后请将 PendLayout 设置成false
-	public:
-		virtual void OnChar(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
-		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
-		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);//
+	protected:
+		ControlStyle& GetStyle(ControlState& _state);//获取当前控件状态下的样式信息
 		virtual void OnPaint(PaintEventArgs& args);//绘制 
 		virtual void ChildPainting(Controls& controls, PaintEventArgs& args);//子控件绘制 可以重载此函数优化鼠标操作性能
 		virtual void OnBackgroundPaint(PaintEventArgs& painter);//背景绘制
@@ -82,10 +58,9 @@ namespace EzUI {
 		virtual void OnBorderPaint(PaintEventArgs& painter);//边框绘制
 		virtual void OnLoad();//控件第一次加载 警告 此函数在LayerWindow里面不允许在函数内添加控件 但是允许设置控件参数  
 		virtual bool OnSize(const Size& size) override;//大小发生改变
-		virtual void OnKillFocus();//失去焦点的时候发生
-		virtual void OnRemove();//被移除该做的事情
-	protected:
+		virtual void OnLayout();//布局代码在此 布局完成之后PendLayout设置成false
 		virtual void OnMouseEvent(const MouseEventArgs& args);//鼠标事件消息
+		virtual void OnKeyBoardEvent(const KeyboardEventArgs& _args);//键盘事件消息
 		virtual void OnMouseMove(const Point& point);//鼠标在控件上移动
 		virtual void OnMouseLeave();//鼠标离开控件
 		virtual void OnMouseWheel(short zDelta, const Point& point);//鼠标滚轮
@@ -94,10 +69,37 @@ namespace EzUI {
 		virtual void OnMouseClick(MouseButton mbtn, const Point& point);//鼠标单击
 		virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point);//鼠标双击
 		virtual void OnMouseEnter(const Point& point);//鼠标移入
+		virtual void OnChar(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
+		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
+		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);//键盘弹起
 	public:
+		const int& X();//布局计算前
+		const int& Y();//布局计算前
+		const int& Width();//布局计算前
+		const int& Height();//布局计算前
+		void SetX(const int& X);//布局计算前
+		void SetY(const int& Y);//布局计算前
+		void SetLocation(const Point& pt);//移动相对与父控件的位置
+		void SetSize(const Size& size); //当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
+		void SetFixedSize(const Size& size); //设置绝对宽高
+		void SetWidth(const int& width);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
+		void SetHeight(const int& height);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
+		void SetFixedWidth(const int& fixedWidth);//设置绝对宽度
+		void SetFixedHeight(const int& fixedHeight);//设置绝对高度
+		const int& GetFixedWidth();//获取绝对宽度
+		const int& GetFixedHeight();//获取绝对高度
+		const Rect& GetRect();//获取相对与父控件矩形 布局计算后
+		Rect GetClientRect();//获取基于客户端的矩形
+		const bool& IsPendLayout();//是否含有挂起的布局
+		void TryPendLayout();//尝试挂起布局
+		bool CheckEventPassThrough(Event eventType);
+		void SetRect(const Rect& rect);//设置相对父控件矩形
+		void ResumeLayout();//直接进行布局
+		virtual void SetTips(const EString& text);
+		virtual void OnKillFocus();//失去焦点的时候发生
+		virtual void OnRemove();//被移除该做的事情
 		void Trigger(const MouseEventArgs& args);//触发鼠标相关消息
-	protected:
-		ControlStyle& GetStyle(ControlState& _state);//获取当前控件状态下的样式信息
+		void Trigger(const KeyboardEventArgs& args);//触发键盘相关消息
 	public:
 		Control();
 		virtual ~Control();

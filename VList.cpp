@@ -13,9 +13,7 @@ namespace EzUI {
 	{
 	}
 
-	void VList::ResumeLayout() {
-		__super::ResumeLayout();
-
+	void VList::OnLayout() {
 		_maxBottom = 0;
 		for (auto& it : GetControls()) {
 			if (it->Visible == false)continue;
@@ -47,7 +45,7 @@ namespace EzUI {
 	{
 		__super::AddControl(ctl);
 		_maxBottom += ctl->Margin.Top;
-		int& y = ((Rect&)ctl->GetRect()).Y;
+		int& y = (int&)ctl->Y();
 		y = _maxBottom;
 		_maxBottom += (ctl->Height() + ctl->Margin.Bottom);
 		LocationY.insert(std::pair<Control*, int>(ctl, ctl->Y()));
@@ -55,7 +53,7 @@ namespace EzUI {
 
 	ControlIterator VList::RemoveControl(Control* ctl)
 	{
-		size_t before =  GetControls().size();//记录一开始的控件数量
+		size_t before = GetControls().size();//记录一开始的控件数量
 		ControlIterator nextIt = __super::RemoveControl(ctl);//删除控件
 		if (GetControls().size() < before) {//如果控件数量比开始少 则 删除成功
 			int outHeight = (ctl->Height() + ctl->Margin.GetVSpace());//删除控件留出来的空白区域宽度
@@ -93,10 +91,14 @@ namespace EzUI {
 		}
 		return false;
 	}
-
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="controls"></param>
+	/// <param name="args"></param>
 	void VList::ChildPainting(Controls& controls, PaintEventArgs& args) {
 		VisibleControls.clear();
-		auto rect = Rect(0, 0,Width(), Height());
+		auto rect = Rect(0, 0, Width(), Height());
 		//绘制子控件
 		for (auto i = controls.begin(); i != controls.end(); i++)
 		{

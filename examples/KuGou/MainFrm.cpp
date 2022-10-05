@@ -5,7 +5,6 @@
 void MainFrm::InitForm() {
 	this->Zoom = true;
 
-
 	this->SetLayout(ui::UIManager::LoadLayout("xml/main.htm"));
 
 	//如果你仍需要使用win32原生控件请给窗口设置 主布局 然后就可以添加win32原生控件了(注:layeredwindow不支持原生控件)
@@ -15,11 +14,14 @@ void MainFrm::InitForm() {
 	auto main2 = FindControl("main2");
 	main2->Style.BackgroundColor = Color(120, 0, 0, 0);
 
+	main = FindControl("main");
+	center = FindControl("center");
+	centerLeft = FindControl("centerLeft");
+	tools = FindControl("tools");
+
+	tabCtrl = (TabLayout*)FindControl("rightView");
 	//MainLayout->Style.Radius =1;//圆角窗口
 	//CloseShadow();//关闭窗口阴影
-
-	
-
 
 	//this is test
 	FindControl("lrcView2")->AddControl(&lrcCtl);//添加歌词控件
@@ -66,7 +68,7 @@ void MainFrm::InitForm() {
 	SongView();
 
 	playerBar = FindControl("playerBar");
-	playerBar2 = playerBar->GetControl(0);
+	playerBar2 = FindControl("rate");
 	playerBar2->MousePassThrough = Event::OnHover | Event::OnActive;
 
 	time = (Label*)FindControl("time");
@@ -93,15 +95,6 @@ MainFrm::MainFrm() :Form(1022, 670)
 	InitForm();
 
 	auto main = FindControl("main");
-	main->BackgroundPainting = [=](PaintEventArgs& arg)->bool {
-		if (player.BuffBitmap) {
-			Image img(player.BuffBitmap->_bitmap);
-			arg.Painter.DrawImage(&img, main->GetRect(), ImageSizeMode::CenterImage);
-			return true;
-		}
-		return false;
-	};
-
 
 	//MainLayout->Style.Radius = 50;
 	//CloseShadow();
@@ -180,7 +173,7 @@ void MainFrm::DownLoadImage(EString SingerName, EString headImageUrl)
 
 	::SendMessageW(Hwnd(), refreshImage, 0, 0);
 }
-void MainFrm::OnKeyDown(WPARAM wparam,LPARAM lParam)
+void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 {
 	if (wparam == 13) {
 		global::page = 1;
@@ -195,9 +188,30 @@ void MainFrm::OnKeyDown(WPARAM wparam,LPARAM lParam)
 		}
 		searchList->Invalidate();
 	}
-	__super::OnKeyDown(wparam,  lParam);
+	__super::OnKeyDown(wparam, lParam);
 }
 bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
+
+	if (args.EventType == Event::OnPaint) {
+
+		if (sender==&player) {
+			if (tabCtrl->PageIndex() ==2) {
+				return false;
+			}
+			return true;
+		}
+		if (sender == main && player.BuffBitmap) {
+			if (tabCtrl->PageIndex() ==1) {
+				PaintEventArgs& arg = (PaintEventArgs&)args;
+				Image img(player.BuffBitmap->_bitmap);
+				arg.Painter.DrawImage(&img, main->GetRect(), ImageSizeMode::CenterImage);
+				return true;
+			}
+			return false;
+		}
+		return false;
+	}
+
 	if (args.EventType == Event::OnMouseDoubleClick) {
 		if (!sender->GetAttribute("FileHash").empty()) {
 			EString hash = sender->GetAttribute("FileHash");
@@ -256,7 +270,17 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 			delete sender->Parent;
 			return false;
 		}
-
+		if (sender->Name == "dellocal") {//删除本地
+			auto songItem = sender->Parent;
+			EString hash = songItem->GetAttribute("FileHash");
+			if (!hash.empty()) {
+				cfg->DeleteSection(hash);
+			}
+			this;
+			auto it = localList->RemoveControl(songItem);
+			delete songItem;
+			return false;
+		}
 		if (sender->GetAttribute("tablayout") == "rightView") {
 			$(sender->Parent->GetControls()).Not(sender).Css("border-bottom:0").Refresh();
 			$(sender).Css("border-bottom:3;border-color:rgb(55,174,254)").Refresh();
@@ -329,6 +353,9 @@ void MainFrm::Task() {
 			lastWidth = w;
 			playerBar2->SetFixedWidth(w);
 			//((Layout*)playerBar)->ResumeLayout();
+			//playerBar2->Invalidate();
+			//playerBar;
+			//playerBar2->ResumeLayout();
 			playerBar2->Invalidate();
 		}
 	}
@@ -358,11 +385,7 @@ void MainFrm::NextPage(int a, int b) {
 	}
 }
 void  MainFrm::SongView() {
-	auto main = FindControl("main");
-	auto center = FindControl("center");
-	auto centerLeft = FindControl("centerLeft");
 	centerLeft->Style.BackgroundColor = Color(0, 0, 0, 0);
-	auto tools = FindControl("tools");
 	tools->Style.BorderBottom = 1;
 	tools->Style.BorderColor = Color(238, 238, 238);
 	main->Style.BackgroundImage.valid = false;
@@ -374,11 +397,7 @@ void  MainFrm::SongView() {
 	main->Invalidate();
 }
 void  MainFrm::LrcView() {
-	auto main = FindControl("main");
-	auto center = FindControl("center");
-	auto centerLeft = FindControl("centerLeft");
 	centerLeft->Style.BackgroundColor = Color(100, 200, 200, 200);
-	auto tools = FindControl("tools");
 	tools->Style.BorderBottom = 1;
 	tools->Style.BorderColor = Color(238, 238, 238);
 	localList->ScrollBar->Style.BackgroundColor = Color(50, 200, 200, 200);

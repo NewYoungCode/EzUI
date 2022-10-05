@@ -33,8 +33,15 @@ class SongItem :public HBox {
 public:
 	Label songName;
 	Label time;
-
+	Label del;
 	SongItem(const EString& _songName, const EString& _songTime = "03:56") {
+
+		del.Style.ForeImage = new Image(L"imgs/del.png");
+		del.SetFixedSize({20,20});
+		del.Cursor = Cursor::HAND;
+		del.Name = "dellocal";
+		del.MousePassThrough = Event::OnHover;
+
 		songName.SetText(_songName);
 		songName.TextAlign = TextAlign::MiddleLeft;
 		songName.MousePassThrough = time.MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseDoubleClick;
@@ -44,7 +51,7 @@ public:
 		time.TextAlign = TextAlign::MiddleRight;
 
 		//time.Style.Radius = 33;
-		time.Style.BackgroundColor = Color(100,255, 255, 0);
+		//time.Style.BackgroundColor = Color(100,255, 255, 0);
 
 		this->SetFixedHeight(33);
 		this->Dock = DockStyle::Horizontal;
@@ -59,7 +66,8 @@ public:
 		AddControl(&songName);
 		AddControl(&time);
 		AddControl(new HSpacer(15));
-
+		AddControl(&del);
+		AddControl(new HSpacer(10));
 	}
 };
 
@@ -163,7 +171,6 @@ namespace global {
 				host = host.substr(0, pos1);
 			}
 		}
-		EString userid = "1581500868";//酷狗的用户ID 不传入可能请求不到正确的数据
 		WebClient wc;
 		wc.AddHeader("Accept", " */*");
 		wc.AddHeader("Accept-Language", " en-US,en;q=0.8,zh-Hans-CN;q=0.5,zh-Hans;q=0.2");
@@ -172,7 +179,9 @@ namespace global {
 		wc.AddHeader("Host", host);
 		wc.AddHeader("Connection", " Keep-Alive");
 		wc.AddHeader("Cache-Control", " no-cache");
-		return wc.HttpGet(newUrl + "&userid=" + userid, resp);
+		EString userid = "1581500868";//酷狗的用户ID 不传入可能请求不到正确的数据
+		newUrl += "&userid=" + userid;
+		return wc.HttpGet(newUrl, resp);
 	}
 
 	inline std::vector<Song> SearchSongs(const EString& keyword) {

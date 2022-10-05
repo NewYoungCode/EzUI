@@ -1,5 +1,7 @@
 #include "GdiplusRender.h"
 #if USED_GDIPLUS
+#define _NOREND_IMAGE_ 
+//#define _NOREND_IMAGE_ return;
 #pragma comment (lib, "usp10.lib")
 #pragma comment(lib,"Shlwapi.lib")
 #pragma comment(lib, "gdiplus.lib")
@@ -278,11 +280,13 @@ namespace EzUI {
 	}
 	void GdiplusRender::DrawImage(IImage* _image, const __Rect& destRect, const __Rect& srcRect)
 	{
+		_NOREND_IMAGE_
 		GdiplusImage* image = (GdiplusImage*)_image;
 		base->DrawImage(image, ToRect(destRect), srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, Gdiplus::Unit::UnitPixel);
 	}
 	void GdiplusRender::DrawImage(IImage* _image, const __Rect& _rect, const ImageSizeMode& imageSizeMode, const Margin& margin)
 	{
+		_NOREND_IMAGE_
 		GdiplusImage* image = (GdiplusImage*)_image;
 
 		if (!image || image->GetLastStatus() != Gdiplus::Status::Ok) return;

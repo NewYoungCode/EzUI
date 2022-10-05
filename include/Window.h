@@ -23,10 +23,9 @@ namespace EzUI {
 		HWND _hWnd = NULL;
 		Rect _rect;//基于桌面的坐标
 		Rect _rectClient;//客户绘图区域
-		Control* _focusControl = NULL;//具有焦点的控件
-		Control* _inputControl = NULL;//输入框
 		void InitData(const DWORD& ExStyle);
 	public:
+		//WindowData *PublicData=NULL;//存储公共数据
 		WindowData PublicData;//存储公共数据
 	private:
 		Window(const Window&) {};
@@ -50,7 +49,8 @@ namespace EzUI {
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam);
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);
 		virtual void OnMove(const Point& point);
-		virtual bool OnNotify(Control* sender, const EventArgs& args);//返回true将不再派发给子控件处理 注意:不要在此函数内部删除自身控件
+		//鼠标 键盘 重绘 会进入此函数,返回true将不再派发给sender控件处理 注意:尽量不要在此函数内部删除自身控件(鼠标和键盘事件内可以删除)
+		virtual bool OnNotify(Control* sender, const EventArgs& args);
 	public:
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	public:

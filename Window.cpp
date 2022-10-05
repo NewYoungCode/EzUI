@@ -1,6 +1,8 @@
 #include "Window.h"
 #include "TabLayout.h"
 namespace EzUI {
+#define _focusControl PublicData._focusControl
+#define _inputControl PublicData._inputControl
 
 	Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 	{
@@ -416,21 +418,15 @@ namespace EzUI {
 			if (_focusControl == delControl) {
 				_focusControl->Trigger(Event::OnMouseLeave);
 				_focusControl = NULL;
-				return;
 			}
 			if (_inputControl == delControl) {
 				_inputControl->OnKillFocus();
 				_inputControl = NULL;
-				return;
 			}
 		};
 
-		PublicData.Notify = [=](UINT uMsg, WPARAM wParam, LPARAM lParam)->bool {
-			if (uMsg >= (WM_USER + 0x04) && uMsg <= (WM_USER + 0x0c)) { //
-				MouseEventArgs* args = (MouseEventArgs*)lParam;
-				return OnNotify((Control*)(wParam), *args);
-			}
-			return FALSE;
+		PublicData.Notify = [=](Control* sender, const EventArgs& args)->bool {
+			return OnNotify(sender, args);
 		};
 		PublicData.SetTips = [=](Control* ctl, const std::wstring& text)->void {
 			TOOLINFO	tti{ 0 };
@@ -724,19 +720,22 @@ namespace EzUI {
 	void Window::OnChar(WPARAM wParam, LPARAM lParam)
 	{
 		if (_inputControl) { //
-			_inputControl->OnChar(wParam, lParam);
+			KeyboardEventArgs args(Event::OnChar, wParam, lParam);
+			_inputControl->Trigger(args);
 			return;
 		}
 	}
 	void Window::OnKeyDown(WPARAM wParam, LPARAM lParam) {
 		if (_inputControl) { //
-			_inputControl->OnKeyDown(wParam, lParam);
+			KeyboardEventArgs args(Event::OnKeyDown, wParam, lParam);
+			_inputControl->Trigger(args);
 			return;
 		}
 	}
 	void Window::OnKeyUp(WPARAM wParam, LPARAM lParam) {
 		if (_inputControl) { //
-			_inputControl->OnKeyUp(wParam, lParam);
+			KeyboardEventArgs args(Event::OnKeyUp, wParam, lParam);
+			_inputControl->Trigger(args);
 			return;
 		}
 	}

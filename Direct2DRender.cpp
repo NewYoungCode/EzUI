@@ -1,5 +1,7 @@
 #include "Direct2DRender.h"
 #if USED_Direct2D
+#define _NOREND_IMAGE_ 
+//#define _NOREND_IMAGE_ return;
 #pragma comment(lib,"dwrite.lib")
 #pragma comment(lib,"d2d1.lib")
 #pragma comment(lib,"Windowscodecs.lib")
@@ -127,7 +129,8 @@ namespace EzUI {
 
 	void Direct2DRender::DrawBitmap(ID2D1Bitmap* d2dBitmap, const  __Rect& rect)
 	{
-		if (d2dBitmap == NULL) return;
+		_NOREND_IMAGE_
+			if (d2dBitmap == NULL) return;
 		D2D1_RECT_F rectF = ToRectF(rect);
 		d2dRender->DrawBitmap(d2dBitmap, &rectF);
 	}
