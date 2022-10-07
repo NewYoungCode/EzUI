@@ -434,12 +434,12 @@ Event(this , ##__VA_ARGS__); \
 				break;
 			}
 		}
-
-		this->ComputeClipRect();//这里要重新计算基于父控件的裁剪区域
+		if (!_rect.Equals(_lastRect)) {
+			_lastRect = _rect;
+		}
 		Size newSize(_rect.Width, _rect.Height);
-		//OnSize(newSize);//然后才开始触发自身的特性 //布局控件会重载这个函数 对子控件调整rect
-
-		if (OnSize(newSize) && Parent) {
+		bool b1 = OnSize(newSize);
+		if (b1 && Parent) {
 			Parent->TryPendLayout();
 		}
 	}
@@ -600,6 +600,7 @@ Event(this , ##__VA_ARGS__); \
 			OnLoad();
 			_load = true;
 		}
+		pt.Count++;
 		this->_lastDrawRect = _ClipRect;//记录最后一次绘制的区域
 		//设置绘制偏移
 		pt.OffsetX = clientRect.X; //设置偏移
@@ -618,8 +619,8 @@ Event(this , ##__VA_ARGS__); \
 		}
 
 		int r = GetRadius();
-		bool isScrollBar = dynamic_cast<EzUI::ScrollBar*>(this);
-		r = isScrollBar ? 0 : r;//因为滚动条是不需要有圆角的
+		//bool isScrollBar = dynamic_cast<EzUI::ScrollBar*>(this);
+		//r = isScrollBar ? 0 : r;//因为滚动条是不需要有圆角的
 
 #if USED_GDIPLUS
 		Layer* layer = NULL;
@@ -645,7 +646,10 @@ Event(this , ##__VA_ARGS__); \
 		}
 #endif 
 		//开始绘制
-		bool isIntercept = this->PublicData->Notify(this, args);//看看那边是否处理
+		bool isIntercept = false;
+		if ((_eventNotify & Event::OnPaint) == Event::OnPaint) {//检查当前事件是否需要被通知到主窗口
+			isIntercept = this->PublicData->Notify(this, args);//看看那边是否处理
+		}
 		if (!isIntercept) {
 			this->OnPaint(args);//绘制基本上下文
 		}
@@ -900,6 +904,16 @@ Event(this , ##__VA_ARGS__); \
 	{
 		OnKeyBoardEvent(args);
 	}
+
+	void Control::AddEventNotify(int eventType) {
+	
+		_eventNotify = _eventNotify | eventType;
+	}
+
+	void Control::RemoveEventNotify(int eventType) {
+		_eventNotify = _eventNotify &~ eventType;
+	}
+
 	void Control::OnMouseDown(MouseButton mbtn, const Point& point)
 	{
 		this->State = ControlState::Active;

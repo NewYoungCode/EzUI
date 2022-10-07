@@ -57,6 +57,11 @@ namespace EzUI {
 		this->SetRect({ 0,parentSize.Height - this->Height(),Parent->Width(),Height() });
 	}
 
+	const Rect& HScrollBar::GetRect()
+	{
+		return _rect;
+	}
+
 	void HScrollBar::OnForePaint(PaintEventArgs& args)
 	{
 		//»¬¿érect

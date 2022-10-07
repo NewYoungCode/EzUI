@@ -295,6 +295,7 @@ namespace EzUI {
 	protected:
 		Gdiplus::SolidBrush* SolidBrush = NULL;
 	public:
+		int Count = 0;
 		std::list<__Rect*> Layers;
 		HDC DC = NULL;
 		int OffsetX = 0;

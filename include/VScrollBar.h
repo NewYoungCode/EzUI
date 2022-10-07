@@ -23,6 +23,7 @@ namespace EzUI {
 		virtual void OnMouseMove(const Point& point)override;
 		virtual void OnMouseWheel(short zDelta, const Point& point)override;
 		virtual void OnBackgroundPaint(PaintEventArgs& e)override;
+		virtual const Rect& GetRect()override;
 	public:
 		VScrollBar();
 		virtual ~VScrollBar();

@@ -30,8 +30,6 @@ HWND _workerw = nullptr;
 //}//获取桌面最底层的句柄
 //
 
-
-
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPWSTR    lpCmdLine,

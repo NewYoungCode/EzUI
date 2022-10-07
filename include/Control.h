@@ -9,7 +9,6 @@ namespace EzUI {
 		bool _mouseDown = false;//鼠标是否已经按下
 		Controls _controls;//子控件
 		Controls _spacer;//存储控件下布局的的弹簧集合
-		Rect _rect;//控件矩形区域(基于父控件)
 		Rect _lastDrawRect;//最后一次显示的位置
 		int _fixedWidth = 0;//绝对宽度
 		int _fixedHeight = 0;//绝对高度
@@ -18,8 +17,12 @@ namespace EzUI {
 		std::wstring _tipsText;//鼠标悬浮的提示文字
 		Cursor _LastCursor = EzUI::Cursor::None;//上一次鼠标的样式
 		Size _lastSize;//上一次大小
+		Rect _lastRect;
+		int _eventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick;//这两个事件默认添加到主窗口通知函数中可拦截
 		Control(const Control&);
 		Control& operator=(const Control&);
+	protected:
+		Rect _rect;//控件矩形区域(基于父控件)
 	public:
 		EzUI::Margin Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数
 		WindowData* PublicData = NULL;//窗口上的公共数据
@@ -88,7 +91,7 @@ namespace EzUI {
 		void SetFixedHeight(const int& fixedHeight);//设置绝对高度
 		const int& GetFixedWidth();//获取绝对宽度
 		const int& GetFixedHeight();//获取绝对高度
-		const Rect& GetRect();//获取相对与父控件矩形 布局计算后
+		virtual const Rect& GetRect();//获取相对与父控件矩形 布局计算后
 		Rect GetClientRect();//获取基于客户端的矩形
 		const bool& IsPendLayout();//是否含有挂起的布局
 		void TryPendLayout();//尝试挂起布局
@@ -100,6 +103,8 @@ namespace EzUI {
 		virtual void OnRemove();//被移除该做的事情
 		void Trigger(const MouseEventArgs& args);//触发鼠标相关消息
 		void Trigger(const KeyboardEventArgs& args);//触发键盘相关消息
+		void AddEventNotify(int eventType);//添加到主窗口ontify函数中可拦截
+		void RemoveEventNotify(int eventType);
 	public:
 		Control();
 		virtual ~Control();

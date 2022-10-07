@@ -54,9 +54,13 @@ namespace EzUI {
 		e.Painter.FillRectangle(Rect{ 0,0,Width(),Height()}, GetBackgroundColor());
 	}
 
-
 	void VScrollBar::OwnerSize(const Size& size) {
-		this->SetRect({ size.Width - this->Width() ,0,this->GetRect().Width,Parent->Height() });
+		this->SetRect({ size.Width - this->Width() ,0,this->Width(),Parent->Height()});
+	}
+
+	const Rect& VScrollBar::GetRect()
+	{
+		return _rect;
 	}
 
 	void VScrollBar::OnForePaint(PaintEventArgs& args)

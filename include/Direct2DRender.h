@@ -277,6 +277,7 @@ namespace EzUI {
 		HWND hWnd = NULL;
 		bool beginDraw = false;
 	public:
+		int Count = 0;
 		ID2D1RenderTarget* d2dRender = NULL;
 		HDC DC = NULL;
 		int OffsetX = 0;

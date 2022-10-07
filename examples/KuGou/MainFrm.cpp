@@ -7,6 +7,9 @@ void MainFrm::InitForm() {
 
 	this->SetLayout(ui::UIManager::LoadLayout("xml/main.htm"));
 
+	
+
+
 	//如果你仍需要使用win32原生控件请给窗口设置 主布局 然后就可以添加win32原生控件了(注:layeredwindow不支持原生控件)
 	/*HWND btn = ::CreateWindowW(DATETIMEPICK_CLASS, L"hello world", WS_POPUP | WS_VISIBLE, 600, 10, 100, 30, NULL, NULL, GetModuleHandle(NULL), 0);
 	::SetParent(btn, Hwnd());*/
@@ -89,6 +92,9 @@ void MainFrm::InitForm() {
 
 	auto main = FindControl("main");
 	player.Tag = (UINT_PTR)main;
+
+	player.AddEventNotify(Event::OnPaint);
+	main->AddEventNotify(Event::OnPaint);
 }
 MainFrm::MainFrm() :Form(1022, 670)
 {
@@ -194,14 +200,15 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 
 	if (args.EventType == Event::OnPaint) {
 
-		if (sender==&player) {
-			if (tabCtrl->PageIndex() ==2) {
+
+		if (sender == &player) {
+			if (tabCtrl->PageIndex() == 2) {
 				return false;
 			}
 			return true;
 		}
 		if (sender == main && player.BuffBitmap) {
-			if (tabCtrl->PageIndex() ==1) {
+			if (tabCtrl->PageIndex() == 1) {
 				PaintEventArgs& arg = (PaintEventArgs&)args;
 				Image img(player.BuffBitmap->_bitmap);
 				arg.Painter.DrawImage(&img, main->GetRect(), ImageSizeMode::CenterImage);

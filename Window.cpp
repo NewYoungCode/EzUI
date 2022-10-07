@@ -390,7 +390,7 @@ namespace EzUI {
 
 #ifdef COUNT_ONPAINT
 		char buf[100]{ 0 };
-		sprintf_s(buf, "OnPaint (%d,%d,%d,%d) %dms \n", rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, sw.ElapsedMilliseconds());
+		sprintf_s(buf, "OnPaint Count(%d) (%d,%d,%d,%d) %dms \n", pt.Count,rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, sw.ElapsedMilliseconds());
 		OutputDebugStringA(buf);
 #endif // COUNT_ONPAINT
 
