@@ -479,6 +479,10 @@ namespace EzUI {
 				point->X = X;
 				point->Y = Y;
 			}
+			Point GetLocation() const
+			{
+				return Point{X,Y};
+			}
 
 			VOID GetSize(OUT Size* size) const
 			{

@@ -580,13 +580,13 @@ namespace EzUI {
 	{
 		if (_focusControl == NULL) return;
 
-		if (_inputControl) {
+	/*	if (_inputControl) {
 			MouseEventArgs args;
 			args.Delta = zDelta;
 			args.Location = point;
 			args.EventType = Event::OnMouseWheel;
 			_inputControl->Trigger(args);
-		}
+		}*/
 
 		ScrollBar* scrollBar = NULL;
 		if (_focusControl->ScrollBar) {
@@ -688,19 +688,20 @@ namespace EzUI {
 			}
 		}
 	}
-	bool Window::OnSize(const Size& sz)
+	void Window::OnSize(const Size& sz)
 	{
 #ifdef COUNT_ONSIZE
 		StopWatch sw;
 #endif
+		__count_onsize = 0;
 		MainLayout->SetRect(this->GetClientRect());
 		MainLayout->Invalidate();
 #ifdef COUNT_ONSIZE
 		char buf[50]{ 0 };
-		sprintf_s(buf, "OnSize (%d,%d) %dms\n", sz.Width, sz.Height, sw.ElapsedMilliseconds());
+		sprintf_s(buf, "OnSize Count(%d) (%d,%d) %dms\n", __count_onsize,sz.Width, sz.Height, sw.ElapsedMilliseconds());
 		OutputDebugStringA(buf);
 #endif
-		return true;
+	
 	}
 
 	void Window::OnRect(const Rect& rect)
@@ -776,6 +777,7 @@ namespace EzUI {
 				TabLayout* tabLayout = dynamic_cast<TabLayout*>(FindControl(ctlName));
 				if (tabLayout) {
 					tabLayout->SetPageIndex(sender->Index());
+					//tabLayout->ResumeLayout();
 					tabLayout->Invalidate();
 				}
 			}

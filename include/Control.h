@@ -9,18 +9,22 @@ namespace EzUI {
 		bool _mouseDown = false;//鼠标是否已经按下
 		Controls _controls;//子控件
 		Controls _spacer;//存储控件下布局的的弹簧集合
-		Rect _lastDrawRect;//最后一次显示的位置
 		int _fixedWidth = 0;//绝对宽度
 		int _fixedHeight = 0;//绝对高度
 		//布局状态AddControl丶RemoveControl丶OnSize时候此标志为挂起 调用ResumeLayout标志为布局中 当调用OnLayout()之后此标志为None
 		EzUI::LayoutState _layoutState = EzUI::LayoutState::None;
 		std::wstring _tipsText;//鼠标悬浮的提示文字
 		Cursor _LastCursor = EzUI::Cursor::None;//上一次鼠标的样式
+		Point _lastLocation;//上一次大小
 		Size _lastSize;//上一次大小
 		Rect _lastRect;
+		Rect _lastDrawRect;//最后一次显示的位置
 		int _eventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick;//这两个事件默认添加到主窗口通知函数中可拦截
 		Control(const Control&);
 		Control& operator=(const Control&);
+	private:
+		bool CheckEventPassThrough(const Event& eventType);
+		bool CheckEventNotify(const Event& eventType);
 	protected:
 		Rect _rect;//控件矩形区域(基于父控件)
 	public:
@@ -60,7 +64,8 @@ namespace EzUI {
 		virtual void OnForePaint(PaintEventArgs& e);//前景绘制
 		virtual void OnBorderPaint(PaintEventArgs& painter);//边框绘制
 		virtual void OnLoad();//控件第一次加载 警告 此函数在LayerWindow里面不允许在函数内添加控件 但是允许设置控件参数  
-		virtual bool OnSize(const Size& size) override;//大小发生改变
+		virtual void OnLocation(const Point& pt);//坐标发生改变
+		virtual void OnSize(const Size& size) override;//大小发生改变
 		virtual void OnLayout();//布局代码在此 布局完成之后PendLayout设置成false
 		virtual void OnMouseEvent(const MouseEventArgs& args);//鼠标事件消息
 		virtual void OnKeyBoardEvent(const KeyboardEventArgs& _args);//键盘事件消息
@@ -95,7 +100,7 @@ namespace EzUI {
 		Rect GetClientRect();//获取基于客户端的矩形
 		const bool& IsPendLayout();//是否含有挂起的布局
 		void TryPendLayout();//尝试挂起布局
-		bool CheckEventPassThrough(Event eventType);
+		void EndLayout();//结束布局
 		void SetRect(const Rect& rect);//设置相对父控件矩形
 		void ResumeLayout();//直接进行布局
 		virtual void SetTips(const EString& text);

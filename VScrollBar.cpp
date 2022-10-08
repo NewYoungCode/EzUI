@@ -55,11 +55,16 @@ namespace EzUI {
 	}
 
 	void VScrollBar::OwnerSize(const Size& size) {
-		this->SetRect({ size.Width - this->Width() ,0,this->Width(),Parent->Height()});
+		this->SetRect({ size.Width - this->Width() ,0,this->Width(),size.Height});
 	}
 
+	void VScrollBar::OnSize(const Size& size)
+	{
+		//此处需要屏蔽
+	}
 	const Rect& VScrollBar::GetRect()
 	{
+		//此处需要屏蔽
 		return _rect;
 	}
 
@@ -132,7 +137,7 @@ namespace EzUI {
 			sliderY += offsetY;
 			pointY = point.Y;
 			Move(sliderY);
-			Refresh();//用户拖动鼠标的时候 需要提高响应速度 显得丝滑
+			//Invalidate();//用户拖动鼠标的时候 需要提高响应速度 显得丝滑
 		}
 	}
 

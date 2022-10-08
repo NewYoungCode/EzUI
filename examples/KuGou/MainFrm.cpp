@@ -118,8 +118,10 @@ MainFrm::~MainFrm()
 void MainFrm::OnClose(bool& cal) {
 	Application::exit(0);
 }
-void MainFrm::DownLoadImage(EString SingerName, EString headImageUrl)
+void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 {
+
+	auto  SingerName =_SingerName.Split(",")[0];
 
 	::SendMessageW(Hwnd(), delImage, 0, 0);
 
@@ -150,18 +152,19 @@ void MainFrm::DownLoadImage(EString SingerName, EString headImageUrl)
 		wc.HttpGet(imageUrl, resp);
 		JObject json(resp);
 		EString bkurl;
-		/*	for (auto&& it : json["array"]) {
-				if (!it["wpurl"].isNull()) {
-					bkurl = it["wpurl"].asString();
-					break;
-				}
-			}*/
+		
 		if (bkurl.empty()) {
 			for (auto&& it : json["array"]) {
 				if (!it["bkurl"].isNull()) {
 					bkurl = it["bkurl"].asString();
 					break;
 				}
+			}
+		}
+		for (auto&& it : json["array"]) {
+			if (!it["wpurl"].isNull()) {
+				bkurl = it["wpurl"].asString();
+				break;
 			}
 		}
 
@@ -312,7 +315,10 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 			std::vector<EString> urls;
 			urls.reserve(6);
 			for (auto&& it : json["mvdata"]) {
-				urls.push_back(it["downurl"].asString());
+				EString url = it["downurl"].asString();
+				if (!url.empty()) {
+					urls.push_back(url);
+				}
 			}
 
 			/*VlcPlayer* deskPlayer = (VlcPlayer*)Tag;

@@ -119,7 +119,7 @@ namespace EzUI {
 		HWND HANDLE = NULL;//窗口句柄
 		UIFunc<void(void*)> InvalidateRect = NULL;//使一个区域无效
 		UIFunc<void()> UpdateWindow = NULL;//立即更新全部无效区域
-		UIFunc<bool(Control*,const EventArgs&)> Notify = NULL;//
+		UIFunc<bool(Control*, const EventArgs&)> Notify = NULL;//
 		UIFunc<void(Control*, const std::wstring&)> SetTips = NULL;//设置悬浮提示文字
 		UIFunc<void(Control*)> DelTips = NULL;//移除悬浮提示文字
 		UIFunc<Cursor()> GetCursor = NULL;//获取鼠标样式
@@ -144,12 +144,14 @@ namespace EzUI {
 		}
 	};
 
-	enum class LayoutState:byte {
+	extern size_t __count_onsize;
+
+	enum class LayoutState :byte {
 		None, //无状态 (无需布局)
 		Pend,//挂起中
 		Layouting//布局中
 	};
-	enum Event :size_t {
+	enum Event :int {
 		OnMouseWheel = 1,
 		OnMouseEnter = 2,
 		OnMouseMove = 4,
@@ -161,14 +163,13 @@ namespace EzUI {
 		OnKeyDown = 256,
 		OnKeyUp = 512,
 		OnPaint = 1024,
-		OnActive = OnMouseDown | OnMouseUp,
-		OnHover = OnMouseEnter | OnMouseLeave,
 		OnKillFocus = 2048,
-		OnRect= 4096,
-		OnMove= 8192,
-		OnSize= 16384,
-		OnTextChange= 32768,
-		OnChar= 65536
+		OnChar = 4096,
+		OnLocation = 8192,
+		OnSize = 16384,
+		OnTextChange = 32768,
+		OnActive = OnMouseDown | OnMouseUp,
+		OnHover = OnMouseEnter | OnMouseLeave
 	};
 	enum class ControlAction {
 		None,
@@ -271,12 +272,33 @@ namespace EzUI {
 	//为键盘事件提供基础数据
 	class KeyboardEventArgs :public EventArgs {
 	public:
+		/// <summary>
+		/// 一般是指 键盘的ascii值
+		/// </summary>
 		WPARAM wParam;
 		LPARAM lParam;
 		KeyboardEventArgs(const Event& eventType, WPARAM wParam, LPARAM lParam) {
 			this->EventType = eventType;
 			this->wParam = wParam;
 			this->lParam = lParam;
+		}
+	};
+	//坐标发生改变
+	class LocationEventArgs :public EventArgs {
+	public:
+		EzUI::Point PrevLocation;
+		EzUI::Point Location;
+		LocationEventArgs() {
+			this->EventType = Event::OnLocation;
+		}
+	};
+	//大小发生改变
+	class SizeEventArgs :public EventArgs {
+	public:
+		EzUI::Size PrevSize;
+		EzUI::Size Size;
+		SizeEventArgs() {
+			this->EventType = Event::OnSize;
 		}
 	};
 
@@ -300,7 +322,6 @@ namespace EzUI {
 		PaintEventArgs(__Painter& painter) :Painter(painter) {
 			EventType = Event::OnPaint;
 		}
-		virtual ~PaintEventArgs() {}
 	};
 
 
@@ -381,7 +402,7 @@ namespace EzUI {
 		virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point) = 0;
 		virtual void OnMouseDown(MouseButton mbtn, const Point& point) = 0;
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point) = 0;
-		virtual bool OnSize(const Size& size) = 0;
+		virtual void OnSize(const Size& size) = 0;
 		virtual void OnLoad() = 0;
 		virtual void OnChar(WPARAM wParam, LPARAM lParam) = 0;
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam) = 0;
@@ -392,4 +413,16 @@ namespace EzUI {
 		virtual EString GetAttribute(const EString& attrName);//获取属性
 	};
 
+	namespace Debug {
+		template<typename ...T>
+		inline void Log(const EString& formatStr, T ...args) {
+#ifdef DEBUGLOG
+			WCHAR buf[1025]{ 0 };
+			auto count = swprintf_s((buf), 1024, formatStr.utf16().c_str(), std::forward<T>(args)...);
+			buf[count] = '\n';
+			buf[count + 1] = NULL;
+			OutputDebugStringW(buf);
+#endif
+		}
+	};
 };

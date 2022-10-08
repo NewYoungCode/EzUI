@@ -376,9 +376,16 @@ Event(this , ##__VA_ARGS__); \
 	{
 		return _fixedHeight;
 	}
-	bool Control::CheckEventPassThrough(Event eventType)
+	bool Control::CheckEventPassThrough(const Event& eventType)
 	{
 		if ((MousePassThrough & eventType) == eventType) {
+			return true;
+		}
+		return false;
+	}
+	bool Control::CheckEventNotify(const Event& eventType)
+	{
+		if ((_eventNotify & eventType) == eventType) {
 			return true;
 		}
 		return false;
@@ -392,6 +399,9 @@ Event(this , ##__VA_ARGS__); \
 		if (this->_layoutState == LayoutState::None) {
 			this->_layoutState = LayoutState::Pend;
 		}
+	}
+	void Control::EndLayout() {
+		this->_layoutState == LayoutState::None;
 	}
 
 	Rect Control::GetClientRect() {
@@ -416,7 +426,7 @@ Event(this , ##__VA_ARGS__); \
 			_rect.Height = _fixedHeight;
 		}
 		if (this->Parent) {
-			Rect pRect = Parent->GetRect();
+			Rect pRect = Rect(Parent->X(), Parent->Y(), Parent->Width(), Parent->Height());//  Parent->GetRect();
 			while (Dock != DockStyle::None)
 			{
 				if (Dock == DockStyle::Fill) {
@@ -434,14 +444,32 @@ Event(this , ##__VA_ARGS__); \
 				break;
 			}
 		}
-		if (!_rect.Equals(_lastRect)) {
-			_lastRect = _rect;
+
+		Point newLocation = _rect.GetLocation();
+		Size newSize = _rect.GetSize();
+
+		if (!_lastLocation.Equals(newLocation)) {
+			if (PublicData && CheckEventNotify(Event::OnLocation)) {
+				LocationEventArgs args;
+				args.PrevLocation = _lastLocation;
+				args.Location = newLocation;
+				PublicData->Notify(this, args);
+			}
+			OnLocation(newLocation);
+			_lastLocation = newLocation;
 		}
-		Size newSize(_rect.Width, _rect.Height);
-		bool b1 = OnSize(newSize);
-		if (b1 && Parent) {
-			Parent->TryPendLayout();
+
+		if (!newSize.Equals(_lastSize)) {
+			if (PublicData && CheckEventNotify(Event::OnSize)) {
+				SizeEventArgs args;
+				args.PrevSize = _lastSize;
+				args.Size = newSize;
+				PublicData->Notify(this, args);
+			}
+			OnSize(newSize);
+			_lastSize = newSize;
 		}
+
 	}
 	void Control::SetTips(const EString& text)
 	{
@@ -457,7 +485,7 @@ Event(this , ##__VA_ARGS__); \
 		this->_layoutState = LayoutState::None;//布局完成需要将布局标志重置
 	}
 	void Control::OnLayout() {}
-	
+
 	//专门处理键盘消息的
 	void Control::OnKeyBoardEvent(const KeyboardEventArgs& args) {
 		if (PublicData == NULL) return;
@@ -647,7 +675,7 @@ Event(this , ##__VA_ARGS__); \
 #endif 
 		//开始绘制
 		bool isIntercept = false;
-		if ((_eventNotify & Event::OnPaint) == Event::OnPaint) {//检查当前事件是否需要被通知到主窗口
+		if (CheckEventNotify(Event::OnPaint)) {//检查当前事件是否需要被通知到主窗口
 			isIntercept = this->PublicData->Notify(this, args);//看看那边是否处理
 		}
 		if (!isIntercept) {
@@ -906,12 +934,12 @@ Event(this , ##__VA_ARGS__); \
 	}
 
 	void Control::AddEventNotify(int eventType) {
-	
+
 		_eventNotify = _eventNotify | eventType;
 	}
 
 	void Control::RemoveEventNotify(int eventType) {
-		_eventNotify = _eventNotify &~ eventType;
+		_eventNotify = _eventNotify & ~eventType;
 	}
 
 	void Control::OnMouseDown(MouseButton mbtn, const Point& point)
@@ -962,20 +990,21 @@ Event(this , ##__VA_ARGS__); \
 		}
 		UI_TRIGGER(MouseLeave);
 	}
-	bool Control::OnSize(const Size& size)
+
+	void Control::OnLocation(const Point& pt)
 	{
-		if (size == _lastSize) {
-			return false;
-		}
-		_lastSize = size;
-		if (_lastSize.Empty()) {
-			return false;
-		}
-		if (ScrollBar) {
+
+	}
+	void Control::OnSize(const Size& size)
+	{
+		__count_onsize++;
+		if (ScrollBar) {//如果存在滚动条就设置滚动条的矩形位置
 			ScrollBar->OwnerSize(size);
 		}
-		this->TryPendLayout();//大小发生改变重新挂起
-		return true;
+		this->TryPendLayout();//将自己挂起
+		if (Parent) {
+			Parent->TryPendLayout();//将父控件挂起
+		}
 	}
 	void Control::OnKillFocus()
 	{

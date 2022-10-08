@@ -6,7 +6,7 @@ namespace EzUI {
 		public Layout
 	{
 	public:
-		bool OnSize(const Size& size)override;
+		void OnSize(const Size& size)override;
 		void OnLayout()override;
 	};
 	using HBox = HLayout;

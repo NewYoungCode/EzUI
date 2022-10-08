@@ -60,12 +60,9 @@ namespace EzUI {
 
 
 
-	bool VLayout::OnSize(const Size& sz) {
-		if (__super::OnSize(sz)) {
-			ResumeLayout();
-			return true;
-		}
-		return false;
+	void VLayout::OnSize(const Size& sz) {
+		__super::OnSize(sz);
+		ResumeLayout();
 	}
 
 };

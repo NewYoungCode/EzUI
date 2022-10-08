@@ -14,6 +14,7 @@ namespace EzUI {
 	public:
 		std::map<Control*, int>* _controlsLocationX = NULL;
 	protected:
+		virtual void OnSize(const Size& size)override;
 		virtual void OnForePaint(PaintEventArgs& args) override;
 		virtual void OnMouseDown(MouseButton mBtn, const Point& point)override;
 		virtual void OnMouseUp(MouseButton mBtn, const Point& point)override;

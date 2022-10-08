@@ -94,14 +94,13 @@ namespace EzUI {
 		} //这段代码是保证重绘区域一定是在窗口内
 		Rect::Union(_InvalidateRect, _InvalidateRect, rect);
 	}
-	bool LayeredWindow::OnSize(const Size& sz) {
+	void LayeredWindow::OnSize(const Size& sz) {
 		if (_winBitmap) {
 			delete _winBitmap;
 		}
 		_winBitmap = new EBitmap(sz.Width, sz.Height, EBitmap::PixelFormat::PixelFormatARGB);
 		MainLayout->SetRect(this->GetClientRect());
 		MainLayout->Invalidate();
-		return  true;
 	}
 	void LayeredWindow::OnPaint(HDC _hdc, const Rect& rePaintRect) {
 		Rect& clientRect = GetClientRect();//

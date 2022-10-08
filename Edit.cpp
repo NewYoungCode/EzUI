@@ -11,7 +11,7 @@ namespace EzUI {
 		timer.Interval = 500;
 		timer.Tick = [&]() {
 			if (!careRect.IsEmptyArea() && _focus) {
-				_careShow=!_careShow;
+				_careShow = !_careShow;
 				this->Invalidate();
 			}
 		};
@@ -364,12 +364,11 @@ namespace EzUI {
 			Placeholder = value;
 		}
 	}
-	bool Edit::OnSize(const Size& sz) {
-		if (__super::OnSize(sz)) {
-			Analysis();
-			return true;
-		}
-		return false;
+	void Edit::OnSize(const Size& sz) {
+
+		__super::OnSize(sz);
+		Analysis();
+
 	}
 
 	void Edit::OnForePaint(PaintEventArgs& e) {

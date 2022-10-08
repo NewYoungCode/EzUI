@@ -25,17 +25,13 @@ namespace EzUI {
 	TileList::~TileList()
 	{
 	}
-	bool TileList::OnSize(const Size& sz)
+	void TileList::OnSize(const Size& sz)
 	{
-		if (__super::OnSize(sz)) {
-			ResumeLayout();
-			if (vScrollBar) {
-				vScrollBar->SetMaxBottom(_MaxBottom);
-			}
-			return true;
+		__super::OnSize(sz);
+		ResumeLayout();
+		if (vScrollBar) {
+			vScrollBar->SetMaxBottom(_MaxBottom);
 		}
-		return false;
-
 	}
 	
 	void TileList::OnLayout()

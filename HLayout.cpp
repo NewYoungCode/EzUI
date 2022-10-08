@@ -53,11 +53,8 @@ namespace EzUI {
 		}
 	}
 
-	bool HLayout::OnSize(const Size& size) {
-		if (__super::OnSize(size)) {
-			ResumeLayout();
-			return true;
-		}
-		return false;
+	void HLayout::OnSize(const Size& size) {
+		__super::OnSize(size);
+		ResumeLayout();
 	}
 };

@@ -81,14 +81,11 @@ namespace EzUI {
 		}
 	}
 
-	bool HList::OnSize(const Size& size) {
-		if (__super::OnSize(size)) {
-			if (hScrollBar) {
-				hScrollBar->SetMaxRight(_maxRight);
-			}
-			return true;
+	void HList::OnSize(const Size& size) {
+		__super::OnSize(size);
+		if (hScrollBar) {
+			hScrollBar->SetMaxRight(_maxRight);
 		}
-		return false;
 	}
 
 	void HList::ChildPainting(Controls& controls, PaintEventArgs& args) {

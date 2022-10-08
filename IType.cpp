@@ -1,5 +1,8 @@
 #include "IType.h"
 namespace EzUI {
+
+	size_t __count_onsize = 0;
+
 	EBitmap::EBitmap(WORD width, WORD height, PixelFormat piexlFormat) {//默认24位不透明位图
 		biteCount = (byte)piexlFormat;
 		this->Width = width;

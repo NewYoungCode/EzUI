@@ -16,12 +16,13 @@ namespace EzUI {
 
 	void TabLayout::SetPageIndex(int index)
 	{
+		this->TryPendLayout();
 		int pos = 0;
 		for (auto i = GetControls().begin(); i != GetControls().end(); i++)
 		{
+			(*i)->SetRect(Rect(0, 0, Width(), Height()));
 			if (pos == index) {
 				(*i)->Visible = true;
-				(*i)->SetRect(Rect(0, 0, Width(), Height()));
 				_index = pos;
 			}
 			else {
@@ -29,6 +30,7 @@ namespace EzUI {
 			}
 			pos++;
 		}
+		this->EndLayout();
 	}
 
 	void TabLayout::AddControl(Control* ctl) {
@@ -49,13 +51,9 @@ namespace EzUI {
 		return _index;
 	}
 
-	bool TabLayout::OnSize(const Size& sz)
+	void TabLayout::OnSize(const Size& sz)
 	{
-		if (__super::OnSize(sz)) {
-			ResumeLayout();
-			return true;
-		}
-		return false;
-
+		__super::OnSize(sz);
+		ResumeLayout();
 	}
 };

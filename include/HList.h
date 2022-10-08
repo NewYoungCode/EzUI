@@ -16,7 +16,7 @@ namespace EzUI {
 		virtual	void AddControl(Control* ctl) override;
 		virtual ControlIterator RemoveControl(Control* ctl)override;
 		virtual void Clear(bool freeControls) override;
-		virtual	bool OnSize(const Size& size) override;
+		virtual	void OnSize(const Size& size) override;
 		virtual void ChildPainting(Controls& controls, PaintEventArgs& args)override;
 	};
 };

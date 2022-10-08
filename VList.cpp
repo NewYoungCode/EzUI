@@ -82,14 +82,11 @@ namespace EzUI {
 		}
 	}
 
-	bool VList::OnSize(const Size& size) {
-		if (__super::OnSize(size)) {
-			if (vScrollBar) {
-				vScrollBar->SetMaxBottom(_maxBottom);
-			}
-			return true;
+	void VList::OnSize(const Size& size) {
+		__super::OnSize(size);
+		if (vScrollBar) {
+			vScrollBar->SetMaxBottom(_maxBottom);
 		}
-		return false;
 	}
 	/// <summary>
 	/// 

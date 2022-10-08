@@ -38,7 +38,7 @@ namespace EzUI {
 		void BuildCare();//构建光标
 		Point ConvertPoint(const Point& pt);//坐标转换
 	protected:
-		virtual bool OnSize(const Size& size)override;
+		virtual void OnSize(const Size& size)override;
 		virtual void OnForePaint(PaintEventArgs& e) override;
 		virtual void OnChar(WPARAM wParam, LPARAM lParam) override;
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam)override;

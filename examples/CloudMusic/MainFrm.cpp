@@ -96,7 +96,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	musicList.ActiveStyle.FontSize = 9;*/
 	musicList.ActiveStyle.BackgroundColor = Color(100, 1, 200, 100);
 	//musicList.Margin = 10;
-	for (size_t i = 0; i < 999; i++)
+	for (size_t i = 0; i < 9999; i++)
 	{
 		SongItem* lb = new SongItem;
 		lb->lb1.SetText(std::to_string(i));

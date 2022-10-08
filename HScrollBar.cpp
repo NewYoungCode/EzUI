@@ -54,14 +54,18 @@ namespace EzUI {
 	}
 
 	void HScrollBar::OwnerSize(const Size& parentSize) {
-		this->SetRect({ 0,parentSize.Height - this->Height(),Parent->Width(),Height() });
+		this->SetRect({ 0,parentSize.Height - this->Height(),parentSize.Width,Height() });
 	}
 
+	void HScrollBar::OnSize(const Size& size)
+	{
+		//此处需要屏蔽
+	}
 	const Rect& HScrollBar::GetRect()
 	{
+		//此处需要屏蔽
 		return _rect;
 	}
-
 	void HScrollBar::OnForePaint(PaintEventArgs& args)
 	{
 		//滑块rect
@@ -111,7 +115,7 @@ namespace EzUI {
 			sliderX += offsetX;
 			pointX = point.X;
 			Move(sliderX);
-			Refresh();//用户拖动鼠标的时候 需要提高响应速度 显得丝滑
+			//Invalidate();//用户拖动鼠标的时候 需要提高响应速度 显得丝滑
 		}
 	}
 
