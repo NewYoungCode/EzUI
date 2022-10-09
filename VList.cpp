@@ -14,6 +14,8 @@ namespace EzUI {
 	}
 
 	void VList::OnLayout() {
+		__super::OnLayout();
+
 		_maxBottom = 0;
 		for (auto& it : GetControls()) {
 			if (it->Visible == false)continue;

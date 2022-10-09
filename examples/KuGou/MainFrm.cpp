@@ -7,9 +7,6 @@ void MainFrm::InitForm() {
 
 	this->SetLayout(ui::UIManager::LoadLayout("xml/main.htm"));
 
-	
-
-
 	//如果你仍需要使用win32原生控件请给窗口设置 主布局 然后就可以添加win32原生控件了(注:layeredwindow不支持原生控件)
 	/*HWND btn = ::CreateWindowW(DATETIMEPICK_CLASS, L"hello world", WS_POPUP | WS_VISIBLE, 600, 10, 100, 30, NULL, NULL, GetModuleHandle(NULL), 0);
 	::SetParent(btn, Hwnd());*/
@@ -39,7 +36,7 @@ void MainFrm::InitForm() {
 	localList->ScrollBar->Style.ForeColor = Color(217, 217, 217);
 	localList->ScrollBar->ActiveStyle.ForeColor = Color(191, 191, 191);
 	//美化搜索列表的滚动条
-	searchList->ScrollBar->SetFixedWidth(9);
+	//searchList->ScrollBar->SetFixedWidth(9);
 	searchList->ScrollBar->Style.Radius = 9;
 	searchList->ScrollBar->Style.BackgroundColor = Color(50, 200, 200, 200);
 	searchList->ScrollBar->Style.ForeColor = Color(250, 200, 200, 200);
@@ -61,7 +58,6 @@ void MainFrm::InitForm() {
 		it->SetTips(name);
 		localList->AddControl(it);
 	}
-	//localList->ResumeLayout();
 
 	searchList->ScrollBar->Rolling = [=](int a, int b)->void {
 		NextPage(a, b);
@@ -307,10 +303,6 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 			EString resp;
 			WebClient wc;
 			wc.HttpGet("http://m.kugou.com/app/i/mv.php?cmd=100&hash=" + sender->GetAttribute("mvhash") + "&ismp3=1&ext=mp4", resp);
-
-
-			auto cn = resp.utf16();
-
 			JObject json(resp);
 			std::vector<EString> urls;
 			urls.reserve(6);
@@ -320,11 +312,6 @@ bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
 					urls.push_back(url);
 				}
 			}
-
-			/*VlcPlayer* deskPlayer = (VlcPlayer*)Tag;
-			deskPlayer->OpenUrl(urls[urls.size() - 1]);
-			deskPlayer->Play();*/
-
 			FindControl("mvView")->Trigger(Event::OnMouseClick);
 			player.OpenUrl(urls[urls.size() - 1]);
 			player.Play();
@@ -357,26 +344,17 @@ void MainFrm::Task() {
 			lastFen = fen;
 			time->SetText(fen);
 			time->Invalidate();
-
-			auto id = std::this_thread::get_id();
-			int idd = *(int*)&id;
-			int pause = 0;
 		}
 		if (w != lastWidth) {
 			lastWidth = w;
 			playerBar2->SetFixedWidth(w);
-			//((Layout*)playerBar)->ResumeLayout();
-			//playerBar2->Invalidate();
-			//playerBar;
-			//playerBar2->ResumeLayout();
 			playerBar2->Invalidate();
 		}
 	}
 }
 
 void MainFrm::NextPage(int a, int b) {
-
-	Debug::Log("%d %d", a, b);
+	//Debug::Log("%d %d", a, b);
 	if (a != 0 && a >= b && global::nextPage) {
 		global::page++;
 		EString keyword = searchEdit->GetText();
@@ -385,7 +363,6 @@ void MainFrm::NextPage(int a, int b) {
 			SongItem2* sit = new SongItem2(it);
 			searchList->AddControl(sit);
 		}
-
 		if (!global::nextPage) {
 			Label* end = new Label;
 			end->Dock = DockStyle::Horizontal;
@@ -422,9 +399,6 @@ void  MainFrm::LrcView() {
 	main->Invalidate();
 }
 
-
-
-
 LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
 {
 	if (delImage == msg) {
@@ -434,7 +408,6 @@ LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
 			headImg = NULL;
 		}
 		if (bkImage) {
-			auto main = FindControl("main");
 			main->Style.BackgroundImage = NULL;
 			delete bkImage;
 			bkImage = NULL;
@@ -446,7 +419,6 @@ LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
 		singer->Style.BackgroundImage = headImg;
 		singer->Invalidate();
 		FindControl("lrcView")->Trigger(Event::OnMouseClick);
-
 		return 0;
 	}
 	return __super::WndProc(msg, W, L);

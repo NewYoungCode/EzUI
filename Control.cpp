@@ -426,7 +426,7 @@ Event(this , ##__VA_ARGS__); \
 			_rect.Height = _fixedHeight;
 		}
 		if (this->Parent) {
-			Rect pRect = Rect(Parent->X(), Parent->Y(), Parent->Width(), Parent->Height());//  Parent->GetRect();
+			const Rect &pRect=Parent->GetRect();
 			while (Dock != DockStyle::None)
 			{
 				if (Dock == DockStyle::Fill) {
@@ -484,7 +484,11 @@ Event(this , ##__VA_ARGS__); \
 		this->OnLayout();
 		this->_layoutState = LayoutState::None;//布局完成需要将布局标志重置
 	}
-	void Control::OnLayout() {}
+	void Control::OnLayout() {
+		if (ScrollBar) {//如果存在滚动条就设置滚动条的矩形位置
+			ScrollBar->OwnerSize({_rect.Width,_rect.Height});
+		}
+	}
 
 	//专门处理键盘消息的
 	void Control::OnKeyBoardEvent(const KeyboardEventArgs& args) {
@@ -984,9 +988,6 @@ Event(this , ##__VA_ARGS__); \
 	void Control::OnSize(const Size& size)
 	{
 		__count_onsize++;
-		if (ScrollBar) {//如果存在滚动条就设置滚动条的矩形位置
-			ScrollBar->OwnerSize(size);
-		}
 		this->TryPendLayout();//将自己挂起
 		if (Parent) {
 			Parent->TryPendLayout();//将父控件挂起

@@ -79,10 +79,12 @@ namespace EzUI {
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);//键盘弹起
 	public:
+		//以下函数请保证在父控件布局已完成的情况下使用 使用ResumeLayout()执行布局
 		const int& X();//布局计算前
 		const int& Y();//布局计算前
 		const int& Width();//布局计算前
 		const int& Height();//布局计算前
+	public:
 		void SetX(const int& X);//布局计算前
 		void SetY(const int& Y);//布局计算前
 		void SetLocation(const Point& pt);//移动相对与父控件的位置

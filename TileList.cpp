@@ -36,6 +36,8 @@ namespace EzUI {
 	
 	void TileList::OnLayout()
 	{
+		__super::OnLayout();
+
 		LocationY.clear();
 		_MaxBottom = 0;
 

@@ -201,27 +201,27 @@ namespace EzUI {
 	enum class MouseButton {
 		// 摘要: 
 		  //     未曾按下鼠标按钮。
-		None = 0,
+		None,
 		//
 		// 摘要: 
 		//     鼠标左按钮曾按下。
-		Left = 1048576,
+		Left,
 		//
 		// 摘要: 
 		//     鼠标右按钮曾按下。
-		Right = 2097152,
+		Right,
 		//
 		// 摘要: 
 		//     鼠标中按钮曾按下。
-		Middle = 4194304,
+		Middle,
 		//
 		// 摘要: 
 		//     第 1 个 XButton 曾按下。
-		XButton1 = 8388608,
+		XButton1,
 		//
 		// 摘要: 
 		//     第 2 个 XButton 曾按下。
-		XButton2 = 16777216,
+		XButton2
 	};
 	enum class Cursor :ULONG_PTR
 	{
