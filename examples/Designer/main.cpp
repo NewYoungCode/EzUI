@@ -17,7 +17,7 @@
 #include "vLayout.h"
 
 #include "HList.h"
-
+#include "ComBox.h"
 #include <Windows.h>
 using namespace EzUI;
 
@@ -81,33 +81,53 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
 	Application app;
 
-	EzUI::BorderlessWindow frm(800, 600);
+	//EzUI::BorderlessWindow frm(800, 600);
 
-	ui::TileList layout;
-	layout.Style.BackgroundColor = Color::White;
+	//ui::TileList layout;
+	//layout.Style.BackgroundColor = Color::White;
 
-	for (size_t i = 0; i < 1000; i++)
+	//for (size_t i = 0; i < 1000; i++)
+	//{
+	//	GameItem* btn1 = new GameItem("Steam PUBG  " + std::to_string(i));
+
+	//	btn1->Margin.Left = 10;
+	//	btn1->Margin.Top = 10;
+
+	//	//btn1->SetText(std::to_string(i) + "button");
+	//	btn1->Style.BackgroundColor = Color::Gray;
+	//	//btn1->SetFixedWidth(35);
+	//	//btn1->Dock = DockStyle::Horizontal;
+	//	layout.AddControl(btn1);
+
+	//	btn1->MouseClick = [&](Control* ct, MouseButton, const Point&) {
+	//		layout.RemoveControl(ct);
+	//		layout.Invalidate();
+	//	};
+	//}
+
+
+	//frm.SetLayout(&layout);
+	//frm.Show();
+
+
+	Window wd(800, 600);
+
+	Layout l;
+	l.Style.BackgroundColor = Color::Pink;
+
+	ComBox cbox;
+	
+	for (size_t i = 0; i < 6; i++)
 	{
-		GameItem* btn1 = new GameItem("Steam PUBG  " + std::to_string(i));
-
-		btn1->Margin.Left = 10;
-		btn1->Margin.Top = 10;
-
-		//btn1->SetText(std::to_string(i) + "button");
-		btn1->Style.BackgroundColor = Color::Gray;
-		//btn1->SetFixedWidth(35);
-		//btn1->Dock = DockStyle::Horizontal;
-		layout.AddControl(btn1);
-
-		btn1->MouseClick = [&](Control* ct, MouseButton, const Point&) {
-			layout.RemoveControl(ct);
-			layout.Invalidate();
-		};
+		cbox.AddItem("选中"+std::to_string(i) );
 	}
 
+	cbox.SetRect({100,100,180,30});
+	l.AddControl(&cbox);
 
-	frm.SetLayout(&layout);
-	frm.Show();
+	wd.SetLayout(&l);
+
+	wd.Show();
 
 	return app.exec();
 

@@ -41,6 +41,7 @@
     <ClInclude Include="include\Layout.h" />
     <ClInclude Include="include\Menu.h" />
     <ClInclude Include="include\NotifyIcon.h" />
+    <ClInclude Include="include\PoupWindow.h" />
     <ClInclude Include="include\RadioButton.h" />
     <ClInclude Include="include\ShadowWindow.h" />
     <ClInclude Include="include\TabLayout.h" />

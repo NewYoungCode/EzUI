@@ -126,6 +126,9 @@
     <ClInclude Include="include\UIDef.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="include\PoupWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Control.cpp">
