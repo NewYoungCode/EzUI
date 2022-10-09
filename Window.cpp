@@ -390,7 +390,7 @@ namespace EzUI {
 
 #ifdef COUNT_ONPAINT
 		char buf[100]{ 0 };
-		sprintf_s(buf, "OnPaint Count(%d) (%d,%d,%d,%d) %dms \n", pt.Count,rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, sw.ElapsedMilliseconds());
+		sprintf_s(buf, "OnPaint Count(%d) (%d,%d,%d,%d) %dms \n", pt.Count, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, sw.ElapsedMilliseconds());
 		OutputDebugStringA(buf);
 #endif // COUNT_ONPAINT
 
@@ -544,7 +544,7 @@ namespace EzUI {
 
 	void Window::OnMouseMove(const Point& point)
 	{
-		if (_focusControl && _mouseDown) {
+		if (_focusControl && _mouseDown) { //按住移动的控件
 			auto ctlRect = _focusControl->GetClientRect();
 			MouseEventArgs args(Event::OnMouseMove, { point.X - ctlRect.X ,point.Y - ctlRect.Y });
 			_focusControl->Trigger(args);
@@ -552,18 +552,26 @@ namespace EzUI {
 		}
 
 		Point relativePoint;
-		Control* outCtl = FindControl(point, relativePoint);
+		Control* outCtl = FindControl(point, relativePoint);//找到当前控件的位置
 		MouseEventArgs args;
+		args.Location = relativePoint;
 
-		if (_focusControl && outCtl != _focusControl) {
+		if (_focusControl && outCtl != _focusControl) {//让上一次具有焦点的控件触发移出事件
 			args.EventType = Event::OnMouseLeave;
 			_focusControl->Trigger(args);
 		}
-		args.EventType = Event::OnMouseMove;
-		args.Location = relativePoint;
-		outCtl->Trigger(args);
-		_focusControl = outCtl;
 
+		if (outCtl) {
+			if (outCtl != _focusControl) {//第一次进入该区域
+				args.EventType = Event::OnMouseEnter;
+				outCtl->Trigger(args);
+			}
+			//让新控件触发鼠标移动事件
+			args.EventType = Event::OnMouseMove;
+			outCtl->Trigger(args);
+		}
+
+		_focusControl = outCtl;
 	}
 	void Window::OnMouseLeave()
 	{
@@ -580,13 +588,13 @@ namespace EzUI {
 	{
 		if (_focusControl == NULL) return;
 
-	/*	if (_inputControl) {
-			MouseEventArgs args;
-			args.Delta = zDelta;
-			args.Location = point;
-			args.EventType = Event::OnMouseWheel;
-			_inputControl->Trigger(args);
-		}*/
+		/*	if (_inputControl) {
+				MouseEventArgs args;
+				args.Delta = zDelta;
+				args.Location = point;
+				args.EventType = Event::OnMouseWheel;
+				_inputControl->Trigger(args);
+			}*/
 
 		ScrollBar* scrollBar = NULL;
 		if (_focusControl->ScrollBar) {
@@ -680,14 +688,20 @@ namespace EzUI {
 			args.Button = mbtn;
 			args.Location = { point.X - ctlRect.X,point.Y - ctlRect.Y };
 			args.EventType = Event::OnMouseUp;
-			_focusControl->Trigger(args);
-			if (_focusControl && !ctlRect.Contains(point))
+			_focusControl->Trigger(args);//触发鼠标抬起事件
+
+			if (_focusControl) {//如果焦点还在 触发click事件
+				args.EventType = Event::OnMouseClick;
+				_focusControl->Trigger(args);
+			}
+
+			if (_focusControl && !ctlRect.Contains(point))//如果焦点还在 但是鼠标已经不在控件矩形内 触发鼠标移出事件
 			{
 				args.EventType = Event::OnMouseLeave;
 				_focusControl->Trigger(args);
 			}
+			}
 		}
-	}
 	void Window::OnSize(const Size& sz)
 	{
 #ifdef COUNT_ONSIZE
@@ -698,10 +712,10 @@ namespace EzUI {
 		MainLayout->Invalidate();
 #ifdef COUNT_ONSIZE
 		char buf[50]{ 0 };
-		sprintf_s(buf, "OnSize Count(%d) (%d,%d) %dms\n", __count_onsize,sz.Width, sz.Height, sw.ElapsedMilliseconds());
+		sprintf_s(buf, "OnSize Count(%d) (%d,%d) %dms\n", __count_onsize, sz.Width, sz.Height, sw.ElapsedMilliseconds());
 		OutputDebugStringA(buf);
 #endif
-	
+
 	}
 
 	void Window::OnRect(const Rect& rect)
@@ -785,4 +799,4 @@ namespace EzUI {
 		return false;
 	}
 
-};
+	};

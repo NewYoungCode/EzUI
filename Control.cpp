@@ -544,7 +544,7 @@ Event(this , ##__VA_ARGS__); \
 			break;
 		}
 		case Event::OnMouseEnter: {
-			bool b1 = !winData->Notify(this, args);
+			bool b1 = (!winData->Notify(this, args));
 			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
 				OnMouseEnter(args.Location);
 				if (!_tipsText.empty()) {
@@ -554,14 +554,8 @@ Event(this , ##__VA_ARGS__); \
 			break;
 		}
 		case Event::OnMouseMove: {
-			bool b1 = !_mouseIn;
-			if (CONTROL_IN_WINDOW && b1) {
-				args.EventType = Event::OnMouseEnter;
-				OnMouseEvent(args);
-				_mouseIn = true;
-			}
-			bool b2 = !winData->Notify(this, args);
-			if (CONTROL_IN_WINDOW && b2) {//如果窗口不做拦截就发给控件处理
+			bool b1 = !winData->Notify(this, args);
+			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
 				OnMouseMove(args.Location);
 			}
 			break;
@@ -574,7 +568,6 @@ Event(this , ##__VA_ARGS__); \
 			break;
 		}
 		case Event::OnMouseDown: {
-			_mouseDown = true;
 			bool b1 = !winData->Notify(this, args);
 			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
 				OnMouseDown(args.Button, args.Location);
@@ -582,20 +575,13 @@ Event(this , ##__VA_ARGS__); \
 			break;
 		}
 		case Event::OnMouseUp: {
-			bool isDown = _mouseDown;
-			_mouseDown = false;
 			bool b1 = !winData->Notify(this, args);
 			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
 				OnMouseUp(args.Button, args.Location);
 			}
-			if (CONTROL_IN_WINDOW && isDown) {
-				args.EventType = Event::OnMouseClick;
-				OnMouseEvent(args);
-			}
 			break;
 		}
 		case Event::OnMouseLeave: {
-			_mouseIn = false;
 			bool b1 = !winData->Notify(this, args);
 			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
 				OnMouseLeave();

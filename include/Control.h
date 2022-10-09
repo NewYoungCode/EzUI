@@ -5,8 +5,6 @@ namespace EzUI {
 	{
 	private:
 		bool _load = false;//是否load
-		bool _mouseIn = false;//鼠标是否在控件里面
-		bool _mouseDown = false;//鼠标是否已经按下
 		Controls _controls;//子控件
 		Controls _spacer;//存储控件下布局的的弹簧集合
 		int _fixedWidth = 0;//绝对宽度
