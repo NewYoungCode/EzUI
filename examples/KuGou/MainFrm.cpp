@@ -195,7 +195,7 @@ void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 	}
 	__super::OnKeyDown(wparam, lParam);
 }
-bool MainFrm::OnNotify(Control* sender, const EventArgs& args) {
+bool MainFrm::OnNotify(Control* sender,  EventArgs& args) {
 
 	if (args.EventType == Event::OnPaint) {
 

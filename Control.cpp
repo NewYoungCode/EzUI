@@ -345,9 +345,9 @@ Event(this , ##__VA_ARGS__); \
 	}
 	const Rect& Control::GetRect()
 	{
-		if (Parent && Parent->IsPendLayout()) {
-			Parent->ResumeLayout();
-		}
+		/*	if (Parent && Parent->IsPendLayout()) {
+				Parent->ResumeLayout();
+			}*/
 		return _rect;
 	}
 
@@ -426,7 +426,7 @@ Event(this , ##__VA_ARGS__); \
 			_rect.Height = _fixedHeight;
 		}
 		if (this->Parent) {
-			const Rect &pRect=Parent->GetRect();
+			const Rect& pRect = Parent->GetRect();
 			while (Dock != DockStyle::None)
 			{
 				if (Dock == DockStyle::Fill) {
@@ -486,7 +486,7 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::OnLayout() {
 		if (ScrollBar) {//如果存在滚动条就设置滚动条的矩形位置
-			ScrollBar->OwnerSize({_rect.Width,_rect.Height});
+			ScrollBar->OwnerSize({ _rect.Width,_rect.Height });
 		}
 	}
 
@@ -495,25 +495,30 @@ Event(this , ##__VA_ARGS__); \
 		if (PublicData == NULL) return;
 		WindowData* winData = PublicData;
 #define CONTROL_IN_WINDOW (winData->_inputControl || winData->_focusControl)
-		bool b1 = !winData->Notify(this, args);
+		bool b1 = this->CheckEventNotify(args.EventType);//先检查是否标记通知到主窗口
+		if (!b1) {
+			return;
+		}
+		bool b2 = winData->Notify(this, (KeyboardEventArgs&)args);//看主窗口那边怎么说
+		if (b2) {
+			return;
+		}
+		bool b3 = CONTROL_IN_WINDOW;//检查是否删除了控件
+		if (!b3) {
+			return;
+		}
 		switch (args.EventType)
 		{
 		case Event::OnChar: {
-			if (CONTROL_IN_WINDOW && b1) {
-				OnChar(args.wParam, args.lParam);
-			}
+			OnChar(args.wParam, args.lParam);
 			break;
 		}
 		case Event::OnKeyDown: {
-			if (CONTROL_IN_WINDOW && b1) {
-				OnKeyDown(args.wParam, args.lParam);
-			}
+			OnKeyDown(args.wParam, args.lParam);
 			break;
 		}
 		case Event::OnKeyUp: {
-			if (CONTROL_IN_WINDOW && b1) {
-				OnKeyUp(args.wParam, args.lParam);
-			}
+			OnKeyUp(args.wParam, args.lParam);
 			break;
 		}
 		default:
@@ -531,71 +536,66 @@ Event(this , ##__VA_ARGS__); \
 		if (CONTROL_IN_WINDOW && CheckEventPassThrough(args.EventType)) {//检查鼠标穿透
 			this->Parent->OnMouseEvent(args);//如果设置了穿透就直接发送给上一层控件
 		}
+
+		bool b1 = this->CheckEventNotify(args.EventType);//先检查是否标记通知到主窗口
+		if (!b1) {
+			return;
+		}
+		bool b2 = winData->Notify(this, args);//看主窗口那边怎么说
+		if (b2) {
+			return;
+		}
+		bool b3 = CONTROL_IN_WINDOW;//检查是否删除了控件
+		if (!b3) {
+			return;
+		}
+
 		switch (args.EventType)
 		{
 		case Event::OnMouseWheel: {
-			bool b1 = (!winData->Notify(this, args));
-			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
-				OnMouseWheel(args.Delta, args.Location);
-			}
+			OnMouseWheel(args.Delta, args.Location);
 			break;
 		}
 		case Event::OnMouseClick: {
-			bool b1 = (!winData->Notify(this, args));
-			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
-				OnMouseClick(args.Button, args.Location);
-			}
+			OnMouseClick(args.Button, args.Location);
 			break;
 		}
 		case Event::OnMouseEnter: {
-			bool b1 = (!winData->Notify(this, args));
-			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
-				OnMouseEnter(args.Location);
-				if (!_tipsText.empty()) {
-					winData->SetTips(this, _tipsText);
-				}
-			}
+			OnMouseEnter(args.Location);
 			break;
 		}
 		case Event::OnMouseMove: {
-			bool b1 = !winData->Notify(this, args);
-			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
+			if (!_mouseIn) {
+				MouseEventArgs _args=args;
+				_args.EventType = Event::OnMouseEnter;
+				OnMouseEvent(_args);
+				_mouseIn = true;
+			}
+			if (CONTROL_IN_WINDOW) {
 				OnMouseMove(args.Location);
 			}
 			break;
 		}
 		case Event::OnMouseDoubleClick: {
-			bool b1 = !winData->Notify(this, args);
-			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
-				OnMouseDoubleClick(args.Button, args.Location);
-			}
+			OnMouseDoubleClick(args.Button, args.Location);
 			break;
 		}
 		case Event::OnMouseDown: {
-			bool b1 = !winData->Notify(this, args);
-			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
-				OnMouseDown(args.Button, args.Location);
-			}
+			OnMouseDown(args.Button, args.Location);
 			break;
 		}
 		case Event::OnMouseUp: {
-			bool b1 = !winData->Notify(this, args);
-			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
-				OnMouseUp(args.Button, args.Location);
-			}
+			OnMouseUp(args.Button, args.Location);
 			break;
 		}
 		case Event::OnMouseLeave: {
-			bool b1 = !winData->Notify(this, args);
-			if (CONTROL_IN_WINDOW && b1) {//如果窗口不做拦截就发给控件处理
-				OnMouseLeave();
-			}
+			_mouseIn = false;
+			OnMouseLeave();
 			break;
 		}
 		default:
 			break;
 		}
-
 	}
 	void Control::Rending(PaintEventArgs& args) {
 		this->PublicData = args.PublicData;
@@ -908,9 +908,14 @@ Event(this , ##__VA_ARGS__); \
 				pControl = pControl->Parent;
 			}
 		}
-		if (Cursor != Cursor::None) {//鼠标移入的时候判断是否有设置状态
-			_LastCursor = PublicData->GetCursor();//记录之前的状态
-			PublicData->SetCursor(Cursor);//设置状态
+		if (PublicData) {
+			if (Cursor != Cursor::None) {//鼠标移入的时候判断是否有设置状态
+				_LastCursor = PublicData->GetCursor();//记录之前的状态
+				PublicData->SetCursor(Cursor);//设置状态
+			}
+			if (!_tipsText.empty()) {//设置提示文字
+				PublicData->SetTips(this, _tipsText);
+			}
 		}
 		UI_TRIGGER(MouseEnter, point);
 	}

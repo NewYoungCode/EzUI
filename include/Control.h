@@ -4,6 +4,7 @@ namespace EzUI {
 	class UI_EXPORT Control :public IControl
 	{
 	private:
+		bool _mouseIn = false;
 		bool _load = false;//是否load
 		Controls _controls;//子控件
 		Controls _spacer;//存储控件下布局的的弹簧集合
@@ -17,7 +18,7 @@ namespace EzUI {
 		Size _lastSize;//上一次大小
 		Rect _lastRect;
 		Rect _lastDrawRect;//最后一次显示的位置
-		int _eventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick;//这两个事件默认添加到主窗口通知函数中可拦截
+		int _eventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnChar | Event::OnKeyDown | Event::OnKeyUp;//默认添加到主窗口通知函数中可拦截
 		Control(const Control&);
 		Control& operator=(const Control&);
 	private:
@@ -80,13 +81,12 @@ namespace EzUI {
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);//键盘弹起
 	public:
 		//以下函数请保证在父控件布局已完成的情况下使用 使用ResumeLayout()执行布局
-		const int& X();//布局计算前
-		const int& Y();//布局计算前
-		const int& Width();//布局计算前
-		const int& Height();//布局计算前
-	public:
-		void SetX(const int& X);//布局计算前
-		void SetY(const int& Y);//布局计算前
+		const int& X();
+		const int& Y();
+		const int& Width();
+		const int& Height();
+		void SetX(const int& X);
+		void SetY(const int& Y);
 		void SetLocation(const Point& pt);//移动相对与父控件的位置
 		void SetSize(const Size& size); //当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
 		void SetFixedSize(const Size& size); //设置绝对宽高

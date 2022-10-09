@@ -119,7 +119,7 @@ namespace EzUI {
 		HWND HANDLE = NULL;//窗口句柄
 		UIFunc<void(void*)> InvalidateRect = NULL;//使一个区域无效
 		UIFunc<void()> UpdateWindow = NULL;//立即更新全部无效区域
-		UIFunc<bool(Control*, const EventArgs&)> Notify = NULL;//
+		UIFunc<bool(Control*, EventArgs&)> Notify = NULL;//
 		UIFunc<void(Control*, const std::wstring&)> SetTips = NULL;//设置悬浮提示文字
 		UIFunc<void(Control*)> DelTips = NULL;//移除悬浮提示文字
 		UIFunc<Cursor()> GetCursor = NULL;//获取鼠标样式
@@ -241,8 +241,7 @@ namespace EzUI {
 		SIZENWSE = (ULONG_PTR)IDC_SIZENWSE,// 双箭头指向西北和东南
 		SIZEWE = (ULONG_PTR)IDC_SIZEWE,// 双箭头指向东西
 		UPARROW = (ULONG_PTR)IDC_UPARROW,// 垂直箭头
-		WAIT = (ULONG_PTR)IDC_WAIT,// 沙漏，Windows7下会显示为选择的圆圈表示等待
-		ALL = APPSTARTING | ARROW | CROSS | HAND | HELP | IBEAM | ICON | NO | SIZE | SIZEALL | SIZENESW | SIZENS | SIZENWSE | SIZEWE | UPARROW | WAIT
+		WAIT = (ULONG_PTR)IDC_WAIT// 沙漏，Windows7下会显示为选择的圆圈表示等待
 	};
 	// 摘要: 
 	//基础事件

@@ -293,17 +293,16 @@ namespace EzUI {
 		}
 		case WM_MOUSEMOVE:
 		{
-			TRACKMOUSEEVENT tme;
-			tme.cbSize = sizeof(tme);
-			tme.dwFlags = TME_LEAVE;
-			tme.hwndTrack = _hWnd;
-			TrackMouseEvent(&tme);
+			/*	TRACKMOUSEEVENT tme;
+				tme.cbSize = sizeof(tme);
+				tme.dwFlags = TME_LEAVE;
+				tme.hwndTrack = _hWnd;
+				TrackMouseEvent(&tme);*/
 			OnMouseMove({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
-			if (_mouseIn == false) {
-				_mouseIn = true;
-			}
+			//Debug::Log("message OnMouseMove");
+			_mouseIn = true;
 			//给hwndTip发送消息告诉现在移动到什么位置了
-			SendMessage(_hWndTip, TTM_TRACKPOSITION, 0, lParam);
+			//SendMessage(_hWndTip, TTM_TRACKPOSITION, 0, lParam);
 			break;
 		}
 		case WM_LBUTTONDOWN:
@@ -420,12 +419,13 @@ namespace EzUI {
 				_focusControl = NULL;
 			}
 			if (_inputControl == delControl) {
+				_inputControl->Trigger(Event::OnMouseLeave);
 				_inputControl->OnKillFocus();
 				_inputControl = NULL;
 			}
 		};
 
-		PublicData.Notify = [=](Control* sender, const EventArgs& args)->bool {
+		PublicData.Notify = [=](Control* sender, EventArgs& args)->bool {
 			return OnNotify(sender, args);
 		};
 		PublicData.SetTips = [=](Control* ctl, const std::wstring& text)->void {
@@ -453,7 +453,8 @@ namespace EzUI {
 		};
 
 		PublicData.SetCursor = [=](Cursor cursor)->void {
-			if (((ULONG)Cursor::ALL & (ULONG)cursor) == (ULONG)cursor) {//判断在不在预设中
+			bool inEnum = cursor == Cursor::APPSTARTING || cursor == Cursor::ARROW || cursor == Cursor::CROSS || cursor == Cursor::HAND || cursor == Cursor::HELP || cursor == Cursor::IBEAM || cursor == Cursor::ICON || cursor == Cursor::NO || cursor == Cursor::SIZE || cursor == Cursor::SIZEALL || cursor == Cursor::SIZENESW || cursor == Cursor::SIZENS || cursor == Cursor::SIZENWSE || cursor == Cursor::SIZEWE || cursor == Cursor::UPARROW || cursor == Cursor::WAIT;
+			if (inEnum) {//判断在不在预设中
 				::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)::LoadCursor(NULL, (LPTSTR)(cursor)));//设置鼠标样式
 			}
 			else {
@@ -556,16 +557,12 @@ namespace EzUI {
 		MouseEventArgs args;
 		args.Location = relativePoint;
 
-		if (_focusControl && outCtl != _focusControl) {//让上一次具有焦点的控件触发移出事件
+		if (_focusControl && (outCtl != _focusControl)) {//让上一次具有焦点的控件触发移出事件
 			args.EventType = Event::OnMouseLeave;
 			_focusControl->Trigger(args);
 		}
 
 		if (outCtl) {
-			if (outCtl != _focusControl) {//第一次进入该区域
-				args.EventType = Event::OnMouseEnter;
-				outCtl->Trigger(args);
-			}
 			//让新控件触发鼠标移动事件
 			args.EventType = Event::OnMouseMove;
 			outCtl->Trigger(args);
@@ -700,8 +697,8 @@ namespace EzUI {
 				args.EventType = Event::OnMouseLeave;
 				_focusControl->Trigger(args);
 			}
-			}
 		}
+	}
 	void Window::OnSize(const Size& sz)
 	{
 #ifdef COUNT_ONSIZE
@@ -758,7 +755,7 @@ namespace EzUI {
 
 	}
 
-	bool Window::OnNotify(Control* sender, const EventArgs& args) {
+	bool Window::OnNotify(Control* sender, EventArgs& args) {
 		if (args.EventType == Event::OnMouseDown) {
 			if (sender->Action == ControlAction::MoveWindow || sender == MainLayout) {
 				MoveWindow();
@@ -799,4 +796,4 @@ namespace EzUI {
 		return false;
 	}
 
-	};
+};

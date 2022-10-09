@@ -50,7 +50,7 @@ namespace EzUI {
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);
 		virtual void OnMove(const Point& point);
 		//鼠标 键盘 重绘 会进入此函数,返回true将不再派发给sender控件处理 注意:尽量不要在此函数内部删除自身控件(鼠标和键盘事件内可以删除)
-		virtual bool OnNotify(Control* sender, const EventArgs& args);
+		virtual bool OnNotify(Control* sender,EventArgs& args);
 	public:
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	public:
