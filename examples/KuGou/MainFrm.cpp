@@ -7,6 +7,9 @@ void MainFrm::InitForm() {
 
 	this->SetLayout(ui::UIManager::LoadLayout("xml/main.htm"));
 
+	playingImage = new Image(L"imgs/play.png");
+	pauseImage = new Image(L"imgs/pause.png");
+	control = (TabLayout*)FindControl("control");
 	//如果你仍需要使用win32原生控件请给窗口设置 主布局 然后就可以添加win32原生控件了(注:layeredwindow不支持原生控件)
 	/*HWND btn = ::CreateWindowW(DATETIMEPICK_CLASS, L"hello world", WS_POPUP | WS_VISIBLE, 600, 10, 100, 30, NULL, NULL, GetModuleHandle(NULL), 0);
 	::SetParent(btn, Hwnd());*/
@@ -27,6 +30,9 @@ void MainFrm::InitForm() {
 	FindControl("lrcView2")->AddControl(&lrcCtl);//添加歌词控件
 
 	localList = (VList*)this->FindControl("playList");
+
+	//localList->AutoHeight = true;
+
 	searchList = (VList*)this->FindControl("searchList");
 	searchEdit = (Edit*)FindControl("searchEdit");
 	//美化左侧本地列表的滚动条
@@ -68,7 +74,7 @@ void MainFrm::InitForm() {
 
 	playerBar = FindControl("playerBar");
 	playerBar2 = FindControl("rate");
-	playerBar2->MousePassThrough = Event::OnHover | Event::OnActive;
+	playerBar2->MousePassThrough = Event::OnHover | Event::OnActive|Event::OnMouseClick;
 
 	time = (Label*)FindControl("time");
 	singer = (Label*)FindControl("singer");
@@ -271,6 +277,15 @@ bool MainFrm::OnNotify(Control* sender,  EventArgs& args) {
 		}
 	}
 	if (args.EventType == Event::OnMouseClick) {
+
+		if (sender->Name == "play") {
+			player.Play();
+			return false;
+		}
+		if (sender->Name == "pause") {
+			player.Pause();
+			return false;
+		}
 		if (sender->Name == "del") {
 			searchList->RemoveControl(sender->Parent);
 			delete sender->Parent;
@@ -324,13 +339,17 @@ bool MainFrm::OnNotify(Control* sender,  EventArgs& args) {
 		}
 		if (sender == playerBar) {
 			const MouseEventArgs& arg = (MouseEventArgs&)args;
-			double f_pos = arg.Location.X * 1.0 / playerBar->Width() * (player.Duration());
+			double f_pos = arg.Location.X * 1.0 / playerBar->Width();
 			player.SetPosition(f_pos);
+			player.Play();
 		}
 	}
 	return __super::OnNotify(sender, args);
 }
 void MainFrm::Task() {
+	TabLayout* control = (TabLayout*)FindControl("control");
+
+
 	if (player.GetState() == libvlc_state_t::libvlc_Playing) {
 		long long position = player.Position();
 		double rate = position / (player.Duration() * 1000.0);
@@ -339,6 +358,9 @@ void MainFrm::Task() {
 		EString f1 = toTimeStr(position / 1000);
 		EString f2 = toTimeStr(player.Duration());
 		EString fen = f1 + "/" + f2;
+
+		control->SetPageIndex(1);
+		control->Invalidate();
 
 		if (fen != lastFen) {
 			lastFen = fen;
@@ -350,6 +372,10 @@ void MainFrm::Task() {
 			playerBar2->SetFixedWidth(w);
 			playerBar2->Invalidate();
 		}
+	}
+	else {
+		control->SetPageIndex(0);
+		control->Invalidate();
 	}
 }
 

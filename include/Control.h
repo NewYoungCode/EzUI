@@ -8,8 +8,6 @@ namespace EzUI {
 		bool _load = false;//是否load
 		Controls _controls;//子控件
 		Controls _spacer;//存储控件下布局的的弹簧集合
-		int _fixedWidth = 0;//绝对宽度
-		int _fixedHeight = 0;//绝对高度
 		//布局状态AddControl丶RemoveControl丶OnSize时候此标志为挂起 调用ResumeLayout标志为布局中 当调用OnLayout()之后此标志为None
 		EzUI::LayoutState _layoutState = EzUI::LayoutState::None;
 		std::wstring _tipsText;//鼠标悬浮的提示文字
@@ -25,6 +23,8 @@ namespace EzUI {
 		bool CheckEventPassThrough(const Event& eventType);
 		bool CheckEventNotify(const Event& eventType);
 	protected:
+		int _fixedWidth = 0;//绝对宽度
+		int _fixedHeight = 0;//绝对高度
 		Rect _rect;//控件矩形区域(基于父控件)
 	public:
 		EzUI::Margin Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数

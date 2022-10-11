@@ -5,7 +5,6 @@
 #include "HLayout.h"
 #include "Edit.h"
 #include "PoupWindow.h"
-#include "Windowsx.h"
 namespace EzUI {
 	class UI_EXPORT ComBox :
 		public HLayout

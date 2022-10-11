@@ -39,9 +39,7 @@ namespace EzUI {
 			_maxRight += it->Width();
 			_maxRight += it->Margin.GetHSpace();
 		}
-		if (hScrollBar) {
-			hScrollBar->SetMaxRight(_maxRight);
-		}
+		RefreshScroll(_maxRight);
 	}
 
 	void HList::AddControl(Control* ctl)
@@ -67,9 +65,7 @@ namespace EzUI {
 				it->SetRect(Rect(it->X() - outWidth, it->Y(), it->Width(), it->Height()));//自身移动
 				LocationX[it] -= outWidth;//记录的原始坐标移动
 			}
-			if (hScrollBar) {
-				hScrollBar->SetMaxRight(_maxRight);//通知滚动条容器最大边界值已经改变
-			}
+			RefreshScroll(_maxRight);//通知滚动条容器最大边界值已经改变
 		}
 		return nextIt;
 	}
@@ -78,18 +74,26 @@ namespace EzUI {
 		__super::Clear(freeControls);
 		LocationX.clear();
 		_maxRight = 0;
-		if (hScrollBar) {
-			hScrollBar->SetMaxRight(_maxRight);
-		}
+		RefreshScroll(_maxRight);
 	}
 
 	void HList::OnSize(const Size& size) {
 		__super::OnSize(size);
+		RefreshScroll(_maxRight);
+	}
+	void HList::RefreshScroll(const int& _maxRight) {
+		if (AutoWidth) {
+			this->_fixedWidth = _maxRight;
+			this->_rect.Width = _maxRight;
+			hScrollBar->Visible = false;
+		}
+		else {
+			hScrollBar->Visible = true;
+		}
 		if (hScrollBar) {
 			hScrollBar->SetMaxRight(_maxRight);
 		}
 	}
-
 	void HList::ChildPainting(Controls& controls, PaintEventArgs& args) {
 		VisibleControls.clear();
 		auto rect = Rect(0, 0,Width(), Height());

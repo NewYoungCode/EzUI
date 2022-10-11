@@ -9,6 +9,7 @@ namespace EzUI {
 		HScrollBar* hScrollBar = NULL;
 	public:
 		int _maxRight = 0;
+		bool AutoWidth = false;//是否根据内容自动宽度
 	public:
 		HList();
 		virtual ~HList();
@@ -18,5 +19,6 @@ namespace EzUI {
 		virtual void Clear(bool freeControls) override;
 		virtual	void OnSize(const Size& size) override;
 		virtual void ChildPainting(Controls& controls, PaintEventArgs& args)override;
+		virtual void RefreshScroll(const int& _maxRight);
 	};
 };

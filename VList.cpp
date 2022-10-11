@@ -12,7 +12,6 @@ namespace EzUI {
 	VList::~VList()
 	{
 	}
-
 	void VList::OnLayout() {
 		__super::OnLayout();
 
@@ -39,9 +38,7 @@ namespace EzUI {
 			_maxBottom += it->Height();
 			_maxBottom += it->Margin.GetVSpace();
 		}
-		if (vScrollBar) {
-			vScrollBar->SetMaxBottom(_maxBottom);
-		}
+		RefreshScroll(_maxBottom);
 	}
 	void VList::AddControl(Control* ctl)
 	{
@@ -68,9 +65,7 @@ namespace EzUI {
 				it->SetRect(Rect(it->X(), it->Y() - outHeight, it->Width(), it->Height()));//自身移动
 				int& locationY = LocationY[it] -= outHeight;//记录的坐标也要移动
 			}
-			if (vScrollBar) {
-				vScrollBar->SetMaxBottom(_maxBottom);//通知滚动条容器最大边界值已经改变
-			}
+			RefreshScroll(_maxBottom);//通知滚动条容器最大边界值已经改变
 		}
 		return nextIt;
 	}
@@ -79,17 +74,28 @@ namespace EzUI {
 		__super::Clear(freeChilds);
 		LocationY.clear();
 		_maxBottom = 0;
+		RefreshScroll(_maxBottom);
+	}
+
+	void VList::OnSize(const Size& size) {
+		__super::OnSize(size);
+		RefreshScroll(_maxBottom);
+	}
+
+	void VList::RefreshScroll(const int& _maxBottom) {
+		if (AutoHeight) {
+			this->_fixedHeight = _maxBottom;
+			this->_rect.Height = _maxBottom;
+			vScrollBar->Visible = false;
+		}
+		else {
+			vScrollBar->Visible = true;
+		}
 		if (vScrollBar) {
 			vScrollBar->SetMaxBottom(_maxBottom);
 		}
 	}
 
-	void VList::OnSize(const Size& size) {
-		__super::OnSize(size);
-		if (vScrollBar) {
-			vScrollBar->SetMaxBottom(_maxBottom);
-		}
-	}
 	/// <summary>
 	/// 
 	/// </summary>

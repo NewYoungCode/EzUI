@@ -102,11 +102,15 @@ namespace EzUI {
 	}
 	void VlcPlayer::Play()
 	{
-		libvlc_media_player_play(vlc_player);
+		if (vlc_player) {
+			libvlc_media_player_play(vlc_player);
+		}
 	}
 	void VlcPlayer::Pause()
 	{
-		libvlc_media_player_pause(vlc_player);
+		if (vlc_player) {
+			libvlc_media_player_pause(vlc_player);
+		}
 	}
 	long long  VlcPlayer::Duration() {
 		return _Duration;

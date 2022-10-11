@@ -23,6 +23,9 @@ private:
 	Image* bkImage, * headImg;
 	std::thread* downloadTask = NULL;
 	TabLayout* tabCtrl;
+	TabLayout* control;
+
+	Image* playingImage = NULL, * pauseImage = NULL;
 
 	Control* main;
 	Control* center;
@@ -32,7 +35,7 @@ private:
 	void DownLoadImage(EString SingerName, EString headImageUrl);
 protected:
 	virtual void OnKeyDown(WPARAM wparam, LPARAM lParam)override;
-	bool OnNotify(Control* sender,  EventArgs& args)override;
+	bool OnNotify(Control* sender, EventArgs& args)override;
 	LRESULT WndProc(UINT msg, WPARAM W, LPARAM L) override;
 	void NextPage(int a, int b);
 	void SongView();

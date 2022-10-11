@@ -2,6 +2,7 @@
 namespace EzUI {
 	ComBox::ComBox() {
 		Style.BorderColor = Color(239, 239, 239);
+		Style.BackgroundColor = Color::White;
 		Style.SetBorder(Color(239, 239, 239), 1);
 		Style.Radius = 2;
 		vlist.Style.BackgroundColor = Color::White;
@@ -32,7 +33,6 @@ namespace EzUI {
 	void ComBox::OnLoad() {
 		if (poupWnd == NULL) {
 			poupWnd = new PoupWindow(Width(), 200, PublicData->HANDLE);
-			poupWnd->SetShadow(5);
 			poupWnd->SetLayout(&vlist);
 		}
 	}

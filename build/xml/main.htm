@@ -19,6 +19,15 @@
             fore-image: "imgs/play_1.png";
         }
 
+    #pause {
+        fore-image: "imgs/pause.png";
+    }
+
+        #pause:hover {
+            fore-image: "imgs/pause_1.png";
+        }
+
+
     #next {
         fore-image: "imgs/next.png";
     }
@@ -91,7 +100,12 @@
             <spacer width="17"></spacer>
             <label width="38" height="38" id="up"></label>
             <spacer width="18"></spacer>
-            <label width="46" height="46" id="play"></label>
+
+            <tablayout id="control"  width="46" height="46">
+                <label  id="play"></label>
+                <label  id="pause"></label>
+            </tablayout>
+
             <spacer width="18"></spacer>
             <label width="38" height="38" id="next"></label>
             <spacer width="24"></spacer>

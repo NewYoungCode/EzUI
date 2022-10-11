@@ -37,7 +37,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
 	Curl_Global_Init();
 	ui::Application app;
-
+	
 	//HWND workWnd = GetWorkerW();
 	//::ShowWindow(workWnd, SW_HIDE);
 	/*HWND wnd = GetWorkerW();
