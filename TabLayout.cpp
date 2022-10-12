@@ -46,7 +46,7 @@ namespace EzUI {
 		return it;
 	}
 
-	int TabLayout::PageIndex()
+	int TabLayout::GetPageIndex()
 	{
 		return _index;
 	}

@@ -14,7 +14,7 @@ namespace EzUI {
 		void SetPageIndex(int index);
 		virtual void AddControl(Control* ctl);
 		ControlIterator RemoveControl(Control* ctl);
-		int PageIndex();
+		int GetPageIndex();
 		virtual void OnLayout();
 		virtual void OnSize(const Size& sz);
 	};

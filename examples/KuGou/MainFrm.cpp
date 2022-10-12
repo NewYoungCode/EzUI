@@ -207,13 +207,13 @@ bool MainFrm::OnNotify(Control* sender,  EventArgs& args) {
 
 
 		if (sender == &player) {
-			if (tabCtrl->PageIndex() == 2) {
+			if (tabCtrl->GetPageIndex() == 2) {
 				return false;
 			}
 			return true;
 		}
 		if (sender == main && player.BuffBitmap) {
-			if (tabCtrl->PageIndex() == 1) {
+			if (tabCtrl->GetPageIndex() == 1) {
 				PaintEventArgs& arg = (PaintEventArgs&)args;
 				Image img(player.BuffBitmap->_bitmap);
 				arg.Painter.DrawImage(&img, main->GetRect(), ImageSizeMode::CenterImage);
@@ -359,9 +359,10 @@ void MainFrm::Task() {
 		EString f2 = toTimeStr(player.Duration());
 		EString fen = f1 + "/" + f2;
 
-		control->SetPageIndex(1);
-		control->Invalidate();
-
+		if (control->GetPageIndex() != 1) {
+			control->SetPageIndex(1);
+			control->Invalidate();
+		}
 		if (fen != lastFen) {
 			lastFen = fen;
 			time->SetText(fen);
@@ -374,8 +375,11 @@ void MainFrm::Task() {
 		}
 	}
 	else {
-		control->SetPageIndex(0);
-		control->Invalidate();
+
+		if (control->GetPageIndex() != 0) {
+			control->SetPageIndex(0);
+			control->Invalidate();
+		}
 	}
 }
 

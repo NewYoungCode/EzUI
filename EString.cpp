@@ -122,7 +122,7 @@ namespace EzUI {
 		for (size_t i = 0; i < str.size(); i++)
 		{
 			char& ch = (char&)str.c_str()[i];
-			if (ch >= 97 && ch <= 120) {
+			if (ch >= 97 && ch <= 122) {
 				ch -= 32;
 			}
 		}
