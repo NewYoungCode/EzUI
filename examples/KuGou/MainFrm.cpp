@@ -103,7 +103,8 @@ MainFrm::MainFrm() :Form(1022, 670)
 	InitForm();
 
 	auto main = FindControl("main");
-
+	//main->Style.Radius =5;
+	//main->Style.BackgroundColor = Color(100, 255, 0, 0);
 	//MainLayout->Style.Radius = 50;
 	//CloseShadow();
 }
@@ -347,7 +348,6 @@ bool MainFrm::OnNotify(Control* sender,  EventArgs& args) {
 	return __super::OnNotify(sender, args);
 }
 void MainFrm::Task() {
-	TabLayout* control = (TabLayout*)FindControl("control");
 
 
 	if (player.GetState() == libvlc_state_t::libvlc_Playing) {

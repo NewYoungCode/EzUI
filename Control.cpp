@@ -817,8 +817,9 @@ Event(this , ##__VA_ARGS__); \
 		if (PublicData) {
 			WindowData* winData = PublicData;
 			if (winData) {
-				Rect _InvalidateRect;
-				Rect::Union(_InvalidateRect, _lastDrawRect, GetClientRect());
+				Rect _InvalidateRect= GetClientRect();
+				Rect::Union(_InvalidateRect, _lastDrawRect, _InvalidateRect);
+				//Debug::Log("%d %d %d %d", _InvalidateRect.X, _InvalidateRect.Y, _InvalidateRect.Width, _InvalidateRect.Height);
 				winData->InvalidateRect(&_InvalidateRect);
 				return true;
 			}

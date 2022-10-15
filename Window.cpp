@@ -195,6 +195,11 @@ namespace EzUI {
 		case WM_ERASEBKGND: {
 			return TRUE;
 		}
+		/*case UI_PAINT: {
+			RECT r = ((Rect*)wParam)->WinRECT();
+			::InvalidateRect(_hWnd, &r, FALSE);
+			break;
+		}*/
 		case WM_PAINT:
 		{
 			if (!_load) {
@@ -404,6 +409,7 @@ namespace EzUI {
 			PublicData.InvalidateRect = [=](void* _rect)->void {
 				RECT r = ((Rect*)_rect)->WinRECT();
 				::InvalidateRect(_hWnd, &r, FALSE);
+				//::SendMessage(_hWnd, UI_PAINT, (WPARAM)_rect, NULL);
 			};
 			PublicData.UpdateWindow = [=]()->void {
 				::UpdateWindow(_hWnd);

@@ -608,14 +608,14 @@ namespace EzUI {
 				IN const Rect& a,
 				IN const Rect& b)
 			{
-				if (a.IsEmptyArea()) {
+			/*	if (a.IsEmptyArea()) {
 					c = b;
 					return !c.IsEmptyArea();
 				}
 				else if (b.IsEmptyArea()) {
 					c = a;
 					return !c.IsEmptyArea();
-				}
+				}*/
 
 				INT right = max(a.GetRight(), b.GetRight());
 				INT bottom = max(a.GetBottom(), b.GetBottom());

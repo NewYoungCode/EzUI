@@ -23,7 +23,7 @@ namespace EzUI {
 		return HTCLIENT;//ָ
 	}
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
-	LayeredWindow::LayeredWindow(int cx, int cy, HWND owner) :Window(cx, cy, owner, WS_POPUP | WS_MINIMIZEBOX, WS_EX_LAYERED )
+	LayeredWindow::LayeredWindow(int cx, int cy, HWND owner) :Window(cx, cy, owner, WS_POPUP | WS_MINIMIZEBOX, WS_EX_LAYERED)
 	{
 		_boxShadow = new ShadowWindow(cx, cy, Hwnd());
 		UpdateShadow();
@@ -107,7 +107,7 @@ namespace EzUI {
 		Painter pt(_hdc, clientRect.Width, clientRect.Height);//
 		PaintEventArgs args(pt);
 		args.InvalidRectangle = rePaintRect;//
-		args.PublicData =&PublicData;
+		args.PublicData = &PublicData;
 		args.DC = _hdc;
 		MainLayout->Rending(args);//
 	}
@@ -141,7 +141,7 @@ namespace EzUI {
 
 	void LayeredWindow::PushDC(HDC hdc) {
 
-		Rect & _rectClient = GetClientRect();
+		Rect& _rectClient = GetClientRect();
 
 		POINT point{ _rectClient.X,_rectClient.Y };
 		SIZE size{ _rectClient.Width,  _rectClient.Height };
@@ -151,9 +151,7 @@ namespace EzUI {
 		blendFunc.BlendOp = AC_SRC_OVER;
 		blendFunc.AlphaFormat = AC_SRC_ALPHA;
 		blendFunc.BlendFlags = 0;
-		::UpdateLayeredWindow(Hwnd(), NULL, NULL, &size, hdc, &point, 0, &blendFunc, ULW_ALPHA);//
-		//::SetDIBits
-
-		//::SetLayeredWindowAttributes(_hWnd, 0, 255, LWA_ALPHA);
+		::UpdateLayeredWindow(Hwnd(), NULL, NULL, &size, hdc, &point, 0, &blendFunc, ULW_OPAQUE);//不透明
+		//::UpdateLayeredWindow(Hwnd(), NULL, NULL, &size, hdc, &point, 0, &blendFunc, ULW_ALPHA);//透明
 	}
 }
