@@ -20,7 +20,7 @@ namespace EzUI {
 		//设计窗口
 		::HINSTANCE hInstance = GetModuleHandle(NULL);
 		::WNDCLASS     wc;
-		wc.style = NULL;// CS_DBLCLKS;放弃windows消息中的双击消息
+		wc.style = NULL;//CS_DBLCLKS;//放弃windows消息中的双击消息
 		//wc.style = CS_HREDRAW | CS_VREDRAW;//| CS_DBLCLKS;
 		wc.lpfnWndProc = EzUI_WndProc;
 		wc.cbClsExtra = NULL;

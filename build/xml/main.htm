@@ -90,7 +90,19 @@
                     <spacer></spacer>
                 </hbox>
                 <tablayout id="rightView">
-                    <vlist id="searchList"></vlist>
+                    <vbox>
+                        <hbox style="background-color: #F5F5F5; color: #888888 " height="32">
+
+                            <spacer width="15"></spacer>
+                            <label halign="left" text="歌曲名"></label>
+                            <label halign="left" width="184" text="专辑"></label>
+                            <spacer width="15"></spacer>
+                            <label  width="50" text="热度"></label>
+                            <label halign="left"  width="60"  text="时长"></label>
+
+                        </hbox>
+                        <vlist id="searchList"></vlist>
+                    </vbox>
                     <vbox id="lrcView2" style="font-size:13"> </vbox>
                     <vbox id="vlcDock" style="background-color:#000000;"></vbox>
                 </tablayout>

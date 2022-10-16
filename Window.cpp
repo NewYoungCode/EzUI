@@ -195,11 +195,11 @@ namespace EzUI {
 		case WM_ERASEBKGND: {
 			return TRUE;
 		}
-		/*case UI_PAINT: {
-			RECT r = ((Rect*)wParam)->WinRECT();
-			::InvalidateRect(_hWnd, &r, FALSE);
-			break;
-		}*/
+						  /*case UI_PAINT: {
+							  RECT r = ((Rect*)wParam)->WinRECT();
+							  ::InvalidateRect(_hWnd, &r, FALSE);
+							  break;
+						  }*/
 		case WM_PAINT:
 		{
 			if (!_load) {
@@ -298,11 +298,11 @@ namespace EzUI {
 		}
 		case WM_MOUSEMOVE:
 		{
-			/*	TRACKMOUSEEVENT tme;
-				tme.cbSize = sizeof(tme);
-				tme.dwFlags = TME_LEAVE;
-				tme.hwndTrack = _hWnd;
-				TrackMouseEvent(&tme);*/
+			TRACKMOUSEEVENT tme;
+			tme.cbSize = sizeof(tme);
+			tme.dwFlags = TME_LEAVE;
+			tme.hwndTrack = _hWnd;
+			TrackMouseEvent(&tme);
 			OnMouseMove({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 			//Debug::Log("message OnMouseMove");
 			_mouseIn = true;
@@ -320,6 +320,10 @@ namespace EzUI {
 			OnMouseDown(MouseButton::Right, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 			break;
 		}
+	/*	case WM_LBUTTONDBLCLK: {
+			OnMouseDoubleClick(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+			break;
+		}*/
 		case WM_LBUTTONUP:
 		{
 			OnMouseUp(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });

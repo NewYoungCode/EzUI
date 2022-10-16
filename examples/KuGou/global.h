@@ -89,8 +89,6 @@ class SongItem2 :public HBox {
 public:
 	SongItem2(const Song& s) {
 
-		Margin.Left = 20;
-
 		song = s;
 		this->Tag = (UINT_PTR)&song;
 		SetAttribute("FileHash", s.hash);
@@ -98,7 +96,6 @@ public:
 
 		SetTips(s.SongName);
 		SetFixedHeight(35);
-		//Dock = DockStyle::Horizontal;
 		Style.BorderBottom = 1;
 		Style.BorderColor = Color(245, 245, 245);
 		HoverStyle.BackgroundColor = Color(245, 245, 245);
@@ -121,36 +118,33 @@ public:
 			mv.SetAttribute("mvhash", s.MvHash);
 			mv.Style.ForeImage = mvicon;
 			mv.Style.ForeImage.value->Padding = 8;
-			//mv.Style.ForeImage.value->Box = Rect(8, 8, 19, 19);
 			mv.Cursor = Cursor::HAND;
-
 		}
 		else {
 			mv.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
 		}
 
-		time.SetFixedWidth(80);
+		time.SetFixedWidth(60);
 		time.SetText(toTimeStr(s.Duration));
 		time.TextAlign = TextAlign::MiddleLeft;
 		time.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
 		time.Style.ForeColor = Color(150, 150, 150);
 
 		del.SetFixedWidth(33);
-		del.Name = "del";
-		del.SetText("X");
-		del.HoverStyle.BackgroundColor = Color::Red;
-		del.Cursor = Cursor::HAND;
-
 		
+		EString fileName = "imgs/" + std::to_string(s.QualityLevel) + ".png";
+		Image* img = new Image(fileName.utf16());
+		img->Padding = 8;
+		del.Style.BackgroundImage = img;
 
 		AddControl(new HSpacer(15));
 		AddControl(&songName);
 		AddControl(&AlbumName);
 		AddControl(&mv);
-		AddControl(&time);
-
 		AddControl(&del);
-		AddControl(new HSpacer(15));
+		AddControl(new HSpacer(5));
+		AddControl(&time);
+		AddControl(new HSpacer(5));
 
 	}
 };
