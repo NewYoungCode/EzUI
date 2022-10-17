@@ -146,6 +146,9 @@ namespace EzUI {
 		}
 		text.insert(TextPos, str);
 		TextPos += str.size();
+		if (TextChange) {
+			TextChange(EString(text));
+		}
 	}
 	bool Edit::DeleteRange() {
 		int pos, count;
@@ -153,6 +156,10 @@ namespace EzUI {
 			//isTrailingHit = FALSE;
 			TextPos = pos;
 			text.erase(pos, count);
+
+			if (TextChange) {
+				TextChange(EString(text));
+			}
 			return true;
 		}
 		return false;
@@ -190,6 +197,9 @@ namespace EzUI {
 			TextPos--;
 			if (TextPos > -1) {
 				text.erase(TextPos, 1);
+				if (TextChange) {
+					TextChange(EString(text));
+				}
 			}
 		}
 	}

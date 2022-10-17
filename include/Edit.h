@@ -52,6 +52,7 @@ namespace EzUI {
 		Edit();
 		virtual ~Edit();
 		const EString GetText();
+		EventTextChange TextChange = NULL;
 		virtual void SetAttribute(const EString& key, const EString& value)override;
 		void SetText(const EString& text);
 	};
