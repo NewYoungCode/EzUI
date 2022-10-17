@@ -8,6 +8,7 @@ namespace EzUI {
 		if (textLayout) delete textLayout;
 	}
 	Edit::Edit() {
+		Cursor = Cursor::IBEAM;
 		timer.Interval = 500;
 		timer.Tick = [&]() {
 			if (!careRect.IsEmptyArea() && _focus) {

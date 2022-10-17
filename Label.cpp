@@ -24,7 +24,6 @@ namespace EzUI {
 	}
 
 	void Label::SetText(const EString& text) {
-		_text = text;
 		_wstr = text.utf16();
 		if (AutoWidth || AutoHeight) {
 			RectF box;
@@ -56,8 +55,8 @@ namespace EzUI {
 		_underline = enable;
 	}
 
-	const EString& Label::GetText()
+	EString Label::GetText()const
 	{
-		return _text;
+		return EString(_wstr);
 	}
 };

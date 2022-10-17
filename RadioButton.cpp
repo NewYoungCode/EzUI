@@ -37,7 +37,7 @@ namespace EzUI {
 	void RadioButton::OnForePaint(PaintEventArgs& args)
 	{
 		int fontHeight = Height();
-		if (!_text.empty()) {
+		if (!_wstr.empty()) {
 			/*RectF box;
 			args.Painter.MeasureString(_wstr, GetFontFamily(this->State).utf16(), GetFontSize(this->State), box);
 			fontHeight = (int)box.Height - 2;

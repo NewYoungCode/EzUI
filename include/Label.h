@@ -6,7 +6,6 @@ namespace EzUI {
 		public Control
 	{
 	protected:
-		EString _text;
 		std::wstring _wstr;
 		bool _underline = false;
 		RectF fontBox;
@@ -21,6 +20,6 @@ namespace EzUI {
 		virtual ~Label();
 		void SetText(const EString& text);
 		void SetUnderline(bool enable = true);
-		const EString& GetText();
+		EString GetText()const;
 	};
 };
