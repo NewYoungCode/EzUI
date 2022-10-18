@@ -49,7 +49,7 @@ void MainFrm::InitForm() {
 	searchList->ScrollBar->ActiveStyle.ForeColor = Color(250, 200, 200, 200);
 	//集体设置右上角的最大化 最小化 关闭按钮 的悬浮效果
 
-	$(this->FindControl("btns")->GetControls()).Css("hover{color:#ffffff;}");
+	$(this->FindControl("btns")->GetControls()).CssHover("color:#ffffff;");
 	
 
 	cfg = new ConfigIni(Path::StartPath() + "\\list.ini");

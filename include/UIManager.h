@@ -24,6 +24,8 @@ namespace EzUI {
 		_Selector(const Controls& Controls);
 		_Selector(Control* control);
 		_Selector& Css(const EString& styleStr);
+		_Selector& CssHover(const EString& styleStr);
+		_Selector& CssActive(const EString& styleStr);
 		_Selector& Attr(const EString& key, const EString& value);
 		_Selector& Refresh();
 		_Selector& Not(Control* fiterCtl);

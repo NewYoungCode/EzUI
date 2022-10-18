@@ -123,29 +123,26 @@ Event(this , ##__VA_ARGS__); \
 		}
 		return Style;
 	}
-	void Control::SetStyleSheet(const EString& styleStr)
+	void Control::SetStyleSheet(const EString& styleStr, ControlState _state)
 	{
-		__super::SetStyleSheet(styleStr);
-		size_t pos1 = styleStr.find("{");
-		size_t pos2 = styleStr.find("}");
-		auto sheet = styleStr.substr(pos1 + 1, pos2 - pos1 - 1);
 		do
 		{
-			if (pos1 == 0 || pos1 == size_t(-1)) {
-				this->Style.SetStyleSheet(sheet);//默认样式
+			if (_state == ControlState::None) {
+				this->Style.SetStyleSheet(styleStr);//默认样式
 				break;
 			}
-			if (styleStr.find("hover") == 0) {
-				this->HoverStyle.SetStyleSheet(sheet);//悬浮样式
+			if (_state == ControlState::Hover) {
+				this->HoverStyle.SetStyleSheet(styleStr);//悬浮样式
 				break;
 			}
-			if (styleStr.find("active") == 0) {
-				this->ActiveStyle.SetStyleSheet(sheet);//鼠标按下样式
+			if (_state == ControlState::Active) {
+				this->ActiveStyle.SetStyleSheet(styleStr);//鼠标按下样式
 				break;
 			}
 		} while (false);
 
 	}
+
 	void Control::SetAttribute(const EString& attrName, const EString& attrValue)
 	{
 		__super::SetAttribute(attrName, attrValue);
@@ -391,7 +388,7 @@ Event(this , ##__VA_ARGS__); \
 		return false;
 	}
 
-	 bool Control::IsPendLayout() {
+	bool Control::IsPendLayout() {
 		return this->_layoutState == LayoutState::Pend;
 	}
 
@@ -566,7 +563,7 @@ Event(this , ##__VA_ARGS__); \
 		}
 		case Event::OnMouseMove: {
 			if (!_mouseIn) {
-				MouseEventArgs _args=args;
+				MouseEventArgs _args = args;
 				_args.EventType = Event::OnMouseEnter;
 				OnMouseEvent(_args);
 				_mouseIn = true;
@@ -816,7 +813,7 @@ Event(this , ##__VA_ARGS__); \
 		if (PublicData) {
 			WindowData* winData = PublicData;
 			if (winData) {
-				Rect _InvalidateRect= GetClientRect();
+				Rect _InvalidateRect = GetClientRect();
 				Rect::Union(_InvalidateRect, _lastDrawRect, _InvalidateRect);
 				//Debug::Log("%d %d %d %d", _InvalidateRect.X, _InvalidateRect.Y, _InvalidateRect.Width, _InvalidateRect.Height);
 				winData->InvalidateRect(&_InvalidateRect);
@@ -891,8 +888,10 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::OnMouseEnter(const Point& point)
 	{
+		this->State = ControlState::Hover;
+
 		if (HoverStyle.IsValid()) {
-			this->State = ControlState::Hover;
+			_stateRepaint = true;
 			Invalidate();
 		}
 		else {
@@ -902,6 +901,7 @@ Event(this , ##__VA_ARGS__); \
 			{
 				_style = &pControl->HoverStyle;
 				if (_style && _style->IsValid()) {
+					_stateRepaint = true;
 					Invalidate();
 					break;
 				}
@@ -941,6 +941,7 @@ Event(this , ##__VA_ARGS__); \
 	{
 		this->State = ControlState::Active;
 		if (ActiveStyle.IsValid()) {
+			_stateRepaint = true;
 			Invalidate();
 		}
 		else {
@@ -950,6 +951,7 @@ Event(this , ##__VA_ARGS__); \
 			{
 				_style = &pControl->ActiveStyle;
 				if (_style && _style->IsValid()) {
+					_stateRepaint = true;
 					Invalidate();
 					break;
 				}
@@ -962,10 +964,13 @@ Event(this , ##__VA_ARGS__); \
 	{
 		if (this->State != ControlState::None && Rect(0, 0, _rect.Width, _rect.Height).Contains(point)) {
 			this->State = ControlState::Hover;
-			Invalidate();
+			if (_stateRepaint) {
+				Invalidate();
+			}
 		}
 		else if (this->State != ControlState::None) {
 			this->State = ControlState::None;
+			_stateRepaint = true;
 			Invalidate();
 		}
 		UI_TRIGGER(MouseUp, mbtn, point);
@@ -974,7 +979,10 @@ Event(this , ##__VA_ARGS__); \
 	{
 		if (this->State != ControlState::None) {
 			this->State = ControlState::None;//重置状态
+			if (_stateRepaint) {
 			Invalidate();//重置状态之后刷新
+			_stateRepaint = false;
+			}
 		}
 		else {
 			this->State = ControlState::None;//鼠标离开无论如何都要重置状态

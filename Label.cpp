@@ -1,5 +1,4 @@
 #include "Label.h"
-#include "Layout.h"
 namespace EzUI {
 
 	Label::Label()

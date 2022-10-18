@@ -4,6 +4,7 @@ namespace EzUI {
 	class UI_EXPORT Control :public IControl
 	{
 	private:
+		bool _stateRepaint = false;
 		bool _mouseIn = false;
 		bool _load = false;//是否load
 		Controls _controls;//子控件
@@ -124,7 +125,7 @@ namespace EzUI {
 		UI_Int GetBorderBottom();
 		Color GetBorderColor();
 		Color GetBackgroundColor();
-		virtual void SetStyleSheet(const EString& styleStr);//
+		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::None);//
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性
 		//具有继承性样式
 		EString GetFontFamily(ControlState _state = ControlState::None);//获取默认控件状态下字体Family

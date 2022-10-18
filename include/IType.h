@@ -408,7 +408,6 @@ namespace EzUI {
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam) = 0;
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam) = 0;
 	public:
-		virtual void SetStyleSheet(const EString& styleStr);//设置style
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//设置属性
 		virtual EString GetAttribute(const EString& attrName);//获取属性
 	};

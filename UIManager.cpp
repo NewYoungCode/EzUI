@@ -48,7 +48,6 @@ namespace EzUI {
 			Control* ctl = NULL;
 			std::string valueStr(node->ValueTStr().c_str());
 			EString::Tolower(&valueStr);
-
 			do
 			{
 				if (valueStr == "control") {
@@ -278,8 +277,35 @@ namespace EzUI {
 
 			EString style = styleStr;
 			TrimStyle(style);
-			while (style.size() > 0) {
 
+			while (true)
+			{
+				//处理注释
+				auto pos1 = style.find("/*");
+				auto pos2 = style.find("*/", pos1 + 2);
+				if (pos1 != size_t(-1) && pos1 != size_t(-1)) {
+					style.erase(pos1, pos2 - pos1 + 2);
+				}
+				else {
+					break;
+				}
+			}
+
+			//分离每个样式
+			std::vector<EString> strs;
+			while (true)
+			{
+				auto pos1 = style.find("}");
+				if (pos1 != size_t(-1)) {
+					strs.push_back(style.substr(0, pos1 + 1));
+					style.erase(0, pos1 + 1);
+				}
+				else {
+					break;
+				}
+			}
+
+			for (auto& style : strs) {
 
 				byte type = ID_STYLE;//
 				size_t pos = style.find("#");
@@ -329,7 +355,6 @@ namespace EzUI {
 						class_styles.insert(std::pair<EString, EString>(name, str));
 					}
 				}
-				style = style.substr(pos2 + 1);
 			}
 		}
 		void LoadStyle(Control* ctl, ControlState styleState) {
@@ -406,6 +431,32 @@ namespace EzUI {
 		}
 		return *this;
 	}
+
+	_Selector& _Selector::CssHover(const EString& styleStr)
+	{
+		for (auto& it : this->ctls) {
+			if (notCtl == it)continue;
+			it->SetStyleSheet(styleStr,ControlState::Hover);
+		}
+		if (ctl) {
+			if (notCtl == ctl)return *this;
+			ctl->SetStyleSheet(styleStr, ControlState::Hover);
+		}
+		return *this;
+	}
+	_Selector& _Selector::CssActive(const EString& styleStr)
+	{
+		for (auto& it : this->ctls) {
+			if (notCtl == it)continue;
+			it->SetStyleSheet(styleStr, ControlState::Active);
+		}
+		if (ctl) {
+			if (notCtl == ctl)return *this;
+			ctl->SetStyleSheet(styleStr, ControlState::Active);
+		}
+		return *this;
+	}
+
 	_Selector& _Selector::Attr(const EString& key, const EString& value)
 	{
 		for (auto& it : this->ctls) {

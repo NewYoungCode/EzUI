@@ -1,4 +1,9 @@
 <style>
+
+    .serachIcon {
+        fore-image: "imgs/search.png";
+    }
+
     #icon {
         fore-image: "imgs/icon.png";
     }
@@ -27,7 +32,6 @@
             fore-image: "imgs/pause_1.png";
         }
 
-
     #next {
         fore-image: "imgs/next.png";
     }
@@ -44,20 +48,16 @@
         fore-image: "imgs/down.png";
     }
 
-    .serachIcon {
-        fore-image: "imgs/search.png";
-    }
-
     #btns {
         font-family: "Marlett";
         font-size: 13;
         color: #dddddd;
     }
 
-        #btns:hover {
+     /*   #btns:hover {
             font-size: 13;
             color: #ffffff;
-        }
+        }*/
 </style>
 <vbox style="background-color:#029BE9" id="main">
     <vbox id="main2">
@@ -74,7 +74,7 @@
             </hbox>
 
             <spacer></spacer>
-            <hbox width="100" id="btns">  <label text="0" action="mini"></label><label text="1" action="max"></label><label text="r" action="close"></label> </hbox>
+            <hbox width="100" id="btns">  <label text="0" action="mini"></label><label text="1" action="max"></label><label text="r" name="close" action="close"></label> </hbox>
         </hbox>
         <hbox id="center" style="background-color:rgb(255,255,255)">
 
