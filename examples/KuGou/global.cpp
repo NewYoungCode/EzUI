@@ -4,4 +4,3 @@ namespace global {
 	int page = 1;
 	bool nextPage = true;
 }
-Image* mvicon = NULL;

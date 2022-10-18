@@ -25,14 +25,7 @@ namespace EzUI {
 	extern IDWriteFactory* g_WriteFactory;
 	extern IWICImagingFactory* g_ImageFactory;
 	extern int Dpi;
-#define __Rect RenderType::Rect
-#define __RectF RenderType::RectF
-#define __Color RenderType::Color
-#define __Point RenderType::Point
-#define __PointF RenderType::PointF
-#define __ARGB RenderType::ARGB
-#define __Size RenderType::Size
-#define __SizeF RenderType::SizeF
+
 	template<typename T>
 	class DxSafeObject {
 	public:
@@ -56,7 +49,7 @@ namespace EzUI {
 		IDWriteTextFormat* value = NULL;
 	public:
 		TextFormat(const std::wstring& fontFamily, int fontSize, TextAlign textAlign) {
-			auto fh = MulDiv(fontSize, Dpi, 72);
+			float fh = (float)MulDiv((int)fontSize, Dpi, 72);
 			g_WriteFactory->CreateTextFormat(fontFamily.c_str(), NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fh, L"", &value);
 #define __Top DWRITE_PARAGRAPH_ALIGNMENT_NEAR
 #define	__Bottom DWRITE_PARAGRAPH_ALIGNMENT_FAR
@@ -170,7 +163,7 @@ namespace EzUI {
 			DWRITE_TEXT_METRICS textMetrics;
 			value->GetMetrics(&textMetrics);
 			D2D1_SIZE_F size = D2D1::SizeF(ceil(textMetrics.widthIncludingTrailingWhitespace), ceil(textMetrics.height));
-			return  __Size{ (int)(size.width+ 0.5) ,(int)((size.height / textMetrics.lineCount)+ 0.5)};
+			return  __Size{ (int)(size.width + 0.5) ,(int)((size.height / textMetrics.lineCount) + 0.5) };
 		}
 		IDWriteTextLayout* operator->() {
 			return value;
@@ -209,8 +202,8 @@ namespace EzUI {
 			g_Direct2dFactory->CreateRectangleGeometry(rectF, (ID2D1RectangleGeometry**)&rgn);
 		}
 		/*	Geometry(const __Rect& rect) :Geometry(rect.X, rect.Y, rect.Width, rect.Height) {};*/
-		Geometry(int x, int y, int width, int height, int radius) {
-			radius = radius / 2.0;
+		Geometry(int x, int y, int width, int height, int _radius) {
+			float radius = _radius / 2.0f;
 			D2D1_ROUNDED_RECT rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) ,radius ,radius };
 			g_Direct2dFactory->CreateRoundedRectangleGeometry(rectF, (ID2D1RoundedRectangleGeometry**)&rgn);
 		}
@@ -287,10 +280,10 @@ namespace EzUI {
 		virtual void DrawBitmap(ID2D1Bitmap* d2dBitmap, const  __Rect& rect);
 	public:
 		static D2D_COLOR_F ToColorF(const  __Color& color) {
-			FLOAT&& aF = color.GetA() == 255 ? 1.0 : FLOAT(color.GetA() * 0.003921);
-			FLOAT&& rF = FLOAT(color.GetR() * 0.003921);
-			FLOAT&& gF = FLOAT(color.GetG() * 0.003921);
-			FLOAT&& bF = FLOAT(color.GetB() * 0.003921);
+			FLOAT aF = color.GetA() == 255 ? 1.0f : FLOAT(color.GetA() * 0.003921f);
+			FLOAT rF = FLOAT(color.GetR() * 0.003921);
+			FLOAT gF = FLOAT(color.GetG() * 0.003921);
+			FLOAT bF = FLOAT(color.GetB() * 0.003921);
 			return D2D1::ColorF(rF, gF, bF, aF);
 		}
 		static D2D_RECT_F ToRectF(const __Rect& rect) {
@@ -304,7 +297,7 @@ namespace EzUI {
 		void FillRectangle(const  __Rect& rect, const  __Color& color, int radius = 0);
 		void DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const  __Color& color, const  __Rect& rect, EzUI::TextAlign textAlign, bool underLine = false);
 		void DrawTextLayout(const __Point&, IDWriteTextLayout* textLayout, const __Color& color);
-		void DrawTextLayout(const __Point&pt, TextLayout* textLayout, const __Color& color) {
+		void DrawTextLayout(const __Point& pt, TextLayout* textLayout, const __Color& color) {
 			DrawTextLayout(pt, textLayout->value, color);
 		}
 		void DrawLine(const  __Color& color, const  __Point& A, const  __Point& B, int width = 1);
@@ -322,6 +315,7 @@ namespace EzUI {
 		void PopLayer();
 		void PushAxisAlignedClip(const __Rect& rectBounds, EzUI::ClipMode clipMode = EzUI::ClipMode::Valid);
 		void PopAxisAlignedClip();
+		void Flush();
 		ID2D1SolidColorBrush* GetSolidColorBrush(const __Color& _color);
 		void BeginDraw();
 		void EndDraw();

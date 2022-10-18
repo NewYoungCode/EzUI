@@ -1,26 +1,5 @@
 ﻿#include "BorderlessWindow.h"
 namespace EzUI {
-	LRESULT __ZoomWindow2(const HWND& _hWnd, const  LPARAM& lParam) {
-		RECT rc;
-		GetWindowRect(_hWnd, &rc);
-		POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
-		int x = 4;//
-		if (pt.x < rc.left + x)
-		{
-			if (pt.y < rc.top + x)return HTTOPLEFT;//
-			if (pt.y >= rc.bottom - x)return HTBOTTOMLEFT;//
-			return HTLEFT;//
-		}
-		if (pt.x >= rc.right - x)//
-		{
-			if (pt.y < rc.top + x)return HTTOPRIGHT;//
-			if (pt.y >= rc.bottom - x)return HTBOTTOMRIGHT;//
-			return HTRIGHT;//
-		}
-		if (pt.y < rc.top + x)return HTTOP;//
-		if (pt.y >= rc.bottom - x)return HTBOTTOM;//
-		return HTCLIENT;//ָ
-	}
 	BorderlessWindow::BorderlessWindow(int width, int height, HWND owner) : Window(width, height, owner, WS_POPUP | WS_MINIMIZEBOX, NULL)
 	{
 		_boxShadow = new ShadowWindow(width, height, Hwnd());
@@ -59,7 +38,7 @@ namespace EzUI {
 		{
 		case WM_NCHITTEST: {
 			if (!::IsZoomed(Hwnd()) && Zoom) {
-				return __ZoomWindow2(Hwnd(), lParam);
+				return ZoomWindow(lParam);
 			}
 			break;
 		}

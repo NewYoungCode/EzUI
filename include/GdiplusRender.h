@@ -17,14 +17,7 @@
 #include "RenderType.h"
 namespace EzUI {
 
-#define __Rect RenderType::Rect
-#define __RectF RenderType::RectF
-#define __Color RenderType::Color
-#define __Point RenderType::Point
-#define __PointF RenderType::PointF
-#define __ARGB RenderType::ARGB
-#define __Size RenderType::Size
-#define __SizeF RenderType::SizeF
+
 
 	extern int Dpi;
 
@@ -80,7 +73,7 @@ namespace EzUI {
 			HRESULT hr = ::ScriptStringAnalyse(m_hDc,
 				text->c_str(),
 				cString,
-				(1.5 * cString + 16),
+				(INT)(1.5 * cString + 16),
 				-1,
 				SSA_GLYPHS | SSA_BREAK | SSA_FALLBACK | SSA_LINK,
 				0,
@@ -96,7 +89,7 @@ namespace EzUI {
 		__Point HitTestTextPosition(int textPos, BOOL A_isTrailingHit) {
 
 			__Size box = GetFontSize();
-			int y = (maxSize.Height - box.Height) / 2.0;//保证上下是居中的
+			FLOAT y = (maxSize.Height - box.Height) / 2.0f;//保证上下是居中的
 
 			int x = 0;
 			HRESULT ret = ::ScriptStringCPtoX(m_Analysis, textPos, A_isTrailingHit, &x);
@@ -105,23 +98,22 @@ namespace EzUI {
 			}
 
 
-
-			return { x,y };
+			return { x,(INT)y };
 		}
 		__Point HitTestPoint(__Point point_Start, int& A_TextPos, BOOL& A_isTrailingHit) {
 
 			__Size box = GetFontSize();
-			int y = (maxSize.Height - box.Height) / 2.0;//保证上下是居中的
+			FLOAT y = (maxSize.Height - box.Height) / 2.0f;//保证上下是居中的
 			if (point_Start.X >= box.Width) {//如果超过了边界
 				A_TextPos = text->length() - 1;
 				A_isTrailingHit = true;
-				return { box.Width,y };
+				return { box.Width,(INT)y };
 			}
 			::ScriptStringXtoCP(m_Analysis, point_Start.X, &A_TextPos, &A_isTrailingHit);
 			int outX = 0;
 			::ScriptStringCPtoX(m_Analysis, A_TextPos, A_isTrailingHit, &outX);
 
-			return { outX,y };
+			return { outX,(INT)y };
 		}
 		__Size GetFontSize() {
 			const SIZE* sz = ::ScriptString_pSize(m_Analysis);
@@ -276,7 +268,7 @@ namespace EzUI {
 			Gdiplus::TextureBrush tb(&img);
 			Gdiplus::GraphicsPath path;
 			CreateRectangle(path, Bound, Radius);//申明
-			tb.TranslateTransform(Bound.X, Bound.Y);//纹理偏移
+			tb.TranslateTransform((FLOAT)Bound.X, (FLOAT)Bound.Y);//纹理偏移
 			render->FillPath(&tb, &path);
 
 			//清理工作
@@ -319,6 +311,7 @@ namespace EzUI {
 		Gdiplus::SolidBrush* GetSolidBrush(const __Color& color);
 		void PushAxisAlignedClip(const __Rect& rect, ClipMode clipMode = ClipMode::Valid);
 		void PopAxisAlignedClip();
+		void Flush();
 		HFONT CreateHFont(const std::wstring& fontFamily, int fontSize, HDC DC, bool lfUnderline = false);
 		void DrawLine(const __Color& color, const __Point& A, const __Point& B, int width = 1);
 		void DrawImage(IImage* image, const __Rect& destRect, const __Rect& srcRect);

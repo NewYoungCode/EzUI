@@ -52,7 +52,7 @@ namespace EzUI {
 				goto ImagingFactoryInit;
 			}
 			CHAR buf[256]{ 0 };
-			sprintf_s(buf, "Code 0x%p", hr);
+			sprintf_s(buf, "Code 0x%p", (void*)hr);
 			::MessageBoxA(NULL, "Failed to create IWICImagingFactory", buf, MB_ICONSTOP);
 		}
 
@@ -175,7 +175,7 @@ namespace EzUI {
 			::ReleaseDC(hWnd, DC);
 		}
 	}
-	void Direct2DRender::DrawRectangle(const  __Rect& _rect, const  __Color& color, int width, int radius)
+	void Direct2DRender::DrawRectangle(const  __Rect& _rect, const  __Color& color, int width, int _radius)
 	{
 		if (color.GetValue() == 0) {
 			return;
@@ -185,8 +185,8 @@ namespace EzUI {
 		rect.Y += OffsetY;
 
 		auto sb = GetSolidColorBrush(color);
-		if (radius > 0) {
-			radius = radius / 2.0;
+		if (_radius > 0) {
+			float radius = _radius / 2.0f;
 			D2D1_ROUNDED_RECT roundRect{ ToRectF(rect), radius, radius };
 			d2dRender->DrawRoundedRectangle(roundRect, sb);
 		}
@@ -194,7 +194,7 @@ namespace EzUI {
 			d2dRender->DrawRectangle(ToRectF(rect), sb);
 		}
 	}
-	void Direct2DRender::FillRectangle(const __Rect& _rect, const __Color& color, int radius)
+	void Direct2DRender::FillRectangle(const __Rect& _rect, const __Color& color, int _radius)
 	{
 		if (color.GetValue() == 0) {
 			return;
@@ -204,8 +204,8 @@ namespace EzUI {
 		rect.Y += OffsetY;
 
 		auto sb = GetSolidColorBrush(color);
-		if (radius > 0) {
-			radius = radius / 2.0;
+		if (_radius > 0) {
+			float radius = _radius / 2.0f;
 			D2D1_ROUNDED_RECT roundRect{ ToRectF(rect), radius, radius };
 			d2dRender->FillRoundedRectangle(roundRect, sb);
 		}
@@ -251,6 +251,9 @@ namespace EzUI {
 	void Direct2DRender::PopAxisAlignedClip() {//弹出最后一个裁剪
 		d2dRender->PopAxisAlignedClip();
 	}
+	void Direct2DRender::Flush() {//弹出最后一个裁剪
+		d2dRender->Flush();
+	}
 	void Direct2DRender::DrawLine(const __Color& color, const __Point& _A, const __Point& _B, int width)
 	{
 		__Point A = _A;
@@ -285,59 +288,9 @@ namespace EzUI {
 
 		image->DecodeOfRender(d2dRender);
 
-		if (imageSizeMode == ImageSizeMode::Zoom) {
-			//客户端数据
-			const int& clientWidth = rect.Width;
-			const int& clientHeight = rect.Height;
-			double clientRate = clientWidth * 1.0 / clientHeight;
-			//图片数据
-			int imgWidth = image->GetWidth();
-			int imgHeight = image->GetHeight();
-			double imgRate = imgWidth * 1.0 / imgHeight;
-			if (clientRate < imgRate) {
-				double zoomHeight = clientWidth * 1.0 / imgWidth * imgHeight + 0.5;
-				__Size sz{ clientWidth,(INT)zoomHeight };
-				int y = (clientHeight - sz.Height) / 2 + rect.Y;
-				this->DrawBitmap(image->d2dBitmap, __Rect{ rect.X  ,y, sz.Width, sz.Height });
-			}
-			else {
-				double zoomWidth = clientHeight * 1.0 / imgHeight * imgWidth + 0.5;
-				__Size sz{ (INT)zoomWidth,clientHeight };
-				int x = (clientWidth - sz.Width) / 2 + rect.X;
-				this->DrawBitmap(image->d2dBitmap, __Rect{ x  , rect.Y, sz.Width, sz.Height });
-			}
-			return;
-		}
-		if (imageSizeMode == ImageSizeMode::CenterImage) {
-			//客户端数据
-			const int& clientWidth = rect.Width;
-			const int& clientHeight = rect.Height;
-			double clientRate = clientWidth * 1.0 / clientHeight;
-			//图片数据
-			int imgWidth = image->GetWidth();
-			int imgHeight = image->GetHeight();
-			double imgRate = imgWidth * 1.0 / imgHeight;
-			if (clientRate < imgRate) {
-				//1000 670 客户端
-				//1000 300 图片
-				//2233 670     缩放后的图片大小 
-				int zoomWidth = clientHeight * 1.0 / imgHeight * imgWidth + 0.5;//图片应该这么宽才对
-				int x = (zoomWidth - clientWidth) * 1.0 / 2 + 0.5;
-				this->DrawBitmap(image->d2dBitmap, __Rect{ rect.X - x,rect.Y,zoomWidth,clientHeight });
-			}
-			else {
-				//1000 600 客户端
-				//400  600 图片
-				//1000 1500     缩放后的图片大小 
-				int zoomHeight = clientWidth * 1.0 / imgWidth * imgHeight + 0.5;//图片应该这么高才对
-				int y = (zoomHeight - clientHeight) * 1.0 / 2 + 0.5;
-				this->DrawBitmap(image->d2dBitmap, __Rect{ rect.X,  rect.Y - y  , clientWidth, zoomHeight });
-			}
-			return;
-		}
-		if (imageSizeMode == ImageSizeMode::StretchImage || true) {
-			this->DrawBitmap(image->d2dBitmap, rect);
-		}
+		__Size imgSize(image->GetWidth(), image->GetHeight());
+		__Rect drawRect = EzUI::Transformation(imageSizeMode, rect, imgSize);
+		this->DrawBitmap(image->d2dBitmap, drawRect);
 	}
 	void Direct2DRender::BeginDraw()
 	{

@@ -47,13 +47,8 @@ namespace EzUI {
 		Control* BuildControl(TiXmlElement* node) {
 			Control* ctl = NULL;
 			std::string valueStr(node->ValueTStr().c_str());
-			for (size_t i = 0; i < valueStr.size(); i++)
-			{
-				char& ch = (char&)valueStr.c_str()[i];
-				if (ch >= 65 && ch <= 90) {
-					ch += 32;
-				}
-			}
+			EString::Tolower(&valueStr);
+
 			do
 			{
 				if (valueStr == "control") {
@@ -339,7 +334,7 @@ namespace EzUI {
 		}
 		void LoadStyle(Control* ctl, ControlState styleState) {
 			EString _class = ctl->GetAttribute("class");
-			EString::Replace(_class, "  ", " ");
+			EString::Replace(&_class, "  ", " ");
 			auto classs = _class.Split(" ");
 			for (auto& className : classs) {
 				//类样式中找

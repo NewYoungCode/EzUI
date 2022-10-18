@@ -41,7 +41,7 @@ namespace EzUI {
 
 		Rect sliderRect(0, 0, Width(), Height());
 		sliderRect.X = X();
-		sliderRect.Y = sliderY;
+		sliderRect.Y = (INT)sliderY;
 		sliderRect.Height = _sliderHeight;
 		return sliderRect;
 	}
@@ -72,7 +72,7 @@ namespace EzUI {
 	{
 		//»¬¿érect
 		Rect sliderRect(0, 0, Width(), Height());
-		sliderRect.Y = sliderY;
+		sliderRect.Y = (INT)sliderY;
 		sliderRect.Height = _sliderHeight;
 		if (_sliderHeight >= Height()) {
 			return;
@@ -91,7 +91,7 @@ namespace EzUI {
 	void VScrollBar::OnMouseDown(MouseButton mBtn, const Point& point) {
 		__super::OnMouseDown(mBtn, point);
 
-		Rect sliderRect(0, sliderY, Width(), _sliderHeight);
+		Rect sliderRect(0, (INT)sliderY, Width(), _sliderHeight);
 		if (_sliderHeight == Height()) { return; }
 		if (mBtn == MouseButton::Left && sliderRect.Contains({ point.X,point.Y })) {
 			mouseDown = true;

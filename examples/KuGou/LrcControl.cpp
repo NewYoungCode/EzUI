@@ -58,7 +58,7 @@ void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
 			if (LrcNow == &lrc)
 			{
 				//arg.Painter.DrawRectangle(Color::Red, rectangle);
-				arg.Painter.DrawString(lrc.text.utf16(), GetFontFamily().utf16(), GetFontSize() + 3, Color(211, 174, 87), rectangle, TextAlign::MiddleCenter);
+				arg.Painter.DrawString(lrc.text.utf16(), GetFontFamily().utf16(), GetFontSize() + 0, Color(211, 174, 87), rectangle, TextAlign::MiddleCenter);
 			}
 			else
 			{

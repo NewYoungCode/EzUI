@@ -1,4 +1,4 @@
-#include "Window.h"
+ï»¿#include "Window.h"
 #include "TabLayout.h"
 namespace EzUI {
 #define _focusControl PublicData._focusControl
@@ -11,17 +11,17 @@ namespace EzUI {
 		::GetMonitorInfo(::MonitorFromWindow(_hWnd, MONITOR_DEFAULTTONEAREST), &monitor);
 
 		const RECT& rcWork = monitor.rcWork;
-		int sw = rcWork.right - rcWork.left;//µ±Ç°¹¤×÷ÇøÓòµÄ¿í
-		int sh = rcWork.bottom - rcWork.top;//µ±Ç°¹¤×÷ÇøÓòµÄ¸ß
-		_rect.X = rcWork.left + (sw - width) / 2;//±£Ö¤×óÓÒ¾ÓÖĞ
-		_rect.Y = rcWork.top + (sh - height) / 2;//±£Ö¤ÉÏÏÂ¾ÓÖĞ
+		int sw = rcWork.right - rcWork.left;//å½“å‰å·¥ä½œåŒºåŸŸçš„å®½
+		int sh = rcWork.bottom - rcWork.top;//å½“å‰å·¥ä½œåŒºåŸŸçš„é«˜
+		_rect.X = rcWork.left + (sw - width) / 2;//ä¿è¯å·¦å³å±…ä¸­
+		_rect.Y = rcWork.top + (sh - height) / 2;//ä¿è¯ä¸Šä¸‹å±…ä¸­
 		_rect.Width = width;
 		_rect.Height = height;
 
 		_hWnd = ::CreateWindowEx(ExStyle | WS_EX_ACCEPTFILES, UI_CLASSNAME, UI_CLASSNAME, dStyle,
 			_rect.X, _rect.Y, width, height, owner, NULL, GetModuleHandle(NULL), NULL);
 
-		InitData(ExStyle);//ÉèÖÃ»ù±¾Êı¾İ
+		InitData(ExStyle);//è®¾ç½®åŸºæœ¬æ•°æ®
 	}
 
 	Window::~Window()
@@ -217,7 +217,7 @@ namespace EzUI {
 		case WM_NOTIFY: {
 			LPNMTTDISPINFO lpnmttdi = (LPNMTTDISPINFO)lParam;
 			if (lpnmttdi->hdr.code == TTN_GETDISPINFO) {
-				//À¹½ØÃ°ÅİÌáÊ¾ÎÄ×Ö
+				//æ‹¦æˆªå†’æ³¡æç¤ºæ–‡å­—
 			}
 			break;
 		}
@@ -306,7 +306,7 @@ namespace EzUI {
 			OnMouseMove({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 			//Debug::Log("message OnMouseMove");
 			_mouseIn = true;
-			//¸øhwndTip·¢ËÍÏûÏ¢¸æËßÏÖÔÚÒÆ¶¯µ½Ê²Ã´Î»ÖÃÁË
+			//ç»™hwndTipå‘é€æ¶ˆæ¯å‘Šè¯‰ç°åœ¨ç§»åŠ¨åˆ°ä»€ä¹ˆä½ç½®äº†
 			//SendMessage(_hWndTip, TTM_TRACKPOSITION, 0, lParam);
 			break;
 		}
@@ -320,10 +320,10 @@ namespace EzUI {
 			OnMouseDown(MouseButton::Right, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 			break;
 		}
-	/*	case WM_LBUTTONDBLCLK: {
-			OnMouseDoubleClick(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
-			break;
-		}*/
+		/*	case WM_LBUTTONDBLCLK: {
+				OnMouseDoubleClick(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+				break;
+			}*/
 		case WM_LBUTTONUP:
 		{
 			OnMouseUp(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
@@ -446,7 +446,7 @@ namespace EzUI {
 			tti.rect = ctl->ClipRect.WinRECT();
 			tti.uId = (UINT_PTR)ctl;
 			tti.lpszText = (LPTSTR)text.c_str();
-			//Ìí¼ÓÒ»¸ötipsĞÅÏ¢
+			//æ·»åŠ ä¸€ä¸ªtipsä¿¡æ¯
 			SendMessage(_hWndTip, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
 		};
 		PublicData.DelTips = [=](Control* ctl)->void {
@@ -454,25 +454,25 @@ namespace EzUI {
 			tti.cbSize = sizeof(TOOLINFO);
 			tti.hwnd = _hWnd;
 			tti.uId = (UINT_PTR)ctl;
-			//ÒÆ³ı
+			//ç§»é™¤
 			SendMessage(_hWndTip, TTM_DELTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
 		};
 
 		PublicData.GetCursor = [=]()->Cursor {
-			return (Cursor)::GetClassLongPtr(_hWnd, GCL_HCURSOR);//»ñÈ¡Êó±ê×´Ì¬
+			return (Cursor)::GetClassLongPtr(_hWnd, GCL_HCURSOR);//è·å–é¼ æ ‡çŠ¶æ€
 		};
 
 		PublicData.SetCursor = [=](Cursor cursor)->void {
 			bool inEnum = cursor == Cursor::APPSTARTING || cursor == Cursor::ARROW || cursor == Cursor::CROSS || cursor == Cursor::HAND || cursor == Cursor::HELP || cursor == Cursor::IBEAM || cursor == Cursor::ICON || cursor == Cursor::NO || cursor == Cursor::SIZE || cursor == Cursor::SIZEALL || cursor == Cursor::SIZENESW || cursor == Cursor::SIZENS || cursor == Cursor::SIZENWSE || cursor == Cursor::SIZEWE || cursor == Cursor::UPARROW || cursor == Cursor::WAIT;
-			if (inEnum) {//ÅĞ¶ÏÔÚ²»ÔÚÔ¤ÉèÖĞ
-				::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)::LoadCursor(NULL, (LPTSTR)(cursor)));//ÉèÖÃÊó±êÑùÊ½
+			if (inEnum) {//åˆ¤æ–­åœ¨ä¸åœ¨é¢„è®¾ä¸­
+				::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)::LoadCursor(NULL, (LPTSTR)(cursor)));//è®¾ç½®é¼ æ ‡æ ·å¼
 			}
 			else {
 				::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)cursor);//
 			}
 		};
 
-		//´´½¨Ã°ÅİÌáÊ¾´°¿Ú
+		//åˆ›å»ºå†’æ³¡æç¤ºçª—å£
 		_hWndTip = CreateWindowEx(WS_EX_TOPMOST,
 			TOOLTIPS_CLASS,
 			NULL,
@@ -555,7 +555,7 @@ namespace EzUI {
 
 	void Window::OnMouseMove(const Point& point)
 	{
-		if (_focusControl && _mouseDown) { //°´×¡ÒÆ¶¯µÄ¿Ø¼ş
+		if (_focusControl && _mouseDown) { //æŒ‰ä½ç§»åŠ¨çš„æ§ä»¶
 			auto ctlRect = _focusControl->GetClientRect();
 			MouseEventArgs args(Event::OnMouseMove, { point.X - ctlRect.X ,point.Y - ctlRect.Y });
 			_focusControl->Trigger(args);
@@ -563,17 +563,17 @@ namespace EzUI {
 		}
 
 		Point relativePoint;
-		Control* outCtl = FindControl(point, relativePoint);//ÕÒµ½µ±Ç°¿Ø¼şµÄÎ»ÖÃ
+		Control* outCtl = FindControl(point, relativePoint);//æ‰¾åˆ°å½“å‰æ§ä»¶çš„ä½ç½®
 		MouseEventArgs args;
 		args.Location = relativePoint;
 
-		if (_focusControl && (outCtl != _focusControl)) {//ÈÃÉÏÒ»´Î¾ßÓĞ½¹µãµÄ¿Ø¼ş´¥·¢ÒÆ³öÊÂ¼ş
+		if (_focusControl && (outCtl != _focusControl)) {//è®©ä¸Šä¸€æ¬¡å…·æœ‰ç„¦ç‚¹çš„æ§ä»¶è§¦å‘ç§»å‡ºäº‹ä»¶
 			args.EventType = Event::OnMouseLeave;
 			_focusControl->Trigger(args);
 		}
 
 		if (outCtl) {
-			//ÈÃĞÂ¿Ø¼ş´¥·¢Êó±êÒÆ¶¯ÊÂ¼ş
+			//è®©æ–°æ§ä»¶è§¦å‘é¼ æ ‡ç§»åŠ¨äº‹ä»¶
 			args.EventType = Event::OnMouseMove;
 			outCtl->Trigger(args);
 		}
@@ -654,12 +654,12 @@ namespace EzUI {
 		args.EventType = Event::OnMouseDown;
 		outCtl->Trigger(args);
 
-		{ //×öË«»÷ÏûÏ¢´¦Àí
+		{ //åšåŒå‡»æ¶ˆæ¯å¤„ç†
 			auto _time = std::chrono::system_clock::now();
 			auto diff = _time - _lastDownTime;
 			auto timeOffset = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//
 			_lastDownTime = _time;
-			if (timeOffset < 300) {//300ºÁÃëÖ®ÄÚµ¥»úÁ½´ÎËãË«»÷ÏûÏ¢
+			if (timeOffset < 300) {//300æ¯«ç§’ä¹‹å†…å•æœºä¸¤æ¬¡ç®—åŒå‡»æ¶ˆæ¯
 				_lastDownCtl = outCtl;
 				_lastDownTime = std::chrono::system_clock::from_time_t(0);
 				_mouseDbClick = &relativePoint;
@@ -672,15 +672,37 @@ namespace EzUI {
 		}
 		_focusControl = outCtl;
 
-		if (_inputControl && _inputControl != _focusControl) { //ÊäÈë½¹µã¸ü»»
-			_inputControl->OnKillFocus();//¸øÉÏÒ»¸öÊäÈë½¹µã´¥·¢Ê§È¥½¹µãµÄÊÂ¼ş
+		if (_inputControl && _inputControl != _focusControl) { //è¾“å…¥ç„¦ç‚¹æ›´æ¢
+			_inputControl->OnKillFocus();//ç»™ä¸Šä¸€ä¸ªè¾“å…¥ç„¦ç‚¹è§¦å‘å¤±å»ç„¦ç‚¹çš„äº‹ä»¶
 		}
 		_inputControl = _focusControl;
 
 	}
 
+	LRESULT Window::ZoomWindow(const  LPARAM& lParam) {
+		RECT rc;
+		GetWindowRect(Hwnd(), &rc);
+		POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
+		int x = 4;//
+		if (pt.x < rc.left + x)
+		{
+			if (pt.y < rc.top + x)return HTTOPLEFT;//
+			if (pt.y >= rc.bottom - x)return HTBOTTOMLEFT;//
+			return HTLEFT;//
+		}
+		if (pt.x >= rc.right - x)//
+		{
+			if (pt.y < rc.top + x)return HTTOPRIGHT;//
+			if (pt.y >= rc.bottom - x)return HTBOTTOMRIGHT;//
+			return HTRIGHT;//
+		}
+		if (pt.y < rc.top + x)return HTTOP;//
+		if (pt.y >= rc.bottom - x)return HTBOTTOM;//
+		return HTCLIENT;//Ö¸
+	}
+
 	void Window::MoveWindow() {
-		::ReleaseCapture();//»áµ¼ÖÂavtiveStyleÊ§Ğ§
+		::ReleaseCapture();//ä¼šå¯¼è‡´avtiveStyleå¤±æ•ˆ
 		SendMessage(_hWnd, 161, 2, NULL);
 		SendMessage(_hWnd, 0x0202, 0, NULL);
 	}
@@ -695,14 +717,14 @@ namespace EzUI {
 			args.Button = mbtn;
 			args.Location = { point.X - ctlRect.X,point.Y - ctlRect.Y };
 			args.EventType = Event::OnMouseUp;
-			_focusControl->Trigger(args);//´¥·¢Êó±êÌ§ÆğÊÂ¼ş
+			_focusControl->Trigger(args);//è§¦å‘é¼ æ ‡æŠ¬èµ·äº‹ä»¶
 
-			if (_focusControl) {//Èç¹û½¹µã»¹ÔÚ ´¥·¢clickÊÂ¼ş
+			if (_focusControl) {//å¦‚æœç„¦ç‚¹è¿˜åœ¨ è§¦å‘clickäº‹ä»¶
 				args.EventType = Event::OnMouseClick;
 				_focusControl->Trigger(args);
 			}
 
-			if (_focusControl && !ctlRect.Contains(point))//Èç¹û½¹µã»¹ÔÚ µ«ÊÇÊó±êÒÑ¾­²»ÔÚ¿Ø¼ş¾ØĞÎÄÚ ´¥·¢Êó±êÒÆ³öÊÂ¼ş
+			if (_focusControl && !ctlRect.Contains(point))//å¦‚æœç„¦ç‚¹è¿˜åœ¨ ä½†æ˜¯é¼ æ ‡å·²ç»ä¸åœ¨æ§ä»¶çŸ©å½¢å†… è§¦å‘é¼ æ ‡ç§»å‡ºäº‹ä»¶
 			{
 				args.EventType = Event::OnMouseLeave;
 				_focusControl->Trigger(args);

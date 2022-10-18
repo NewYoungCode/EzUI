@@ -98,7 +98,7 @@ namespace EzUI {
 		const int& GetFixedHeight();//获取绝对高度
 		virtual const Rect& GetRect();//获取相对与父控件矩形 布局计算后
 		Rect GetClientRect();//获取基于客户端的矩形
-		const bool& IsPendLayout();//是否含有挂起的布局
+		bool IsPendLayout();//是否含有挂起的布局
 		void TryPendLayout();//尝试挂起布局
 		void EndLayout();//结束布局
 		void SetRect(const Rect& rect);//设置相对父控件矩形

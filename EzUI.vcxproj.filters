@@ -129,6 +129,9 @@
     <ClInclude Include="include\PoupWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="include\UIInterface.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Control.cpp">
@@ -228,6 +231,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="EString.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="UIInterface.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

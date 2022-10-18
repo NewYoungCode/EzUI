@@ -391,7 +391,7 @@ Event(this , ##__VA_ARGS__); \
 		return false;
 	}
 
-	const bool& Control::IsPendLayout() {
+	 bool Control::IsPendLayout() {
 		return this->_layoutState == LayoutState::Pend;
 	}
 
@@ -401,7 +401,7 @@ Event(this , ##__VA_ARGS__); \
 		}
 	}
 	void Control::EndLayout() {
-		this->_layoutState == LayoutState::None;
+		this->_layoutState = LayoutState::None;
 	}
 
 	Rect Control::GetClientRect() {
@@ -625,15 +625,14 @@ Event(this , ##__VA_ARGS__); \
 		pt.OffsetY = clientRect.Y;//设置偏移
 
 		if (ShadowWidth > 0) {
-			//pt.EndDraw();//如果是Direct2D绘制那么必须先结束绘制 相当于先Flush画面到DC里面
+			pt.Flush();
 			BoxShadow bs(Width(), Height(), ShadowWidth);
 			auto sz = bs.GetSize();
 			BLENDFUNCTION blendFunc{ 0 };
 			blendFunc.SourceConstantAlpha = 255;
 			blendFunc.BlendOp = AC_SRC_OVER;
 			blendFunc.AlphaFormat = AC_SRC_ALPHA;
-			//::AlphaBlend(args., pt.OffsetX - ShadowWidth, pt.OffsetY - ShadowWidth, sz.Width, sz.Height, bs._bufBitmap->GetDC(), 0, 0, sz.Width, sz.Height, blendFunc);
-			//pt.BeginDraw();//继续绘制剩下的内容
+			::AlphaBlend(args.DC, pt.OffsetX - ShadowWidth, pt.OffsetY - ShadowWidth, sz.Width, sz.Height, bs._bufBitmap->GetDC(), 0, 0, sz.Width, sz.Height, blendFunc);
 		}
 
 		int r = GetRadius();

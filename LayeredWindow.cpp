@@ -1,27 +1,7 @@
 ﻿#include "LayeredWindow.h"
 
 namespace EzUI {
-	LRESULT __ZoomWindow(const HWND& _hWnd, const  LPARAM& lParam) {
-		RECT rc;
-		GetWindowRect(_hWnd, &rc);
-		POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
-		int x = 4;//
-		if (pt.x < rc.left + x)
-		{
-			if (pt.y < rc.top + x)return HTTOPLEFT;//
-			if (pt.y >= rc.bottom - x)return HTBOTTOMLEFT;//
-			return HTLEFT;//
-		}
-		if (pt.x >= rc.right - x)//
-		{
-			if (pt.y < rc.top + x)return HTTOPRIGHT;//
-			if (pt.y >= rc.bottom - x)return HTBOTTOMRIGHT;//
-			return HTRIGHT;//
-		}
-		if (pt.y < rc.top + x)return HTTOP;//
-		if (pt.y >= rc.bottom - x)return HTBOTTOM;//
-		return HTCLIENT;//ָ
-	}
+
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
 	LayeredWindow::LayeredWindow(int cx, int cy, HWND owner) :Window(cx, cy, owner, WS_POPUP | WS_MINIMIZEBOX, WS_EX_LAYERED)
 	{
@@ -133,7 +113,7 @@ namespace EzUI {
 		}
 		if (uMsg == WM_NCHITTEST) {
 			if (!::IsZoomed(Hwnd()) && Zoom) {
-				return __ZoomWindow(Hwnd(), lParam);
+				return ZoomWindow(lParam);
 			}
 		}
 		return __super::WndProc(uMsg, wParam, lParam);

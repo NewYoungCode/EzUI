@@ -48,6 +48,16 @@
         fore-image: "imgs/search.png";
     }
 
+    #btns {
+        font-family: "Marlett";
+        font-size: 13;
+        color: #dddddd;
+    }
+
+        #btns:hover {
+            font-size: 13;
+            color: #ffffff;
+        }
 </style>
 <vbox style="background-color:#029BE9" id="main">
     <vbox id="main2">
@@ -97,8 +107,8 @@
                             <label halign="left" text="歌曲名"></label>
                             <label halign="left" width="184" text="专辑"></label>
                             <spacer width="15"></spacer>
-                            <label  width="50" text="热度"></label>
-                            <label halign="left"  width="60"  text="时长"></label>
+                            <label width="50" text="热度"></label>
+                            <label halign="left" width="60" text="时长"></label>
 
                         </hbox>
                         <vlist id="searchList"></vlist>
@@ -109,23 +119,26 @@
             </vbox>
         </hbox>
         <hbox id="bottom" height="67">
-            <spacer width="17"></spacer>
-            <label width="38" height="38" id="up"></label>
-            <spacer width="18"></spacer>
 
-            <tablayout id="control"  width="46" height="46">
-                <label  id="play"></label>
-                <label  id="pause"></label>
-            </tablayout>
+            <hbox width="256">
 
-            <spacer width="18"></spacer>
-            <label width="38" height="38" id="next"></label>
-            <spacer width="24"></spacer>
+                <spacer width="47"></spacer>
+                <label width="38" height="38" id="up"></label>
+                <spacer width="18"></spacer>
+
+                <tablayout id="control" width="46" height="46">
+                    <label id="play"></label>
+                    <label id="pause"></label>
+                </tablayout>
+
+                <spacer width="18"></spacer>
+                <label width="38" height="38" id="next"></label>
+                <spacer width="24"></spacer>
+            </hbox>
 
             <label id="singer" width="53" height="53">
 
             </label>
-
             <spacer width="10"></spacer>
 
             <vbox style="color:rgb(255,255,255)" class="a b  c   ddd">

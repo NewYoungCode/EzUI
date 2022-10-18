@@ -22,7 +22,7 @@ namespace EzUI {
 		}
 		else {
 			//»¬¿é¸ß¶È
-			_sliderWidth = rect.Width * 1.0 * rect.Width / _maxRight;
+			_sliderWidth =(int)(rect.Width * 1.0 * rect.Width / _maxRight);
 		}
 		Move(sliderX);
 	}
@@ -40,7 +40,7 @@ namespace EzUI {
 
 	Rect HScrollBar::GetSliderRect() {
 		Rect sliderRect(0, 0, Width(), Height());
-		sliderRect.X = sliderX;
+		sliderRect.X = (INT)sliderX;
 		sliderRect.Y = 0;
 		sliderRect.Width = _sliderWidth;
 		return sliderRect;
@@ -70,7 +70,7 @@ namespace EzUI {
 	{
 		//»¬¿érect
 		Rect sliderRect(0, 0,Width(), Height());
-		sliderRect.X = sliderX;
+		sliderRect.X = (INT)sliderX;
 		sliderRect.Width = _sliderWidth;
 		if (_sliderWidth >= Width()) {
 			return;
@@ -88,7 +88,7 @@ namespace EzUI {
 
 	void HScrollBar::OnMouseDown(MouseButton mBtn, const Point& point) {
 		__super::OnMouseDown(mBtn, point);
-		Rect sliderRect(sliderX, 0, _sliderWidth, Width());
+		Rect sliderRect((INT)sliderX, 0, _sliderWidth, Width());
 		if (_sliderWidth == Width()) { return; }
 		if (mBtn == MouseButton::Left && sliderRect.Contains({ point.X,point.Y })) {
 			mouseDown = true;

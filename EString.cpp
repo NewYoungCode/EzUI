@@ -14,14 +14,7 @@ namespace EzUI {
 	EString::EString() {}
 	EString::EString(const std::string& str, int codePage) :std::string() {
 		if ((codePage == EString::ANSI) && (::GetACP() != CP_UTF8)) {
-			int nwLen = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.size(), NULL, 0);
-			wchar_t* pwBuf = new wchar_t[nwLen + 1];
-			ZeroMemory(pwBuf, nwLen * 2 + 2);
-			::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.length(), pwBuf, nwLen);
-			int nLen = ::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, NULL, NULL, NULL, NULL);
-			this->resize(nLen);
-			::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, (char*)this->c_str(), nLen, NULL, NULL);
-			delete[]pwBuf;
+			EString::ANSIToUTF8(str, this);
 		}
 		else {
 			this->resize(str.size());
@@ -32,14 +25,7 @@ namespace EzUI {
 		if (szbuf == NULL)return;
 		size_t len = ::strlen(szbuf);
 		if ((codePage == EString::ANSI) && (::GetACP() != CP_UTF8)) {
-			int nwLen = ::MultiByteToWideChar(CP_ACP, 0, szbuf, len, NULL, 0);
-			wchar_t* pwBuf = new wchar_t[nwLen + 1];
-			ZeroMemory(pwBuf, nwLen * 2 + 2);
-			::MultiByteToWideChar(CP_ACP, 0, szbuf, len, pwBuf, nwLen);
-			int nLen = ::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, NULL, NULL, NULL, NULL);
-			this->resize(nLen);
-			::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, (char*)this->c_str(), nLen, NULL, NULL);
-			delete[]pwBuf;
+			EString::ANSIToUTF8(szbuf, this);
 		}
 		else
 		{
@@ -49,93 +35,53 @@ namespace EzUI {
 	}
 	EString::EString(const wchar_t* szbuf) {
 		if (szbuf == NULL)return;
-		size_t len = ::lstrlenW(szbuf);
-		int bytes = ::WideCharToMultiByte(CP_UTF8, 0, szbuf, len, NULL, 0, NULL, NULL);
-		this->resize(bytes);
-		WideCharToMultiByte(CP_UTF8, 0, szbuf, len, (char*)this->c_str(), bytes, NULL, NULL);
+		EString::UnicodeToUTF8(szbuf, this);
 	}
 	EString::EString(const std::wstring& wstr) {
-		int bytes = ::WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
-		this->resize(bytes);
-		WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), (char*)this->c_str(), bytes, NULL, NULL);
+		EString::UnicodeToUTF8(wstr,this);
 	}
-
-	EString EString::Erase(CHAR _char)const {
-		const EString& self = *this;
-		CHAR* bufStr = new CHAR[self.size()]{ 0 };
-		size_t pos = 0;
-		for (auto& it : self) {
-			if (_char == it)continue;
-			bufStr[pos] = it;
-			pos++;
-		}
-		EString newStr(bufStr);
-		delete bufStr;
+	
+	//常用函数
+	EString EString::Erase(const char& _char)const {
+		EString newStr(*this);
+		EString::Erase(&newStr, _char);
 		return newStr;
 	}
-	std::vector<EString> EString::Split(const EString& ch_)const {
-
-		const EString& str = *this;
-
-		std::vector<EString> arr;
-		if (str.empty()) return arr;
-		EString buf = str;
-		size_t pos = buf.find(ch_);
-		if (pos == EString::npos) {
-			arr.push_back(str);
-			return arr;
-		}
-		for (; pos != EString::npos;) {
-			auto item = buf.substr(0, pos);
-			if (!item.empty()) {
-				arr.push_back(item);
-			}
-			buf = buf.erase(0, pos + ch_.size());
-			pos = buf.find(ch_);
-			if (pos == std::string::npos) {
-				arr.push_back(buf);
-			}
-		}
+	std::vector<std::string> EString::Split(const EString& ch_)const {
+		std::vector<std::string> arr;
+		EString::Split(*this, ch_, &arr);
 		return arr;
 	}
 	EString EString::Replace(const EString& oldText, const EString& newText) const
 	{
 		EString newStr = *this;
-		EString::Replace(newStr, oldText, newText);
+		EString::Replace(&newStr, oldText, newText);
 		return newStr;
 	}
 	EString EString::Tolower() const
 	{
 		EString str(*this);
-		for (size_t i = 0; i < str.size(); i++)
-		{
-			char& ch = (char&)str.c_str()[i];
-			if (ch >= 65 && ch <= 90) {
-				ch += 32;
-			}
-		}
+		EString::Tolower(&str);
 		return str;
 	}
 	EString EString::Toupper() const
 	{
 		EString str(*this);
-		for (size_t i = 0; i < str.size(); i++)
-		{
-			char& ch = (char&)str.c_str()[i];
-			if (ch >= 97 && ch <= 122) {
-				ch -= 32;
-			}
-		}
+		EString::Toupper(&str);
 		return str;
 	}
 	std::wstring EString::utf16() const {
-		int textlen = MultiByteToWideChar(CP_UTF8, 0, this->c_str(), this->size(), NULL, 0);
 		std::wstring wstr;
-		wstr.resize(textlen);
-		MultiByteToWideChar(CP_UTF8, 0, this->c_str(), this->size(), (WCHAR*)wstr.c_str(), textlen);
+		EString::UTF8ToUnicode(*this, &wstr);
 		return wstr;
 	}
+	std::string EString::ansi() const {
+		std::string str;
+		EString::UTF8ToANSI(*this, &str);
+		return str;
+	}
 
+	//以下是静态函数
 	void EString::ANSIToUniCode(const std::string& str, std::wstring* outStr)
 	{
 		std::wstring& wstrCmd = *outStr;
@@ -143,26 +89,123 @@ namespace EzUI {
 		wstrCmd.resize(bytes);
 		bytes = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.size(), const_cast<wchar_t*>(wstrCmd.c_str()), wstrCmd.size());
 	}
-	void EString::UnicodeToANSI(const std::wstring& wstr, std::string*outStr)
+	void EString::ANSIToUTF8(const std::string& str, std::string* outStr)
 	{
-		std::string &strCmd=*outStr;
+		int nwLen = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, NULL, 0);
+		wchar_t* pwBuf = new wchar_t[nwLen + 1];
+		ZeroMemory(pwBuf, nwLen * 2 + 2);
+		::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.length(), pwBuf, nwLen);
+		int nLen = ::WideCharToMultiByte(CP_UTF8, 0, pwBuf, -1, NULL, NULL, NULL, NULL);
+		char* pBuf = new char[nLen + 1];
+		ZeroMemory(pBuf, nLen + 1);
+		::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, pBuf, nLen, NULL, NULL);
+		*outStr = pBuf;
+		delete[]pwBuf;
+		delete[]pBuf;
+	}
+	void EString::UnicodeToANSI(const std::wstring& wstr, std::string* outStr)
+	{
+		std::string& strCmd = *outStr;
 		int bytes = ::WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
 		strCmd.resize(bytes);
-		bytes = ::WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), const_cast<char*>(strCmd.data()), strCmd.size(), NULL, NULL);
+		bytes = ::WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), const_cast<char*>(strCmd.c_str()), strCmd.size(), NULL, NULL);
 	}
-
-	size_t EString::Replace(EString& str, const EString& oldText, const EString& newText)
+	void EString::UnicodeToUTF8(const std::wstring& wstr, std::string* outStr)
 	{
-		EString& newStr = str;
+		int bytes = ::WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
+		std::string& strCmd=*outStr;
+		strCmd.resize(bytes);
+		bytes = ::WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), const_cast<char*>(strCmd.c_str()), strCmd.size(), NULL, NULL);
+	}
+	void EString::UTF8ToANSI(const std::string& str, std::string* outStr) {
+		int nwLen = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
+		wchar_t* pwBuf = new wchar_t[nwLen + 1];
+		memset(pwBuf, 0, nwLen * 2 + 2);
+		MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), pwBuf, nwLen);
+		int nLen = WideCharToMultiByte(CP_ACP, 0, pwBuf, -1, NULL, NULL, NULL, NULL);
+		char* pBuf = new char[nLen + 1];
+		memset(pBuf, 0, nLen + 1);
+		WideCharToMultiByte(CP_ACP, 0, pwBuf, nwLen, pBuf, nLen, NULL, NULL);
+		*outStr = pBuf;
+		delete[]pBuf;
+		delete[]pwBuf;
+	}
+	void EString::UTF8ToUnicode(const std::string& str, std::wstring* outStr) {
+		int newLen = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
+		wchar_t* buffer = new wchar_t[newLen + 1] {0};
+		::MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, buffer, newLen);
+		*outStr = buffer;
+		delete[] buffer;
+	}
+	void EString::Tolower(std::string* str_in_out)
+	{
+		std::string& str = *str_in_out;
+		for (size_t i = 0; i < str.size(); i++)
+		{
+			char& ch = (char&)str.c_str()[i];
+			if (ch >= 65 && ch <= 90) {
+				ch += 32;
+			}
+		}
+	}
+	void EString::Toupper(std::string* str_in_out)
+	{
+		std::string& str = *str_in_out;
+		for (size_t i = 0; i < str.size(); i++)
+		{
+			char& ch = (char&)str.c_str()[i];
+			if (ch >= 97 && ch <= 122) {
+				ch -= 32;
+			}
+		}
+	}
+	void EString::Erase(std::string* str_in_out, const char& _char) {
+		const EString& self = *str_in_out;
+		char* bufStr = new char[self.size() + 1] { 0 };
+		size_t pos = 0;
+		for (auto& it : self) {
+			if (_char == it)continue;
+			bufStr[pos] = it;
+			pos++;
+		}
+		*str_in_out = bufStr;
+		delete[] bufStr;
+	}
+	void EString::Replace(std::string* str_in_out, const std::string& oldText, const std::string& newText)
+	{
+		std::string& newStr = *str_in_out;
 		size_t pos;
-		pos = str.find(oldText);
-		size_t count = 0;
+		pos = newStr.find(oldText);
 		for (; pos != std::string::npos;) {
 			newStr.replace(pos, oldText.size(), newText);
-			count++;
 			pos = newStr.find(oldText);
 		}
-		return count;
+	}
+	void EString::Split(const std::string& str_in, const std::string& ch_, std::vector<std::string>* strs_out) {
+
+		std::vector<std::string>& arr = *strs_out;
+		arr.clear();
+		if (str_in.empty()) return;
+
+		std::string buf = str_in;
+		size_t pos = buf.find(ch_);
+		if (pos == std::string::npos) {
+			arr.push_back(buf);
+			return;
+		}
+		for (; pos != std::string::npos;) {
+			auto item = buf.substr(0, pos);
+			if (!item.empty()) {
+				arr.push_back(item);
+			}
+			buf = buf.erase(0, pos + ch_.size());
+			pos = buf.find(ch_);
+			if (pos == std::string::npos) {
+				if (!buf.empty()) {
+					arr.push_back(buf);
+				}
+			}
+		}
 	}
 
 };

@@ -20,7 +20,7 @@ namespace EzUI {
 		size_t AddItem(const EString& text);
 		void RemoveItem(size_t pos);
 	protected:
-		virtual void OnMouseClick(const MouseButton btn, const Point& pt) override;
+		virtual void OnMouseClick( MouseButton btn, const Point& pt) override;
 		virtual void OnLoad() override;
 		virtual void OnLayout()override;
 	};

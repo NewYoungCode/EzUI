@@ -27,15 +27,18 @@ struct Song {
 	int QualityLevel;//ÈÈ¶È
 };
 
-extern Image* mvicon;
-
 class SongItem :public HBox {
 public:
 	Label songName;
 	Label time;
 	Label del;
+	virtual ~SongItem() {
+		if (del.Style.ForeImage) {
+			delete del.Style.ForeImage;
+		}
+	}
 	SongItem(const EString& _songName, const EString& _songTime = "03:56") {
-
+		//this->ShadowWidth = 5;
 		del.Style.ForeImage = new Image(L"imgs/del.png");
 		del.SetFixedSize({20,20});
 		del.Cursor = Cursor::HAND;
@@ -87,6 +90,16 @@ class SongItem2 :public HBox {
 	Song song;
 	Label del;
 public:
+
+	virtual ~SongItem2() {
+		if (mv.Style.ForeImage) {
+			delete mv.Style.ForeImage;
+		}
+		if (del.Style.BackgroundImage) {
+			delete del.Style.BackgroundImage;
+		}
+	}
+
 	SongItem2(const Song& s) {
 
 		song = s;
@@ -116,7 +129,7 @@ public:
 		mv.MousePassThrough = Event::OnHover;
 		if (!s.MvHash.empty()) {
 			mv.SetAttribute("mvhash", s.MvHash);
-			mv.Style.ForeImage = mvicon;
+			mv.Style.ForeImage = new Image(L"imgs/mvicon.png");;
 			mv.Style.ForeImage.value->Padding = 8;
 			mv.Cursor = Cursor::HAND;
 		}
@@ -145,7 +158,6 @@ public:
 		AddControl(new HSpacer(5));
 		AddControl(&time);
 		AddControl(new HSpacer(5));
-
 	}
 };
 namespace global {

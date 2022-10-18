@@ -47,9 +47,10 @@ void MainFrm::InitForm() {
 	searchList->ScrollBar->Style.BackgroundColor = Color(50, 200, 200, 200);
 	searchList->ScrollBar->Style.ForeColor = Color(250, 200, 200, 200);
 	searchList->ScrollBar->ActiveStyle.ForeColor = Color(250, 200, 200, 200);
-	//集体设置右上角的最大化 最小化 关闭按钮
-	$(this->FindControl("btns")->GetControls()).Css("font-family:\"Marlett\";font-size:13;color:#dddddd;");
-	$(this->FindControl("btns")->GetControls()).Css("hover{font-size:13;color:#ffffff;}");
+	//集体设置右上角的最大化 最小化 关闭按钮 的悬浮效果
+
+	$(this->FindControl("btns")->GetControls()).Css("hover{color:#ffffff;}");
+	
 
 	cfg = new ConfigIni(Path::StartPath() + "\\list.ini");
 
@@ -136,7 +137,7 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 	{
 		EString singerBkImg = cache + "\\" + SingerName + "_headImg.jpg";
 		WebClient wc2;
-		auto code = wc2.DownloadFile(headImageUrl.Replace("{size}", "400"), Text::UTF8ToANSI(singerBkImg).c_str());
+		auto code = wc2.DownloadFile(headImageUrl.Replace("{size}", "400"), singerBkImg.ansi());
 		if (code == 200) {
 			headImg = new Image(singerBkImg.utf16());
 		}
@@ -174,7 +175,7 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 		if (!bkurl.empty()) {
 			EString singerBkImg = cache + "\\" + SingerName + ".jpg";
 			WebClient wc2;
-			wc2.DownloadFile(bkurl, Text::UTF8ToANSI(singerBkImg).c_str());
+			wc2.DownloadFile(bkurl, singerBkImg.ansi());
 			bkImage = new Image(singerBkImg.utf16());
 		}
 		else {
@@ -229,10 +230,9 @@ bool MainFrm::OnNotify(Control* sender,  EventArgs& args) {
 		if (!sender->GetAttribute("FileHash").empty()) {
 			EString hash = sender->GetAttribute("FileHash");
 			EString url = "http://m.kugou.com/app/i/getSongInfo.php?hash={hash}&cmd=playInfo";
-			EString::Replace(url, "{hash}", hash);
+			EString::Replace(&url, "{hash}", hash);
 			EString resp;
 			global::HttpGet(url, resp);
-			auto gb = Text::UTF8ToANSI(resp);
 			auto id = std::this_thread::get_id();
 			int idd = *(int*)&id;
 			timer->Stop();

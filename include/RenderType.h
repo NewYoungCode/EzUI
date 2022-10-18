@@ -481,7 +481,7 @@ namespace EzUI {
 			}
 			Point GetLocation() const
 			{
-				return Point{X,Y};
+				return Point{ X,Y };
 			}
 
 			VOID GetSize(OUT Size* size) const
@@ -608,14 +608,14 @@ namespace EzUI {
 				IN const Rect& a,
 				IN const Rect& b)
 			{
-			/*	if (a.IsEmptyArea()) {
-					c = b;
-					return !c.IsEmptyArea();
-				}
-				else if (b.IsEmptyArea()) {
-					c = a;
-					return !c.IsEmptyArea();
-				}*/
+				/*	if (a.IsEmptyArea()) {
+						c = b;
+						return !c.IsEmptyArea();
+					}
+					else if (b.IsEmptyArea()) {
+						c = a;
+						return !c.IsEmptyArea();
+					}*/
 
 				INT right = max(a.GetRight(), b.GetRight());
 				INT bottom = max(a.GetBottom(), b.GetBottom());
@@ -1040,12 +1040,11 @@ namespace EzUI {
 		size_t GetHSpace() {
 			return Left + Right;
 		}
-	} Margin,Padding;
+	} Margin, Padding;
 	enum class ClipMode {
 		Valid = 0,//Gdiplus::CombineMode::CombineModeReplace,//设置有效区域
 		Invalid = 4// Gdiplus::CombineMode::CombineModeExclude,//设置无效区域
 	};
-
 	enum class ImageSizeMode {
 		//
 		// 摘要:
@@ -1141,4 +1140,62 @@ namespace EzUI {
 	public:
 		virtual ~IImage() {}
 	};
+
+	inline RenderType::Rect Transformation(ImageSizeMode imageSizeMode, const RenderType::Rect& rect, const RenderType::Size& imgSize) {
+
+		if (imageSizeMode == ImageSizeMode::StretchImage) {
+			return rect;
+		}
+
+		//客户端数据
+		float clientWidth = (float)rect.Width;
+		float clientHeight = (float)rect.Height;
+		float clientRate = clientWidth / clientHeight;
+		//图片数据
+		float imgWidth = (float)imgSize.Width;
+		float imgHeight = (float)imgSize.Height;
+		float imgRate = imgWidth / imgHeight;
+
+		if (imageSizeMode == ImageSizeMode::Zoom) {
+			if (clientRate < imgRate) {
+				float zoomHeight = clientWidth / imgWidth * imgHeight + 0.5f;
+				RenderType::SizeF sz{ clientWidth,zoomHeight };
+				float y = (clientHeight - sz.Height) / 2 + rect.Y;
+				return RenderType::Rect{ rect.X  ,(INT)y, (INT)sz.Width, (INT)sz.Height };
+			}
+			else {
+				float zoomWidth = clientHeight / imgHeight * imgWidth + 0.5f;
+				RenderType::SizeF sz{ zoomWidth,clientHeight };
+				float x = (clientWidth - sz.Width) / 2 + rect.X;
+				return RenderType::Rect{ (INT)x  , rect.Y, (INT)sz.Width, (INT)sz.Height };
+			}
+		}
+		if (imageSizeMode == ImageSizeMode::CenterImage) {
+			if (clientRate < imgRate) {
+				//1000 670 客户端
+				//1000 300 图片
+				//2233 670     缩放后的图片大小 
+				float zoomWidth = clientHeight / imgHeight * imgWidth + 0.5f;//图片应该这么宽才对
+				float x = (zoomWidth - clientWidth) / 2 + 0.5f;
+				return RenderType::Rect{ (INT)(rect.X - x),rect.Y,(INT)zoomWidth,(INT)clientHeight };
+			}
+			else {
+				//1000 600 客户端
+				//400  600 图片
+				//1000 1500     缩放后的图片大小 
+				float zoomHeight = clientWidth / imgWidth * imgHeight + 0.5f;//图片应该这么高才对
+				float y = (zoomHeight - clientHeight) / 2 + 0.5f;
+				return RenderType::Rect{ rect.X, (INT)(rect.Y - y)  , (INT)clientWidth, (INT)zoomHeight };
+			}
+		}
+		return rect;
+	}
+#define __Rect RenderType::Rect
+#define __RectF RenderType::RectF
+#define __Color RenderType::Color
+#define __Point RenderType::Point
+#define __PointF RenderType::PointF
+#define __ARGB RenderType::ARGB
+#define __Size RenderType::Size
+#define __SizeF RenderType::SizeF
 };

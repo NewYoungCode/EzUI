@@ -73,7 +73,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//	player.Play();
 	//};
 
-	mvicon = new Image(L"imgs/mvicon.png");
+
 	MainFrm frm;
 	//frm.Tag = (UINT_PTR)&player;
 	frm.Show();

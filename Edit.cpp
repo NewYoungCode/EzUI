@@ -1,5 +1,4 @@
 #include "Edit.h"
-#include "EzUI.h"
 namespace EzUI {
 #define FontHeight  FontBox.Height
 	Edit::~Edit() {
@@ -57,8 +56,8 @@ namespace EzUI {
 				//获取剪贴板数据
 				HANDLE hClipboard = GetClipboardData(CF_TEXT);
 				EString buf((CHAR*)GlobalLock(hClipboard));
-				EString::Replace(buf, "\r", "");//行编辑框不允许有换行符
-				EString::Replace(buf, "\n", "");//行编辑框不允许有换行符
+				EString::Replace(&buf, "\r", "");//行编辑框不允许有换行符
+				EString::Replace(&buf, "\n", "");//行编辑框不允许有换行符
 				std::wstring wBuf;
 
 				EString::ANSIToUniCode(buf, &wBuf);
@@ -141,7 +140,7 @@ namespace EzUI {
 	}
 	void Edit::Insert(const std::wstring& str) {
 		if (TextPos < 0)TextPos = 0;
-		if (TextPos > text.size()) {
+		if (TextPos > (int)text.size()) {
 			TextPos = text.size();
 		}
 		text.insert(TextPos, str);
@@ -263,7 +262,7 @@ namespace EzUI {
 		if (TextPos < 0) {
 			TextPos = 0;
 		}
-		if (TextPos > text.size()) {
+		if (TextPos > (int)text.size()) {
 			TextPos = text.size();
 		}
 		/*char buf[256]{ 0 };
