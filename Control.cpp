@@ -886,27 +886,28 @@ Event(this , ##__VA_ARGS__); \
 	{
 		UI_TRIGGER(MouseDoubleClick, mbtn, point);
 	}
+	void Control::Trigger(const MouseEventArgs& args)
+	{
+		OnMouseEvent(args);
+	}
+	void Control::Trigger(const KeyboardEventArgs& args)
+	{
+		OnKeyBoardEvent(args);
+	}
+
+	void Control::AddEventNotify(int eventType) {
+		_eventNotify = _eventNotify | eventType;
+	}
+	void Control::RemoveEventNotify(int eventType) {
+		_eventNotify = _eventNotify & ~eventType;
+	}
+
 	void Control::OnMouseEnter(const Point& point)
 	{
 		this->State = ControlState::Hover;
-
 		if (HoverStyle.IsValid()) {
 			_stateRepaint = true;
 			Invalidate();
-		}
-		else {
-			Control* pControl = this->Parent;
-			ControlStyle* _style = NULL;
-			while (pControl)
-			{
-				_style = &pControl->HoverStyle;
-				if (_style && _style->IsValid()) {
-					_stateRepaint = true;
-					Invalidate();
-					break;
-				}
-				pControl = pControl->Parent;
-			}
 		}
 		if (PublicData) {
 			if (Cursor != Cursor::None) {//鼠标移入的时候判断是否有设置状态
@@ -919,24 +920,6 @@ Event(this , ##__VA_ARGS__); \
 		}
 		UI_TRIGGER(MouseEnter, point);
 	}
-	void Control::Trigger(const MouseEventArgs& args)
-	{
-		OnMouseEvent(args);
-	}
-	void Control::Trigger(const KeyboardEventArgs& args)
-	{
-		OnKeyBoardEvent(args);
-	}
-
-	void Control::AddEventNotify(int eventType) {
-
-		_eventNotify = _eventNotify | eventType;
-	}
-
-	void Control::RemoveEventNotify(int eventType) {
-		_eventNotify = _eventNotify & ~eventType;
-	}
-
 	void Control::OnMouseDown(MouseButton mbtn, const Point& point)
 	{
 		this->State = ControlState::Active;
@@ -944,48 +927,22 @@ Event(this , ##__VA_ARGS__); \
 			_stateRepaint = true;
 			Invalidate();
 		}
-		else {
-			Control* pControl = this->Parent;
-			ControlStyle* _style = NULL;
-			while (pControl)
-			{
-				_style = &pControl->ActiveStyle;
-				if (_style && _style->IsValid()) {
-					_stateRepaint = true;
-					Invalidate();
-					break;
-				}
-				pControl = pControl->Parent;
-			}
-		}
 		UI_TRIGGER(MouseDown, mbtn, point);
 	}
 	void Control::OnMouseUp(MouseButton mbtn, const Point& point)
 	{
-		if (this->State != ControlState::None && Rect(0, 0, _rect.Width, _rect.Height).Contains(point)) {
-			this->State = ControlState::Hover;
-			if (_stateRepaint) {
-				Invalidate();
-			}
-		}
-		else if (this->State != ControlState::None) {
-			this->State = ControlState::None;
-			_stateRepaint = true;
+		this->State = ControlState::Hover;
+		if (_stateRepaint) {
 			Invalidate();
 		}
 		UI_TRIGGER(MouseUp, mbtn, point);
 	}
 	void Control::OnMouseLeave()
 	{
-		if (this->State != ControlState::None) {
-			this->State = ControlState::None;//重置状态
-			if (_stateRepaint) {
-			Invalidate();//重置状态之后刷新
+		this->State = ControlState::None;
+		if (_stateRepaint) {
 			_stateRepaint = false;
-			}
-		}
-		else {
-			this->State = ControlState::None;//鼠标离开无论如何都要重置状态
+			Invalidate();
 		}
 		if (_LastCursor != Cursor::None) {//如果此控件已经设置过鼠标指针样式 则 鼠标移出 的时候需要恢复成之前的状态
 			PublicData->SetCursor(_LastCursor);

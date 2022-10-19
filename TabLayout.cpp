@@ -23,9 +23,11 @@ namespace EzUI {
 			(*i)->SetRect(Rect(0, 0, Width(), Height()));
 			if (pos == index) {
 				(*i)->Visible = true;
+				//(*i)->Trigger(Event::OnMouseEnter);
 				_index = pos;
 			}
 			else {
+				//(*i)->Trigger(Event::OnMouseLeave);
 				(*i)->Visible = false;
 			}
 			pos++;

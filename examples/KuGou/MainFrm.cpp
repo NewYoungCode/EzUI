@@ -361,6 +361,9 @@ void MainFrm::Task() {
 
 		if (control->GetPageIndex() != 1) {
 			control->SetPageIndex(1);
+			control->ResumeLayout();
+			control->GetControl(1)->Trigger(Event::OnMouseEnter);
+
 			control->Invalidate();
 		}
 		if (fen != lastFen) {
@@ -378,6 +381,8 @@ void MainFrm::Task() {
 
 		if (control->GetPageIndex() != 0) {
 			control->SetPageIndex(0);
+			control->ResumeLayout();
+			control->GetControl(0)->Trigger(Event::OnMouseEnter);
 			control->Invalidate();
 		}
 	}

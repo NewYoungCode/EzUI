@@ -326,14 +326,19 @@ namespace EzUI {
 			}*/
 		case WM_LBUTTONUP:
 		{
-			OnMouseUp(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+			Point pt(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			OnMouseUp(MouseButton::Left,pt);
+			OnMouseClick(MouseButton::Left, pt);
 			break;
 		}
 		case WM_RBUTTONUP:
 		{
-			OnMouseUp(MouseButton::Right, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+			Point pt(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			OnMouseUp(MouseButton::Right, pt);
+			OnMouseClick(MouseButton::Right, pt);
 			break;
 		}
+
 		case WM_MOUSELEAVE:
 		{
 			_mouseIn = false;
@@ -723,14 +728,31 @@ namespace EzUI {
 				args.EventType = Event::OnMouseClick;
 				_focusControl->Trigger(args);
 			}
-
 			if (_focusControl && !ctlRect.Contains(point))//如果焦点还在 但是鼠标已经不在控件矩形内 触发鼠标移出事件
 			{
 				args.EventType = Event::OnMouseLeave;
 				_focusControl->Trigger(args);
 			}
+
+			//_focusControl = NULL;
+			//OnMouseMove(point);
 		}
 	}
+
+	void Window::OnMouseClick(MouseButton mbtn, const Point& point) {
+		return;
+		Point relativePoint;
+		Control* outCtl = FindControl(point, relativePoint);//找到当前控件的位置
+		if (outCtl) {
+			MouseEventArgs args;
+			args.Location = relativePoint;
+			args.EventType = Event::OnMouseClick;
+			args.Button = mbtn;
+			outCtl->Trigger(args);
+		}
+		OnMouseMove(point);
+	}
+
 	void Window::OnSize(const Size& sz)
 	{
 #ifdef COUNT_ONSIZE
@@ -745,7 +767,7 @@ namespace EzUI {
 		OutputDebugStringA(buf);
 #endif
 
-	}
+}
 
 	void Window::OnRect(const Rect& rect)
 	{
