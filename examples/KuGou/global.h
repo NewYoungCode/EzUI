@@ -107,7 +107,7 @@ public:
 		SetAttribute("FileHash", s.hash);
 		SetAttribute("SingerName", s.SingerName);
 
-		SetTips(s.SongName);
+		//SetTips(s.SongName);
 		SetFixedHeight(35);
 		Style.BorderBottom = 1;
 		Style.BorderColor = Color(245, 245, 245);

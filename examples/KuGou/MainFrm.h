@@ -8,7 +8,7 @@ class MainFrm :
 	public Form
 {
 private:
-	Timer* timer = NULL;
+	Windows::Timer* timer = NULL;
 	VlcPlayer player;
 	void InitForm();
 	VList* localList;

@@ -122,8 +122,6 @@ namespace EzUI {
 		UIFunc<bool(Control*, EventArgs&)> Notify = NULL;//
 		UIFunc<void(Control*, const std::wstring&)> SetTips = NULL;//设置悬浮提示文字
 		UIFunc<void(Control*)> DelTips = NULL;//移除悬浮提示文字
-		UIFunc<Cursor()> GetCursor = NULL;//获取鼠标样式
-		UIFunc<void(Cursor)> SetCursor = NULL;//设置鼠标样式
 		UIFunc<void(Control*)> RemoveControl = NULL;//清空控件标记等等...
 	};
 	struct StopWatch {
@@ -416,11 +414,11 @@ namespace EzUI {
 		template<typename ...T>
 		inline void Log(const EString& formatStr, T ...args) {
 #ifdef DEBUGLOG
-			WCHAR buf[1025]{ 0 };
-			auto count = swprintf_s((buf), 1024, formatStr.utf16().c_str(), std::forward<T>(args)...);
+			char buf[1025]{ 0 };
+			auto count = sprintf_s((buf), 1024, formatStr.c_str(), std::forward<T>(args)...);
 			buf[count] = '\n';
 			buf[count + 1] = NULL;
-			OutputDebugStringW(buf);
+			OutputDebugStringW(EString(buf).utf16().c_str());
 #endif
 		}
 	};

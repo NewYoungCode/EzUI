@@ -531,7 +531,10 @@ Event(this , ##__VA_ARGS__); \
 
 #define CONTROL_IN_WINDOW (winData->_inputControl || winData->_focusControl)
 		if (CONTROL_IN_WINDOW && CheckEventPassThrough(args.EventType)) {//检查鼠标穿透
-			this->Parent->OnMouseEvent(args);//如果设置了穿透就直接发送给上一层控件
+			MouseEventArgs copy_args = args;
+			copy_args.Location.X += this->X();
+			copy_args.Location.Y += this->Y();
+			this->Parent->OnMouseEvent(copy_args);//如果设置了穿透就直接发送给上一层控件
 		}
 
 		bool b1 = this->CheckEventNotify(args.EventType);//先检查是否标记通知到主窗口
@@ -563,10 +566,10 @@ Event(this , ##__VA_ARGS__); \
 		}
 		case Event::OnMouseMove: {
 			if (!_mouseIn) {
-				MouseEventArgs _args = args;
-				_args.EventType = Event::OnMouseEnter;
-				OnMouseEvent(_args);
 				_mouseIn = true;
+				MouseEventArgs copy_args = args;
+				copy_args.EventType = Event::OnMouseEnter;
+				OnMouseEvent(copy_args);
 			}
 			if (CONTROL_IN_WINDOW) {
 				OnMouseMove(args.Location);
@@ -706,6 +709,9 @@ Event(this , ##__VA_ARGS__); \
 
 	Control::~Control()
 	{
+		if (_hCursor) {
+			::DestroyCursor(_hCursor);
+		}
 		//销毁控件前请先将控件从父容器中移除
 		if (this->ScrollBar) {
 			delete ScrollBar;
@@ -815,7 +821,6 @@ Event(this , ##__VA_ARGS__); \
 			if (winData) {
 				Rect _InvalidateRect = GetClientRect();
 				Rect::Union(_InvalidateRect, _lastDrawRect, _InvalidateRect);
-				//Debug::Log("%d %d %d %d", _InvalidateRect.X, _InvalidateRect.Y, _InvalidateRect.Width, _InvalidateRect.Height);
 				winData->InvalidateRect(&_InvalidateRect);
 				return true;
 			}
@@ -902,6 +907,22 @@ Event(this , ##__VA_ARGS__); \
 		_eventNotify = _eventNotify & ~eventType;
 	}
 
+	void Control::SetCursor(const EString& fileName) {
+		if (_hCursor) {
+			::DestroyCursor(_hCursor);
+		}
+		_hCursor = ::LoadCursorFromFileW(fileName.utf16().c_str());
+	}
+	HCURSOR Control::GetCursor() {
+		if (_hCursor) {
+			return _hCursor;
+		}
+		if (this->Cursor != EzUI::Cursor::None) {
+			_hCursor = ::LoadCursor(NULL, (LPTSTR)this->Cursor);
+		}
+		return _hCursor;
+	}
+
 	void Control::OnMouseEnter(const Point& point)
 	{
 		this->State = ControlState::Hover;
@@ -910,10 +931,6 @@ Event(this , ##__VA_ARGS__); \
 			Invalidate();
 		}
 		if (PublicData) {
-			if (Cursor != Cursor::None) {//鼠标移入的时候判断是否有设置状态
-				_LastCursor = PublicData->GetCursor();//记录之前的状态
-				PublicData->SetCursor(Cursor);//设置状态
-			}
 			if (!_tipsText.empty()) {//设置提示文字
 				PublicData->SetTips(this, _tipsText);
 			}
@@ -943,10 +960,6 @@ Event(this , ##__VA_ARGS__); \
 		if (_stateRepaint) {
 			_stateRepaint = false;
 			Invalidate();
-		}
-		if (_LastCursor != Cursor::None) {//如果此控件已经设置过鼠标指针样式 则 鼠标移出 的时候需要恢复成之前的状态
-			PublicData->SetCursor(_LastCursor);
-			_LastCursor = Cursor::None;
 		}
 		UI_TRIGGER(MouseLeave);
 	}

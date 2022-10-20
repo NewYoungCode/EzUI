@@ -12,7 +12,7 @@ namespace EzUI {
 		//布局状态AddControl丶RemoveControl丶OnSize时候此标志为挂起 调用ResumeLayout标志为布局中 当调用OnLayout()之后此标志为None
 		EzUI::LayoutState _layoutState = EzUI::LayoutState::None;
 		std::wstring _tipsText;//鼠标悬浮的提示文字
-		Cursor _LastCursor = EzUI::Cursor::None;//上一次鼠标的样式
+		HCURSOR _hCursor = NULL;//鼠标样式
 		Point _lastLocation;//上一次大小
 		Size _lastSize;//上一次大小
 		Rect _lastRect;
@@ -111,6 +111,8 @@ namespace EzUI {
 		void Trigger(const KeyboardEventArgs& args);//触发键盘相关消息
 		void AddEventNotify(int eventType);//添加到主窗口ontify函数中可拦截
 		void RemoveEventNotify(int eventType);
+		void SetCursor(const EString& fileName);
+		HCURSOR GetCursor();
 	public:
 		Control();
 		virtual ~Control();

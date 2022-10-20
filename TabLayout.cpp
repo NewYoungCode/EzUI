@@ -10,7 +10,6 @@ namespace EzUI {
 
 	void TabLayout::OnLayout()
 	{
-
 		SetPageIndex(_index);
 	}
 
@@ -21,14 +20,10 @@ namespace EzUI {
 		for (auto i = GetControls().begin(); i != GetControls().end(); i++)
 		{
 			(*i)->SetRect(Rect(0, 0, Width(), Height()));
+			(*i)->Visible = false;
 			if (pos == index) {
 				(*i)->Visible = true;
-				//(*i)->Trigger(Event::OnMouseEnter);
 				_index = pos;
-			}
-			else {
-				//(*i)->Trigger(Event::OnMouseLeave);
-				(*i)->Visible = false;
 			}
 			pos++;
 		}

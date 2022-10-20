@@ -87,7 +87,7 @@ void MainFrm::InitForm() {
 	headImg->SizeMode = ImageSizeMode::CenterImage;
 	singer->Style.BackgroundImage = headImg;
 
-	timer = new Timer;
+	timer = new Windows::Timer;
 	timer->Interval = 10;
 	timer->Tick = [=]() {
 		Task();
@@ -232,6 +232,7 @@ bool MainFrm::OnNotify(Control* sender,  EventArgs& args) {
 			EString url = "http://m.kugou.com/app/i/getSongInfo.php?hash={hash}&cmd=playInfo";
 			EString::Replace(&url, "{hash}", hash);
 			EString resp;
+			//{"errcode":30001,"status":0,"error":"data not found"}
 			global::HttpGet(url, resp);
 			auto id = std::this_thread::get_id();
 			int idd = *(int*)&id;
@@ -252,7 +253,7 @@ bool MainFrm::OnNotify(Control* sender,  EventArgs& args) {
 					it->SetAttribute("FileHash", hash);
 					it->SetAttribute("SingerName", SingerName);
 					localList->AddControl(it);
-
+					localList->ResumeLayout();
 					localList->ScrollBar->Move(localList->ScrollBar->RollingTotal());
 					localList->Invalidate();
 
@@ -281,10 +282,16 @@ bool MainFrm::OnNotify(Control* sender,  EventArgs& args) {
 
 		if (sender->Name == "play") {
 			player.Play();
+			control->SetPageIndex(1);
+			control->ResumeLayout();
+			control->Invalidate();
 			return false;
 		}
 		if (sender->Name == "pause") {
 			player.Pause();
+			control->SetPageIndex(0);
+			control->ResumeLayout();
+			control->Invalidate();
 			return false;
 		}
 		if (sender->Name == "del") {
@@ -361,9 +368,6 @@ void MainFrm::Task() {
 
 		if (control->GetPageIndex() != 1) {
 			control->SetPageIndex(1);
-			control->ResumeLayout();
-			control->GetControl(1)->Trigger(Event::OnMouseEnter);
-
 			control->Invalidate();
 		}
 		if (fen != lastFen) {
@@ -381,8 +385,6 @@ void MainFrm::Task() {
 
 		if (control->GetPageIndex() != 0) {
 			control->SetPageIndex(0);
-			control->ResumeLayout();
-			control->GetControl(0)->Trigger(Event::OnMouseEnter);
 			control->Invalidate();
 		}
 	}

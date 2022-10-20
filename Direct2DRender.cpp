@@ -264,7 +264,7 @@ namespace EzUI {
 		B.Y += OffsetY;
 
 		auto sb = GetSolidColorBrush(color);
-		d2dRender->DrawLine(D2D1_POINT_2F{ (float)A.X,(float)A.Y }, D2D1_POINT_2F{ (float)B.X,(float)B.Y }, sb);
+		d2dRender->DrawLine(D2D1_POINT_2F{ (float)A.X,(float)A.Y }, D2D1_POINT_2F{ (float)B.X,(float)B.Y }, sb, (FLOAT)width);
 
 	}
 	void Direct2DRender::DrawImage(IImage* _image, const __Rect& destRect, const __Rect& srcRect)

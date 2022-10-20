@@ -296,6 +296,20 @@ namespace EzUI {
 			OnDestroy();
 			break;
 		}
+		case WM_SETCURSOR: {
+			POINT p1{ 0 };
+			::GetCursorPos(&p1);
+			::ScreenToClient(Hwnd(), &p1);
+			Point point{ p1.x,p1.y };
+			Point relativePoint;
+			Control* outCtl = FindControl(point, relativePoint);//找到当前控件的位置
+			HCURSOR cursor = NULL;
+			if (outCtl && (cursor=outCtl->GetCursor())) {
+				::SetCursor(cursor);
+				return TRUE;
+			}
+			break;
+		}
 		case WM_MOUSEMOVE:
 		{
 			TRACKMOUSEEVENT tme;
@@ -426,9 +440,6 @@ namespace EzUI {
 		}
 
 		PublicData.RemoveControl = [=](Control* delControl)->void {
-			/*	char buf[100]{ 0 };
-				sprintf_s(buf, "RemoveControl %p\n", delControl);
-				OutputDebugStringA(buf);*/
 			if (_focusControl == delControl) {
 				_focusControl->Trigger(Event::OnMouseLeave);
 				_focusControl = NULL;
@@ -463,19 +474,18 @@ namespace EzUI {
 			SendMessage(_hWndTip, TTM_DELTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
 		};
 
-		PublicData.GetCursor = [=]()->Cursor {
-			return (Cursor)::GetClassLongPtr(_hWnd, GCL_HCURSOR);//获取鼠标状态
-		};
-
-		PublicData.SetCursor = [=](Cursor cursor)->void {
-			bool inEnum = cursor == Cursor::APPSTARTING || cursor == Cursor::ARROW || cursor == Cursor::CROSS || cursor == Cursor::HAND || cursor == Cursor::HELP || cursor == Cursor::IBEAM || cursor == Cursor::ICON || cursor == Cursor::NO || cursor == Cursor::SIZE || cursor == Cursor::SIZEALL || cursor == Cursor::SIZENESW || cursor == Cursor::SIZENS || cursor == Cursor::SIZENWSE || cursor == Cursor::SIZEWE || cursor == Cursor::UPARROW || cursor == Cursor::WAIT;
-			if (inEnum) {//判断在不在预设中
-				::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)::LoadCursor(NULL, (LPTSTR)(cursor)));//设置鼠标样式
-			}
-			else {
-				::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)cursor);//
-			}
-		};
+		//PublicData.GetCursor = [=]()->Cursor {
+		//	return (Cursor)::GetClassLongPtr(_hWnd, GCL_HCURSOR);//获取鼠标状态
+		//};
+		//PublicData.SetCursor = [=](Cursor cursor)->void {
+		//	bool inEnum = cursor == Cursor::APPSTARTING || cursor == Cursor::ARROW || cursor == Cursor::CROSS || cursor == Cursor::HAND || cursor == Cursor::HELP || cursor == Cursor::IBEAM || cursor == Cursor::ICON || cursor == Cursor::NO || cursor == Cursor::SIZE || cursor == Cursor::SIZEALL || cursor == Cursor::SIZENESW || cursor == Cursor::SIZENS || cursor == Cursor::SIZENWSE || cursor == Cursor::SIZEWE || cursor == Cursor::UPARROW || cursor == Cursor::WAIT;
+		//	if (inEnum) {//判断在不在预设中
+		//		::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)::LoadCursor(NULL, (LPTSTR)(cursor)));//设置鼠标样式
+		//	}
+		//	else {
+		//		::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)cursor);//
+		//	}
+		//};
 
 		//创建冒泡提示窗口
 		_hWndTip = CreateWindowEx(WS_EX_TOPMOST,
@@ -577,13 +587,13 @@ namespace EzUI {
 			_focusControl->Trigger(args);
 		}
 
+		_focusControl = outCtl;
 		if (outCtl) {
 			//让新控件触发鼠标移动事件
 			args.EventType = Event::OnMouseMove;
 			outCtl->Trigger(args);
 		}
 
-		_focusControl = outCtl;
 	}
 	void Window::OnMouseLeave()
 	{

@@ -85,7 +85,6 @@ namespace EzUI {
 	void VlcPlayer::OpenUrl(const EString& url)
 	{
 		if (vlc_player) {
-
 			libvlc_media_player_stop(vlc_player);//停止播放
 			libvlc_media_player_release(vlc_player);//释放之前的播放媒体器
 		}

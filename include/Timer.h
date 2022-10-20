@@ -4,7 +4,7 @@
 #include <Windows.h>
 namespace EzUI {
 	namespace Thread {
-		class Timer //另开线程做Timer
+		class Timer //另开线程做Timer 不建议处理UI相关的操作 请自行控制线程同步
 		{
 		private:
 			bool brun = false;
@@ -48,7 +48,7 @@ namespace EzUI {
 	}
 	namespace Windows {
 		static std::map<UINT_PTR, UINT_PTR> _timers;
-		class Timer {//基于主线程Timer
+		class Timer {//基于主线程Timer 在操作UI的时候建议使用此Timer类
 		public:
 			std::function<void()> Tick;
 			size_t Interval = -1;
