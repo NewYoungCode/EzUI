@@ -1,7 +1,5 @@
 #pragma once
-#include <functional>
-#include <thread>
-#include <Windows.h>
+#include "IType.h"
 namespace EzUI {
 	namespace Thread {
 		class Timer //另开线程做Timer 不建议处理UI相关的操作 请自行控制线程同步
@@ -48,25 +46,41 @@ namespace EzUI {
 	}
 	namespace Windows {
 		static std::map<UINT_PTR, UINT_PTR> _timers;
-		class Timer {//基于主线程Timer 在操作UI的时候建议使用此Timer类
+		static std::mutex _timerMtx;
+		class Timer {//在操作UI的时候建议使用此Timer类
+		private:
+			static void InsertTimer(UINT_PTR TimerId, UINT_PTR timer) {
+				_timerMtx.lock();
+				_timers.insert(std::pair<UINT_PTR, UINT_PTR>(TimerId, timer));
+				_timerMtx.unlock();
+			};
+			static void Erase(UINT_PTR iTimerID) {
+				_timerMtx.lock();
+				_timers.erase(iTimerID);
+				_timerMtx.unlock();
+			};
 		public:
-			std::function<void()> Tick;
+			std::function<void(Timer*)> Tick;
 			size_t Interval = -1;
 			UINT_PTR TimerId = 0;
 			bool started = false;
+			EString Name;
 		private:
 			static void  CALLBACK TimeProc(HWND hwnd, UINT message, UINT_PTR iTimerID, DWORD dwTime)
 			{
+				_timerMtx.lock();
 				Timer* timer = (Timer*)_timers[iTimerID];
 				if (timer && timer->Tick) {
-					timer->Tick();
+					timer->Tick(timer);
 				}
+				_timerMtx.unlock();
 			}
 		public:
 			void Stop() {
 				if (TimerId) {
 					auto ret = ::KillTimer(NULL, TimerId);
-					_timers.erase(TimerId);
+					//_timers.erase(TimerId);
+					Erase(TimerId);
 					TimerId = NULL;
 					started = false;
 				}
@@ -76,8 +90,10 @@ namespace EzUI {
 					return;
 				}
 				Stop();
-				 TimerId = ::SetTimer(NULL, NULL, Interval, Timer::TimeProc);
-				_timers.insert(std::pair<UINT_PTR, UINT_PTR>(TimerId, (UINT_PTR)this));
+
+				TimerId = ::SetTimer(NULL, TimerId, Interval, Timer::TimeProc);
+				//_timers.insert(std::pair<UINT_PTR, UINT_PTR>(TimerId, (UINT_PTR)this));
+				InsertTimer(TimerId, (UINT_PTR)this);
 				started = true;
 			}
 			Timer() {

@@ -9,7 +9,7 @@ namespace EzUI {
 	Edit::Edit() {
 		Cursor = Cursor::IBEAM;
 		timer.Interval = 500;
-		timer.Tick = [&]() {
+		timer.Tick = [&](Windows::Timer*) {
 			if (!careRect.IsEmptyArea() && _focus) {
 				_careShow = !_careShow;
 				this->Invalidate();
@@ -78,8 +78,29 @@ namespace EzUI {
 		if (wParam < 32)return;//控制字符
 
 		DeleteRange();//先删除是否有选中的区域
-		WCHAR buf[2]{ (WCHAR)wParam ,0 };
+		TCHAR buf[2]{ (TCHAR)wParam ,0 };
+#ifdef UNICODE
 		Insert(buf);//插入新的字符
+#else
+		byte _ch = (byte)wParam;
+		if (_ch > 127) {
+			ansiBuf += _ch;
+			if (ansiBuf.size() > 1) {//判断是否中文
+				std::wstring wBuf;
+				EString::ANSIToUniCode(ansiBuf, &wBuf);
+				Insert(wBuf);//插入新的字符
+				ansiBuf = "";
+			}
+			else {
+				return;
+			}
+		}
+		else {
+			WCHAR buf[2]{ (WCHAR)wParam ,0 };
+			Insert(buf);//插入新的字符
+		}
+
+#endif // !UINCODE
 		Analysis();//分析字符串
 		Invalidate();//刷新
 	}
@@ -212,6 +233,7 @@ namespace EzUI {
 		if (wParam == VK_LEFT) {
 			TextPos--;
 			_careShow = true;
+			selectRect = Rect();
 			BuildCare();
 			Invalidate();
 			return;
@@ -219,6 +241,7 @@ namespace EzUI {
 		if (wParam == VK_RIGHT) {
 			TextPos++;
 			_careShow = true;
+			selectRect = Rect();
 			BuildCare();
 			Invalidate();
 			return;

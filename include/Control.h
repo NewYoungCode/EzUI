@@ -55,7 +55,7 @@ namespace EzUI {
 		EventMouseUp MouseUp;//鼠标抬起
 		EventMouseClick MouseClick;//鼠标单击
 		EventMouseDoubleClick MouseDoubleClick;//鼠标双击
-		EventPaint Painting = NULL;//绘制事件
+		EventPaint Painting;//绘制事件
 	protected:
 		ControlStyle& GetStyle(ControlState& _state);//获取当前控件状态下的样式信息
 		virtual void OnPaint(PaintEventArgs& args);//绘制 

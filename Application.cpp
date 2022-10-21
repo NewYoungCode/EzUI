@@ -30,7 +30,8 @@ namespace EzUI {
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wc.hbrBackground = NULL;// (HBRUSH)(COLOR_WINDOW + 1);
 		wc.lpszMenuName = NULL;
-		wc.lpszClassName = UI_CLASSNAME;
+		StdString className = GetThisClassName();
+		wc.lpszClassName = className.c_str();
 		if (!RegisterClass(&wc)) //×¢²á´°¿Ú
 		{
 			::MessageBox(NULL, TEXT("This program requires Windows NT !"),
@@ -57,6 +58,5 @@ namespace EzUI {
 		}
 		return (int)msg.wParam;
 	}
-
 
 };

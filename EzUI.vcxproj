@@ -45,6 +45,7 @@
     <ClInclude Include="include\RadioButton.h" />
     <ClInclude Include="include\ShadowWindow.h" />
     <ClInclude Include="include\TabLayout.h" />
+    <ClInclude Include="include\Delegate.h" />
     <ClInclude Include="include\TileList.h" />
     <ClInclude Include="include\Timer.h" />
     <ClInclude Include="include\RenderType.h" />

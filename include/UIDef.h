@@ -12,6 +12,7 @@
 #include <functional>
 #include <thread>
 #include <mutex>
+#include <future>
 
 #include <windows.h>
 #include <windowsx.h>
@@ -59,19 +60,21 @@
 #else
 #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
-
 #define UIFunc std::function
-
-#define UI_CLASSNAME TEXT("EzUI_Win32")
-#define UI_NotifyIcon_CLASSNAME TEXT("EzUI_NotifyIcon_Class")
 #define UI_NOTIFYICON WM_USER+0x01 //
-#define UI_PAINT WM_USER+0x03 //
+#define Layered_PAINT WM_USER+0x03 //
 #define WM_UIMESSAGE  WM_USER+20   
 #ifdef _WINDLL
 #define  UI_EXPORT  __declspec(dllexport) 
 #else
 #define UI_EXPORT
 #endif // _WINDLL
+
+#ifdef UNICODE
+#define StdString std::wstring
+#else
+#define StdString std::string
+#endif
 
 #ifdef _DEBUG
 #define DEBUGPAINT //

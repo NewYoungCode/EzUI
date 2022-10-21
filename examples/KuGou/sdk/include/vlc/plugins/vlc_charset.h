@@ -3,7 +3,7 @@
  *****************************************************************************
  * Copyright (C) 2003-2005 VLC authors and VideoLAN
  * Copyright © 2005-2010 Rémi Denis-Courmont
- * $Id: 4de57ab70f369c91338676f8ca154ecab427ca5e $
+ * $Id: 3119e89fd6bad58096a18211009d1504b97c9fbe $
  *
  * Author: Rémi Denis-Courmont <rem # videolan,org>
  *
@@ -85,8 +85,10 @@ static inline char *ToCodePage (unsigned cp, const char *utf8)
         return NULL;
 
     size_t len = WideCharToMultiByte (cp, 0, wide, -1, NULL, 0, NULL, NULL);
-    if (len == 0)
+    if (len == 0) {
+        free(wide);
         return NULL;
+    }
 
     char *out = (char *)malloc (len);
     if (likely(out != NULL))

@@ -6,6 +6,9 @@ namespace EzUI {
 		public Control
 	{
 	private:
+#ifndef UNICODE
+		std::string ansiBuf;
+#endif
 		std::wstring text;//文字
 		EString Placeholder;//placeholder懂得都懂
 		bool _down = false;//是否具有焦点中

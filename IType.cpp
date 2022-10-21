@@ -1,6 +1,18 @@
 #include "IType.h"
 namespace EzUI {
-
+	size_t GetThreadId() {
+		std::thread::id threadId = std::this_thread::get_id();
+		return *(size_t*)&threadId;
+	}
+	StdString GetThisClassName() {
+		TCHAR buff[256]{ 0 };
+#ifdef UNICODE
+		swprintf_s(buff, L"EzUI%d", GetThreadId());
+#else
+		sprintf_s(buff, "EzUI%d", GetThreadId());
+#endif
+		return StdString(buff);
+	}
 	size_t __count_onsize = 0;
 
 	EBitmap::EBitmap(WORD width, WORD height, PixelFormat piexlFormat) {//默认24位不透明位图
@@ -203,7 +215,6 @@ namespace EzUI {
 		return RGB(r, g, b);
 	}
 
-
 	void ControlStyle::SetBorder(const Color& color, int width) { //对所有border有效
 		BorderColor = color;
 		BorderLeft = width;//左边边框
@@ -301,7 +312,7 @@ namespace EzUI {
 	IControl::~IControl() {
 
 	}
-	
+
 	void IControl::SetAttribute(const EString& attrName, const EString& attrValue) {
 		AttributeIterator itor = _attrs.find(attrName);
 		if (itor != _attrs.end()) {

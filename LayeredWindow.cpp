@@ -12,14 +12,14 @@ namespace EzUI {
 		};
 		PublicData.UpdateWindow = [=]()->void {
 			if (!_InvalidateRect.IsEmptyArea()) {
-				::SendMessage(Hwnd(), UI_PAINT, NULL, NULL);
+				::SendMessage(Hwnd(), Layered_PAINT, NULL, NULL);
 			}
 		};
 		task = new std::thread([=]() {
 			while (bRunTask)
 			{
 				if (!_InvalidateRect.IsEmptyArea()) {
-					::SendMessage(Hwnd(), UI_PAINT, NULL, NULL);
+					::PostMessage(Hwnd(), Layered_PAINT, NULL, NULL);
 				}
 				Sleep(5);//检测无效区域的延时 200fps
 			}
@@ -101,7 +101,7 @@ namespace EzUI {
 			EndPaint(Hwnd(), &pst);
 			return ::DefWindowProc(Hwnd(), uMsg, wParam, lParam);
 		}
-		if (uMsg == UI_PAINT) //layeredWindow
+		if (uMsg == Layered_PAINT) //layeredWindow
 		{
 			if (_winBitmap) {
 				_winBitmap->Earse(_InvalidateRect);//清除背景

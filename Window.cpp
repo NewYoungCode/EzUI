@@ -18,7 +18,8 @@ namespace EzUI {
 		_rect.Width = width;
 		_rect.Height = height;
 
-		_hWnd = ::CreateWindowEx(ExStyle | WS_EX_ACCEPTFILES, UI_CLASSNAME, UI_CLASSNAME, dStyle,
+		StdString className = GetThisClassName();
+		_hWnd = ::CreateWindowEx(ExStyle | WS_EX_ACCEPTFILES, className.c_str(), className.c_str(), dStyle,
 			_rect.X, _rect.Y, width, height, owner, NULL, GetModuleHandle(NULL), NULL);
 
 		InitData(ExStyle);//设置基本数据

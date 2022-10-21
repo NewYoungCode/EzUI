@@ -8,8 +8,8 @@ class MainFrm :
 	public Form
 {
 private:
-	Windows::Timer* timer = NULL;
 	VlcPlayer player;
+	Windows::Timer* timer = NULL;
 	void InitForm();
 	VList* localList;
 	VList* searchList;
@@ -21,17 +21,16 @@ private:
 	Label* time, * singer;
 	ConfigIni* cfg = new ConfigIni;
 	Image* bkImage, * headImg;
-	std::thread* downloadTask = NULL;
 	TabLayout* tabCtrl;
 	TabLayout* control;
 
 	Image* playingImage = NULL, * pauseImage = NULL;
-
 	Control* main;
 	Control* center;
 	Control* centerLeft;
 	Control* tools;
 
+	std::future<void> * downloadTask = NULL;
 	void DownLoadImage(EString SingerName, EString headImageUrl);
 protected:
 	virtual void OnKeyDown(WPARAM wparam, LPARAM lParam)override;

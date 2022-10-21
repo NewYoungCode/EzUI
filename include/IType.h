@@ -1,11 +1,17 @@
 #pragma once
 #include "UIDef.h"
+#include "Delegate.h"
 #include "EString.h"
 #include "RenderType.h"
 #include "GdiplusRender.h"
 #include "Direct2DRender.h"
 #pragma comment(lib, "Msimg32.lib")
 namespace EzUI {
+	//获取当前线程ID
+	extern UI_EXPORT size_t GetThreadId();
+	//获取当前线程注册的窗口类名
+	extern UI_EXPORT StdString GetThisClassName();
+
 	using RectF = RenderType::RectF;
 	using Size = RenderType::Size;
 	using SizeF = RenderType::SizeF;
@@ -339,7 +345,7 @@ namespace EzUI {
 	typedef UIFunc<void(Control*, MouseButton, const Point&)> EventMouseClick;//鼠标单击
 	typedef UIFunc<void(Control*, MouseButton, const Point&)> EventMouseDoubleClick;//鼠标双击
 	typedef UIFunc<void(int, int)> EventScrollRolling;//滚动条滚动事件
-	typedef UIFunc<void(PaintEventArgs& args)> EventPaint;//绘制
+	typedef UIFunc<void(PaintEventArgs&)> EventPaint;//绘制
 	typedef UIFunc<void(EString)> EventTextChange;//文字变更事件
 
 	class UI_EXPORT ControlStyle {

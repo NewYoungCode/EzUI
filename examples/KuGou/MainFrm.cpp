@@ -1,6 +1,5 @@
 #include "MainFrm.h"
 #define refreshImage WM_UIMESSAGE+1
-#define delImage WM_UIMESSAGE+2
 
 void MainFrm::InitForm() {
 	this->Zoom = true;
@@ -50,7 +49,6 @@ void MainFrm::InitForm() {
 	//集体设置右上角的最大化 最小化 关闭按钮 的悬浮效果
 
 	$(this->FindControl("btns")->GetControls()).CssHover("color:#ffffff;");
-	
 
 	cfg = new ConfigIni(Path::StartPath() + "\\list.ini");
 
@@ -75,7 +73,7 @@ void MainFrm::InitForm() {
 
 	playerBar = FindControl("playerBar");
 	playerBar2 = FindControl("rate");
-	playerBar2->MousePassThrough = Event::OnHover | Event::OnActive|Event::OnMouseClick;
+	playerBar2->MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseClick;
 
 	time = (Label*)FindControl("time");
 	singer = (Label*)FindControl("singer");
@@ -89,7 +87,7 @@ void MainFrm::InitForm() {
 
 	timer = new Windows::Timer;
 	timer->Interval = 10;
-	timer->Tick = [=]() {
+	timer->Tick = [=](Windows::Timer*) {
 		Task();
 	};
 
@@ -114,7 +112,7 @@ MainFrm::~MainFrm()
 
 	timer->Stop();
 	if (downloadTask) {
-		downloadTask->join();
+		downloadTask->get();
 		delete downloadTask;
 	}
 
@@ -122,12 +120,11 @@ MainFrm::~MainFrm()
 void MainFrm::OnClose(bool& cal) {
 	Application::exit(0);
 }
+
+
 void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 {
-
-	auto  SingerName =_SingerName.Split(",")[0];
-
-	::SendMessageW(Hwnd(), delImage, 0, 0);
+	auto  SingerName = _SingerName.Split(",")[0];
 
 	WCHAR temp[256]{ 0 };
 	::GetTempPathW(256, temp);
@@ -137,7 +134,7 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 	{
 		EString singerBkImg = cache + "\\" + SingerName + "_headImg.jpg";
 		WebClient wc2;
-		auto code = wc2.DownloadFile(headImageUrl.Replace("{size}", "400"), singerBkImg.ansi());
+		auto code = wc2.DownloadFile(headImageUrl.Replace("{size}", "400"), singerBkImg.ansi(), NULL, 5);
 		if (code == 200) {
 			headImg = new Image(singerBkImg.utf16());
 		}
@@ -146,17 +143,16 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 			headImg = new Image(L"imgs/headImg.jpg");
 		}
 	}
-
+	//下载歌手写真
 	{
-		//下载歌手写真
 		auto rect = GetClientRect();
 		EString imageUrl = "https://artistpicserver.kuwo.cn/pic.web?type=big_artist_pic&pictype=url&content=list&&id=0&name=" + HttpUtility::UrlEncode(SingerName) + "&from=pc&json=1&version=1&width=" + std::to_string(1920) + "&height=" + std::to_string(1080);
 		EString resp;
 		WebClient wc;
-		wc.HttpGet(imageUrl, resp);
+		wc.HttpGet(imageUrl, resp, 5);
 		JObject json(resp);
 		EString bkurl;
-		
+
 		if (bkurl.empty()) {
 			for (auto&& it : json["array"]) {
 				if (!it["bkurl"].isNull()) {
@@ -171,11 +167,10 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 				break;
 			}
 		}
-
 		if (!bkurl.empty()) {
 			EString singerBkImg = cache + "\\" + SingerName + ".jpg";
 			WebClient wc2;
-			wc2.DownloadFile(bkurl, singerBkImg.ansi());
+			wc2.DownloadFile(bkurl, singerBkImg.ansi(), NULL, 5);
 			bkImage = new Image(singerBkImg.utf16());
 		}
 		else {
@@ -183,8 +178,12 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 		}
 		bkImage->SizeMode = ImageSizeMode::CenterImage;
 	}
-
-	::SendMessageW(Hwnd(), refreshImage, 0, 0);
+	//headImg->SizeMode = ImageSizeMode::CenterImage;
+	//singer->Style.BackgroundImage = headImg;
+	//singer->Invalidate();
+	//FindControl("lrcView")->Trigger(Event::OnMouseClick);
+	//main->Invalidate();
+	::PostMessage(Hwnd(), refreshImage, NULL, NULL);
 }
 void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 {
@@ -203,7 +202,7 @@ void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 	}
 	__super::OnKeyDown(wparam, lParam);
 }
-bool MainFrm::OnNotify(Control* sender,  EventArgs& args) {
+bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 
 	if (args.EventType == Event::OnPaint) {
 
@@ -242,11 +241,29 @@ bool MainFrm::OnNotify(Control* sender,  EventArgs& args) {
 			EString playUrl = json["url"].asCString();
 			if (!playUrl.empty()) {
 				EString SingerName = sender->GetAttribute("SingerName");
+
 				if (downloadTask) {
-					downloadTask->join();
+					downloadTask->get();
 					delete downloadTask;
 				}
-				downloadTask = new std::thread(&MainFrm::DownLoadImage, this, SingerName, json["imgUrl"].asString());
+
+				if (headImg) {
+					singer->Style.BackgroundImage = NULL;
+					delete headImg;
+					headImg = NULL;
+				}
+				if (bkImage) {
+					main->Style.BackgroundImage = NULL;
+					delete bkImage;
+					bkImage = NULL;
+				}
+				FindControl("lrcView")->Trigger(Event::OnMouseClick);
+
+				downloadTask = new std::future<void>(std::async([&](EString singname, EString imgUrl)->void {
+					this->DownLoadImage(singname, imgUrl);
+					}, SingerName, json["imgUrl"].asString()));
+
+
 				if (dynamic_cast<SongItem2*>(sender)) {
 					Song* tag = (Song*)sender->Tag;
 					SongItem* it = new SongItem(tag->SongName, toTimeStr(dur));
@@ -438,19 +455,6 @@ void  MainFrm::LrcView() {
 
 LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
 {
-	if (delImage == msg) {
-		if (headImg) {
-			singer->Style.BackgroundImage = NULL;
-			delete headImg;
-			headImg = NULL;
-		}
-		if (bkImage) {
-			main->Style.BackgroundImage = NULL;
-			delete bkImage;
-			bkImage = NULL;
-		}
-		FindControl("lrcView")->Trigger(Event::OnMouseClick);
-	}
 	if (refreshImage == msg) {
 		headImg->SizeMode = ImageSizeMode::CenterImage;
 		singer->Style.BackgroundImage = headImg;

@@ -132,6 +132,9 @@
     <ClInclude Include="include\UIInterface.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="include\Delegate.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Control.cpp">

@@ -2,7 +2,7 @@
  * vlc_input.h: Core input structures
  *****************************************************************************
  * Copyright (C) 1999-2006 VLC authors and VideoLAN
- * $Id: 6ec305bebad2dd0cb1a29d4cd50168e09a53d375 $
+ * $Id: 13a944a2ac92728542d3f33755daf7857113d5d9 $
  *
  * Authors: Christophe Massiot <massiot@via.ecp.fr>
  *          Laurent Aimar <fenrir@via.ecp.fr>
@@ -53,6 +53,8 @@ struct seekpoint_t
 static inline seekpoint_t *vlc_seekpoint_New( void )
 {
     seekpoint_t *point = (seekpoint_t*)malloc( sizeof( seekpoint_t ) );
+    if( !point )
+        return NULL;
     point->i_byte_offset =
     point->i_time_offset = -1;
     point->psz_name = NULL;
@@ -96,6 +98,8 @@ typedef struct input_title_t
 static inline input_title_t *vlc_input_title_New(void)
 {
     input_title_t *t = (input_title_t*)malloc( sizeof( input_title_t ) );
+    if( !t )
+        return NULL;
 
     t->psz_name = NULL;
     t->b_menu = false;

@@ -1,7 +1,6 @@
 #include "NotifyIcon.h"
 
 namespace EzUI {
-	bool _EZUI_NotifyIcon_Class = false;
 	LRESULT CALLBACK _NotifyIcon_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		LONG_PTR USERDATA = GetWindowLongPtr(hwnd, GWLP_USERDATA);
@@ -46,26 +45,9 @@ namespace EzUI {
 	NotifyIcon::NotifyIcon()
 	{
 		_menu = NULL;
-
 		_hInstance = GetModuleHandle(0);
-		if (!_EZUI_NotifyIcon_Class) {
-			//设计窗口
-			WNDCLASS     wc;
-			wc.style = CS_HREDRAW | CS_VREDRAW;
-			wc.lpfnWndProc = _NotifyIcon_WndProc;
-			wc.cbClsExtra = NULL;
-			wc.cbWndExtra = NULL;
-			wc.hInstance = _hInstance;
-			wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-			wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-			wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-			wc.lpszMenuName = NULL;
-			wc.lpszClassName = UI_NotifyIcon_CLASSNAME;
-			RegisterClass(&wc);
-			_EZUI_NotifyIcon_Class = true;
-		}
-
-		_hwnd = ::CreateWindow(UI_NotifyIcon_CLASSNAME, UI_NotifyIcon_CLASSNAME, WS_OVERLAPPEDWINDOW,
+	
+		_hwnd = ::CreateWindow(GetThisClassName().c_str(), TEXT("EzUI_NotifyIcon"), WS_OVERLAPPEDWINDOW,
 			0, 0, 10, 10, NULL, NULL, _hInstance, NULL);
 		::SetWindowLongPtr(_hwnd, GWLP_USERDATA, (LONG_PTR)this);
 		_nid.cbSize = sizeof(NOTIFYICONDATA);//结构体长度

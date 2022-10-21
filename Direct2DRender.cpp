@@ -22,40 +22,42 @@ namespace EzUI {
 		}
 	}
 
-
 	void RenderInitialize()
 	{
 		Dpi = ::GetDpiForSystem();
-
 		HRESULT hr = S_OK;
 		// Create a Direct2D factory.
-		hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &g_Direct2dFactory);
-		if (!g_Direct2dFactory) {
-			::MessageBoxW(NULL, L"Failed to create ID2D1Factory", L"Error", MB_ICONSTOP);
-		}
-		hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&g_WriteFactory));
-		if (!g_WriteFactory) {
-			::MessageBoxW(NULL, L"Failed to create IDWriteFactory", L"Error", MB_ICONSTOP);
-		}
-
-		_GUID imageFactoryOld{ 0xcacaf262, 0x9370, 0x4615, 0xa1, 0x3b, 0x9f, 0x55, 0x39, 0xda, 0x4c, 0xa };//xp  win7 旧版
-		_GUID WICImagingFactoryId = CLSID_WICImagingFactory;//当前平台
-	ImagingFactoryInit:
-		hr = CoCreateInstance(WICImagingFactoryId, NULL, CLSCTX_INPROC_SERVER, __uuidof(IWICImagingFactory), (LPVOID*)&g_ImageFactory);
-		if (hr != S_OK) {
-			//if (hr == 0x800401F0) {//未初始化com 自己在全局初始化一下就好了 (自己控制初始化时机)
-			//	::CoInitialize(NULL);
-			//	goto ImagingFactory;
-			//}
-			if (hr == 0x80040154) {//没有注册类 不用win7的sdk生成的程序在下win7系统上运行会出现此错误
-				WICImagingFactoryId = imageFactoryOld;
-				goto ImagingFactoryInit;
+		if (g_Direct2dFactory == NULL) {
+			hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, &g_Direct2dFactory);
+			if (!g_Direct2dFactory) {
+				::MessageBoxW(NULL, L"Failed to create ID2D1Factory", L"Error", MB_ICONSTOP);
 			}
-			CHAR buf[256]{ 0 };
-			sprintf_s(buf, "Code 0x%p", (void*)hr);
-			::MessageBoxA(NULL, "Failed to create IWICImagingFactory", buf, MB_ICONSTOP);
 		}
-
+		if (g_WriteFactory == NULL) {
+			hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&g_WriteFactory));
+			if (!g_WriteFactory) {
+				::MessageBoxW(NULL, L"Failed to create IDWriteFactory", L"Error", MB_ICONSTOP);
+			}
+		}
+		if (g_ImageFactory == NULL) {
+			_GUID imageFactoryOld{ 0xcacaf262, 0x9370, 0x4615, 0xa1, 0x3b, 0x9f, 0x55, 0x39, 0xda, 0x4c, 0xa };//xp  win7 旧版
+			_GUID WICImagingFactoryId = CLSID_WICImagingFactory;//当前平台
+		ImagingFactoryInit:
+			hr = CoCreateInstance(WICImagingFactoryId, NULL, CLSCTX_INPROC_SERVER, __uuidof(IWICImagingFactory), (LPVOID*)&g_ImageFactory);
+			if (hr != S_OK) {
+				//if (hr == 0x800401F0) {//未初始化com 自己在全局初始化一下就好了 (自己控制初始化时机)
+				//	::CoInitialize(NULL);
+				//	goto ImagingFactory;
+				//}
+				if (hr == 0x80040154) {//没有注册类 不用win7的sdk生成的程序在下win7系统上运行会出现此错误
+					WICImagingFactoryId = imageFactoryOld;
+					goto ImagingFactoryInit;
+				}
+				CHAR buf[256]{ 0 };
+				sprintf_s(buf, "Code 0x%p", (void*)hr);
+				::MessageBoxA(NULL, "Failed to create IWICImagingFactory", buf, MB_ICONSTOP);
+			}
+		}
 	}
 	void RenderUnInitialize()
 	{
