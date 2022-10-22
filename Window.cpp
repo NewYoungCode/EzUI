@@ -339,14 +339,14 @@ namespace EzUI {
 		{
 			Point pt(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 			OnMouseUp(MouseButton::Left, pt);
-			OnMouseClick(MouseButton::Left, pt);
+			//OnMouseClick(MouseButton::Left, pt);
 			break;
 		}
 		case WM_RBUTTONUP:
 		{
 			Point pt(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 			OnMouseUp(MouseButton::Right, pt);
-			OnMouseClick(MouseButton::Right, pt);
+			//OnMouseClick(MouseButton::Right, pt);
 			break;
 		}
 
@@ -721,7 +721,7 @@ namespace EzUI {
 			args.EventType = Event::OnMouseUp;
 			_focusControl->Trigger(args);//触发鼠标抬起事件
 
-			if (_focusControl) {//如果焦点还在 触发click事件
+			if (_focusControl && ctlRect.Contains(point)) {//如果焦点还在并且鼠标未移出控件内 触发click事件
 				args.EventType = Event::OnMouseClick;
 				_focusControl->Trigger(args);
 			}
