@@ -305,64 +305,15 @@ namespace EzUI {
 		__Size imgSize(image->GetWidth(), image->GetHeight());
 		__Rect drawRect=EzUI::Transformation(imageSizeMode, rect, imgSize);
 
+		//HBITMAP bitmap;
+		//image->GetHBITMAP(Gdiplus::Color::Transparent, &bitmap);
+		//HDC tempDc =::CreateCompatibleDC(NULL);
+		//SelectObject(tempDc, bitmap);
+		//::StretchBlt(this->DC, drawRect.X, drawRect.Y, drawRect.Width, drawRect.Height, tempDc, 0, 0, imgSize.Width, imgSize.Height,SRCCOPY);
+		//DeleteObject(tempDc);
+		//DeleteObject(bitmap);
+
 		base->DrawImage(image,drawRect.X,drawRect.Y,drawRect.Width,drawRect.Height);
-
-		//if (imageSizeMode == ImageSizeMode::Zoom) {
-		//	//客户端数据
-		//	const int& clientWidth = rect.Width;
-		//	const int& clientHeight = rect.Height;
-		//	double clientRate = clientWidth * 1.0 / clientHeight;
-		//	//图片数据
-		//	int imgWidth = image->GetWidth();
-		//	int imgHeight = image->GetHeight();
-		//	double imgRate = imgWidth * 1.0 / imgHeight;
-		//	if (clientRate < imgRate) {
-		//		double zoomHeight = clientWidth * 1.0 / imgWidth * imgHeight + 0.5;
-		//		__Size sz{ clientWidth,(INT)zoomHeight };
-		//		int y = (clientHeight - sz.Height) / 2 + rect.Y;
-		//		base->DrawImage(image, Gdiplus::Rect{ rect.X  ,y, sz.Width, sz.Height });
-		//	}
-		//	else {
-		//		double zoomWidth = clientHeight * 1.0 / imgHeight * imgWidth + 0.5;
-		//		__Size sz{ (INT)zoomWidth,clientHeight };
-		//		int x = (clientWidth - sz.Width) / 2 + rect.X;
-		//		base->DrawImage(image, Gdiplus::Rect{ x  , rect.Y, sz.Width, sz.Height });
-		//	}
-		//	return;
-		//}
-		//if (imageSizeMode == ImageSizeMode::CenterImage) {
-		//	//客户端数据
-		//	const int& clientWidth = rect.Width;
-		//	const int& clientHeight = rect.Height;
-		//	double clientRate = clientWidth * 1.0 / clientHeight;
-		//	//图片数据
-		//	int imgWidth = image->GetWidth();
-		//	int imgHeight = image->GetHeight();
-		//	double imgRate = imgWidth * 1.0 / imgHeight;
-		//	if (clientRate < imgRate) {
-		//		//1000 670 客户端
-		//		//1000 300 图片
-		//		//2233 670     缩放后的图片大小 
-		//		int zoomWidth = clientHeight * 1.0 / imgHeight * imgWidth + 0.5;//图片应该这么宽才对
-		//		int x = (zoomWidth - clientWidth) * 1.0 / 2 + 0.5;
-		//		base->DrawImage(image, Gdiplus::Rect{ rect.X - x,rect.Y,zoomWidth,clientHeight });
-		//	}
-		//	else {
-		//		//1000 600 客户端
-		//		//400  600 图片
-		//		//1000 1500     缩放后的图片大小 
-		//		int zoomHeight = clientWidth * 1.0 / imgWidth * imgHeight + 0.5;//图片应该这么高才对
-		//		int y = (zoomHeight - clientHeight) * 1.0 / 2 + 0.5;
-		//		base->DrawImage(image, Gdiplus::Rect{ rect.X,  rect.Y - y  , clientWidth, zoomHeight });
-		//	}
-		//	return;
-		//}
-
-		//if (imageSizeMode == ImageSizeMode::StretchImage || true) {
-
-
-		//	base->DrawImage(image, ToRect(rect));
-		//}
 	}
 	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
 	{

@@ -14,8 +14,8 @@ namespace EzUI {
 		UpdateShadow();
 	}
 	void BorderlessWindow::OnRect(const Rect& rect) {
-		UpdateShadow();
 		__super::OnRect(rect);
+		UpdateShadow();
 	}
 	void BorderlessWindow::Hide() {
 		__super::Hide();

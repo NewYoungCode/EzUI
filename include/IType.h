@@ -2,15 +2,23 @@
 #include "UIDef.h"
 #include "Delegate.h"
 #include "EString.h"
+#include "unzip.h"
 #include "RenderType.h"
 #include "GdiplusRender.h"
 #include "Direct2DRender.h"
 #pragma comment(lib, "Msimg32.lib")
 namespace EzUI {
+	//全局资源句柄
+	extern UI_EXPORT HZIP HZipResource;//zip文件中的全局资源句柄
+	extern UI_EXPORT HGLOBAL HVSResource;//vs中的资源文件句柄
 	//获取当前线程ID
 	extern UI_EXPORT size_t GetThreadId();
 	//获取当前线程注册的窗口类名
 	extern UI_EXPORT StdString GetThisClassName();
+	//从全局zip获取资源
+	extern UI_EXPORT bool GetGlobalResource(const EString& fileName, std::string** outData);
+	//从全局zip获取资源
+	extern UI_EXPORT bool GetGlobalResource(const EString& fileName, IStream** outData);
 
 	using RectF = RenderType::RectF;
 	using Size = RenderType::Size;
@@ -307,11 +315,41 @@ namespace EzUI {
 
 #if USED_GDIPLUS
 	using Painter = GdiplusRender;
-	using Image = GdiplusImage;
+	class Image :public GdiplusImage {
+	public:
+		Image(HBITMAP hBitmap) :GdiplusImage(hBitmap) {}
+		Image(IStream *iStream) :GdiplusImage(iStream) {}
+
+		Image(const EString& fileOrRes):GdiplusImage((IStream*)NULL) {
+			IStream* iStream = NULL;
+			if (GetGlobalResource(fileOrRes, &iStream)) {
+				this->CreateFormStream(iStream);
+				iStream->Release();
+			}
+			else {
+				this->CreateFromFile(fileOrRes.utf16());
+			}
+		}
+	};
 #endif
+
 #if USED_Direct2D
 	using Painter = Direct2DRender;
-	using Image = DXImage;
+	class Image :public DXImage {
+	public:
+		Image(HBITMAP hBitmap) :DXImage(hBitmap) {}
+		Image(IStream* iStream) :DXImage(iStream) {}
+		Image(const EString& fileOrRes) {
+			IStream* iStream = NULL;
+			if (GetGlobalResource(fileOrRes, &iStream)) {
+				this->CreateFormStream(iStream);
+				iStream->Release();
+			}
+			else {
+				this->CreateFromFile(fileOrRes.utf16());
+			}
+		}
+	};
 #endif
 	// 摘要: 
 	// 为 OnPaint 事件提供数据。

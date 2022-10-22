@@ -15,6 +15,7 @@
 #include "base64.h"
 #include "ConfigIni.h"
 
+
 using namespace EzUI;
 struct Song {
 	EString hash;
@@ -186,7 +187,7 @@ namespace global {
 		wc.AddHeader("Connection", " Keep-Alive");
 		wc.AddHeader("Cache-Control", " no-cache");
 		EString userid = "1581500868";//酷狗的用户ID 不传入可能请求不到正确的数据
-		newUrl += "&userid=" + userid;
+		//newUrl += "&userid=" + userid;
 		return wc.HttpGet(newUrl, resp);
 	}
 

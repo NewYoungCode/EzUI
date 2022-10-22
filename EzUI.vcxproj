@@ -52,6 +52,7 @@
     <ClInclude Include="include\UIDef.h" />
     <ClInclude Include="include\UIInterface.h" />
     <ClInclude Include="include\UIManager.h" />
+    <ClInclude Include="include\unzip.h" />
     <ClInclude Include="include\VLayout.h" />
     <ClInclude Include="include\VList.h" />
     <ClInclude Include="include\VScrollBar.h" />
@@ -90,6 +91,7 @@
     <ClCompile Include="tinyxml\tinyxmlparser.cpp" />
     <ClCompile Include="UIInterface.cpp" />
     <ClCompile Include="UIManager.cpp" />
+    <ClCompile Include="unzip.cpp" />
     <ClCompile Include="VLayout.cpp" />
     <ClCompile Include="VList.cpp" />
     <ClCompile Include="VScrollBar.cpp" />

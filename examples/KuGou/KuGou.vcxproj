@@ -164,7 +164,11 @@
     <ClInclude Include="global.h" />
     <ClInclude Include="LrcControl.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="VlcPlayer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="KuGou.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

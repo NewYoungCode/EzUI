@@ -134,8 +134,20 @@ namespace EzUI {
 	};
 
 	class UI_EXPORT GdiplusImage :public Gdiplus::Bitmap, public IImage {
+	protected:
+		void CreateFromFile(const std::wstring& file) {
+			Gdiplus::GpBitmap* bitmap = NULL;
+			lastResult = Gdiplus::DllExports::GdipCreateBitmapFromFile(file.c_str(), &bitmap);
+			SetNativeImage(bitmap);
+		}
+		void CreateFormStream(IStream* iStream) {
+			Gdiplus::GpBitmap* bitmap = NULL;
+			lastResult = Gdiplus::DllExports::GdipCreateBitmapFromStream(iStream, &bitmap);
+			SetNativeImage(bitmap);
+		}
 	public:
 		virtual ~GdiplusImage() {}
+		GdiplusImage(IStream* iStream) :Gdiplus::Bitmap(iStream) {}
 		GdiplusImage(const std::wstring& fileName) :Gdiplus::Bitmap(fileName.c_str()) {}
 		GdiplusImage(HBITMAP hBitmap) :Gdiplus::Bitmap(hBitmap, NULL) {}
 		GdiplusImage(BITMAPINFO* gdiBitmapInfo, void* gdiBitmapData) :Gdiplus::Bitmap(gdiBitmapInfo, gdiBitmapData) {}

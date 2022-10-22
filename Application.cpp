@@ -10,7 +10,7 @@ namespace EzUI {
 		return ::DefWindowProc(hwnd, message, wParam, lParam);
 	}
 
-	Application::Application() {
+	void Application::Init() {
 		//确保加载公共控件 DLL （Comctl32.dll），并从 DLL 注册特定的公共控件类
 		INITCOMMONCONTROLSEX iccex;
 		iccex.dwSize = sizeof(INITCOMMONCONTROLSEX);
@@ -42,10 +42,41 @@ namespace EzUI {
 		::CoInitialize(NULL);//初始化com
 		RenderInitialize();
 	}
-
+	Application::Application(int resID, const EString& custResType, const EString& password) {
+		Init();
+		HINSTANCE hInst = GetModuleHandle(NULL);
+#ifdef UNICODE
+		HRSRC hRsrc = ::FindResource(hInst, MAKEINTRESOURCE(resID), custResType.utf16().c_str());
+#else
+		HRSRC hRsrc = ::FindResource(hInst, MAKEINTRESOURCE(resID), custResType.c_str());
+#endif
+		if (!hRsrc)return;
+		DWORD len = SizeofResource(hInst, hRsrc);
+		HVSResource = LoadResource(hInst, hRsrc);
+		HZipResource = OpenZip((void*)HVSResource, len, password.empty() ? NULL : password.c_str());
+	}
+	//使用本地文件名称加载资源包
+	Application::Application(const EString& fileName, const EString& password) {
+		Init();
+		HZipResource = OpenZip(fileName.utf16().c_str(), password.empty() ? NULL : password.c_str());
+#ifdef _DEBUG
+		if (HZipResource == NULL) {
+			::MessageBoxA(NULL, "Open ZipResource Fail !", "Error", 0);
+		}
+#endif
+	}
+	Application::Application() {
+		Init();
+	}
 	Application::~Application() {
 		RenderUnInitialize();
 		::CoUninitialize();
+		if (HZipResource) {
+			CloseZip(HZipResource);
+		}
+		if (HVSResource) {
+			FreeResource(HVSResource);
+		}
 	}
 
 	int Application::exec()

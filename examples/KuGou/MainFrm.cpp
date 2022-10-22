@@ -142,6 +142,8 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 		{
 			headImg = new Image(L"imgs/headImg.jpg");
 		}
+		headImg->SizeMode = ImageSizeMode::CenterImage;
+		singer->Style.BackgroundImage = headImg;
 	}
 	//ÏÂÔØ¸èÊÖÐ´Õæ
 	{
@@ -178,11 +180,6 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 		}
 		bkImage->SizeMode = ImageSizeMode::CenterImage;
 	}
-	//headImg->SizeMode = ImageSizeMode::CenterImage;
-	//singer->Style.BackgroundImage = headImg;
-	//singer->Invalidate();
-	//FindControl("lrcView")->Trigger(Event::OnMouseClick);
-	//main->Invalidate();
 	::PostMessage(Hwnd(), refreshImage, NULL, NULL);
 }
 void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
@@ -233,10 +230,15 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			EString resp;
 			//{"errcode":30001,"status":0,"error":"data not found"}
 			global::HttpGet(url, resp);
-			auto id = std::this_thread::get_id();
-			int idd = *(int*)&id;
+			//resp = resp.ansi();
 			timer->Stop();
 			JObject json(resp);
+
+			if (json["errcode"].asInt() != 0) {
+				::MessageBoxW(Hwnd(),  EString(json["error"].asString()).utf16().c_str(), L"ÒôÀÖAPI´íÎó", 0);
+				return 0;
+			}
+
 			int dur = json["timeLength"].asInt();
 			EString playUrl = json["url"].asCString();
 			if (!playUrl.empty()) {
@@ -456,9 +458,12 @@ void  MainFrm::LrcView() {
 LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
 {
 	if (refreshImage == msg) {
-		headImg->SizeMode = ImageSizeMode::CenterImage;
-		singer->Style.BackgroundImage = headImg;
-		singer->Invalidate();
+
+		if (headImg) {
+		
+			singer->Invalidate();
+		}
+		
 		FindControl("lrcView")->Trigger(Event::OnMouseClick);
 		return 0;
 	}

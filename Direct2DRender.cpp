@@ -32,6 +32,22 @@ namespace EzUI {
 			if (!g_Direct2dFactory) {
 				::MessageBoxW(NULL, L"Failed to create ID2D1Factory", L"Error", MB_ICONSTOP);
 			}
+			else {
+				D2D1_RENDER_TARGET_PROPERTIES defaultOption = D2D1::RenderTargetProperties(
+					D2D1_RENDER_TARGET_TYPE_DEFAULT,
+					D2D1::PixelFormat(
+						DXGI_FORMAT_B8G8R8A8_UNORM,
+						D2D1_ALPHA_MODE_IGNORE),
+					0,
+					0,
+					D2D1_RENDER_TARGET_USAGE_NONE,
+					D2D1_FEATURE_LEVEL_DEFAULT
+				);
+				//初始化一下DX让第一次启动窗口快一点
+				ID2D1DCRenderTarget* initRender = NULL;
+				HRESULT	hr = g_Direct2dFactory->CreateDCRenderTarget(&defaultOption, (ID2D1DCRenderTarget**)&initRender);
+				SafeRelease(&initRender);
+			}
 		}
 		if (g_WriteFactory == NULL) {
 			hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&g_WriteFactory));
@@ -91,7 +107,21 @@ namespace EzUI {
 	UINT DXImage::GetHeight() {
 		return Height;
 	}
-	DXImage::DXImage(const std::wstring& filew)
+
+	void DXImage::CreateFormStream(IStream* istram) {
+		if (g_ImageFactory) {
+			g_ImageFactory->CreateDecoderFromStream(istram, NULL, WICDecodeMetadataCacheOnDemand, &bitmapdecoder);//
+			
+		}
+		if (bitmapdecoder) {
+			bitmapdecoder->GetFrame(0, &pframe);
+			g_ImageFactory->CreateFormatConverter(&fmtcovter);
+			fmtcovter->Initialize(pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
+			pframe->GetSize(&Width, &Height);
+		}
+	}
+
+	void DXImage::CreateFromFile(const std::wstring& filew)
 	{
 		if (g_ImageFactory) {
 			g_ImageFactory->CreateDecoderFromFilename(filew.c_str(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &bitmapdecoder);//
@@ -108,6 +138,12 @@ namespace EzUI {
 			g_ImageFactory->CreateBitmapFromHBITMAP(hBitmap, NULL, WICBitmapUsePremultipliedAlpha, &bitMap);
 			bitMap->GetSize(&Width, &Height);
 		}
+	}
+	DXImage::DXImage(const std::wstring& file) {
+		CreateFromFile(file);
+	}
+	DXImage::DXImage(IStream* istram) {
+		CreateFormStream(istram);
 	}
 	DXImage::~DXImage()
 	{

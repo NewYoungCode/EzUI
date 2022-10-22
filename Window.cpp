@@ -194,13 +194,9 @@ namespace EzUI {
 			break;
 		}
 		case WM_ERASEBKGND: {
-			return TRUE;
+			break;
 		}
-						  /*case UI_PAINT: {
-							  RECT r = ((Rect*)wParam)->WinRECT();
-							  ::InvalidateRect(_hWnd, &r, FALSE);
-							  break;
-						  }*/
+
 		case WM_PAINT:
 		{
 			if (!_load) {
@@ -305,7 +301,7 @@ namespace EzUI {
 			Point relativePoint;
 			Control* outCtl = FindControl(point, relativePoint);//找到当前控件的位置
 			HCURSOR cursor = NULL;
-			if (outCtl && (cursor=outCtl->GetCursor())) {
+			if (outCtl && (cursor = outCtl->GetCursor())) {
 				::SetCursor(cursor);
 				return TRUE;
 			}
@@ -342,7 +338,7 @@ namespace EzUI {
 		case WM_LBUTTONUP:
 		{
 			Point pt(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-			OnMouseUp(MouseButton::Left,pt);
+			OnMouseUp(MouseButton::Left, pt);
 			OnMouseClick(MouseButton::Left, pt);
 			break;
 		}
@@ -378,6 +374,7 @@ namespace EzUI {
 		}
 		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
 	}
+
 
 	void Window::OnPaint(HDC winHDC, const Rect& rePaintRect)
 	{
@@ -475,18 +472,7 @@ namespace EzUI {
 			SendMessage(_hWndTip, TTM_DELTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
 		};
 
-		//PublicData.GetCursor = [=]()->Cursor {
-		//	return (Cursor)::GetClassLongPtr(_hWnd, GCL_HCURSOR);//获取鼠标状态
-		//};
-		//PublicData.SetCursor = [=](Cursor cursor)->void {
-		//	bool inEnum = cursor == Cursor::APPSTARTING || cursor == Cursor::ARROW || cursor == Cursor::CROSS || cursor == Cursor::HAND || cursor == Cursor::HELP || cursor == Cursor::IBEAM || cursor == Cursor::ICON || cursor == Cursor::NO || cursor == Cursor::SIZE || cursor == Cursor::SIZEALL || cursor == Cursor::SIZENESW || cursor == Cursor::SIZENS || cursor == Cursor::SIZENWSE || cursor == Cursor::SIZEWE || cursor == Cursor::UPARROW || cursor == Cursor::WAIT;
-		//	if (inEnum) {//判断在不在预设中
-		//		::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)::LoadCursor(NULL, (LPTSTR)(cursor)));//设置鼠标样式
-		//	}
-		//	else {
-		//		::SetClassLongPtr(_hWnd, GCL_HCURSOR, (UINT_PTR)cursor);//
-		//	}
-		//};
+	
 
 		//创建冒泡提示窗口
 		_hWndTip = CreateWindowEx(WS_EX_TOPMOST,
@@ -778,7 +764,7 @@ namespace EzUI {
 		OutputDebugStringA(buf);
 #endif
 
-}
+	}
 
 	void Window::OnRect(const Rect& rect)
 	{
@@ -861,4 +847,4 @@ namespace EzUI {
 		return false;
 	}
 
-};
+	};

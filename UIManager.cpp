@@ -232,7 +232,7 @@ namespace EzUI {
 		std::vector<Control*> LoadControls(const EString& filename)
 		{
 			FILE* file(0);
-			_wfopen_s(&file, filename.utf16().c_str(), L"rb+");
+			_wfopen_s(&file, filename.utf16().c_str(), L"rb");
 			std::ifstream ifs(file);
 			std::stringstream ss;
 			ss << ifs.rdbuf();
@@ -245,6 +245,13 @@ namespace EzUI {
 		}
 		Layout* LoadLayout(const EString& filename)
 		{
+			std::string* memStream = NULL;
+			if (GetGlobalResource(filename, &memStream)) {
+				std::vector<Control*> controls;
+				LoadControl(*memStream, controls);
+				delete memStream;
+				return (Layout*)controls[0];
+			}
 			return (Layout*)LoadControls(filename)[0];
 		}
 		void LoadControl(const EString& xmlRaw, std::vector<Control*>& controls)

@@ -3,6 +3,9 @@
 #include "timer.h"
 #include "Button.h"
 
+#include "resource.h"
+
+
 class DesktopWallper :public BorderlessWindow
 {
 public:
@@ -30,23 +33,6 @@ HWND _workerw = nullptr;
 //}//获取桌面最底层的句柄
 //
 
-void test1() {
-	for (size_t i = 0; i < 10; i++)
-	{
-		Windows::Timer* t = new Windows::Timer();
-
-		std::thread::id this_id = std::this_thread::get_id();
-		unsigned int tid = *(unsigned int*)&this_id;// threadid 转成 unsigned int
-
-		t->Name = std::to_string(tid) + " number " + std::to_string(i);
-
-		t->Interval = 100;
-		t->Tick = [=](Windows::Timer* tm)->void {
-			Debug::Log("%s", tm->Name.c_str());
-		};
-		t->Start();
-	}
-}
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -55,10 +41,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
 	Curl_Global_Init();
 
-	ui::Application app;
-	//test1();
-	/*std::thread* t1 = new std::thread(test1);
-	std::thread* t2 = new std::thread(test1);*/
+	ui::Application app(L"res.zip");//外部资源
+
+	//ui::Application app(IDR_FILE3,"File", "123456");//
+
+	MainFrm frm;
+	frm.Show();
+
+	return app.exec();
 
 	//HWND workWnd = GetWorkerW();
 	//::ShowWindow(workWnd, SW_HIDE);
@@ -95,8 +85,4 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//	player.Play();
 	//};
 
-	MainFrm frm;
-	//frm.Tag = (UINT_PTR)&player;
-	frm.Show();
-	return app.exec();
 }

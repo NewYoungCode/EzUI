@@ -6,6 +6,7 @@
 #include <chrono>
 #include <exception>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <map>
 #include <memory>
@@ -31,6 +32,8 @@
 #include <objbase.h>
 #include <shlwapi.h>
 #pragma comment(lib,"Shlwapi.lib")
+#include <objidl.h>
+#pragma comment(lib,"Uuid.lib")
 
 #ifndef ASSERT
 #define ASSERT(expr)  _ASSERTE(expr)
@@ -85,7 +88,7 @@
 //#define COUNT_ONPAINT//统计绘制耗时
 
 //下面的渲染方式只能选一个
-#define USED_GDIPLUS  0//CPU绘制 绘制略慢 内存占用低
-#define USED_Direct2D 1 //显卡绘制 性能好 内存占用高
+#define USED_GDIPLUS  0  //CPU绘制 绘制略慢 内存占用低
+#define USED_Direct2D 1  //显卡绘制 性能好 内存占用高
 
 #define ui EzUI

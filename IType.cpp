@@ -1,5 +1,7 @@
 #include "IType.h"
 namespace EzUI {
+	HZIP HZipResource = NULL;
+	HGLOBAL HVSResource = NULL;
 	size_t GetThreadId() {
 		std::thread::id threadId = std::this_thread::get_id();
 		return *(size_t*)&threadId;
@@ -13,6 +15,40 @@ namespace EzUI {
 #endif
 		return StdString(buff);
 	}
+
+	std::mutex _resourceMtx;
+	bool GetGlobalResource(const EString& fileName, std::string** _outData) {
+		std::unique_lock<std::mutex> autoLock(_resourceMtx);
+		//Debug::Log("threadId %d", GetThreadId());
+		if (HZipResource) {
+			ZIPENTRY z;
+			int index;
+			ZRESULT zresult = FindZipItem(HZipResource, fileName.c_str(), false, &index, &z);
+			if (zresult == 0) {
+				std::string* outData = new std::string;
+				outData->resize(z.unc_size);
+				zresult = UnzipItem(HZipResource, index, (void*)outData->c_str(), z.unc_size);
+				if (zresult != 0) {//½âÑ¹Ê§°Ü
+					delete outData;
+					return false;
+				}
+				*_outData = outData;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool GetGlobalResource(const EString& fileName, IStream** _outData) {
+		std::string* memStream = NULL;
+		if (GetGlobalResource(fileName, &memStream)) {
+			*_outData = SHCreateMemStream((byte*)memStream->c_str(), memStream->size());
+			delete memStream;
+			return true;
+		}
+		return false;
+	}
+
 	size_t __count_onsize = 0;
 
 	EBitmap::EBitmap(WORD width, WORD height, PixelFormat piexlFormat) {//Ä¬ÈÏ24Î»²»Í¸Ã÷Î»Í¼
@@ -251,12 +287,12 @@ namespace EzUI {
 			}
 			if (key == "background-image") {
 				value = value.Erase('"');//É¾³ýË«ÒýºÅ;
-				style->BackgroundImage = new Image(value.utf16());
+				style->BackgroundImage = new Image(value);
 				break;
 			}
 			if (key == "fore-image") {
 				value = value.Erase('"');//É¾³ýË«ÒýºÅ;
-				style->ForeImage = new Image(value.utf16());
+				style->ForeImage = new Image(value);
 				break;
 			}
 			if (key == "border-color") {
