@@ -1,5 +1,5 @@
 #pragma once
-#include "IType.h"
+#include "EzUI.h"
 namespace EzUI {
 
 	class UI_EXPORT  Menu

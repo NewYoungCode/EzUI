@@ -1,5 +1,5 @@
 #pragma once
-#include "Layout.h"
+#include "Control.h"
 #include "VScrollBar.h"
 namespace EzUI {
 

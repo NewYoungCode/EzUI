@@ -4,7 +4,11 @@
 void MainFrm::InitForm() {
 	this->Zoom = true;
 
-	this->SetLayout(ui::UIManager::LoadLayout("xml/main.htm"));
+	UIManager um("xml/main.htm");
+
+	auto root= um.GetRoot();
+
+	SetLayout(root);
 
 	playingImage = new Image(L"imgs/play.png");
 	pauseImage = new Image(L"imgs/pause.png");
@@ -33,7 +37,7 @@ void MainFrm::InitForm() {
 	//localList->AutoHeight = true;
 
 	searchList = (VList*)this->FindControl("searchList");
-	searchEdit = (Edit*)FindControl("searchEdit");
+	searchEdit = (TextBox*)FindControl("searchEdit");
 	//美化左侧本地列表的滚动条
 	localList->ScrollBar->SetFixedWidth(9);
 	localList->ScrollBar->Style.Radius = 9;
@@ -223,6 +227,13 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 	}
 
 	if (args.EventType == Event::OnMouseDoubleClick) {
+
+		if (sender->Name == "gif") {
+			sender->Parent->RemoveControl(sender);
+			delete sender;
+			return false;
+		}
+
 		if (!sender->GetAttribute("FileHash").empty()) {
 			EString hash = sender->GetAttribute("FileHash");
 			EString url = "http://m.kugou.com/app/i/getSongInfo.php?hash={hash}&cmd=playInfo";

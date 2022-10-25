@@ -120,7 +120,7 @@ namespace EzUI {
 
 		POINT point{ 0,0 };
 		SIZE size{ rect.Width,  rect.Height };
-		BLENDFUNCTION blend;
+		BLENDFUNCTION blend{0};
 		blend.BlendOp = AC_SRC_OVER;
 		blend.BlendFlags = 0;
 		blend.AlphaFormat = AC_SRC_ALPHA;

@@ -30,12 +30,6 @@
     <ClInclude Include="include\EzUI.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\IType.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Layout.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\HLayout.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -99,9 +93,6 @@
     <ClInclude Include="include\Window.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\Edit.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\Timer.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -129,13 +120,13 @@
     <ClInclude Include="include\PoupWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\UIInterface.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Delegate.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\unzip.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TextBox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PictureBox.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -143,7 +134,7 @@
     <ClCompile Include="Control.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="IType.cpp">
+    <ClCompile Include="EzUI.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="tinyxml\tinyxmlparser.cpp">
@@ -165,9 +156,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="HLayout.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Layout.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Application.cpp">
@@ -221,9 +209,6 @@
     <ClCompile Include="VScrollBar.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Edit.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="BorderlessWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -239,10 +224,13 @@
     <ClCompile Include="EString.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="UIInterface.cpp">
+    <ClCompile Include="unzip.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="unzip.cpp">
+    <ClCompile Include="TextBox.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PictureBox.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

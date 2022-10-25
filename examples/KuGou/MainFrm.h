@@ -13,7 +13,7 @@ private:
 	void InitForm();
 	VList* localList;
 	VList* searchList;
-	Edit* searchEdit;
+	TextBox* searchEdit;
 	LrcControl lrcCtl;
 	Control* playerBar, * playerBar2;
 	int lastWidth = -1;

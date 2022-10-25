@@ -282,17 +282,7 @@ namespace EzUI {
 		ID2D1SolidColorBrush* SolidColorBrush = NULL;
 	protected:
 		virtual void DrawBitmap(ID2D1Bitmap* d2dBitmap, const  __Rect& rect);
-	public:
-		static D2D_COLOR_F ToColorF(const  __Color& color) {
-			FLOAT aF = color.GetA() == 255 ? 1.0f : FLOAT(color.GetA() * 0.003921f);
-			FLOAT rF = FLOAT(color.GetR() * 0.003921);
-			FLOAT gF = FLOAT(color.GetG() * 0.003921);
-			FLOAT bF = FLOAT(color.GetB() * 0.003921);
-			return D2D1::ColorF(rF, gF, bF, aF);
-		}
-		static D2D_RECT_F ToRectF(const __Rect& rect) {
-			return D2D_RECT_F{ (FLOAT)rect.X,(FLOAT)rect.Y,(FLOAT)rect.GetRight(),(FLOAT)rect.GetBottom() };
-		}
+
 	public:
 		Direct2DRender(HDC _dc, int Width = 0, int Height = 0);
 		Direct2DRender(HWND hWnd, int Width = 0, int Height = 0);
@@ -315,9 +305,9 @@ namespace EzUI {
 		void FillGeometry(const Geometry& geometry, const  __Color& color) {
 			FillGeometry(geometry.rgn, color);
 		}
-		void PushLayer(const Geometry& Geometry, EzUI::ClipMode clipMode = EzUI::ClipMode::Valid);
+		void PushLayer(const Geometry& Geometry);
 		void PopLayer();
-		void PushAxisAlignedClip(const __Rect& rectBounds, EzUI::ClipMode clipMode = EzUI::ClipMode::Valid);
+		void PushAxisAlignedClip(const __Rect& rectBounds);
 		void PopAxisAlignedClip();
 		void Flush();
 		ID2D1SolidColorBrush* GetSolidColorBrush(const __Color& _color);
@@ -326,5 +316,7 @@ namespace EzUI {
 	};
 	UI_EXPORT void RenderInitialize();//全局初始化direct2d
 	UI_EXPORT void RenderUnInitialize();//释放direct2d
+
+	using Painter = Direct2DRender;
 };
 #endif

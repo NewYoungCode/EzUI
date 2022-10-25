@@ -49,6 +49,7 @@ Event(this , ##__VA_ARGS__); \
 		OnForePaint(args);//再绘制前景
 
 	}
+
 	void Control::OnBackgroundPaint(PaintEventArgs& e)
 	{
 		Color backgroundColor = GetBackgroundColor();
@@ -57,14 +58,14 @@ Event(this , ##__VA_ARGS__); \
 		if (backgroundColor.valid) {
 			e.Painter.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, backgroundColor);
 		}
-		if (backgroundImage.valid) {
-			e.Painter.DrawImage(backgroundImage.value, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage.value->SizeMode, backgroundImage.value->Padding);
+		if (backgroundImage.valid && backgroundImage) {
+			e.Painter.DrawImage(backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage->SizeMode, backgroundImage->Padding);
 		}
 	}
 	void Control::OnForePaint(PaintEventArgs& e) {
 		HImage foreImage = GetForeImage();
-		if (foreImage.valid) {
-			e.Painter.DrawImage(foreImage.value, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage.value->SizeMode, foreImage.value->Padding);
+		if (foreImage.valid && foreImage) {
+			e.Painter.DrawImage(foreImage, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage->SizeMode, foreImage->Padding);
 		}
 	}
 	void Control::OnBorderPaint(PaintEventArgs& e)
@@ -491,7 +492,7 @@ Event(this , ##__VA_ARGS__); \
 	void Control::OnKeyBoardEvent(const KeyboardEventArgs& args) {
 		if (PublicData == NULL) return;
 		WindowData* winData = PublicData;
-#define CONTROL_IN_WINDOW (winData->_inputControl || winData->_focusControl)
+#define CONTROL_IN_WINDOW (winData->InputControl || winData->FocusControl)
 		bool b1 = this->CheckEventNotify(args.EventType);//先检查是否标记通知到主窗口
 		if (!b1) {
 			return;
@@ -529,7 +530,7 @@ Event(this , ##__VA_ARGS__); \
 		WindowData* winData = PublicData;
 		MouseEventArgs& args = (MouseEventArgs&)_args;
 
-#define CONTROL_IN_WINDOW (winData->_inputControl || winData->_focusControl)
+#define CONTROL_IN_WINDOW (winData->InputControl || winData->FocusControl)
 		if (CONTROL_IN_WINDOW && CheckEventPassThrough(args.EventType)) {//检查鼠标穿透
 			MouseEventArgs copy_args = args;
 			copy_args.Location.X += this->X();
@@ -619,7 +620,11 @@ Event(this , ##__VA_ARGS__); \
 			_load = true;
 		}
 		pt.Count++;
+
+		_rePaintMtx.lock();
 		this->_lastDrawRect = _ClipRect;//记录最后一次绘制的区域
+		_rePaintMtx.unlock();
+
 		//设置绘制偏移
 		pt.OffsetX = clientRect.X; //设置偏移
 		pt.OffsetY = clientRect.Y;//设置偏移
@@ -656,7 +661,7 @@ Event(this , ##__VA_ARGS__); \
 			Geometry outClipRect;
 			Geometry::Intersect(outClipRect, roundRect, _clientRect);
 			pt.PushLayer(outClipRect);
-		}
+	}
 		else {
 			//针对矩形控件
 			pt.PushAxisAlignedClip(_ClipRect);
@@ -689,7 +694,7 @@ Event(this , ##__VA_ARGS__); \
 		if (r > 0) {
 			layer->PopLayer();
 			delete layer;
-		}
+}
 		pt.PopAxisAlignedClip();
 #endif 
 #if USED_Direct2D
@@ -816,6 +821,7 @@ Event(this , ##__VA_ARGS__); \
 	}
 
 	bool Control::Invalidate() {
+		std::unique_lock<std::mutex> autoLock(_rePaintMtx);
 		if (PublicData) {
 			WindowData* winData = PublicData;
 			if (winData) {

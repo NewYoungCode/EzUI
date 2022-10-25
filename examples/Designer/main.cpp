@@ -115,6 +115,10 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	Layout l;
 	l.Style.BackgroundColor = Color::Pink;
 
+	Image testGif(L"D:\\test.gif");
+
+	l.HoverStyle.ForeImage = &testGif;
+
 	ComBox cbox;
 	
 	for (size_t i = 0; i < 6; i++)

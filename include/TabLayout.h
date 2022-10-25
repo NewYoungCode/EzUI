@@ -1,10 +1,10 @@
 #pragma once
-#include "Layout.h"
+#include "Control.h"
 
 namespace EzUI {
 
 	class UI_EXPORT TabLayout :
-		public Layout
+		public Control
 	{
 	protected:
 		int _index = 0;

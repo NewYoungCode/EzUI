@@ -32,7 +32,9 @@ HWND _workerw = nullptr;
 //	return windowHandle;
 //}//获取桌面最底层的句柄
 //
+void test(int a) {
 
+}
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -41,9 +43,24 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
 	Curl_Global_Init();
 
-	ui::Application app(L"res.zip");//外部资源
+	EzUI::Application app;//相对路径资源
 
-	//ui::Application app(IDR_FILE3,"File", "123456");//
+	HImage a;
+
+	auto sz = sizeof(Control);
+
+	//ui::Application app(L"res.zip");//载入外部压缩资源
+
+	//ui::Application app(IDR_FILE3,"File", "123456");//载入vs自定义资源
+
+	//Image testGif(L"D:\\test.gif");
+	//UINT count = 0;
+
+	//for (size_t i = 0; i < testGif.FrameCount(); i++)
+	//{
+	//	auto time = testGif.NextFrame();
+	//	Sleep(time);
+	//}
 
 	MainFrm frm;
 	frm.Show();

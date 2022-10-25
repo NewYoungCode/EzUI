@@ -1,10 +1,8 @@
 #pragma once
-#include "Layout.h"
-
+#include "Control.h"
 namespace EzUI {
-
 	class UI_EXPORT  VLayout :
-		public Layout
+		public Control
 	{
 	public:
 		virtual ~VLayout();

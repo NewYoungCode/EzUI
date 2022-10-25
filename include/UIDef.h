@@ -34,7 +34,12 @@
 #pragma comment(lib,"Shlwapi.lib")
 #include <objidl.h>
 #pragma comment(lib,"Uuid.lib")
-
+#include <commctrl.h>
+#pragma comment(lib, "comctl32.lib")
+//#pragma comment(lib,"odbc32.lib")
+//#pragma comment(lib,"odbccp32.lib")
+#pragma comment(lib,"imm32.lib")
+#pragma comment(lib, "Msimg32.lib")
 #ifndef ASSERT
 #define ASSERT(expr)  _ASSERTE(expr)
 #endif
@@ -66,6 +71,8 @@
 #define UIFunc std::function
 #define UI_NOTIFYICON WM_USER+0x01 //
 #define Layered_PAINT WM_USER+0x03 //
+#define ImageGif_Paint WM_USER+0x04 //
+
 #define WM_UIMESSAGE  WM_USER+20   
 #ifdef _WINDLL
 #define  UI_EXPORT  __declspec(dllexport) 
@@ -88,7 +95,5 @@
 //#define COUNT_ONPAINT//统计绘制耗时
 
 //下面的渲染方式只能选一个
-#define USED_GDIPLUS  0  //CPU绘制 绘制略慢 内存占用低
-#define USED_Direct2D 1  //显卡绘制 性能好 内存占用高
-
-#define ui EzUI
+#define USED_GDIPLUS  1  //CPU绘制 绘制略慢 内存占用低
+#define USED_Direct2D 0  //显卡绘制 性能好 内存占用高

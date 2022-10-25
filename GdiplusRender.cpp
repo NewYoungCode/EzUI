@@ -10,6 +10,13 @@ namespace EzUI {
 	int Dpi = 0;
 	ULONG_PTR _gdiplusToken = NULL;
 
+	Gdiplus::Rect ToRect(const __Rect& _rect) {
+		return Gdiplus::Rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
+	}
+	Gdiplus::Color ToColor(const __Color& color) {
+		return  Gdiplus::Color(color.GetValue());
+	}
+
 	Gdiplus::SolidBrush* CreateBrush(const __Color& color) {
 		Gdiplus::SolidBrush* _bufBrush = new Gdiplus::SolidBrush(color.GetValue());
 		return _bufBrush;
@@ -65,7 +72,7 @@ namespace EzUI {
 		this->DC = hdc;
 		base = new  Gdiplus::Graphics(hdc);
 		HighQualityMode(base);
-		
+
 	}
 	GdiplusRender::GdiplusRender(HWND hWnd)
 	{
@@ -87,7 +94,7 @@ namespace EzUI {
 
 	void GdiplusRender::DrawTextLayout(const __Point& pt, TextLayout* textLayout, const __Color& color) {
 		__Rect rect{ pt.X,pt.Y,textLayout->maxSize.Width,textLayout->maxSize.Height };
-		this->DrawString(*textLayout->text, textLayout->textFormat->fontFamilly, textLayout->textFormat->fontSize, color, rect, textLayout->textFormat->textAlign,false, textLayout->textFormat->Font);
+		this->DrawString(*textLayout->text, textLayout->textFormat->fontFamilly, textLayout->textFormat->fontSize, color, rect, textLayout->textFormat->textAlign, false, textLayout->textFormat->Font);
 	}
 
 	void GdiplusRender::DrawRectangle(const __Rect& _rect, const __Color& color, int width, int radius)
@@ -140,7 +147,7 @@ namespace EzUI {
 		}
 
 	}
-	void GdiplusRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& _rect, TextAlign textAlign, bool underLine, HFONT font )
+	void GdiplusRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& _rect, TextAlign textAlign, bool underLine, HFONT font)
 	{
 		__Rect rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
 		rect.X += OffsetX;
@@ -157,15 +164,15 @@ namespace EzUI {
 			}
 		}
 		//设定基本参数
-		int lastMode=::SetBkMode(DC, TRANSPARENT);
+		int lastMode = ::SetBkMode(DC, TRANSPARENT);
 		HGDIOBJ oldFont = NULL;
 		HFONT newFont = NULL;
 		if (font) {
-			oldFont=SelectFont(DC, font);
+			oldFont = SelectFont(DC, font);
 		}
 		else {
 			newFont = CreateHFont(fontFamily, fontSize, DC, underLine);
-			oldFont=SelectFont(DC, newFont);
+			oldFont = SelectFont(DC, newFont);
 		}
 
 		//绘制文字
@@ -233,10 +240,10 @@ namespace EzUI {
 		}
 		base->ReleaseHDC(DC);
 	}
-	void GdiplusRender::PushAxisAlignedClip(const __Rect& rect, ClipMode clipMode)
+	void GdiplusRender::PushAxisAlignedClip(const __Rect& rect)
 	{
 		Layers.push_back((__Rect*)&rect);
-		base->SetClip(ToRect(rect), (Gdiplus::CombineMode)clipMode);
+		base->SetClip(ToRect(rect), Gdiplus::CombineMode::CombineModeReplace);
 	}
 	void GdiplusRender::PopAxisAlignedClip()
 	{
@@ -245,7 +252,7 @@ namespace EzUI {
 			Layers.pop_back();
 			if (!Layers.empty()) {
 				__Rect& it = *(Layers.back());
-				base->SetClip(ToRect(it), (Gdiplus::CombineMode)ClipMode::Valid);
+				base->SetClip(ToRect(it), Gdiplus::CombineMode::CombineModeReplace);
 			}
 		}
 	}
@@ -284,13 +291,13 @@ namespace EzUI {
 	void GdiplusRender::DrawImage(IImage* _image, const __Rect& destRect, const __Rect& srcRect)
 	{
 		_NOREND_IMAGE_
-		GdiplusImage* image = (GdiplusImage*)_image;
+			GdiplusImage* image = (GdiplusImage*)_image;
 		base->DrawImage(image, ToRect(destRect), srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, Gdiplus::Unit::UnitPixel);
 	}
 	void GdiplusRender::DrawImage(IImage* _image, const __Rect& _rect, const ImageSizeMode& imageSizeMode, const Margin& margin)
 	{
 		_NOREND_IMAGE_
-		GdiplusImage* image = (GdiplusImage*)_image;
+			GdiplusImage* image = (GdiplusImage*)_image;
 
 		if (!image || image->GetLastStatus() != Gdiplus::Status::Ok) return;
 		__Rect rect = _rect;
@@ -303,7 +310,7 @@ namespace EzUI {
 		rect.Height -= margin.Bottom * 2;
 
 		__Size imgSize(image->GetWidth(), image->GetHeight());
-		__Rect drawRect=EzUI::Transformation(imageSizeMode, rect, imgSize);
+		__Rect drawRect = EzUI::Transformation(imageSizeMode, rect, imgSize);
 
 		//HBITMAP bitmap;
 		//image->GetHBITMAP(Gdiplus::Color::Transparent, &bitmap);
@@ -313,7 +320,7 @@ namespace EzUI {
 		//DeleteObject(tempDc);
 		//DeleteObject(bitmap);
 
-		base->DrawImage(image,drawRect.X,drawRect.Y,drawRect.Width,drawRect.Height);
+		base->DrawImage(image, drawRect.X, drawRect.Y, drawRect.Width, drawRect.Height);
 	}
 	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
 	{
@@ -423,6 +430,47 @@ namespace EzUI {
 				SaveHDCToFile(DC, &rect, format, fileName);
 			}*/
 	}
+	void GdiplusImage::Init() {
+		_framePos = 0;
+		_frameCount = 0;
+		UINT count = this->GetFrameDimensionsCount();
+		pDimensionIDs = new GUID[count];
+		// 得到子帧的对象列表
+		GetFrameDimensionsList(pDimensionIDs, count);
+		//获取总帧数
+		_frameCount = GetFrameCount(&pDimensionIDs[0]);
+		if (_frameCount < 2) {
+			return;
+		}
+		// 假设图像具有属性条目 PropertyItemEquipMake.
+		// 获取此条目的大小.
+		int nSize = GetPropertyItemSize(PropertyTagFrameDelay);
+		// 为属性条目分配空间.
+		m_pPropertyItem = (Gdiplus::PropertyItem*)malloc(nSize);
+		GetPropertyItem(PropertyTagFrameDelay, nSize, m_pPropertyItem);
+	}
+	size_t GdiplusImage::NextFrame() {
+		if (_frameCount < 2) {
+			return 0;
+		}
+		if (_framePos >= _frameCount) {
+			_framePos = 0;
+		}
+		SelectActiveFrame(pDimensionIDs, _framePos);
+		long stayTime = ((long*)m_pPropertyItem->value)[_framePos] * 10;
+		_framePos++;
+		return (size_t)stayTime;
+	}
+
+	GdiplusImage::~GdiplusImage() {
+		if (pDimensionIDs) {
+			delete pDimensionIDs;
+		}
+		if (m_pPropertyItem) {
+			free(m_pPropertyItem);
+		}
+	}
+
 	void GdiplusRender::BeginDraw()
 	{
 		//base->BeginContainer();

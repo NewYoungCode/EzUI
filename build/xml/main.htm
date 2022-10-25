@@ -54,7 +54,20 @@
         color: #dddddd;
     }
 
-     /*   #btns:hover {
+    .aaa {
+        /*background-image: ""*/
+    }
+        .aaa:hover {
+            /*background-image: "imgs/xmt.gif"*/
+        }
+        /*   #live:hover {
+            background-image: "imgs/test.gif"
+        }
+
+        #live:active {
+            background-image: "imgs/test.gif"
+        }*/
+        /*   #btns:hover {
             font-size: 13;
             color: #ffffff;
         }*/
@@ -115,6 +128,12 @@
                     </vbox>
                     <vbox id="lrcView2" style="font-size:13"> </vbox>
                     <vbox id="vlcDock" style="background-color:#000000;"></vbox>
+
+                    <vbox class="aaa">
+
+                        <img id="gif" src="imgs/201792920495388672.gif" />
+
+                    </vbox>
                 </tablayout>
             </vbox>
         </hbox>
@@ -140,7 +159,7 @@
 
             </label>
             <spacer width="10"></spacer>
-
+            
             <vbox style="color:rgb(255,255,255)" class="a b  c   ddd">
                 <label id="songName" halign="left" text="酷🐕音乐xxx" height="40"></label>
                 <hbox id="playerBar" style="background-color: rgb(200,200,200, 0.3);border-radius:5" height="5">
@@ -148,7 +167,7 @@
                     <label id="rate" style="background-color:#FFFEA1" width="5"></label>
                 </hbox>
             </vbox>
-            <label id="time" text="00:00/00:00" width="130" style="color:#ffffff"></label>
+            <label id="time"  class="aaa" text="00:00/00:00" width="130" style="color:#ffffff"></label>
         </hbox>
     </vbox>
 </vbox>

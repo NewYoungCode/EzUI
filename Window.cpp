@@ -1,8 +1,8 @@
 ﻿#include "Window.h"
 #include "TabLayout.h"
 namespace EzUI {
-#define _focusControl PublicData._focusControl
-#define _inputControl PublicData._inputControl
+#define _focusControl PublicData.FocusControl
+#define _inputControl PublicData.InputControl
 
 	Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 	{
@@ -141,9 +141,6 @@ namespace EzUI {
 		}
 	}
 
-	//#pragma comment(lib,"odbc32.lib")
-	//#pragma comment(lib,"odbccp32.lib")
-#pragma comment(lib,"imm32.lib")
 	LRESULT HandleStartComposition(HWND hWnd, WPARAM wParam, LPARAM lParam)
 	{
 		return 1;
@@ -164,7 +161,7 @@ namespace EzUI {
 		case  WM_IME_STARTCOMPOSITION://
 		{
 			HIMC hIMC = ImmGetContext(_hWnd);
-			COMPOSITIONFORM cpf;
+			COMPOSITIONFORM cpf{0};
 			cpf.dwStyle = CFS_POINT;
 			int x = 0;
 			int y = 0;
@@ -211,6 +208,14 @@ namespace EzUI {
 			EndPaint(_hWnd, &pst);
 			break;
 		}
+		case ImageGif_Paint: {
+			Control* ctl = dynamic_cast<Control*>(((Control*)wParam));
+			if (ctl) {
+				ctl->Invalidate();
+			}
+			return TRUE;
+		}
+
 		case WM_NOTIFY: {
 			LPNMTTDISPINFO lpnmttdi = (LPNMTTDISPINFO)lParam;
 			if (lpnmttdi->hdr.code == TTN_GETDISPINFO) {
@@ -309,7 +314,7 @@ namespace EzUI {
 		}
 		case WM_MOUSEMOVE:
 		{
-			TRACKMOUSEEVENT tme;
+			TRACKMOUSEEVENT tme{0};
 			tme.cbSize = sizeof(tme);
 			tme.dwFlags = TME_LEAVE;
 			tme.hwndTrack = _hWnd;
@@ -428,6 +433,7 @@ namespace EzUI {
 
 		if ((ExStyle & WS_EX_LAYERED) != WS_EX_LAYERED) {
 			PublicData.InvalidateRect = [=](void* _rect)->void {
+				//Debug::Log("threadId %d",EzUI::GetThreadId());
 				RECT r = ((Rect*)_rect)->WinRECT();
 				::InvalidateRect(_hWnd, &r, FALSE);
 				//::SendMessage(_hWnd, UI_PAINT, (WPARAM)_rect, NULL);
@@ -494,7 +500,7 @@ namespace EzUI {
 
 	bool Window::IsInWindow(Control& pControl, Control& it) {
 		Rect& winClientRect = GetClientRect();
-		auto rect = it.GetRect();//
+		const Rect &rect = it.GetRect();//
 
 		if (rect.IsEmptyArea()) {
 			return false;
@@ -672,13 +678,15 @@ namespace EzUI {
 			args.EventType = Event::OnMouseLeave;
 			_focusControl->Trigger(args);
 		}
-		_focusControl = outCtl;
+
+		if (_focusControl && _inputControl) {
+			_focusControl = outCtl;
+		}
 
 		if (_inputControl && _inputControl != _focusControl) { //输入焦点更换
 			_inputControl->OnKillFocus();//给上一个输入焦点触发失去焦点的事件
 		}
 		_inputControl = _focusControl;
-
 	}
 
 	LRESULT Window::ZoomWindow(const  LPARAM& lParam) {

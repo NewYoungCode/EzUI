@@ -1,6 +1,6 @@
 #pragma once
 #include "EzUI.h"
-#include "Edit.h"
+#include "TextBox.h"
 #include "Form.h"
 #include "Application.h"
 #include "UIManager.h"
@@ -131,7 +131,7 @@ public:
 		if (!s.MvHash.empty()) {
 			mv.SetAttribute("mvhash", s.MvHash);
 			mv.Style.ForeImage = new Image(L"imgs/mvicon.png");;
-			mv.Style.ForeImage.value->Padding = 8;
+			mv.Style.ForeImage->Padding = 8;
 			mv.Cursor = Cursor::HAND;
 		}
 		else {
@@ -186,8 +186,8 @@ namespace global {
 		wc.AddHeader("Host", host);
 		wc.AddHeader("Connection", " Keep-Alive");
 		wc.AddHeader("Cache-Control", " no-cache");
-		EString userid = "1581500868";//酷狗的用户ID 不传入可能请求不到正确的数据
-		//newUrl += "&userid=" + userid;
+		EString userid = "1581500898";//酷狗的用户ID 不传入可能请求不到正确的数据
+		newUrl += "&userid=" + userid;
 		return wc.HttpGet(newUrl, resp);
 	}
 

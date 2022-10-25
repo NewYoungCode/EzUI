@@ -17,8 +17,6 @@
 #include "RenderType.h"
 namespace EzUI {
 
-
-
 	extern int Dpi;
 
 	class TextFormat {
@@ -135,23 +133,30 @@ namespace EzUI {
 
 	class UI_EXPORT GdiplusImage :public Gdiplus::Bitmap, public IImage {
 	protected:
+		Gdiplus::PropertyItem* m_pPropertyItem = NULL;
+		GUID* pDimensionIDs = NULL;
 		void CreateFromFile(const std::wstring& file) {
 			Gdiplus::GpBitmap* bitmap = NULL;
 			lastResult = Gdiplus::DllExports::GdipCreateBitmapFromFile(file.c_str(), &bitmap);
 			SetNativeImage(bitmap);
+			Init();
 		}
 		void CreateFormStream(IStream* iStream) {
 			Gdiplus::GpBitmap* bitmap = NULL;
 			lastResult = Gdiplus::DllExports::GdipCreateBitmapFromStream(iStream, &bitmap);
 			SetNativeImage(bitmap);
+			Init();
 		}
+		void Init();
 	public:
-		virtual ~GdiplusImage() {}
-		GdiplusImage(IStream* iStream) :Gdiplus::Bitmap(iStream) {}
-		GdiplusImage(const std::wstring& fileName) :Gdiplus::Bitmap(fileName.c_str()) {}
-		GdiplusImage(HBITMAP hBitmap) :Gdiplus::Bitmap(hBitmap, NULL) {}
-		GdiplusImage(BITMAPINFO* gdiBitmapInfo, void* gdiBitmapData) :Gdiplus::Bitmap(gdiBitmapInfo, gdiBitmapData) {}
-		GdiplusImage(INT width, INT height, Gdiplus::PixelFormat pixelFormat = PixelFormat32bppARGB) :Gdiplus::Bitmap(width, height, pixelFormat) {}
+		virtual ~GdiplusImage();
+		GdiplusImage(IStream* iStream) :Gdiplus::Bitmap(iStream) { Init(); }
+		GdiplusImage(const std::wstring& fileName) :Gdiplus::Bitmap(fileName.c_str()) { Init(); }
+		GdiplusImage(HBITMAP hBitmap) :Gdiplus::Bitmap(hBitmap, NULL) { Init(); }
+		GdiplusImage(BITMAPINFO* gdiBitmapInfo, void* gdiBitmapData) :Gdiplus::Bitmap(gdiBitmapInfo, gdiBitmapData) { Init(); }
+		GdiplusImage(INT width, INT height, Gdiplus::PixelFormat pixelFormat = PixelFormat32bppARGB) :Gdiplus::Bitmap(width, height, pixelFormat) { Init(); }
+		//跳转到下一帧 并且获取下一帧的延迟
+		virtual size_t NextFrame();
 		void Save(const  std::wstring& fileName);
 	};
 
@@ -306,12 +311,6 @@ namespace EzUI {
 		int OffsetY = 0;
 		Gdiplus::Graphics* base = NULL;
 	public:
-		Gdiplus::Rect ToRect(const __Rect& _rect) {
-			return Gdiplus::Rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
-		}
-		Gdiplus::Color ToColor(const __Color& color) {
-			return  Gdiplus::Color(color.GetValue());
-		}
 		GdiplusRender(HDC hdc, int Width = 0, int Height = 0);
 		GdiplusRender(HWND hWnd);
 		GdiplusRender(Gdiplus::Image* image);
@@ -321,7 +320,7 @@ namespace EzUI {
 		void DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& rect, TextAlign textAlign, bool underLine = false, HFONT font = NULL);
 		void DrawTextLayout(const __Point& pt, TextLayout* textLayout, const __Color& color);
 		Gdiplus::SolidBrush* GetSolidBrush(const __Color& color);
-		void PushAxisAlignedClip(const __Rect& rect, ClipMode clipMode = ClipMode::Valid);
+		void PushAxisAlignedClip(const __Rect& rect);
 		void PopAxisAlignedClip();
 		void Flush();
 		HFONT CreateHFont(const std::wstring& fontFamily, int fontSize, HDC DC, bool lfUnderline = false);
@@ -333,5 +332,7 @@ namespace EzUI {
 		void BeginDraw();
 		void EndDraw();
 	};
+	using Painter = GdiplusRender;
+
 };
 #endif

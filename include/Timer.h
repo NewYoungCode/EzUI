@@ -1,5 +1,5 @@
 #pragma once
-#include "IType.h"
+#include "EzUI.h"
 namespace EzUI {
 	namespace Thread {
 		class Timer //另开线程做Timer 不建议处理UI相关的操作 请自行控制线程同步

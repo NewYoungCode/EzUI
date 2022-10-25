@@ -1,9 +1,9 @@
 #pragma once
-#include "Layout.h"
+#include "Control.h"
 
 namespace EzUI {
 	class UI_EXPORT  HLayout :
-		public Layout
+		public Control
 	{
 	public:
 		void OnSize(const Size& size)override;

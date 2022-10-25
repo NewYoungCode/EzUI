@@ -1,5 +1,4 @@
 #pragma once
-#include "IType.h"
 #include "BorderlessWindow.h"
 namespace EzUI {
 	class PoupWindow :public BorderlessWindow {

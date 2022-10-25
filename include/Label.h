@@ -18,6 +18,7 @@ namespace EzUI {
 		Size GetFontWidth();
 		Label();
 		virtual ~Label();
+		virtual void SetAttribute(const EString& key, const EString& value)override;
 		void SetText(const EString& text);
 		void SetUnderline(bool enable = true);
 		EString GetText()const;

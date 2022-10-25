@@ -1,9 +1,7 @@
 ﻿#pragma once
 #include "Control.h"
-#include "Layout.h"
-#include "Edit.h"
-#include <commctrl.h>
-#pragma comment(lib, "comctl32.lib")
+#include "TextBox.h"
+
 namespace EzUI {
 
 	class UI_EXPORT Window :public IControl

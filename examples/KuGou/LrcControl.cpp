@@ -88,6 +88,9 @@ LrcControl::~LrcControl()
 
 LrcControl::LrcControl()
 {
+
+	//ActiveStyle.BackgroundColor = Color(200,100,200,100);
+
 	timer = new Timer;
 	timer->Interval = 2;
 	timer->Tick = [=]() {
@@ -99,7 +102,7 @@ void LrcControl::LoadLrc(const EString& lrcData)
 {
 	Clear();
 	auto lrc = lrcData.Split("\n");
-	auto gbk = Text::UTF8ToANSI(lrcData);
+	auto gbk = lrcData.ansi();
 	for (auto&& it : lrc) {
 		if (it.empty()) continue;
 		int pos1 = it.find("[");

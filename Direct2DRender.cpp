@@ -11,6 +11,17 @@ namespace EzUI {
 	IWICImagingFactory* g_ImageFactory = NULL;
 	int Dpi = 0;
 
+	 D2D_COLOR_F ToColorF(const  __Color& color) {
+		FLOAT aF = color.GetA() == 255 ? 1.0f : FLOAT(color.GetA() * 0.003921f);
+		FLOAT rF = FLOAT(color.GetR() * 0.003921);
+		FLOAT gF = FLOAT(color.GetG() * 0.003921);
+		FLOAT bF = FLOAT(color.GetB() * 0.003921);
+		return D2D1::ColorF(rF, gF, bF, aF);
+	}
+	 D2D_RECT_F ToRectF(const __Rect& rect) {
+		return D2D_RECT_F{ (FLOAT)rect.X,(FLOAT)rect.Y,(FLOAT)rect.GetRight(),(FLOAT)rect.GetBottom() };
+	}
+
 	template<class Interface>
 	inline void SafeRelease(
 		Interface** ppInterfaceToRelease)
@@ -271,7 +282,7 @@ namespace EzUI {
 		d2dRender->DrawTextLayout(D2D1_POINT_2F{ (FLOAT)(startLacation.X + OffsetX) ,(FLOAT)(startLacation.Y + OffsetY) }, textLayout, sb);
 	}
 	//layer巨tm的耗性能!!! 但是可以异形抗锯齿裁剪
-	void Direct2DRender::PushLayer(const Geometry& dxGeometry, EzUI::ClipMode clipMode)
+	void Direct2DRender::PushLayer(const Geometry& dxGeometry)
 	{
 		ID2D1Layer* layer;
 		d2dRender->CreateLayer(&layer);
@@ -283,13 +294,13 @@ namespace EzUI {
 		d2dRender->PopLayer();
 	}
 	//正规矩形速度快!!! 不支持异形抗锯齿裁剪
-	void Direct2DRender::PushAxisAlignedClip(const __Rect& rectBounds, EzUI::ClipMode clipMode) {
+	void Direct2DRender::PushAxisAlignedClip(const __Rect& rectBounds) {
 		d2dRender->PushAxisAlignedClip(ToRectF(rectBounds), D2D1_ANTIALIAS_MODE::D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	}
 	void Direct2DRender::PopAxisAlignedClip() {//弹出最后一个裁剪
 		d2dRender->PopAxisAlignedClip();
 	}
-	void Direct2DRender::Flush() {//弹出最后一个裁剪
+	void Direct2DRender::Flush() {
 		d2dRender->Flush();
 	}
 	void Direct2DRender::DrawLine(const __Color& color, const __Point& _A, const __Point& _B, int width)

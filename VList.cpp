@@ -59,7 +59,7 @@ namespace EzUI {
 
 			_maxBottom -= outHeight;//减去空白区域高度
 			LocationY.erase(ctl);//将记录Y坐标的map也要删除控件
-			for (auto i = nextIt; i != GetControls().end(); i++)//从删除的下一个控件开始往前移动X坐标
+			for (ControlIterator i = nextIt; i != GetControls().end(); i++)//从删除的下一个控件开始往前移动X坐标
 			{
 				Control* it = *i;
 				it->SetRect(Rect(it->X(), it->Y() - outHeight, it->Width(), it->Height()));//自身移动

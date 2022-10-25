@@ -3,14 +3,14 @@
 #include "Label.h"
 #include "VList.h"
 #include "HLayout.h"
-#include "Edit.h"
+#include "TextBox.h"
 #include "PoupWindow.h"
 namespace EzUI {
 	class UI_EXPORT ComBox :
 		public HLayout
 	{
 	private:
-		Edit edit;
+		TextBox edit;
 		Label label;
 		VList vlist;
 		PoupWindow* poupWnd = NULL;

@@ -1,11 +1,11 @@
 #pragma once
-#include "IType.h"
+#include "EzUI.h"
 namespace EzUI {
 	class UI_EXPORT Control :public IControl
 	{
 	private:
-		bool _stateRepaint = false;
-		bool _mouseIn = false;
+		bool _stateRepaint = false;//状态发生改变的时候绘制
+		bool _mouseIn = false;//鼠标是否在控件内
 		bool _load = false;//是否load
 		Controls _controls;//子控件
 		Controls _spacer;//存储控件下布局的的弹簧集合
@@ -18,6 +18,7 @@ namespace EzUI {
 		Rect _lastRect;
 		Rect _lastDrawRect;//最后一次显示的位置
 		int _eventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnChar | Event::OnKeyDown | Event::OnKeyUp;//默认添加到主窗口通知函数中可拦截
+		std::mutex _rePaintMtx;
 		Control(const Control&);
 		Control& operator=(const Control&);
 	private:

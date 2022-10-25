@@ -10,21 +10,18 @@ namespace EzUI {
 #define REAL_TOLERANCE     (FLT_MIN * 100)
 #define REAL_EPSILON        1.192092896e-07F        /* FLT_EPSILON */
 
-		//--------------------------------------------------------------------------
-		// Forward declarations of common classes
-		//--------------------------------------------------------------------------
-
 		class Size;
 		class SizeF;
 		class Point;
 		class PointF;
 		class Rect;
 		class RectF;
-		class CharacterRange;
-
 
 		class SizeF
 		{
+		public:
+			REAL Width;
+			REAL Height;
 		public:
 			SizeF()
 			{
@@ -56,28 +53,24 @@ namespace EzUI {
 					Height - sz.Height);
 			}
 
-			BOOL Equals(IN const SizeF& sz) const
+			bool Equals(IN const SizeF& sz) const
 			{
 				return (Width == sz.Width) && (Height == sz.Height);
 			}
 
-			BOOL Empty() const
+			bool Empty() const
 			{
 				return (Width == 0.0f && Height == 0.0f);
 			}
 
-		public:
-
-			REAL Width;
-			REAL Height;
+		
 		};
-
-		//--------------------------------------------------------------------------
-		// Represents a dimension in a 2D coordinate system (integer coordinates)
-		//--------------------------------------------------------------------------
 
 		class Size
 		{
+		public:
+			INT Width;
+			INT Height;
 		public:
 			Size()
 			{
@@ -118,28 +111,24 @@ namespace EzUI {
 				return !(Width == _right.Width && Height == _right.Height);
 			}
 
-			BOOL Equals(IN const Size& sz) const
+			bool Equals(IN const Size& sz) const
 			{
 				return (Width == sz.Width) && (Height == sz.Height);
 			}
 
-			BOOL Empty() const
+			bool Empty() const
 			{
 				return (Width == 0 && Height == 0);
 			}
 
-		public:
-
-			INT Width;
-			INT Height;
+		
 		};
-
-		//--------------------------------------------------------------------------
-		// Represents a location in a 2D coordinate system (floating-point coordinates)
-		//--------------------------------------------------------------------------
 
 		class PointF
 		{
+		public:
+			REAL X;
+			REAL Y;
 		public:
 			PointF()
 			{
@@ -177,23 +166,19 @@ namespace EzUI {
 					Y - point.Y);
 			}
 
-			BOOL Equals(IN const PointF& point)
+			bool Equals(IN const PointF& point)
 			{
 				return (X == point.X) && (Y == point.Y);
 			}
 
-		public:
-
-			REAL X;
-			REAL Y;
+		
 		};
-
-		//--------------------------------------------------------------------------
-		// Represents a location in a 2D coordinate system (integer coordinates)
-		//--------------------------------------------------------------------------
 
 		class Point
 		{
+		public:
+			INT X;
+			INT Y;
 		public:
 			Point()
 			{
@@ -231,23 +216,20 @@ namespace EzUI {
 					Y - point.Y);
 			}
 
-			BOOL Equals(IN const Point& point)
+			bool Equals(IN const Point& point)
 			{
 				return (X == point.X) && (Y == point.Y);
 			}
 
-		public:
 
-			INT X;
-			INT Y;
 		};
-
-		//--------------------------------------------------------------------------
-		// Represents a rectangle in a 2D coordinate system (floating-point coordinates)
-		//--------------------------------------------------------------------------
-
 		class RectF
 		{
+		public:
+			REAL X;
+			REAL Y;
+			REAL Width;
+			REAL Height;
 		public:
 
 			RectF()
@@ -286,19 +268,19 @@ namespace EzUI {
 				return new RectF(X, Y, Width, Height);
 			}
 
-			VOID GetLocation(OUT PointF* point) const
+			void GetLocation(OUT PointF* point) const
 			{
 				point->X = X;
 				point->Y = Y;
 			}
 
-			VOID GetSize(OUT SizeF* size) const
+			void GetSize(OUT SizeF* size) const
 			{
 				size->Width = Width;
 				size->Height = Height;
 			}
 
-			VOID GetBounds(OUT RectF* rect) const
+			void GetBounds(OUT RectF* rect) const
 			{
 				rect->X = X;
 				rect->Y = Y;
@@ -326,12 +308,12 @@ namespace EzUI {
 				return Y + Height;
 			}
 
-			BOOL IsEmptyArea() const
+			bool IsEmptyArea() const
 			{
 				return (Width <= REAL_EPSILON) || (Height <= REAL_EPSILON);
 			}
 
-			BOOL Equals(IN const RectF& rect) const
+			bool Equals(IN const RectF& rect) const
 			{
 				return X == rect.X &&
 					Y == rect.Y &&
@@ -339,25 +321,25 @@ namespace EzUI {
 					Height == rect.Height;
 			}
 
-			BOOL Contains(IN REAL x,
+			bool Contains(IN REAL x,
 				IN REAL y) const
 			{
 				return x >= X && x < X + Width &&
 					y >= Y && y < Y + Height;
 			}
 
-			BOOL Contains(IN const PointF& pt) const
+			bool Contains(IN const PointF& pt) const
 			{
 				return Contains(pt.X, pt.Y);
 			}
 
-			BOOL Contains(IN const RectF& rect) const
+			bool Contains(IN const RectF& rect) const
 			{
 				return (X <= rect.X) && (rect.GetRight() <= GetRight()) &&
 					(Y <= rect.Y) && (rect.GetBottom() <= GetBottom());
 			}
 
-			VOID Inflate(IN REAL dx,
+			void Inflate(IN REAL dx,
 				IN REAL dy)
 			{
 				X -= dx;
@@ -366,17 +348,17 @@ namespace EzUI {
 				Height += 2 * dy;
 			}
 
-			VOID Inflate(IN const PointF& point)
+			void Inflate(IN const PointF& point)
 			{
 				Inflate(point.X, point.Y);
 			}
 
-			BOOL Intersect(IN const RectF& rect)
+			bool Intersect(IN const RectF& rect)
 			{
 				return Intersect(*this, *this, rect);
 			}
 
-			static BOOL Intersect(OUT RectF& c,
+			static bool Intersect(OUT RectF& c,
 				IN const RectF& a,
 				IN const RectF& b)
 			{
@@ -392,7 +374,7 @@ namespace EzUI {
 				return !c.IsEmptyArea();
 			}
 
-			BOOL IntersectsWith(IN const RectF& rect) const
+			bool IntersectsWith(IN const RectF& rect) const
 			{
 				return (GetLeft() < rect.GetRight() &&
 					GetTop() < rect.GetBottom() &&
@@ -400,7 +382,7 @@ namespace EzUI {
 					GetBottom() > rect.GetTop());
 			}
 
-			static BOOL Union(OUT RectF& c,
+			static bool Union(OUT RectF& c,
 				IN const RectF& a,
 				IN const RectF& b)
 			{
@@ -416,32 +398,27 @@ namespace EzUI {
 				return !c.IsEmptyArea();
 			}
 
-			VOID Offset(IN const PointF& point)
+			void Offset(IN const PointF& point)
 			{
 				Offset(point.X, point.Y);
 			}
 
-			VOID Offset(IN REAL dx,
+			void Offset(IN REAL dx,
 				IN REAL dy)
 			{
 				X += dx;
 				Y += dy;
 			}
 
-		public:
-
-			REAL X;
-			REAL Y;
-			REAL Width;
-			REAL Height;
+	
 		};
-
-		//--------------------------------------------------------------------------
-		// Represents a rectangle in a 2D coordinate system (integer coordinates)
-		//--------------------------------------------------------------------------
-
 		class Rect
 		{
+		public:
+			INT X;
+			INT Y;
+			INT Width;
+			INT Height;
 		public:
 
 			Rect()
@@ -474,7 +451,7 @@ namespace EzUI {
 				return new Rect(X, Y, Width, Height);
 			}
 
-			VOID GetLocation(OUT Point* point) const
+			void GetLocation(OUT Point* point) const
 			{
 				point->X = X;
 				point->Y = Y;
@@ -484,7 +461,7 @@ namespace EzUI {
 				return Point{ X,Y };
 			}
 
-			VOID GetSize(OUT Size* size) const
+			void GetSize(OUT Size* size) const
 			{
 				size->Width = Width;
 				size->Height = Height;
@@ -494,7 +471,7 @@ namespace EzUI {
 				return Size{ Width,Height };
 			}
 
-			VOID GetBounds(OUT Rect* rect) const
+			void GetBounds(OUT Rect* rect) const
 			{
 				rect->X = X;
 				rect->Y = Y;
@@ -522,12 +499,12 @@ namespace EzUI {
 				return Y + Height;
 			}
 
-			BOOL IsEmptyArea() const
+			bool IsEmptyArea() const
 			{
 				return (Width <= 0) || (Height <= 0);
 			}
 
-			BOOL Equals(IN const Rect& rect) const
+			bool Equals(IN const Rect& rect) const
 			{
 				return X == rect.X &&
 					Y == rect.Y &&
@@ -535,30 +512,30 @@ namespace EzUI {
 					Height == rect.Height;
 			}
 
-			BOOL  operator == (const Rect& right) {
+			bool  operator == (const Rect& right) {
 				return Equals(right);
 			}
 
-			BOOL Contains(IN INT x,
+			bool Contains(IN INT x,
 				IN INT y) const
 			{
 				return x >= X && x < X + Width &&
 					y >= Y && y < Y + Height;
 			}
 
-			BOOL Contains(IN const Point& pt) const
+			bool Contains(IN const Point& pt) const
 			{
 				return Contains(pt.X, pt.Y);
 			}
 
-			BOOL Contains(IN const Rect& rect) const
+			bool Contains(IN const Rect& rect) const
 			{
 				return (X <= rect.X) && (rect.GetRight() <= GetRight()) &&
 					(Y <= rect.Y) && (rect.GetBottom() <= GetBottom());
 
 			}
 
-			VOID Inflate(IN INT dx,
+			void Inflate(IN INT dx,
 				IN INT dy)
 			{
 				X -= dx;
@@ -567,12 +544,12 @@ namespace EzUI {
 				Height += 2 * dy;
 			}
 
-			VOID Inflate(IN const Point& point)
+			void Inflate(IN const Point& point)
 			{
 				Inflate(point.X, point.Y);
 			}
 
-			BOOL Intersect(IN const Rect& rect)
+			bool Intersect(IN const Rect& rect)
 			{
 				return Intersect(*this, *this, rect);
 			}
@@ -580,7 +557,7 @@ namespace EzUI {
 				return RECT{ X,Y,GetRight(),GetBottom() };
 			}
 
-			static BOOL Intersect(OUT Rect& c,
+			static bool Intersect(OUT Rect& c,
 				IN const Rect& a,
 				IN const Rect& b)
 			{
@@ -596,7 +573,7 @@ namespace EzUI {
 				return !c.IsEmptyArea();
 			}
 
-			BOOL IntersectsWith(IN const Rect& rect) const
+			bool IntersectsWith(IN const Rect& rect) const
 			{
 				return (GetLeft() < rect.GetRight() &&
 					GetTop() < rect.GetBottom() &&
@@ -604,7 +581,7 @@ namespace EzUI {
 					GetBottom() > rect.GetTop());
 			}
 
-			static BOOL Union(OUT Rect& c,
+			static bool Union(OUT Rect& c,
 				IN const Rect& a,
 				IN const Rect& b)
 			{
@@ -629,118 +606,26 @@ namespace EzUI {
 				return !c.IsEmptyArea();
 			}
 
-			VOID Offset(IN const Point& point)
+			void Offset(IN const Point& point)
 			{
 				Offset(point.X, point.Y);
 			}
 
 
 
-			VOID Offset(IN INT dx,
+			void Offset(IN INT dx,
 				IN INT dy)
 			{
 				X += dx;
 				Y += dy;
 			}
 
-		public:
-
-			INT X;
-			INT Y;
-			INT Width;
-			INT Height;
+	
 		};
-
-		class PathData
-		{
-		public:
-			PathData()
-			{
-				Count = 0;
-				Points = NULL;
-				Types = NULL;
-			}
-
-			~PathData()
-			{
-				if (Points != NULL)
-				{
-					delete[] Points;
-				}
-
-				if (Types != NULL)
-				{
-					delete[] Types;
-				}
-			}
-
-		private:
-			PathData(const PathData&);
-			PathData& operator=(const PathData&);
-
-		public:
-			INT Count;
-			PointF* Points;
-			_Field_size_opt_(Count) BYTE* Types;
-		};
-
-		class CharacterRange
-		{
-		public:
-			CharacterRange(
-				INT first,
-				INT length
-			) :
-				First(first),
-				Length(length)
-			{}
-
-			CharacterRange() : First(0), Length(0)
-			{}
-
-			CharacterRange& operator = (const CharacterRange& rhs)
-			{
-				First = rhs.First;
-				Length = rhs.Length;
-				return *this;
-			}
-
-			INT First;
-			INT Length;
-		};
-
-
-
-
-		//----------------------------------------------------------------------------
-		// Color mode
-		//----------------------------------------------------------------------------
-
-		enum ColorMode
-		{
-			ColorModeARGB32 = 0,
-			ColorModeARGB64 = 1
-		};
-
-		//----------------------------------------------------------------------------
-		// Color Channel flags
-		//----------------------------------------------------------------------------
-
-		enum ColorChannelFlags
-		{
-			ColorChannelFlagsC = 0,
-			ColorChannelFlagsM,
-			ColorChannelFlagsY,
-			ColorChannelFlagsK,
-			ColorChannelFlagsLast
-		};
-
-		//----------------------------------------------------------------------------
-		// Color
-		//----------------------------------------------------------------------------
-
 		class Color
 		{
+		protected:
+			ARGB Argb;
 		public:
 
 			Color()
@@ -818,12 +703,12 @@ namespace EzUI {
 				return Argb;
 			}
 
-			VOID SetValue(IN ARGB argb)
+			void SetValue(IN ARGB argb)
 			{
 				Argb = argb;
 			}
 
-			VOID SetFromCOLORREF(IN COLORREF rgb)
+			void SetFromCOLORREF(IN COLORREF rgb)
 			{
 				Argb = MakeARGB(255, GetRValue(rgb), GetGValue(rgb), GetBValue(rgb));
 			}
@@ -1013,9 +898,7 @@ namespace EzUI {
 					((ARGB)(a) << AlphaShift));
 			}
 
-		protected:
-
-			ARGB Argb;
+	
 		};
 	};
 
@@ -1041,10 +924,7 @@ namespace EzUI {
 			return Left + Right;
 		}
 	} Margin, Padding;
-	enum class ClipMode {
-		Valid = 0,//Gdiplus::CombineMode::CombineModeReplace,//设置有效区域
-		Invalid = 4// Gdiplus::CombineMode::CombineModeExclude,//设置无效区域
-	};
+
 	enum class ImageSizeMode {
 		//
 		// 摘要:
@@ -1134,11 +1014,25 @@ namespace EzUI {
 	};
 
 	class  IImage {
+	protected:
+		size_t _frameCount = 0;//总帧数
+		size_t _framePos = 0;//当前帧率索引
 	public:
 		EzUI::Padding Padding;// 控件与图片的距离 该数值越大 图片将越小 参考web前端
 		ImageSizeMode SizeMode = ImageSizeMode::Zoom;// 图像显示模式
 	public:
 		virtual ~IImage() {}
+		size_t FrameCount() {
+			return _frameCount;
+		}
+		//跳转到下一帧 并且获取下一帧的延迟
+		virtual size_t NextFrame() {
+			if (_framePos >= _frameCount) {
+				_framePos = 0;
+			}
+			_framePos++;
+			return 0;
+		}
 	};
 
 	inline RenderType::Rect Transformation(ImageSizeMode imageSizeMode, const RenderType::Rect& rect, const RenderType::Size& imgSize) {

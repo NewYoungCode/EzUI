@@ -17,6 +17,45 @@ namespace EzUI {
 			args.Painter.DrawString(_wstr, GetFontFamily(this->State).utf16(), GetFontSize(this->State), GetForeColor(this->State), Rect(0, 0, Width(), Height()), TextAlign, _underline);
 		}
 	}
+
+	void Label::SetAttribute(const EString& key, const EString& value) {
+		do
+		{
+			if (key == "valign") {
+				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)Align::Top);
+				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)Align::Mid);
+				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)Align::Bottom);
+				Align v = Align::Mid;
+				if (value == "top") {
+					v = Align::Top;
+				}
+				else if (value == "bottom") {
+					v = Align::Bottom;
+				}
+				this->TextAlign = EzUI::TextAlign((int)this->TextAlign | (int)v);
+				break;
+			}
+			if (key == "halign") {
+				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)Align::Left);
+				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)Align::Center);
+				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)Align::Right);
+				Align h = Align::Center;
+				if (value == "left") {
+					h = Align::Left;
+				}
+				else if (value == "right") {
+					h = Align::Right;
+				}
+				this->TextAlign = EzUI::TextAlign((int)this->TextAlign | (int)h);
+				break;
+			}
+			if (key == "text") {
+				this->SetText(value);
+				break;
+			}
+		} while (false);
+		__super::SetAttribute(key, value);
+	}
 	Size Label::GetFontWidth() {
 
 		return Size((int)fontBox.Width, (int)fontBox.Height);

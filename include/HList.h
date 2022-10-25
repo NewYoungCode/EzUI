@@ -1,9 +1,9 @@
 #pragma once
-#include "Layout.h"
+#include "Control.h"
 #include "HScrollBar.h"
 namespace EzUI {
 	class UI_EXPORT  HList :
-		public Layout, public IScroll
+		public Control, public IScroll
 	{
 	private:
 		HScrollBar* hScrollBar = NULL;
