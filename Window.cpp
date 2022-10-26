@@ -161,7 +161,7 @@ namespace EzUI {
 		case  WM_IME_STARTCOMPOSITION://
 		{
 			HIMC hIMC = ImmGetContext(_hWnd);
-			COMPOSITIONFORM cpf{0};
+			COMPOSITIONFORM cpf{ 0 };
 			cpf.dwStyle = CFS_POINT;
 			int x = 0;
 			int y = 0;
@@ -314,7 +314,7 @@ namespace EzUI {
 		}
 		case WM_MOUSEMOVE:
 		{
-			TRACKMOUSEEVENT tme{0};
+			TRACKMOUSEEVENT tme{ 0 };
 			tme.cbSize = sizeof(tme);
 			tme.dwFlags = TME_LEAVE;
 			tme.hwndTrack = _hWnd;
@@ -444,14 +444,14 @@ namespace EzUI {
 		}
 
 		PublicData.RemoveControl = [=](Control* delControl)->void {
+			//Debug::Log("remove delControl %p", delControl);
 			if (_focusControl == delControl) {
-				_focusControl->Trigger(Event::OnMouseLeave);
 				_focusControl = NULL;
+				//Debug::Log("remove _focusControl %p", delControl);
 			}
 			if (_inputControl == delControl) {
-				_inputControl->Trigger(Event::OnMouseLeave);
-				_inputControl->OnKillFocus();
 				_inputControl = NULL;
+				//Debug::Log("remove _inputControl %p", delControl);
 			}
 		};
 
@@ -478,7 +478,7 @@ namespace EzUI {
 			SendMessage(_hWndTip, TTM_DELTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
 		};
 
-	
+
 
 		//创建冒泡提示窗口
 		_hWndTip = CreateWindowEx(WS_EX_TOPMOST,
@@ -500,7 +500,7 @@ namespace EzUI {
 
 	bool Window::IsInWindow(Control& pControl, Control& it) {
 		Rect& winClientRect = GetClientRect();
-		const Rect &rect = it.GetRect();//
+		const Rect& rect = it.GetRect();//
 
 		if (rect.IsEmptyArea()) {
 			return false;
@@ -563,10 +563,10 @@ namespace EzUI {
 
 	void Window::OnMouseMove(const Point& point)
 	{
-		if (_focusControl && _mouseDown) { //按住移动的控件
-			auto ctlRect = _focusControl->GetClientRect();
+		if (_inputControl && _mouseDown) { //按住移动的控件
+			auto ctlRect = _inputControl->GetClientRect();
 			MouseEventArgs args(Event::OnMouseMove, { point.X - ctlRect.X ,point.Y - ctlRect.Y });
-			_focusControl->Trigger(args);
+			_inputControl->Trigger(args);
 			return;
 		}
 
@@ -575,16 +575,18 @@ namespace EzUI {
 		MouseEventArgs args;
 		args.Location = relativePoint;
 
-		if (_focusControl && (outCtl != _focusControl)) {//让上一次具有焦点的控件触发移出事件
-			args.EventType = Event::OnMouseLeave;
-			_focusControl->Trigger(args);
+		//触发上一个
+		if (_focusControl != outCtl) {
+			if (_focusControl) {
+				args.EventType = Event::OnMouseLeave;
+				_focusControl->Trigger(args);
+			}
+			_focusControl = outCtl;
 		}
-
-		_focusControl = outCtl;
-		if (outCtl) {
-			//让新控件触发鼠标移动事件
+		//触发命中的
+		if (_focusControl) {
 			args.EventType = Event::OnMouseMove;
-			outCtl->Trigger(args);
+			_focusControl->Trigger(args);
 		}
 
 	}
@@ -598,11 +600,9 @@ namespace EzUI {
 		_mouseDown = false;
 	}
 
-
 	void Window::OnMouseWheel(short zDelta, const Point& point)
 	{
 		if (_focusControl == NULL) return;
-
 		/*	if (_inputControl) {
 				MouseEventArgs args;
 				args.Delta = zDelta;
@@ -610,7 +610,6 @@ namespace EzUI {
 				args.EventType = Event::OnMouseWheel;
 				_inputControl->Trigger(args);
 			}*/
-
 		ScrollBar* scrollBar = NULL;
 		if (_focusControl->ScrollBar) {
 			scrollBar = dynamic_cast<ScrollBar*>(_focusControl->ScrollBar);
@@ -639,12 +638,15 @@ namespace EzUI {
 	}
 	void Window::OnMouseDoubleClick(MouseButton mbtn, const Point& point)
 	{
-		Control* outCtl = _lastDownCtl;
-		MouseEventArgs args;
-		args.Button = mbtn;
-		args.Location = *_mouseDbClick;
-		args.EventType = Event::OnMouseDoubleClick;
-		outCtl->Trigger(args);
+		Point relativePoint;
+		Control* outCtl = FindControl(point, relativePoint);
+		if (outCtl) {
+			MouseEventArgs args;
+			args.Button = mbtn;
+			args.Location = relativePoint;
+			args.EventType = Event::OnMouseDoubleClick;
+			outCtl->Trigger(args);
+		}
 	}
 
 	void Window::OnMouseDown(MouseButton mbtn, const Point& point)
@@ -652,110 +654,56 @@ namespace EzUI {
 		::SetFocus(_hWnd);
 		_mouseDown = true;
 		::SetCapture(_hWnd);
-
+		//寻早控件
 		Point relativePoint;
 		Control* outCtl = FindControl(point, relativePoint);
-
 		MouseEventArgs args;
 		args.Button = mbtn;
 		args.Location = relativePoint;
-		args.EventType = Event::OnMouseDown;
-		outCtl->Trigger(args);
-
-		{ //做双击消息处理
-			auto _time = std::chrono::system_clock::now();
-			auto diff = _time - _lastDownTime;
-			auto timeOffset = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//
-			_lastDownTime = _time;
-			if (timeOffset < 300) {//300毫秒之内单机两次算双击消息
-				_lastDownCtl = outCtl;
-				_lastDownTime = std::chrono::system_clock::from_time_t(0);
-				_mouseDbClick = &relativePoint;
-				OnMouseDoubleClick(mbtn, point);
+		//如果单机的不是上一个 那么上一个触发失去焦点事件
+		if (_inputControl != outCtl) {
+			if (_inputControl) {
+				_inputControl->OnKillFocus();//给上一个输入焦点触发失去焦点的事件
 			}
+			_inputControl = outCtl;
 		}
-		if (_focusControl && _focusControl != outCtl) {
-			args.EventType = Event::OnMouseLeave;
-			_focusControl->Trigger(args);
+		//给命中的控件触发鼠标按下事件
+		if (_inputControl) {
+			args.EventType = Event::OnMouseDown;
+			_inputControl->Trigger(args);
 		}
-
-		if (_focusControl && _inputControl) {
-			_focusControl = outCtl;
-		}
-
-		if (_inputControl && _inputControl != _focusControl) { //输入焦点更换
-			_inputControl->OnKillFocus();//给上一个输入焦点触发失去焦点的事件
-		}
-		_inputControl = _focusControl;
 	}
-
-	LRESULT Window::ZoomWindow(const  LPARAM& lParam) {
-		RECT rc;
-		GetWindowRect(Hwnd(), &rc);
-		POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
-		int x = 4;//
-		if (pt.x < rc.left + x)
-		{
-			if (pt.y < rc.top + x)return HTTOPLEFT;//
-			if (pt.y >= rc.bottom - x)return HTBOTTOMLEFT;//
-			return HTLEFT;//
-		}
-		if (pt.x >= rc.right - x)//
-		{
-			if (pt.y < rc.top + x)return HTTOPRIGHT;//
-			if (pt.y >= rc.bottom - x)return HTBOTTOMRIGHT;//
-			return HTRIGHT;//
-		}
-		if (pt.y < rc.top + x)return HTTOP;//
-		if (pt.y >= rc.bottom - x)return HTBOTTOM;//
-		return HTCLIENT;//ָ
-	}
-
-	void Window::MoveWindow() {
-		::ReleaseCapture();//会导致avtiveStyle失效
-		SendMessage(_hWnd, 161, 2, NULL);
-		SendMessage(_hWnd, 0x0202, 0, NULL);
-	}
-
 	void Window::OnMouseUp(MouseButton mbtn, const Point& point)
 	{
 		_mouseDown = false;
 		::ReleaseCapture();
-		if (_focusControl) {
-			auto ctlRect = _focusControl->GetClientRect();
+		if (_inputControl) {
+			auto ctlRect = _inputControl->GetClientRect();
 			MouseEventArgs args;
 			args.Button = mbtn;
 			args.Location = { point.X - ctlRect.X,point.Y - ctlRect.Y };
 			args.EventType = Event::OnMouseUp;
-			_focusControl->Trigger(args);//触发鼠标抬起事件
+			_inputControl->Trigger(args);//触发鼠标抬起事件
 
-			if (_focusControl && ctlRect.Contains(point)) {//如果焦点还在并且鼠标未移出控件内 触发click事件
+			if (_inputControl && ctlRect.Contains(point)) {//如果焦点还在并且鼠标未移出控件内 触发click事件
 				args.EventType = Event::OnMouseClick;
-				_focusControl->Trigger(args);
+				_inputControl->Trigger(args);
 			}
-			if (_focusControl && !ctlRect.Contains(point))//如果焦点还在 但是鼠标已经不在控件矩形内 触发鼠标移出事件
-			{
-				args.EventType = Event::OnMouseLeave;
-				_focusControl->Trigger(args);
-			}
+		}
 
-			//_focusControl = NULL;
-			//OnMouseMove(point);
+		//做双击消息处理
+		auto _time = std::chrono::system_clock::now();
+		auto diff = _time - _lastDownTime;
+		auto timeOffset = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//
+		_lastDownTime = _time;
+		if (timeOffset < 300) {//300毫秒之内单机两次算双击消息
+			_lastDownTime = std::chrono::system_clock::from_time_t(0);
+			OnMouseDoubleClick(mbtn, point);
 		}
 	}
 
 	void Window::OnMouseClick(MouseButton mbtn, const Point& point) {
-		return;
-		Point relativePoint;
-		Control* outCtl = FindControl(point, relativePoint);//找到当前控件的位置
-		if (outCtl) {
-			MouseEventArgs args;
-			args.Location = relativePoint;
-			args.EventType = Event::OnMouseClick;
-			args.Button = mbtn;
-			outCtl->Trigger(args);
-		}
-		OnMouseMove(point);
+
 	}
 
 	void Window::OnSize(const Size& sz)
@@ -788,6 +736,7 @@ namespace EzUI {
 	{
 
 	}
+
 	void Window::OnChar(WPARAM wParam, LPARAM lParam)
 	{
 		if (_inputControl) { //
@@ -813,7 +762,33 @@ namespace EzUI {
 	void Window::OnMove(const Point& point) {
 
 	}
+	LRESULT Window::ZoomWindow(const  LPARAM& lParam) {
+		RECT rc;
+		GetWindowRect(Hwnd(), &rc);
+		POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
+		int x = 4;//
+		if (pt.x < rc.left + x)
+		{
+			if (pt.y < rc.top + x)return HTTOPLEFT;//
+			if (pt.y >= rc.bottom - x)return HTBOTTOMLEFT;//
+			return HTLEFT;//
+		}
+		if (pt.x >= rc.right - x)//
+		{
+			if (pt.y < rc.top + x)return HTTOPRIGHT;//
+			if (pt.y >= rc.bottom - x)return HTBOTTOMRIGHT;//
+			return HTRIGHT;//
+		}
+		if (pt.y < rc.top + x)return HTTOP;//
+		if (pt.y >= rc.bottom - x)return HTBOTTOM;//
+		return HTCLIENT;//ָ
+	}
 
+	void Window::MoveWindow() {
+		::ReleaseCapture();//会导致avtiveStyle失效
+		SendMessage(_hWnd, 161, 2, NULL);
+		SendMessage(_hWnd, 0x0202, 0, NULL);
+	}
 	bool Window::OnNotify(Control* sender, EventArgs& args) {
 		if (args.EventType == Event::OnMouseDown) {
 			if (sender->Action == ControlAction::MoveWindow || sender == MainLayout) {
@@ -855,4 +830,4 @@ namespace EzUI {
 		return false;
 	}
 
-	};
+};

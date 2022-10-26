@@ -343,9 +343,6 @@ Event(this , ##__VA_ARGS__); \
 	}
 	const Rect& Control::GetRect()
 	{
-		/*	if (Parent && Parent->IsPendLayout()) {
-				Parent->ResumeLayout();
-			}*/
 		return _rect;
 	}
 
@@ -778,15 +775,15 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::OnRemove()
 	{
-		_load = false;
+		for (auto& it : _controls) {
+			it->OnRemove();
+		}
 		if (PublicData) {
 			PublicData->DelTips(this);//ÒÆ³ýtipsÎÄ×Ö°ó¶¨
 			PublicData->RemoveControl(this);
 			PublicData = NULL;
 		}
-		for (auto& it : _controls) {
-			it->OnRemove();
-		}
+		_load = false;
 		Parent = NULL;
 	}
 	Control* Control::FindControl(const EString& objectName)
@@ -822,7 +819,16 @@ Event(this , ##__VA_ARGS__); \
 
 	bool Control::Invalidate() {
 		std::unique_lock<std::mutex> autoLock(_rePaintMtx);
-		if (PublicData) {
+
+		bool visible = this->Visible;
+		Control* pCtl = this->Parent;
+		while (pCtl && visible)
+		{
+			visible = pCtl->Visible;
+			pCtl = pCtl->Parent;
+		}
+
+		if (PublicData && visible) {
 			WindowData* winData = PublicData;
 			if (winData) {
 				Rect _InvalidateRect = GetClientRect();
