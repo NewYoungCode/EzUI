@@ -36,8 +36,8 @@ namespace EzUI {
 							rePaint = false;
 						}
 						if (Parent && rePaint) {
-							auto itor = std::find(Parent->VisibleControls.begin(), Parent->VisibleControls.end(), this);
-							if (itor == Parent->VisibleControls.end()) {
+							Rect parentRect =Rect(0,0, Parent->Width(), Parent->Height());
+							if (!parentRect.IntersectsWith(this->GetRect())) {
 								rePaint = false;
 							}
 						}
