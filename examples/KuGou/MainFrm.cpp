@@ -68,6 +68,12 @@ void MainFrm::InitForm() {
 		localList->AddControl(it);
 	}
 
+	auto pxImage = new PictureBox;
+	pxImage->SetFixedHeight(200);
+
+	pxImage->SetImage(new Image("imgs/xmt.gif"));
+	localList->AddControl(pxImage);
+
 	searchList->ScrollBar->Rolling = [=](int a, int b)->void {
 		NextPage(a, b);
 	};

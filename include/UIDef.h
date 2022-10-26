@@ -71,7 +71,6 @@
 #define UIFunc std::function
 #define UI_NOTIFYICON WM_USER+0x01 //
 #define Layered_PAINT WM_USER+0x03 //
-#define ImageGif_Paint WM_USER+0x04 //
 
 #define WM_UIMESSAGE  WM_USER+20   
 #ifdef _WINDLL

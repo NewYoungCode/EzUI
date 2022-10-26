@@ -21,7 +21,20 @@ namespace EzUI {
 							pause = _img->NextFrame();
 						}
 						_mtx.unlock();
-						this->Invalidate();
+						bool rePaint = true;
+
+						if (!IsVisible()) {
+							rePaint = false;
+						}
+						if (Parent && rePaint) {
+							auto itor = std::find(Parent->VisibleControls.begin(), Parent->VisibleControls.end(), this);
+							if (itor == Parent->VisibleControls.end()) {
+								rePaint = false;
+							}
+						}
+						if (rePaint) {
+							this->Invalidate();
+						}
 						Sleep(pause);
 					}
 					});

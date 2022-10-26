@@ -14,6 +14,7 @@ namespace EzUI {
 		std::chrono::system_clock::time_point _lastDownTime = std::chrono::system_clock::from_time_t(0);
 		Size _lastSize;//上一次客户端大小的信息
 		Point _lastPoint;//上一次移动的坐标
+		MouseButton _lastBtn = MouseButton::None;
 		int _closeCode = 0;
 		HWND _OwnerHwnd = NULL;
 		HWND  _hWndTip = NULL;
@@ -60,7 +61,7 @@ namespace EzUI {
 		HWND& Hwnd();
 		Rect& GetRect();
 		Rect& GetClientRect();
-		void ReSize(const Size& size);
+		void SetSize(const Size& size);
 		void SetIcon(short id);
 		void SetIcon(HICON icon);
 		void SetLayout(EzUI::Control* layout);

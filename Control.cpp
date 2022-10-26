@@ -34,8 +34,10 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::ChildPainting(Controls& controls, PaintEventArgs& args)
 	{
+		VisibleControls.clear();
 		//绘制子控件
 		for (auto& it : controls) {
+			VisibleControls.push_back(it);
 			it->Rending(args);
 		}
 		//子控件绘制完毕
@@ -658,11 +660,11 @@ Event(this , ##__VA_ARGS__); \
 			Geometry outClipRect;
 			Geometry::Intersect(outClipRect, roundRect, _clientRect);
 			pt.PushLayer(outClipRect);
-	}
+		}
 		else {
 			//针对矩形控件
 			pt.PushAxisAlignedClip(_ClipRect);
-		}
+	}
 #endif 
 		//开始绘制
 		bool isIntercept = false;
@@ -691,7 +693,7 @@ Event(this , ##__VA_ARGS__); \
 		if (r > 0) {
 			layer->PopLayer();
 			delete layer;
-}
+		}
 		pt.PopAxisAlignedClip();
 #endif 
 #if USED_Direct2D
@@ -700,7 +702,7 @@ Event(this , ##__VA_ARGS__); \
 		}
 		else {
 			pt.PopAxisAlignedClip();
-		}
+}
 #endif 
 #ifdef DEBUGPAINT
 		if (PublicData->Debug) {
@@ -817,9 +819,7 @@ Event(this , ##__VA_ARGS__); \
 		return ctls;
 	}
 
-	bool Control::Invalidate() {
-		std::unique_lock<std::mutex> autoLock(_rePaintMtx);
-
+	bool Control::IsVisible() {
 		bool visible = this->Visible;
 		Control* pCtl = this->Parent;
 		while (pCtl && visible)
@@ -827,8 +827,12 @@ Event(this , ##__VA_ARGS__); \
 			visible = pCtl->Visible;
 			pCtl = pCtl->Parent;
 		}
+		return visible;
+	}
 
-		if (PublicData && visible) {
+	bool Control::Invalidate() {
+		std::unique_lock<std::mutex> autoLock(_rePaintMtx);
+		if (PublicData) {
 			WindowData* winData = PublicData;
 			if (winData) {
 				Rect _InvalidateRect = GetClientRect();

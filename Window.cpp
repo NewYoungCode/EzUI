@@ -67,7 +67,7 @@ namespace EzUI {
 	{
 		::SetWindowTextW(_hWnd, text.utf16().c_str());
 	}
-	void Window::ReSize(const Size& size) {
+	void Window::SetSize(const Size& size) {
 		RECT rect;
 		::GetWindowRect(_hWnd, &rect);
 		::MoveWindow(_hWnd, rect.left, rect.right, size.Width, size.Height, TRUE);
@@ -78,7 +78,7 @@ namespace EzUI {
 	}
 	void Window::SetIcon(HICON icon)
 	{
-		::SendMessageW(_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)icon);
+		::SendMessage(_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)icon);
 	}
 	void Window::SetLayout(EzUI::Control* layout) {
 		ASSERT(layout);
@@ -97,7 +97,7 @@ namespace EzUI {
 	}
 	void Window::Close(int code) {
 		_closeCode = code;
-		::SendMessageW(_hWnd, WM_CLOSE, 0, 0);
+		::SendMessage(_hWnd, WM_CLOSE, 0, 0);
 	}
 	void Window::Show(int cmdShow)
 	{
@@ -207,13 +207,6 @@ namespace EzUI {
 			OnPaint(pst.hdc, paintRect);
 			EndPaint(_hWnd, &pst);
 			break;
-		}
-		case ImageGif_Paint: {
-			Control* ctl = dynamic_cast<Control*>(((Control*)wParam));
-			if (ctl) {
-				ctl->Invalidate();
-			}
-			return TRUE;
 		}
 
 		case WM_NOTIFY: {
@@ -344,14 +337,12 @@ namespace EzUI {
 		{
 			Point pt(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 			OnMouseUp(MouseButton::Left, pt);
-			//OnMouseClick(MouseButton::Left, pt);
 			break;
 		}
 		case WM_RBUTTONUP:
 		{
 			Point pt(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 			OnMouseUp(MouseButton::Right, pt);
-			//OnMouseClick(MouseButton::Right, pt);
 			break;
 		}
 
@@ -689,17 +680,23 @@ namespace EzUI {
 				args.EventType = Event::OnMouseClick;
 				_inputControl->Trigger(args);
 			}
+			if (_inputControl && !ctlRect.Contains(point))//如果焦点还在 但是鼠标已经不在控件矩形内 触发鼠标移出事件
+			{
+				args.EventType = Event::OnMouseLeave;
+				_inputControl->Trigger(args);
+			}
 		}
 
 		//做双击消息处理
 		auto _time = std::chrono::system_clock::now();
 		auto diff = _time - _lastDownTime;
 		auto timeOffset = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//
-		_lastDownTime = _time;
-		if (timeOffset < 300) {//300毫秒之内单机两次算双击消息
+		if (timeOffset < 300 && _lastBtn == mbtn) {//300毫秒之内同一个按钮按下两次算双击消息
 			_lastDownTime = std::chrono::system_clock::from_time_t(0);
 			OnMouseDoubleClick(mbtn, point);
 		}
+		_lastBtn = mbtn;
+		_lastDownTime = _time;
 	}
 
 	void Window::OnMouseClick(MouseButton mbtn, const Point& point) {
@@ -720,7 +717,7 @@ namespace EzUI {
 		OutputDebugStringA(buf);
 #endif
 
-	}
+}
 
 	void Window::OnRect(const Rect& rect)
 	{
