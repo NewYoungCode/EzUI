@@ -7,6 +7,15 @@ namespace EzUI {
 			delete _gifTask;
 		}
 	}
+	void PictureBox::OnRemove() {
+		__super::OnRemove();
+		if (_gifTask) {
+			_exit = true;
+			_gifTask->join();
+			delete _gifTask;
+			_gifTask = NULL;
+		}
+	}
 	void PictureBox::SetImage(Image* image) {
 		_mtx.lock();
 		_img = image;

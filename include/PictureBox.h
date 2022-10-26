@@ -7,6 +7,8 @@ namespace EzUI {
 		std::mutex _mtx;
 		Image* _img = NULL;
 		std::thread* _gifTask = NULL;
+	protected:
+		virtual void OnRemove()override;
 	public:
 		virtual ~PictureBox();
 		void SetImage(Image* image);
