@@ -24,7 +24,7 @@ namespace EzUI {
 	extern ID2D1Factory* g_Direct2dFactory;
 	extern IDWriteFactory* g_WriteFactory;
 	extern IWICImagingFactory* g_ImageFactory;
-	extern int Dpi;
+	extern float Scale;//屏幕缩放比例 默认1:1
 
 	template<typename T>
 	class DxSafeObject {
@@ -49,7 +49,7 @@ namespace EzUI {
 		IDWriteTextFormat* value = NULL;
 	public:
 		TextFormat(const std::wstring& fontFamily, int fontSize, TextAlign textAlign) {
-			float fh = (float)MulDiv((int)fontSize, Dpi, 72);
+			float fh = fontSize* Scale;//如果要适应DPI 那么这里也要随之更改
 			g_WriteFactory->CreateTextFormat(fontFamily.c_str(), NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fh, L"", &value);
 #define __Top DWRITE_PARAGRAPH_ALIGNMENT_NEAR
 #define	__Bottom DWRITE_PARAGRAPH_ALIGNMENT_FAR

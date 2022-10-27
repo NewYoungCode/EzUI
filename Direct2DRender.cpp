@@ -9,16 +9,16 @@ namespace EzUI {
 	ID2D1Factory* g_Direct2dFactory = NULL;
 	IDWriteFactory* g_WriteFactory = NULL;
 	IWICImagingFactory* g_ImageFactory = NULL;
-	int Dpi = 0;
+	float Scale = 1.0f;
 
-	 D2D_COLOR_F ToColorF(const  __Color& color) {
+	D2D_COLOR_F ToColorF(const  __Color& color) {
 		FLOAT aF = color.GetA() == 255 ? 1.0f : FLOAT(color.GetA() * 0.003921f);
 		FLOAT rF = FLOAT(color.GetR() * 0.003921);
 		FLOAT gF = FLOAT(color.GetG() * 0.003921);
 		FLOAT bF = FLOAT(color.GetB() * 0.003921);
 		return D2D1::ColorF(rF, gF, bF, aF);
 	}
-	 D2D_RECT_F ToRectF(const __Rect& rect) {
+	D2D_RECT_F ToRectF(const __Rect& rect) {
 		return D2D_RECT_F{ (FLOAT)rect.X,(FLOAT)rect.Y,(FLOAT)rect.GetRight(),(FLOAT)rect.GetBottom() };
 	}
 
@@ -35,7 +35,6 @@ namespace EzUI {
 
 	void RenderInitialize()
 	{
-		Dpi = ::GetDpiForSystem();
 		HRESULT hr = S_OK;
 		// Create a Direct2D factory.
 		if (g_Direct2dFactory == NULL) {
@@ -122,7 +121,7 @@ namespace EzUI {
 	void DXImage::CreateFormStream(IStream* istram) {
 		if (g_ImageFactory) {
 			g_ImageFactory->CreateDecoderFromStream(istram, NULL, WICDecodeMetadataCacheOnDemand, &bitmapdecoder);//
-			
+
 		}
 		if (bitmapdecoder) {
 			bitmapdecoder->GetFrame(0, &pframe);

@@ -36,6 +36,9 @@ void test(int a) {
 
 }
 
+#include <shellscalingapi.h>
+#pragma comment(lib,"Shcore.lib")
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPWSTR    lpCmdLine,
@@ -44,12 +47,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	Curl_Global_Init();
 
 	EzUI::Application app;//相对路径资源
-
-	HImage a;
-
-	auto sz = sizeof(Control);
-
-	//ui::Application app(L"res.zip");//载入外部压缩资源
+	//SetProcessDPIAware();
+	//SetProcessDpiAwareness(PROCESS_DPI_AWARENESS::PROCESS_PER_MONITOR_DPI_AWARE);
 
 	//ui::Application app(IDR_FILE3,"File", "123456");//载入vs自定义资源
 

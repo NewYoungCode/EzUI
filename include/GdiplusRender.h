@@ -17,7 +17,7 @@
 #include "RenderType.h"
 namespace EzUI {
 
-	extern int Dpi;
+	extern float Scale;//屏幕缩放比例 默认1:1
 
 	class TextFormat {
 	public:
@@ -34,7 +34,7 @@ namespace EzUI {
 			GetObjectW(GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONTW), &lf);
 			wcsncpy_s(lf.lfFaceName, fontFamilly.c_str(), LF_FACESIZE);
 			lf.lfCharSet = DEFAULT_CHARSET;
-			lf.lfHeight = -MulDiv(fontSize, Dpi, 72);
+			lf.lfHeight =-(LONG)(fontSize * Scale);
 			//lf.lfWeight += FW_BOLD; //粗体
 			//lf.lfUnderline = lfUnderline; //下划线
 			//lf.lfItalic = TRUE; //斜体

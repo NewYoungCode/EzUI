@@ -6,8 +6,7 @@
 #pragma comment(lib,"Shlwapi.lib")
 #pragma comment(lib, "gdiplus.lib")
 namespace EzUI {
-
-	int Dpi = 0;
+	float Scale=1.0f;//屏幕缩放比例 默认1:1
 	ULONG_PTR _gdiplusToken = NULL;
 
 	Gdiplus::Rect ToRect(const __Rect& _rect) {
@@ -28,7 +27,6 @@ namespace EzUI {
 
 	void RenderInitialize()
 	{
-		Dpi = ::GetDpiForSystem();
 		Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 		Gdiplus::GdiplusStartup(&_gdiplusToken, &gdiplusStartupInput, NULL);//初始化gdi+
 	}
@@ -41,8 +39,6 @@ namespace EzUI {
 	{
 		graphics->SetSmoothingMode(Gdiplus::SmoothingMode::SmoothingModeAntiAlias);//抗锯齿
 		graphics->SetPixelOffsetMode(Gdiplus::PixelOffsetMode::PixelOffsetModeHalf);//像素偏移模式
-		//graphics->SetTextRenderingHint(Gdiplus::TextRenderingHint::TextRenderingHintClearTypeGridFit);//文字
-		//graphics->SetInterpolationMode(Gdiplus::InterpolationMode::InterpolationModeHighQuality);//图像
 	}
 	void CreateRectangle(Gdiplus::GraphicsPath& path, const  __Rect& rect, int radius)
 	{
@@ -149,6 +145,9 @@ namespace EzUI {
 	}
 	void GdiplusRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& _rect, TextAlign textAlign, bool underLine, HFONT font)
 	{
+
+		//fontSize *= 1.25f;
+
 		__Rect rect(_rect.X, _rect.Y, _rect.Width, _rect.Height);
 		rect.X += OffsetX;
 		rect.Y += OffsetY;
@@ -171,6 +170,7 @@ namespace EzUI {
 			oldFont = SelectFont(DC, font);
 		}
 		else {
+
 			newFont = CreateHFont(fontFamily, fontSize, DC, underLine);
 			oldFont = SelectFont(DC, newFont);
 		}
@@ -269,7 +269,7 @@ namespace EzUI {
 		GetObjectW(GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONTW), &lf);
 		wcsncpy_s(lf.lfFaceName, fontFamily.c_str(), LF_FACESIZE);
 		lf.lfCharSet = DEFAULT_CHARSET;
-		lf.lfHeight = -MulDiv(fontSize, Dpi, 72);
+		lf.lfHeight = - (LONG)(fontSize * Scale);
 		//lf.lfWeight += FW_BOLD; //粗体
 		lf.lfUnderline = lfUnderline; //下划线
 		//lf.lfItalic = TRUE; //斜体

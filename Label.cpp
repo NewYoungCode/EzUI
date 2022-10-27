@@ -14,6 +14,10 @@ namespace EzUI {
 		__super::OnForePaint(args);
 		if (!_wstr.empty()) {
 			//args.Painter.MeasureString(_text, GetFontFamily(this->State), GetFontSize(this->State), fontBox);
+
+			//TextFormat textFormat(GetFontFamily(this->State).utf16(), GetFontSize(this->State), TextAlign);
+			//TextLayout textLayout(_wstr, Size{ Width(),Height() }, &textFormat);
+			//args.Painter.DrawTextLayout({ 0,0 }, &textLayout, GetForeColor(this->State));
 			args.Painter.DrawString(_wstr, GetFontFamily(this->State).utf16(), GetFontSize(this->State), GetForeColor(this->State), Rect(0, 0, Width(), Height()), TextAlign, _underline);
 		}
 	}

@@ -1,8 +1,38 @@
 ﻿#include "Window.h"
 #include "TabLayout.h"
+
+//#include <shellscalingapi.h>
+//#pragma comment(lib,"Shcore.lib")
+
 namespace EzUI {
 #define _focusControl PublicData.FocusControl
 #define _inputControl PublicData.InputControl
+
+	float GetScale() {
+		return 1.0f;
+
+		HWND hWnd = GetDesktopWindow();
+		HMONITOR hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+		// 获取监视器逻辑宽度与高度
+		MONITORINFOEX miex;
+		miex.cbSize = sizeof(miex);
+		GetMonitorInfo(hMonitor, &miex);
+		int cxLogical = (miex.rcMonitor.right - miex.rcMonitor.left);
+		int cyLogical = (miex.rcMonitor.bottom - miex.rcMonitor.top);
+		// 获取监视器物理宽度与高度
+		DEVMODE dm;
+		dm.dmSize = sizeof(dm);
+		dm.dmDriverExtra = 0;
+		EnumDisplaySettings(miex.szDevice, ENUM_REGISTRY_SETTINGS, &dm);
+		int cxPhysical = dm.dmPelsWidth;
+		int cyPhysical = dm.dmPelsHeight;
+		// 缩放比例计算  实际上使用任何一个即可
+		double horzScale = ((double)cxPhysical / (double)cxLogical);
+		double vertScale = ((double)cyPhysical / (double)cyLogical);
+		//printf("%lf  %lf\n", horzScale, vertScale);
+		return (float)horzScale;
+	}
+
 
 	Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 	{
@@ -21,6 +51,8 @@ namespace EzUI {
 		StdString className = GetThisClassName();
 		_hWnd = ::CreateWindowEx(ExStyle | WS_EX_ACCEPTFILES, className.c_str(), className.c_str(), dStyle,
 			_rect.X, _rect.Y, width, height, owner, NULL, GetModuleHandle(NULL), NULL);
+
+		EzUI::Scale = GetScale();
 
 		InitData(ExStyle);//设置基本数据
 	}
@@ -87,7 +119,7 @@ namespace EzUI {
 			MainLayout->Style.FontFamily = TEXT("Microsoft YaHei");
 		}
 		if (!MainLayout->Style.FontSize.valid) {
-			MainLayout->Style.FontSize = 9;
+			MainLayout->Style.FontSize = 12;
 		}
 		if (!MainLayout->Style.ForeColor.valid) {
 			MainLayout->Style.ForeColor = Color::Black;
@@ -141,6 +173,7 @@ namespace EzUI {
 		}
 	}
 
+	
 	LRESULT HandleStartComposition(HWND hWnd, WPARAM wParam, LPARAM lParam)
 	{
 		return 1;
@@ -194,6 +227,14 @@ namespace EzUI {
 			break;
 		}
 
+		case WM_DISPLAYCHANGE: {
+		/*	auto width = LOWORD(lParam);
+			auto height = HIWORD(lParam);;
+			EzUI::Scale = GetScale();
+			SetWindowPos(_hWnd, HWND_TOP, _rect.X * Scale, _rect.Y * Scale, _rect.Width * Scale, _rect.Height * Scale, SWP_NOZORDER | SWP_NOACTIVATE);
+			MainLayout->Invalidate();*/
+			break;
+		}
 		case WM_PAINT:
 		{
 			if (!_load) {
@@ -220,34 +261,40 @@ namespace EzUI {
 		case WM_WINDOWPOSCHANGED: {
 			bool rePaint = false;
 			WINDOWPOS* wPos = (WINDOWPOS*)(void*)lParam;
-			int flag = SWP_NOCOPYBITS;//
-			if ((wPos->flags & flag) == flag) {
+			if ((wPos->flags & SWP_NOCOPYBITS) == SWP_NOCOPYBITS) {
 				rePaint = true;
 			}
+			//获取客户区的矩形
 			RECT rect;
 			::GetClientRect(_hWnd, &rect);
-			Point point{ rect.left,rect.top };
-			Size size{ rect.right - rect.left,rect.bottom - rect.top };
-			_rectClient = { point,size };
-			if (_rectClient.IsEmptyArea()) {
-				_rect = { 0,0,0,0 };
+			Point clientPoint{ rect.left,rect.top };
+			Size clientSize{ rect.right - rect.left,rect.bottom - rect.top };
+			//客户区矩形无效的时候
+			if (clientSize.Width == 0 && clientSize.Height == 0) {
+				//_rect = { 0,0,0,0 };
 				return TRUE;
 			}
-			_rect = { wPos->x,wPos->y,wPos->cx,wPos->cy };
+			_rect = Rect{ wPos->x,wPos->y,wPos->cx,wPos->cy };
+			_rectClient = Rect{ clientPoint,clientSize };
+			//触发
 			OnRect(_rect);
-			if (!_lastSize.Equals(size)) {
-				_lastSize = size;
-				OnSize(size);
+			if (!_lastSize.Equals(clientSize)) {
+				_lastSize = clientSize;
+				OnSize(clientSize);
 			}
-			else if (rePaint) {
+			if (rePaint) {
 				//Debug::Log("SWP_NOCOPYBITS!");
-				OnSize(size);
+				//丢弃工作区的整个内容。 如果未指定此标志，则会在调整或重新定位窗口后保存并复制回工作区的有效内容。
+				if (MainLayout) {
+					MainLayout->Invalidate();
+				}
 			}
+			Point point = _rect.GetLocation();
 			if (!_lastPoint.Equals(point)) {
 				_lastPoint = point;
 				OnMove(point);
 			}
-			return TRUE;
+			break;
 		}
 		case WM_CLOSE:
 		{
@@ -410,9 +457,7 @@ namespace EzUI {
 #endif
 
 #ifdef COUNT_ONPAINT
-		char buf[100]{ 0 };
-		sprintf_s(buf, "OnPaint Count(%d) (%d,%d,%d,%d) %dms \n", pt.Count, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, sw.ElapsedMilliseconds());
-		OutputDebugStringA(buf);
+		Debug::Log("OnPaint Count(%d) (%d,%d,%d,%d) %dms \n", pt.Count, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, sw.ElapsedMilliseconds());
 #endif // COUNT_ONPAINT
 
 	}
@@ -712,12 +757,10 @@ namespace EzUI {
 		MainLayout->SetRect(this->GetClientRect());
 		MainLayout->Invalidate();
 #ifdef COUNT_ONSIZE
-		char buf[50]{ 0 };
-		sprintf_s(buf, "OnSize Count(%d) (%d,%d) %dms\n", __count_onsize, sz.Width, sz.Height, sw.ElapsedMilliseconds());
-		OutputDebugStringA(buf);
+		Debug::Log("OnSize Count(%d) (%d,%d) %dms\n", __count_onsize, sz.Width, sz.Height, sw.ElapsedMilliseconds());
 #endif
 
-}
+	}
 
 	void Window::OnRect(const Rect& rect)
 	{

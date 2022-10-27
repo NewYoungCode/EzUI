@@ -39,6 +39,10 @@ public:
 		}
 	}
 	SongItem(const EString& _songName, const EString& _songTime = "03:56") {
+
+
+		Style.FontSize = 12;
+
 		//this->ShadowWidth = 5;
 		del.Style.ForeImage = new Image(L"imgs/del.png");
 		del.SetFixedSize({20,20});
