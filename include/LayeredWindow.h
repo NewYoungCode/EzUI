@@ -17,6 +17,7 @@ namespace EzUI {
 		virtual void OnSize(const Size& sz)override;
 		void OnPaint(HDC hdc, const Rect& rePaintRect) override;
 		void OnRect(const Rect& rect);
+		void SetShadow(int width);
 		LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
 	public:
 		ShadowWindow* _boxShadow = NULL;

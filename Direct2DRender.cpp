@@ -124,10 +124,13 @@ namespace EzUI {
 
 		}
 		if (bitmapdecoder) {
-			bitmapdecoder->GetFrame(0, &pframe);
 			g_ImageFactory->CreateFormatConverter(&fmtcovter);
+
+
+			bitmapdecoder->GetFrame(0, &pframe);
 			fmtcovter->Initialize(pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
 			pframe->GetSize(&Width, &Height);
+			Init();
 		}
 	}
 
@@ -137,16 +140,54 @@ namespace EzUI {
 			g_ImageFactory->CreateDecoderFromFilename(filew.c_str(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &bitmapdecoder);//
 		}
 		if (bitmapdecoder) {
-			bitmapdecoder->GetFrame(0, &pframe);
 			g_ImageFactory->CreateFormatConverter(&fmtcovter);
+
+			bitmapdecoder->GetFrame(0, &pframe);
 			fmtcovter->Initialize(pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
 			pframe->GetSize(&Width, &Height);
+			Init();
 		}
 	}
+	void DXImage::Init() {
+		_framePos = 0;
+		UINT fCount = 0;
+		if (bitmapdecoder) {
+			bitmapdecoder->GetFrameCount(&fCount);
+			_frameCount = fCount;
+		}
+		if (fCount > 1) {
+			int a = 0;
+		}
+	}
+	//跳转到下一帧 并且获取下一帧的延迟
+	size_t DXImage::NextFrame() {
+		if (_framePos >= _frameCount) {
+			_framePos = 0;
+		}
+		if (pframe) {
+			pframe->Release();
+			pframe = NULL;
+		}
+
+		if (fmtcovter) {
+			fmtcovter->Release();
+			fmtcovter = NULL;
+		}
+
+		g_ImageFactory->CreateFormatConverter(&fmtcovter);
+		bitmapdecoder->GetFrame(_framePos, &pframe);
+		fmtcovter->Initialize(pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
+
+		_framePos++;
+		return 60;
+	}
+
 	DXImage::DXImage(HBITMAP hBitmap) {
 		if (g_ImageFactory) {
 			g_ImageFactory->CreateBitmapFromHBITMAP(hBitmap, NULL, WICBitmapUsePremultipliedAlpha, &bitMap);
 			bitMap->GetSize(&Width, &Height);
+			Init();
+
 		}
 	}
 	DXImage::DXImage(const std::wstring& file) {
@@ -269,6 +310,7 @@ namespace EzUI {
 
 		TextFormat textFormat(fontFamily, fontSize, textAlign);
 		TextLayout textLayout(text, __Size{ rect.Width, rect.Height }, &textFormat);
+		//TextLayout textLayout(text, __Size{ 16777216, rect.Height }, &textFormat);
 		if (underLine) {
 			textLayout->SetUnderline(TRUE, { 0,(UINT32)text.size() });
 		}

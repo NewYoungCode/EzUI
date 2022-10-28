@@ -6,7 +6,7 @@
 #include "Form.h" 
 #include "Button.h"
 #include "VList.h"
-#include "Edit.h"
+#include "TextBox.h"
 #include "MainFrm.h"
 #include "UIManager.h"
 

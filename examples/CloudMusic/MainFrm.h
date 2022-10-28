@@ -3,18 +3,16 @@
 #include "EzUI.h"
 #include "Form.h"
 #include "Label.h"
-#include "Layout.h"
 #include "HLayout.h"
 #include "VLayout.h"
-#include "Edit.h"
+#include "TextBox.h"
 #include "VList.h"
 #include "TileList.h"
 #include "Button.h"
 
-#include "Edit.h"
 #include "Application.h"
 
-using namespace ui;
+using namespace EzUI;
 
 class MainFrm :public Form
 {
@@ -29,8 +27,8 @@ private:
 
 	VLayout laout;//垂直布局器
 	Label title;//标题
-	Edit edit;//搜索框
-	Layout top;//顶部部分
+	TextBox edit;//搜索框
+	Control top;//顶部部分
 	Control redBar;//红色的线条
 	HLayout centerLayout;//中心部分
 	VList menu;//左侧菜单
@@ -52,7 +50,7 @@ private:
 	Label btn5;
 	Label btn6;
 	HLayout bottom;
-	Layout bottom_left;
+	Control bottom_left;
 	Label head;//歌手头像
 	Label songName;//歌曲名称
 	Label singer;//歌手

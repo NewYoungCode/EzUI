@@ -5,7 +5,7 @@
 #include "Form.h" 
 #include "Button.h"
 #include "VList.h"
-#include "Edit.h"
+#include "TextBox.h"
 #include "UIManager.h"
 #include <thread>
 
@@ -16,7 +16,7 @@
 #include <sapi.h>
 #pragma comment(lib,"ole32.lib") //CoInitialize CoCreateInstance需要调用ole32.dll 
 #pragma comment(lib,"sapi.lib") //sapi.lib在SDK的lib目录,必需正确配置 
-using namespace ui;
+using namespace EzUI;
 
 extern ISpVoice* pVoice;
 namespace TTS {

@@ -257,6 +257,7 @@ namespace EzUI {
 	protected:
 		void CreateFormStream(IStream* istram);
 		void CreateFromFile(const std::wstring& file);
+		void Init();
 	public:
 		void DecodeOfRender(ID2D1RenderTarget* render);
 		DXImage(HBITMAP hBitmap);
@@ -264,6 +265,7 @@ namespace EzUI {
 		DXImage(const std::wstring& file);
 		UINT GetWidth();
 		UINT GetHeight();
+		virtual size_t NextFrame()override;
 		DXImage() {}
 		virtual ~DXImage();
 	};

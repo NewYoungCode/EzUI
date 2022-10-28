@@ -1,9 +1,6 @@
 ﻿#include "Window.h"
 #include "TabLayout.h"
 
-//#include <shellscalingapi.h>
-//#pragma comment(lib,"Shcore.lib")
-
 namespace EzUI {
 #define _focusControl PublicData.FocusControl
 #define _inputControl PublicData.InputControl
@@ -173,7 +170,7 @@ namespace EzUI {
 		}
 	}
 
-	
+
 	LRESULT HandleStartComposition(HWND hWnd, WPARAM wParam, LPARAM lParam)
 	{
 		return 1;
@@ -228,11 +225,11 @@ namespace EzUI {
 		}
 
 		case WM_DISPLAYCHANGE: {
-		/*	auto width = LOWORD(lParam);
-			auto height = HIWORD(lParam);;
-			EzUI::Scale = GetScale();
-			SetWindowPos(_hWnd, HWND_TOP, _rect.X * Scale, _rect.Y * Scale, _rect.Width * Scale, _rect.Height * Scale, SWP_NOZORDER | SWP_NOACTIVATE);
-			MainLayout->Invalidate();*/
+			/*	auto width = LOWORD(lParam);
+				auto height = HIWORD(lParam);;
+				EzUI::Scale = GetScale();
+				SetWindowPos(_hWnd, HWND_TOP, _rect.X * Scale, _rect.Y * Scale, _rect.Width * Scale, _rect.Height * Scale, SWP_NOZORDER | SWP_NOACTIVATE);
+				MainLayout->Invalidate();*/
 			break;
 		}
 		case WM_PAINT:
@@ -416,7 +413,7 @@ namespace EzUI {
 		}
 		}
 		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
-	}
+		}
 
 
 	void Window::OnPaint(HDC winHDC, const Rect& rePaintRect)
@@ -870,4 +867,4 @@ namespace EzUI {
 		return false;
 	}
 
-};
+	};

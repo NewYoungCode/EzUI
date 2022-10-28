@@ -25,6 +25,11 @@ namespace EzUI {
 			}
 			});
 	}
+	void LayeredWindow::SetShadow(int width)
+	{
+		_shadowWidth = width;
+		UpdateShadow();
+	}
 	void LayeredWindow::OnRect(const Rect& rect) {
 		UpdateShadow();
 		__super::OnRect(rect);

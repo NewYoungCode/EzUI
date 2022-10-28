@@ -18,20 +18,14 @@ namespace EzUI {
 		::InitCommonControlsEx(&iccex);
 
 		//设计窗口
-		::HINSTANCE hInstance = GetModuleHandle(NULL);
-		::WNDCLASS     wc;
-		wc.style = NULL;//CS_DBLCLKS;//放弃windows消息中的双击消息
-		//wc.style = CS_HREDRAW | CS_VREDRAW;//| CS_DBLCLKS;
-		wc.lpfnWndProc = EzUI_WndProc;
-		wc.cbClsExtra = NULL;
-		wc.cbWndExtra = NULL;
-		wc.hInstance = hInstance;
-		wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = NULL;// (HBRUSH)(COLOR_WINDOW + 1);
-		wc.lpszMenuName = NULL;
 		StdString className = GetThisClassName();
-		wc.lpszClassName = className.c_str();
+		::HINSTANCE hInstance = GetModuleHandle(NULL);
+		::WNDCLASS     wc{ 0 };
+		wc.lpfnWndProc = EzUI_WndProc;//窗口过程
+		wc.hInstance = hInstance;//
+		wc.hCursor = LoadCursor(NULL, IDC_ARROW);//光标
+		wc.lpszClassName = className.c_str();//类名
+
 		if (!RegisterClass(&wc)) //注册窗口
 		{
 			::MessageBox(NULL, TEXT("This program requires Windows NT !"),
@@ -90,4 +84,4 @@ namespace EzUI {
 		return (int)msg.wParam;
 	}
 
-};
+	};

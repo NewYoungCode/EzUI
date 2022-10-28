@@ -84,7 +84,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	centerLayout.AddControl(&musicList);
 	musicList.Dock = DockStyle::Vertical;
 
-	musicList.Style.FontSize = (11);
+	musicList.Style.FontSize = (14);
 	musicList.Style.ForeColor = (Color::White);
 
 	musicList.ScrollBar->Style.BackgroundColor = { 100, 63,63,63 };
@@ -95,11 +95,18 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	musicList.ActiveStyle.ForeColor = Color::Blue;
 	musicList.ActiveStyle.FontSize = 9;*/
 	musicList.ActiveStyle.BackgroundColor = Color(100, 1, 200, 100);
+
+	Image* gif = new Image("imgs/headImg.jpg");
+
 	//musicList.Margin = 10;
-	for (size_t i = 0; i < 9999; i++)
+	for (size_t i = 0; i < 99999; i++)
 	{
+		PictureBox* pBox = new PictureBox;
+		pBox->SetImage(gif);
+
 		SongItem* lb = new SongItem;
 		lb->lb1.SetText(std::to_string(i));
+		lb->AddControl(pBox);
 
 		if (i % 2) {
 			lb->Style.BackgroundColor = { 55,55,55 };
@@ -188,7 +195,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	Label1.SetFixedWidth(70);
 	Label1.SetText(utf8("00:00"));
 	bottom_center.AddControl(&Label1);
-	
+
 	prog.SetFixedHeight(3);
 	prog.SetFixedWidth(360);
 	prog.Style.BackgroundColor = { 236,65,65 };

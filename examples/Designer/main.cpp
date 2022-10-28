@@ -18,6 +18,8 @@
 
 #include "HList.h"
 #include "ComBox.h"
+#include "PictureBox.h"
+
 #include <Windows.h>
 using namespace EzUI;
 
@@ -112,12 +114,15 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
 	Window wd(800, 600);
 
-	Layout l;
+	PictureBox l;
 	l.Style.BackgroundColor = Color::Pink;
 
 	Image testGif(L"D:\\test.gif");
 
-	l.HoverStyle.ForeImage = &testGif;
+	//l.HoverStyle.ForeImage = &testGif;
+
+	l.SetImage(&testGif);
+
 
 	ComBox cbox;
 	
