@@ -1,32 +1,22 @@
 //WIN32 desktop application UI framework
 
-//email:718987717@qq.com
-//qq群: 758485934
+//email:718987717@qq.com //qq群: 758485934
 
 #include "EzUI.h"
-
 #include "Application.h"
-
 #include "Form.h"
-
 #include "Button.h"
+#include "VLayout.h"
+#include "HLayout.h"
 
-#include "TileLayout.h"
+using namespace EzUI;
 
-#include "VList.h"
-
-using namespace EzUi;
-
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-_In_opt_ HINSTANCE hPrevInstance,
-	_In_ LPWSTR    lpCmdLine,
-	_In_ int       nCmdShow)
-	
+int APIENTRY wWinMain( HINSTANCE hInstance,HINSTANCE hPrevInstance,LPWSTR lpCmdLine, int nCmdShow)
 {
 
 	Application app;//消息循环对象
 	BorderlessWindow frm(800, 600);//无边框窗口
-	
+
 	VLayout mainLayout;//主要布局
 	mainLayout.Style.BackgroundColor = Color::White;//主布局背景颜色
 
