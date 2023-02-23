@@ -247,3 +247,11 @@ namespace global {
 		return base64Text;
 	}
 };
+
+class test {
+public:
+	int a;
+	int b;
+private:
+	int c;
+};

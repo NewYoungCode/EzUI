@@ -32,9 +32,6 @@ HWND _workerw = nullptr;
 //	return windowHandle;
 //}//获取桌面最底层的句柄
 //
-void test(int a) {
-
-}
 
 #include <shellscalingapi.h>
 #pragma comment(lib,"Shcore.lib")
@@ -54,14 +51,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	int sz = sizeof Control;
 
-	//Image testGif(L"D:\\test.gif");
-	//UINT count = 0;
 
-	//for (size_t i = 0; i < testGif.FrameCount(); i++)
-	//{
-	//	auto time = testGif.NextFrame();
-	//	Sleep(time);
-	//}
+	Debug::Log("%x", 4336);
 
 	MainFrm frm;
 	frm.Show();

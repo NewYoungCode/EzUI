@@ -8,7 +8,7 @@ void LrcControl::ChangePostion(int postion)
 			LrcNow = it;
 			break;
 		}
-	}
+	} 
 	if (this->GetRect().IsEmptyArea()) {
 		return;
 	}

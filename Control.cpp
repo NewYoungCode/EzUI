@@ -175,7 +175,7 @@ Event(this , ##__VA_ARGS__); \
 					this->Margin.Right = std::stoi(strs[1]);
 					this->Margin.Bottom = std::stoi(strs[2]);
 					this->Margin.Left = std::stoi(strs[3]);
-					break;
+					break; 
 				}
 				break;
 			}
