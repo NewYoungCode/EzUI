@@ -39,6 +39,16 @@ public:
 		AddControl(&name);
 	}
 };
+
+class TestWindow :public Window {
+public:
+	TestWindow() :Window(800, 600) {};
+	virtual ~TestWindow() {};
+	virtual void OnClose(bool& b) {
+		::PostQuitMessage(0);
+	};
+};
+
 int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
 	//Application app;
@@ -112,25 +122,20 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	//frm.Show();
 
 
-	Window wd(800, 600);
+	TestWindow wd;
 
 	PictureBox l;
 	l.Style.BackgroundColor = Color::Pink;
 
 	Image testGif(L"D:\\test.gif");
-
-	//l.HoverStyle.ForeImage = &testGif;
-
+	l.HoverStyle.ForeImage = &testGif;
 	l.SetImage(&testGif);
 
-
 	ComBox cbox;
-	
-	for (size_t i = 0; i < 6; i++)
+	for (size_t i = 0; i < 16; i++)
 	{
 		cbox.AddItem("选中"+std::to_string(i) );
 	}
-
 	cbox.SetRect({100,100,180,30});
 	l.AddControl(&cbox);
 

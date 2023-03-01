@@ -14,7 +14,6 @@ namespace EzUI {
 
 		label.SetText(L"∨");
 		label.MouseClick = [&](Control* sender, const MouseButton, const Point&)->void {
-			poupWnd->Show(SW_SHOW);
 
 			Rect _rect=GetClientRect();
 			HWND Owner = ::GetWindowOwner(poupWnd->Hwnd());
@@ -25,13 +24,22 @@ namespace EzUI {
 			POINT clientPos = mousePos;
 			ClientToScreen(Owner, &clientPos);
 			int height = OwnerRect.bottom - OwnerRect.top;
-			::MoveWindow(poupWnd->Hwnd(), clientPos.x, clientPos.y, rect.Width, rect.Height, FALSE);
-
+			//::MoveWindow(poupWnd->Hwnd(), clientPos.x, clientPos.y, rect.Width, rect.Height, FALSE);
+			//根据内容自动高度
+			::MoveWindow(poupWnd->Hwnd(), clientPos.x, clientPos.y, rect.Width, vlist._maxBottom, FALSE);
+			poupWnd->Show(SW_SHOW);
 		};
 	}
-	ComBox::~ComBox() {}
+	ComBox::~ComBox() {
+		if (poupWnd) {
+			poupWnd->Close();
+			delete poupWnd;
+			poupWnd = NULL;
+		}
+	}
 	void ComBox::OnLoad() {
 		if (poupWnd == NULL) {
+			//默认200高度
 			poupWnd = new PoupWindow(Width(), 200, PublicData->HANDLE);
 			poupWnd->SetLayout(&vlist);
 		}
