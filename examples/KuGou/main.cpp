@@ -36,45 +36,17 @@ HWND _workerw = nullptr;
 #include <shellscalingapi.h>
 #pragma comment(lib,"Shcore.lib")
 
-class testClass {
-public:
-	testClass() {}
-	virtual ~testClass() {
-		int exit = 0;
-		OutputDebugStringA("delete testClass\n");
-	}
-};
-class testClassA :public testClass {
-public:
-	testClassA() {}
-	~testClassA() {
-		int exit = 0;
-		OutputDebugStringA("delete testClassA\n");
-	}
-};
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPWSTR    lpCmdLine,
 	_In_ int       nCmdShow)
 {
-	{
-		testClass* a = new testClassA;
-		delete a;
-	}
-
 
 	Curl_Global_Init();
-
 	EzUI::Application app("res.zip");//相对路径资源
 	//SetProcessDPIAware();
 	//SetProcessDpiAwareness(PROCESS_DPI_AWARENESS::PROCESS_PER_MONITOR_DPI_AWARE);
-
 	//ui::Application app(IDR_FILE3,"File", "123456");//载入vs自定义资源
-
-	int sz = sizeof Control;
-
-
-	Debug::Log("%x", 4336);
 
 	MainFrm frm;
 	frm.Show();

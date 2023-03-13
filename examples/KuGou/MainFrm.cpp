@@ -6,7 +6,7 @@ void MainFrm::InitForm() {
 
 	UIManager um("xml/main.htm");
 
-	auto root= um.GetRoot();
+	auto root = um.GetRoot();
 
 	SetLayout(root);
 
@@ -68,11 +68,11 @@ void MainFrm::InitForm() {
 		localList->AddControl(it);
 	}
 
-	auto pxImage = new PictureBox;
-	pxImage->SetFixedHeight(200);
-
-	pxImage->SetImage(new Image("imgs/xmt.gif"));
-	localList->AddControl(pxImage);
+	//gif¶¯Ì¬
+	//auto pxImage = new PictureBox;
+	//pxImage->SetFixedHeight(200);
+	//pxImage->SetImage(new Image("imgs/xmt.gif"));
+	//localList->AddControl(pxImage);
 
 	searchList->ScrollBar->Rolling = [=](int a, int b)->void {
 		NextPage(a, b);
@@ -252,7 +252,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			JObject json(resp);
 
 			if (json["errcode"].asInt() != 0) {
-				::MessageBoxW(Hwnd(),  EString(json["error"].asString()).utf16().c_str(), L"ÒôÀÖAPI´íÎó", 0);
+				::MessageBoxW(Hwnd(), EString(json["error"].asString()).utf16().c_str(), L"ÒôÀÖAPI´íÎó", 0);
 				return 0;
 			}
 
@@ -278,6 +278,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				}
 				FindControl("lrcView")->Trigger(Event::OnMouseClick);
 
+				//this->DownLoadImage(SingerName, json["imgUrl"].asString());
 				downloadTask = new std::future<void>(std::async([&](EString singname, EString imgUrl)->void {
 					this->DownLoadImage(singname, imgUrl);
 					}, SingerName, json["imgUrl"].asString()));
@@ -477,10 +478,10 @@ LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
 	if (refreshImage == msg) {
 
 		if (headImg) {
-		
+
 			singer->Invalidate();
 		}
-		
+
 		FindControl("lrcView")->Trigger(Event::OnMouseClick);
 		return 0;
 	}

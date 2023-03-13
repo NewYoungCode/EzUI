@@ -90,12 +90,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>../../include;E:\C++\GeneralLib\GeneralLib;E:\C++\GeneralLib\include;sdk/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;E:\C++\Common\Common\include;sdk/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\C++\GeneralLib\lib;sdk/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\C++\Common\Common\lib;sdk/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <Manifest />
@@ -108,14 +108,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>../../include;E:\C++\GeneralLib\GeneralLib;E:\C++\GeneralLib\include;sdk/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../include;E:\C++\Common\Common\include;sdk/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\C++\GeneralLib\lib;sdk/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>E:\C++\Common\Common\lib;sdk/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
@@ -157,6 +157,9 @@
     <ClCompile Include="VlcPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Common\Common\Common.vcxproj">
+      <Project>{a0439652-04db-4cf5-b277-fcd18a8b3f5d}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\EzUI.vcxproj">
       <Project>{be15257d-96dd-4376-8270-403dd4e16783}</Project>
     </ProjectReference>
