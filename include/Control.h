@@ -104,7 +104,7 @@ namespace EzUI {
 		void TryPendLayout();//尝试挂起布局
 		void EndLayout();//结束布局
 		void SetRect(const Rect& rect);//设置相对父控件矩形
-		void ResumeLayout();//直接进行布局
+		virtual void ResumeLayout();//直接进行布局
 		virtual void SetTips(const EString& text);
 		virtual void OnKillFocus();//失去焦点的时候发生
 		virtual void OnRemove();//被移除该做的事情

@@ -411,6 +411,9 @@ namespace EzUI {
 		if (key == "placeholder") {
 			Placeholder = value;
 		}
+		if (key == "text") {
+			SetText(value);
+		}
 	}
 	void TextBox::OnSize(const Size& sz) {
 		__super::OnSize(sz);

@@ -56,10 +56,277 @@
     <ClInclude Include="resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_about.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_access.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_addons.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_aout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_aout_volume.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_arrays.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_atomic.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_avcodec.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_bits.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_block.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_block_helper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_charset.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_codec.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_common.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_config.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_config_cat.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_configuration.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_cpu.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_demux.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_dialog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_epg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_es.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_es_out.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_events.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_filter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_fingerprinter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_fourcc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_fs.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_gcrypt.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_http.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_httpd.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_inhibit.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_input.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_input_item.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_keys.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_main.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_md5.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_media_library.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_messages.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_meta.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_meta_fetcher.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_mime.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_modules.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_mouse.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_mtime.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_network.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_objects.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_opengl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_picture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_picture_fifo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_picture_pool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_playlist.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_plugin.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_probe.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_rand.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_services_discovery.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_sout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_spu.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_stream.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_strings.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_subpicture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_text_style.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_threads.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_tls.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_url.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_variables.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_video_splitter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_vlm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_vout.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_vout_display.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_vout_osd.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_vout_window.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_xlib.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\plugins\vlc_xml.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\deprecated.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\libvlc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\libvlc_events.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\libvlc_media.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\libvlc_media_discoverer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\libvlc_media_library.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\libvlc_media_list.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\libvlc_media_list_player.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\libvlc_media_player.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\libvlc_structures.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\libvlc_version.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\libvlc_vlm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="sdk\include\vlc\vlc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="KuGou.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sdk\activex\test.html" />
   </ItemGroup>
 </Project>

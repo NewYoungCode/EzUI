@@ -7,9 +7,7 @@ namespace EzUI {
 		__super::Clear(freeChilds);
 		LocationY.clear();
 		_MaxBottom = 0;
-		if (vScrollBar) {
-			vScrollBar->SetMaxBottom(_MaxBottom);
-		}
+		RefreshScroll(_MaxBottom);
 	}
 
 	TileList::TileList()
@@ -29,11 +27,22 @@ namespace EzUI {
 	{
 		__super::OnSize(sz);
 		ResumeLayout();
+		RefreshScroll(_MaxBottom);
+	}
+
+	void TileList::RefreshScroll(const int& _maxBottom) {
+		if (AutoHeight) {
+			this->_fixedHeight = _maxBottom;
+			this->_rect.Height = _maxBottom;
+			vScrollBar->Visible = false;
+		}
+		else {
+			vScrollBar->Visible = true;
+		}
 		if (vScrollBar) {
-			vScrollBar->SetMaxBottom(_MaxBottom);
+			vScrollBar->SetMaxBottom(_maxBottom);
 		}
 	}
-	
 	void TileList::OnLayout()
 	{
 		__super::OnLayout();
@@ -74,6 +83,9 @@ namespace EzUI {
 
 			_MaxBottom = y + maxHeight;
 		}
+		RefreshScroll(_MaxBottom);
 	}
-
+	void TileList::ResumeLayout() {
+		__super::ResumeLayout();
+	}
 };
