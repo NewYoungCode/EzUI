@@ -31,6 +31,7 @@ namespace EzUI {
 };
 
 namespace EzUI {
+#define ERROR_STYLE -1
 #define ID_STYLE 0
 #define CLASS_STYLE 1
 	Control* UIManager::BuildControl(void* _node) {
@@ -147,7 +148,7 @@ namespace EzUI {
 			this->OnSetAttribute(ctl, attrName, attrValue);
 		} while ((attr = attr->Next()));
 
-		ctl->IsXmlControl = true;//标记为xml加载进来的控件
+		((bool)(ctl->IsXmlControl)) = true;//标记为xml加载进来的控件
 		LoadStyle(ctl, ControlState::None);
 		LoadStyle(ctl, ControlState::Active);
 		LoadStyle(ctl, ControlState::Hover);
@@ -248,15 +249,19 @@ namespace EzUI {
 		}
 		//解析样式类型
 		for (auto& style : strs) {
-			byte type = ID_STYLE;//
-			size_t pos = style.find("#");
-			if (pos == -1) {
-				pos = style.find(".");//类样式
-				type = CLASS_STYLE;
+
+			byte type = ERROR_STYLE;//样式类型
+			size_t pos(-1);
+			if ((pos = style.find("#")) == 0) {
+				type = ID_STYLE;//ID样式
 			}
-			if (pos == -1) {
-				break;
+			else if ((pos = style.find(".")) == 0) {
+				type = CLASS_STYLE;//类样式
 			}
+			else {
+				continue;//否则就啥也不式
+			}
+
 			size_t pos2 = style.find("}");
 			if (pos2 == -1)break;
 			size_t pos3 = style.find("{");
@@ -358,7 +363,7 @@ namespace EzUI {
 	}
 	void UIManager::OnSetAttribute(Control* ctl, const EString& attrName, const EString& attrValue) {
 		if (EventSetAttribute) {
-			EventSetAttribute(ctl, attrName , attrValue);
+			EventSetAttribute(ctl, attrName, attrValue);
 		}
 	}
 	UIManager::UIManager(const EString& fileName) {

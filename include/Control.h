@@ -34,7 +34,7 @@ namespace EzUI {
 		EzUI::Cursor Cursor = EzUI::Cursor::None;//鼠标样式
 		int MousePassThrough = 0;//忽略的鼠标消息
 		int ShadowWidth = 0;//控件阴影宽度
-		bool IsXmlControl = false;//是否是xml加载进来的
+		const bool IsXmlControl = false;//是否是xml加载进来的
 		EString Name;//控件的ObjectName ID
 		ScrollBar* ScrollBar = NULL;//垂直滚动条或者水平滚动条 一个控件只允许有一个
 		ControlState State = ControlState::None;//控件状态
