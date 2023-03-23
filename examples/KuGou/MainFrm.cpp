@@ -18,7 +18,7 @@ void MainFrm::InitForm() {
 	//::SetParent(btn, Hwnd());
 
 	auto main2 = FindControl("main2");
-	main2->Style.BackgroundColor = Color(120, 0, 0, 0);
+	main2->Style.BackgroundColor = Color(100, 0, 0, 0);
 
 	main = FindControl("main");
 	center = FindControl("center");

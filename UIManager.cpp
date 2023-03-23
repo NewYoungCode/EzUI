@@ -32,8 +32,9 @@ namespace EzUI {
 
 namespace EzUI {
 #define ERROR_STYLE -1
-#define ID_STYLE 0
-#define CLASS_STYLE 1
+#define TAG_STYLE 0
+#define ID_STYLE 1
+#define CLASS_STYLE 2
 	Control* UIManager::BuildControl(void* _node) {
 		TiXmlElement* node = (TiXmlElement*)_node;
 		Control* ctl = NULL;
@@ -252,20 +253,26 @@ namespace EzUI {
 
 			byte type = ERROR_STYLE;//样式类型
 			size_t pos(-1);
+			size_t selectSize = 0;
+
 			if ((pos = style.find("#")) == 0) {
 				type = ID_STYLE;//ID样式
+				selectSize = 1;
 			}
 			else if ((pos = style.find(".")) == 0) {
 				type = CLASS_STYLE;//类样式
+				selectSize = 1;
 			}
 			else {
-				continue;//否则就啥也不式
+				type = TAG_STYLE;//类样式
+				pos = 0;//标签样式
+				selectSize = 0;
 			}
 
 			size_t pos2 = style.find("}");
 			if (pos2 == -1)break;
 			size_t pos3 = style.find("{");
-			EString name = style.substr(pos + 1, pos3 - pos - 1);
+			EString name = style.substr(pos + selectSize, pos3 - pos - selectSize);
 			size_t pos4 = name.find(":");
 			EString style_type;
 			EString str = style.substr(pos3 + 1, pos2 - pos3 - 1);

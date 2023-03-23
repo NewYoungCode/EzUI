@@ -43,7 +43,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
 
 	Curl_Global_Init();
-	EzUI::Application app("res.zip");//相对路径资源
+	EzUI::Application app;//相对路径资源
 	//SetProcessDPIAware();
 	//SetProcessDpiAwareness(PROCESS_DPI_AWARENESS::PROCESS_PER_MONITOR_DPI_AWARE);
 	//ui::Application app(IDR_FILE3,"File", "123456");//载入vs自定义资源
