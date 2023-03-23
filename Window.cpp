@@ -341,7 +341,7 @@ namespace EzUI {
 			::ScreenToClient(Hwnd(), &p1);
 			Point point{ p1.x,p1.y };
 			Point relativePoint;
-			Control* outCtl = FindControl(point, relativePoint);//找到当前控件的位置
+			Control* outCtl = this->FindControl(point, relativePoint);//找到当前控件的位置
 			HCURSOR cursor = NULL;
 			if (outCtl && (cursor = outCtl->GetCursor())) {
 				::SetCursor(cursor);
@@ -413,7 +413,7 @@ namespace EzUI {
 		}
 		}
 		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
-		}
+	}
 
 
 	void Window::OnPaint(HDC winHDC, const Rect& rePaintRect)
@@ -576,20 +576,19 @@ namespace EzUI {
 			if (!it.Visible) {
 				continue;
 			}
-
 			if (!IsInWindow(*outCtl, it)) {
 				continue;
 			}
 			if (it.GetClientRect().Contains(clientPoint)) {
-				if (dynamic_cast<Spacer*>(&it)) {
-					return outCtl;
-				}
 				outCtl = &it;
 				auto ctlRect = it.GetClientRect();
 				outPoint.X = clientPoint.X - ctlRect.X;
 				outPoint.Y = clientPoint.Y - ctlRect.Y;
 				goto UI_Loop;
 			}
+		}
+		if (dynamic_cast<Spacer*>(outCtl) && outCtl->Parent) {
+			return  outCtl->Parent;
 		}
 		return outCtl;
 	}
@@ -604,7 +603,7 @@ namespace EzUI {
 		}
 
 		Point relativePoint;
-		Control* outCtl = FindControl(point, relativePoint);//找到当前控件的位置
+		Control* outCtl = this->FindControl(point, relativePoint);//找到当前控件的位置
 		MouseEventArgs args;
 		args.Location = relativePoint;
 
@@ -672,7 +671,7 @@ namespace EzUI {
 	void Window::OnMouseDoubleClick(MouseButton mbtn, const Point& point)
 	{
 		Point relativePoint;
-		Control* outCtl = FindControl(point, relativePoint);
+		Control* outCtl = this->FindControl(point, relativePoint);
 		if (outCtl) {
 			MouseEventArgs args;
 			args.Button = mbtn;
@@ -689,7 +688,7 @@ namespace EzUI {
 		::SetCapture(_hWnd);
 		//寻早控件
 		Point relativePoint;
-		Control* outCtl = FindControl(point, relativePoint);
+		Control* outCtl = this->FindControl(point, relativePoint);
 		MouseEventArgs args;
 		args.Button = mbtn;
 		args.Location = relativePoint;
@@ -867,4 +866,4 @@ namespace EzUI {
 		return false;
 	}
 
-	};
+};

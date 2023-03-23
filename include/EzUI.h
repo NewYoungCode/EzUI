@@ -6,6 +6,7 @@
 #include "GdiplusRender.h"
 #include "Direct2DRender.h"
 namespace EzUI {
+
 	//全局资源句柄
 	extern UI_EXPORT HZIP HZipResource;//zip文件中的全局资源句柄
 	extern UI_EXPORT HGLOBAL HVSResource;//vs中的资源文件句柄
@@ -308,7 +309,7 @@ namespace EzUI {
 		UPARROW = (ULONG_PTR)IDC_UPARROW,// 垂直箭头
 		WAIT = (ULONG_PTR)IDC_WAIT// 沙漏，Windows7下会显示为选择的圆圈表示等待
 	};
-	
+
 	//基础事件
 	class EventArgs {
 	public:

@@ -5,6 +5,7 @@ namespace EzUI {
 	class UI_EXPORT  HList :
 		public Control, public IScroll
 	{
+		UI_GetClassName()
 	private:
 		HScrollBar* hScrollBar = NULL;
 	public:

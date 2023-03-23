@@ -17,19 +17,24 @@
 #include "Window.h"
 #include "Form.h"
 namespace EzUI {
-
 	class UI_EXPORT UIManager {
+		enum class Style {
+			Static,
+			Hover,
+			Active
+		};
+		struct Selector
+		{
+			UIManager::Style styleType;
+			EString selectorName;
+			EString styleStr;
+		};
 	private:
-		std::map<EString, EString> styles;//默认样式集合
-		std::map<EString, EString> styles_active;//按下样式集合
-		std::map<EString, EString> styles_hover;//鼠标悬浮样式集合
-		std::map<EString, EString> class_styles;//默认样式集合 类样式
-		std::map<EString, EString> class_styles_active;//按下样式集合 类样式
-		std::map<EString, EString> class_styles_hover;//鼠标悬浮样式集合 类样式
+		std::list<UIManager::Selector> Selectors;//样式集合
 		std::list<Control*> controls;//加载的控件集合
 		void LoadControl(void* node, Control* control);
 		Control* BuildControl(void* node);
-		void LoadStyle(Control* ctl, ControlState styleType);
+		void LoadStyle(Control* ctl, const EString& selectorName);
 		void AnalysisStyle(const EString& styleStr);
 		void LoadFromFile(const EString& filename);
 		void LoadFromRaw(const EString& xmlRaw);

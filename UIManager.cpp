@@ -31,97 +31,97 @@ namespace EzUI {
 };
 
 namespace EzUI {
-#define ERROR_STYLE -1
-#define TAG_STYLE 0
-#define ID_STYLE 1
-#define CLASS_STYLE 2
+
 	Control* UIManager::BuildControl(void* _node) {
 		TiXmlElement* node = (TiXmlElement*)_node;
 		Control* ctl = NULL;
-		std::string valueStr(node->ValueTStr().c_str());
-		EString::Tolower(&valueStr);
+		std::string tagStr(node->ValueTStr().c_str());
+		EString::Tolower(&tagStr);
 		do
 		{
-			if (valueStr == "control") {
+			if (tagStr == "control") {
 				ctl = new Control();
 				break;
 			}
-			if (valueStr == "vlist") {
+			if (tagStr == "vlist") {
 				ctl = new VList;
 				break;
 			}
-			if (valueStr == "hlist") {
+			if (tagStr == "hlist") {
 				ctl = new HList;
 				break;
 			}
-			if (valueStr == "vlayout" || valueStr == "vbox") {
+			if (tagStr == "vlayout" || tagStr == "vbox") {
 				ctl = new VLayout;
 				break;
 			}
-			if (valueStr == "hlayout" || valueStr == "hbox") {
+			if (tagStr == "hlayout" || tagStr == "hbox") {
 				ctl = new HLayout;
 				break;
 			}
-			if (valueStr == "layout" || valueStr == "box") {
+			if (tagStr == "layout" || tagStr == "box") {
 				ctl = new Control;
 				break;
 			}
-			if (valueStr == "tilelist") {
+			if (tagStr == "tilelist") {
 				ctl = new TileList;
 				break;
 			}
-			if (valueStr == "tablayout") {
+			if (tagStr == "tablayout") {
 				ctl = new TabLayout;
 				break;
 			}
-			if (valueStr == "spacer") {
+			if (tagStr == "spacer") {
 				ctl = new Spacer();
 				break;
 			}
-			if (valueStr == "vspacer") {
+			if (tagStr == "vspacer") {
 				ctl = new VSpacer(0);
 				break;
 			}
-			if (valueStr == "hspacer") {
+			if (tagStr == "hspacer") {
 				ctl = new HSpacer(0);
 				break;
 			}
-			if (valueStr == "label") {
+			if (tagStr == "label") {
 				ctl = new Label;
 				break;
 			}
-			if (valueStr == "button") {
+			if (tagStr == "button") {
 				ctl = new Button;
 				break;
 			}
-			if (valueStr == "radiobutton") {
+			if (tagStr == "radiobutton") {
 				ctl = new RadioButton;
 				break;
 			}
-			if (valueStr == "checkbox") {
+			if (tagStr == "checkbox") {
 				ctl = new CheckBox;
 				break;
 			}
-			if (valueStr == "edit" || valueStr == "textbox") {
+			if (tagStr == "edit" || tagStr == "textbox") {
 				ctl = new TextBox;
 				break;
 			}
-			if (valueStr == "img" || valueStr == "pictureBox") {
+			if (tagStr == "img" || tagStr == "pictureBox") {
 				ctl = new PictureBox;
 				break;
 			}
 			if (ctl == NULL) {
-				this->OnBuildControl(valueStr, &ctl);
+				this->OnBuildControl(tagStr, &ctl);
 			}
 			if (ctl == NULL) {
 #ifdef _DEBUG
-				::MessageBoxA(NULL, EString("UnKnow Element " + valueStr).c_str(), "UIManager Erro", NULL);
+				::MessageBoxA(NULL, EString("UnKnow Element " + tagStr).c_str(), "UIManager Erro", NULL);
 #endif // _DEBUG
 				ctl = new Control;
 			}
 		} while (false);
 
-
+		//内联样式
+		EString inlineStyle;
+		EString inlineStyle_active;
+		EString inlineStyle_hover;
 
 		TiXmlAttribute* attr = node->FirstAttribute();
 		do
@@ -150,9 +150,42 @@ namespace EzUI {
 		} while ((attr = attr->Next()));
 
 		((bool)(ctl->IsXmlControl)) = true;//标记为xml加载进来的控件
-		LoadStyle(ctl, ControlState::None);
-		LoadStyle(ctl, ControlState::Active);
-		LoadStyle(ctl, ControlState::Hover);
+
+		{//加载样式 使用标签选择器
+			LoadStyle(ctl, tagStr);
+			LoadStyle(ctl, tagStr + ":active");
+			LoadStyle(ctl, tagStr + ":hover");
+		}
+		{//加载样式 使用类选择器  
+			EString _class = ctl->GetAttribute("class");
+			EString::Replace(&_class, "  ", " ");
+			auto classs = _class.Split(" ");
+			for (auto& className : classs) {
+				LoadStyle(ctl, "." + className);
+				LoadStyle(ctl, "." + className + ":active");
+				LoadStyle(ctl, "." + className + ":hover");
+			}
+		}
+		if (!(ctl->Name.empty())) {//加载样式 使用ID选择器 
+			LoadStyle(ctl, "#" + ctl->Name);
+			LoadStyle(ctl, "#" + ctl->Name + ":active");
+			LoadStyle(ctl, "#" + ctl->Name + ":hover");
+		}
+
+		{//内联样式
+			EString sytle_static = ctl->GetAttribute("style");//内联样式语法
+			EString style_hover = ctl->GetAttribute("style:hover");//内联样式语法
+			EString style_active = ctl->GetAttribute("style:active");//内联样式语法
+			if (!sytle_static.empty()) {
+				ctl->Style.SetStyleSheet(sytle_static);
+			}
+			if (!style_hover.empty()) {
+				ctl->HoverStyle.SetStyleSheet(style_hover);
+			}
+			if (!style_active.empty()) {
+				ctl->ActiveStyle.SetStyleSheet(style_active);
+			}
+		}
 		return ctl;
 	}
 	void UIManager::LoadControl(void* _node, Control* control) {
@@ -196,6 +229,9 @@ namespace EzUI {
 		auto result = doc.Parse(xmlRaw.c_str(), NULL, TiXmlEncoding::TIXML_ENCODING_UTF8);
 		//doc.Parse
 		TiXmlElement* element = doc.FirstChildElement();//read frist element
+
+		std::list<TiXmlElement*> controlNodes;
+		//先处理样式
 		do
 		{
 			if (element == NULL) break;
@@ -203,24 +239,19 @@ namespace EzUI {
 				AnalysisStyle(element->GetText());//
 			}
 			else { //if no style , must be Control
-				Control* control = BuildControl(element);//先加载根节点
-				LoadControl(element, control);//加载子节点
-				if (control) controls.push_back(control);
+				controlNodes.push_back(element);
 			}
 		} while ((element = element->NextSiblingElement()));
+		//然后处理控件
+		for (auto& element : controlNodes) {
+			Control* control = BuildControl(element);//先加载根节点
+			LoadControl(element, control);//加载子节点
+			if (control) controls.push_back(control);
+		}
 	}
 
 	void UIManager::AnalysisStyle(const EString& styleStr) {
-		styles.clear();
-		styles_active.clear();
-		styles_hover.clear();
-
-		class_styles.clear();
-		class_styles_active.clear();
-		class_styles_hover.clear();
-
 		EString style = styleStr;
-
 		//处理空格 双引号内的空格不处理
 		TrimStyle(style);
 		while (true)
@@ -250,115 +281,46 @@ namespace EzUI {
 		}
 		//解析样式类型
 		for (auto& style : strs) {
-
-			byte type = ERROR_STYLE;//样式类型
-			size_t pos(-1);
-			size_t selectSize = 0;
-
-			if ((pos = style.find("#")) == 0) {
-				type = ID_STYLE;//ID样式
-				selectSize = 1;
-			}
-			else if ((pos = style.find(".")) == 0) {
-				type = CLASS_STYLE;//类样式
-				selectSize = 1;
-			}
-			else {
-				type = TAG_STYLE;//类样式
-				pos = 0;//标签样式
-				selectSize = 0;
-			}
-
 			size_t pos2 = style.find("}");
 			if (pos2 == -1)break;
 			size_t pos3 = style.find("{");
-			EString name = style.substr(pos + selectSize, pos3 - pos - selectSize);
+			EString name = style.substr(0, pos3);
 			size_t pos4 = name.find(":");
 			EString style_type;
 			EString str = style.substr(pos3 + 1, pos2 - pos3 - 1);
 			if (pos4 != size_t(-1)) {
 				style_type = name.substr(pos4 + 1);
-				name = name.substr(0, pos4);
 			}
-
+			//添加至集合
+			UIManager::Selector selector;
+			selector.selectorName = name;
+			selector.styleStr = str;
 			if (style_type == "hover") {
-
-				if (type == ID_STYLE) {
-					styles_hover.insert(std::pair<EString, EString>(name, str));
-				}
-				else {
-					class_styles_hover.insert(std::pair<EString, EString>(name, str));
-				}
+				selector.styleType = UIManager::Style::Hover;
 			}
 			else if (style_type == "active") {
-				if (type == ID_STYLE) {
-					styles_active.insert(std::pair<EString, EString>(name, str));
-				}
-				else {
-					class_styles_active.insert(std::pair<EString, EString>(name, str));
-				}
+				selector.styleType = UIManager::Style::Active;
 			}
 			else {
-
-				if (type == ID_STYLE) {
-					styles.insert(std::pair<EString, EString>(name, str));
-				}
-				else {
-					class_styles.insert(std::pair<EString, EString>(name, str));
-				}
+				selector.styleType = UIManager::Style::Static;
 			}
+			Selectors.push_back(selector);
 		}
 	}
-	void UIManager::LoadStyle(Control* ctl, ControlState styleState) {
-		EString _class = ctl->GetAttribute("class");
-		EString::Replace(&_class, "  ", " ");
-		auto classs = _class.Split(" ");
-		for (auto& className : classs) {
-			//类样式中找
-			ControlStyle* style = NULL;
-			std::map<EString, EString>::iterator styleStr;
-			std::map<EString, EString>* _styles = NULL;
-			if (styleState == ControlState::Active) {//按下样式
-				style = &ctl->ActiveStyle;
-				_styles = &class_styles_active;
-				styleStr = class_styles_active.find(className);
-			}
-			else if (styleState == ControlState::Hover) {//悬浮样式
-				style = &ctl->HoverStyle;
-				_styles = &class_styles_hover;
-				styleStr = class_styles_hover.find(className);
-			}
-			else {//默认样式
-				style = &ctl->Style;
-				_styles = &class_styles;
-				styleStr = class_styles.find(className);
-			}
-			if (styleStr != _styles->end() && styleStr->second.size() > 0) {
-				style->SetStyleSheet(styleStr->second);
-			}
-		}
 
-		{//id样式中找
-			ControlStyle* style = NULL;
-			std::map<EString, EString>::iterator styleStr;
-			std::map<EString, EString>* _styles = NULL;
-			if (styleState == ControlState::Active) {//按下样式
-				style = &ctl->ActiveStyle;
-				_styles = &styles_active;
-				styleStr = styles_active.find(ctl->Name);
-			}
-			else if (styleState == ControlState::Hover) {//悬浮样式
-				style = &ctl->HoverStyle;
-				_styles = &styles_hover;
-				styleStr = styles_hover.find(ctl->Name);
-			}
-			else {//默认样式
-				style = &ctl->Style;
-				_styles = &styles;
-				styleStr = styles.find(ctl->Name);
-			}
-			if (styleStr != _styles->end() && styleStr->second.size() > 0) {
-				style->SetStyleSheet(styleStr->second);
+	void UIManager::LoadStyle(Control* ctl, const EString& selectorName)
+	{
+		for (auto& it : Selectors) {
+			if (it.selectorName == selectorName) {
+				if (it.styleType == UIManager::Style::Static) {
+					ctl->Style.SetStyleSheet(it.styleStr);
+				}
+				if (it.styleType == UIManager::Style::Hover) {
+					ctl->HoverStyle.SetStyleSheet(it.styleStr);
+				}
+				if (it.styleType == UIManager::Style::Active) {
+					ctl->ActiveStyle.SetStyleSheet(it.styleStr);
+				}
 			}
 		}
 	}

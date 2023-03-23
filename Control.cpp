@@ -175,7 +175,7 @@ Event(this , ##__VA_ARGS__); \
 					this->Margin.Right = std::stoi(strs[1]);
 					this->Margin.Bottom = std::stoi(strs[2]);
 					this->Margin.Left = std::stoi(strs[3]);
-					break; 
+					break;
 				}
 				break;
 			}
@@ -224,18 +224,6 @@ Event(this , ##__VA_ARGS__); \
 				if (attrValue == "move" || attrValue == "movewindow") {
 					this->Action = ControlAction::MoveWindow; break;
 				}
-				break;
-			}
-			if (attrName == "style") {
-				this->Style.SetStyleSheet(attrValue);
-				break;
-			}
-			if (attrName == "hover") {
-				this->HoverStyle.SetStyleSheet(attrValue);
-				break;
-			}
-			if (attrName == "active") {
-				this->ActiveStyle.SetStyleSheet(attrValue);
 				break;
 			}
 		} while (false);
@@ -664,7 +652,7 @@ Event(this , ##__VA_ARGS__); \
 		else {
 			//针对矩形控件
 			pt.PushAxisAlignedClip(_ClipRect);
-	}
+		}
 #endif 
 		//开始绘制
 		bool isIntercept = false;
@@ -702,7 +690,7 @@ Event(this , ##__VA_ARGS__); \
 		}
 		else {
 			pt.PopAxisAlignedClip();
-}
+		}
 #endif 
 #ifdef DEBUGPAINT
 		if (PublicData->Debug) {

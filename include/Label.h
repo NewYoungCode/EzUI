@@ -5,6 +5,7 @@ namespace EzUI {
 	class UI_EXPORT  Label :
 		public Control
 	{
+		UI_GetClassName()
 	protected:
 		std::wstring _wstr;
 		bool _underline = false;

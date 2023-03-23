@@ -5,6 +5,7 @@ namespace EzUI {
 	class UI_EXPORT VList :
 		public Control, public IScroll
 	{
+		UI_GetClassName()
 	private:
 		VScrollBar* vScrollBar = NULL;
 	public:

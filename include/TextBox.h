@@ -5,6 +5,7 @@ namespace EzUI {
 	class UI_EXPORT TextBox :
 		public Control
 	{
+		UI_GetClassName()
 	private:
 #ifndef UNICODE
 		std::string ansiBuf;
