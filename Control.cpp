@@ -232,8 +232,8 @@ Event(this , ##__VA_ARGS__); \
 	EString Control::GetFontFamily(ControlState _state)
 	{
 		ControlStyle& style = GetStyle(_state);
-		if (_state != ControlState::None && !style.FontFamily.empty()) { //先看看对应状态的是否有 有效字段
-			return style.FontFamily;
+		if (_state != ControlState::None && !style.FontFamily.empty() && _mouseIn) { //先看看对应状态的是否有 有效字段
+			return style.FontFamily; 
 		}
 		else if (!Style.FontFamily.empty()) { //如果对应状态没有 有效字段 则从默认样式里面拿
 			return Style.FontFamily;
@@ -254,7 +254,7 @@ Event(this , ##__VA_ARGS__); \
 	UI_Int  Control::GetFontSize(ControlState _state)
 	{
 		ControlStyle& style = GetStyle(_state);
-		if (_state != ControlState::None && style.FontSize.valid) { //先看看对应状态的是否有 有效字段
+		if (_state != ControlState::None && style.FontSize.valid && _mouseIn) { //先看看对应状态的是否有 有效字段
 			return style.FontSize;
 		}
 		else if (Style.FontSize.valid) { //如果对应状态没有 有效字段 则从默认样式里面拿
@@ -636,7 +636,7 @@ Event(this , ##__VA_ARGS__); \
 		if (r > 0) {
 			//处理圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分) 带抗锯齿
 			layer = new Layer(clientRect, r, args.DC, pt.base);
-		}
+	}
 		pt.PushAxisAlignedClip(_ClipRect);
 #endif 
 
@@ -681,7 +681,7 @@ Event(this , ##__VA_ARGS__); \
 		if (r > 0) {
 			layer->PopLayer();
 			delete layer;
-		}
+}
 		pt.PopAxisAlignedClip();
 #endif 
 #if USED_Direct2D

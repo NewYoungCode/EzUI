@@ -8,6 +8,7 @@ namespace EzUI {
 	private:
 		bool _stateRepaint = false;//状态发生改变的时候绘制
 		bool _mouseIn = false;//鼠标是否在控件内
+		bool _mouseDown = false;//鼠标是否已经按下
 		bool _load = false;//是否load
 		Controls _controls;//子控件
 		Controls _spacer;//存储控件下布局的的弹簧集合
@@ -79,11 +80,11 @@ namespace EzUI {
 		virtual void OnMouseClick(MouseButton mbtn, const Point& point);//鼠标单击
 		virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point);//鼠标双击
 		virtual void OnMouseEnter(const Point& point);//鼠标移入
+		virtual void OnMouseEvent(const MouseEventArgs& args);//鼠标事件消息
 		virtual void OnChar(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);//键盘弹起
 	public:
-		virtual void OnMouseEvent(const MouseEventArgs& args);//鼠标事件消息
 		//以下函数请保证在父控件布局已完成的情况下使用 使用ResumeLayout()执行布局
 		const int& X();
 		const int& Y();
