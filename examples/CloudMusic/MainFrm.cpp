@@ -99,7 +99,7 @@ MainFrm::MainFrm(int width, int height) :Form(width, height)
 	Image* gif = new Image("imgs/headImg.jpg");
 
 	//musicList.Margin = 10;
-	for (size_t i = 0; i < 99999; i++)
+	for (size_t i = 0; i < 999; i++)
 	{
 		PictureBox* pBox = new PictureBox;
 		pBox->SetImage(gif);

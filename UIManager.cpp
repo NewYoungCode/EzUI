@@ -272,7 +272,7 @@ namespace EzUI {
 		{
 			auto pos1 = style.find("}");
 			if (pos1 != size_t(-1)) {
-				strs.push_front(style.substr(0, pos1 + 1));
+				strs.push_back(style.substr(0, pos1 + 1));
 				style.erase(0, pos1 + 1);
 			}
 			else {
@@ -291,20 +291,24 @@ namespace EzUI {
 			if (pos4 != size_t(-1)) {
 				style_type = name.substr(pos4 + 1);
 			}
-			//添加至集合
-			UIManager::Selector selector;
-			selector.selectorName = name;
-			selector.styleStr = str;
-			if (style_type == "hover") {
-				selector.styleType = UIManager::Style::Hover;
+			//考虑到多个选择器
+			auto names = name.Split(",");
+			for (auto& name : names) {
+				//添加至集合
+				UIManager::Selector selector;
+				selector.selectorName = name;
+				selector.styleStr = str;
+				if (style_type == "hover") {
+					selector.styleType = UIManager::Style::Hover;
+				}
+				else if (style_type == "active") {
+					selector.styleType = UIManager::Style::Active;
+				}
+				else {
+					selector.styleType = UIManager::Style::Static;
+				}
+				Selectors.push_back(selector);
 			}
-			else if (style_type == "active") {
-				selector.styleType = UIManager::Style::Active;
-			}
-			else {
-				selector.styleType = UIManager::Style::Static;
-			}
-			Selectors.push_back(selector);
 		}
 	}
 
