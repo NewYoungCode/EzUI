@@ -188,7 +188,7 @@ namespace EzUI {
 
 	Color::Color()
 	{
-		Argb = (ARGB)Color::Black;
+		Argb = (ARGB)Color::Transparent;
 		valid = false;
 	}
 	Color::Color(const EString& colorStr) {
@@ -210,7 +210,7 @@ namespace EzUI {
 	}
 	Color& Color::operator=(const Color& Align_Right_Color) {
 		Argb = Align_Right_Color.GetValue();
-		valid = true;
+		valid = Align_Right_Color.valid;
 		return *this;
 	}
 	Color& Color::operator=(const EString& colorStr) {

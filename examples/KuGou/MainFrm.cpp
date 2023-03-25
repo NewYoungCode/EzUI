@@ -39,6 +39,7 @@ void MainFrm::InitForm() {
 	searchList = (VList*)this->FindControl("searchList");
 	searchEdit = (TextBox*)FindControl("searchEdit");
 	//美化左侧本地列表的滚动条
+	localList->ScrollBar->Name = "testBar";
 	localList->ScrollBar->SetFixedWidth(9);
 	localList->ScrollBar->Style.Radius = 9;
 	localList->ScrollBar->Style.BackgroundColor = Color(50, 200, 200, 200);

@@ -99,27 +99,41 @@
     </vbox>
 </vbox>
 <style>
-    vlayout {
-        background-color: #FFFEA1;
+
+    /*测试优先级*/
+    #main2 {
+        font-size: 20;
+        color: #1933ee;
     }
-
-/*    label, #main2 {
-        background-color: #029BE9;
-        font-size:30;
-    }*/
-
-
-    label:hover {
-        background-color: #029BE9;
-        font-size: 30;
-        font-family:"黑体";
+    #main2:hover {
+        color: #76e110;
     }
-
-        label:active {
-            background-color: #55EEE9;
-            font-size:20;
+    label {
+    font-size:20;
+    color:#1933b0;
+    }
+    label:active {
+        font-size: 35;
+    }
+        label:hover {
+            font-size: 15;
         }
+    #leftList, #login:hover {
+        font-size: 25;
+        font-family: "华康少女文字W5";
+        color: #000000;
+    }
+    #leftList, #login:active {
+        font-size: 20;
+        font-family: "华康少女文字W5";
+        color: #e0119c;
+    }
 
+    #login {
+        font-family: "方正喵呜体";
+    }
+
+/*测试优先级*/
     .serachIcon {
         fore-image: "imgs/search.png";
     }
@@ -173,23 +187,4 @@
         font-size: 13;
         color: #dddddd;
     }
-
-    .aaa {
-        /*background-image: ""*/
-    }
-
-    .aaa:hover {
-        /*background-image: "imgs/xmt.gif"*/
-    }
-    /*   #live:hover {
-            background-image: "imgs/test.gif"
-        }
-
-        #live:active {
-            background-image: "imgs/test.gif"
-        }*/
-    /*   #btns:hover {
-            font-size: 13;
-            color: #ffffff;
-        }*/
 </style>

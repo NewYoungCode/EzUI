@@ -362,6 +362,7 @@ namespace EzUI {
 
 	void TextBox::OnMouseMove(const Point& point)
 	{
+		__super::OnMouseMove(point);
 		if (_down) {
 			point_End = ConvertPoint(point);
 			//Debug::Log("%d %d", point_End.X, point_End.Y);
@@ -384,6 +385,7 @@ namespace EzUI {
 	}
 	void TextBox::OnMouseUp(MouseButton mbtn, const Point& point)
 	{
+		__super::OnMouseUp(mbtn, point);
 		_down = false;
 		Invalidate();
 		this;

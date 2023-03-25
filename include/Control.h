@@ -6,9 +6,9 @@ namespace EzUI {
 	{
 		UI_GetClassName()
 	private:
+		ControlStyle _nowStyle;//临时组成的样式
 		bool _stateRepaint = false;//状态发生改变的时候绘制
 		bool _mouseIn = false;//鼠标是否在控件内
-		bool _mouseDown = false;//鼠标是否已经按下
 		bool _load = false;//是否load
 		Controls _controls;//子控件
 		Controls _spacer;//存储控件下布局的的弹簧集合
@@ -24,6 +24,7 @@ namespace EzUI {
 		std::mutex _rePaintMtx;
 		Control(const Control&);
 		Control& operator=(const Control&);
+		bool IsRePaint();
 	private:
 		bool CheckEventPassThrough(const Event& eventType);
 		bool CheckEventNotify(const Event& eventType);
@@ -40,7 +41,7 @@ namespace EzUI {
 		const bool IsXmlControl = false;//是否是xml加载进来的
 		EString Name;//控件的ObjectName ID
 		ScrollBar* ScrollBar = NULL;//垂直滚动条或者水平滚动条 一个控件只允许有一个
-		ControlState State = ControlState::None;//控件状态
+		ControlState State = ControlState::Static;//控件状态
 		ControlAction Action = ControlAction::None;//控件行为
 		ControlStyle Style;//默认样式
 		ControlStyle HoverStyle;//鼠标悬浮样式
@@ -61,7 +62,7 @@ namespace EzUI {
 		EventMouseDoubleClick MouseDoubleClick;//鼠标双击
 		EventPaint Painting;//绘制事件
 	protected:
-		ControlStyle& GetStyle(ControlState& _state);//获取当前控件状态下的样式信息
+		ControlStyle& GetStyle(const ControlState& _state);//获取当前控件状态下的样式信息
 		virtual void OnPaint(PaintEventArgs& args);//绘制 
 		virtual void ChildPainting(Controls& controls, PaintEventArgs& args);//子控件绘制 可以重载此函数优化鼠标操作性能
 		virtual void OnBackgroundPaint(PaintEventArgs& painter);//背景绘制
@@ -122,21 +123,21 @@ namespace EzUI {
 		virtual ~Control();
 		void DestroySpacers();
 		//普通样式
-		HImage  GetForeImage();
-		HImage  GetBackgroundImage();
-		UI_Int GetRadius();
-		UI_Int GetBorderLeft();
-		UI_Int GetBorderTop();
-		UI_Int GetBorderRight();
-		UI_Int GetBorderBottom();
-		Color GetBorderColor();
-		Color GetBackgroundColor();
-		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::None);//
-		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性
+		HImage GetForeImage(ControlState _state = ControlState::None);
+		HImage GetBackgroundImage(ControlState _state = ControlState::None);
+		UI_Int GetRadius(ControlState _state = ControlState::None);
+		UI_Int GetBorderLeft(ControlState _state = ControlState::None);
+		UI_Int GetBorderTop(ControlState _state = ControlState::None);
+		UI_Int GetBorderRight(ControlState _state = ControlState::None);
+		UI_Int GetBorderBottom(ControlState _state = ControlState::None);
+		Color GetBorderColor(ControlState _state = ControlState::None);
+		Color GetBackgroundColor(ControlState _state = ControlState::None);
 		//具有继承性样式
 		EString GetFontFamily(ControlState _state = ControlState::None);//获取默认控件状态下字体Family
 		UI_Int GetFontSize(ControlState _state = ControlState::None);//获取默认控件状态下字体大小样式
 		Color GetForeColor(ControlState _state = ControlState::None);//获取默认控件状态下前景色
+		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::Static);//
+		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性
 		Controls& GetControls();//获取当前所有子控件
 		Control* GetControl(size_t pos);//使用下标获取控件
 		Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等

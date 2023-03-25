@@ -245,10 +245,11 @@ namespace EzUI {
 		Close//关闭
 	};
 	enum class ControlState {
-		None,
-		Hover,
-		Active,
-		Disable
+		None,//无状态 则是使用_nowStyle缓存样式
+		Static,//静态
+		Hover,//鼠标悬浮
+		Active,//鼠标按住
+		Disable//禁用
 	};
 	enum class DockStyle {
 		// 摘要:

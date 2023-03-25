@@ -2,14 +2,17 @@
 #include "BoxShadow.h"
 namespace EzUI {
 
-#define UI_BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed()  { \
-if(this->State==ControlState::None){return  Style. ##_filed; }\
-ControlStyle &style = GetStyle(this->State); \
-if (this->State != ControlState::None &&style. ##_filed.valid) { \
-	return style. ##_filed; \
+#define UI_BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed(ControlState _state)  { \
+if (_state == ControlState::None && _nowStyle. ##_filed.valid) {\
+		return _nowStyle.##_filed;\
+	}\
+ControlStyle& style = GetStyle(this->State);\
+if(style.##_filed.valid ){\
+	return style.##_filed; \
 }\
-return Style. ##_filed; \
-}
+	return this->Style.##_filed;\
+}\
+
 	//触发事件宏
 #define UI_TRIGGER(Event,...)  if( ##Event){ \
 Event(this , ##__VA_ARGS__); \
@@ -19,13 +22,10 @@ Event(this , ##__VA_ARGS__); \
 	UI_BINDFUNC(UI_Int, BorderTop);
 	UI_BINDFUNC(UI_Int, BorderRight);
 	UI_BINDFUNC(UI_Int, BorderBottom);
-
 	UI_BINDFUNC(Color, BorderColor);
 	UI_BINDFUNC(Color, BackgroundColor);
-
 	UI_BINDFUNC(HImage, ForeImage);
 	UI_BINDFUNC(HImage, BackgroundImage);
-
 
 	Control::Control() {}
 	Control::Control(const Control&) {}
@@ -102,35 +102,28 @@ Event(this , ##__VA_ARGS__); \
 		}
 	}
 
-	ControlStyle& Control::GetStyle(ControlState& _state) {
-		if (this->Parent && this->Parent->State != ControlState::None) {
-			_state = this->Parent->State;
+	ControlStyle& Control::GetStyle(const ControlState& _state) {
+		if (_state == ControlState::None) {
+			return this->_nowStyle;
 		}
-		switch (_state)
-		{
-		case ControlState::None:
-			break;
-		case ControlState::Hover:
-		{
-			return HoverStyle;
+		if (_state == ControlState::Static) {
+			return this->Style;
 		}
-		case ControlState::Active:
-		{
-			return ActiveStyle;
-			break;
+		if (_state == ControlState::Hover) {
+			return this->HoverStyle;
 		}
-		case ControlState::Disable:
-			break;
-		default:
-			break;
+		if (_state == ControlState::Active) {
+			return this->ActiveStyle;
 		}
-		return Style;
+		if (_state == ControlState::Disable) {
+		}
+		return this->Style;
 	}
 	void Control::SetStyleSheet(const EString& styleStr, ControlState _state)
 	{
 		do
 		{
-			if (_state == ControlState::None) {
+			if (_state == ControlState::Static) {
 				this->Style.SetStyleSheet(styleStr);//默认样式
 				break;
 			}
@@ -231,67 +224,88 @@ Event(this , ##__VA_ARGS__); \
 	void Control::OnLoad() {}
 	EString Control::GetFontFamily(ControlState _state)
 	{
-		ControlStyle& style = GetStyle(_state);
-		if (_state != ControlState::None && !style.FontFamily.empty() && _mouseIn) { //先看看对应状态的是否有 有效字段
-			return style.FontFamily; 
+		if (_state == ControlState::None && !_nowStyle.FontFamily.empty()) {
+			return _nowStyle.FontFamily;
 		}
-		else if (!Style.FontFamily.empty()) { //如果对应状态没有 有效字段 则从默认样式里面拿
-			return Style.FontFamily;
+		if (_state == ControlState::None) {
+			_state = this->State;
 		}
-		//如果还是没拿到就从父控件里面拿去相应的字段
-		Control* pControl = this->Parent;
 		EString _FontFamily;
-		while (_FontFamily.empty() && pControl)
+	loop:
+		_FontFamily = this->GetStyle(_state).FontFamily; //先看看对应状态的是否有 有效字段
+		if (!_FontFamily.empty()) {
+			return _FontFamily;//如果当前控件里面查找到就返回
+		}
+		Control* pControl = this->Parent;
+		while (pControl)//如果没有则从父控件里面查找对应的样式
 		{
-			_FontFamily = pControl->GetFontFamily(_state);
+			_FontFamily = pControl->GetStyle(_state).FontFamily;
 			if (!_FontFamily.empty()) {
-				break;
+				return _FontFamily;//如果从父控件里面查找到就返回
 			}
 			pControl = pControl->Parent;
+		}
+		if (_FontFamily.empty() && _state != ControlState::Static) {
+			_state = ControlState::Static;//如果从父样式中仍然未找到,则找静态样式
+			goto loop;
 		}
 		return _FontFamily;
 	}
 	UI_Int  Control::GetFontSize(ControlState _state)
 	{
-		ControlStyle& style = GetStyle(_state);
-		if (_state != ControlState::None && style.FontSize.valid && _mouseIn) { //先看看对应状态的是否有 有效字段
-			return style.FontSize;
+		if (_state == ControlState::None && _nowStyle.FontSize.valid) {
+			return _nowStyle.FontSize;
 		}
-		else if (Style.FontSize.valid) { //如果对应状态没有 有效字段 则从默认样式里面拿
-			return Style.FontSize;
+		if (_state == ControlState::None) {
+			_state = this->State;
 		}
-		//如果还是没拿到就从父控件里面拿去相应的字段
-		Control* pControl = this->Parent;
 		UI_Int _FontSize;
-		while (!_FontSize.valid && pControl)
+	loop:
+		_FontSize = this->GetStyle(_state).FontSize; //先看看对应状态的是否有 有效字段
+		if (_FontSize.valid) {
+			return _FontSize;//如果当前控件里面查找到就返回
+		}
+		Control* pControl = this->Parent;
+		while (pControl)//如果没有则从父控件里面查找对应的样式
 		{
-			_FontSize = pControl->GetFontSize(_state);
+			_FontSize = pControl->GetStyle(_state).FontSize;
 			if (_FontSize.valid) {
-				break;
+				return _FontSize;//如果从父控件里面查找到就返回
 			}
 			pControl = pControl->Parent;
+		}
+		if (!(_FontSize.valid) && _state != ControlState::Static) {
+			_state = ControlState::Static;//如果从父样式中仍然未找到,则找静态样式
+			goto loop;
 		}
 		return _FontSize;
 	}
 	Color  Control::GetForeColor(ControlState _state)
 	{
-		ControlStyle& style = GetStyle(_state);
-		if (_state != ControlState::None && style.ForeColor.valid) { //先看看对应状态的是否有 有效字段
-			return style.ForeColor;
+		if (_state == ControlState::None && _nowStyle.ForeColor.valid) {
+			return _nowStyle.ForeColor;
 		}
-		else if (Style.ForeColor.valid) { //如果对应状态没有 有效字段 则从默认样式里面拿
-			return Style.ForeColor;
+		if (_state == ControlState::None) {
+			_state = this->State;
 		}
-		//如果还是没拿到就从父控件里面拿去相应的字段
-		Control* pControl = this->Parent;
 		Color _ForeColor;
-		while (!_ForeColor.valid && pControl)
+	loop:
+		_ForeColor = this->GetStyle(_state).ForeColor; //先看看对应状态的是否有 有效字段
+		if (_ForeColor.valid) {
+			return _ForeColor;//如果当前控件里面查找到就返回
+		}
+		Control* pControl = this->Parent;
+		while (pControl)//如果没有则从父控件里面查找对应的样式
 		{
-			_ForeColor = pControl->GetForeColor(_state);
+			_ForeColor = pControl->GetStyle(_state).ForeColor;
 			if (_ForeColor.valid) {
-				break;
+				return _ForeColor;//如果从父控件里面查找到就返回
 			}
 			pControl = pControl->Parent;
+		}
+		if (!(_ForeColor.valid) && _state != ControlState::Static) {
+			_state = ControlState::Static;//如果从父样式中仍然未找到,则找静态样式
+			goto loop;
 		}
 		return _ForeColor;
 	}
@@ -636,7 +650,7 @@ Event(this , ##__VA_ARGS__); \
 		if (r > 0) {
 			//处理圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分) 带抗锯齿
 			layer = new Layer(clientRect, r, args.DC, pt.base);
-	}
+		}
 		pt.PushAxisAlignedClip(_ClipRect);
 #endif 
 
@@ -648,7 +662,7 @@ Event(this , ##__VA_ARGS__); \
 			Geometry outClipRect;
 			Geometry::Intersect(outClipRect, roundRect, _clientRect);
 			pt.PushLayer(outClipRect);
-		}
+	}
 		else {
 			//针对矩形控件
 			pt.PushAxisAlignedClip(_ClipRect);
@@ -681,7 +695,7 @@ Event(this , ##__VA_ARGS__); \
 		if (r > 0) {
 			layer->PopLayer();
 			delete layer;
-}
+		}
 		pt.PopAxisAlignedClip();
 #endif 
 #if USED_Direct2D
@@ -697,7 +711,19 @@ Event(this , ##__VA_ARGS__); \
 			pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, Color::White);
 		}
 #endif
-	}
+		_nowStyle.BackgroundColor.valid = false;
+		_nowStyle.BackgroundImage.valid = false;
+		_nowStyle.BorderBottom.valid = false;
+		_nowStyle.BorderColor.valid = false;
+		_nowStyle.BorderLeft.valid = false;
+		_nowStyle.BorderRight.valid = false;
+		_nowStyle.BorderTop.valid = false;
+		_nowStyle.FontFamily.clear();
+		_nowStyle.FontSize.valid = false;
+		_nowStyle.ForeColor.valid = false;
+		_nowStyle.ForeImage.valid = false;
+		_nowStyle.Radius.valid = false;
+		}
 
 	Control::~Control()
 	{
@@ -927,10 +953,26 @@ Event(this , ##__VA_ARGS__); \
 		return _hCursor;
 	}
 
+	bool Control::IsRePaint() {
+		_nowStyle.BackgroundColor = GetBackgroundColor();
+		_nowStyle.BackgroundImage = GetBackgroundImage();
+		_nowStyle.BorderBottom = GetBorderBottom();
+		_nowStyle.BorderColor = GetBorderColor();
+		_nowStyle.BorderLeft = GetBorderLeft();
+		_nowStyle.BorderRight = GetBorderRight();
+		_nowStyle.BorderTop = GetBorderTop();
+		_nowStyle.FontFamily = GetFontFamily(this->State);
+		_nowStyle.FontSize = GetFontSize(this->State);
+		_nowStyle.ForeColor = GetForeColor(this->State);
+		_nowStyle.ForeImage = GetForeImage();
+		_nowStyle.Radius = GetRadius();
+		return  _nowStyle.IsValid();
+	}
+
 	void Control::OnMouseEnter(const Point& point)
 	{
 		this->State = ControlState::Hover;
-		if (HoverStyle.IsValid()) {
+		if (IsRePaint()) {
 			_stateRepaint = true;
 			Invalidate();
 		}
@@ -944,7 +986,7 @@ Event(this , ##__VA_ARGS__); \
 	void Control::OnMouseDown(MouseButton mbtn, const Point& point)
 	{
 		this->State = ControlState::Active;
-		if (ActiveStyle.IsValid()) {
+		if (IsRePaint()) {
 			_stateRepaint = true;
 			Invalidate();
 		}
@@ -960,7 +1002,7 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::OnMouseLeave()
 	{
-		this->State = ControlState::None;
+		this->State = ControlState::Static;
 		if (_stateRepaint) {
 			_stateRepaint = false;
 			Invalidate();
