@@ -108,7 +108,7 @@ void MainFrm::InitForm() {
 	player.AddEventNotify(Event::OnPaint);
 	main->AddEventNotify(Event::OnPaint);
 }
-MainFrm::MainFrm() :Form(1022, 670)
+MainFrm::MainFrm() :LayeredWindow(1022, 670)
 {
 	InitForm();
 

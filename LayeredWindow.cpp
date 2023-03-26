@@ -12,14 +12,14 @@ namespace EzUI {
 		};
 		PublicData.UpdateWindow = [=]()->void {
 			if (!_InvalidateRect.IsEmptyArea()) {
-				::SendMessage(Hwnd(), Layered_PAINT, NULL, NULL);
+				::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
 			}
 		};
 		task = new std::thread([=]() {
 			while (bRunTask)
 			{
 				if (!_InvalidateRect.IsEmptyArea()) {
-					::PostMessage(Hwnd(), Layered_PAINT, NULL, NULL);
+					::PostMessage(Hwnd(), WM_PAINT, NULL, NULL);
 				}
 				Sleep(5);//检测无效区域的延时 200fps
 			}
@@ -98,15 +98,15 @@ namespace EzUI {
 	}
 	LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		if (uMsg == WM_PAINT)
-		{
-			PAINTSTRUCT pst;//也许这样能避免锁屏之后一直发送WM_PAINT消息的问题
-			BeginPaint(Hwnd(), &pst);
-			RECT& r = pst.rcPaint;
-			EndPaint(Hwnd(), &pst);
-			return ::DefWindowProc(Hwnd(), uMsg, wParam, lParam);
-		}
-		if (uMsg == Layered_PAINT) //layeredWindow
+		//if (uMsg == WM_PAINT)
+		//{
+		//	PAINTSTRUCT pst;//也许这样能避免锁屏之后一直发送WM_PAINT消息的问题
+		//	BeginPaint(Hwnd(), &pst);
+		//	RECT& r = pst.rcPaint;
+		//	EndPaint(Hwnd(), &pst);
+		//	return ::DefWindowProc(Hwnd(), uMsg, wParam, lParam);
+		//}
+		if (uMsg == WM_PAINT) //layeredWindow
 		{
 			if (_winBitmap) {
 				_winBitmap->Earse(_InvalidateRect);//清除背景
@@ -114,7 +114,7 @@ namespace EzUI {
 				PushDC(_winBitmap->GetDC());//updatelaredwindow 更新窗口
 				_InvalidateRect = { 0,0,0,0 };//重置区域
 			}
-			return FALSE;
+			return ::DefWindowProc(Hwnd(), uMsg, wParam, lParam);
 		}
 		if (uMsg == WM_NCHITTEST) {
 			if (!::IsZoomed(Hwnd()) && Zoom) {

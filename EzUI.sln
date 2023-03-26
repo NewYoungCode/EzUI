@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CloudMusic", "examples\Clou
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "..\..\Common\Common\Common.vcxproj", "{A0439652-04DB-4CF5-B277-FCD18A8B3F5D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WeChat", "examples\WeChat\WeChat.vcxproj", "{70D89F1A-1882-4F3D-A872-D89740A7E0EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -71,6 +73,14 @@ Global
 		{A0439652-04DB-4CF5-B277-FCD18A8B3F5D}.Release|x64.Build.0 = Release|x64
 		{A0439652-04DB-4CF5-B277-FCD18A8B3F5D}.Release|x86.ActiveCfg = Release|Win32
 		{A0439652-04DB-4CF5-B277-FCD18A8B3F5D}.Release|x86.Build.0 = Release|Win32
+		{70D89F1A-1882-4F3D-A872-D89740A7E0EB}.Debug|x64.ActiveCfg = Debug|x64
+		{70D89F1A-1882-4F3D-A872-D89740A7E0EB}.Debug|x64.Build.0 = Debug|x64
+		{70D89F1A-1882-4F3D-A872-D89740A7E0EB}.Debug|x86.ActiveCfg = Debug|Win32
+		{70D89F1A-1882-4F3D-A872-D89740A7E0EB}.Debug|x86.Build.0 = Debug|Win32
+		{70D89F1A-1882-4F3D-A872-D89740A7E0EB}.Release|x64.ActiveCfg = Release|x64
+		{70D89F1A-1882-4F3D-A872-D89740A7E0EB}.Release|x64.Build.0 = Release|x64
+		{70D89F1A-1882-4F3D-A872-D89740A7E0EB}.Release|x86.ActiveCfg = Release|Win32
+		{70D89F1A-1882-4F3D-A872-D89740A7E0EB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
