@@ -5,7 +5,7 @@
 #include "Timer.h"
 #include "TabLayout.h"
 class MainFrm :
-	public LayeredWindow
+	public BorderlessWindow
 {
 private:
 	VlcPlayer player;

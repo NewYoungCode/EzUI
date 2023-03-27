@@ -108,10 +108,9 @@ void MainFrm::InitForm() {
 	player.AddEventNotify(Event::OnPaint);
 	main->AddEventNotify(Event::OnPaint);
 }
-MainFrm::MainFrm() :LayeredWindow(1022, 670)
+MainFrm::MainFrm() :BorderlessWindow(1022, 670)
 {
 	InitForm();
-
 	auto main = FindControl("main");
 	//main->Style.Radius =5;
 	//main->Style.BackgroundColor = Color(100, 255, 0, 0);
