@@ -284,6 +284,11 @@ namespace EzUI {
 		textLayout = new TextLayout(text, { 16777216, Height() }, textFormat);
 
 		FontBox = textLayout->GetFontSize();
+
+		if (FontBox.Width < this->Width()) {
+			x = 0;
+		}
+
 		//Ö§³Ö±à¼­ ËùÒÔÔÝÇÒ×¢ÊÍµô
 		/*if (FontBox.Width > this->Width()) {
 			x = this->Width() - FontBox.Width;
