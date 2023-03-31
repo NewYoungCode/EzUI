@@ -288,14 +288,9 @@ namespace EzUI {
 		if (FontBox.Width < this->Width()) {
 			x = 0;
 		}
-
-		//Ö§³Ö±à¼­ ËùÒÔÔÝÇÒ×¢ÊÍµô
-		/*if (FontBox.Width > this->Width()) {
+		if (FontBox.Width > this->Width() && x + FontBox.Width < this->Width()) {
 			x = this->Width() - FontBox.Width;
 		}
-		else {
-			x = 0;
-		}*/
 		BuildCare();
 	}
 
