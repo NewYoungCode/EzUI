@@ -198,7 +198,7 @@ namespace EzUI {
 	}
 
 	bool TextBox::Paste() {
-	
+
 		do
 		{
 			//只接收文本
@@ -284,13 +284,13 @@ namespace EzUI {
 		textLayout = new TextLayout(text, { 16777216, Height() }, textFormat);
 
 		FontBox = textLayout->GetFontSize();
-
-		if (FontBox.Width > this->Width()) {
+		//支持编辑 所以暂且注释掉
+		/*if (FontBox.Width > this->Width()) {
 			x = this->Width() - FontBox.Width;
 		}
 		else {
 			x = 0;
-		}
+		}*/
 		BuildCare();
 	}
 
@@ -316,6 +316,7 @@ namespace EzUI {
 	void TextBox::OnMouseDown(MouseButton mbtn, const Point& point) {
 		__super::OnMouseDown(mbtn, point);
 		_focus = true;
+		lastX = 0;
 		Invalidate();
 		_careShow = true;
 		timer.Start();
@@ -365,7 +366,6 @@ namespace EzUI {
 		__super::OnMouseMove(point);
 		if (_down) {
 			point_End = ConvertPoint(point);
-			//Debug::Log("%d %d", point_End.X, point_End.Y);
 			if (textLayout) {
 				selectRect = Rect();
 				B = textLayout->HitTestPoint(point_End, B_TextPos, B_isTrailingHit);
@@ -379,6 +379,29 @@ namespace EzUI {
 					rect.Y = B.Y;
 					rect.Width = -rect.Width;
 				}
+
+				//当鼠标往左侧移动
+				int textWidth = textLayout->GetFontSize().Width;
+				if (lastX > point.X) {
+					lastX = point.X;
+					if (textWidth > Width() && x < 0 && point.X < 0) {
+						x += 2;
+						Invalidate();
+						return;
+					}
+				}
+				//当鼠标往右侧移动
+				if (lastX < point.X) {
+					lastX = point.X;
+					if (textWidth > Width() && point.X > Width()) {
+						x -= 2;
+						if (-x + Width() > textWidth) {
+							x = -(textWidth - Width());
+						}
+						Invalidate();
+						return;
+					}
+				}
 				Invalidate();
 			}
 		}
@@ -387,6 +410,7 @@ namespace EzUI {
 	{
 		__super::OnMouseUp(mbtn, point);
 		_down = false;
+		lastX = 0;
 		Invalidate();
 		this;
 	}

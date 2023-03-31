@@ -27,7 +27,10 @@ namespace EzUI {
 		BOOL B_isTrailingHit;//如果是1表示是字符的后半边
 		int B_TextPos = 0;//点击了第几个字符
 		int TextPos = 0;//当前文字的下标 0~text.size()
-		int x = 0;//用于滚动
+		int x = 0;//用于左右滚动
+		int lastX = 0;//上一个x位置
+		int y = 0;//用于垂直滚动 预留
+		int lastY = 0;//上一个y位置 预留
 		Windows::Timer timer;//用于光标闪烁
 		bool _careShow = false;//用于光标闪烁
 	private:

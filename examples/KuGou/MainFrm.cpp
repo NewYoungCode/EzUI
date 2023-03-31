@@ -108,7 +108,7 @@ void MainFrm::InitForm() {
 	player.AddEventNotify(Event::OnPaint);
 	main->AddEventNotify(Event::OnPaint);
 }
-MainFrm::MainFrm() :BorderlessWindow(1022, 670)
+MainFrm::MainFrm() :Form(1022, 670)
 {
 	InitForm();
 	auto main = FindControl("main");

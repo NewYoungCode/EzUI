@@ -3,9 +3,9 @@
 namespace EzUI {
 
 #define UI_BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed(ControlState _state)  { \
-if (_state == ControlState::None && _nowStyle. ##_filed.valid) {\
+/*if (_state == ControlState::None && _nowStyle. ##_filed.valid) {\
 		return _nowStyle.##_filed;\
-	}\
+	}\*/  \
 ControlStyle& style = GetStyle(this->State);\
 if(style.##_filed.valid ){\
 	return style.##_filed; \
@@ -103,9 +103,9 @@ Event(this , ##__VA_ARGS__); \
 	}
 
 	ControlStyle& Control::GetStyle(const ControlState& _state) {
-		if (_state == ControlState::None) {
+		/*if (_state == ControlState::None) {
 			return this->_nowStyle;
-		}
+		}*/
 		if (_state == ControlState::Static) {
 			return this->Style;
 		}
@@ -224,9 +224,9 @@ Event(this , ##__VA_ARGS__); \
 	void Control::OnLoad() {}
 	EString Control::GetFontFamily(ControlState _state)
 	{
-		if (_state == ControlState::None && !_nowStyle.FontFamily.empty()) {
+		/*if (_state == ControlState::None && !_nowStyle.FontFamily.empty()) {
 			return _nowStyle.FontFamily;
-		}
+		}*/
 		if (_state == ControlState::None) {
 			_state = this->State;
 		}
@@ -253,9 +253,9 @@ Event(this , ##__VA_ARGS__); \
 	}
 	UI_Int  Control::GetFontSize(ControlState _state)
 	{
-		if (_state == ControlState::None && _nowStyle.FontSize.valid) {
+		/*if (_state == ControlState::None && _nowStyle.FontSize.valid) {
 			return _nowStyle.FontSize;
-		}
+		}*/
 		if (_state == ControlState::None) {
 			_state = this->State;
 		}
@@ -282,9 +282,9 @@ Event(this , ##__VA_ARGS__); \
 	}
 	Color  Control::GetForeColor(ControlState _state)
 	{
-		if (_state == ControlState::None && _nowStyle.ForeColor.valid) {
+		/*if (_state == ControlState::None && _nowStyle.ForeColor.valid) {
 			return _nowStyle.ForeColor;
-		}
+		}*/
 		if (_state == ControlState::None) {
 			_state = this->State;
 		}
@@ -662,7 +662,7 @@ Event(this , ##__VA_ARGS__); \
 			Geometry outClipRect;
 			Geometry::Intersect(outClipRect, roundRect, _clientRect);
 			pt.PushLayer(outClipRect);
-	}
+		}
 		else {
 			//针对矩形控件
 			pt.PushAxisAlignedClip(_ClipRect);
@@ -711,7 +711,7 @@ Event(this , ##__VA_ARGS__); \
 			pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, Color::White);
 		}
 #endif
-		_nowStyle.BackgroundColor.valid = false;
+		/*_nowStyle.BackgroundColor.valid = false;
 		_nowStyle.BackgroundImage.valid = false;
 		_nowStyle.BorderBottom.valid = false;
 		_nowStyle.BorderColor.valid = false;
@@ -722,8 +722,8 @@ Event(this , ##__VA_ARGS__); \
 		_nowStyle.FontSize.valid = false;
 		_nowStyle.ForeColor.valid = false;
 		_nowStyle.ForeImage.valid = false;
-		_nowStyle.Radius.valid = false;
-		}
+		_nowStyle.Radius.valid = false;*/
+	}
 
 	Control::~Control()
 	{
@@ -954,6 +954,7 @@ Event(this , ##__VA_ARGS__); \
 	}
 
 	bool Control::IsRePaint() {
+		/* //缓存方式,此方式可能会造成样式残留
 		_nowStyle.BackgroundColor = GetBackgroundColor();
 		_nowStyle.BackgroundImage = GetBackgroundImage();
 		_nowStyle.BorderBottom = GetBorderBottom();
@@ -966,7 +967,8 @@ Event(this , ##__VA_ARGS__); \
 		_nowStyle.ForeColor = GetForeColor(this->State);
 		_nowStyle.ForeImage = GetForeImage();
 		_nowStyle.Radius = GetRadius();
-		return  _nowStyle.IsValid();
+		return _nowStyle.IsValid();*/
+		return  true;//  
 	}
 
 	void Control::OnMouseEnter(const Point& point)

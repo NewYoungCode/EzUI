@@ -6,7 +6,7 @@ namespace EzUI {
 	{
 		UI_GetClassName()
 	private:
-		ControlStyle _nowStyle;//临时组成的样式
+		//ControlStyle _nowStyle;//临时组成的样式
 		bool _stateRepaint = false;//状态发生改变的时候绘制
 		bool _mouseIn = false;//鼠标是否在控件内
 		bool _load = false;//是否load
