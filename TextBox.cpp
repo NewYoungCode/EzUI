@@ -303,14 +303,22 @@ namespace EzUI {
 		if (TextPos > (int)text.size()) {
 			TextPos = text.size();
 		}
-		/*char buf[256]{ 0 };
-		sprintf_s(buf, "%d TextSize %d \n", TextPos,text.size());
-		OutputDebugStringA(buf);*/
+
 		Point pt = textLayout->HitTestTextPosition(TextPos, FALSE);
 		careRect.X = pt.X;
 		careRect.Y = pt.Y;
 		careRect.Height = FontHeight;
 		careRect.Width = 1;
+
+		//使光标一直在输入框内
+		int drawX = careRect.X + x;
+		if (drawX < 0) {//光标在最左侧
+			x -= drawX;
+		}
+		if (drawX > Width()) {//光标在最右侧
+			int ofssetX = (Width() - drawX);
+			x += ofssetX;
+		}
 	}
 
 	void TextBox::OnMouseDown(MouseButton mbtn, const Point& point) {
