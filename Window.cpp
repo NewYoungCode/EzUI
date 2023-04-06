@@ -404,16 +404,16 @@ namespace EzUI {
 		StopWatch sw;
 #endif // COUNT_ONPAINT
 
-#if USED_GDIPLUS
-		EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height, EBitmap::PixelFormat::PixelFormatRGB);//
-		Painter pt(memBitmap.GetDC());
-		PaintEventArgs args(pt);
-		args.DC = memBitmap.GetDC();
-		args.PublicData = &PublicData;
-		args.InvalidRectangle = rePaintRect;
-		MainLayout->Rending(args);//
-		::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//
-#endif
+		//#if USED_GDIPLUS
+		//		EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height, EBitmap::PixelFormat::PixelFormatRGB);//
+		//		Painter pt(memBitmap.GetDC());
+		//		PaintEventArgs args(pt);
+		//		args.DC = memBitmap.GetDC();
+		//		args.PublicData = &PublicData;
+		//		args.InvalidRectangle = rePaintRect;
+		//		MainLayout->Rending(args);//
+		//		::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//
+		//#endif
 
 #if USED_Direct2D
 		Painter pt(winHDC, GetClientRect().Width, GetClientRect().Height);

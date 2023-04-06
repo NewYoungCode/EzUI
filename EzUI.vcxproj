@@ -28,7 +28,6 @@
     <ClInclude Include="include\Control.h" />
     <ClInclude Include="include\Direct2DRender.h" />
     <ClInclude Include="include\EString.h" />
-    <ClInclude Include="include\GdiplusRender.h" />
     <ClInclude Include="include\Form.h" />
     <ClInclude Include="include\HLayout.h" />
     <ClInclude Include="include\HList.h" />
@@ -66,7 +65,6 @@
     <ClCompile Include="Control.cpp" />
     <ClCompile Include="Direct2DRender.cpp" />
     <ClCompile Include="EString.cpp" />
-    <ClCompile Include="GdiplusRender.cpp" />
     <ClCompile Include="Form.cpp" />
     <ClCompile Include="HLayout.cpp" />
     <ClCompile Include="HList.cpp" />

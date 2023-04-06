@@ -51,9 +51,6 @@
     <ClInclude Include="include\CheckBox.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\GdiplusRender.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="include\Form.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -148,9 +145,6 @@
     </ClCompile>
     <ClCompile Include="tinyxml\tinystr.cpp">
       <Filter>tinyxml</Filter>
-    </ClCompile>
-    <ClCompile Include="GdiplusRender.cpp">
-      <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="VLayout.cpp">
       <Filter>源文件</Filter>

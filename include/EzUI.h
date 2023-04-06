@@ -3,7 +3,6 @@
 #include "EString.h"
 #include "unzip.h"
 #include "RenderType.h"
-#include "GdiplusRender.h"
 #include "Direct2DRender.h"
 namespace EzUI {
 
@@ -87,24 +86,6 @@ namespace EzUI {
 		virtual ~EBitmap();
 	};
 
-#if USED_GDIPLUS
-	class Image :public GdiplusImage {
-	public:
-		Image(HBITMAP hBitmap) :GdiplusImage(hBitmap) {}
-		Image(IStream* iStream) :GdiplusImage(iStream) {}
-
-		Image(const EString& fileOrRes) :GdiplusImage((IStream*)NULL) {
-			IStream* iStream = NULL;
-			if (GetGlobalResource(fileOrRes, &iStream)) {
-				this->CreateFormStream(iStream);
-				iStream->Release();
-			}
-			else {
-				this->CreateFromFile(fileOrRes.utf16());
-			}
-		}
-	};
-#endif
 #if USED_Direct2D
 	class Image :public DXImage {
 	public:

@@ -633,14 +633,7 @@ Event(this , ##__VA_ARGS__); \
 		//bool isScrollBar = dynamic_cast<EzUI::ScrollBar*>(this);
 		//r = isScrollBar ? 0 : r;//因为滚动条是不需要有圆角的
 
-#if USED_GDIPLUS
-		Layer* layer = NULL;
-		if (r > 0) {
-			//处理圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分) 带抗锯齿
-			layer = new Layer(clientRect, r, args.DC, pt.base);
-		}
-		pt.PushAxisAlignedClip(_ClipRect);
-#endif 
+
 
 #if USED_Direct2D
 		if (r > 0) {
@@ -679,13 +672,6 @@ Event(this , ##__VA_ARGS__); \
 		pt.OffsetY = clientRect.Y;//设置偏移
 		this->OnBorderPaint(args);//绘制边框
 
-#if USED_GDIPLUS
-		if (r > 0) {
-			layer->PopLayer();
-			delete layer;
-		}
-		pt.PopAxisAlignedClip();
-#endif 
 #if USED_Direct2D
 		if (r > 0) {
 			pt.PopLayer();//弹出
