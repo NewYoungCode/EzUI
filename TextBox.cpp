@@ -455,15 +455,17 @@ namespace EzUI {
 	}
 
 	void TextBox::OnForePaint(PaintEventArgs& e) {
+
+		Color fontColor = GetForeColor();
+
 		if (text.empty()) {
-			Color c = GetForeColor();
-			byte r = c.GetR() - 30;
-			byte g = c.GetG() - 30;
-			byte b = c.GetB() - 30;
+			byte r = fontColor.GetR() - 30;
+			byte g = fontColor.GetG() - 30;
+			byte b = fontColor.GetB() - 30;
 			e.Painter.DrawString(Placeholder.utf16(), GetFontFamily().utf16(), GetFontSize(), Color(r, g, b), { 0,0,Width(),Height() }, TextAlign::MiddleLeft);
 		}
 		if (textLayout) {
-			e.Painter.DrawTextLayout({ x,0 }, textLayout, GetForeColor());
+			e.Painter.DrawTextLayout({ x,0 }, textLayout, fontColor);
 		}
 		if (!selectRect.IsEmptyArea()) {
 			Rect rect(selectRect);
@@ -477,7 +479,7 @@ namespace EzUI {
 				if (rect.X == this->Width()) {//如果刚好处于边界
 					rect.X = this->Width() - 1;
 				}
-				e.Painter.FillRectangle(rect, CareColor);
+				e.Painter.FillRectangle(rect, fontColor);
 			}
 		}
 	}

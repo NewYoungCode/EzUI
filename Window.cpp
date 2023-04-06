@@ -50,7 +50,6 @@ namespace EzUI {
 			_rect.X, _rect.Y, width, height, owner, NULL, GetModuleHandle(NULL), NULL);
 
 		EzUI::Scale = GetScale();
-
 		InitData(ExStyle);//设置基本数据
 	}
 
@@ -170,21 +169,10 @@ namespace EzUI {
 		}
 	}
 
-
-	LRESULT HandleStartComposition(HWND hWnd, WPARAM wParam, LPARAM lParam)
-	{
-		return 1;
-	}
-	bool _Has(UINT uMsg, UINT msg) {
-		if (uMsg == msg) return true;
-		return false;
-	}
-#define HAS(arg) _Has(uMsg,arg)
-
 	LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		if (WM_COMMAND == uMsg) {
-
+			//windows子控件消息
 		}
 		switch (uMsg)
 		{
@@ -373,10 +361,6 @@ namespace EzUI {
 			OnMouseDown(MouseButton::Right, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 			break;
 		}
-		/*	case WM_LBUTTONDBLCLK: {
-				OnMouseDoubleClick(MouseButton::Left, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
-				break;
-			}*/
 		case WM_LBUTTONUP:
 		{
 			Point pt(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -389,14 +373,12 @@ namespace EzUI {
 			OnMouseUp(MouseButton::Right, pt);
 			break;
 		}
-
 		case WM_MOUSELEAVE:
 		{
 			_mouseIn = false;
 			OnMouseLeave();
 			break;
 		}
-
 		case WM_MOUSEWHEEL:
 		{
 			auto fwKeys = GET_KEYSTATE_WPARAM(wParam);
@@ -408,7 +390,6 @@ namespace EzUI {
 		}
 		default:
 		{
-
 			break;
 		}
 		}
@@ -445,18 +426,16 @@ namespace EzUI {
 		args.PublicData = &PublicData;
 		args.InvalidRectangle = rePaintRect;
 		MainLayout->Rending(args);//
-#ifdef DEBUGPAINT
-		if (PublicData.Debug) {
-			pt.DrawRectangle(rePaintRect, Color::Red);
-		}
-#endif
-
 #endif
 
 #ifdef COUNT_ONPAINT
 		Debug::Log("OnPaint Count(%d) (%d,%d,%d,%d) %dms \n", pt.Count, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, sw.ElapsedMilliseconds());
 #endif // COUNT_ONPAINT
-
+#ifdef DEBUGPAINT
+		if (PublicData.Debug) {
+			pt.DrawRectangle(rePaintRect, Color::Red);
+		}
+#endif
 	}
 
 	void Window::InitData(const DWORD& ExStyle)

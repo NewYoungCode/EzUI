@@ -59,7 +59,6 @@ namespace EzUI {
 	public:
 		EString Placeholder;//placeholder懂得都懂 (在没有文字的情况下显示的文字)
 		Color SelectColor = Color(100, 255, 0, 0);//选中颜色
-		Color CareColor = Color::Black;//光标颜色
 	public:
 		TextBox();
 		virtual ~TextBox();

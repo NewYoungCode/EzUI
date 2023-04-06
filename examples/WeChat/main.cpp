@@ -7,6 +7,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	
 	MainFrm frm;
 	frm.Show();
-
+	 
 	return app.exec();
 }

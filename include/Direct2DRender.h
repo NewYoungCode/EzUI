@@ -26,24 +26,6 @@ namespace EzUI {
 	extern IWICImagingFactory* g_ImageFactory;
 	extern float Scale;//ÆÁÄ»Ëõ·Å±ÈÀý Ä¬ÈÏ1:1
 
-	template<typename T>
-	class DxSafeObject {
-	public:
-		T* value = NULL;
-		DxSafeObject(T* v) :value(v) {}
-		operator T* () {
-			return value;
-		}
-		~DxSafeObject() {
-			if (value) {
-				value->Release();
-			}
-		}
-		T* operator->() {
-			return value;
-		}
-	};
-
 	class TextFormat {
 	public:
 		IDWriteTextFormat* value = NULL;
