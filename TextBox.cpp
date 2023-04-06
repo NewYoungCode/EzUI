@@ -354,14 +354,6 @@ namespace EzUI {
 	}
 	void TextBox::OnMouseWheel(short zDelta, const Point& point) {
 		__super::OnMouseWheel(zDelta, point);
-		//if (x == 0)return;
-		/*if (zDelta > 0) {
-			x+=4;
-		}
-		else {
-			x-=4;
-		}
-		Invalidate();*/
 	}
 
 	Point TextBox::ConvertPoint(const Point& pt) {
@@ -393,7 +385,7 @@ namespace EzUI {
 				if (lastX > point.X) {
 					lastX = point.X;
 					if (textWidth > Width() && x < 0 && point.X < 0) {
-						x += 2;
+						x += 3;
 						Invalidate();
 						return;
 					}
@@ -402,7 +394,7 @@ namespace EzUI {
 				if (lastX < point.X) {
 					lastX = point.X;
 					if (textWidth > Width() && point.X > Width()) {
-						x -= 2;
+						x -= 3;
 						if (-x + Width() > textWidth) {
 							x = -(textWidth - Width());
 						}

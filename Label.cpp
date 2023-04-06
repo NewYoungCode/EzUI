@@ -4,7 +4,6 @@ namespace EzUI {
 	Label::Label()
 	{
 	}
-
 	Label::~Label()
 	{
 
@@ -13,12 +12,36 @@ namespace EzUI {
 	{
 		__super::OnForePaint(args);
 		if (!_wstr.empty()) {
-			//args.Painter.MeasureString(_text, GetFontFamily(this->State), GetFontSize(this->State), fontBox);
-
-			//TextFormat textFormat(GetFontFamily(this->State).utf16(), GetFontSize(this->State), TextAlign);
-			//TextLayout textLayout(_wstr, Size{ Width(),Height() }, &textFormat);
-			//args.Painter.DrawTextLayout({ 0,0 }, &textLayout, GetForeColor(this->State));
-			args.Painter.DrawString(_wstr, GetFontFamily(this->State).utf16(), GetFontSize(this->State), GetForeColor(this->State), Rect(0, 0, Width(), Height()), TextAlign, _underline);
+			std::wstring drawText(_wstr);
+			std::wstring fontF = GetFontFamily().utf16();
+			UI_Int fontSize = GetFontSize();
+			Color fontColor = GetForeColor();
+			if (!EllipsisText.empty()) { //水平文本溢出的显示方案
+				Size ellipsisTextSize;
+				TextFormat textFormat(fontF, fontSize, TextAlign::TopLeft);
+				{
+					TextLayout textLayout(EllipsisText.utf16(), { 16777216, Height() }, &textFormat);
+					ellipsisTextSize = textLayout.GetFontSize();
+				}
+				TextLayout textLayout(_wstr, { 16777216, Height() }, &textFormat);
+				if (textLayout.GetFontSize().Width > Width()) {//当文字显示超出的时候 宽度
+					int pos = 0;
+					BOOL isTrailingHit;
+					textLayout.HitTestPoint({ Width(),0 }, pos, isTrailingHit);//对文字进行命中测试
+					drawText.erase(pos);
+					while (drawText.size() > 0)
+					{
+						//从最后往前删除文字 直到可以显示正常为止
+						drawText.erase(drawText.size() - 1, 1);
+						TextLayout textLayout(drawText, { 16777216, Height() }, &textFormat);
+						if (textLayout.GetFontSize().Width + ellipsisTextSize.Width < Width()) {
+							drawText.append(EllipsisText.utf16());
+							break;
+						}
+					}
+				}
+			}
+			args.Painter.DrawString(!drawText.empty() ? drawText : EllipsisText.utf16(), fontF, fontSize, fontColor, Rect(0, 0, Width(), Height()), TextAlign, _underline);
 		}
 	}
 

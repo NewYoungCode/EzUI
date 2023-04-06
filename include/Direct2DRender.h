@@ -127,13 +127,12 @@ namespace EzUI {
 					&hitTestMetrics
 				);
 			}
-			////绘制光标
 			int posX = (int)(hitTestMetrics.left + 0.5);
 			if (isTrailingHit) {//判断前侧还是尾侧
 				posX += (int)(hitTestMetrics.width + 0.5);
 			}
 			textPos = hitTestMetrics.textPosition;
-			return __Point{ posX,(int)(hitTestMetrics.top + 0.5) };
+			return __Point{ posX,(int)(hitTestMetrics.top + 0.5) };//返回光标所在的位置
 		}
 		__Point HitTestTextPosition(int textPos, BOOL isTrailingHit) {
 			DWRITE_HIT_TEST_METRICS hitTestMetrics;

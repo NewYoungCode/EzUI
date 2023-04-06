@@ -45,14 +45,16 @@ public:
 
 		//this->ShadowWidth = 5;
 		del.Style.ForeImage = new Image(L"imgs/del.png");
-		del.SetFixedSize({20,20});
+		del.SetFixedSize({ 20,20 });
 		del.Cursor = Cursor::HAND;
 		del.Name = "dellocal";
 		del.MousePassThrough = Event::OnHover;
 
 		songName.SetText(_songName);
+		songName.EllipsisText = "...";
 		songName.TextAlign = TextAlign::MiddleLeft;
 		songName.MousePassThrough = time.MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseDoubleClick;
+		songName.HoverStyle.FontSize = 15;
 
 		time.SetFixedWidth(50);
 		time.SetText(_songTime);
@@ -118,6 +120,7 @@ public:
 		Style.BorderColor = Color(245, 245, 245);
 		HoverStyle.BackgroundColor = Color(245, 245, 245);
 
+		songName.EllipsisText = L"...";
 		songName.SetText(s.SongName);
 		songName.TextAlign = TextAlign::MiddleLeft;
 		songName.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
@@ -149,7 +152,7 @@ public:
 		time.Style.ForeColor = Color(150, 150, 150);
 
 		del.SetFixedWidth(33);
-		
+
 		EString fileName = "imgs/" + std::to_string(s.QualityLevel) + ".png";
 		Image* img = new Image(fileName.utf16());
 		img->Padding = 8;

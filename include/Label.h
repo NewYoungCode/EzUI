@@ -12,6 +12,8 @@ namespace EzUI {
 	protected:
 		virtual void OnForePaint(PaintEventArgs& args) override;
 	public:
+		EString EllipsisText;//文字溢出将显示的文字
+	public:
 		TextAlign TextAlign = TextAlign::MiddleCenter;
 		bool AutoWidth = false;
 		bool AutoHeight = false;
