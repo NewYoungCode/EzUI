@@ -2,7 +2,6 @@
 #include "Control.h"
 namespace EzUI {
 	class UI_EXPORT PictureBox : public Control {
-		UI_GetClassName()
 	private:
 		bool _exit =false;
 		std::mutex _mtx;

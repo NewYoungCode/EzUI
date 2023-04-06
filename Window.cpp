@@ -412,13 +412,9 @@ namespace EzUI {
 		args.PublicData = &PublicData;
 		args.InvalidRectangle = rePaintRect;
 		MainLayout->Rending(args);//
-#ifdef DEBUGPAINT
-		if (PublicData.Debug) {
-			pt.DrawRectangle(rePaintRect, Color::Red);
-		}
-#endif
 		::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//
 #endif
+
 #if USED_Direct2D
 		Painter pt(winHDC, GetClientRect().Width, GetClientRect().Height);
 		PaintEventArgs args(pt);
@@ -489,8 +485,6 @@ namespace EzUI {
 			//移除
 			SendMessage(_hWndTip, TTM_DELTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
 		};
-
-
 
 		//创建冒泡提示窗口
 		_hWndTip = CreateWindowEx(WS_EX_TOPMOST,

@@ -5,7 +5,6 @@ namespace EzUI {
 	class UI_EXPORT  HScrollBar :
 		public ScrollBar
 	{
-		UI_GetClassName()
 	private:
 		int _maxRight = 0;
 		double sliderX = 0;

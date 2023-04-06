@@ -9,7 +9,6 @@ namespace EzUI {
 	class UI_EXPORT ComBox :
 		public HLayout
 	{
-		UI_GetClassName()
 	private:
 		TextBox edit;
 		Label label;

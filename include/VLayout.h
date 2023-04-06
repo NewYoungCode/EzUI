@@ -4,7 +4,6 @@ namespace EzUI {
 	class UI_EXPORT  VLayout :
 		public Control
 	{
-		UI_GetClassName()
 	public:
 		virtual ~VLayout();
 	public:

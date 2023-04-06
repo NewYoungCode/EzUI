@@ -6,7 +6,6 @@ namespace EzUI {
 	class UI_EXPORT CheckBox :
 		public Label
 	{
-		UI_GetClassName()
 	protected:
 		bool _checked = false;
 	public:

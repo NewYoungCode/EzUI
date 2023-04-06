@@ -1,10 +1,8 @@
 #pragma once
 #include "EzUI.h"
 namespace EzUI {
-#define UI_GetClassName() public: virtual EString GetTypeName(){return typeid(this).name();} private:
 	class UI_EXPORT Control :public IControl
 	{
-		UI_GetClassName()
 	private:
 		//ControlStyle _nowStyle;//临时组成的样式
 		bool _stateRepaint = false;//状态发生改变的时候绘制
@@ -37,7 +35,6 @@ namespace EzUI {
 		WindowData* PublicData = NULL;//窗口上的公共数据
 		EzUI::Cursor Cursor = EzUI::Cursor::None;//鼠标样式
 		int MousePassThrough = 0;//忽略的鼠标消息
-		int ShadowWidth = 0;//控件阴影宽度
 		const bool IsXmlControl = false;//是否是xml加载进来的
 		EString Name;//控件的ObjectName ID
 		ScrollBar* ScrollBar = NULL;//垂直滚动条或者水平滚动条 一个控件只允许有一个
@@ -180,7 +177,6 @@ namespace EzUI {
 	};
 
 	class  ScrollBar :public Control, public IScrollBar {
-		UI_GetClassName()
 	public:
 		ScrollBar() {
 			Style.ForeColor = { 205,205,205 };//the bar backgroundcolor

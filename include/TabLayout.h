@@ -6,7 +6,6 @@ namespace EzUI {
 	class UI_EXPORT TabLayout :
 		public Control
 	{
-		UI_GetClassName()
 	protected:
 		int _index = 0;
 	public:

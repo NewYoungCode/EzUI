@@ -6,7 +6,6 @@ namespace EzUI {
 	class UI_EXPORT VScrollBar :
 		public ScrollBar
 	{
-		UI_GetClassName()
 	private:
 		int _maxBottom = 0;
 		double sliderY = 0;

@@ -1,5 +1,4 @@
 #include "Control.h"
-#include "BoxShadow.h"
 namespace EzUI {
 
 #define UI_BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed(ControlState _state)  { \
@@ -629,17 +628,6 @@ Event(this , ##__VA_ARGS__); \
 		//ÉèÖÃ»æÖÆÆ«ÒÆ
 		pt.OffsetX = clientRect.X; //ÉèÖÃÆ«ÒÆ
 		pt.OffsetY = clientRect.Y;//ÉèÖÃÆ«ÒÆ
-
-		if (ShadowWidth > 0) {
-			pt.Flush();
-			BoxShadow bs(Width(), Height(), ShadowWidth);
-			auto sz = bs.GetSize();
-			BLENDFUNCTION blendFunc{ 0 };
-			blendFunc.SourceConstantAlpha = 255;
-			blendFunc.BlendOp = AC_SRC_OVER;
-			blendFunc.AlphaFormat = AC_SRC_ALPHA;
-			::AlphaBlend(args.DC, pt.OffsetX - ShadowWidth, pt.OffsetY - ShadowWidth, sz.Width, sz.Height, bs._bufBitmap->GetDC(), 0, 0, sz.Width, sz.Height, blendFunc);
-		}
 
 		int r = GetRadius();
 		//bool isScrollBar = dynamic_cast<EzUI::ScrollBar*>(this);

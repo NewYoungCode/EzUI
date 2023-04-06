@@ -6,7 +6,6 @@ namespace EzUI {
 	class UI_EXPORT  TileList :
 		public Control,public  IScroll
 	{
-		UI_GetClassName()
 	private:
 		int _MaxBottom = 0;
 		VScrollBar* vScrollBar = NULL;
