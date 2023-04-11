@@ -1,4 +1,4 @@
-//WIN32 desktop application UI framework
+//WIN32 desktop application UI framework (2d graphical library:direct2d,后期可能会采用其他跨平台的2d图形库对整个UI框架进行跨平台)
 
 //email:718987717@qq.com //qq群: 758485934
 
