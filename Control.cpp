@@ -626,27 +626,23 @@ Event(this , ##__VA_ARGS__); \
 		_rePaintMtx.unlock();
 
 		//设置绘制偏移
-		pt.OffsetX = clientRect.X; //设置偏移
-		pt.OffsetY = clientRect.Y;//设置偏移
+		pt.SetTransform(clientRect.X, clientRect.Y);
 
 		int r = GetRadius();
 		//bool isScrollBar = dynamic_cast<EzUI::ScrollBar*>(this);
 		//r = isScrollBar ? 0 : r;//因为滚动条是不需要有圆角的
-
-
-
 #if USED_Direct2D
 		if (r > 0) {
 			//处理圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分) 带抗锯齿
-			Geometry roundRect(clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height, r);
-			Geometry _clientRect(_ClipRect.X, _ClipRect.Y, _ClipRect.Width, _ClipRect.Height);
+			Geometry roundRect(0, 0, clientRect.Width, clientRect.Height, r);
+			Geometry _clientRect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height);
 			Geometry outClipRect;
 			Geometry::Intersect(outClipRect, roundRect, _clientRect);
 			pt.PushLayer(outClipRect);
 		}
 		else {
 			//针对矩形控件
-			pt.PushAxisAlignedClip(_ClipRect);
+			pt.PushAxisAlignedClip(Rect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height));
 		}
 #endif 
 		//开始绘制
@@ -663,14 +659,17 @@ Event(this , ##__VA_ARGS__); \
 		if (scrollbar = this->ScrollBar) {
 			scrollbar->PublicData = args.PublicData;
 			Rect barRect = scrollbar->GetClientRect();
-			pt.OffsetX = barRect.X; //设置偏移
-			pt.OffsetY = barRect.Y;//设置偏移
+			//设置偏移
+			pt.SetTransform(barRect.X, barRect.Y);
+
 			scrollbar->Rending(args);
 		}
+		//设置偏移
+		pt.SetTransform(clientRect.X, clientRect.Y);
 		//绘制边框
-		pt.OffsetX = clientRect.X; //设置偏移
-		pt.OffsetY = clientRect.Y;//设置偏移
 		this->OnBorderPaint(args);//绘制边框
+		//恢复偏移
+		pt.SetTransform(0, 0);
 
 #if USED_Direct2D
 		if (r > 0) {
@@ -682,21 +681,9 @@ Event(this , ##__VA_ARGS__); \
 #endif 
 #ifdef DEBUGPAINT
 		if (PublicData->Debug) {
-			pt.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, Color::White);
+			pt.DrawRectangle(GetClientRect(), Color::White);
 		}
 #endif
-		/*_nowStyle.BackgroundColor.valid = false;
-		_nowStyle.BackgroundImage.valid = false;
-		_nowStyle.BorderBottom.valid = false;
-		_nowStyle.BorderColor.valid = false;
-		_nowStyle.BorderLeft.valid = false;
-		_nowStyle.BorderRight.valid = false;
-		_nowStyle.BorderTop.valid = false;
-		_nowStyle.FontFamily.clear();
-		_nowStyle.FontSize.valid = false;
-		_nowStyle.ForeColor.valid = false;
-		_nowStyle.ForeImage.valid = false;
-		_nowStyle.Radius.valid = false;*/
 	}
 
 	Control::~Control()

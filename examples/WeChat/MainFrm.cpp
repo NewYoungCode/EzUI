@@ -8,6 +8,8 @@ MainFrm::MainFrm() :Form(1000, 670) {
 	Control* friend_view= this->FindControl("friend_view");
 	friend_view->ScrollBar->SetFixedWidth(8);
 
+	MainLayout->ResumeLayout();
+	int pause = 0;
 }
 
 MainFrm::~MainFrm() {

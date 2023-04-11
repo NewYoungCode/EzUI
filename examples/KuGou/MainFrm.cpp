@@ -131,7 +131,6 @@ void MainFrm::OnClose(bool& cal) {
 	Application::exit(0);
 }
 
-
 void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 {
 	auto  SingerName = _SingerName.Split(",")[0];

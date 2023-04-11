@@ -134,12 +134,29 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	ComBox cbox;
 	for (size_t i = 0; i < 16; i++)
 	{
-		cbox.AddItem("选中"+std::to_string(i) );
+		cbox.AddItem("选中" + std::to_string(i));
 	}
-	cbox.SetRect({100,100,180,30});
+	cbox.SetRect({ 100,100,180,30 });
 	l.AddControl(&cbox);
 
+
+	Control h;
+	h.SetRect({ 200,200,180,30 });
+	h.Style.BackgroundColor = Color::Red;
+	h.Style.Radius = 30;
+	h.HoverStyle.Radius = 0;
+
+	Label label;
+	label.Name = "aa";
+	label.SetRect({ 20,5,180,30 });
+	label.Style.BackgroundColor = Color::Yellow;
+	label.SetText(utf8("saddf465fg456dgdf56g4ds6dfhbgdfgfdgdfg564df65g45d6fg456"));
+	label.EllipsisText = "...";
+	h.AddControl(&label);
+
+	l.AddControl(&h);
 	wd.SetLayout(&l);
+
 
 	wd.Show();
 

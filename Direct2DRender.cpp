@@ -215,7 +215,6 @@ namespace EzUI {
 		}
 	}
 
-
 	void Direct2DRender::DrawBitmap(ID2D1Bitmap* d2dBitmap, const  __Rect& rect)
 	{
 		_NOREND_IMAGE_
@@ -253,6 +252,12 @@ namespace EzUI {
 			(ID2D1HwndRenderTarget**)&d2dRender);
 		this->BeginDraw();
 	}
+	void Direct2DRender::SetTransform(int xOffset, int yOffset)
+	{
+		// 设置x和y方向的偏移
+		D2D1_MATRIX_3X2_F transformMatrix = D2D1::Matrix3x2F::Translation((FLOAT)xOffset, (FLOAT)yOffset);
+		d2dRender->SetTransform(transformMatrix);
+	}
 	Direct2DRender::~Direct2DRender()
 	{
 		if (SolidColorBrush) {
@@ -269,9 +274,7 @@ namespace EzUI {
 		if (color.GetValue() == 0) {
 			return;
 		}
-		__Rect rect = _rect;
-		rect.X += OffsetX;
-		rect.Y += OffsetY;
+		const __Rect& rect = _rect;
 
 		auto sb = GetSolidColorBrush(color);
 		if (_radius > 0) {
@@ -288,9 +291,7 @@ namespace EzUI {
 		if (color.GetValue() == 0) {
 			return;
 		}
-		__Rect rect = _rect;
-		rect.X += OffsetX;
-		rect.Y += OffsetY;
+		const __Rect& rect = _rect;
 
 		auto sb = GetSolidColorBrush(color);
 		if (_radius > 0) {
@@ -305,8 +306,6 @@ namespace EzUI {
 	void Direct2DRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& _rect, EzUI::TextAlign textAlign, bool underLine)
 	{
 		__Rect rect = _rect;
-		rect.X += OffsetX;
-		rect.Y += OffsetY;
 
 		TextFormat textFormat(fontFamily, fontSize, textAlign);
 		TextLayout textLayout(text, __Size{ rect.Width, rect.Height }, &textFormat);
@@ -320,7 +319,7 @@ namespace EzUI {
 	void Direct2DRender::DrawTextLayout(const __Point& startLacation, IDWriteTextLayout* textLayout, const __Color& color)
 	{
 		auto sb = GetSolidColorBrush(color);
-		d2dRender->DrawTextLayout(D2D1_POINT_2F{ (FLOAT)(startLacation.X + OffsetX) ,(FLOAT)(startLacation.Y + OffsetY) }, textLayout, sb);
+		d2dRender->DrawTextLayout(D2D1_POINT_2F{ (FLOAT)(startLacation.X) ,(FLOAT)(startLacation.Y) }, textLayout, sb);
 	}
 	//layer巨tm的耗性能!!! 但是可以异形抗锯齿裁剪
 	void Direct2DRender::PushLayer(const Geometry& dxGeometry)
@@ -346,12 +345,8 @@ namespace EzUI {
 	}
 	void Direct2DRender::DrawLine(const __Color& color, const __Point& _A, const __Point& _B, int width)
 	{
-		__Point A = _A;
-		A.X += OffsetX;
-		A.Y += OffsetY;
-		__Point B = _B;
-		B.X += OffsetX;
-		B.Y += OffsetY;
+		const __Point& A = _A;
+		const __Point& B = _B;
 
 		auto sb = GetSolidColorBrush(color);
 		d2dRender->DrawLine(D2D1_POINT_2F{ (float)A.X,(float)A.Y }, D2D1_POINT_2F{ (float)B.X,(float)B.Y }, sb, (FLOAT)width);
@@ -368,8 +363,6 @@ namespace EzUI {
 		DXImage* image = (DXImage*)_image;
 
 		__Rect rect = _rect;
-		rect.X += OffsetX;
-		rect.Y += OffsetY;
 
 		rect.X += margin.Left;
 		rect.Y += margin.Top;

@@ -31,7 +31,7 @@ namespace EzUI {
 		IDWriteTextFormat* value = NULL;
 	public:
 		TextFormat(const std::wstring& fontFamily, int fontSize, TextAlign textAlign) {
-			float fh = fontSize* Scale;//如果要适应DPI 那么这里也要随之更改
+			float fh = fontSize * Scale;//如果要适应DPI 那么这里也要随之更改
 			g_WriteFactory->CreateTextFormat(fontFamily.c_str(), NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, fh, L"", &value);
 #define __Top DWRITE_PARAGRAPH_ALIGNMENT_NEAR
 #define	__Bottom DWRITE_PARAGRAPH_ALIGNMENT_FAR
@@ -251,7 +251,6 @@ namespace EzUI {
 		virtual ~DXImage();
 	};
 
-
 	class UI_EXPORT Direct2DRender {
 	protected:
 		HWND hWnd = NULL;
@@ -260,15 +259,13 @@ namespace EzUI {
 		int Count = 0;
 		ID2D1RenderTarget* d2dRender = NULL;
 		HDC DC = NULL;
-		int OffsetX = 0;
-		int OffsetY = 0;
 		ID2D1SolidColorBrush* SolidColorBrush = NULL;
 	protected:
 		virtual void DrawBitmap(ID2D1Bitmap* d2dBitmap, const  __Rect& rect);
-
 	public:
 		Direct2DRender(HDC _dc, int Width = 0, int Height = 0);
 		Direct2DRender(HWND hWnd, int Width = 0, int Height = 0);
+		void SetTransform(int xOffset, int yOffset);
 		virtual ~Direct2DRender();
 		void DrawRectangle(const  __Rect& rect, const  __Color& color, int width = 1, int radius = 0);
 		void FillRectangle(const  __Rect& rect, const  __Color& color, int radius = 0);
