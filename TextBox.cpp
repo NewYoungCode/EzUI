@@ -454,15 +454,18 @@ namespace EzUI {
 			byte r = fontColor.GetR() - 30;
 			byte g = fontColor.GetG() - 30;
 			byte b = fontColor.GetB() - 30;
-			e.Painter.DrawString(Placeholder.utf16(), GetFontFamily().utf16(), GetFontSize(), Color(r, g, b), { 0,0,Width(),Height() }, TextAlign::MiddleLeft);
+			EzUI::DrawString(e.Painter, Placeholder.utf16(), GetFontFamily().utf16(), GetFontSize(), Color(r, g, b), { 0,0,Width(),Height() }, TextAlign::MiddleLeft);
 		}
 		if (textLayout) {
-			e.Painter.DrawTextLayout({ x,0 }, textLayout, fontColor);
+
+#if USED_Direct2D
+			EzUI::DrawTextLayout(e.Painter, { x,0 }, textLayout->value, fontColor);
+#endif
 		}
 		if (!selectRect.IsEmptyArea()) {
 			Rect rect(selectRect);
 			rect.X += x;//偏移
-			e.Painter.FillRectangle(rect, SelectColor);
+		 EzUI::FillRectangle(e.Painter,rect, SelectColor);
 		}
 		if (!careRect.IsEmptyArea() && _focus) {
 			if (_careShow) {
@@ -471,7 +474,7 @@ namespace EzUI {
 				if (rect.X == this->Width()) {//如果刚好处于边界
 					rect.X = this->Width() - 1;
 				}
-				e.Painter.FillRectangle(rect, fontColor);
+				EzUI::FillRectangle(e.Painter,rect, fontColor);
 			}
 		}
 	}

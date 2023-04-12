@@ -5,7 +5,6 @@
 
 #include "resource.h"
 
-
 class DesktopWallper :public BorderlessWindow
 {
 public:

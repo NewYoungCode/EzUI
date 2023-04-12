@@ -15,12 +15,12 @@ namespace EzUI {
 		label.SetText(L"กล");
 		label.MouseClick = [&](Control* sender, const MouseButton, const Point&)->void {
 
-			Rect _rect=GetClientRect();
+			Rect _rect = GetClientRect();
 			HWND Owner = ::GetWindowOwner(poupWnd->Hwnd());
 			RECT OwnerRect;
 			::GetWindowRect(Owner, &OwnerRect);
 			auto rect = poupWnd->GetRect();
-			POINT mousePos{ _rect.X,_rect.GetBottom()};
+			POINT mousePos{ _rect.X,_rect.GetBottom() };
 			POINT clientPos = mousePos;
 			ClientToScreen(Owner, &clientPos);
 			int height = OwnerRect.bottom - OwnerRect.top;
@@ -70,7 +70,7 @@ namespace EzUI {
 	}
 	void ComBox::RemoveItem(size_t pos) {}
 
-	void ComBox::OnMouseClick( MouseButton btn, const Point& pt) {
+	void ComBox::OnMouseClick(MouseButton btn, const Point& pt) {
 		__super::OnMouseClick(btn, pt);
 		/*if (btn == MouseButton::Left) {
 			poupWnd->Show(SW_SHOW);

@@ -57,16 +57,16 @@ Event(this , ##__VA_ARGS__); \
 		HImage backgroundImage = GetBackgroundImage();
 		UI_Int radius = GetRadius();
 		if (backgroundColor.valid) {
-			e.Painter.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, backgroundColor);
+			EzUI::FillRectangle(e.Painter, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundColor);
 		}
 		if (backgroundImage.valid && backgroundImage) {
-			e.Painter.DrawImage(backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage->SizeMode, backgroundImage->Padding);
+			EzUI::DrawImage(e.Painter, backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage->SizeMode, backgroundImage->Padding);
 		}
 	}
 	void Control::OnForePaint(PaintEventArgs& e) {
 		HImage foreImage = GetForeImage();
 		if (foreImage.valid && foreImage) {
-			e.Painter.DrawImage(foreImage, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage->SizeMode, foreImage->Padding);
+			EzUI::DrawImage(e.Painter, foreImage, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage->SizeMode, foreImage->Padding);
 		}
 	}
 	void Control::OnBorderPaint(PaintEventArgs& e)
@@ -84,20 +84,20 @@ Event(this , ##__VA_ARGS__); \
 		if (!hasBorder) return;//边框为0不绘制
 
 		if (radius > 0 && hasBorder) {
-			e.Painter.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, borderColor, borderLeft, radius);
+			EzUI::DrawRectangle(e.Painter, Rect{ 0,0,_rect.Width,_rect.Height }, borderColor, borderLeft, radius);
 			return;
 		}
 		if (borderLeft > 0) {
-			e.Painter.DrawLine(borderColor, Point{ 0,0 }, Point{ 0,_rect.Height }, borderLeft);
+			EzUI::DrawLine(e.Painter, borderColor, Point{ 0,0 }, Point{ 0,_rect.Height }, borderLeft);
 		}
 		if (borderTop > 0) {
-			e.Painter.DrawLine(borderColor, Point{ 0,0 }, Point{ _rect.Width,0 }, borderTop);
+			EzUI::DrawLine(e.Painter, borderColor, Point{ 0,0 }, Point{ _rect.Width,0 }, borderTop);
 		}
 		if (borderRight > 0) {
-			e.Painter.DrawLine(borderColor, Point{ _rect.Width,0 }, Point{ _rect.Width,_rect.Height }, borderRight);
+			EzUI::DrawLine(e.Painter, borderColor, Point{ _rect.Width,0 }, Point{ _rect.Width,_rect.Height }, borderRight);
 		}
 		if (borderBottom > 0) {
-			e.Painter.DrawLine(borderColor, Point{ 0,_rect.Height }, Point{ _rect.Width,_rect.Height }, borderBottom);
+			EzUI::DrawLine(e.Painter, borderColor, Point{ 0,_rect.Height }, Point{ _rect.Width,_rect.Height }, borderBottom);
 		}
 	}
 
@@ -619,18 +619,25 @@ Event(this , ##__VA_ARGS__); \
 			OnLoad();
 			_load = true;
 		}
-		pt.Count++;
+		//pt.Count++;
 
 		_rePaintMtx.lock();
 		this->_lastDrawRect = _ClipRect;//记录最后一次绘制的区域
 		_rePaintMtx.unlock();
 
+
 		//设置绘制偏移
-		pt.SetTransform(clientRect.X, clientRect.Y);
+		SetTransform(pt, clientRect.X, clientRect.Y);
 
 		int r = GetRadius();
 		//bool isScrollBar = dynamic_cast<EzUI::ScrollBar*>(this);
 		//r = isScrollBar ? 0 : r;//因为滚动条是不需要有圆角的
+
+#if USED_Skia
+//针对矩形控件
+		EzUI::PushAxisAlignedClip(pt, Rect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height));
+#endif
+
 #if USED_Direct2D
 		if (r > 0) {
 			//处理圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分) 带抗锯齿
@@ -638,11 +645,11 @@ Event(this , ##__VA_ARGS__); \
 			Geometry _clientRect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height);
 			Geometry outClipRect;
 			Geometry::Intersect(outClipRect, roundRect, _clientRect);
-			pt.PushLayer(outClipRect);
+			EzUI::PushLayer(pt, outClipRect);
 		}
 		else {
 			//针对矩形控件
-			pt.PushAxisAlignedClip(Rect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height));
+			EzUI::PushAxisAlignedClip(pt, Rect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height));
 		}
 #endif 
 		//开始绘制
@@ -660,28 +667,33 @@ Event(this , ##__VA_ARGS__); \
 			scrollbar->PublicData = args.PublicData;
 			Rect barRect = scrollbar->GetClientRect();
 			//设置偏移
-			pt.SetTransform(barRect.X, barRect.Y);
-
+			EzUI::SetTransform(pt, barRect.X, barRect.Y);
 			scrollbar->Rending(args);
 		}
 		//设置偏移
-		pt.SetTransform(clientRect.X, clientRect.Y);
+		EzUI::SetTransform(pt, clientRect.X, clientRect.Y);
 		//绘制边框
 		this->OnBorderPaint(args);//绘制边框
 		//恢复偏移
-		pt.SetTransform(0, 0);
+		EzUI::SetTransform(pt, 0, 0);
+
+
+#if USED_Skia
+		EzUI::PopAxisAlignedClip(pt);//弹出
+#endif
 
 #if USED_Direct2D
 		if (r > 0) {
-			pt.PopLayer();//弹出
+			EzUI::PopLayer(pt);//弹出
 		}
 		else {
-			pt.PopAxisAlignedClip();
+			EzUI::PopAxisAlignedClip(pt);//弹出
+
 		}
 #endif 
 #ifdef DEBUGPAINT
 		if (PublicData->Debug) {
-			pt.DrawRectangle(GetClientRect(), Color::White);
+			EzUI::DrawRectangle(pt, GetClientRect(), Color::White);
 		}
 #endif
 	}

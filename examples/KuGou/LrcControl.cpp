@@ -8,7 +8,7 @@ void LrcControl::ChangePostion(int postion)
 			LrcNow = it;
 			break;
 		}
-	} 
+	}
 	if (this->GetRect().IsEmptyArea()) {
 		return;
 	}
@@ -58,12 +58,12 @@ void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
 			if (LrcNow == &lrc)
 			{
 				//arg.Painter.DrawRectangle(Color::Red, rectangle);
-				arg.Painter.DrawString(lrc.text.utf16(), GetFontFamily().utf16(), GetFontSize() + 0, Color(211, 174, 87), rectangle, TextAlign::MiddleCenter);
+				EzUI::DrawString(arg.Painter, lrc.text.utf16(), GetFontFamily().utf16(), GetFontSize() + 0, Color(211, 174, 87), rectangle, TextAlign::MiddleCenter);
 			}
 			else
 			{
 				//arg.Painter.DrawRectangle(Color::Red, rectangle);
-				arg.Painter.DrawString(lrc.text.utf16(), GetFontFamily().utf16(), GetFontSize(), GetForeColor(), rectangle, TextAlign::MiddleCenter);
+				EzUI::DrawString(arg.Painter, lrc.text.utf16(), GetFontFamily().utf16(), GetFontSize(), GetForeColor(), rectangle, TextAlign::MiddleCenter);
 			}
 		}
 	}

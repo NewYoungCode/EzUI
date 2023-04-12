@@ -5,7 +5,7 @@ namespace EzUI {
 	CheckBox::CheckBox()
 	{
 		//Cursor = IDC_HAND;
-		TextAlign=TextAlign::MiddleLeft;
+		TextAlign = TextAlign::MiddleLeft;
 
 	}
 
@@ -41,12 +41,13 @@ namespace EzUI {
 			args.Painter.DrawString(_wstr, GetFontFamily(this->State).utf16(), GetFontSize(this->State), GetForeColor(this->State), Rect(x, 0, cx, (float)_rect.Height), TextAlign, _underline);*/
 		}
 		int y = (Height() - fontHeight) / 2;
-		args.Painter.FillRectangle({ 0,y,fontHeight,fontHeight },Color(200, 255, 255, 255));
+
+		EzUI::FillRectangle(args.Painter, { 0,y,fontHeight,fontHeight }, Color(200, 255, 255, 255));
 		if (!_checked) {
-			args.Painter.FillRectangle({ 0 + 2,y + 2,fontHeight - 4,fontHeight - 4 },Color(200, 0, 0, 0));
+			EzUI::FillRectangle(args.Painter, { 0 + 2,y + 2,fontHeight - 4,fontHeight - 4 }, Color(200, 0, 0, 0));
 		}
 		else {
-			args.Painter.FillRectangle({ 0 + 3,y + 3,fontHeight - 6,fontHeight - 6 },Color(200, 0, 160, 0), 2);
+			EzUI::FillRectangle(args.Painter, { 0 + 3,y + 3,fontHeight - 6,fontHeight - 6 }, Color(200, 0, 160, 0), 2);
 		}
 	}
 };

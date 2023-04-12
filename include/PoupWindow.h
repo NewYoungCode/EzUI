@@ -1,9 +1,10 @@
 #pragma once
 #include "LayeredWindow.h"
+#include "BorderlessWindow.h"
 namespace EzUI {
-	class PoupWindow :public LayeredWindow {
+	class PoupWindow :public BorderlessWindow {
 	public:
-		PoupWindow(int cx, int cy, HWND owner) : LayeredWindow(cx, cy, owner)
+		PoupWindow(int cx, int cy, HWND owner) : BorderlessWindow(cx, cy, owner)
 		{
 			this->SetShadow(5);
 		}

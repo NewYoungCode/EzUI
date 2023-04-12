@@ -49,7 +49,7 @@ namespace EzUI {
 		_hWnd = ::CreateWindowEx(ExStyle | WS_EX_ACCEPTFILES, className.c_str(), className.c_str(), dStyle,
 			_rect.X, _rect.Y, width, height, owner, NULL, GetModuleHandle(NULL), NULL);
 
-		EzUI::Scale = GetScale();
+		//EzUI::Scale = GetScale();
 		InitData(ExStyle);//设置基本数据
 	}
 
@@ -404,33 +404,38 @@ namespace EzUI {
 		StopWatch sw;
 #endif // COUNT_ONPAINT
 
-		//#if USED_GDIPLUS
-		//		EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height, EBitmap::PixelFormat::PixelFormatRGB);//
-		//		Painter pt(memBitmap.GetDC());
-		//		PaintEventArgs args(pt);
-		//		args.DC = memBitmap.GetDC();
-		//		args.PublicData = &PublicData;
-		//		args.InvalidRectangle = rePaintRect;
-		//		MainLayout->Rending(args);//
-		//		::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//
-		//#endif
+#if USED_Skia
+		EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height, EBitmap::PixelFormat::PixelFormatARGB);//
+		auto pt = EzUI::CreateRender(memBitmap.point, GetClientRect().Width, GetClientRect().Height);
+		PaintEventArgs args(pt);
+		args.DC = memBitmap.GetDC();
+		args.PublicData = &PublicData;
+		args.InvalidRectangle = rePaintRect;
+		MainLayout->Rending(args);//
+		pt->flush();
+		EzUI::ReleaseRender(pt);
+		::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//
+#endif
 
 #if USED_Direct2D
-		Painter pt(winHDC, GetClientRect().Width, GetClientRect().Height);
+		auto pt = EzUI::CreateRender(winHDC, GetClientRect().Width, GetClientRect().Height);
+		pt->BeginDraw();
 		PaintEventArgs args(pt);
 		args.DC = winHDC;
 		args.PublicData = &PublicData;
 		args.InvalidRectangle = rePaintRect;
 		MainLayout->Rending(args);//
+		pt->EndDraw();
+		EzUI::ReleaseRender(pt);
 #endif
 
 #ifdef COUNT_ONPAINT
 		Debug::Log("OnPaint Count(%d) (%d,%d,%d,%d) %dms \n", pt.Count, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, sw.ElapsedMilliseconds());
 #endif // COUNT_ONPAINT
 #ifdef DEBUGPAINT
-		if (PublicData.Debug) {
-			pt.DrawRectangle(rePaintRect, Color::Red);
-		}
+		/*	if (PublicData.Debug) {
+				pt.DrawRectangle(rePaintRect, Color::Red);
+			}*/
 #endif
 	}
 
@@ -839,4 +844,4 @@ namespace EzUI {
 		return false;
 	}
 
-};
+	};

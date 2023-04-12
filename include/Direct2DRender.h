@@ -20,6 +20,8 @@
 #include <list>
 #include <map>
 #include "RenderType.h"
+
+
 namespace EzUI {
 	extern ID2D1Factory* g_Direct2dFactory;
 	extern IDWriteFactory* g_WriteFactory;
@@ -251,52 +253,26 @@ namespace EzUI {
 		virtual ~DXImage();
 	};
 
-	class UI_EXPORT Direct2DRender {
-	protected:
-		HWND hWnd = NULL;
-		bool beginDraw = false;
-	public:
-		int Count = 0;
-		ID2D1RenderTarget* d2dRender = NULL;
-		HDC DC = NULL;
-		ID2D1SolidColorBrush* SolidColorBrush = NULL;
-	protected:
-		virtual void DrawBitmap(ID2D1Bitmap* d2dBitmap, const  __Rect& rect);
-	public:
-		Direct2DRender(HDC _dc, int Width = 0, int Height = 0);
-		Direct2DRender(HWND hWnd, int Width = 0, int Height = 0);
-		void SetTransform(int xOffset, int yOffset);
-		virtual ~Direct2DRender();
-		void DrawRectangle(const  __Rect& rect, const  __Color& color, int width = 1, int radius = 0);
-		void FillRectangle(const  __Rect& rect, const  __Color& color, int radius = 0);
-		void DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const  __Color& color, const  __Rect& rect, EzUI::TextAlign textAlign, bool underLine = false);
-		void DrawTextLayout(const __Point&, IDWriteTextLayout* textLayout, const __Color& color);
-		void DrawTextLayout(const __Point& pt, TextLayout* textLayout, const __Color& color) {
-			DrawTextLayout(pt, textLayout->value, color);
-		}
-		void DrawLine(const  __Color& color, const  __Point& A, const  __Point& B, int width = 1);
-		void DrawImage(IImage* image, const  __Rect& destRect, const __Rect& srcRect);
-		void DrawImage(IImage* image, const  __Rect& rect, const EzUI::ImageSizeMode& imageSizeMode = EzUI::ImageSizeMode::Zoom, const EzUI::Margin& margin = 0);
-		void DrawGeometry(ID2D1Geometry* geometry, const  __Color& color, int width = 1);
-		void FillGeometry(ID2D1Geometry* geometry, const  __Color& color);
-		void DrawGeometry(const Geometry& geometry, const  __Color& color, int width = 1) {
-			DrawGeometry(geometry.rgn, color);
-		}
-		void FillGeometry(const Geometry& geometry, const  __Color& color) {
-			FillGeometry(geometry.rgn, color);
-		}
-		void PushLayer(const Geometry& Geometry);
-		void PopLayer();
-		void PushAxisAlignedClip(const __Rect& rectBounds);
-		void PopAxisAlignedClip();
-		void Flush();
-		ID2D1SolidColorBrush* GetSolidColorBrush(const __Color& _color);
-		void BeginDraw();
-		void EndDraw();
-	};
 	UI_EXPORT void RenderInitialize();//全局初始化direct2d
 	UI_EXPORT void RenderUnInitialize();//释放direct2d
+	using Painter = ID2D1RenderTarget;
+};
 
-	using Painter = Direct2DRender;
+namespace EzUI {
+	UI_EXPORT ID2D1DCRenderTarget* CreateRender(HDC _dc, int Width, int Height);
+	UI_EXPORT void ReleaseRender(ID2D1DCRenderTarget* d2dRender);
+	UI_EXPORT void FillRectangle(ID2D1RenderTarget* d2dRender, const __Rect& _rect, const __Color& color, int _radius = 0);
+	UI_EXPORT void DrawRectangle(ID2D1RenderTarget* d2dRender, const  __Rect& _rect, const  __Color& color, int width = 1, int _radius = 0);
+	UI_EXPORT void SetTransform(ID2D1RenderTarget* d2dRender, int xOffset, int yOffset);
+	UI_EXPORT void DrawLine(ID2D1RenderTarget* d2dRender, const __Color& color, const __Point& _A, const __Point& _B, int width);
+	//正规矩形速度快!!! 不支持异形抗锯齿裁剪
+	UI_EXPORT 	void PushAxisAlignedClip(ID2D1RenderTarget* d2dRender, const __Rect& rectBounds);
+	UI_EXPORT 	void PopAxisAlignedClip(ID2D1RenderTarget* d2dRender);
+	//layer巨tm的耗性能!!! 但是可以异形抗锯齿裁剪
+	UI_EXPORT void PushLayer(ID2D1RenderTarget* d2dRender, const Geometry& dxGeometry);
+	UI_EXPORT void PopLayer(ID2D1RenderTarget* d2dRender);//弹出最后一个裁剪
+	UI_EXPORT void DrawImage(ID2D1RenderTarget* d2dRender, IImage* _image, const __Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Margin& margin = 0);
+	UI_EXPORT void DrawTextLayout(ID2D1RenderTarget* d2dRender, const __Point& startLacation, IDWriteTextLayout* textLayout, const __Color& color);
+	UI_EXPORT void DrawString(ID2D1RenderTarget* d2dRender, const std::wstring& text, const std::wstring& fontFamily, int fontSize, const  __Color& color, const  __Rect& _rect, EzUI::TextAlign textAlign, bool underLine = false);
 };
 #endif

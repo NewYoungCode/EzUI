@@ -94,3 +94,5 @@
 
 //下面的渲染方式只能选一个
 #define USED_Direct2D 1  //DX绘制 性能好 内存占用高
+#define USED_Skia  0	//跨平台 如果使用此2d图形库 项目必须设置为c++17及以上
+

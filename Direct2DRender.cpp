@@ -22,7 +22,7 @@ namespace EzUI {
 		return D2D_RECT_F{ (FLOAT)rect.X,(FLOAT)rect.Y,(FLOAT)rect.GetRight(),(FLOAT)rect.GetBottom() };
 	}
 
-	template<class Interface>
+	template<typename Interface>
 	inline void SafeRelease(
 		Interface** ppInterfaceToRelease)
 	{
@@ -32,6 +32,20 @@ namespace EzUI {
 			(*ppInterfaceToRelease) = NULL;
 		}
 	}
+
+	template<typename T>
+	class Smart_ptr {
+		T* value = NULL;
+	public:
+		Smart_ptr(T* t) {
+			value = t;
+		}
+		~Smart_ptr() {
+			if (value) {
+				value->Release();
+			}
+		}
+	};
 
 	void RenderInitialize()
 	{
@@ -187,7 +201,6 @@ namespace EzUI {
 			g_ImageFactory->CreateBitmapFromHBITMAP(hBitmap, NULL, WICBitmapUsePremultipliedAlpha, &bitMap);
 			bitMap->GetSize(&Width, &Height);
 			Init();
-
 		}
 	}
 	DXImage::DXImage(const std::wstring& file) {
@@ -214,17 +227,12 @@ namespace EzUI {
 			SafeRelease(&bitMap);
 		}
 	}
+};
 
-	void Direct2DRender::DrawBitmap(ID2D1Bitmap* d2dBitmap, const  __Rect& rect)
+namespace EzUI {
+	ID2D1DCRenderTarget* CreateRender(HDC _dc, int Width, int Height)
 	{
-		_NOREND_IMAGE_
-			if (d2dBitmap == NULL) return;
-		D2D1_RECT_F rectF = ToRectF(rect);
-		d2dRender->DrawBitmap(d2dBitmap, &rectF);
-	}
-	Direct2DRender::Direct2DRender(HDC _dc, int Width, int Height)
-	{
-		this->DC = _dc;
+		ID2D1DCRenderTarget* d2dRender = NULL;
 		D2D1_RENDER_TARGET_PROPERTIES defaultOption = D2D1::RenderTargetProperties(
 			D2D1_RENDER_TARGET_TYPE_DEFAULT,
 			D2D1::PixelFormat(
@@ -237,63 +245,21 @@ namespace EzUI {
 		);
 		HRESULT	hr = g_Direct2dFactory->CreateDCRenderTarget(&defaultOption, (ID2D1DCRenderTarget**)&d2dRender);
 		RECT rc{ 0,0,Width ,Height };
-		((ID2D1DCRenderTarget*)d2dRender)->BindDC(DC, &rc);
-		this->BeginDraw();
+		((ID2D1DCRenderTarget*)d2dRender)->BindDC(_dc, &rc);
+		return d2dRender;
 	}
-	Direct2DRender::Direct2DRender(HWND hWnd, int Width, int Height)
-	{
-		this->hWnd = hWnd;
-		DC = ::GetDC(hWnd);
-		D2D1_SIZE_U size = D2D1::SizeU(Width, Height);
-		// Create a Direct2D render target.
-		HRESULT hr = g_Direct2dFactory->CreateHwndRenderTarget(
-			D2D1::RenderTargetProperties(),
-			D2D1::HwndRenderTargetProperties(hWnd, size),
-			(ID2D1HwndRenderTarget**)&d2dRender);
-		this->BeginDraw();
+	void ReleaseRender(ID2D1DCRenderTarget* d2dRender) {
+		d2dRender->Release();
 	}
-	void Direct2DRender::SetTransform(int xOffset, int yOffset)
-	{
-		// 设置x和y方向的偏移
-		D2D1_MATRIX_3X2_F transformMatrix = D2D1::Matrix3x2F::Translation((FLOAT)xOffset, (FLOAT)yOffset);
-		d2dRender->SetTransform(transformMatrix);
-	}
-	Direct2DRender::~Direct2DRender()
-	{
-		if (SolidColorBrush) {
-			SafeRelease(&SolidColorBrush);
-		}
-		d2dRender->EndDraw();
-		SafeRelease(&d2dRender);
-		if (hWnd && DC) {
-			::ReleaseDC(hWnd, DC);
-		}
-	}
-	void Direct2DRender::DrawRectangle(const  __Rect& _rect, const  __Color& color, int width, int _radius)
-	{
+	void FillRectangle(ID2D1RenderTarget* d2dRender, const __Rect& _rect, const __Color& color, int _radius) {
+
+		ID2D1SolidColorBrush* sb = NULL;
+		d2dRender->CreateSolidColorBrush(ToColorF(color), &sb);
+		Smart_ptr<ID2D1SolidColorBrush> smptr(sb);
 		if (color.GetValue() == 0) {
 			return;
 		}
 		const __Rect& rect = _rect;
-
-		auto sb = GetSolidColorBrush(color);
-		if (_radius > 0) {
-			float radius = _radius / 2.0f;
-			D2D1_ROUNDED_RECT roundRect{ ToRectF(rect), radius, radius };
-			d2dRender->DrawRoundedRectangle(roundRect, sb);
-		}
-		else {
-			d2dRender->DrawRectangle(ToRectF(rect), sb);
-		}
-	}
-	void Direct2DRender::FillRectangle(const __Rect& _rect, const __Color& color, int _radius)
-	{
-		if (color.GetValue() == 0) {
-			return;
-		}
-		const __Rect& rect = _rect;
-
-		auto sb = GetSolidColorBrush(color);
 		if (_radius > 0) {
 			float radius = _radius / 2.0f;
 			D2D1_ROUNDED_RECT roundRect{ ToRectF(rect), radius, radius };
@@ -303,112 +269,94 @@ namespace EzUI {
 			d2dRender->FillRectangle(ToRectF(rect), sb);
 		}
 	}
-	void Direct2DRender::DrawString(const std::wstring& text, const std::wstring& fontFamily, int fontSize, const __Color& color, const __Rect& _rect, EzUI::TextAlign textAlign, bool underLine)
+	void DrawRectangle(ID2D1RenderTarget* d2dRender, const  __Rect& _rect, const  __Color& color, int width, int _radius)
 	{
-		__Rect rect = _rect;
-
-		TextFormat textFormat(fontFamily, fontSize, textAlign);
-		TextLayout textLayout(text, __Size{ rect.Width, rect.Height }, &textFormat);
-		//TextLayout textLayout(text, __Size{ 16777216, rect.Height }, &textFormat);
-		if (underLine) {
-			textLayout->SetUnderline(TRUE, { 0,(UINT32)text.size() });
+		if (color.GetValue() == 0) {
+			return;
 		}
-		this->DrawTextLayout({ _rect.X,_rect.Y }, textLayout, color);
+		const __Rect& rect = _rect;
+		ID2D1SolidColorBrush* sb = NULL;
+		d2dRender->CreateSolidColorBrush(ToColorF(color), &sb);
+		Smart_ptr<ID2D1SolidColorBrush> smptr(sb);
+		if (_radius > 0) {
+			float radius = _radius / 2.0f;
+			D2D1_ROUNDED_RECT roundRect{ ToRectF(rect), radius, radius };
+			d2dRender->DrawRoundedRectangle(roundRect, sb);
+		}
+		else {
+			d2dRender->DrawRectangle(ToRectF(rect), sb);
+		}
 	}
-
-	void Direct2DRender::DrawTextLayout(const __Point& startLacation, IDWriteTextLayout* textLayout, const __Color& color)
+	void SetTransform(ID2D1RenderTarget* d2dRender, int xOffset, int yOffset)
 	{
-		auto sb = GetSolidColorBrush(color);
-		d2dRender->DrawTextLayout(D2D1_POINT_2F{ (FLOAT)(startLacation.X) ,(FLOAT)(startLacation.Y) }, textLayout, sb);
+		// 设置x和y方向的偏移
+		D2D1_MATRIX_3X2_F transformMatrix = D2D1::Matrix3x2F::Translation((FLOAT)xOffset, (FLOAT)yOffset);
+		d2dRender->SetTransform(transformMatrix);
 	}
-	//layer巨tm的耗性能!!! 但是可以异形抗锯齿裁剪
-	void Direct2DRender::PushLayer(const Geometry& dxGeometry)
-	{
-		ID2D1Layer* layer;
-		d2dRender->CreateLayer(&layer);
-		d2dRender->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.rgn), layer);//放入layer
-		SafeRelease(&layer);
-	}
-	void Direct2DRender::PopLayer()//弹出最后一个裁剪
-	{
-		d2dRender->PopLayer();
-	}
-	//正规矩形速度快!!! 不支持异形抗锯齿裁剪
-	void Direct2DRender::PushAxisAlignedClip(const __Rect& rectBounds) {
-		d2dRender->PushAxisAlignedClip(ToRectF(rectBounds), D2D1_ANTIALIAS_MODE::D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
-	}
-	void Direct2DRender::PopAxisAlignedClip() {//弹出最后一个裁剪
-		d2dRender->PopAxisAlignedClip();
-	}
-	void Direct2DRender::Flush() {
-		d2dRender->Flush();
-	}
-	void Direct2DRender::DrawLine(const __Color& color, const __Point& _A, const __Point& _B, int width)
+	void DrawLine(ID2D1RenderTarget* d2dRender, const __Color& color, const __Point& _A, const __Point& _B, int width)
 	{
 		const __Point& A = _A;
 		const __Point& B = _B;
 
-		auto sb = GetSolidColorBrush(color);
+		ID2D1SolidColorBrush* sb = NULL;
+		d2dRender->CreateSolidColorBrush(ToColorF(color), &sb);
+		Smart_ptr<ID2D1SolidColorBrush> smptr(sb);
 		d2dRender->DrawLine(D2D1_POINT_2F{ (float)A.X,(float)A.Y }, D2D1_POINT_2F{ (float)B.X,(float)B.Y }, sb, (FLOAT)width);
-
 	}
-	void Direct2DRender::DrawImage(IImage* _image, const __Rect& destRect, const __Rect& srcRect)
+	void PushAxisAlignedClip(ID2D1RenderTarget* d2dRender, const __Rect& rectBounds) {
+		d2dRender->PushAxisAlignedClip(ToRectF(rectBounds), D2D1_ANTIALIAS_MODE::D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+	}
+	void PopAxisAlignedClip(ID2D1RenderTarget* d2dRender) {//弹出最后一个裁剪
+		d2dRender->PopAxisAlignedClip();
+	}
+	void PushLayer(ID2D1RenderTarget* d2dRender, const Geometry& dxGeometry)
 	{
-		DXImage* image = (DXImage*)_image;
-
+		ID2D1Layer* layer;
+		d2dRender->CreateLayer(&layer);
+		d2dRender->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.rgn), layer);//放入layer
+		layer->Release();
 	}
-	void Direct2DRender::DrawImage(IImage* _image, const __Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Margin& margin)
+	void PopLayer(ID2D1RenderTarget* d2dRender)//弹出最后一个裁剪
+	{
+		d2dRender->PopLayer();
+	}
+	void DrawImage(ID2D1RenderTarget* d2dRender, IImage* _image, const __Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Margin& margin)
 	{
 		if (_image == NULL) return;
 		DXImage* image = (DXImage*)_image;
-
+		//计算坐标
 		__Rect rect = _rect;
-
 		rect.X += margin.Left;
 		rect.Y += margin.Top;
 		rect.Width -= margin.Right * 2;
 		rect.Height -= margin.Bottom * 2;
-
+		//解码
 		image->DecodeOfRender(d2dRender);
-
+		//转换坐标,缩放
 		__Size imgSize(image->GetWidth(), image->GetHeight());
 		__Rect drawRect = EzUI::Transformation(imageSizeMode, rect, imgSize);
-		this->DrawBitmap(image->d2dBitmap, drawRect);
+		//开始绘制
+		if (image->d2dBitmap == NULL) return;
+		D2D1_RECT_F rectF = ToRectF(drawRect);
+		d2dRender->DrawBitmap(image->d2dBitmap, &rectF);
 	}
-	void Direct2DRender::BeginDraw()
+	void DrawTextLayout(ID2D1RenderTarget* d2dRender, const __Point& startLacation, IDWriteTextLayout* textLayout, const __Color& color)
 	{
-		if (!beginDraw) {
-			d2dRender->BeginDraw();
-			beginDraw = true;
+		ID2D1SolidColorBrush* sb = NULL;
+		d2dRender->CreateSolidColorBrush(ToColorF(color), &sb);
+		Smart_ptr<ID2D1SolidColorBrush> smptr(sb);
+		d2dRender->DrawTextLayout(D2D1_POINT_2F{ (FLOAT)(startLacation.X) ,(FLOAT)(startLacation.Y) }, textLayout, sb);
+	}
+	void DrawString(ID2D1RenderTarget* d2dRender, const std::wstring& text, const std::wstring& fontFamily, int fontSize, const  __Color& color, const  __Rect& _rect, EzUI::TextAlign textAlign, bool underLine)
+	{
+		__Rect rect = _rect;
+		TextFormat textFormat(fontFamily, fontSize, textAlign);
+		TextLayout textLayout(text, __Size{ rect.Width, rect.Height }, &textFormat);
+		if (underLine) {
+			textLayout->SetUnderline(TRUE, { 0,(UINT32)text.size() });
 		}
+		DrawTextLayout(d2dRender, { _rect.X,_rect.Y }, textLayout, color);
 	}
-	void Direct2DRender::FillGeometry(ID2D1Geometry* geometry, const __Color& color)
-	{
-		auto sb = GetSolidColorBrush(color);
-		d2dRender->FillGeometry(geometry, sb);
-	}
-	ID2D1SolidColorBrush* Direct2DRender::GetSolidColorBrush(const __Color& _color)
-	{
-		if (SolidColorBrush) {
-			SolidColorBrush->SetColor(ToColorF(_color));
-		}
-		else {
-			d2dRender->CreateSolidColorBrush(ToColorF(_color), &SolidColorBrush);
-		}
-		return SolidColorBrush;
-	}
-	void Direct2DRender::DrawGeometry(ID2D1Geometry* geometry, const __Color& color, int width)
-	{
-		auto sb = GetSolidColorBrush(color);
-		d2dRender->DrawGeometry(geometry, sb);
-	}
-	void Direct2DRender::EndDraw()
-	{
-		if (beginDraw) {
-			d2dRender->EndDraw();
-			beginDraw = false;
-		}
-	}
-}
+};
 
 #endif

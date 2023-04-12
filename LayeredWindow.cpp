@@ -88,13 +88,13 @@ namespace EzUI {
 		MainLayout->Invalidate();
 	}
 	void LayeredWindow::OnPaint(HDC _hdc, const Rect& rePaintRect) {
-		Rect& clientRect = GetClientRect();//
-		Painter pt(_hdc, clientRect.Width, clientRect.Height);//
-		PaintEventArgs args(pt);
-		args.InvalidRectangle = rePaintRect;//
-		args.PublicData = &PublicData;
-		args.DC = _hdc;
-		MainLayout->Rending(args);//
+		//Rect& clientRect = GetClientRect();//
+		//Painter pt(_hdc, clientRect.Width, clientRect.Height);//
+		//PaintEventArgs args(pt);
+		//args.InvalidRectangle = rePaintRect;//
+		//args.PublicData = &PublicData;
+		//args.DC = _hdc;
+		//MainLayout->Rending(args);//
 	}
 	LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{

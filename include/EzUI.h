@@ -4,6 +4,7 @@
 #include "unzip.h"
 #include "RenderType.h"
 #include "Direct2DRender.h"
+#include "SkiaRender.h"
 namespace EzUI {
 
 	//全局资源句柄
@@ -354,9 +355,9 @@ namespace EzUI {
 	public:
 		WindowData* PublicData = NULL;
 		HDC DC = NULL;
-		EzUI::Painter& Painter;//画家
+		EzUI::Painter* Painter = NULL;//画家
 		Rect InvalidRectangle;//WM_PAINT里面的无效区域
-		PaintEventArgs(EzUI::Painter& painter) :Painter(painter) {
+		PaintEventArgs(EzUI::Painter* _painter) :Painter(_painter) {
 			EventType = Event::OnPaint;
 		}
 	};

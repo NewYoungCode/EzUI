@@ -50,7 +50,7 @@ namespace EzUI {
 		if (_sliderWidth >= Width()) {
 			return;
 		}
-		e.Painter.FillRectangle(Rect{ 0,0,Width(),Height()}, GetBackgroundColor());
+		EzUI:: FillRectangle(e.Painter,Rect{ 0,0,Width(),Height()}, GetBackgroundColor());
 	}
 
 	void HScrollBar::OwnerSize(const Size& parentSize) {
@@ -83,7 +83,7 @@ namespace EzUI {
 		if (radius > sliderRect.Width) {
 			radius = sliderRect.Width;
 		}
-		args.Painter.FillRectangle(sliderRect, GetForeColor(this->State), radius);
+		EzUI::FillRectangle(args.Painter,sliderRect, GetForeColor(this->State), radius);
 	}
 
 	void HScrollBar::OnMouseDown(MouseButton mBtn, const Point& point) {

@@ -41,7 +41,7 @@ namespace EzUI {
 					}
 				}
 			}
-			args.Painter.DrawString(!drawText.empty() ? drawText : EllipsisText.utf16(), fontF, fontSize, fontColor, Rect(0, 0, Width(), Height()), TextAlign, _underline);
+			EzUI::DrawString(args.Painter,!drawText.empty() ? drawText : EllipsisText.utf16(), fontF, fontSize, fontColor, Rect(0, 0, Width(), Height()), TextAlign, _underline);
 		}
 	}
 
