@@ -4,7 +4,6 @@
 #include "unzip.h"
 #include "RenderType.h"
 #include "Direct2DRender.h"
-#include "SkiaRender.h"
 namespace EzUI {
 
 	//全局资源句柄

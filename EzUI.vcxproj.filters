@@ -126,9 +126,6 @@
     <ClInclude Include="include\PictureBox.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="include\SkiaRender.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Control.cpp">
@@ -228,9 +225,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="PictureBox.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SkiaRender.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
