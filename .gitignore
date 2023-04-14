@@ -10,7 +10,7 @@
 *.lib
 *.exe
 *.dll
-/build/
+build/*
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
