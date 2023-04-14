@@ -1,0 +1,5 @@
+C:/Users/yang/Desktop/EzUI/build/CMakeFiles/EzUI.dir
+C:/Users/yang/Desktop/EzUI/build/CMakeFiles/helloWorld.dir
+C:/Users/yang/Desktop/EzUI/build/CMakeFiles/kugouDemo.dir
+C:/Users/yang/Desktop/EzUI/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/yang/Desktop/EzUI/build/CMakeFiles/ZERO_CHECK.dir

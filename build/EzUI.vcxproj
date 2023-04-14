@@ -1,0 +1,313 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x86</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|win32">
+      <Configuration>Debug</Configuration>
+      <Platform>win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|win32">
+      <Configuration>Release</Configuration>
+      <Platform>win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|win32">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|win32">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F6FB79AE-4E98-398B-BB20-62247D628688}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
+    <Platform>win32</Platform>
+    <ProjectName>EzUI</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|win32'">C:\Users\yang\Desktop\EzUI\build\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|win32'">EzUI.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|win32'">EzUI</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|win32'">C:\Users\yang\Desktop\EzUI\build\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|win32'">EzUI.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|win32'">EzUI</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|win32'">C:\Users\yang\Desktop\EzUI\build\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|win32'">EzUI.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|win32'">EzUI</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|win32'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|win32'">C:\Users\yang\Desktop\EzUI\build\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|win32'">EzUI.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|win32'">EzUI</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|win32'">.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\yang\Desktop\EzUI\.\EzUI\include;C:\Users\yang\Desktop\EzUI\.\kugou;C:\Users\yang\Desktop\EzUI\.\kugou\lib\Common\include;C:\Users\yang\Desktop\EzUI\.\kugou\lib\vlc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\yang\Desktop\EzUI\.\EzUI\include;C:\Users\yang\Desktop\EzUI\.\kugou;C:\Users\yang\Desktop\EzUI\.\kugou\lib\Common\include;C:\Users\yang\Desktop\EzUI\.\kugou\lib\vlc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\yang\Desktop\EzUI\.\EzUI\include;C:\Users\yang\Desktop\EzUI\.\kugou;C:\Users\yang\Desktop\EzUI\.\kugou\lib\Common\include;C:\Users\yang\Desktop\EzUI\.\kugou\lib\vlc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\yang\Desktop\EzUI\.\EzUI\include;C:\Users\yang\Desktop\EzUI\.\kugou;C:\Users\yang\Desktop\EzUI\.\kugou\lib\Common\include;C:\Users\yang\Desktop\EzUI\.\kugou\lib\vlc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\yang\Desktop\EzUI\.\EzUI\include;C:\Users\yang\Desktop\EzUI\.\kugou;C:\Users\yang\Desktop\EzUI\.\kugou\lib\Common\include;C:\Users\yang\Desktop\EzUI\.\kugou\lib\vlc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\yang\Desktop\EzUI\.\EzUI\include;C:\Users\yang\Desktop\EzUI\.\kugou;C:\Users\yang\Desktop\EzUI\.\kugou\lib\Common\include;C:\Users\yang\Desktop\EzUI\.\kugou\lib\vlc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\yang\Desktop\EzUI\.\EzUI\include;C:\Users\yang\Desktop\EzUI\.\kugou;C:\Users\yang\Desktop\EzUI\.\kugou\lib\Common\include;C:\Users\yang\Desktop\EzUI\.\kugou\lib\vlc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\yang\Desktop\EzUI\.\EzUI\include;C:\Users\yang\Desktop\EzUI\.\kugou;C:\Users\yang\Desktop\EzUI\.\kugou\lib\Common\include;C:\Users\yang\Desktop\EzUI\.\kugou\lib\vlc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\yang\Desktop\EzUI\.\EzUI\include;C:\Users\yang\Desktop\EzUI\.\kugou;C:\Users\yang\Desktop\EzUI\.\kugou\lib\Common\include;C:\Users\yang\Desktop\EzUI\.\kugou\lib\vlc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\yang\Desktop\EzUI\.\EzUI\include;C:\Users\yang\Desktop\EzUI\.\kugou;C:\Users\yang\Desktop\EzUI\.\kugou\lib\Common\include;C:\Users\yang\Desktop\EzUI\.\kugou\lib\vlc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\yang\Desktop\EzUI\.\EzUI\include;C:\Users\yang\Desktop\EzUI\.\kugou;C:\Users\yang\Desktop\EzUI\.\kugou\lib\Common\include;C:\Users\yang\Desktop\EzUI\.\kugou\lib\vlc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\yang\Desktop\EzUI\.\EzUI\include;C:\Users\yang\Desktop\EzUI\.\kugou;C:\Users\yang\Desktop\EzUI\.\kugou\lib\Common\include;C:\Users\yang\Desktop\EzUI\.\kugou\lib\vlc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\yang\Desktop\EzUI\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|win32'">Building Custom Rule C:/Users/yang/Desktop/EzUI/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|win32'">setlocal
+"D:\Program Files\CMake\bin\cmake.exe" -SC:/Users/yang/Desktop/EzUI -BC:/Users/yang/Desktop/EzUI/build --check-stamp-file C:/Users/yang/Desktop/EzUI/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|win32'">C:\Users\yang\Desktop\EzUI\build\CMakeFiles\3.26.3\CMakeCCompiler.cmake;C:\Users\yang\Desktop\EzUI\build\CMakeFiles\3.26.3\CMakeCXXCompiler.cmake;C:\Users\yang\Desktop\EzUI\build\CMakeFiles\3.26.3\CMakeRCCompiler.cmake;C:\Users\yang\Desktop\EzUI\build\CMakeFiles\3.26.3\CMakeSystem.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeCInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeCXXInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeCommonLanguageInclude.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeGenericSystem.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeInitializeConfigs.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeLanguageInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeRCInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeSystemSpecificInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeSystemSpecificInitialize.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Compiler\MSVC-C.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Compiler\MSVC-CXX.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Compiler\MSVC.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\Windows-MSVC-C.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\Windows-MSVC-CXX.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\Windows-MSVC.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\Windows.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\WindowsPaths.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|win32'">C:\Users\yang\Desktop\EzUI\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|win32'">Building Custom Rule C:/Users/yang/Desktop/EzUI/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|win32'">setlocal
+"D:\Program Files\CMake\bin\cmake.exe" -SC:/Users/yang/Desktop/EzUI -BC:/Users/yang/Desktop/EzUI/build --check-stamp-file C:/Users/yang/Desktop/EzUI/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|win32'">C:\Users\yang\Desktop\EzUI\build\CMakeFiles\3.26.3\CMakeCCompiler.cmake;C:\Users\yang\Desktop\EzUI\build\CMakeFiles\3.26.3\CMakeCXXCompiler.cmake;C:\Users\yang\Desktop\EzUI\build\CMakeFiles\3.26.3\CMakeRCCompiler.cmake;C:\Users\yang\Desktop\EzUI\build\CMakeFiles\3.26.3\CMakeSystem.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeCInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeCXXInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeCommonLanguageInclude.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeGenericSystem.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeInitializeConfigs.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeLanguageInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeRCInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeSystemSpecificInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeSystemSpecificInitialize.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Compiler\MSVC-C.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Compiler\MSVC-CXX.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Compiler\MSVC.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\Windows-MSVC-C.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\Windows-MSVC-CXX.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\Windows-MSVC.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\Windows.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\WindowsPaths.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|win32'">C:\Users\yang\Desktop\EzUI\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|win32'">Building Custom Rule C:/Users/yang/Desktop/EzUI/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|win32'">setlocal
+"D:\Program Files\CMake\bin\cmake.exe" -SC:/Users/yang/Desktop/EzUI -BC:/Users/yang/Desktop/EzUI/build --check-stamp-file C:/Users/yang/Desktop/EzUI/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|win32'">C:\Users\yang\Desktop\EzUI\build\CMakeFiles\3.26.3\CMakeCCompiler.cmake;C:\Users\yang\Desktop\EzUI\build\CMakeFiles\3.26.3\CMakeCXXCompiler.cmake;C:\Users\yang\Desktop\EzUI\build\CMakeFiles\3.26.3\CMakeRCCompiler.cmake;C:\Users\yang\Desktop\EzUI\build\CMakeFiles\3.26.3\CMakeSystem.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeCInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeCXXInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeCommonLanguageInclude.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeGenericSystem.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeInitializeConfigs.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeLanguageInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeRCInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeSystemSpecificInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeSystemSpecificInitialize.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Compiler\MSVC-C.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Compiler\MSVC-CXX.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Compiler\MSVC.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\Windows-MSVC-C.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\Windows-MSVC-CXX.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\Windows-MSVC.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\Windows.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\WindowsPaths.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|win32'">C:\Users\yang\Desktop\EzUI\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|win32'">Building Custom Rule C:/Users/yang/Desktop/EzUI/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|win32'">setlocal
+"D:\Program Files\CMake\bin\cmake.exe" -SC:/Users/yang/Desktop/EzUI -BC:/Users/yang/Desktop/EzUI/build --check-stamp-file C:/Users/yang/Desktop/EzUI/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|win32'">C:\Users\yang\Desktop\EzUI\build\CMakeFiles\3.26.3\CMakeCCompiler.cmake;C:\Users\yang\Desktop\EzUI\build\CMakeFiles\3.26.3\CMakeCXXCompiler.cmake;C:\Users\yang\Desktop\EzUI\build\CMakeFiles\3.26.3\CMakeRCCompiler.cmake;C:\Users\yang\Desktop\EzUI\build\CMakeFiles\3.26.3\CMakeSystem.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeCInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeCXXInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeCommonLanguageInclude.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeGenericSystem.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeInitializeConfigs.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeLanguageInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeRCInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeSystemSpecificInformation.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\CMakeSystemSpecificInitialize.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Compiler\CMakeCommonCompilerMacros.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Compiler\MSVC-C.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Compiler\MSVC-CXX.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Compiler\MSVC.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\Windows-MSVC-C.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\Windows-MSVC-CXX.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\Windows-MSVC.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\Windows.cmake;D:\Program Files\CMake\share\cmake-3.26\Modules\Platform\WindowsPaths.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|win32'">C:\Users\yang\Desktop\EzUI\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\Application.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\BorderlessWindow.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\Button.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\CheckBox.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\ComBox.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\Control.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\Direct2DRender.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\EString.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\EzUI.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\Form.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\HLayout.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\HList.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\HScrollBar.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\Label.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\LayeredWindow.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\Menu.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\NotifyIcon.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\PictureBox.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\RadioButton.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\ShadowWindow.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\TabLayout.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\TextBox.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\TileList.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\UIManager.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\VLayout.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\VList.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\VScrollBar.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\Window.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\unzip.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\tinyxml\tinystr.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\tinyxml\tinyxml.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\tinyxml\tinyxmlerror.cpp" />
+    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\tinyxml\tinyxmlparser.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\yang\Desktop\EzUI\build\ZERO_CHECK.vcxproj">
+      <Project>{3BC1AC9C-A330-321D-BB1B-25A6DCE534D9}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

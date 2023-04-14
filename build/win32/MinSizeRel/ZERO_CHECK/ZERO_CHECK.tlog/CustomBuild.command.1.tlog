@@ -1,0 +1,10 @@
+^C:\USERS\YANG\DESKTOP\EZUI\BUILD\CMAKEFILES\C2F6507C2BE77C3F736905C936CA6050\GENERATE.STAMP.RULE
+setlocal
+"D:\Program Files\CMake\bin\cmake.exe" -SC:/Users/yang/Desktop/EzUI -BC:/Users/yang/Desktop/EzUI/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/yang/Desktop/EzUI/build/kugou.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
