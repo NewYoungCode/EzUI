@@ -404,39 +404,29 @@ namespace EzUI {
 		StopWatch sw;
 #endif // COUNT_ONPAINT
 
-#if USED_Skia
-		EBitmap memBitmap(GetClientRect().Width, GetClientRect().Height, EBitmap::PixelFormat::PixelFormatARGB);//
-		auto pt = EzUI::CreateRender(memBitmap.point, GetClientRect().Width, GetClientRect().Height);
-		PaintEventArgs args(pt);
-		args.DC = memBitmap.GetDC();
-		args.PublicData = &PublicData;
-		args.InvalidRectangle = rePaintRect;
-		MainLayout->Rending(args);//
-		pt->flush();
-		EzUI::ReleaseRender(pt);
-		::BitBlt(winHDC, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, memBitmap.GetDC(), rePaintRect.X, rePaintRect.Y, SRCCOPY);//
-#endif
-
 #if USED_Direct2D
 		auto pt = EzUI::CreateRender(winHDC, GetClientRect().Width, GetClientRect().Height);
 		pt->BeginDraw();
 		PaintEventArgs args(pt);
 		args.DC = winHDC;
 		args.PublicData = &PublicData;
+		args.PublicData->PaintCount = 0;
 		args.InvalidRectangle = rePaintRect;
 		MainLayout->Rending(args);//
-		pt->EndDraw();
-		EzUI::ReleaseRender(pt);
 #endif
 
 #ifdef COUNT_ONPAINT
-		Debug::Log("OnPaint Count(%d) (%d,%d,%d,%d) %dms \n", pt.Count, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, sw.ElapsedMilliseconds());
+		char buf[256]{ 0 };
+		sprintf(buf, "OnPaint Count(%d) (%d,%d,%d,%d) %dms \n", args.PublicData->PaintCount, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, sw.ElapsedMilliseconds());
+		OutputDebugStringA(buf);
 #endif // COUNT_ONPAINT
 #ifdef DEBUGPAINT
-		/*	if (PublicData.Debug) {
-				pt.DrawRectangle(rePaintRect, Color::Red);
-			}*/
+		if (PublicData.Debug) {
+			EzUI::DrawRectangle(pt, rePaintRect, Color::Red);
+		}
 #endif
+		pt->EndDraw();
+		EzUI::ReleaseRender(pt);
 	}
 
 	void Window::InitData(const DWORD& ExStyle)
@@ -844,4 +834,4 @@ namespace EzUI {
 		return false;
 	}
 
-	};
+};

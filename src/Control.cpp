@@ -619,7 +619,9 @@ Event(this , ##__VA_ARGS__); \
 			OnLoad();
 			_load = true;
 		}
-		//pt.Count++;
+
+		//绘制数量+1
+		args.PublicData->PaintCount++;
 
 		_rePaintMtx.lock();
 		this->_lastDrawRect = _ClipRect;//记录最后一次绘制的区域

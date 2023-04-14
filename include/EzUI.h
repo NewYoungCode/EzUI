@@ -164,6 +164,7 @@ namespace EzUI {
 		void* Window = NULL;//窗口类实例
 		Control* FocusControl = NULL;//具有焦点的控件
 		Control* InputControl = NULL;//输入框
+		size_t PaintCount = 0;
 		bool Debug = false;//是否开启debug模式
 		HWND HANDLE = NULL;//窗口句柄
 		UIFunc<void(void*)> InvalidateRect = NULL;//使一个区域无效
