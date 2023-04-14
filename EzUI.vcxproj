@@ -53,46 +53,46 @@
     <ClInclude Include="include\VList.h" />
     <ClInclude Include="include\VScrollBar.h" />
     <ClInclude Include="include\Window.h" />
-    <ClInclude Include="tinyxml\tinystr.h" />
-    <ClInclude Include="tinyxml\tinyxml.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Application.cpp" />
-    <ClCompile Include="BorderlessWindow.cpp" />
-    <ClCompile Include="Button.cpp" />
-    <ClCompile Include="CheckBox.cpp" />
-    <ClCompile Include="ComBox.cpp" />
-    <ClCompile Include="Control.cpp" />
-    <ClCompile Include="Direct2DRender.cpp" />
-    <ClCompile Include="EString.cpp" />
-    <ClCompile Include="Form.cpp" />
-    <ClCompile Include="HLayout.cpp" />
-    <ClCompile Include="HList.cpp" />
-    <ClCompile Include="HScrollBar.cpp" />
-    <ClCompile Include="EzUI.cpp" />
-    <ClCompile Include="Label.cpp" />
-    <ClCompile Include="LayeredWindow.cpp" />
-    <ClCompile Include="Menu.cpp" />
-    <ClCompile Include="NotifyIcon.cpp" />
-    <ClCompile Include="PictureBox.cpp" />
-    <ClCompile Include="RadioButton.cpp" />
-    <ClCompile Include="ShadowWindow.cpp" />
-    <ClCompile Include="TabLayout.cpp" />
-    <ClCompile Include="TextBox.cpp" />
-    <ClCompile Include="TileList.cpp" />
-    <ClCompile Include="tinyxml\tinystr.cpp" />
-    <ClCompile Include="tinyxml\tinyxml.cpp" />
-    <ClCompile Include="tinyxml\tinyxmlerror.cpp" />
-    <ClCompile Include="tinyxml\tinyxmlparser.cpp" />
-    <ClCompile Include="UIManager.cpp" />
-    <ClCompile Include="unzip.cpp" />
-    <ClCompile Include="VLayout.cpp" />
-    <ClCompile Include="VList.cpp" />
-    <ClCompile Include="VScrollBar.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClInclude Include="src\tinyxml\tinystr.h" />
+    <ClInclude Include="src\tinyxml\tinyxml.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\BorderlessWindow.cpp" />
+    <ClCompile Include="src\Button.cpp" />
+    <ClCompile Include="src\CheckBox.cpp" />
+    <ClCompile Include="src\ComBox.cpp" />
+    <ClCompile Include="src\Control.cpp" />
+    <ClCompile Include="src\Direct2DRender.cpp" />
+    <ClCompile Include="src\EString.cpp" />
+    <ClCompile Include="src\EzUI.cpp" />
+    <ClCompile Include="src\Form.cpp" />
+    <ClCompile Include="src\HLayout.cpp" />
+    <ClCompile Include="src\HList.cpp" />
+    <ClCompile Include="src\HScrollBar.cpp" />
+    <ClCompile Include="src\Label.cpp" />
+    <ClCompile Include="src\LayeredWindow.cpp" />
+    <ClCompile Include="src\Menu.cpp" />
+    <ClCompile Include="src\NotifyIcon.cpp" />
+    <ClCompile Include="src\PictureBox.cpp" />
+    <ClCompile Include="src\RadioButton.cpp" />
+    <ClCompile Include="src\ShadowWindow.cpp" />
+    <ClCompile Include="src\TabLayout.cpp" />
+    <ClCompile Include="src\TextBox.cpp" />
+    <ClCompile Include="src\TileList.cpp" />
+    <ClCompile Include="src\tinyxml\tinystr.cpp" />
+    <ClCompile Include="src\tinyxml\tinyxml.cpp" />
+    <ClCompile Include="src\tinyxml\tinyxmlerror.cpp" />
+    <ClCompile Include="src\tinyxml\tinyxmlparser.cpp" />
+    <ClCompile Include="src\UIManager.cpp" />
+    <ClCompile Include="src\unzip.cpp" />
+    <ClCompile Include="src\VLayout.cpp" />
+    <ClCompile Include="src\VList.cpp" />
+    <ClCompile Include="src\VScrollBar.cpp" />
+    <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
