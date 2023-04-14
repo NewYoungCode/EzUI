@@ -1,34 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="E:\C++\EzUI2\EzUI\kugou\LrcControl.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\kugou\LrcControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\C++\EzUI2\EzUI\kugou\MainFrm.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\kugou\MainFrm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\C++\EzUI2\EzUI\kugou\VlcPlayer.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\kugou\VlcPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\C++\EzUI2\EzUI\kugou\base64.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\kugou\base64.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\C++\EzUI2\EzUI\kugou\global.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\kugou\global.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\C++\EzUI2\EzUI\kugou\main.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\kugou\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\C++\EzUI2\EzUI\kugou\testFrm.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\kugou\testFrm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="E:\C++\EzUI2\EzUI\CMakeLists.txt" />
+    <CustomBuild Include="E:\C++\EzUI\EzUI\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{C5D71A6B-D66C-3AEF-8EA1-4F7E99589677}</UniqueIdentifier>
+      <UniqueIdentifier>{2A365333-84D2-36BF-94D3-3FC3F1B778FA}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

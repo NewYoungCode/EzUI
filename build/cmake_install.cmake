@@ -1,4 +1,4 @@
-# Install script for directory: E:/C++/EzUI2/EzUI
+# Install script for directory: E:/C++/EzUI/EzUI
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "E:/C++/EzUI2/EzUI/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "E:/C++/EzUI/EzUI/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
