@@ -90,19 +90,19 @@
 			[
 				{
 					"backtrace" : 5,
-					"path" : "C:/Users/yang/Desktop/EzUI/./EzUI/include"
+					"path" : "E:/C++/EzUI/EzUI/./EzUI/include"
 				},
 				{
 					"backtrace" : 6,
-					"path" : "C:/Users/yang/Desktop/EzUI/./kugou"
+					"path" : "E:/C++/EzUI/EzUI/./kugou"
 				},
 				{
 					"backtrace" : 7,
-					"path" : "C:/Users/yang/Desktop/EzUI/./kugou/lib/Common/include"
+					"path" : "E:/C++/EzUI/EzUI/./kugou/lib/Common/include"
 				},
 				{
 					"backtrace" : 8,
-					"path" : "C:/Users/yang/Desktop/EzUI/./kugou/lib/vlc/include"
+					"path" : "E:/C++/EzUI/EzUI/./kugou/lib/vlc/include"
 				}
 			],
 			"language" : "CXX",
@@ -143,12 +143,12 @@
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "-LIBPATH:C:\\Users\\yang\\Desktop\\EzUI\\.\\kugou\\lib\\Common\\lib",
+				"fragment" : "-LIBPATH:E:\\C++\\EzUI\\EzUI\\.\\kugou\\lib\\Common\\lib",
 				"role" : "libraryPath"
 			},
 			{
 				"backtrace" : 3,
-				"fragment" : "-LIBPATH:C:\\Users\\yang\\Desktop\\EzUI\\.\\kugou\\lib\\vlc\\lib",
+				"fragment" : "-LIBPATH:E:\\C++\\EzUI\\EzUI\\.\\kugou\\lib\\vlc\\lib",
 				"role" : "libraryPath"
 			},
 			{

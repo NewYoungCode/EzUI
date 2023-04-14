@@ -1,112 +1,112 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\Application.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\BorderlessWindow.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\BorderlessWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\Button.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\CheckBox.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\CheckBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\ComBox.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\ComBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\Control.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\Control.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\Direct2DRender.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\Direct2DRender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\EString.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\EString.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\EzUI.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\EzUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\Form.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\Form.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\HLayout.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\HLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\HList.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\HList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\HScrollBar.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\HScrollBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\Label.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\Label.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\LayeredWindow.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\LayeredWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\Menu.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\Menu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\NotifyIcon.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\NotifyIcon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\PictureBox.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\PictureBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\RadioButton.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\RadioButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\ShadowWindow.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\ShadowWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\TabLayout.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\TabLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\TextBox.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\TextBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\TileList.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\TileList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\UIManager.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\UIManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\VLayout.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\VLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\VList.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\VList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\VScrollBar.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\VScrollBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\Window.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\unzip.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\unzip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\tinyxml\tinystr.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\tinyxml\tinystr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\tinyxml\tinyxml.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\tinyxml\tinyxml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\tinyxml\tinyxmlerror.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\tinyxml\tinyxmlerror.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\yang\Desktop\EzUI\EzUI\sources\tinyxml\tinyxmlparser.cpp">
+    <ClCompile Include="E:\C++\EzUI\EzUI\EzUI\sources\tinyxml\tinyxmlparser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="C:\Users\yang\Desktop\EzUI\CMakeLists.txt" />
+    <CustomBuild Include="E:\C++\EzUI\EzUI\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{71BAFB8E-9201-36D1-ABDB-30213C6CDBF5}</UniqueIdentifier>
+      <UniqueIdentifier>{2A365333-84D2-36BF-94D3-3FC3F1B778FA}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

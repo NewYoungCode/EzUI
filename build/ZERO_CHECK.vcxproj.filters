@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <CustomBuild Include="C:\Users\yang\Desktop\EzUI\build\CMakeFiles\c2f6507c2be77c3f736905c936ca6050\generate.stamp.rule">
+    <CustomBuild Include="E:\C++\EzUI\EzUI\build\CMakeFiles\e575692a8cfa22e12a47e5a3bf309460\generate.stamp.rule">
       <Filter>CMake Rules</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CMake Rules">
-      <UniqueIdentifier>{85060AF8-0315-3D23-9B57-3FBCDD5150CB}</UniqueIdentifier>
+      <UniqueIdentifier>{AF648C6F-07AD-3E3C-BA74-ABFF058FB519}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

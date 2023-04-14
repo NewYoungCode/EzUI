@@ -2,10 +2,10 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "MinSizeRel/kugouDemo.exe"
+			"path" : "Release/kugouDemo.exe"
 		},
 		{
-			"path" : "MinSizeRel/kugouDemo.pdb"
+			"path" : "Release/kugouDemo.pdb"
 		}
 	],
 	"backtrace" : 1,
@@ -83,26 +83,26 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O1 /Ob1 /DNDEBUG"
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O2 /Ob2 /DNDEBUG"
 				}
 			],
 			"includes" : 
 			[
 				{
 					"backtrace" : 5,
-					"path" : "C:/Users/yang/Desktop/EzUI/./EzUI/include"
+					"path" : "E:/C++/EzUI/EzUI/./EzUI/include"
 				},
 				{
 					"backtrace" : 6,
-					"path" : "C:/Users/yang/Desktop/EzUI/./kugou"
+					"path" : "E:/C++/EzUI/EzUI/./kugou"
 				},
 				{
 					"backtrace" : 7,
-					"path" : "C:/Users/yang/Desktop/EzUI/./kugou/lib/Common/include"
+					"path" : "E:/C++/EzUI/EzUI/./kugou/lib/Common/include"
 				},
 				{
 					"backtrace" : 8,
-					"path" : "C:/Users/yang/Desktop/EzUI/./kugou/lib/vlc/include"
+					"path" : "E:/C++/EzUI/EzUI/./kugou/lib/vlc/include"
 				}
 			],
 			"language" : "CXX",
@@ -134,7 +134,7 @@
 		"commandFragments" : 
 		[
 			{
-				"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O1 /Ob1 /DNDEBUG",
+				"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O2 /Ob2 /DNDEBUG",
 				"role" : "flags"
 			},
 			{
@@ -143,17 +143,17 @@
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "-LIBPATH:C:\\Users\\yang\\Desktop\\EzUI\\.\\kugou\\lib\\Common\\lib",
+				"fragment" : "-LIBPATH:E:\\C++\\EzUI\\EzUI\\.\\kugou\\lib\\Common\\lib",
 				"role" : "libraryPath"
 			},
 			{
 				"backtrace" : 3,
-				"fragment" : "-LIBPATH:C:\\Users\\yang\\Desktop\\EzUI\\.\\kugou\\lib\\vlc\\lib",
+				"fragment" : "-LIBPATH:E:\\C++\\EzUI\\EzUI\\.\\kugou\\lib\\vlc\\lib",
 				"role" : "libraryPath"
 			},
 			{
 				"backtrace" : 4,
-				"fragment" : "MinSizeRel\\EzUI.lib",
+				"fragment" : "Release\\EzUI.lib",
 				"role" : "libraries"
 			},
 			{

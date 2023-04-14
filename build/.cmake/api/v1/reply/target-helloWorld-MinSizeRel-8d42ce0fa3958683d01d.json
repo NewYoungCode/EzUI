@@ -2,10 +2,10 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "RelWithDebInfo/helloWorld.exe"
+			"path" : "MinSizeRel/helloWorld.exe"
 		},
 		{
-			"path" : "RelWithDebInfo/helloWorld.pdb"
+			"path" : "MinSizeRel/helloWorld.pdb"
 		}
 	],
 	"backtrace" : 1,
@@ -70,26 +70,26 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG"
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O1 /Ob1 /DNDEBUG"
 				}
 			],
 			"includes" : 
 			[
 				{
 					"backtrace" : 3,
-					"path" : "C:/Users/yang/Desktop/EzUI/./EzUI/include"
+					"path" : "E:/C++/EzUI/EzUI/./EzUI/include"
 				},
 				{
 					"backtrace" : 4,
-					"path" : "C:/Users/yang/Desktop/EzUI/./kugou"
+					"path" : "E:/C++/EzUI/EzUI/./kugou"
 				},
 				{
 					"backtrace" : 5,
-					"path" : "C:/Users/yang/Desktop/EzUI/./kugou/lib/Common/include"
+					"path" : "E:/C++/EzUI/EzUI/./kugou/lib/Common/include"
 				},
 				{
 					"backtrace" : 6,
-					"path" : "C:/Users/yang/Desktop/EzUI/./kugou/lib/vlc/include"
+					"path" : "E:/C++/EzUI/EzUI/./kugou/lib/vlc/include"
 				}
 			],
 			"language" : "CXX",
@@ -115,16 +115,16 @@
 		"commandFragments" : 
 		[
 			{
-				"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG",
+				"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O1 /Ob1 /DNDEBUG",
 				"role" : "flags"
 			},
 			{
-				"fragment" : "/machine:X86 /SAFESEH:NO /debug /INCREMENTAL /subsystem:windows",
+				"fragment" : "/machine:X86 /SAFESEH:NO /INCREMENTAL:NO /subsystem:windows",
 				"role" : "flags"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "RelWithDebInfo\\EzUI.lib",
+				"fragment" : "MinSizeRel\\EzUI.lib",
 				"role" : "libraries"
 			},
 			{

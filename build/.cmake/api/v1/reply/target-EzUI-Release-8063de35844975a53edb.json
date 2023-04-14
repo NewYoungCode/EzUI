@@ -12,7 +12,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "Debug/EzUI.lib"
+			"path" : "Release/EzUI.lib"
 		}
 	],
 	"backtrace" : 1,
@@ -70,26 +70,26 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1"
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O2 /Ob2 /DNDEBUG"
 				}
 			],
 			"includes" : 
 			[
 				{
 					"backtrace" : 2,
-					"path" : "C:/Users/yang/Desktop/EzUI/./EzUI/include"
+					"path" : "E:/C++/EzUI/EzUI/./EzUI/include"
 				},
 				{
 					"backtrace" : 3,
-					"path" : "C:/Users/yang/Desktop/EzUI/./kugou"
+					"path" : "E:/C++/EzUI/EzUI/./kugou"
 				},
 				{
 					"backtrace" : 4,
-					"path" : "C:/Users/yang/Desktop/EzUI/./kugou/lib/Common/include"
+					"path" : "E:/C++/EzUI/EzUI/./kugou/lib/Common/include"
 				},
 				{
 					"backtrace" : 5,
-					"path" : "C:/Users/yang/Desktop/EzUI/./kugou/lib/vlc/include"
+					"path" : "E:/C++/EzUI/EzUI/./kugou/lib/vlc/include"
 				}
 			],
 			"language" : "CXX",

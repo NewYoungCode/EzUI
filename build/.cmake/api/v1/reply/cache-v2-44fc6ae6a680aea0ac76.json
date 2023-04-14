@@ -27,7 +27,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "c:/Users/yang/Desktop/EzUI/build"
+			"value" : "e:/C++/EzUI/EzUI/build"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -431,7 +431,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/yang/Desktop/EzUI/build/CMakeFiles/pkgRedirects"
+			"value" : "E:/C++/EzUI/EzUI/build/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -491,7 +491,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Users/yang/Desktop/EzUI"
+			"value" : "E:/C++/EzUI/EzUI"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -1027,7 +1027,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/yang/Desktop/EzUI/build"
+			"value" : "E:/C++/EzUI/EzUI/build"
 		},
 		{
 			"name" : "EzUI_IS_TOP_LEVEL",
@@ -1051,7 +1051,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/yang/Desktop/EzUI"
+			"value" : "E:/C++/EzUI/EzUI"
 		},
 		{
 			"name" : "helloWorld_BINARY_DIR",
@@ -1063,7 +1063,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/yang/Desktop/EzUI/build"
+			"value" : "E:/C++/EzUI/EzUI/build"
 		},
 		{
 			"name" : "helloWorld_IS_TOP_LEVEL",
@@ -1087,7 +1087,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/yang/Desktop/EzUI"
+			"value" : "E:/C++/EzUI/EzUI"
 		},
 		{
 			"name" : "kugouDemo_BINARY_DIR",
@@ -1099,7 +1099,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/yang/Desktop/EzUI/build"
+			"value" : "E:/C++/EzUI/EzUI/build"
 		},
 		{
 			"name" : "kugouDemo_IS_TOP_LEVEL",
@@ -1123,43 +1123,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/yang/Desktop/EzUI"
-		},
-		{
-			"name" : "kugou_BINARY_DIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Value Computed by CMake"
-				}
-			],
-			"type" : "STATIC",
-			"value" : "C:/Users/yang/Desktop/EzUI/build"
-		},
-		{
-			"name" : "kugou_IS_TOP_LEVEL",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Value Computed by CMake"
-				}
-			],
-			"type" : "STATIC",
-			"value" : "ON"
-		},
-		{
-			"name" : "kugou_SOURCE_DIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Value Computed by CMake"
-				}
-			],
-			"type" : "STATIC",
-			"value" : "C:/Users/yang/Desktop/EzUI"
+			"value" : "E:/C++/EzUI/EzUI"
 		}
 	],
 	"kind" : "cache",
