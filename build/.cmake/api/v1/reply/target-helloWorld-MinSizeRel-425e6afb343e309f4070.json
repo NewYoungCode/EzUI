@@ -47,19 +47,19 @@
 			{
 				"command" : 2,
 				"file" : 0,
+				"line" : 21,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
 				"line" : 23,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 25,
-				"parent" : 0
-			},
-			{
-				"command" : 2,
-				"file" : 0,
-				"line" : 26,
+				"line" : 24,
 				"parent" : 0
 			}
 		]
@@ -77,19 +77,19 @@
 			[
 				{
 					"backtrace" : 3,
-					"path" : "E:/C++/EzUI/EzUI/./EzUI/include"
+					"path" : "E:/C++/EzUI2/EzUI/./EzUI/include"
 				},
 				{
 					"backtrace" : 4,
-					"path" : "E:/C++/EzUI/EzUI/./kugou"
+					"path" : "E:/C++/EzUI2/EzUI/./kugou"
 				},
 				{
 					"backtrace" : 5,
-					"path" : "E:/C++/EzUI/EzUI/./kugou/lib/Common/include"
+					"path" : "E:/C++/EzUI2/EzUI/./kugou/lib/Common/include"
 				},
 				{
 					"backtrace" : 6,
-					"path" : "E:/C++/EzUI/EzUI/./kugou/lib/vlc/include"
+					"path" : "E:/C++/EzUI2/EzUI/./kugou/lib/vlc/include"
 				}
 			],
 			"language" : "CXX",

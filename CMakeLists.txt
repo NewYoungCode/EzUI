@@ -16,8 +16,6 @@ project(helloWorld)
 add_executable(helloWorld WIN32 ./helloWorld/main.cpp)
 target_link_libraries(helloWorld PRIVATE EzUI)
 
-
-
 #模仿酷狗音乐demo
 project(kugouDemo)
 include_directories(./kugou)

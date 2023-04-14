@@ -94,8 +94,8 @@ D:/Program Files/CMake/share/cmake-3.26/Modules/Platform/Windows-MSVC-CXX.cmake
 D:/Program Files/CMake/share/cmake-3.26/Modules/Platform/Windows-MSVC.cmake
 D:/Program Files/CMake/share/cmake-3.26/Modules/Platform/Windows.cmake
 D:/Program Files/CMake/share/cmake-3.26/Modules/Platform/WindowsPaths.cmake
-E:/C++/EzUI/EzUI/CMakeLists.txt
-E:/C++/EzUI/EzUI/build/CMakeFiles/3.26.3/CMakeCCompiler.cmake
-E:/C++/EzUI/EzUI/build/CMakeFiles/3.26.3/CMakeCXXCompiler.cmake
-E:/C++/EzUI/EzUI/build/CMakeFiles/3.26.3/CMakeRCCompiler.cmake
-E:/C++/EzUI/EzUI/build/CMakeFiles/3.26.3/CMakeSystem.cmake
+E:/C++/EzUI2/EzUI/CMakeLists.txt
+E:/C++/EzUI2/EzUI/build/CMakeFiles/3.26.3/CMakeCCompiler.cmake
+E:/C++/EzUI2/EzUI/build/CMakeFiles/3.26.3/CMakeCXXCompiler.cmake
+E:/C++/EzUI2/EzUI/build/CMakeFiles/3.26.3/CMakeRCCompiler.cmake
+E:/C++/EzUI2/EzUI/build/CMakeFiles/3.26.3/CMakeSystem.cmake

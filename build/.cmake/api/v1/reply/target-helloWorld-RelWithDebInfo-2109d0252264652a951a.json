@@ -2,10 +2,10 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "Release/helloWorld.exe"
+			"path" : "RelWithDebInfo/helloWorld.exe"
 		},
 		{
-			"path" : "Release/helloWorld.pdb"
+			"path" : "RelWithDebInfo/helloWorld.pdb"
 		}
 	],
 	"backtrace" : 1,
@@ -47,19 +47,19 @@
 			{
 				"command" : 2,
 				"file" : 0,
+				"line" : 21,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
 				"line" : 23,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 25,
-				"parent" : 0
-			},
-			{
-				"command" : 2,
-				"file" : 0,
-				"line" : 26,
+				"line" : 24,
 				"parent" : 0
 			}
 		]
@@ -70,26 +70,26 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O2 /Ob2 /DNDEBUG"
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG"
 				}
 			],
 			"includes" : 
 			[
 				{
 					"backtrace" : 3,
-					"path" : "E:/C++/EzUI/EzUI/./EzUI/include"
+					"path" : "E:/C++/EzUI2/EzUI/./EzUI/include"
 				},
 				{
 					"backtrace" : 4,
-					"path" : "E:/C++/EzUI/EzUI/./kugou"
+					"path" : "E:/C++/EzUI2/EzUI/./kugou"
 				},
 				{
 					"backtrace" : 5,
-					"path" : "E:/C++/EzUI/EzUI/./kugou/lib/Common/include"
+					"path" : "E:/C++/EzUI2/EzUI/./kugou/lib/Common/include"
 				},
 				{
 					"backtrace" : 6,
-					"path" : "E:/C++/EzUI/EzUI/./kugou/lib/vlc/include"
+					"path" : "E:/C++/EzUI2/EzUI/./kugou/lib/vlc/include"
 				}
 			],
 			"language" : "CXX",
@@ -115,16 +115,16 @@
 		"commandFragments" : 
 		[
 			{
-				"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O2 /Ob2 /DNDEBUG",
+				"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG",
 				"role" : "flags"
 			},
 			{
-				"fragment" : "/machine:X86 /SAFESEH:NO /INCREMENTAL:NO /subsystem:windows",
+				"fragment" : "/machine:X86 /SAFESEH:NO /debug /INCREMENTAL /subsystem:windows",
 				"role" : "flags"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "Release\\EzUI.lib",
+				"fragment" : "RelWithDebInfo\\EzUI.lib",
 				"role" : "libraries"
 			},
 			{

@@ -12,7 +12,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "Debug/EzUI.lib"
+			"path" : "RelWithDebInfo/EzUI.lib"
 		}
 	],
 	"backtrace" : 1,
@@ -47,19 +47,19 @@
 			{
 				"command" : 1,
 				"file" : 0,
+				"line" : 21,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
 				"line" : 23,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 25,
-				"parent" : 0
-			},
-			{
-				"command" : 1,
-				"file" : 0,
-				"line" : 26,
+				"line" : 24,
 				"parent" : 0
 			}
 		]
@@ -70,26 +70,26 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1"
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG"
 				}
 			],
 			"includes" : 
 			[
 				{
 					"backtrace" : 2,
-					"path" : "E:/C++/EzUI/EzUI/./EzUI/include"
+					"path" : "E:/C++/EzUI2/EzUI/./EzUI/include"
 				},
 				{
 					"backtrace" : 3,
-					"path" : "E:/C++/EzUI/EzUI/./kugou"
+					"path" : "E:/C++/EzUI2/EzUI/./kugou"
 				},
 				{
 					"backtrace" : 4,
-					"path" : "E:/C++/EzUI/EzUI/./kugou/lib/Common/include"
+					"path" : "E:/C++/EzUI2/EzUI/./kugou/lib/Common/include"
 				},
 				{
 					"backtrace" : 5,
-					"path" : "E:/C++/EzUI/EzUI/./kugou/lib/vlc/include"
+					"path" : "E:/C++/EzUI2/EzUI/./kugou/lib/vlc/include"
 				}
 			],
 			"language" : "CXX",
