@@ -12,8 +12,7 @@ namespace EzUI {
 
 	TileList::TileList()
 	{
-		this->ScrollBar = new VScrollBar;
-		vScrollBar = (VScrollBar*)this->ScrollBar;
+		this->vScrollBar = new VScrollBar;
 		if (vScrollBar) {
 			vScrollBar->SetHeight(Height());
 			vScrollBar->Parent = this;
@@ -22,6 +21,10 @@ namespace EzUI {
 	}
 	TileList::~TileList()
 	{
+	}
+	ScrollBar* TileList::GetScrollBar()
+	{
+		return this->vScrollBar;
 	}
 	void TileList::OnSize(const Size& sz)
 	{

@@ -2,7 +2,7 @@
 namespace EzUI {
 	VList::VList()
 	{
-		this->ScrollBar = vScrollBar = new VScrollBar;
+		this->vScrollBar = new VScrollBar;
 		if (vScrollBar) {
 			vScrollBar->SetHeight(Height());//滚动条宽度
 			vScrollBar->Parent = this;
@@ -94,6 +94,11 @@ namespace EzUI {
 		if (vScrollBar) {
 			vScrollBar->SetMaxBottom(_maxBottom);
 		}
+	}
+
+	ScrollBar* VList::GetScrollBar()
+	{
+		return this->vScrollBar;
 	}
 
 	/// <summary>

@@ -17,7 +17,6 @@ namespace EzUI {
 		MouseButton _lastBtn = MouseButton::None;
 		int _closeCode = 0;
 		HWND _OwnerHwnd = NULL;
-		HWND  _hWndTip = NULL;
 		HWND _hWnd = NULL;
 		Rect _rect;//基于桌面的坐标
 		Rect _rectClient;//客户绘图区域

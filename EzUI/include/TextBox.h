@@ -6,9 +6,6 @@ namespace EzUI {
 		public Control
 	{
 	private:
-#ifndef UNICODE
-		std::string ansiBuf;
-#endif
 		std::wstring text;//文字
 		bool _down = false;//是否具有焦点中
 		bool _focus = false;//是否具有焦点中

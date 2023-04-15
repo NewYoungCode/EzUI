@@ -23,7 +23,6 @@ namespace EzUI {
 		Control(const Control&);
 		Control& operator=(const Control&);
 		bool IsRePaint();
-	private:
 		bool CheckEventPassThrough(const Event& eventType);
 		bool CheckEventNotify(const Event& eventType);
 	protected:
@@ -37,7 +36,6 @@ namespace EzUI {
 		int MousePassThrough = 0;//忽略的鼠标消息
 		const bool IsXmlControl = false;//是否是xml加载进来的
 		EString Name;//控件的ObjectName ID
-		ScrollBar* ScrollBar = NULL;//垂直滚动条或者水平滚动条 一个控件只允许有一个
 		ControlState State = ControlState::Static;//控件状态
 		ControlAction Action = ControlAction::None;//控件行为
 		ControlStyle Style;//默认样式
@@ -114,6 +112,7 @@ namespace EzUI {
 		void AddEventNotify(int eventType);//添加到主窗口ontify函数中可拦截
 		void RemoveEventNotify(int eventType);
 		void SetCursor(const EString& fileName);
+		virtual ScrollBar* GetScrollBar();
 		HCURSOR GetCursor();
 	public:
 		Control();

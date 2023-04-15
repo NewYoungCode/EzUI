@@ -3,7 +3,7 @@
 namespace EzUI {
 	HList::HList()
 	{
-		this->ScrollBar = hScrollBar = new HScrollBar;
+		this->hScrollBar = new HScrollBar;
 		if (hScrollBar) {
 			hScrollBar->SetWidth(Width());//滚动条宽度
 			hScrollBar->Parent = this;
@@ -93,6 +93,10 @@ namespace EzUI {
 		if (hScrollBar) {
 			hScrollBar->SetMaxRight(_maxRight);
 		}
+	}
+	ScrollBar* HList::GetScrollBar()
+	{
+		return this->hScrollBar;
 	}
 	void HList::ChildPainting(Controls& controls, PaintEventArgs& args) {
 		VisibleControls.clear();

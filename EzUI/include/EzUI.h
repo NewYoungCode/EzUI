@@ -5,14 +5,12 @@
 #include "RenderType.h"
 #include "Direct2DRender.h"
 namespace EzUI {
-
+	extern WCHAR WindowClassName[];
 	//全局资源句柄
 	extern UI_EXPORT HZIP HZipResource;//zip文件中的全局资源句柄
 	extern UI_EXPORT HGLOBAL HVSResource;//vs中的资源文件句柄
 	//获取当前线程ID
 	extern UI_EXPORT size_t GetThreadId();
-	//获取当前线程注册的窗口类名
-	extern UI_EXPORT StdString GetThisClassName();
 	//从全局zip获取资源
 	extern UI_EXPORT bool GetGlobalResource(const EString& fileName, std::string** outData);
 	//从全局zip获取资源
@@ -170,8 +168,6 @@ namespace EzUI {
 		UIFunc<void(void*)> InvalidateRect = NULL;//使一个区域无效
 		UIFunc<void()> UpdateWindow = NULL;//立即更新全部无效区域
 		UIFunc<bool(Control*, EventArgs&)> Notify = NULL;//
-		UIFunc<void(Control*, const std::wstring&)> SetTips = NULL;//设置悬浮提示文字
-		UIFunc<void(Control*)> DelTips = NULL;//移除悬浮提示文字
 		UIFunc<void(Control*)> RemoveControl = NULL;//清空控件标记等等...
 	};
 	class StopWatch {

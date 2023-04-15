@@ -45,8 +45,7 @@ namespace EzUI {
 		_rect.Width = width;
 		_rect.Height = height;
 
-		StdString className = GetThisClassName();
-		_hWnd = ::CreateWindowEx(ExStyle | WS_EX_ACCEPTFILES, className.c_str(), className.c_str(), dStyle,
+		_hWnd = ::CreateWindowExW(ExStyle | WS_EX_ACCEPTFILES, WindowClassName, WindowClassName, dStyle,
 			_rect.X, _rect.Y, width, height, owner, NULL, GetModuleHandle(NULL), NULL);
 
 		//EzUI::Scale = GetScale();
@@ -55,9 +54,6 @@ namespace EzUI {
 
 	Window::~Window()
 	{
-		if (::IsWindow(_hWndTip)) {
-			::DestroyWindow(_hWndTip);
-		}
 		if (::IsWindow(_hWnd)) {
 			::DestroyWindow(_hWnd);
 		}
@@ -423,11 +419,11 @@ namespace EzUI {
 #ifdef DEBUGPAINT
 		if (PublicData.Debug) {
 			EzUI::DrawRectangle(pt, rePaintRect, Color::Red);
-		}
+	}
 #endif
 		pt->EndDraw();
 		EzUI::ReleaseRender(pt);
-	}
+}
 
 	void Window::InitData(const DWORD& ExStyle)
 	{
@@ -457,45 +453,9 @@ namespace EzUI {
 				//Debug::Log("remove _inputControl %p", delControl);
 			}
 		};
-
 		PublicData.Notify = [=](Control* sender, EventArgs& args)->bool {
 			return OnNotify(sender, args);
 		};
-		PublicData.SetTips = [=](Control* ctl, const std::wstring& text)->void {
-			TOOLINFO	tti{ 0 };
-			tti.cbSize = sizeof(TOOLINFO);
-			tti.uFlags = TTF_SUBCLASS;
-			tti.hwnd = _hWnd;
-			tti.rect = ctl->ClipRect.WinRECT();
-			tti.uId = (UINT_PTR)ctl;
-			tti.lpszText = (LPTSTR)text.c_str();
-			//添加一个tips信息
-			SendMessage(_hWndTip, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
-		};
-		PublicData.DelTips = [=](Control* ctl)->void {
-			TOOLINFO	tti{ 0 };
-			tti.cbSize = sizeof(TOOLINFO);
-			tti.hwnd = _hWnd;
-			tti.uId = (UINT_PTR)ctl;
-			//移除
-			SendMessage(_hWndTip, TTM_DELTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
-		};
-
-		//创建冒泡提示窗口
-		_hWndTip = CreateWindowEx(WS_EX_TOPMOST,
-			TOOLTIPS_CLASS,
-			NULL,
-			WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
-			_hWnd,
-			NULL,
-			::GetModuleHandle(NULL),
-			NULL
-		);
-
 		UI_SetUserData(_hWnd, &PublicData);
 	}
 
@@ -520,7 +480,7 @@ namespace EzUI {
 		outPoint = clientPoint;
 		Control* outCtl = MainLayout;
 	UI_Loop:
-		Control* scrollBar = outCtl->ScrollBar;
+		Control* scrollBar = outCtl->GetScrollBar();
 		if (scrollBar && scrollBar->GetClientRect().Contains(clientPoint)) {
 			if (scrollBar->Visible) {
 				auto barRect = scrollBar->GetClientRect();
@@ -611,14 +571,14 @@ namespace EzUI {
 				_inputControl->Trigger(args);
 			}*/
 		ScrollBar* scrollBar = NULL;
-		if (_focusControl->ScrollBar) {
-			scrollBar = dynamic_cast<ScrollBar*>(_focusControl->ScrollBar);
+		if (_focusControl->GetScrollBar()) {
+			scrollBar = dynamic_cast<ScrollBar*>(_focusControl->GetScrollBar());
 		}
 		Control* pControl = _focusControl;
 		while (scrollBar == NULL && pControl)
 		{
-			if (pControl->ScrollBar) {
-				scrollBar = dynamic_cast<ScrollBar*>(pControl->ScrollBar);
+			if (pControl->GetScrollBar()) {
+				scrollBar = dynamic_cast<ScrollBar*>(pControl->GetScrollBar());
 				break;
 			}
 			pControl = pControl->Parent;
@@ -755,7 +715,7 @@ namespace EzUI {
 			_inputControl->Trigger(args);
 			return;
 		}
-	}
+		}
 	void Window::OnKeyUp(WPARAM wParam, LPARAM lParam) {
 		if (_inputControl) { //
 			KeyboardEventArgs args(Event::OnKeyUp, wParam, lParam);
@@ -834,4 +794,4 @@ namespace EzUI {
 		return false;
 	}
 
-};
+	};

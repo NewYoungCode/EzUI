@@ -39,18 +39,18 @@ void MainFrm::InitForm() {
 	searchList = (VList*)this->FindControl("searchList");
 	searchEdit = (TextBox*)FindControl("searchEdit");
 	//美化左侧本地列表的滚动条
-	localList->ScrollBar->Name = "testBar";
-	localList->ScrollBar->SetFixedWidth(9);
-	localList->ScrollBar->Style.Radius = 9;
-	localList->ScrollBar->Style.BackgroundColor = Color(50, 200, 200, 200);
-	localList->ScrollBar->Style.ForeColor = Color(217, 217, 217);
-	localList->ScrollBar->ActiveStyle.ForeColor = Color(191, 191, 191);
+	localList->GetScrollBar()->Name = "testBar";
+	localList->GetScrollBar()->SetFixedWidth(9);
+	localList->GetScrollBar()->Style.Radius = 9;
+	localList->GetScrollBar()->Style.BackgroundColor = Color(50, 200, 200, 200);
+	localList->GetScrollBar()->Style.ForeColor = Color(217, 217, 217);
+	localList->GetScrollBar()->ActiveStyle.ForeColor = Color(191, 191, 191);
 	//美化搜索列表的滚动条
 	//searchList->ScrollBar->SetFixedWidth(9);
-	searchList->ScrollBar->Style.Radius = 9;
-	searchList->ScrollBar->Style.BackgroundColor = Color(50, 200, 200, 200);
-	searchList->ScrollBar->Style.ForeColor = Color(250, 200, 200, 200);
-	searchList->ScrollBar->ActiveStyle.ForeColor = Color(250, 200, 200, 200);
+	searchList->GetScrollBar()->Style.Radius = 9;
+	searchList->GetScrollBar()->Style.BackgroundColor = Color(50, 200, 200, 200);
+	searchList->GetScrollBar()->Style.ForeColor = Color(250, 200, 200, 200);
+	searchList->GetScrollBar()->ActiveStyle.ForeColor = Color(250, 200, 200, 200);
 	//集体设置右上角的最大化 最小化 关闭按钮 的悬浮效果
 
 	$(this->FindControl("btns")->GetControls()).CssHover("color:#ffffff;");
@@ -75,7 +75,7 @@ void MainFrm::InitForm() {
 	//pxImage->SetImage(new Image("imgs/xmt.gif"));
 	//localList->AddControl(pxImage);
 
-	searchList->ScrollBar->Rolling = [=](int a, int b)->void {
+	searchList->GetScrollBar()->Rolling = [=](int a, int b)->void {
 		NextPage(a, b);
 	};
 
@@ -107,6 +107,16 @@ void MainFrm::InitForm() {
 
 	player.AddEventNotify(Event::OnPaint);
 	main->AddEventNotify(Event::OnPaint);
+
+	auto code = ::GetACP();
+
+	EString aaa=("你好a");
+	EString::ANSIToUTF8("库狗",&aaa);
+
+	((Label*)FindControl("songName"))->SetText("酷狗");
+	EString kg = "酷狗";
+	int a = 0;
+
 }
 MainFrm::MainFrm() :Form(1022, 670)
 {
@@ -290,7 +300,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 					it->SetAttribute("SingerName", SingerName);
 					localList->AddControl(it);
 					localList->ResumeLayout();
-					localList->ScrollBar->Move(localList->ScrollBar->RollingTotal());
+					localList->GetScrollBar()->Move(localList->GetScrollBar()->RollingTotal());
 					localList->Invalidate();
 
 					cfg->WriteValue("name", tag->SongName, hash);
@@ -452,9 +462,9 @@ void  MainFrm::SongView() {
 	tools->Style.BorderBottom = 1;
 	tools->Style.BorderColor = Color(238, 238, 238);
 	main->Style.BackgroundImage.valid = false;
-	localList->ScrollBar->Style.BackgroundColor = Color(50, 200, 200, 200);
-	localList->ScrollBar->Style.ForeColor = Color(217, 217, 217);
-	localList->ScrollBar->ActiveStyle.ForeColor = Color(191, 191, 191);
+	localList->GetScrollBar()->Style.BackgroundColor = Color(50, 200, 200, 200);
+	localList->GetScrollBar()->Style.ForeColor = Color(217, 217, 217);
+	localList->GetScrollBar()->ActiveStyle.ForeColor = Color(191, 191, 191);
 	center->Style.BackgroundColor = Color::White;
 	center->Style.ForeColor = Color::Black;
 	main->Invalidate();
@@ -463,9 +473,9 @@ void  MainFrm::LrcView() {
 	centerLeft->Style.BackgroundColor = Color(100, 200, 200, 200);
 	tools->Style.BorderBottom = 1;
 	tools->Style.BorderColor = Color(238, 238, 238);
-	localList->ScrollBar->Style.BackgroundColor = Color(50, 200, 200, 200);
-	localList->ScrollBar->Style.ForeColor = Color(100, 255, 255, 255);
-	localList->ScrollBar->ActiveStyle.ForeColor = Color(150, 255, 255, 255);
+	localList->GetScrollBar()->Style.BackgroundColor = Color(50, 200, 200, 200);
+	localList->GetScrollBar()->Style.ForeColor = Color(100, 255, 255, 255);
+	localList->GetScrollBar()->ActiveStyle.ForeColor = Color(150, 255, 255, 255);
 	main->Style.BackgroundImage = bkImage;
 	center->Style.BackgroundColor = Color(0, 0, 0, 0);
 	center->Style.ForeColor = Color::White;

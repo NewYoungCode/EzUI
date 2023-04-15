@@ -6,8 +6,8 @@ namespace EzUI {
 		Style.SetBorder(Color(239, 239, 239), 1);
 		Style.Radius = 2;
 		vlist.Style.BackgroundColor = Color::White;
-		vlist.ScrollBar->Style.Radius = 5;
-		vlist.ScrollBar->SetFixedWidth(5);
+		vlist.GetScrollBar()->Style.Radius = 5;
+		vlist.GetScrollBar()->SetFixedWidth(5);
 
 		this->AddControl(&edit);
 		this->AddControl(&label);

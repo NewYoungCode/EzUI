@@ -18,5 +18,6 @@ namespace EzUI {
 		virtual void OnLayout()override;
 		virtual void ResumeLayout() override;
 		virtual void RefreshScroll(const int& _maxBottom);
+		virtual ScrollBar* GetScrollBar()override;
 	};
 };

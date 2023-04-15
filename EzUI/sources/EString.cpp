@@ -12,35 +12,24 @@ namespace EzUI {
 		return count;
 	}
 	EString::EString() {}
-	EString::EString(const std::string& str, int codePage) :std::string() {
-		if ((codePage == EString::ANSI) && (::GetACP() != CP_UTF8)) {
-			EString::ANSIToUTF8(str, this);
-		}
-		else {
-			this->resize(str.size());
-			::memcpy((void*)c_str(), str.c_str(), str.size());
-		}
+	EString::EString(const std::string& str) {
+		this->resize(str.size());
+		::memcpy((void*)c_str(), str.c_str(), str.size());
 	}
-	EString::EString(const char* szbuf, int codePage) {
+	EString::EString(const char* szbuf) {
 		if (szbuf == NULL)return;
 		size_t len = ::strlen(szbuf);
-		if ((codePage == EString::ANSI) && (::GetACP() != CP_UTF8)) {
-			EString::ANSIToUTF8(szbuf, this);
-		}
-		else
-		{
-			this->resize(len);
-			::memcpy((void*)c_str(), szbuf, len);
-		}
+		this->resize(len);
+		::memcpy((void*)c_str(), szbuf, len);
 	}
 	EString::EString(const wchar_t* szbuf) {
 		if (szbuf == NULL)return;
 		EString::UnicodeToUTF8(szbuf, this);
 	}
 	EString::EString(const std::wstring& wstr) {
-		EString::UnicodeToUTF8(wstr,this);
+		EString::UnicodeToUTF8(wstr, this);
 	}
-	
+
 	//常用函数
 	EString EString::Erase(const char& _char)const {
 		EString newStr(*this);
@@ -91,6 +80,10 @@ namespace EzUI {
 	}
 	void EString::ANSIToUTF8(const std::string& str, std::string* outStr)
 	{
+		if (::GetACP() == CP_UTF8) {
+			*outStr = str;//如果本身就是utf8则不需要转换
+			return;
+		}
 		int nwLen = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, NULL, 0);
 		wchar_t* pwBuf = new wchar_t[nwLen + 1];
 		ZeroMemory(pwBuf, nwLen * 2 + 2);
@@ -113,11 +106,15 @@ namespace EzUI {
 	void EString::UnicodeToUTF8(const std::wstring& wstr, std::string* outStr)
 	{
 		int bytes = ::WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
-		std::string& strCmd=*outStr;
+		std::string& strCmd = *outStr;
 		strCmd.resize(bytes);
 		bytes = ::WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), const_cast<char*>(strCmd.c_str()), strCmd.size(), NULL, NULL);
 	}
 	void EString::UTF8ToANSI(const std::string& str, std::string* outStr) {
+		if (::GetACP() == CP_UTF8) {
+			*outStr = str;//如果本身就是utf8则不需要转换
+			return;
+		}
 		int nwLen = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
 		wchar_t* pwBuf = new wchar_t[nwLen + 1];
 		memset(pwBuf, 0, nwLen * 2 + 2);
@@ -132,7 +129,7 @@ namespace EzUI {
 	}
 	void EString::UTF8ToUnicode(const std::string& str, std::wstring* outStr) {
 		int newLen = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
-		wchar_t* buffer = new wchar_t[newLen + 1] {0};
+		wchar_t* buffer = new wchar_t[newLen + 1]{ 0 };
 		::MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, buffer, newLen);
 		*outStr = buffer;
 		delete[] buffer;
@@ -161,7 +158,7 @@ namespace EzUI {
 	}
 	void EString::Erase(std::string* str_in_out, const char& _char) {
 		const EString& self = *str_in_out;
-		char* bufStr = new char[self.size() + 1] { 0 };
+		char* bufStr = new char[self.size() + 1]{ 0 };
 		size_t pos = 0;
 		for (auto& it : self) {
 			if (_char == it)continue;

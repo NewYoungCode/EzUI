@@ -65,30 +65,11 @@ namespace EzUI {
 
 		if (wParam < 32)return;//控制字符
 
+	/*	static EString ccc;
+		ccc.append()*/
 		DeleteRange();//先删除是否有选中的区域
-		TCHAR buf[2]{ (TCHAR)wParam ,0 };
-#ifdef UNICODE
+		WCHAR buf[2]{ (WCHAR)wParam ,0 };
 		Insert(buf);//插入新的字符
-#else
-		byte _ch = (byte)wParam;
-		if (_ch > 127) {
-			ansiBuf += _ch;
-			if (ansiBuf.size() > 1) {//判断是否中文
-				std::wstring wBuf;
-				EString::ANSIToUniCode(ansiBuf, &wBuf);
-				Insert(wBuf);//插入新的字符
-				ansiBuf = "";
-			}
-			else {
-				return;
-			}
-		}
-		else {
-			WCHAR buf[2]{ (WCHAR)wParam ,0 };
-			Insert(buf);//插入新的字符
-		}
-
-#endif // !UINCODE
 		Analysis();//分析字符串
 		Invalidate();//刷新
 	}
@@ -457,15 +438,12 @@ namespace EzUI {
 			EzUI::DrawString(e.Painter, Placeholder.utf16(), GetFontFamily().utf16(), GetFontSize(), Color(r, g, b), { 0,0,Width(),Height() }, TextAlign::MiddleLeft);
 		}
 		if (textLayout) {
-
-#if USED_Direct2D
 			EzUI::DrawTextLayout(e.Painter, { x,0 }, textLayout->value, fontColor);
-#endif
 		}
 		if (!selectRect.IsEmptyArea()) {
 			Rect rect(selectRect);
 			rect.X += x;//偏移
-		 EzUI::FillRectangle(e.Painter,rect, SelectColor);
+			EzUI::FillRectangle(e.Painter, rect, SelectColor);
 		}
 		if (!careRect.IsEmptyArea() && _focus) {
 			if (_careShow) {
@@ -474,7 +452,7 @@ namespace EzUI {
 				if (rect.X == this->Width()) {//如果刚好处于边界
 					rect.X = this->Width() - 1;
 				}
-				EzUI::FillRectangle(e.Painter,rect, fontColor);
+				EzUI::FillRectangle(e.Painter, rect, fontColor);
 			}
 		}
 	}

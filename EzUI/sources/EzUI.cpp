@@ -1,21 +1,12 @@
 #include "EzUI.h"
 namespace EzUI {
+	WCHAR WindowClassName[]{ L"EzUI_Window" };
 	HZIP HZipResource = NULL;
 	HGLOBAL HVSResource = NULL;
 	size_t GetThreadId() {
 		std::thread::id threadId = std::this_thread::get_id();
 		return *(size_t*)&threadId;
 	}
-	StdString GetThisClassName() {
-		TCHAR buff[256]{ 0 };
-#ifdef UNICODE
-		swprintf_s(buff, L"EzUI%d", GetThreadId());
-#else
-		sprintf_s(buff, "EzUI%d", GetThreadId());
-#endif
-		return StdString(buff);
-	}
-
 	std::mutex _resourceMtx;
 	bool GetGlobalResource(const EString& fileName, std::string** _outData) {
 		std::unique_lock<std::mutex> autoLock(_resourceMtx);

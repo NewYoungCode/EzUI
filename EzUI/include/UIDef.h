@@ -50,12 +50,12 @@
 
 #ifdef _WIN64
 #define CPU64
-#define UI_SetUserData(hWnd,data)  SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)data);
-#define UI_GetUserData(hwnd) GetWindowLongPtr(hwnd, GWLP_USERDATA);
+#define UI_SetUserData(hWnd,data)  SetWindowLongPtrW(hWnd, GWLP_USERDATA, (LONG_PTR)data);
+#define UI_GetUserData(hwnd) GetWindowLongPtrW(hwnd, GWLP_USERDATA);
 #else  
 #define CPU86
-#define UI_SetUserData(hWnd,data)  SetWindowLong(hWnd, GWLP_USERDATA, (LONG)data);
-#define UI_GetUserData(hwnd) GetWindowLong(hwnd, GWLP_USERDATA);
+#define UI_SetUserData(hWnd,data)  SetWindowLongW(hWnd, GWLP_USERDATA, (LONG)data);
+#define UI_GetUserData(hwnd) GetWindowLongW(hwnd, GWLP_USERDATA);
 #endif
 //
 
@@ -77,12 +77,6 @@
 #else
 #define UI_EXPORT
 #endif // _WINDLL
-
-#ifdef UNICODE
-#define StdString std::wstring
-#else
-#define StdString std::string
-#endif
 
 #ifdef _DEBUG
 #define DEBUGPAINT //

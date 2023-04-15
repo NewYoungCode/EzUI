@@ -7,28 +7,21 @@ namespace EzUI {
 		if (wndData) {
 			return  ((Window*)wndData->Window)->WndProc(message, wParam, lParam);
 		}
-		return ::DefWindowProc(hwnd, message, wParam, lParam);
+		return ::DefWindowProcW(hwnd, message, wParam, lParam);
 	}
 
 	void Application::Init() {
-		//确保加载公共控件 DLL （Comctl32.dll），并从 DLL 注册特定的公共控件类
-		INITCOMMONCONTROLSEX iccex;
-		iccex.dwSize = sizeof(INITCOMMONCONTROLSEX);
-		iccex.dwICC = ICC_WIN95_CLASSES;
-		::InitCommonControlsEx(&iccex);
-
 		//设计窗口
-		StdString className = GetThisClassName();
-		::HINSTANCE hInstance = GetModuleHandle(NULL);
-		::WNDCLASS     wc{ 0 };
+		::HINSTANCE hInstance = GetModuleHandleW(NULL);
+		::WNDCLASSW    wc{ 0 };
 		wc.lpfnWndProc = EzUI_WndProc;//窗口过程
 		wc.hInstance = hInstance;//
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);//光标
-		wc.lpszClassName = className.c_str();//类名
+		wc.lpszClassName = WindowClassName;//类名
 
-		if (!RegisterClass(&wc)) //注册窗口
+		if (!RegisterClassW(&wc)) //注册窗口
 		{
-			::MessageBox(NULL, TEXT("This program requires Windows NT !"),
+			::MessageBoxW(NULL, L"This program requires Windows NT !",
 				wc.lpszClassName, MB_ICONERROR);
 			return;
 		}
@@ -55,7 +48,7 @@ namespace EzUI {
 		HZipResource = OpenZip(fileName.utf16().c_str(), password.empty() ? NULL : password.c_str());
 #ifdef _DEBUG
 		if (HZipResource == NULL) {
-			::MessageBoxA(NULL, "Open ZipResource Fail !", "Error", 0);
+			::MessageBoxW(NULL, L"Open ZipResource Fail !", L"Error", 0);
 		}
 #endif
 	}
@@ -76,12 +69,12 @@ namespace EzUI {
 	int Application::exec()
 	{
 		::MSG msg{ 0 };
-		while (GetMessage(&msg, NULL, 0, 0) != 0)
+		while (GetMessageW(&msg, NULL, 0, 0) != 0)
 		{
 			::TranslateMessage(&msg);
-			::DispatchMessage(&msg);
+			::DispatchMessageW(&msg);
 		}
 		return (int)msg.wParam;
 	}
 
-	};
+};

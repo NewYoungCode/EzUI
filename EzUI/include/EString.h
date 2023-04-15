@@ -5,16 +5,10 @@
 namespace EzUI {
 	class  UI_EXPORT EString :public std::string {
 	public:
-		enum
-		{
-			ANSI = CP_ACP,
-			UTF8 = CP_UTF8
-		};
-	public:
-		size_t length() const;
+		size_t length() const;//the utf8 length
 		EString();
-		EString(const std::string& str, int codePage = EString::UTF8);
-		EString(const char* szbuf, int codePage = EString::UTF8);
+		EString(const std::string& str);
+		EString(const char* szbuf);
 		EString(const wchar_t* szbuf);
 		EString(const std::wstring& wstr);
 		std::wstring utf16() const;
@@ -37,5 +31,4 @@ namespace EzUI {
 		static void Replace(std::string* str_in_out, const std::string& oldText, const std::string& newText);
 		static void Split(const std::string& str_in, const std::string& ch, std::vector<std::string>* strs_out);
 	};
-#define utf8(szbuf)  EString(szbuf,EString::ANSI)
 };

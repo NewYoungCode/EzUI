@@ -46,8 +46,7 @@ namespace EzUI {
 	{
 		_menu = NULL;
 		_hInstance = GetModuleHandle(0);
-	
-		_hwnd = ::CreateWindow(GetThisClassName().c_str(), TEXT("EzUI_NotifyIcon"), WS_OVERLAPPEDWINDOW,
+		_hwnd = ::CreateWindowW(WindowClassName, L"EzUI_NotifyIcon", WS_OVERLAPPEDWINDOW,
 			0, 0, 10, 10, NULL, NULL, _hInstance, NULL);
 		::SetWindowLongPtr(_hwnd, GWLP_USERDATA, (LONG_PTR)this);
 		_nid.cbSize = sizeof(NOTIFYICONDATA);//结构体长度

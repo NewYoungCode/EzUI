@@ -7,6 +7,9 @@ elseif(WIN32)
     add_compile_options(/utf-8)
 endif()
 
+#让所有项目都使用UNICODE
+add_definitions(-D_UNICODE -DUNICODE)
+
 project(EzUI)
 set(libBasePath ./EzUI)
 include_directories(${libBasePath}/include)

@@ -483,8 +483,8 @@ Event(this , ##__VA_ARGS__); \
 		this->_layoutState = LayoutState::None;//布局完成需要将布局标志重置
 	}
 	void Control::OnLayout() {
-		if (ScrollBar) {//如果存在滚动条就设置滚动条的矩形位置
-			ScrollBar->OwnerSize({ _rect.Width,_rect.Height });
+		if (GetScrollBar()) {//如果存在滚动条就设置滚动条的矩形位置
+			GetScrollBar()->OwnerSize({ _rect.Width,_rect.Height });
 		}
 	}
 
@@ -665,7 +665,7 @@ Event(this , ##__VA_ARGS__); \
 		this->ChildPainting(this->_controls, args);//绘制子控件
 		//绘制滚动条
 		EzUI::ScrollBar* scrollbar = NULL;
-		if (scrollbar = this->ScrollBar) {
+		if (scrollbar = this->GetScrollBar()) {
 			scrollbar->PublicData = args.PublicData;
 			Rect barRect = scrollbar->GetClientRect();
 			//设置偏移
@@ -706,8 +706,8 @@ Event(this , ##__VA_ARGS__); \
 			::DestroyCursor(_hCursor);
 		}
 		//销毁控件前请先将控件从父容器中移除
-		if (this->ScrollBar) {
-			delete ScrollBar;
+		if (this->GetScrollBar()) {
+			delete this->GetScrollBar();
 		}
 		DestroySpacers();
 	}
@@ -770,7 +770,6 @@ Event(this , ##__VA_ARGS__); \
 			it->OnRemove();
 		}
 		if (PublicData) {
-			PublicData->DelTips(this);//移除tips文字绑定
 			PublicData->RemoveControl(this);
 			PublicData = NULL;
 		}
@@ -918,6 +917,10 @@ Event(this , ##__VA_ARGS__); \
 		}
 		_hCursor = ::LoadCursorFromFileW(fileName.utf16().c_str());
 	}
+	ScrollBar* Control::GetScrollBar()
+	{
+		return NULL;
+	}
 	HCURSOR Control::GetCursor() {
 		if (_hCursor) {
 			return _hCursor;
@@ -955,7 +958,7 @@ Event(this , ##__VA_ARGS__); \
 		}
 		if (PublicData) {
 			if (!_tipsText.empty()) {//设置提示文字
-				PublicData->SetTips(this, _tipsText);
+				//PublicData->SetTips(this, _tipsText);
 			}
 		}
 		UI_TRIGGER(MouseEnter, point);
