@@ -68,17 +68,17 @@ namespace EzUI {
 	void VlcPlayer::OpenPath(const EString& file)
 	{
 		if (vlc_player) {
-			libvlc_media_player_stop(vlc_player);//Í£Ö¹²¥·Å
-			libvlc_media_player_release(vlc_player);//ÊÍ·ÅÖ®Ç°µÄ²¥·ÅÃ½ÌåÆ÷
+			libvlc_media_player_stop(vlc_player);//Í£Ö¹ï¿½ï¿½ï¿½ï¿½
+			libvlc_media_player_release(vlc_player);//ï¿½Í·ï¿½Ö®Ç°ï¿½Ä²ï¿½ï¿½ï¿½Ã½ï¿½ï¿½ï¿½ï¿½
 		}
 		if (vlc_media) {
 			libvlc_media_release(vlc_media);
 		}
 		vlc_media = libvlc_media_new_path(vlc_inst, file.c_str());
-		libvlc_media_parse(vlc_media);//½âÎö
-		_Duration = libvlc_media_get_duration(vlc_media);//»ñÈ¡Ã½ÌåÊ±³¤
+		libvlc_media_parse(vlc_media);//ï¿½ï¿½ï¿½ï¿½
+		_Duration = libvlc_media_get_duration(vlc_media);//ï¿½ï¿½È¡Ã½ï¿½ï¿½Ê±ï¿½ï¿½
 
-		vlc_player = libvlc_media_player_new_from_media(vlc_media);//ÉèÖÃÃ½Ìå
+		vlc_player = libvlc_media_player_new_from_media(vlc_media);//ï¿½ï¿½ï¿½ï¿½Ã½ï¿½ï¿½
 
 		libvlc_video_set_format_callbacks(vlc_player, setup, (libvlc_video_cleanup_cb)this);
 		libvlc_video_set_callbacks(vlc_player, lock, unlock, display, this);
@@ -86,16 +86,16 @@ namespace EzUI {
 	void VlcPlayer::OpenUrl(const EString& url)
 	{
 		if (vlc_player) {
-			libvlc_media_player_stop(vlc_player);//Í£Ö¹²¥·Å vlcµÄbug ´Ë´¦»á±ÀÀ£
-			libvlc_media_player_release(vlc_player);//ÊÍ·ÅÖ®Ç°µÄ²¥·ÅÃ½ÌåÆ÷
+			libvlc_media_player_stop(vlc_player);//Í£Ö¹ï¿½ï¿½ï¿½ï¿½ vlcï¿½ï¿½bug ï¿½Ë´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			libvlc_media_player_release(vlc_player);//ï¿½Í·ï¿½Ö®Ç°ï¿½Ä²ï¿½ï¿½ï¿½Ã½ï¿½ï¿½ï¿½ï¿½
 		}
 		if (vlc_media) {
 			libvlc_media_release(vlc_media);
 		}
 		vlc_media = libvlc_media_new_location(vlc_inst, url.c_str());
-		libvlc_media_parse(vlc_media);//½âÎö
-		_Duration = libvlc_media_get_duration(vlc_media);//»ñÈ¡Ã½ÌåÊ±³¤
-		vlc_player = libvlc_media_player_new_from_media(vlc_media);//ÉèÖÃÃ½Ìå
+		libvlc_media_parse(vlc_media);//ï¿½ï¿½ï¿½ï¿½
+		_Duration = libvlc_media_get_duration(vlc_media);//ï¿½ï¿½È¡Ã½ï¿½ï¿½Ê±ï¿½ï¿½
+		vlc_player = libvlc_media_player_new_from_media(vlc_media);//ï¿½ï¿½ï¿½ï¿½Ã½ï¿½ï¿½
 		libvlc_video_set_format_callbacks(vlc_player, setup, (libvlc_video_cleanup_cb)this);
 		libvlc_video_set_callbacks(vlc_player, lock, unlock, display, this);
 	}
@@ -129,7 +129,7 @@ namespace EzUI {
 	void VlcPlayer::SetPosition(float f_pos)
 	{
 		if (vlc_player) {
-			//²»ÖªµÀÎªÊ²Ã´ ÉèÖÃ½ø¶È¾Í²¥·Å²»ÁËÁË ÔÝÊ±Ã»ÑÐ¾¿
+			//ï¿½ï¿½Öªï¿½ï¿½ÎªÊ²Ã´ ï¿½ï¿½ï¿½Ã½ï¿½ï¿½È¾Í²ï¿½ï¿½Å²ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ê±Ã»ï¿½Ð¾ï¿½
 			libvlc_media_player_set_position(vlc_player, f_pos);
 		}
 	}

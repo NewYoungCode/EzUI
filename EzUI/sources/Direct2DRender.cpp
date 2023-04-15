@@ -98,7 +98,7 @@ namespace EzUI {
 			int a = 0;
 		}
 	}
-	//Ìø×ªµ½ÏÂÒ»Ö¡ ²¢ÇÒ»ñÈ¡ÏÂÒ»Ö¡µÄÑÓ³Ù
+	//è·³è½¬åˆ°ä¸‹ä¸€å¸§ å¹¶ä¸”èŽ·å–ä¸‹ä¸€å¸§çš„å»¶è¿Ÿ
 	size_t DXImage::NextFrame() {
 		if (_framePos >= _frameCount) {
 			_framePos = 0;
@@ -175,7 +175,7 @@ namespace EzUI {
 					D2D1_RENDER_TARGET_USAGE_NONE,
 					D2D1_FEATURE_LEVEL_DEFAULT
 				);
-				//³õÊ¼»¯Ò»ÏÂDXÈÃµÚÒ»´ÎÆô¶¯´°¿Ú¿ìÒ»µã
+				//åˆå§‹åŒ–ä¸€ä¸‹DXè®©ç¬¬ä¸€æ¬¡å¯åŠ¨çª—å£å¿«ä¸€ç‚¹
 				ID2D1DCRenderTarget* initRender = NULL;
 				HRESULT	hr = D2D::g_Direct2dFactory->CreateDCRenderTarget(&defaultOption, (ID2D1DCRenderTarget**)&initRender);
 				SafeRelease(&initRender);
@@ -188,16 +188,16 @@ namespace EzUI {
 			}
 		}
 		if (D2D::g_ImageFactory == NULL) {
-			_GUID imageFactoryOld{ 0xcacaf262, 0x9370, 0x4615, 0xa1, 0x3b, 0x9f, 0x55, 0x39, 0xda, 0x4c, 0xa };//xp  win7 ¾É°æ
-			_GUID WICImagingFactoryId = CLSID_WICImagingFactory;//µ±Ç°Æ½Ì¨
+			_GUID imageFactoryOld{ 0xcacaf262, 0x9370, 0x4615, 0xa1, 0x3b, 0x9f, 0x55, 0x39, 0xda, 0x4c, 0xa };//xp  win7 æ—§ç‰ˆ
+			_GUID WICImagingFactoryId = CLSID_WICImagingFactory;//å½“å‰å¹³å°
 		ImagingFactoryInit:
 			hr = CoCreateInstance(WICImagingFactoryId, NULL, CLSCTX_INPROC_SERVER, __uuidof(IWICImagingFactory), (LPVOID*)&D2D::g_ImageFactory);
 			if (hr != S_OK) {
-				//if (hr == 0x800401F0) {//Î´³õÊ¼»¯com ×Ô¼ºÔÚÈ«¾Ö³õÊ¼»¯Ò»ÏÂ¾ÍºÃÁË (×Ô¼º¿ØÖÆ³õÊ¼»¯Ê±»ú)
+				//if (hr == 0x800401F0) {//æœªåˆå§‹åŒ–com è‡ªå·±åœ¨å…¨å±€åˆå§‹åŒ–ä¸€ä¸‹å°±å¥½äº† (è‡ªå·±æŽ§åˆ¶åˆå§‹åŒ–æ—¶æœº)
 				//	::CoInitialize(NULL);
 				//	goto ImagingFactory;
 				//}
-				if (hr == 0x80040154) {//Ã»ÓÐ×¢²áÀà ²»ÓÃwin7µÄsdkÉú³ÉµÄ³ÌÐòÔÚÏÂwin7ÏµÍ³ÉÏÔËÐÐ»á³öÏÖ´Ë´íÎó
+				if (hr == 0x80040154) {//æ²¡æœ‰æ³¨å†Œç±» ä¸ç”¨win7çš„sdkç”Ÿæˆçš„ç¨‹åºåœ¨ä¸‹win7ç³»ç»Ÿä¸Šè¿è¡Œä¼šå‡ºçŽ°æ­¤é”™è¯¯
 					WICImagingFactoryId = imageFactoryOld;
 					goto ImagingFactoryInit;
 				}
@@ -274,7 +274,7 @@ namespace EzUI {
 	}
 	void SetTransform(ID2D1RenderTarget* d2dRender, int xOffset, int yOffset)
 	{
-		// ÉèÖÃxºÍy·½ÏòµÄÆ«ÒÆ
+		// è®¾ç½®xå’Œyæ–¹å‘çš„åç§»
 		d2dRender->SetTransform(D2D1::Matrix3x2F::Translation((FLOAT)xOffset, (FLOAT)yOffset));
 	}
 	void DrawLine(ID2D1RenderTarget* d2dRender, const __Color& color, const __Point& _A, const __Point& _B, int width)
@@ -288,17 +288,17 @@ namespace EzUI {
 	void PushAxisAlignedClip(ID2D1RenderTarget* d2dRender, const __Rect& rectBounds) {
 		d2dRender->PushAxisAlignedClip(__To_D2D_RectF(rectBounds), D2D1_ANTIALIAS_MODE::D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	}
-	void PopAxisAlignedClip(ID2D1RenderTarget* d2dRender) {//µ¯³ö×îºóÒ»¸ö²Ã¼ô
+	void PopAxisAlignedClip(ID2D1RenderTarget* d2dRender) {//å¼¹å‡ºæœ€åŽä¸€ä¸ªè£å‰ª
 		d2dRender->PopAxisAlignedClip();
 	}
 	void PushLayer(ID2D1RenderTarget* d2dRender, const Geometry& dxGeometry)
 	{
 		ID2D1Layer* layer = NULL;
 		d2dRender->CreateLayer(&layer);
-		d2dRender->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.rgn), layer);//·ÅÈëlayer
+		d2dRender->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.rgn), layer);//æ”¾å…¥layer
 		layer->Release();
 	}
-	void PopLayer(ID2D1RenderTarget* d2dRender)//µ¯³ö×îºóÒ»¸ö²Ã¼ô
+	void PopLayer(ID2D1RenderTarget* d2dRender)//å¼¹å‡ºæœ€åŽä¸€ä¸ªè£å‰ª
 	{
 		d2dRender->PopLayer();
 	}
@@ -307,18 +307,18 @@ namespace EzUI {
 		_NOREND_IMAGE_
 			if (_image == NULL) return;
 		DXImage* image = (DXImage*)_image;
-		//¼ÆËã×ø±ê
+		//è®¡ç®—åæ ‡
 		__Rect rect = _rect;
 		rect.X += margin.Left;
 		rect.Y += margin.Top;
 		rect.Width -= margin.Right * 2;
 		rect.Height -= margin.Bottom * 2;
-		//½âÂë
+		//è§£ç 
 		image->DecodeOfRender(d2dRender);
-		//×ª»»×ø±ê,Ëõ·Å
+		//è½¬æ¢åæ ‡,ç¼©æ”¾
 		__Size imgSize(image->GetWidth(), image->GetHeight());
 		__Rect drawRect = EzUI::Transformation(imageSizeMode, rect, imgSize);
-		//¿ªÊ¼»æÖÆ
+		//å¼€å§‹ç»˜åˆ¶
 		if (image->d2dBitmap == NULL) return;
 		d2dRender->DrawBitmap(image->d2dBitmap, __To_D2D_RectF(drawRect));
 	}

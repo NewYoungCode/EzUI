@@ -11,7 +11,7 @@ namespace EzUI {
 
 	bool ShadowWindow::SetShadow(int m_Width, int m_Height, size_t iSize) {
 		int width = m_Width < m_Height ? m_Width : m_Height;
-		int radius = 3;//°ë¾¶
+		int radius = 3;//åŠå¾„
 		int max_size = width / 2 - radius;
 		if (max_size <= 0) {
 			radius = 0;
@@ -20,7 +20,7 @@ namespace EzUI {
 		iSize = (int)iSize < max_size ? iSize : max_size;
 		double piAngle = 3.1415926;
 		int iSizeB = 4 * iSize;
-		double fN = piAngle / iSize / 5;//ÉèÖÃËÄÌõ±ßÍâÄ£ºı¶È
+		double fN = piAngle / iSize / 5;//è®¾ç½®å››æ¡è¾¹å¤–æ¨¡ç³Šåº¦
 		double lN = 1.0 / iSize;
 		int iAplpha = 0;
 		int Left = iSize + radius,
@@ -75,14 +75,14 @@ namespace EzUI {
 	}
 
 	void ShadowWindow::setA(const int& x, const int& y, const BYTE& a) {
-		if (clipRect.Contains(x, y)) { //²»ÔÊĞí»æÖÆÔÚOWner´°¿ÚÇøÓò
+		if (clipRect.Contains(x, y)) { //ä¸å…è®¸ç»˜åˆ¶åœ¨OWnerçª—å£åŒºåŸŸ
 			return;
 		}
-		DWORD* point = (DWORD*)_bufBitmap->point + (x + y * _bufBitmap->Width);//ÆğÊ¼µØÖ·+×ø±êÆ«ÒÆ
-		((BYTE*)point)[3] = a;//ĞŞ¸ÄAÍ¨µÀÊıÖµ
-		//((BYTE*)point)[2] = 0;//ĞŞ¸ÄRÍ¨µÀÊıÖµ
-		//((BYTE*)point)[1] = 10;//ĞŞ¸ÄGÍ¨µÀÊıÖµ
-		//((BYTE*)point)[0] = 10;//ĞŞ¸ÄBÍ¨µÀÊıÖµ
+		DWORD* point = (DWORD*)_bufBitmap->point + (x + y * _bufBitmap->Width);//èµ·å§‹åœ°å€+åæ ‡åç§»
+		((BYTE*)point)[3] = a;//ä¿®æ”¹Aé€šé“æ•°å€¼
+		//((BYTE*)point)[2] = 0;//ä¿®æ”¹Ré€šé“æ•°å€¼
+		//((BYTE*)point)[1] = 10;//ä¿®æ”¹Gé€šé“æ•°å€¼
+		//((BYTE*)point)[0] = 10;//ä¿®æ”¹Bé€šé“æ•°å€¼
 	}
 	void ShadowWindow::Update(int _shadowWidth) {
 		HWND OwnerWnd = ::GetWindowOwner(_hWnd);
@@ -94,16 +94,16 @@ namespace EzUI {
 
 		RECT Orect;
 		BOOL empty = ::GetWindowRect(OwnerWnd, &Orect);
-		Size paintSize{ Orect.right - Orect.left,Orect.bottom - Orect.top };//¸¸¿Ø¼ş×÷Í¼´óĞ¡
+		Size paintSize{ Orect.right - Orect.left,Orect.bottom - Orect.top };//çˆ¶æ§ä»¶ä½œå›¾å¤§å°
 
-		clipRect = { {_shadowWidth ,_shadowWidth},paintSize };//²Ã¼ôÇøÓò
+		clipRect = { {_shadowWidth ,_shadowWidth},paintSize };//è£å‰ªåŒºåŸŸ
 		int x = 0;
 		int y = 0;
 		int width = paintSize.Width + _shadowWidth * 2;
 		int height = paintSize.Height + _shadowWidth * 2;
-		//ÒÆ¶¯ÒõÓ°´°¿Ú
+		//ç§»åŠ¨é˜´å½±çª—å£
 		::MoveWindow(_hWnd, Orect.left - _shadowWidth, Orect.top - _shadowWidth, width, height, FALSE);
-		//Ö»ÓĞÔÚ´óĞ¡·¢Éú¸Ä±äµÄÊ±ºò²Å»ØÈ¥ÖØĞÂÉú³Élayered´°¿Ú
+		//åªæœ‰åœ¨å¤§å°å‘ç”Ÿæ”¹å˜çš„æ—¶å€™æ‰å›å»é‡æ–°ç”Ÿæˆlayeredçª—å£
 		if (paintSize.Equals(_bufSize)) {
 			return;
 		}
@@ -112,10 +112,10 @@ namespace EzUI {
 			delete _bufBitmap;
 			_bufBitmap = NULL;
 		}
-		_bufBitmap = new EBitmap(width, height, EBitmap::PixelFormat::PixelFormatARGB);//32Î»Í¸Ã÷Í¼
+		_bufBitmap = new EBitmap(width, height, EBitmap::PixelFormat::PixelFormatARGB);//32ä½é€æ˜å›¾
 		//Debug::Log(TEXT("Update BoxShadow"));
 		Rect rect{ 0,0,width, height };
-		//×öÒìĞÎ
+		//åšå¼‚å½¢
 		SetShadow(rect.Width, rect.Height, _shadowWidth);
 
 		POINT point{ 0,0 };
@@ -125,7 +125,7 @@ namespace EzUI {
 		blend.BlendFlags = 0;
 		blend.AlphaFormat = AC_SRC_ALPHA;
 		blend.SourceConstantAlpha = 255;
-		::UpdateLayeredWindow(_hWnd, NULL, NULL, &size, _bufBitmap->GetDC(), &point, 0, &blend, ULW_ALPHA);//¡£¡£¡£¡£¡£¡£¸üĞÂ·Ö²ã´°¿Ú
+		::UpdateLayeredWindow(_hWnd, NULL, NULL, &size, _bufBitmap->GetDC(), &point, 0, &blend, ULW_ALPHA);//ã€‚ã€‚ã€‚ã€‚ã€‚ã€‚æ›´æ–°åˆ†å±‚çª—å£
 	}
 	ShadowWindow::~ShadowWindow()
 	{

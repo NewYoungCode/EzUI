@@ -7,15 +7,15 @@ namespace EzUI {
 	public:
 		int _shadowWidth = 15;
 		void setA(int x, int y, BYTE a) {
-			DWORD* point = (DWORD*)_bufBitmap->point + (x + y * _bufBitmap->Width);//ÆğÊ¼µØÖ·+×ø±êÆ«ÒÆ
-			((BYTE*)point)[3] = a;//ĞŞ¸ÄAÍ¨µÀÊıÖµ
-			((BYTE*)point)[2] = 0;//ĞŞ¸ÄRÍ¨µÀÊıÖµ
-			((BYTE*)point)[1] = 0;//ĞŞ¸ÄGÍ¨µÀÊıÖµ
-			((BYTE*)point)[0] = 0;//ĞŞ¸ÄBÍ¨µÀÊıÖµ
+			DWORD* point = (DWORD*)_bufBitmap->point + (x + y * _bufBitmap->Width);//èµ·å§‹åœ°å€+åæ ‡åç§»
+			((BYTE*)point)[3] = a;//ä¿®æ”¹Aé€šé“æ•°å€¼
+			((BYTE*)point)[2] = 0;//ä¿®æ”¹Ré€šé“æ•°å€¼
+			((BYTE*)point)[1] = 0;//ä¿®æ”¹Gé€šé“æ•°å€¼
+			((BYTE*)point)[0] = 0;//ä¿®æ”¹Bé€šé“æ•°å€¼
 		}
 		bool SetShadow(int m_Width, int m_Height, size_t iSize) {
 			int width = m_Width < m_Height ? m_Width : m_Height;
-			int radius = 3;//°ë¾¶
+			int radius = 3;//åŠå¾„
 			int max_size = width / 2 - radius;
 			if (max_size <= 0) {
 				radius = 0;
@@ -24,7 +24,7 @@ namespace EzUI {
 			iSize = (int)iSize < max_size ? iSize : max_size;
 			double piAngle = 3.1415926;
 			int iSizeB = 4 * iSize;
-			double fN = piAngle / iSize / 5;//ÉèÖÃËÄÌõ±ßÍâÄ£ºı¶È
+			double fN = piAngle / iSize / 5;//è®¾ç½®å››æ¡è¾¹å¤–æ¨¡ç³Šåº¦
 			double lN = 1.0 / iSize;
 			int iAplpha = 0;
 			int Left = iSize + radius,

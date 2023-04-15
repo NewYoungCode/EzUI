@@ -9,40 +9,40 @@ namespace EzUI {
 #ifndef UNICODE
 		std::string ansiBuf;
 #endif
-		std::wstring text;//ÎÄ×Ö
-		bool _down = false;//ÊÇ·ñ¾ßÓĞ½¹µãÖĞ
-		bool _focus = false;//ÊÇ·ñ¾ßÓĞ½¹µãÖĞ
-		Point point_Start;//¿ªÊ¼Ñ¡ÖĞµÄÎ»ÖÃ
-		Point point_End;//½áÊøÎ»ÖÃ
-		Rect selectRect;//Ñ¡ÖĞµÄ×Ö·û¾ØĞÎ
-		Rect careRect;//¹â±êÎ»ÖÃ
-		Size FontBox;//ÎÄ×ÖÕ¼ÓÃ¿Õ¼ä
-		TextFormat* textFormat = NULL;//×ÖÌå¸ñÊ½
-		TextLayout* textLayout = NULL;//×ÖÌå²¼¾Ö
-		Point A;//Aµã
-		BOOL A_isTrailingHit;//Èç¹ûÊÇ1±íÊ¾ÊÇ×Ö·ûµÄºó°ë±ß
-		int A_TextPos = 0;//µã»÷ÁËµÚ¼¸¸ö×Ö·û
-		Point B;//Bµã
-		BOOL B_isTrailingHit;//Èç¹ûÊÇ1±íÊ¾ÊÇ×Ö·ûµÄºó°ë±ß
-		int B_TextPos = 0;//µã»÷ÁËµÚ¼¸¸ö×Ö·û
-		int TextPos = 0;//µ±Ç°ÎÄ×ÖµÄÏÂ±ê 0~text.size()
-		int x = 0;//ÓÃÓÚ×óÓÒ¹ö¶¯
-		int lastX = 0;//ÉÏÒ»¸öxÎ»ÖÃ
-		int y = 0;//ÓÃÓÚ´¹Ö±¹ö¶¯ Ô¤Áô
-		int lastY = 0;//ÉÏÒ»¸öyÎ»ÖÃ Ô¤Áô
-		Windows::Timer timer;//ÓÃÓÚ¹â±êÉÁË¸
-		bool _careShow = false;//ÓÃÓÚ¹â±êÉÁË¸
+		std::wstring text;//æ–‡å­—
+		bool _down = false;//æ˜¯å¦å…·æœ‰ç„¦ç‚¹ä¸­
+		bool _focus = false;//æ˜¯å¦å…·æœ‰ç„¦ç‚¹ä¸­
+		Point point_Start;//å¼€å§‹é€‰ä¸­çš„ä½ç½®
+		Point point_End;//ç»“æŸä½ç½®
+		Rect selectRect;//é€‰ä¸­çš„å­—ç¬¦çŸ©å½¢
+		Rect careRect;//å…‰æ ‡ä½ç½®
+		Size FontBox;//æ–‡å­—å ç”¨ç©ºé—´
+		TextFormat* textFormat = NULL;//å­—ä½“æ ¼å¼
+		TextLayout* textLayout = NULL;//å­—ä½“å¸ƒå±€
+		Point A;//Aç‚¹
+		BOOL A_isTrailingHit;//å¦‚æœæ˜¯1è¡¨ç¤ºæ˜¯å­—ç¬¦çš„ååŠè¾¹
+		int A_TextPos = 0;//ç‚¹å‡»äº†ç¬¬å‡ ä¸ªå­—ç¬¦
+		Point B;//Bç‚¹
+		BOOL B_isTrailingHit;//å¦‚æœæ˜¯1è¡¨ç¤ºæ˜¯å­—ç¬¦çš„ååŠè¾¹
+		int B_TextPos = 0;//ç‚¹å‡»äº†ç¬¬å‡ ä¸ªå­—ç¬¦
+		int TextPos = 0;//å½“å‰æ–‡å­—çš„ä¸‹æ ‡ 0~text.size()
+		int x = 0;//ç”¨äºå·¦å³æ»šåŠ¨
+		int lastX = 0;//ä¸Šä¸€ä¸ªxä½ç½®
+		int y = 0;//ç”¨äºå‚ç›´æ»šåŠ¨ é¢„ç•™
+		int lastY = 0;//ä¸Šä¸€ä¸ªyä½ç½® é¢„ç•™
+		Windows::Timer timer;//ç”¨äºå…‰æ ‡é—ªçƒ
+		bool _careShow = false;//ç”¨äºå…‰æ ‡é—ªçƒ
 	private:
-		void Analysis();//·ÖÎö×Ö·û´®
-		void Insert(const std::wstring& str);//²åÈëÎÄ×Ö
-		bool DeleteRange();//É¾³ıÑ¡ÖĞÄÚÈİ
-		bool GetSelectedRange(int* outPos, int* outCount);//»ñÈ¡µ±Ç°±»Ñ¡ÖĞµÄÇøÓò ·µ»ØÏÂ±êºÍ¸öÊı
-		bool Copy();//¸´ÖÆµ½¼ôÇĞ°å
-		bool Paste();//Õ³Ìù
-		bool SelectedAll();//È«Ñ¡
-		void OnBackspace();//ÍË¸ñ¼üÒª×öµÄÊÂ
-		void BuildCare();//¹¹½¨¹â±ê
-		Point ConvertPoint(const Point& pt);//×ø±ê×ª»»
+		void Analysis();//åˆ†æå­—ç¬¦ä¸²
+		void Insert(const std::wstring& str);//æ’å…¥æ–‡å­—
+		bool DeleteRange();//åˆ é™¤é€‰ä¸­å†…å®¹
+		bool GetSelectedRange(int* outPos, int* outCount);//è·å–å½“å‰è¢«é€‰ä¸­çš„åŒºåŸŸ è¿”å›ä¸‹æ ‡å’Œä¸ªæ•°
+		bool Copy();//å¤åˆ¶åˆ°å‰ªåˆ‡æ¿
+		bool Paste();//ç²˜è´´
+		bool SelectedAll();//å…¨é€‰
+		void OnBackspace();//é€€æ ¼é”®è¦åšçš„äº‹
+		void BuildCare();//æ„å»ºå…‰æ ‡
+		Point ConvertPoint(const Point& pt);//åæ ‡è½¬æ¢
 	protected:
 		virtual void OnRemove()override;
 		virtual void OnSize(const Size& size)override;
@@ -56,8 +56,8 @@ namespace EzUI {
 		virtual void OnKillFocus() override;
 		virtual void OnMouseWheel(short zDelta, const Point& point)override;
 	public:
-		EString Placeholder;//placeholder¶®µÃ¶¼¶® (ÔÚÃ»ÓĞÎÄ×ÖµÄÇé¿öÏÂÏÔÊ¾µÄÎÄ×Ö)
-		Color SelectColor = Color(100, 255, 0, 0);//Ñ¡ÖĞÑÕÉ«
+		EString Placeholder;//placeholderæ‡‚å¾—éƒ½æ‡‚ (åœ¨æ²¡æœ‰æ–‡å­—çš„æƒ…å†µä¸‹æ˜¾ç¤ºçš„æ–‡å­—)
+		Color SelectColor = Color(100, 255, 0, 0);//é€‰ä¸­é¢œè‰²
 	public:
 		TextBox();
 		virtual ~TextBox();

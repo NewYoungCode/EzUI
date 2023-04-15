@@ -9,7 +9,7 @@ namespace EzUI {
 		VScrollBar* vScrollBar = NULL;
 	public:
 		int _maxBottom = 0;
-		bool AutoHeight = false;//¸ù¾İÄÚÈİµÄ¸ß¶È×Ô¶¯±ä»¯
+		bool AutoHeight = false;//æ ¹æ®å†…å®¹çš„é«˜åº¦è‡ªåŠ¨å˜åŒ–
 	public:
 		VList();
 		virtual ~VList();

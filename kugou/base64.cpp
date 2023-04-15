@@ -4,7 +4,7 @@
    More information at
      https://renenyffenegger.ch/notes/development/Base64/Encoding-and-decoding-base-64-with-cpp
    Version: 2.rc.08 (release candidate)
-   Copyright (C) 2004-2017, 2020, 2021 Ren¨¦ Nyffenegger
+   Copyright (C) 2004-2017, 2020, 2021 Renï¿½ï¿½ Nyffenegger
    This source code is provided 'as-is', without any express or implied
    warranty. In no event will the author be held liable for any damages
    arising from the use of this software.
@@ -18,7 +18,7 @@
    2. Altered source versions must be plainly marked as such, and must not be
       misrepresented as being the original source code.
    3. This notice may not be removed or altered from any source distribution.
-   Ren¨¦ Nyffenegger rene.nyffenegger@adp-gmbh.ch
+   Renï¿½ï¿½ Nyffenegger rene.nyffenegger@adp-gmbh.ch
 */
 
 #include "base64.h"
@@ -152,7 +152,7 @@ std::string base64_encode(unsigned char const* bytes_to_encode, size_t in_len, b
 template <typename String>
 static std::string decode(String encoded_string, bool remove_linebreaks) {
     //
-    // decode(¡­) is templated so that it can be used with String = const std::string&
+    // decode(ï¿½ï¿½) is templated so that it can be used with String = const std::string&
     // or std::string_view (requires at least C++17)
     //
 

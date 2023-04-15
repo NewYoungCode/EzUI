@@ -16,7 +16,7 @@ namespace EzUI {
 			std::wstring fontF = GetFontFamily().utf16();
 			UI_Int fontSize = GetFontSize();
 			Color fontColor = GetForeColor();
-			if (!EllipsisText.empty()) { //Ë®Æ½ÎÄ±¾Òç³öµÄÏÔÊ¾·½°¸
+			if (!EllipsisText.empty()) { //æ°´å¹³æ–‡æœ¬æº¢å‡ºçš„æ˜¾ç¤ºæ–¹æ¡ˆ
 				Size ellipsisTextSize;
 				TextFormat textFormat(fontF, fontSize, TextAlign::TopLeft);
 				{
@@ -24,14 +24,14 @@ namespace EzUI {
 					ellipsisTextSize = textLayout.GetFontSize();
 				}
 				TextLayout textLayout(_wstr, { 16777216, Height() }, &textFormat);
-				if (textLayout.GetFontSize().Width > Width()) {//µ±ÎÄ×ÖÏÔÊ¾³¬³öµÄÊ±ºò ¿í¶È
+				if (textLayout.GetFontSize().Width > Width()) {//å½“æ–‡å­—æ˜¾ç¤ºè¶…å‡ºçš„æ—¶å€™ å®½åº¦
 					int pos = 0;
 					BOOL isTrailingHit;
-					textLayout.HitTestPoint({ Width(),0 }, pos, isTrailingHit);//¶ÔÎÄ×Ö½øĞĞÃüÖĞ²âÊÔ
+					textLayout.HitTestPoint({ Width(),0 }, pos, isTrailingHit);//å¯¹æ–‡å­—è¿›è¡Œå‘½ä¸­æµ‹è¯•
 					drawText.erase(pos);
 					while (drawText.size() > 0)
 					{
-						//´Ó×îºóÍùÇ°É¾³ıÎÄ×Ö Ö±µ½¿ÉÒÔÏÔÊ¾Õı³£ÎªÖ¹
+						//ä»æœ€åå¾€å‰åˆ é™¤æ–‡å­— ç›´åˆ°å¯ä»¥æ˜¾ç¤ºæ­£å¸¸ä¸ºæ­¢
 						drawText.erase(drawText.size() - 1, 1);
 						TextLayout textLayout(drawText, { 16777216, Height() }, &textFormat);
 						if (textLayout.GetFontSize().Width + ellipsisTextSize.Width < Width()) {
@@ -92,7 +92,7 @@ namespace EzUI {
 		_wstr = text.utf16();
 		//if (AutoWidth || AutoHeight) {
 		//	RectF box;
-		//	//¼ÆËã×ÖÌåµÄ³¤¶È
+		//	//è®¡ç®—å­—ä½“çš„é•¿åº¦
 		//	HDC dc = ::GetDC(NULL);
 		//	/*Gdiplus::Graphics gp(dc);
 		//	std::wstring nickname = _text.utf16();

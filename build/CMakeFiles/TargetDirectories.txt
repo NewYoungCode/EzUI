@@ -1,5 +1,0 @@
-E:/C++/EzUI/EzUI/build/CMakeFiles/EzUI.dir
-E:/C++/EzUI/EzUI/build/CMakeFiles/helloWorld.dir
-E:/C++/EzUI/EzUI/build/CMakeFiles/kugouDemo.dir
-E:/C++/EzUI/EzUI/build/CMakeFiles/ALL_BUILD.dir
-E:/C++/EzUI/EzUI/build/CMakeFiles/ZERO_CHECK.dir

@@ -21,7 +21,7 @@ HWND _workerw = nullptr;
 //		_workerw = FindWindowEx(0, tophandle, L"WorkerW", 0);
 //	}
 //	return true;
-//}//±éÀú¾ä±úµÄ»Øµ÷º¯Êý
+//}//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä»Øµï¿½ï¿½ï¿½ï¿½ï¿½
 //
 //HWND GetWorkerW() {
 //	int result;
@@ -30,7 +30,7 @@ HWND _workerw = nullptr;
 //	EnumWindows(EnumWindowsProc, (LPARAM)nullptr);
 //	    ShowWindow(_workerw,SW_HIDE);
 //	return windowHandle;
-//}//»ñÈ¡×ÀÃæ×îµ×²ãµÄ¾ä±ú
+//}//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×²ï¿½Ä¾ï¿½ï¿½
 //
 
 #include <shellscalingapi.h>
@@ -43,10 +43,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
 
 	Curl_Global_Init();
-	EzUI::Application app;//Ïà¶ÔÂ·¾¶×ÊÔ´
+	EzUI::Application app;//ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½Ô´
 	//SetProcessDPIAware();
 	//SetProcessDpiAwareness(PROCESS_DPI_AWARENESS::PROCESS_PER_MONITOR_DPI_AWARE);
-	//ui::Application app(IDR_FILE3,"File", "123456");//ÔØÈëvs×Ô¶¨Òå×ÊÔ´
+	//ui::Application app(IDR_FILE3,"File", "123456");//ï¿½ï¿½ï¿½ï¿½vsï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½Ô´
 
 	MainFrm frm;
 	frm.Show();

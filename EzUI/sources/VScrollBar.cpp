@@ -13,14 +13,14 @@ namespace EzUI {
 	void VScrollBar::SetMaxBottom(int maxBottom)
 	{
 		this->_maxBottom = maxBottom;
-		//¼ÆËã¹ö¶¯ÌõÏà¹Ø
+		//è®¡ç®—æ»šåŠ¨æ¡ç›¸å…³
 		auto& rect = GetRect();
 		if (rect.Height >= _maxBottom) {
 			_sliderHeight = rect.Height;
 		}
 		else {
 			if (_maxBottom != 0) {
-				//»¬¿é¸ß¶È
+				//æ»‘å—é«˜åº¦
 				_sliderHeight = (int)(rect.Height * 1.0 * rect.Height / _maxBottom);
 			}
 		}
@@ -62,17 +62,17 @@ namespace EzUI {
 
 	void VScrollBar::OnSize(const Size& size)
 	{
-		//´Ë´¦ĞèÒªÆÁ±Î
+		//æ­¤å¤„éœ€è¦å±è”½
 	}
 	const Rect& VScrollBar::GetRect()
 	{
-		//´Ë´¦ĞèÒªÆÁ±Î
+		//æ­¤å¤„éœ€è¦å±è”½
 		return _rect;
 	}
 
 	void VScrollBar::OnForePaint(PaintEventArgs& args)
 	{
-		//»¬¿érect
+		//æ»‘å—rect
 		Rect sliderRect(0, 0, Width(), Height());
 		sliderRect.Y = (INT)sliderY;
 		sliderRect.Height = _sliderHeight;
@@ -82,7 +82,7 @@ namespace EzUI {
 		if (sliderRect.Height <= 0) {
 			sliderRect.Height = 1;
 		}
-		//»æÖÆ»¬¿é
+		//ç»˜åˆ¶æ»‘å—
 		int radius = GetRadius();
 		if (radius > sliderRect.Height) {
 			radius = sliderRect.Height;
@@ -107,7 +107,7 @@ namespace EzUI {
 	void VScrollBar::OnMouseEnter(const Point& pt) {
 		__super::OnMouseEnter(pt);
 
-		//{//¹ö¶¯ÌõĞ§¹û
+		//{//æ»šåŠ¨æ¡æ•ˆæœ
 		//	SetWidth(8);
 		//	Style.Radius = 8;
 		//	OnLayout(Size(Parent->Width(), Parent->Height()), true);
@@ -126,7 +126,7 @@ namespace EzUI {
 		__super::OnMouseLeave();
 		mouseDown = false;
 
-		//{//¹ö¶¯ÌõĞ§¹û
+		//{//æ»šåŠ¨æ¡æ•ˆæœ
 		//	SetWidth(5);
 		//	Style.Radius = 5;
 		//	OnLayout(Size(Parent->Width(), Parent->Height()), true);
@@ -142,29 +142,29 @@ namespace EzUI {
 			sliderY += offsetY;
 			pointY = point.Y;
 			Move(sliderY);
-			//Invalidate();//ÓÃ»§ÍÏ¶¯Êó±êµÄÊ±ºò ĞèÒªÌá¸ßÏìÓ¦ËÙ¶È ÏÔµÃË¿»¬
+			//Invalidate();//ç”¨æˆ·æ‹–åŠ¨é¼ æ ‡çš„æ—¶å€™ éœ€è¦æé«˜å“åº”é€Ÿåº¦ æ˜¾å¾—ä¸æ»‘
 		}
 	}
 
 	void VScrollBar::Move(double posY) {
 		sliderY = posY;
-		if (sliderY <= 0) { //»¬¿éÔÚ¶¥²¿
+		if (sliderY <= 0) { //æ»‘å—åœ¨é¡¶éƒ¨
 			sliderY = 0;
 		}
-		if (sliderY + _sliderHeight >= GetRect().Height) { //»¬¿éÔÚ×îµ×²¿
+		if (sliderY + _sliderHeight >= GetRect().Height) { //æ»‘å—åœ¨æœ€åº•éƒ¨
 			sliderY = GetRect().Height - _sliderHeight;
 		}
-		int  distanceTotal = Height() - _sliderHeight;//µ±Ç°»¬¿é¿ÉÓÃ»¬µÀµÄ×Ü¾àÀë
-		double rate = distanceTotal * 1.0 / (_maxBottom - Parent->Height());//»¬¿é¿ÉÓÃ×Ü¸ß¶È / list item¸ß¶È×ÜºÍ * µ±Ç°»¬¿é×ø±êµÄ×ø±ê
+		int  distanceTotal = Height() - _sliderHeight;//å½“å‰æ»‘å—å¯ç”¨æ»‘é“çš„æ€»è·ç¦»
+		double rate = distanceTotal * 1.0 / (_maxBottom - Parent->Height());//æ»‘å—å¯ç”¨æ€»é«˜åº¦ / list itemé«˜åº¦æ€»å’Œ * å½“å‰æ»‘å—åæ ‡çš„åæ ‡
 		double offsetY = sliderY / rate;
 		if (Parent && distanceTotal > 0) {
-			for (auto& it : *_controlsLocationY) { //°¤¸öÒÆ¶¯×ø±ê
+			for (auto& it : *_controlsLocationY) { //æŒ¨ä¸ªç§»åŠ¨åæ ‡
 				it.first->SetRect({ it.first->X(), (int)(it.second - offsetY), it.first->Width(),it.first->Height() });
 			}
 			Parent->Invalidate();
 		}
-		else if (Parent) {//µ±¹ö¶¯Ìõ²»¿ÉÓÃµÄµÄÊ±ºò
-			for (auto& it : *_controlsLocationY) { //Ê¹ÓÃÔ­×ø±ê °¤¸öÒÆ¶¯×ø±ê
+		else if (Parent) {//å½“æ»šåŠ¨æ¡ä¸å¯ç”¨çš„çš„æ—¶å€™
+			for (auto& it : *_controlsLocationY) { //ä½¿ç”¨åŸåæ ‡ æŒ¨ä¸ªç§»åŠ¨åæ ‡
 				it.first->SetRect({ it.first->X(), (int)(it.second), it.first->Width(),it.first->Height() });
 			}
 			Parent->Invalidate();

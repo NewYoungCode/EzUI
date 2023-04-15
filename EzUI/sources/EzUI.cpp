@@ -28,7 +28,7 @@ namespace EzUI {
 				std::string* outData = new std::string;
 				outData->resize(z.unc_size);
 				zresult = UnzipItem(HZipResource, index, (void*)outData->c_str(), z.unc_size);
-				if (zresult != 0) {//½âÑ¹Ê§°Ü
+				if (zresult != 0) {//è§£å‹å¤±è´¥
 					delete outData;
 					return false;
 				}
@@ -51,7 +51,7 @@ namespace EzUI {
 
 	size_t __count_onsize = 0;
 
-	EBitmap::EBitmap(WORD width, WORD height, PixelFormat piexlFormat) {//Ä¬ÈÏ24Î»²»Í¸Ã÷Î»Í¼
+	EBitmap::EBitmap(WORD width, WORD height, PixelFormat piexlFormat) {//é»˜è®¤24ä½ä¸é€æ˜ä½å›¾
 		biteCount = (byte)piexlFormat;
 		this->Width = width;
 		this->Height = height;
@@ -69,23 +69,23 @@ namespace EzUI {
 	}
 
 	void EBitmap::SetPixel(int x, int y, const Color& color) {
-		DWORD* point = (DWORD*)this->point + (x + y * this->Width);//ÆğÊ¼µØÖ·+×ø±êÆ«ÒÆ	
+		DWORD* point = (DWORD*)this->point + (x + y * this->Width);//èµ·å§‹åœ°å€+åæ ‡åç§»	
 		if (biteCount == 32) { //argb
-			((BYTE*)point)[3] = color.GetA();//ĞŞ¸ÄAÍ¨µÀÊıÖµ
+			((BYTE*)point)[3] = color.GetA();//ä¿®æ”¹Aé€šé“æ•°å€¼
 		}
-		((BYTE*)point)[2] = color.GetR();//ĞŞ¸ÄRÍ¨µÀÊıÖµ
-		((BYTE*)point)[1] = color.GetG();//ĞŞ¸ÄGÍ¨µÀÊıÖµ
-		((BYTE*)point)[0] = color.GetB();//ĞŞ¸ÄBÍ¨µÀÊıÖµ
+		((BYTE*)point)[2] = color.GetR();//ä¿®æ”¹Ré€šé“æ•°å€¼
+		((BYTE*)point)[1] = color.GetG();//ä¿®æ”¹Gé€šé“æ•°å€¼
+		((BYTE*)point)[0] = color.GetB();//ä¿®æ”¹Bé€šé“æ•°å€¼
 	}
 	Color EBitmap::GetPixel(int x, int y) {
-		DWORD* point = (DWORD*)this->point + (x + y * this->Width);//ÆğÊ¼µØÖ·+×ø±êÆ«ÒÆ
+		DWORD* point = (DWORD*)this->point + (x + y * this->Width);//èµ·å§‹åœ°å€+åæ ‡åç§»
 		BYTE a = 255, r, g, b;
 		if (biteCount == 32) { //argb
 			a = ((BYTE*)point)[3];
 		}
-		r = ((BYTE*)point)[2];//ĞŞ¸ÄRÍ¨µÀÊıÖµ
-		g = ((BYTE*)point)[1];//ĞŞ¸ÄGÍ¨µÀÊıÖµ
-		b = ((BYTE*)point)[0];//ĞŞ¸ÄBÍ¨µÀÊıÖµ
+		r = ((BYTE*)point)[2];//ä¿®æ”¹Ré€šé“æ•°å€¼
+		g = ((BYTE*)point)[1];//ä¿®æ”¹Gé€šé“æ•°å€¼
+		b = ((BYTE*)point)[0];//ä¿®æ”¹Bé€šé“æ•°å€¼
 		return Color(a, r, g, b);
 	}
 
@@ -107,8 +107,8 @@ namespace EzUI {
 		}
 		for (int y = rect.Y; y < rect.GetBottom(); y++)
 		{
-			DWORD* point = (DWORD*)this->point + (rect.X + y * this->Width);//ÆğÊ¼µØÖ·+×ø±êÆ«ÒÆ
-			::memset(point, 0, rect.Width * 4);//Ä¨³ı
+			DWORD* point = (DWORD*)this->point + (rect.X + y * this->Width);//èµ·å§‹åœ°å€+åæ ‡åç§»
+			::memset(point, 0, rect.Width * 4);//æŠ¹é™¤
 		}
 	}
 	void EBitmap::FillRect(const Rect& _rect, const Color& color) {
@@ -141,8 +141,8 @@ namespace EzUI {
 
 		for (int y = rect.Y; y < rect.GetBottom(); y++)
 		{
-			DWORD* point = (DWORD*)this->point + (rect.X + y * this->Width);//ÆğÊ¼µØÖ·+×ø±êÆ«ÒÆ
-			::memset(point, 255, rect.Width * 4);//Ä¨³ı
+			DWORD* point = (DWORD*)this->point + (rect.X + y * this->Width);//èµ·å§‹åœ°å€+åæ ‡åç§»
+			::memset(point, 255, rect.Width * 4);//æŠ¹é™¤
 		}
 	}
 
@@ -164,7 +164,7 @@ namespace EzUI {
 		auto rectStr = str.Split(",");
 		if (str.empty()) {
 			X = Y = Width = Height = 0;
-			return;//Èç¹ûÃ»Ğ´¾ØĞÎÇøÓò
+			return;//å¦‚æœæ²¡å†™çŸ©å½¢åŒºåŸŸ
 		}
 		X = std::stoi(rectStr.at(0));
 		Y = std::stoi(rectStr.at(1));
@@ -236,7 +236,7 @@ namespace EzUI {
 			EString rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
 			auto rgbList = rgbStr.Split(",");
 			unsigned char r, g, b;
-			float a = rgbList.size() == 3 ? 1 : std::stof(rgbList.at(3));//Í¸Ã÷°Ù·Ö±È 0~1
+			float a = rgbList.size() == 3 ? 1 : std::stof(rgbList.at(3));//é€æ˜ç™¾åˆ†æ¯” 0~1
 			r = std::stoi(rgbList.at(0));
 			g = std::stoi(rgbList.at(1));
 			b = std::stoi(rgbList.at(2));
@@ -251,12 +251,12 @@ namespace EzUI {
 		return RGB(r, g, b);
 	}
 
-	void ControlStyle::SetBorder(const Color& color, int width) { //¶ÔËùÓĞborderÓĞĞ§
+	void ControlStyle::SetBorder(const Color& color, int width) { //å¯¹æ‰€æœ‰borderæœ‰æ•ˆ
 		BorderColor = color;
-		BorderLeft = width;//×ó±ß±ß¿ò
-		BorderTop = width;//¶¥²¿±ß¿ò
-		BorderRight = width;//ÓÒ±ß±ß¿ò
-		BorderBottom = width;//µ×²¿±ß¿ò
+		BorderLeft = width;//å·¦è¾¹è¾¹æ¡†
+		BorderTop = width;//é¡¶éƒ¨è¾¹æ¡†
+		BorderRight = width;//å³è¾¹è¾¹æ¡†
+		BorderBottom = width;//åº•éƒ¨è¾¹æ¡†
 	}
 	bool ControlStyle::IsValid() {
 		return  Radius.valid ||
@@ -286,12 +286,12 @@ namespace EzUI {
 				break;
 			}
 			if (key == "background-image") {
-				value = value.Erase('"');//É¾³ıË«ÒıºÅ;
+				value = value.Erase('"');//åˆ é™¤åŒå¼•å·;
 				style->BackgroundImage = new Image(value);
 				break;
 			}
 			if (key == "fore-image") {
-				value = value.Erase('"');//É¾³ıË«ÒıºÅ;
+				value = value.Erase('"');//åˆ é™¤åŒå¼•å·;
 				style->ForeImage = new Image(value);
 				break;
 			}
@@ -312,7 +312,7 @@ namespace EzUI {
 				break;
 			}
 			if (key == "font-family") {
-				value = value.Erase('"');//É¾³ıË«ÒıºÅ;
+				value = value.Erase('"');//åˆ é™¤åŒå¼•å·;
 				style->FontFamily = value;
 				break;
 			}

@@ -30,8 +30,8 @@ namespace EzUI {
 			EString styleStr;
 		};
 	private:
-		std::list<UIManager::Selector> Selectors;//ÑùÊ½¼¯ºÏ
-		std::list<Control*> controls;//¼ÓÔØµÄ¿Ø¼ş¼¯ºÏ
+		std::list<UIManager::Selector> Selectors;//æ ·å¼é›†åˆ
+		std::list<Control*> controls;//åŠ è½½çš„æ§ä»¶é›†åˆ
 		void LoadControl(void* node, Control* control);
 		Control* BuildControl(void* node);
 		void LoadStyle(Control* ctl, const EString& selectorName);
@@ -42,14 +42,14 @@ namespace EzUI {
 		virtual void OnBuildControl(const EString& nodeName, Control** outCtl);
 		virtual void OnSetAttribute(Control* ctl, const EString& attrName, const EString& attrValue);
 	public:
-		UIFunc<void(const EString& nodeName, Control** outCtl)> EventBuilControl;//ÓÃÓÚ×Ô¶¨Òå¿Ø¼ş
-		UIFunc<void(Control* ctl, const EString& attrName, const EString& attrValue)> EventSetAttribute;//ÓÃÓÚ×Ô¶¨Òå¿Ø¼ş
+		UIFunc<void(const EString& nodeName, Control** outCtl)> EventBuilControl;//ç”¨äºè‡ªå®šä¹‰æ§ä»¶
+		UIFunc<void(Control* ctl, const EString& attrName, const EString& attrValue)> EventSetAttribute;//ç”¨äºè‡ªå®šä¹‰æ§ä»¶
 		UIManager(const EString& fileOrRes);
 		Controls& GetControls();
 		Control* GetRoot();
 	};
 
-	//Ñ¡ÔñÆ÷
+	//é€‰æ‹©å™¨
 	class UI_EXPORT _Selector
 	{
 	private:

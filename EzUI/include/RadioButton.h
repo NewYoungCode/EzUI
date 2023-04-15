@@ -9,7 +9,7 @@ namespace EzUI {
 	protected:
 		bool _checked = false;
 	public:
-		int Indent = 2;//Ëõ½ø
+		int Indent = 2;//ç¼©è¿›
 		RadioButton();
 		virtual	~RadioButton();
 		void SetCheck(bool checked = true);

@@ -15,8 +15,8 @@ namespace EzUI {
 		void setA(const int& x,const int& y,const BYTE& A);
 		bool SetShadow(int m_Width, int m_Height, size_t iSize);
 	public:
-		ShadowWindow(int cx, int cy, HWND OwnerWnd);//¹¹Ôìº¯Êı
+		ShadowWindow(int cx, int cy, HWND OwnerWnd);//æ„é€ å‡½æ•°
 		virtual ~ShadowWindow();
-		virtual void Update(int _marginWidth);//ÔÚ¸¸´°¿Ú·¢Éú¸Ä±äµÄÊ±ºò¸üĞÂÒõÓ°ÇøÓò
+		virtual void Update(int _marginWidth);//åœ¨çˆ¶çª—å£å‘ç”Ÿæ”¹å˜çš„æ—¶å€™æ›´æ–°é˜´å½±åŒºåŸŸ
 	};
 };

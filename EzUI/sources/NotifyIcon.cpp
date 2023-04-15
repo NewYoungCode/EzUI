@@ -50,9 +50,9 @@ namespace EzUI {
 		_hwnd = ::CreateWindow(GetThisClassName().c_str(), TEXT("EzUI_NotifyIcon"), WS_OVERLAPPEDWINDOW,
 			0, 0, 10, 10, NULL, NULL, _hInstance, NULL);
 		::SetWindowLongPtr(_hwnd, GWLP_USERDATA, (LONG_PTR)this);
-		_nid.cbSize = sizeof(NOTIFYICONDATA);//½á¹¹Ìå³¤¶È
-		_nid.hWnd = _hwnd;//´°¿Ú¾ä±ú
-		_nid.uCallbackMessage = UI_NOTIFYICON;//ÏûÏ¢´¦Àí£¬ÕâÀïºÜÖØÒª£¬´¦ÀíÊó±êµã»÷
+		_nid.cbSize = sizeof(NOTIFYICONDATA);//ç»“æ„ä½“é•¿åº¦
+		_nid.hWnd = _hwnd;//çª—å£å¥æŸ„
+		_nid.uCallbackMessage = UI_NOTIFYICON;//æ¶ˆæ¯å¤„ç†ï¼Œè¿™é‡Œå¾ˆé‡è¦ï¼Œå¤„ç†é¼ æ ‡ç‚¹å‡»
 		_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 		Shell_NotifyIconW(NIM_ADD, &_nid);
 
@@ -60,7 +60,7 @@ namespace EzUI {
 
 	void NotifyIcon::SetIcon(short id)
 	{
-		SetIcon(::LoadIcon(_hInstance, MAKEINTRESOURCE(id)));//¼ÓÔØÍ¼±ê
+		SetIcon(::LoadIcon(_hInstance, MAKEINTRESOURCE(id)));//åŠ è½½å›¾æ ‡
 	}
 
 	void NotifyIcon::SetIcon(HICON icon)

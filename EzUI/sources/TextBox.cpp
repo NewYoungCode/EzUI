@@ -24,59 +24,59 @@ namespace EzUI {
 	}
 	void TextBox::OnChar(WPARAM wParam, LPARAM lParam)
 	{
-		//Debug::Log(utf8("°´ÏÂÁË%d"), wParam);
+		//Debug::Log(utf8("æŒ‰ä¸‹äº†%d"), wParam);
 		do
 		{
-			if (wParam == VK_BACK) { //ÍË¸ñ¼ü
-				OnBackspace();//ÍË¸ñ¼üµÄ²Ù×÷ÔÚÀïÃæ
-				Analysis();//ÖØĞÂ·ÖÎö
-				Invalidate();//Ë¢ĞÂ
+			if (wParam == VK_BACK) { //é€€æ ¼é”®
+				OnBackspace();//é€€æ ¼é”®çš„æ“ä½œåœ¨é‡Œé¢
+				Analysis();//é‡æ–°åˆ†æ
+				Invalidate();//åˆ·æ–°
 				break;
 			}
 			if (wParam == 1) {
-				SelectedAll();//È«Ñ¡
-				Invalidate();//Ë¢ĞÂ
+				SelectedAll();//å…¨é€‰
+				Invalidate();//åˆ·æ–°
 				break;
 			}
-			if (wParam == 3) {//¸´ÖÆ
+			if (wParam == 3) {//å¤åˆ¶
 				Copy();
 				break;
 			}
-			if (wParam == 24) {//ctrl+x²Ã¼ô
+			if (wParam == 24) {//ctrl+xè£å‰ª
 				if (Copy()) {
-					DeleteRange();//ÒòÎªÊÇ¼ôÇĞ ËùÒÔÒªÉ¾³ıÑ¡ÖĞµÄÕâ¶Î
+					DeleteRange();//å› ä¸ºæ˜¯å‰ªåˆ‡ æ‰€ä»¥è¦åˆ é™¤é€‰ä¸­çš„è¿™æ®µ
 					Analysis();
-					Invalidate();//Ë¢ĞÂ
+					Invalidate();//åˆ·æ–°
 				}
 				break;
 			}
-			if (wParam == 26) {//ctrl+z³·Ïú
+			if (wParam == 26) {//ctrl+zæ’¤é”€
 				break;
 			}
 			if (wParam == 22) {
-				Paste();//Õ³Ìù
-				Analysis();//·ÖÎö×Ö·û´®
-				Invalidate();//Ë¢ĞÂ
+				Paste();//ç²˜è´´
+				Analysis();//åˆ†æå­—ç¬¦ä¸²
+				Invalidate();//åˆ·æ–°
 				break;
 			}
 
 
 		} while (false);
 
-		if (wParam < 32)return;//¿ØÖÆ×Ö·û
+		if (wParam < 32)return;//æ§åˆ¶å­—ç¬¦
 
-		DeleteRange();//ÏÈÉ¾³ıÊÇ·ñÓĞÑ¡ÖĞµÄÇøÓò
+		DeleteRange();//å…ˆåˆ é™¤æ˜¯å¦æœ‰é€‰ä¸­çš„åŒºåŸŸ
 		TCHAR buf[2]{ (TCHAR)wParam ,0 };
 #ifdef UNICODE
-		Insert(buf);//²åÈëĞÂµÄ×Ö·û
+		Insert(buf);//æ’å…¥æ–°çš„å­—ç¬¦
 #else
 		byte _ch = (byte)wParam;
 		if (_ch > 127) {
 			ansiBuf += _ch;
-			if (ansiBuf.size() > 1) {//ÅĞ¶ÏÊÇ·ñÖĞÎÄ
+			if (ansiBuf.size() > 1) {//åˆ¤æ–­æ˜¯å¦ä¸­æ–‡
 				std::wstring wBuf;
 				EString::ANSIToUniCode(ansiBuf, &wBuf);
-				Insert(wBuf);//²åÈëĞÂµÄ×Ö·û
+				Insert(wBuf);//æ’å…¥æ–°çš„å­—ç¬¦
 				ansiBuf = "";
 			}
 			else {
@@ -85,12 +85,12 @@ namespace EzUI {
 		}
 		else {
 			WCHAR buf[2]{ (WCHAR)wParam ,0 };
-			Insert(buf);//²åÈëĞÂµÄ×Ö·û
+			Insert(buf);//æ’å…¥æ–°çš„å­—ç¬¦
 		}
 
 #endif // !UINCODE
-		Analysis();//·ÖÎö×Ö·û´®
-		Invalidate();//Ë¢ĞÂ
+		Analysis();//åˆ†æå­—ç¬¦ä¸²
+		Invalidate();//åˆ·æ–°
 	}
 
 	bool TextBox::SelectedAll() {
@@ -160,7 +160,7 @@ namespace EzUI {
 	}
 	bool TextBox::DeleteRange() {
 		int pos, count;
-		if (GetSelectedRange(&pos, &count)) {//É¾³ıÑ¡ÖĞµÄ
+		if (GetSelectedRange(&pos, &count)) {//åˆ é™¤é€‰ä¸­çš„
 			//isTrailingHit = FALSE;
 			TextPos = pos;
 			text.erase(pos, count);
@@ -181,14 +181,14 @@ namespace EzUI {
 			std::string str;
 			EString::UnicodeToANSI(wBuf, &str);
 
-			//´ò¿ª¼ôÌù°å
+			//æ‰“å¼€å‰ªè´´æ¿
 			if (!OpenClipboard(PublicData->HANDLE))break;
-			//Çå¿Õ¼ôÌù°å
+			//æ¸…ç©ºå‰ªè´´æ¿
 			EmptyClipboard();
-			//Îª¼ôÇĞ°åÉêÇëÄÚ´æ
+			//ä¸ºå‰ªåˆ‡æ¿ç”³è¯·å†…å­˜
 			HGLOBAL clip = GlobalAlloc(GMEM_DDESHARE, (str.size() + 1));
 			memcpy((void*)clip, str.c_str(), (str.size() + 1));
-			//½âËø
+			//è§£é”
 			GlobalUnlock(clip);
 			SetClipboardData(CF_TEXT, clip);
 			CloseClipboard();
@@ -201,24 +201,24 @@ namespace EzUI {
 
 		do
 		{
-			//Ö»½ÓÊÕÎÄ±¾
+			//åªæ¥æ”¶æ–‡æœ¬
 			if (!IsClipboardFormatAvailable(CF_TEXT))break;
-			//´ò¿ª¼ôÌù°æ
+			//æ‰“å¼€å‰ªè´´ç‰ˆ
 			if (!OpenClipboard(PublicData->HANDLE))break;
-			//»ñÈ¡¼ôÌù°åÊı¾İ
+			//è·å–å‰ªè´´æ¿æ•°æ®
 			HANDLE hClipboard = GetClipboardData(CF_TEXT);
 			EString buf((CHAR*)GlobalLock(hClipboard));
-			EString::Replace(&buf, "\r", "");//ĞĞ±à¼­¿ò²»ÔÊĞíÓĞ»»ĞĞ·û
-			EString::Replace(&buf, "\n", "");//ĞĞ±à¼­¿ò²»ÔÊĞíÓĞ»»ĞĞ·û
+			EString::Replace(&buf, "\r", "");//è¡Œç¼–è¾‘æ¡†ä¸å…è®¸æœ‰æ¢è¡Œç¬¦
+			EString::Replace(&buf, "\n", "");//è¡Œç¼–è¾‘æ¡†ä¸å…è®¸æœ‰æ¢è¡Œç¬¦
 			std::wstring wBuf;
 
 			EString::ANSIToUniCode(buf, &wBuf);
-			//½âËø
+			//è§£é”
 			GlobalUnlock(hClipboard);
 			CloseClipboard();
 
-			DeleteRange();//ÏÈÉ¾³ıÊÇ·ñÓĞÑ¡ÖĞµÄÇøÓò
-			Insert(wBuf);//²åÈëĞÂµÄ×Ö·û
+			DeleteRange();//å…ˆåˆ é™¤æ˜¯å¦æœ‰é€‰ä¸­çš„åŒºåŸŸ
+			Insert(wBuf);//æ’å…¥æ–°çš„å­—ç¬¦
 			return true;
 
 		} while (false);
@@ -227,8 +227,8 @@ namespace EzUI {
 	void TextBox::OnBackspace() {
 		if (text.size() <= 0)return;
 
-		if (!DeleteRange()) {//ÏÈ¿´¿´ÓĞÃ»ÓĞÓĞÑ¡ÖĞµÄĞèÒªÉ¾³ı
-			//·ñÔòÉ¾³ıµ¥¸ö×Ö·û
+		if (!DeleteRange()) {//å…ˆçœ‹çœ‹æœ‰æ²¡æœ‰æœ‰é€‰ä¸­çš„éœ€è¦åˆ é™¤
+			//å¦åˆ™åˆ é™¤å•ä¸ªå­—ç¬¦
 			TextPos--;
 			if (TextPos > -1) {
 				text.erase(TextPos, 1);
@@ -261,7 +261,7 @@ namespace EzUI {
 			Invalidate();
 			return;
 		}
-		//Debug::Log(utf8("°´ÏÂÁË%d"), wParam);
+		//Debug::Log(utf8("æŒ‰ä¸‹äº†%d"), wParam);
 	}
 
 	void TextBox::OnKeyUp(WPARAM wParam, LPARAM lParam) {
@@ -310,12 +310,12 @@ namespace EzUI {
 		careRect.Height = FontHeight;
 		careRect.Width = 1;
 
-		//Ê¹¹â±êÒ»Ö±ÔÚÊäÈë¿òÄÚ
+		//ä½¿å…‰æ ‡ä¸€ç›´åœ¨è¾“å…¥æ¡†å†…
 		int drawX = careRect.X + x;
-		if (drawX < 0) {//¹â±êÔÚ×î×ó²à
+		if (drawX < 0) {//å…‰æ ‡åœ¨æœ€å·¦ä¾§
 			x -= drawX;
 		}
-		if (drawX > Width()) {//¹â±êÔÚ×îÓÒ²à
+		if (drawX > Width()) {//å…‰æ ‡åœ¨æœ€å³ä¾§
 			int ofssetX = (Width() - drawX);
 			x += ofssetX;
 		}
@@ -380,7 +380,7 @@ namespace EzUI {
 					rect.Width = -rect.Width;
 				}
 
-				//µ±Êó±êÍù×ó²àÒÆ¶¯
+				//å½“é¼ æ ‡å¾€å·¦ä¾§ç§»åŠ¨
 				int textWidth = textLayout->GetFontSize().Width;
 				if (lastX > point.X) {
 					lastX = point.X;
@@ -390,7 +390,7 @@ namespace EzUI {
 						return;
 					}
 				}
-				//µ±Êó±êÍùÓÒ²àÒÆ¶¯
+				//å½“é¼ æ ‡å¾€å³ä¾§ç§»åŠ¨
 				if (lastX < point.X) {
 					lastX = point.X;
 					if (textWidth > Width() && point.X > Width()) {
@@ -464,14 +464,14 @@ namespace EzUI {
 		}
 		if (!selectRect.IsEmptyArea()) {
 			Rect rect(selectRect);
-			rect.X += x;//Æ«ÒÆ
+			rect.X += x;//åç§»
 		 EzUI::FillRectangle(e.Painter,rect, SelectColor);
 		}
 		if (!careRect.IsEmptyArea() && _focus) {
 			if (_careShow) {
 				Rect rect(careRect);
-				rect.X += x;//Æ«ÒÆ
-				if (rect.X == this->Width()) {//Èç¹û¸ÕºÃ´¦ÓÚ±ß½ç
+				rect.X += x;//åç§»
+				if (rect.X == this->Width()) {//å¦‚æœåˆšå¥½å¤„äºè¾¹ç•Œ
 					rect.X = this->Width() - 1;
 				}
 				EzUI::FillRectangle(e.Painter,rect, fontColor);

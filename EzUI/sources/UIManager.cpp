@@ -4,7 +4,7 @@
 #include "tinyxml/tinystr.h"
 
 namespace EzUI {
-	//È¥³ı¿Õ¸ñ»òÕßÆäËû·ûºÅ Ë«ÒıºÅÄÚµÄ¿Õ¸ñ²»»áÈ¥³ı
+	//å»é™¤ç©ºæ ¼æˆ–è€…å…¶ä»–ç¬¦å· åŒå¼•å·å†…çš„ç©ºæ ¼ä¸ä¼šå»é™¤
 	void TrimStyle(EString& str, CHAR _char = ' ') {
 		CHAR* bufStr = new CHAR[str.size() + 1]{ 0 };
 		size_t pos = 0;
@@ -118,7 +118,7 @@ namespace EzUI {
 			}
 		} while (false);
 
-		//ÄÚÁªÑùÊ½
+		//å†…è”æ ·å¼
 		EString inlineStyle;
 		EString inlineStyle_active;
 		EString inlineStyle_hover;
@@ -149,14 +149,14 @@ namespace EzUI {
 			this->OnSetAttribute(ctl, attrName, attrValue);
 		} while ((attr = attr->Next()));
 
-		((bool)(ctl->IsXmlControl)) = true;//±ê¼ÇÎªxml¼ÓÔØ½øÀ´µÄ¿Ø¼ş
+		((bool)(ctl->IsXmlControl)) = true;//æ ‡è®°ä¸ºxmlåŠ è½½è¿›æ¥çš„æ§ä»¶
 
-		{//¼ÓÔØÑùÊ½ Ê¹ÓÃ±êÇ©Ñ¡ÔñÆ÷
+		{//åŠ è½½æ ·å¼ ä½¿ç”¨æ ‡ç­¾é€‰æ‹©å™¨
 			LoadStyle(ctl, tagStr);
 			LoadStyle(ctl, tagStr + ":active");
 			LoadStyle(ctl, tagStr + ":hover");
 		}
-		{//¼ÓÔØÑùÊ½ Ê¹ÓÃÀàÑ¡ÔñÆ÷  
+		{//åŠ è½½æ ·å¼ ä½¿ç”¨ç±»é€‰æ‹©å™¨  
 			EString _class = ctl->GetAttribute("class");
 			EString::Replace(&_class, "  ", " ");
 			auto classs = _class.Split(" ");
@@ -166,16 +166,16 @@ namespace EzUI {
 				LoadStyle(ctl, "." + className + ":hover");
 			}
 		}
-		if (!(ctl->Name.empty())) {//¼ÓÔØÑùÊ½ Ê¹ÓÃIDÑ¡ÔñÆ÷ 
+		if (!(ctl->Name.empty())) {//åŠ è½½æ ·å¼ ä½¿ç”¨IDé€‰æ‹©å™¨ 
 			LoadStyle(ctl, "#" + ctl->Name);
 			LoadStyle(ctl, "#" + ctl->Name + ":active");
 			LoadStyle(ctl, "#" + ctl->Name + ":hover");
 		}
 
-		{//ÄÚÁªÑùÊ½
-			EString sytle_static = ctl->GetAttribute("style");//ÄÚÁªÑùÊ½Óï·¨
-			EString style_hover = ctl->GetAttribute("style:hover");//ÄÚÁªÑùÊ½Óï·¨
-			EString style_active = ctl->GetAttribute("style:active");//ÄÚÁªÑùÊ½Óï·¨
+		{//å†…è”æ ·å¼
+			EString sytle_static = ctl->GetAttribute("style");//å†…è”æ ·å¼è¯­æ³•
+			EString style_hover = ctl->GetAttribute("style:hover");//å†…è”æ ·å¼è¯­æ³•
+			EString style_active = ctl->GetAttribute("style:active");//å†…è”æ ·å¼è¯­æ³•
 			if (!sytle_static.empty()) {
 				ctl->Style.SetStyleSheet(sytle_static);
 			}
@@ -192,14 +192,14 @@ namespace EzUI {
 		TiXmlElement* node = (TiXmlElement*)_node;
 
 		TiXmlElement* fristChild = NULL;
-		if ((fristChild = node->FirstChildElement()))//ÏÈÑ°ÕÒ×Ó¿Ø¼ş
+		if ((fristChild = node->FirstChildElement()))//å…ˆå¯»æ‰¾å­æ§ä»¶
 		{
 			//Debug::Log("node %s", fristChild->Value());
 			Control* ctl = BuildControl(fristChild);
 			LoadControl(fristChild, ctl);
 			control->AddControl(ctl);
 			TiXmlElement* nextChild = fristChild->NextSiblingElement();
-			while (nextChild)//È»ºóÑ°ÕÒĞÖµÜ
+			while (nextChild)//ç„¶åå¯»æ‰¾å…„å¼Ÿ
 			{
 				//Debug::Log("node %s", nextChild->Value());
 				Control* ctl2 = BuildControl(nextChild);
@@ -231,7 +231,7 @@ namespace EzUI {
 		TiXmlElement* element = doc.FirstChildElement();//read frist element
 
 		std::list<TiXmlElement*> controlNodes;
-		//ÏÈ´¦ÀíÑùÊ½
+		//å…ˆå¤„ç†æ ·å¼
 		do
 		{
 			if (element == NULL) break;
@@ -242,21 +242,21 @@ namespace EzUI {
 				controlNodes.push_back(element);
 			}
 		} while ((element = element->NextSiblingElement()));
-		//È»ºó´¦Àí¿Ø¼ş
+		//ç„¶åå¤„ç†æ§ä»¶
 		for (auto& element : controlNodes) {
-			Control* control = BuildControl(element);//ÏÈ¼ÓÔØ¸ù½Úµã
-			LoadControl(element, control);//¼ÓÔØ×Ó½Úµã
+			Control* control = BuildControl(element);//å…ˆåŠ è½½æ ¹èŠ‚ç‚¹
+			LoadControl(element, control);//åŠ è½½å­èŠ‚ç‚¹
 			if (control) controls.push_back(control);
 		}
 	}
 
 	void UIManager::AnalysisStyle(const EString& styleStr) {
 		EString style = styleStr;
-		//´¦Àí¿Õ¸ñ Ë«ÒıºÅÄÚµÄ¿Õ¸ñ²»´¦Àí
+		//å¤„ç†ç©ºæ ¼ åŒå¼•å·å†…çš„ç©ºæ ¼ä¸å¤„ç†
 		TrimStyle(style);
 		while (true)
 		{
-			//´¦ÀícssµÄ×¢ÊÍ
+			//å¤„ç†cssçš„æ³¨é‡Š
 			auto pos1 = style.find("/*");
 			auto pos2 = style.find("*/", pos1 + 2);
 			if (pos1 != size_t(-1) && pos1 != size_t(-1)) {
@@ -266,7 +266,7 @@ namespace EzUI {
 				break;
 			}
 		}
-		//·ÖÀëÃ¿¸öÑùÊ½
+		//åˆ†ç¦»æ¯ä¸ªæ ·å¼
 		std::list<EString> strs;
 		while (true)
 		{
@@ -279,7 +279,7 @@ namespace EzUI {
 				break;
 			}
 		}
-		//½âÎöÑùÊ½ÀàĞÍ
+		//è§£ææ ·å¼ç±»å‹
 		for (auto& style : strs) {
 			size_t pos2 = style.find("}");
 			if (pos2 == -1)break;
@@ -291,10 +291,10 @@ namespace EzUI {
 			if (pos4 != size_t(-1)) {
 				style_type = name.substr(pos4 + 1);
 			}
-			//¿¼ÂÇµ½¶à¸öÑ¡ÔñÆ÷
+			//è€ƒè™‘åˆ°å¤šä¸ªé€‰æ‹©å™¨
 			auto names = name.Split(",");
 			for (auto& name : names) {
-				//Ìí¼ÓÖÁ¼¯ºÏ
+				//æ·»åŠ è‡³é›†åˆ
 				UIManager::Selector selector;
 				selector.selectorName = name;
 				selector.styleStr = str;

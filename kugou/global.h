@@ -239,7 +239,7 @@ namespace global {
 		JObject json(resp);
 
 		if (json["status"].asInt() != 200) {
-			return utf8("[00:00.00]�Ṷ����");
+			return EString(L"[00:00.00]无歌词");
 		}
 
 		EString id = (*json["candidates"].begin())["id"].asString();

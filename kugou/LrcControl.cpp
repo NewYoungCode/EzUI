@@ -54,7 +54,7 @@ void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
 		Rect drawRec(GetRect());
 		//arg.Painter.DrawRectangle(Color::Gray, drawRec);
 		if (GetRect().Contains(rectangle))
-		{ //°üº¬ÔÚ´ËÇøÓòÄÚµÄ¸è´Ê²Å¿ÉÒÔ»æÖÆ
+		{ //ï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÚµÄ¸ï¿½Ê²Å¿ï¿½ï¿½Ô»ï¿½ï¿½ï¿½
 			if (LrcNow == &lrc)
 			{
 				//arg.Painter.DrawRectangle(Color::Red, rectangle);
@@ -115,14 +115,14 @@ void LrcControl::LoadLrc(const EString& lrcData)
 		auto gbk2 = Text::UTF8ToANSI(it);
 		int fen = std::atoi(it.substr(1, 2).c_str());
 		float miao = std::atof(it.substr(4, 5).c_str());
-		int postion = (fen * 60 * 1000 + miao * 1000);//×ª»»³ÉºÁÃë
+		int postion = (fen * 60 * 1000 + miao * 1000);//×ªï¿½ï¿½ï¿½Éºï¿½ï¿½ï¿½
 		LrcList.push_back(new Lrc(postion, text, Point(0, VerticalCenter)));
-		VerticalCenter += (FontHeight + marginVertical);//´¹Ö±×ø±êµİÔö
+		VerticalCenter += (FontHeight + marginVertical);//ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	}
 
 	if (LrcList.size() > 0)
 	{
-		LrcNow = LrcList[0];//Èç¹ûÓĞÒ»¾ä¸è´ÊÄ¬ÈÏÊÇµÚÒ»¾ä¸è´Ê±äÉ«
+		LrcNow = LrcList[0];//ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½ï¿½Çµï¿½Ò»ï¿½ï¿½ï¿½Ê±ï¿½É«
 		timer->Start();
 	}
 }

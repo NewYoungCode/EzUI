@@ -12,7 +12,7 @@ namespace EzUI {
 		this->AddControl(&edit);
 		this->AddControl(&label);
 
-		label.SetText(L"¡Å");
+		label.SetText(L"âˆ¨");
 		label.MouseClick = [&](Control* sender, const MouseButton, const Point&)->void {
 
 			Rect _rect = GetClientRect();
@@ -25,7 +25,7 @@ namespace EzUI {
 			ClientToScreen(Owner, &clientPos);
 			int height = OwnerRect.bottom - OwnerRect.top;
 			//::MoveWindow(poupWnd->Hwnd(), clientPos.x, clientPos.y, rect.Width, rect.Height, FALSE);
-			//¸ù¾İÄÚÈİ×Ô¶¯¸ß¶È
+			//æ ¹æ®å†…å®¹è‡ªåŠ¨é«˜åº¦
 			::MoveWindow(poupWnd->Hwnd(), clientPos.x, clientPos.y, rect.Width, vlist._maxBottom, FALSE);
 			poupWnd->Show(SW_SHOW);
 		};
@@ -39,7 +39,7 @@ namespace EzUI {
 	}
 	void ComBox::OnLoad() {
 		if (poupWnd == NULL) {
-			//Ä¬ÈÏ200¸ß¶È
+			//é»˜è®¤200é«˜åº¦
 			poupWnd = new PoupWindow(Width(), 200, PublicData->HANDLE);
 			poupWnd->SetLayout(&vlist);
 		}

@@ -129,11 +129,11 @@ namespace EzUI {
 				);
 			}
 			int posX = (int)(hitTestMetrics.left + 0.5);
-			if (isTrailingHit) {//ÅĞ¶ÏÇ°²à»¹ÊÇÎ²²à
+			if (isTrailingHit) {//åˆ¤æ–­å‰ä¾§è¿˜æ˜¯å°¾ä¾§
 				posX += (int)(hitTestMetrics.width + 0.5);
 			}
 			textPos = hitTestMetrics.textPosition;
-			return __Point{ posX,(int)(hitTestMetrics.top + 0.5) };//·µ»Ø¹â±êËùÔÚµÄÎ»ÖÃ
+			return __Point{ posX,(int)(hitTestMetrics.top + 0.5) };//è¿”å›å…‰æ ‡æ‰€åœ¨çš„ä½ç½®
 		}
 		__Point HitTestTextPosition(int textPos, BOOL isTrailingHit) {
 			DWRITE_HIT_TEST_METRICS hitTestMetrics;
@@ -209,11 +209,11 @@ namespace EzUI {
 			out.rgn = outPathGeometry;
 			geometrySink->Release();
 		}
-		//Á½¿éÇøÓòÈ¡×î´ó±ß½ç
+		//ä¸¤å—åŒºåŸŸå–æœ€å¤§è¾¹ç•Œ
 		static void Union(Geometry& out, const Geometry& a, const Geometry& b) {
 			Combine(out, a, b, D2D1_COMBINE_MODE::D2D1_COMBINE_MODE_UNION);
 		}
-		//Á½¿éÇøÓòÓĞ½»¼¯µÄ²¿·Ö
+		//ä¸¤å—åŒºåŸŸæœ‰äº¤é›†çš„éƒ¨åˆ†
 		static void Intersect(Geometry& out, const Geometry& a, const Geometry& b) {
 			Combine(out, a, b, D2D1_COMBINE_MODE::D2D1_COMBINE_MODE_INTERSECT);
 		}
@@ -230,8 +230,8 @@ namespace EzUI {
 	protected:
 		IWICBitmapDecoder* bitmapdecoder = NULL;
 		IWICBitmapFrameDecode* pframe = NULL;
-		IWICFormatConverter* fmtcovter = NULL;//´ÓÎÄ¼ş¼ÓÔØ
-		IWICBitmap* bitMap = NULL;//´ÓHBITMAPÖĞ¼ÓÔØ
+		IWICFormatConverter* fmtcovter = NULL;//ä»æ–‡ä»¶åŠ è½½
+		IWICBitmap* bitMap = NULL;//ä»HBITMAPä¸­åŠ è½½
 		UINT Width = 0;
 		UINT Height = 0;
 	public:
@@ -255,20 +255,20 @@ namespace EzUI {
 };
 
 namespace EzUI {
-	UI_EXPORT void RenderInitialize();//È«¾Ö³õÊ¼»¯direct2d
-	UI_EXPORT void RenderUnInitialize();//ÊÍ·Ådirect2d
+	UI_EXPORT void RenderInitialize();//å…¨å±€åˆå§‹åŒ–direct2d
+	UI_EXPORT void RenderUnInitialize();//é‡Šæ”¾direct2d
 	UI_EXPORT ID2D1DCRenderTarget* CreateRender(HDC _dc, int Width, int Height);
 	UI_EXPORT void ReleaseRender(ID2D1DCRenderTarget* d2dRender);
 	UI_EXPORT void FillRectangle(ID2D1RenderTarget* d2dRender, const __Rect& _rect, const __Color& color, int _radius = 0);
 	UI_EXPORT void DrawRectangle(ID2D1RenderTarget* d2dRender, const  __Rect& _rect, const  __Color& color, int width = 1, int _radius = 0);
 	UI_EXPORT void SetTransform(ID2D1RenderTarget* d2dRender, int xOffset, int yOffset);
 	UI_EXPORT void DrawLine(ID2D1RenderTarget* d2dRender, const __Color& color, const __Point& _A, const __Point& _B, int width);
-	//Õı¹æ¾ØĞÎËÙ¶È¿ì!!! ²»Ö§³ÖÒìĞÎ¿¹¾â³İ²Ã¼ô
+	//æ­£è§„çŸ©å½¢é€Ÿåº¦å¿«!!! ä¸æ”¯æŒå¼‚å½¢æŠ—é”¯é½¿è£å‰ª
 	UI_EXPORT void PushAxisAlignedClip(ID2D1RenderTarget* d2dRender, const __Rect& rectBounds);
 	UI_EXPORT void PopAxisAlignedClip(ID2D1RenderTarget* d2dRender);
-	//layer¾ŞtmµÄºÄĞÔÄÜ!!! µ«ÊÇ¿ÉÒÔÒìĞÎ¿¹¾â³İ²Ã¼ô
+	//layerå·¨tmçš„è€—æ€§èƒ½!!! ä½†æ˜¯å¯ä»¥å¼‚å½¢æŠ—é”¯é½¿è£å‰ª
 	UI_EXPORT void PushLayer(ID2D1RenderTarget* d2dRender, const Geometry& dxGeometry);
-	UI_EXPORT void PopLayer(ID2D1RenderTarget* d2dRender);//µ¯³ö×îºóÒ»¸ö²Ã¼ô
+	UI_EXPORT void PopLayer(ID2D1RenderTarget* d2dRender);//å¼¹å‡ºæœ€åä¸€ä¸ªè£å‰ª
 	UI_EXPORT void DrawImage(ID2D1RenderTarget* d2dRender, IImage* _image, const __Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Margin& margin = 0);
 	UI_EXPORT void DrawTextLayout(ID2D1RenderTarget* d2dRender, const __Point& startLacation, IDWriteTextLayout* textLayout, const __Color& color);
 	UI_EXPORT void DrawString(ID2D1RenderTarget* d2dRender, const std::wstring& text, const std::wstring& fontFamily, int fontSize, const  __Color& color, const  __Rect& _rect, EzUI::TextAlign textAlign, bool underLine = false);

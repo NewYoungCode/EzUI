@@ -51,7 +51,7 @@ namespace EzUI {
 		_MaxBottom = 0;
 
 		const int& maxWith = this->Width();
-		int maxHeight = 0;//Ã¿ĞĞ×î¸ßµÄÄÇ¸ö
+		int maxHeight = 0;//æ¯è¡Œæœ€é«˜çš„é‚£ä¸ª
 		int x = 0;
 		int y = 0;
 		for (auto& _it : GetControls()) {
@@ -60,26 +60,26 @@ namespace EzUI {
 			int _x = it.Margin.Left + it.Width();
 
 			if (x + _x > maxWith) {
-				//»»ĞĞ
+				//æ¢è¡Œ
 				x = 0;
 				y += maxHeight;
 				maxHeight = 0;
 			}
 
-			x += it.Margin.Left;//×ó±ß¾à
-			int& refX = (int&)it.X();//ÒıÓÃx
-			int& refY = (int&)it.Y();//ÒıÓÃy
-			refX = x;//ÉèÖÃX×ø±ê
-			refY = y + it.Margin.Top;//ÉèÖÃY×ø±ê+ÉÏ±ß¾à
+			x += it.Margin.Left;//å·¦è¾¹è·
+			int& refX = (int&)it.X();//å¼•ç”¨x
+			int& refY = (int&)it.Y();//å¼•ç”¨y
+			refX = x;//è®¾ç½®Xåæ ‡
+			refY = y + it.Margin.Top;//è®¾ç½®Yåæ ‡+ä¸Šè¾¹è·
 
 			LocationY.insert(std::pair<Control*, int>(&it, refY));
 
-			int itemSpace = it.Height() + it.Margin.GetVSpace();//µ±Ç°¿Ø¼ş´¹Ö±Õ¼ÓÃµÄ¿Õ¼ä
+			int itemSpace = it.Height() + it.Margin.GetVSpace();//å½“å‰æ§ä»¶å‚ç›´å ç”¨çš„ç©ºé—´
 			if (maxHeight < itemSpace) {
 				maxHeight = itemSpace;
 			}
 
-			x += it.Margin.Right + it.Width();//ÓÒ±ß¾à
+			x += it.Margin.Right + it.Width();//å³è¾¹è·
 
 			_MaxBottom = y + maxHeight;
 		}

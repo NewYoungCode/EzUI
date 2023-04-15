@@ -1,4 +1,4 @@
-﻿#include "LayeredWindow.h"
+#include "LayeredWindow.h"
 
 namespace EzUI {
 

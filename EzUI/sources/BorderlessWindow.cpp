@@ -1,4 +1,4 @@
-﻿#include "BorderlessWindow.h"
+#include "BorderlessWindow.h"
 namespace EzUI {
 	BorderlessWindow::BorderlessWindow(int width, int height, HWND owner) : Window(width, height, owner, WS_POPUP | WS_MINIMIZEBOX, NULL)
 	{

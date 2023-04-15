@@ -11,29 +11,29 @@ namespace EzUI {
 	}
 
 	void Application::Init() {
-		//È·±£¼ÓÔØ¹«¹²¿Ø¼ş DLL £¨Comctl32.dll£©£¬²¢´Ó DLL ×¢²áÌØ¶¨µÄ¹«¹²¿Ø¼şÀà
+		//ç¡®ä¿åŠ è½½å…¬å…±æ§ä»¶ DLL ï¼ˆComctl32.dllï¼‰ï¼Œå¹¶ä» DLL æ³¨å†Œç‰¹å®šçš„å…¬å…±æ§ä»¶ç±»
 		INITCOMMONCONTROLSEX iccex;
 		iccex.dwSize = sizeof(INITCOMMONCONTROLSEX);
 		iccex.dwICC = ICC_WIN95_CLASSES;
 		::InitCommonControlsEx(&iccex);
 
-		//Éè¼Æ´°¿Ú
+		//è®¾è®¡çª—å£
 		StdString className = GetThisClassName();
 		::HINSTANCE hInstance = GetModuleHandle(NULL);
 		::WNDCLASS     wc{ 0 };
-		wc.lpfnWndProc = EzUI_WndProc;//´°¿Ú¹ı³Ì
+		wc.lpfnWndProc = EzUI_WndProc;//çª—å£è¿‡ç¨‹
 		wc.hInstance = hInstance;//
-		wc.hCursor = LoadCursor(NULL, IDC_ARROW);//¹â±ê
-		wc.lpszClassName = className.c_str();//ÀàÃû
+		wc.hCursor = LoadCursor(NULL, IDC_ARROW);//å…‰æ ‡
+		wc.lpszClassName = className.c_str();//ç±»å
 
-		if (!RegisterClass(&wc)) //×¢²á´°¿Ú
+		if (!RegisterClass(&wc)) //æ³¨å†Œçª—å£
 		{
 			::MessageBox(NULL, TEXT("This program requires Windows NT !"),
 				wc.lpszClassName, MB_ICONERROR);
 			return;
 		}
 		::SetCurrentDirectoryW(Application::StartPath().c_str());
-		::CoInitialize(NULL);//³õÊ¼»¯com
+		::CoInitialize(NULL);//åˆå§‹åŒ–com
 		RenderInitialize();
 	}
 	Application::Application(int resID, const EString& custResType, const EString& password) {
@@ -49,7 +49,7 @@ namespace EzUI {
 		HVSResource = LoadResource(hInst, hRsrc);
 		HZipResource = OpenZip((void*)HVSResource, len, password.empty() ? NULL : password.c_str());
 	}
-	//Ê¹ÓÃ±¾µØÎÄ¼şÃû³Æ¼ÓÔØ×ÊÔ´°ü
+	//ä½¿ç”¨æœ¬åœ°æ–‡ä»¶åç§°åŠ è½½èµ„æºåŒ…
 	Application::Application(const EString& fileName, const EString& password) {
 		Init();
 		HZipResource = OpenZip(fileName.utf16().c_str(), password.empty() ? NULL : password.c_str());

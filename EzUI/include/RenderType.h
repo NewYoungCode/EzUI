@@ -63,7 +63,7 @@ namespace EzUI {
 				return (Width == 0.0f && Height == 0.0f);
 			}
 
-		
+
 		};
 
 		class Size
@@ -121,7 +121,7 @@ namespace EzUI {
 				return (Width == 0 && Height == 0);
 			}
 
-		
+
 		};
 
 		class PointF
@@ -171,7 +171,7 @@ namespace EzUI {
 				return (X == point.X) && (Y == point.Y);
 			}
 
-		
+
 		};
 
 		class Point
@@ -410,7 +410,7 @@ namespace EzUI {
 				Y += dy;
 			}
 
-	
+
 		};
 		class Rect
 		{
@@ -620,7 +620,7 @@ namespace EzUI {
 				Y += dy;
 			}
 
-	
+
 		};
 		class Color
 		{
@@ -898,7 +898,7 @@ namespace EzUI {
 					((ARGB)(a) << AlphaShift));
 			}
 
-	
+
 		};
 	};
 
@@ -915,11 +915,11 @@ namespace EzUI {
 			Left = Top = Right = Bottom = distanceAll;
 			return *this;
 		}
-		//»ñÈ¡´¹Ö±ËùÕ¼¿Õ¼ä
+		//è·å–å‚ç›´æ‰€å ç©ºé—´
 		size_t GetVSpace() {
 			return Top + Bottom;
 		}
-		//»ñÈ¡Ë®Æ½ËùÕ¼¿Õ¼ä
+		//è·å–æ°´å¹³æ‰€å ç©ºé—´
 		size_t GetHSpace() {
 			return Left + Right;
 		}
@@ -927,17 +927,17 @@ namespace EzUI {
 
 	enum class ImageSizeMode {
 		//
-		// ÕªÒª:
-		//     Owner¿Ø¼ş ÖĞµÄÍ¼Ïñ±»À­Éì»òÊÕËõ£¬ÒÔÊÊºÏ Owner¿Ø¼ş
-		//     µÄ´óĞ¡¡£
+		// æ‘˜è¦:
+		//     Owneræ§ä»¶ ä¸­çš„å›¾åƒè¢«æ‹‰ä¼¸æˆ–æ”¶ç¼©ï¼Œä»¥é€‚åˆ Owneræ§ä»¶
+		//     çš„å¤§å°ã€‚
 		StretchImage = 1,
-		// ÕªÒª:
-		//     Èç¹û Owner¿Ø¼ş ±ÈÍ¼Ïñ´ó£¬ÔòÍ¼Ïñ½«¾ÓÖĞÏÔÊ¾¡£Èç¹ûÍ¼Ïñ±È Owner¿Ø¼ş
-		//     ´ó£¬ÔòÍ¼Æ¬½«¾ÓÓÚ Owner¿Ø¼ş ÖĞĞÄ£¬¶øÍâ±ßÔµ½«±»¼ô²Ãµô¡£
+		// æ‘˜è¦:
+		//     å¦‚æœ Owneræ§ä»¶ æ¯”å›¾åƒå¤§ï¼Œåˆ™å›¾åƒå°†å±…ä¸­æ˜¾ç¤ºã€‚å¦‚æœå›¾åƒæ¯” Owneræ§ä»¶
+		//     å¤§ï¼Œåˆ™å›¾ç‰‡å°†å±…äº Owneræ§ä»¶ ä¸­å¿ƒï¼Œè€Œå¤–è¾¹ç¼˜å°†è¢«å‰ªè£æ‰ã€‚
 		CenterImage = 3,
 		//
-		// ÕªÒª:
-		//     Í¼Ïñ´óĞ¡°´ÆäÔ­ÓĞµÄ´óĞ¡±ÈÀı±»Ôö¼Ó»ò¼õĞ¡¡£
+		// æ‘˜è¦:
+		//     å›¾åƒå¤§å°æŒ‰å…¶åŸæœ‰çš„å¤§å°æ¯”ä¾‹è¢«å¢åŠ æˆ–å‡å°ã€‚
 		Zoom = 4
 	};
 
@@ -966,66 +966,66 @@ namespace EzUI {
 		Center = Align_Center
 	};
 	enum  class TextAlign :int {
-		// ÕªÒª: 
-		   //     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏ¶¥²¿¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏ×ó±ß¶ÔÆë¡£
+		// æ‘˜è¦: 
+		   //     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šé¡¶éƒ¨å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå·¦è¾¹å¯¹é½ã€‚
 		TopLeft = Align_Top | Align_Left,
 		//
-		// ÕªÒª: 
-		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏ¶¥²¿¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏ¾ÓÖĞ¶ÔÆë¡£
+		// æ‘˜è¦: 
+		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šé¡¶éƒ¨å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå±…ä¸­å¯¹é½ã€‚
 		TopCenter = Align_Top | Align_Center,
 		//
-		// ÕªÒª: 
-		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏ¶¥²¿¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏÓÒ±ß¶ÔÆë¡£
+		// æ‘˜è¦: 
+		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šé¡¶éƒ¨å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå³è¾¹å¯¹é½ã€‚
 		TopRight = Align_Top | Align_Right,
 		//
-		// ÕªÒª: 
-		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏÖĞ¼ä¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏ×ó±ß¶ÔÆë¡£
+		// æ‘˜è¦: 
+		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šä¸­é—´å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå·¦è¾¹å¯¹é½ã€‚
 		MiddleLeft = Align_Mid | Align_Left,
 		//
-		// ÕªÒª: 
-		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏÖĞ¼ä¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏ¾ÓÖĞ¶ÔÆë¡£
+		// æ‘˜è¦: 
+		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šä¸­é—´å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå±…ä¸­å¯¹é½ã€‚
 		MiddleCenter = Align_Mid | Align_Center,
 		//
-		// ÕªÒª: 
-		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏÖĞ¼ä¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏÓÒ±ß¶ÔÆë¡£
+		// æ‘˜è¦: 
+		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šä¸­é—´å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå³è¾¹å¯¹é½ã€‚
 		MiddleRight = Align_Mid | Align_Right,
 		//
-		// ÕªÒª: 
-		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏµ×±ß¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏ×ó±ß¶ÔÆë¡£
+		// æ‘˜è¦: 
+		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šåº•è¾¹å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå·¦è¾¹å¯¹é½ã€‚
 		BottomLeft = Align_Bottom | Align_Left,
 		//
-		// ÕªÒª: 
-		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏµ×±ß¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏ¾ÓÖĞ¶ÔÆë¡£
+		// æ‘˜è¦: 
+		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šåº•è¾¹å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå±…ä¸­å¯¹é½ã€‚
 		BottomCenter = Align_Bottom | Align_Center,
 		//
-		// ÕªÒª: 
-		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏµ×±ß¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏÓÒ±ß¶ÔÆë¡£
+		// æ‘˜è¦: 
+		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šåº•è¾¹å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå³è¾¹å¯¹é½ã€‚
 		BottomRight = Align_Bottom | Align_Right
 	};
 
 	enum class FontStyle :int {
 		NORMAL = 0
 		/*DWRITE_FONT_STYLE_NORMAL
-		×ÖÌåÑùÊ½ £ºÕı³£¡£
+		å­—ä½“æ ·å¼ ï¼šæ­£å¸¸ã€‚
 		DWRITE_FONT_STYLE_OBLIQUE
-		×ÖÌåÑùÊ½ £ºÇãĞ±¡£
+		å­—ä½“æ ·å¼ ï¼šå€¾æ–œã€‚
 		DWRITE_FONT_STYLE_ITALIC
-		×ÖÌåÑùÊ½ £ºĞ±Ìå¡£*/
+		å­—ä½“æ ·å¼ ï¼šæ–œä½“ã€‚*/
 	};
 
 	class  IImage {
 	protected:
-		size_t _frameCount = 0;//×ÜÖ¡Êı
-		size_t _framePos = 0;//µ±Ç°Ö¡ÂÊË÷Òı
+		size_t _frameCount = 0;//æ€»å¸§æ•°
+		size_t _framePos = 0;//å½“å‰å¸§ç‡ç´¢å¼•
 	public:
-		EzUI::Padding Padding;// ¿Ø¼şÓëÍ¼Æ¬µÄ¾àÀë ¸ÃÊıÖµÔ½´ó Í¼Æ¬½«Ô½Ğ¡ ²Î¿¼webÇ°¶Ë
-		ImageSizeMode SizeMode = ImageSizeMode::Zoom;// Í¼ÏñÏÔÊ¾Ä£Ê½
+		EzUI::Padding Padding;// æ§ä»¶ä¸å›¾ç‰‡çš„è·ç¦» è¯¥æ•°å€¼è¶Šå¤§ å›¾ç‰‡å°†è¶Šå° å‚è€ƒwebå‰ç«¯
+		ImageSizeMode SizeMode = ImageSizeMode::Zoom;// å›¾åƒæ˜¾ç¤ºæ¨¡å¼
 	public:
 		virtual ~IImage() {}
 		size_t FrameCount() {
 			return _frameCount;
 		}
-		//Ìø×ªµ½ÏÂÒ»Ö¡ ²¢ÇÒ»ñÈ¡ÏÂÒ»Ö¡µÄÑÓ³Ù
+		//è·³è½¬åˆ°ä¸‹ä¸€å¸§ å¹¶ä¸”è·å–ä¸‹ä¸€å¸§çš„å»¶è¿Ÿ
 		virtual size_t NextFrame() {
 			if (_framePos >= _frameCount) {
 				_framePos = 0;
@@ -1041,11 +1041,11 @@ namespace EzUI {
 			return rect;
 		}
 
-		//¿Í»§¶ËÊı¾İ
+		//å®¢æˆ·ç«¯æ•°æ®
 		float clientWidth = (float)rect.Width;
 		float clientHeight = (float)rect.Height;
 		float clientRate = clientWidth / clientHeight;
-		//Í¼Æ¬Êı¾İ
+		//å›¾ç‰‡æ•°æ®
 		float imgWidth = (float)imgSize.Width;
 		float imgHeight = (float)imgSize.Height;
 		float imgRate = imgWidth / imgHeight;
@@ -1066,18 +1066,18 @@ namespace EzUI {
 		}
 		if (imageSizeMode == ImageSizeMode::CenterImage) {
 			if (clientRate < imgRate) {
-				//1000 670 ¿Í»§¶Ë
-				//1000 300 Í¼Æ¬
-				//2233 670     Ëõ·ÅºóµÄÍ¼Æ¬´óĞ¡ 
-				float zoomWidth = clientHeight / imgHeight * imgWidth + 0.5f;//Í¼Æ¬Ó¦¸ÃÕâÃ´¿í²Å¶Ô
+				//1000 670 å®¢æˆ·ç«¯
+				//1000 300 å›¾ç‰‡
+				//2233 670     ç¼©æ”¾åçš„å›¾ç‰‡å¤§å° 
+				float zoomWidth = clientHeight / imgHeight * imgWidth + 0.5f;//å›¾ç‰‡åº”è¯¥è¿™ä¹ˆå®½æ‰å¯¹
 				float x = (zoomWidth - clientWidth) / 2 + 0.5f;
 				return RenderType::Rect{ (INT)(rect.X - x),rect.Y,(INT)zoomWidth,(INT)clientHeight };
 			}
 			else {
-				//1000 600 ¿Í»§¶Ë
-				//400  600 Í¼Æ¬
-				//1000 1500     Ëõ·ÅºóµÄÍ¼Æ¬´óĞ¡ 
-				float zoomHeight = clientWidth / imgWidth * imgHeight + 0.5f;//Í¼Æ¬Ó¦¸ÃÕâÃ´¸ß²Å¶Ô
+				//1000 600 å®¢æˆ·ç«¯
+				//400  600 å›¾ç‰‡
+				//1000 1500     ç¼©æ”¾åçš„å›¾ç‰‡å¤§å° 
+				float zoomHeight = clientWidth / imgWidth * imgHeight + 0.5f;//å›¾ç‰‡åº”è¯¥è¿™ä¹ˆé«˜æ‰å¯¹
 				float y = (zoomHeight - clientHeight) / 2 + 0.5f;
 				return RenderType::Rect{ rect.X, (INT)(rect.Y - y)  , (INT)clientWidth, (INT)zoomHeight };
 			}

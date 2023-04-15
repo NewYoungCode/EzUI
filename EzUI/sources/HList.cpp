@@ -5,7 +5,7 @@ namespace EzUI {
 	{
 		this->ScrollBar = hScrollBar = new HScrollBar;
 		if (hScrollBar) {
-			hScrollBar->SetWidth(Width());//¹ö¶¯Ìõ¿í¶È
+			hScrollBar->SetWidth(Width());//æ»šåŠ¨æ¡å®½åº¦
 			hScrollBar->Parent = this;
 			hScrollBar->_controlsLocationX = &LocationX;
 		}
@@ -21,7 +21,7 @@ namespace EzUI {
 		_maxRight = 0;
 		for (auto& it : GetControls()) {
 			if (it->Visible == false) continue;
-			//´¦Àíy×ø±êºÍmargin
+			//å¤„ç†yåæ ‡å’Œmargin
 			{
 				int height = it->GetFixedHeight();
 				if (height == 0) {
@@ -53,19 +53,19 @@ namespace EzUI {
 	}
 	ControlIterator HList::RemoveControl(Control* ctl)
 	{
-		size_t before = GetControls().size();//¼ÇÂ¼Ò»¿ªÊ¼µÄ¿Ø¼şÊıÁ¿
-		ControlIterator nextIt = __super::RemoveControl(ctl);//É¾³ı¿Ø¼ş
-		if (GetControls().size() < before) {//Èç¹û¿Ø¼şÊıÁ¿±È¿ªÊ¼ÉÙ Ôò É¾³ı³É¹¦
-			int outWidth = ( ctl->Width() +ctl->Margin.GetHSpace());//É¾³ı¿Ø¼şÁô³öÀ´µÄ¿Õ°×ÇøÓò¿í¶È
-			_maxRight -= outWidth;//¼õÈ¥¿Õ°×ÇøÓò¿í¶È
-			LocationX.erase(ctl);//½«¼ÇÂ¼X×ø±êµÄmapÒ²ÒªÉ¾³ı¿Ø¼ş
-			for (auto i = nextIt; i != GetControls().end(); i++)//´ÓÉ¾³ıµÄÏÂÒ»¸ö¿Ø¼ş¿ªÊ¼ÍùÇ°ÒÆ¶¯X×ø±ê
+		size_t before = GetControls().size();//è®°å½•ä¸€å¼€å§‹çš„æ§ä»¶æ•°é‡
+		ControlIterator nextIt = __super::RemoveControl(ctl);//åˆ é™¤æ§ä»¶
+		if (GetControls().size() < before) {//å¦‚æœæ§ä»¶æ•°é‡æ¯”å¼€å§‹å°‘ åˆ™ åˆ é™¤æˆåŠŸ
+			int outWidth = ( ctl->Width() +ctl->Margin.GetHSpace());//åˆ é™¤æ§ä»¶ç•™å‡ºæ¥çš„ç©ºç™½åŒºåŸŸå®½åº¦
+			_maxRight -= outWidth;//å‡å»ç©ºç™½åŒºåŸŸå®½åº¦
+			LocationX.erase(ctl);//å°†è®°å½•Xåæ ‡çš„mapä¹Ÿè¦åˆ é™¤æ§ä»¶
+			for (auto i = nextIt; i != GetControls().end(); i++)//ä»åˆ é™¤çš„ä¸‹ä¸€ä¸ªæ§ä»¶å¼€å§‹å¾€å‰ç§»åŠ¨Xåæ ‡
 			{
 				Control* it = *i;
-				it->SetRect(Rect(it->X() - outWidth, it->Y(), it->Width(), it->Height()));//×ÔÉíÒÆ¶¯
-				LocationX[it] -= outWidth;//¼ÇÂ¼µÄÔ­Ê¼×ø±êÒÆ¶¯
+				it->SetRect(Rect(it->X() - outWidth, it->Y(), it->Width(), it->Height()));//è‡ªèº«ç§»åŠ¨
+				LocationX[it] -= outWidth;//è®°å½•çš„åŸå§‹åæ ‡ç§»åŠ¨
 			}
-			RefreshScroll(_maxRight);//Í¨Öª¹ö¶¯ÌõÈİÆ÷×î´ó±ß½çÖµÒÑ¾­¸Ä±ä
+			RefreshScroll(_maxRight);//é€šçŸ¥æ»šåŠ¨æ¡å®¹å™¨æœ€å¤§è¾¹ç•Œå€¼å·²ç»æ”¹å˜
 		}
 		return nextIt;
 	}
@@ -97,7 +97,7 @@ namespace EzUI {
 	void HList::ChildPainting(Controls& controls, PaintEventArgs& args) {
 		VisibleControls.clear();
 		auto rect = Rect(0, 0,Width(), Height());
-		//»æÖÆ×Ó¿Ø¼ş
+		//ç»˜åˆ¶å­æ§ä»¶
 		for (auto i = controls.begin(); i != controls.end(); i++)
 		{
 			auto& it = **i;
@@ -105,10 +105,10 @@ namespace EzUI {
 				VisibleControls.push_back(*i);
 				it.Rending(args);
 			}
-			if (it.Y() >= Height()) { //×İÏòÁĞ±í¿Ø¼ş³¬³öÔò²»ÔÙ»æÖÆºóÃæµÄ¿Ø¼ş ÓÅ»¯
+			if (it.Y() >= Height()) { //çºµå‘åˆ—è¡¨æ§ä»¶è¶…å‡ºåˆ™ä¸å†ç»˜åˆ¶åé¢çš„æ§ä»¶ ä¼˜åŒ–
 				break;
 			}
 		}
-		//×Ó¿Ø¼ş»æÖÆÍê±Ï
+		//å­æ§ä»¶ç»˜åˆ¶å®Œæ¯•
 	}
 };

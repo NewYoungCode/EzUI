@@ -41,7 +41,7 @@ namespace EzUI {
 		EString::UnicodeToUTF8(wstr,this);
 	}
 	
-	//³£ÓÃº¯Êı
+	//å¸¸ç”¨å‡½æ•°
 	EString EString::Erase(const char& _char)const {
 		EString newStr(*this);
 		EString::Erase(&newStr, _char);
@@ -81,7 +81,7 @@ namespace EzUI {
 		return str;
 	}
 
-	//ÒÔÏÂÊÇ¾²Ì¬º¯Êı
+	//ä»¥ä¸‹æ˜¯é™æ€å‡½æ•°
 	void EString::ANSIToUniCode(const std::string& str, std::wstring* outStr)
 	{
 		std::wstring& wstrCmd = *outStr;

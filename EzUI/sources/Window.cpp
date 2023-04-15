@@ -1,4 +1,4 @@
-﻿#include "Window.h"
+#include "Window.h"
 #include "TabLayout.h"
 
 namespace EzUI {

@@ -15,13 +15,13 @@ namespace EzUI {
 	{
 
 		this->_maxRight = maxRight;
-		//¼ÆËã¹ö¶¯ÌõÏà¹Ø
+		//è®¡ç®—æ»šåŠ¨æ¡ç›¸å…³
 		auto& rect = GetRect();
 		if (rect.Width >= _maxRight) {
 			_sliderWidth = rect.Width;
 		}
 		else {
-			//»¬¿é¸ß¶È
+			//æ»‘å—é«˜åº¦
 			_sliderWidth =(int)(rect.Width * 1.0 * rect.Width / _maxRight);
 		}
 		Move(sliderX);
@@ -59,16 +59,16 @@ namespace EzUI {
 
 	void HScrollBar::OnSize(const Size& size)
 	{
-		//´Ë´¦ĞèÒªÆÁ±Î
+		//æ­¤å¤„éœ€è¦å±è”½
 	}
 	const Rect& HScrollBar::GetRect()
 	{
-		//´Ë´¦ĞèÒªÆÁ±Î
+		//æ­¤å¤„éœ€è¦å±è”½
 		return _rect;
 	}
 	void HScrollBar::OnForePaint(PaintEventArgs& args)
 	{
-		//»¬¿érect
+		//æ»‘å—rect
 		Rect sliderRect(0, 0,Width(), Height());
 		sliderRect.X = (INT)sliderX;
 		sliderRect.Width = _sliderWidth;
@@ -78,7 +78,7 @@ namespace EzUI {
 		if (sliderRect.Width <= 0) {
 			sliderRect.Width = 1;
 		}
-		//»æÖÆ»¬¿é
+		//ç»˜åˆ¶æ»‘å—
 		int radius = GetRadius();
 		if (radius > sliderRect.Width) {
 			radius = sliderRect.Width;
@@ -115,30 +115,30 @@ namespace EzUI {
 			sliderX += offsetX;
 			pointX = point.X;
 			Move(sliderX);
-			//Invalidate();//ÓÃ»§ÍÏ¶¯Êó±êµÄÊ±ºò ĞèÒªÌá¸ßÏìÓ¦ËÙ¶È ÏÔµÃË¿»¬
+			//Invalidate();//ç”¨æˆ·æ‹–åŠ¨é¼ æ ‡çš„æ—¶å€™ éœ€è¦æé«˜å“åº”é€Ÿåº¦ æ˜¾å¾—ä¸æ»‘
 		}
 	}
 
 	void HScrollBar::Move(double posY) {
 		sliderX = posY;
 
-		if (sliderX <= 0) { //»¬¿éÔÚ¶¥²¿
+		if (sliderX <= 0) { //æ»‘å—åœ¨é¡¶éƒ¨
 			sliderX = 0;
 		}
-		if (sliderX + _sliderWidth >= GetRect().Width) { //»¬¿éÔÚ×îµ×²¿
+		if (sliderX + _sliderWidth >= GetRect().Width) { //æ»‘å—åœ¨æœ€åº•éƒ¨
 			sliderX = GetRect().Width - _sliderWidth;
 		}
-		int  distanceTotal = Width() - _sliderWidth;//µ±Ç°»¬¿é¿ÉÓÃ»¬µÀµÄ×Ü¾àÀë
-		double rate = distanceTotal * 1.0 / (_maxRight - Parent->Width());//»¬¿é¿ÉÓÃ×Ü¸ß¶È / list item¸ß¶È×ÜºÍ * µ±Ç°»¬¿é×ø±êµÄ×ø±ê
+		int  distanceTotal = Width() - _sliderWidth;//å½“å‰æ»‘å—å¯ç”¨æ»‘é“çš„æ€»è·ç¦»
+		double rate = distanceTotal * 1.0 / (_maxRight - Parent->Width());//æ»‘å—å¯ç”¨æ€»é«˜åº¦ / list itemé«˜åº¦æ€»å’Œ * å½“å‰æ»‘å—åæ ‡çš„åæ ‡
 		double offsetX = sliderX / rate;
 		if (Parent && distanceTotal > 0) {
-			for (auto& it : *_controlsLocationX) { //°¤¸öÒÆ¶¯×ø±ê
+			for (auto& it : *_controlsLocationX) { //æŒ¨ä¸ªç§»åŠ¨åæ ‡
 				it.first->SetRect({ (int)(it.second - offsetX), it.first->Y(), it.first->Width(),it.first->Height() });
 			}
 			Parent->Invalidate();
 		}
-		else if (Parent) {//µ±¹ö¶¯Ìõ²»¿ÉÓÃµÄµÄÊ±ºò
-			for (auto& it : *_controlsLocationX) { //Ê¹ÓÃÔ­×ø±ê
+		else if (Parent) {//å½“æ»šåŠ¨æ¡ä¸å¯ç”¨çš„çš„æ—¶å€™
+			for (auto& it : *_controlsLocationX) { //ä½¿ç”¨åŸåæ ‡
 				it.first->SetRect({ (int)(it.second), it.first->Y(), it.first->Width(),it.first->Height() });
 			}
 			Parent->Invalidate();

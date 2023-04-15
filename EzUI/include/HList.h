@@ -9,7 +9,7 @@ namespace EzUI {
 		HScrollBar* hScrollBar = NULL;
 	public:
 		int _maxRight = 0;
-		bool AutoWidth = false;//是否根据内容自动宽度
+		bool AutoWidth = false;//鏄惁鏍规嵁鍐呭鑷姩瀹藉害
 	public:
 		HList();
 		virtual ~HList();

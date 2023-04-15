@@ -4,21 +4,21 @@ namespace EzUI {
 	class UI_EXPORT Control :public IControl
 	{
 	private:
-		//ControlStyle _nowStyle;//ÁÙÊ±×é³ÉµÄÑùÊ½
-		bool _stateRepaint = false;//×´Ì¬·¢Éú¸Ä±äµÄÊ±ºò»æÖÆ
-		bool _mouseIn = false;//Êó±êÊÇ·ñÔÚ¿Ø¼şÄÚ
-		bool _load = false;//ÊÇ·ñload
-		Controls _controls;//×Ó¿Ø¼ş
-		Controls _spacer;//´æ´¢¿Ø¼şÏÂ²¼¾ÖµÄµÄµ¯»É¼¯ºÏ
-		//²¼¾Ö×´Ì¬AddControlØ¼RemoveControlØ¼OnSizeÊ±ºò´Ë±êÖ¾Îª¹ÒÆğ µ÷ÓÃResumeLayout±êÖ¾Îª²¼¾ÖÖĞ µ±µ÷ÓÃOnLayout()Ö®ºó´Ë±êÖ¾ÎªNone
+		//ControlStyle _nowStyle;//ä¸´æ—¶ç»„æˆçš„æ ·å¼
+		bool _stateRepaint = false;//çŠ¶æ€å‘ç”Ÿæ”¹å˜çš„æ—¶å€™ç»˜åˆ¶
+		bool _mouseIn = false;//é¼ æ ‡æ˜¯å¦åœ¨æ§ä»¶å†…
+		bool _load = false;//æ˜¯å¦load
+		Controls _controls;//å­æ§ä»¶
+		Controls _spacer;//å­˜å‚¨æ§ä»¶ä¸‹å¸ƒå±€çš„çš„å¼¹ç°§é›†åˆ
+		//å¸ƒå±€çŠ¶æ€AddControlä¸¶RemoveControlä¸¶OnSizeæ—¶å€™æ­¤æ ‡å¿—ä¸ºæŒ‚èµ· è°ƒç”¨ResumeLayoutæ ‡å¿—ä¸ºå¸ƒå±€ä¸­ å½“è°ƒç”¨OnLayout()ä¹‹åæ­¤æ ‡å¿—ä¸ºNone
 		EzUI::LayoutState _layoutState = EzUI::LayoutState::None;
-		std::wstring _tipsText;//Êó±êĞü¸¡µÄÌáÊ¾ÎÄ×Ö
-		HCURSOR _hCursor = NULL;//Êó±êÑùÊ½
-		Point _lastLocation;//ÉÏÒ»´Î´óĞ¡
-		Size _lastSize;//ÉÏÒ»´Î´óĞ¡
+		std::wstring _tipsText;//é¼ æ ‡æ‚¬æµ®çš„æç¤ºæ–‡å­—
+		HCURSOR _hCursor = NULL;//é¼ æ ‡æ ·å¼
+		Point _lastLocation;//ä¸Šä¸€æ¬¡å¤§å°
+		Size _lastSize;//ä¸Šä¸€æ¬¡å¤§å°
 		Rect _lastRect;
-		Rect _lastDrawRect;//×îºóÒ»´ÎÏÔÊ¾µÄÎ»ÖÃ
-		int _eventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnChar | Event::OnKeyDown | Event::OnKeyUp;//Ä¬ÈÏÌí¼Óµ½Ö÷´°¿ÚÍ¨Öªº¯ÊıÖĞ¿ÉÀ¹½Ø
+		Rect _lastDrawRect;//æœ€åä¸€æ¬¡æ˜¾ç¤ºçš„ä½ç½®
+		int _eventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnChar | Event::OnKeyDown | Event::OnKeyUp;//é»˜è®¤æ·»åŠ åˆ°ä¸»çª—å£é€šçŸ¥å‡½æ•°ä¸­å¯æ‹¦æˆª
 		std::mutex _rePaintMtx;
 		Control(const Control&);
 		Control& operator=(const Control&);
@@ -27,91 +27,91 @@ namespace EzUI {
 		bool CheckEventPassThrough(const Event& eventType);
 		bool CheckEventNotify(const Event& eventType);
 	protected:
-		int _fixedWidth = 0;//¾ø¶Ô¿í¶È
-		int _fixedHeight = 0;//¾ø¶Ô¸ß¶È
-		Rect _rect;//¿Ø¼ş¾ØĞÎÇøÓò(»ùÓÚ¸¸¿Ø¼ş)
+		int _fixedWidth = 0;//ç»å¯¹å®½åº¦
+		int _fixedHeight = 0;//ç»å¯¹é«˜åº¦
+		Rect _rect;//æ§ä»¶çŸ©å½¢åŒºåŸŸ(åŸºäºçˆ¶æ§ä»¶)
 	public:
-		EzUI::Margin Margin;//Íâ±ß¾à ÈÃÈİÆ÷¶ÀÕ¼Ò»ĞĞ »ò Ò»ÁĞµÄÇé¿öÏÂ ÉèÖÃ±ß¾à»áÊ¹¿Ø¼ş±äĞ¡ ²»¿ÉÉèÖÃÎª¸ºÊı
-		WindowData* PublicData = NULL;//´°¿ÚÉÏµÄ¹«¹²Êı¾İ
-		EzUI::Cursor Cursor = EzUI::Cursor::None;//Êó±êÑùÊ½
-		int MousePassThrough = 0;//ºöÂÔµÄÊó±êÏûÏ¢
-		const bool IsXmlControl = false;//ÊÇ·ñÊÇxml¼ÓÔØ½øÀ´µÄ
-		EString Name;//¿Ø¼şµÄObjectName ID
-		ScrollBar* ScrollBar = NULL;//´¹Ö±¹ö¶¯Ìõ»òÕßË®Æ½¹ö¶¯Ìõ Ò»¸ö¿Ø¼şÖ»ÔÊĞíÓĞÒ»¸ö
-		ControlState State = ControlState::Static;//¿Ø¼ş×´Ì¬
-		ControlAction Action = ControlAction::None;//¿Ø¼şĞĞÎª
-		ControlStyle Style;//Ä¬ÈÏÑùÊ½
-		ControlStyle HoverStyle;//Êó±êĞü¸¡ÑùÊ½
-		ControlStyle ActiveStyle;//Êó±ê°´ÏÂÑùÊ½
-		bool Visible = true;//¿Ø¼şÊÇ·ñ¿É¼û
-		Control* Parent = NULL;//¸¸¿Ø¼ş
-		Controls VisibleControls;//»ùÓÚ¿Ø¼şÖĞµÄ¿É¼û¿Ø¼ş
-		DockStyle Dock = DockStyle::None;//dockÑùÊ½
-		const Rect ClipRect;//¿Ø¼şÔÚ´°¿ÚÖĞµÄ¿É¼ûÇøÓò
+		EzUI::Margin Margin;//å¤–è¾¹è· è®©å®¹å™¨ç‹¬å ä¸€è¡Œ æˆ– ä¸€åˆ—çš„æƒ…å†µä¸‹ è®¾ç½®è¾¹è·ä¼šä½¿æ§ä»¶å˜å° ä¸å¯è®¾ç½®ä¸ºè´Ÿæ•°
+		WindowData* PublicData = NULL;//çª—å£ä¸Šçš„å…¬å…±æ•°æ®
+		EzUI::Cursor Cursor = EzUI::Cursor::None;//é¼ æ ‡æ ·å¼
+		int MousePassThrough = 0;//å¿½ç•¥çš„é¼ æ ‡æ¶ˆæ¯
+		const bool IsXmlControl = false;//æ˜¯å¦æ˜¯xmlåŠ è½½è¿›æ¥çš„
+		EString Name;//æ§ä»¶çš„ObjectName ID
+		ScrollBar* ScrollBar = NULL;//å‚ç›´æ»šåŠ¨æ¡æˆ–è€…æ°´å¹³æ»šåŠ¨æ¡ ä¸€ä¸ªæ§ä»¶åªå…è®¸æœ‰ä¸€ä¸ª
+		ControlState State = ControlState::Static;//æ§ä»¶çŠ¶æ€
+		ControlAction Action = ControlAction::None;//æ§ä»¶è¡Œä¸º
+		ControlStyle Style;//é»˜è®¤æ ·å¼
+		ControlStyle HoverStyle;//é¼ æ ‡æ‚¬æµ®æ ·å¼
+		ControlStyle ActiveStyle;//é¼ æ ‡æŒ‰ä¸‹æ ·å¼
+		bool Visible = true;//æ§ä»¶æ˜¯å¦å¯è§
+		Control* Parent = NULL;//çˆ¶æ§ä»¶
+		Controls VisibleControls;//åŸºäºæ§ä»¶ä¸­çš„å¯è§æ§ä»¶
+		DockStyle Dock = DockStyle::None;//dockæ ·å¼
+		const Rect ClipRect;//æ§ä»¶åœ¨çª—å£ä¸­çš„å¯è§åŒºåŸŸ
 	public:
-		EventMouseMove MouseMove;//ÒÆ¶¯ÊÂ¼ş
-		EventMouseEnter MouseEnter;//ÒÆÈëÊÂ¼ş
-		EventMouseWheel MouseWheel;//¹öÂÖÊÂ¼ş
-		EventMouseLeave MouseLeave;//Êó±êÀë¿ªÊÂ¼ş
-		EventMouseDown MouseDown;//Êó±ê°´ÏÂÊÂ¼ş
-		EventMouseUp MouseUp;//Êó±êÌ§Æğ
-		EventMouseClick MouseClick;//Êó±êµ¥»÷
-		EventMouseDoubleClick MouseDoubleClick;//Êó±êË«»÷
-		EventPaint Painting;//»æÖÆÊÂ¼ş
+		EventMouseMove MouseMove;//ç§»åŠ¨äº‹ä»¶
+		EventMouseEnter MouseEnter;//ç§»å…¥äº‹ä»¶
+		EventMouseWheel MouseWheel;//æ»šè½®äº‹ä»¶
+		EventMouseLeave MouseLeave;//é¼ æ ‡ç¦»å¼€äº‹ä»¶
+		EventMouseDown MouseDown;//é¼ æ ‡æŒ‰ä¸‹äº‹ä»¶
+		EventMouseUp MouseUp;//é¼ æ ‡æŠ¬èµ·
+		EventMouseClick MouseClick;//é¼ æ ‡å•å‡»
+		EventMouseDoubleClick MouseDoubleClick;//é¼ æ ‡åŒå‡»
+		EventPaint Painting;//ç»˜åˆ¶äº‹ä»¶
 	protected:
-		ControlStyle& GetStyle(const ControlState& _state);//»ñÈ¡µ±Ç°¿Ø¼ş×´Ì¬ÏÂµÄÑùÊ½ĞÅÏ¢
-		virtual void OnPaint(PaintEventArgs& args);//»æÖÆ 
-		virtual void ChildPainting(Controls& controls, PaintEventArgs& args);//×Ó¿Ø¼ş»æÖÆ ¿ÉÒÔÖØÔØ´Ëº¯ÊıÓÅ»¯Êó±ê²Ù×÷ĞÔÄÜ
-		virtual void OnBackgroundPaint(PaintEventArgs& painter);//±³¾°»æÖÆ
-		virtual void OnForePaint(PaintEventArgs& e);//Ç°¾°»æÖÆ
-		virtual void OnBorderPaint(PaintEventArgs& painter);//±ß¿ò»æÖÆ
-		virtual void OnLoad();//¿Ø¼şµÚÒ»´Î¼ÓÔØ ¾¯¸æ ´Ëº¯ÊıÔÚLayerWindowÀïÃæ²»ÔÊĞíÔÚº¯ÊıÄÚÌí¼Ó¿Ø¼ş µ«ÊÇÔÊĞíÉèÖÃ¿Ø¼ş²ÎÊı  
-		virtual void OnLocation(const Point& pt);//×ø±ê·¢Éú¸Ä±ä
-		virtual void OnSize(const Size& size) override;//´óĞ¡·¢Éú¸Ä±ä
-		virtual void OnLayout();//²¼¾Ö´úÂëÔÚ´Ë ²¼¾ÖÍê³ÉÖ®ºóPendLayoutÉèÖÃ³Éfalse
-		virtual void OnKeyBoardEvent(const KeyboardEventArgs& _args);//¼üÅÌÊÂ¼şÏûÏ¢
-		virtual void OnMouseMove(const Point& point);//Êó±êÔÚ¿Ø¼şÉÏÒÆ¶¯
-		virtual void OnMouseLeave();//Êó±êÀë¿ª¿Ø¼ş
-		virtual void OnMouseWheel(short zDelta, const Point& point);//Êó±ê¹öÂÖ
-		virtual void OnMouseDown(MouseButton mbtn, const Point& point);//Êó±ê°´ÏÂ
-		virtual void OnMouseUp(MouseButton mbtn, const Point& point);//Êó±êµ¯Æğ
-		virtual void OnMouseClick(MouseButton mbtn, const Point& point);//Êó±êµ¥»÷
-		virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point);//Êó±êË«»÷
-		virtual void OnMouseEnter(const Point& point);//Êó±êÒÆÈë
-		virtual void OnMouseEvent(const MouseEventArgs& args);//Êó±êÊÂ¼şÏûÏ¢
-		virtual void OnChar(WPARAM wParam, LPARAM lParam) override;//WM_CAHRÏûÏ¢
-		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam) override;//WM_CAHRÏûÏ¢
-		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);//¼üÅÌµ¯Æğ
+		ControlStyle& GetStyle(const ControlState& _state);//è·å–å½“å‰æ§ä»¶çŠ¶æ€ä¸‹çš„æ ·å¼ä¿¡æ¯
+		virtual void OnPaint(PaintEventArgs& args);//ç»˜åˆ¶ 
+		virtual void ChildPainting(Controls& controls, PaintEventArgs& args);//å­æ§ä»¶ç»˜åˆ¶ å¯ä»¥é‡è½½æ­¤å‡½æ•°ä¼˜åŒ–é¼ æ ‡æ“ä½œæ€§èƒ½
+		virtual void OnBackgroundPaint(PaintEventArgs& painter);//èƒŒæ™¯ç»˜åˆ¶
+		virtual void OnForePaint(PaintEventArgs& e);//å‰æ™¯ç»˜åˆ¶
+		virtual void OnBorderPaint(PaintEventArgs& painter);//è¾¹æ¡†ç»˜åˆ¶
+		virtual void OnLoad();//æ§ä»¶ç¬¬ä¸€æ¬¡åŠ è½½ è­¦å‘Š æ­¤å‡½æ•°åœ¨LayerWindowé‡Œé¢ä¸å…è®¸åœ¨å‡½æ•°å†…æ·»åŠ æ§ä»¶ ä½†æ˜¯å…è®¸è®¾ç½®æ§ä»¶å‚æ•°  
+		virtual void OnLocation(const Point& pt);//åæ ‡å‘ç”Ÿæ”¹å˜
+		virtual void OnSize(const Size& size) override;//å¤§å°å‘ç”Ÿæ”¹å˜
+		virtual void OnLayout();//å¸ƒå±€ä»£ç åœ¨æ­¤ å¸ƒå±€å®Œæˆä¹‹åPendLayoutè®¾ç½®æˆfalse
+		virtual void OnKeyBoardEvent(const KeyboardEventArgs& _args);//é”®ç›˜äº‹ä»¶æ¶ˆæ¯
+		virtual void OnMouseMove(const Point& point);//é¼ æ ‡åœ¨æ§ä»¶ä¸Šç§»åŠ¨
+		virtual void OnMouseLeave();//é¼ æ ‡ç¦»å¼€æ§ä»¶
+		virtual void OnMouseWheel(short zDelta, const Point& point);//é¼ æ ‡æ»šè½®
+		virtual void OnMouseDown(MouseButton mbtn, const Point& point);//é¼ æ ‡æŒ‰ä¸‹
+		virtual void OnMouseUp(MouseButton mbtn, const Point& point);//é¼ æ ‡å¼¹èµ·
+		virtual void OnMouseClick(MouseButton mbtn, const Point& point);//é¼ æ ‡å•å‡»
+		virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point);//é¼ æ ‡åŒå‡»
+		virtual void OnMouseEnter(const Point& point);//é¼ æ ‡ç§»å…¥
+		virtual void OnMouseEvent(const MouseEventArgs& args);//é¼ æ ‡äº‹ä»¶æ¶ˆæ¯
+		virtual void OnChar(WPARAM wParam, LPARAM lParam) override;//WM_CAHRæ¶ˆæ¯
+		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam) override;//WM_CAHRæ¶ˆæ¯
+		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);//é”®ç›˜å¼¹èµ·
 	public:
-		//ÒÔÏÂº¯ÊıÇë±£Ö¤ÔÚ¸¸¿Ø¼ş²¼¾ÖÒÑÍê³ÉµÄÇé¿öÏÂÊ¹ÓÃ Ê¹ÓÃResumeLayout()Ö´ĞĞ²¼¾Ö
+		//ä»¥ä¸‹å‡½æ•°è¯·ä¿è¯åœ¨çˆ¶æ§ä»¶å¸ƒå±€å·²å®Œæˆçš„æƒ…å†µä¸‹ä½¿ç”¨ ä½¿ç”¨ResumeLayout()æ‰§è¡Œå¸ƒå±€
 		const int& X();
 		const int& Y();
 		const int& Width();
 		const int& Height();
 		void SetX(const int& X);
 		void SetY(const int& Y);
-		void SetLocation(const Point& pt);//ÒÆ¶¯Ïà¶ÔÓë¸¸¿Ø¼şµÄÎ»ÖÃ
-		void SetSize(const Size& size); //µ±ÖØ»æ¿Ø¼şÊ±²»½¨Òé¶à´ÎÊ¹ÓÃ Ó°ÏìĞÔÄÜ(»áµ÷ÓÃSetRectº¯Êı)
-		void SetFixedSize(const Size& size); //ÉèÖÃ¾ø¶Ô¿í¸ß
-		void SetWidth(const int& width);//µ±ÖØ»æ¿Ø¼şÊ±²»½¨Òé¶à´ÎÊ¹ÓÃ Ó°ÏìĞÔÄÜ(»áµ÷ÓÃSetRectº¯Êı)
-		void SetHeight(const int& height);//µ±ÖØ»æ¿Ø¼şÊ±²»½¨Òé¶à´ÎÊ¹ÓÃ Ó°ÏìĞÔÄÜ(»áµ÷ÓÃSetRectº¯Êı)
-		void SetFixedWidth(const int& fixedWidth);//ÉèÖÃ¾ø¶Ô¿í¶È
-		void SetFixedHeight(const int& fixedHeight);//ÉèÖÃ¾ø¶Ô¸ß¶È
-		const int& GetFixedWidth();//»ñÈ¡¾ø¶Ô¿í¶È
-		const int& GetFixedHeight();//»ñÈ¡¾ø¶Ô¸ß¶È
-		virtual const Rect& GetRect();//»ñÈ¡Ïà¶ÔÓë¸¸¿Ø¼ş¾ØĞÎ ²¼¾Ö¼ÆËãºó
-		Rect GetClientRect();//»ñÈ¡»ùÓÚ¿Í»§¶ËµÄ¾ØĞÎ
-		bool IsPendLayout();//ÊÇ·ñº¬ÓĞ¹ÒÆğµÄ²¼¾Ö
-		void TryPendLayout();//³¢ÊÔ¹ÒÆğ²¼¾Ö
-		void EndLayout();//½áÊø²¼¾Ö
-		void SetRect(const Rect& rect);//ÉèÖÃÏà¶Ô¸¸¿Ø¼ş¾ØĞÎ
-		virtual void ResumeLayout();//Ö±½Ó½øĞĞ²¼¾Ö
+		void SetLocation(const Point& pt);//ç§»åŠ¨ç›¸å¯¹ä¸çˆ¶æ§ä»¶çš„ä½ç½®
+		void SetSize(const Size& size); //å½“é‡ç»˜æ§ä»¶æ—¶ä¸å»ºè®®å¤šæ¬¡ä½¿ç”¨ å½±å“æ€§èƒ½(ä¼šè°ƒç”¨SetRectå‡½æ•°)
+		void SetFixedSize(const Size& size); //è®¾ç½®ç»å¯¹å®½é«˜
+		void SetWidth(const int& width);//å½“é‡ç»˜æ§ä»¶æ—¶ä¸å»ºè®®å¤šæ¬¡ä½¿ç”¨ å½±å“æ€§èƒ½(ä¼šè°ƒç”¨SetRectå‡½æ•°)
+		void SetHeight(const int& height);//å½“é‡ç»˜æ§ä»¶æ—¶ä¸å»ºè®®å¤šæ¬¡ä½¿ç”¨ å½±å“æ€§èƒ½(ä¼šè°ƒç”¨SetRectå‡½æ•°)
+		void SetFixedWidth(const int& fixedWidth);//è®¾ç½®ç»å¯¹å®½åº¦
+		void SetFixedHeight(const int& fixedHeight);//è®¾ç½®ç»å¯¹é«˜åº¦
+		const int& GetFixedWidth();//è·å–ç»å¯¹å®½åº¦
+		const int& GetFixedHeight();//è·å–ç»å¯¹é«˜åº¦
+		virtual const Rect& GetRect();//è·å–ç›¸å¯¹ä¸çˆ¶æ§ä»¶çŸ©å½¢ å¸ƒå±€è®¡ç®—å
+		Rect GetClientRect();//è·å–åŸºäºå®¢æˆ·ç«¯çš„çŸ©å½¢
+		bool IsPendLayout();//æ˜¯å¦å«æœ‰æŒ‚èµ·çš„å¸ƒå±€
+		void TryPendLayout();//å°è¯•æŒ‚èµ·å¸ƒå±€
+		void EndLayout();//ç»“æŸå¸ƒå±€
+		void SetRect(const Rect& rect);//è®¾ç½®ç›¸å¯¹çˆ¶æ§ä»¶çŸ©å½¢
+		virtual void ResumeLayout();//ç›´æ¥è¿›è¡Œå¸ƒå±€
 		virtual void SetTips(const EString& text);
-		virtual void OnKillFocus();//Ê§È¥½¹µãµÄÊ±ºò·¢Éú
-		virtual void OnRemove();//±»ÒÆ³ı¸Ã×öµÄÊÂÇé
-		void Trigger(const MouseEventArgs& args);//´¥·¢Êó±êÏà¹ØÏûÏ¢
-		void Trigger(const KeyboardEventArgs& args);//´¥·¢¼üÅÌÏà¹ØÏûÏ¢
-		void AddEventNotify(int eventType);//Ìí¼Óµ½Ö÷´°¿Úontifyº¯ÊıÖĞ¿ÉÀ¹½Ø
+		virtual void OnKillFocus();//å¤±å»ç„¦ç‚¹çš„æ—¶å€™å‘ç”Ÿ
+		virtual void OnRemove();//è¢«ç§»é™¤è¯¥åšçš„äº‹æƒ…
+		void Trigger(const MouseEventArgs& args);//è§¦å‘é¼ æ ‡ç›¸å…³æ¶ˆæ¯
+		void Trigger(const KeyboardEventArgs& args);//è§¦å‘é”®ç›˜ç›¸å…³æ¶ˆæ¯
+		void AddEventNotify(int eventType);//æ·»åŠ åˆ°ä¸»çª—å£ontifyå‡½æ•°ä¸­å¯æ‹¦æˆª
 		void RemoveEventNotify(int eventType);
 		void SetCursor(const EString& fileName);
 		HCURSOR GetCursor();
@@ -119,7 +119,7 @@ namespace EzUI {
 		Control();
 		virtual ~Control();
 		void DestroySpacers();
-		//ÆÕÍ¨ÑùÊ½
+		//æ™®é€šæ ·å¼
 		HImage GetForeImage(ControlState _state = ControlState::None);
 		HImage GetBackgroundImage(ControlState _state = ControlState::None);
 		UI_Int GetRadius(ControlState _state = ControlState::None);
@@ -129,33 +129,33 @@ namespace EzUI {
 		UI_Int GetBorderBottom(ControlState _state = ControlState::None);
 		Color GetBorderColor(ControlState _state = ControlState::None);
 		Color GetBackgroundColor(ControlState _state = ControlState::None);
-		//¾ßÓĞ¼Ì³ĞĞÔÑùÊ½
-		EString GetFontFamily(ControlState _state = ControlState::None);//»ñÈ¡Ä¬ÈÏ¿Ø¼ş×´Ì¬ÏÂ×ÖÌåFamily
-		UI_Int GetFontSize(ControlState _state = ControlState::None);//»ñÈ¡Ä¬ÈÏ¿Ø¼ş×´Ì¬ÏÂ×ÖÌå´óĞ¡ÑùÊ½
-		Color GetForeColor(ControlState _state = ControlState::None);//»ñÈ¡Ä¬ÈÏ¿Ø¼ş×´Ì¬ÏÂÇ°¾°É«
+		//å…·æœ‰ç»§æ‰¿æ€§æ ·å¼
+		EString GetFontFamily(ControlState _state = ControlState::None);//è·å–é»˜è®¤æ§ä»¶çŠ¶æ€ä¸‹å­—ä½“Family
+		UI_Int GetFontSize(ControlState _state = ControlState::None);//è·å–é»˜è®¤æ§ä»¶çŠ¶æ€ä¸‹å­—ä½“å¤§å°æ ·å¼
+		Color GetForeColor(ControlState _state = ControlState::None);//è·å–é»˜è®¤æ§ä»¶çŠ¶æ€ä¸‹å‰æ™¯è‰²
 		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::Static);//
-		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//»ù´¡¿Ø¼şÉèÖÃÊôĞÔ
-		Controls& GetControls();//»ñÈ¡µ±Ç°ËùÓĞ×Ó¿Ø¼ş
-		Control* GetControl(size_t pos);//Ê¹ÓÃÏÂ±ê»ñÈ¡¿Ø¼ş
-		Control* FindControl(const EString& objectName);//Ñ°ÕÒ×Ó¿Ø¼ş °üº¬Ëï×Ó ÔøËï µÈµÈ
-		Controls FindControl(const EString& attr, const EString& attrValue);//Ê¹ÓÃÊôĞÔ²éÕÒ
+		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//åŸºç¡€æ§ä»¶è®¾ç½®å±æ€§
+		Controls& GetControls();//è·å–å½“å‰æ‰€æœ‰å­æ§ä»¶
+		Control* GetControl(size_t pos);//ä½¿ç”¨ä¸‹æ ‡è·å–æ§ä»¶
+		Control* FindControl(const EString& objectName);//å¯»æ‰¾å­æ§ä»¶ åŒ…å«å­™å­ æ›¾å­™ ç­‰ç­‰
+		Controls FindControl(const EString& attr, const EString& attrValue);//ä½¿ç”¨å±æ€§æŸ¥æ‰¾
 		size_t Index();
-		virtual void AddControl(Control* ctl);//Ìí¼Ó¿Ø¼ş
-		virtual ControlIterator RemoveControl(Control* ctl);//É¾³ı¿Ø¼ş ·µ»ØÏÂÒ»¸öµü´úÆ÷
-		virtual void Clear(bool freeControls = false);//Çå¿Õµ±Ç°ËùÓĞ×Ó¿Ø¼ş, freeControlsÊÇ·ñÊÍ·ÅËùÓĞ×Ó¿Ø¼ş
-		virtual void Rending(PaintEventArgs& args);//»æÖÆº¯Êı
-		bool IsVisible();//µ±Ç°ÊÇ·ñÏÔÊ¾ÔÚ´°¿ÚÄÚ
-		virtual bool Invalidate();// Ê¹µ±Ç°¿Ø¼şµÄÇøÓòÎªÎŞĞ§ÇøÓò
-		virtual void Refresh();// Ê¹µ±Ç°¿Ø¼şÇøÓòÎªÎŞĞ§ÇøÓò²¢ÇÒÁ¢¼´¸üĞÂÈ«²¿µÄÎŞĞ§ÇøÓò
-		void ComputeClipRect();//¼ÆËã»ùÓÚ¸¸¿Ø¼şµÄ²Ã¼ôÇøÓò
+		virtual void AddControl(Control* ctl);//æ·»åŠ æ§ä»¶
+		virtual ControlIterator RemoveControl(Control* ctl);//åˆ é™¤æ§ä»¶ è¿”å›ä¸‹ä¸€ä¸ªè¿­ä»£å™¨
+		virtual void Clear(bool freeControls = false);//æ¸…ç©ºå½“å‰æ‰€æœ‰å­æ§ä»¶, freeControlsæ˜¯å¦é‡Šæ”¾æ‰€æœ‰å­æ§ä»¶
+		virtual void Rending(PaintEventArgs& args);//ç»˜åˆ¶å‡½æ•°
+		bool IsVisible();//å½“å‰æ˜¯å¦æ˜¾ç¤ºåœ¨çª—å£å†…
+		virtual bool Invalidate();// ä½¿å½“å‰æ§ä»¶çš„åŒºåŸŸä¸ºæ— æ•ˆåŒºåŸŸ
+		virtual void Refresh();// ä½¿å½“å‰æ§ä»¶åŒºåŸŸä¸ºæ— æ•ˆåŒºåŸŸå¹¶ä¸”ç«‹å³æ›´æ–°å…¨éƒ¨çš„æ— æ•ˆåŒºåŸŸ
+		void ComputeClipRect();//è®¡ç®—åŸºäºçˆ¶æ§ä»¶çš„è£å‰ªåŒºåŸŸ
 	};
 
-	//Ìí¼Óµ¯»ÉÎŞĞèÓÃ»§ÊÖ¶¯ÊÍ·Å,
+	//æ·»åŠ å¼¹ç°§æ— éœ€ç”¨æˆ·æ‰‹åŠ¨é‡Šæ”¾,
 	class Spacer :public Control {
 	public:
 		virtual ~Spacer() {};
 	};
-	//¾ßÓĞ¾ø¶Ô¸ß¶ÈµÄ µÄµ¯»É
+	//å…·æœ‰ç»å¯¹é«˜åº¦çš„ çš„å¼¹ç°§
 	class VSpacer :public Spacer {
 	private:
 		VSpacer() {};
@@ -165,7 +165,7 @@ namespace EzUI {
 			SetFixedHeight(fixedHeight);
 		}
 	};
-	//¾ßÓĞ¾ø¶Ô¿í¶ÈµÄ µÄµ¯»É
+	//å…·æœ‰ç»å¯¹å®½åº¦çš„ çš„å¼¹ç°§
 	class HSpacer :public Spacer {
 	private:
 		HSpacer() {};
@@ -182,8 +182,8 @@ namespace EzUI {
 			Style.ForeColor = { 205,205,205 };//the bar backgroundcolor
 			Style.BackgroundColor = { 240,240,240 };//the bar backgroundcolor
 			ActiveStyle.ForeColor = { 166,166,166 };
-			SetWidth(10);//¹ö¶¯Ìõ¸ß¶È
-			SetHeight(10);//¹ö¶¯Ìõ¿í¶È
+			SetWidth(10);//æ»šåŠ¨æ¡é«˜åº¦
+			SetHeight(10);//æ»šåŠ¨æ¡å®½åº¦
 			Style.Radius = 10;
 		}
 		virtual ~ScrollBar() {}

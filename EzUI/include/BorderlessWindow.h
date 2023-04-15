@@ -2,7 +2,7 @@
 #include "Window.h"
 #include "ShadowWindow.h"
 namespace EzUI {
-	//ÎŞ±ß¿ò´øÒõÓ°µÄ´°¿Ú ³£¹æ½ÓÊÜWM_PAINTÏûÏ¢
+	//æ— è¾¹æ¡†å¸¦é˜´å½±çš„çª—å£ å¸¸è§„æ¥å—WM_PAINTæ¶ˆæ¯
 	class UI_EXPORT BorderlessWindow :public Window {
 	private:
 		int _shadowWidth = SHADOWWIDTH;

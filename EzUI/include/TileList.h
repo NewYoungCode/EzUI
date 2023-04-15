@@ -9,7 +9,7 @@ namespace EzUI {
 	private:
 		int _MaxBottom = 0;
 		VScrollBar* vScrollBar = NULL;
-		bool AutoHeight = false;//¸ù¾İÄÚÈİµÄ¸ß¶È×Ô¶¯±ä»¯
+		bool AutoHeight = false;//æ ¹æ®å†…å®¹çš„é«˜åº¦è‡ªåŠ¨å˜åŒ–
 	public:
 		TileList();
 		virtual ~TileList();

@@ -9,8 +9,8 @@ namespace EzUI {
 		LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
 		virtual void Show(int cmdShow = SW_SHOW);
 	};
-	//Window            //¾­µä´ø±ß¿ò´øÏµÍ³²Ëµ¥WIN32´°¿ÚÑùÊ½
-	//BorderlessWindow //ÎÞ±ß¿ò ´øÒõÓ° ²»Í¸Ã÷´°¿Ú   ÆÁÄ»ÍâÍÏÈë»áÖØ»æ     ³£¹æ½ÓÊÜWM_PAINTÏûÏ¢ 
-	//LayeredWindow	  //ÎÞ±ß¿ò  ´øÒõÓ° ´°¿ÚÍ¸Ã÷ÒìÐÎ ´°¿Ú´óÐ¡·¢Éú¸Ä±äÖØ»æ ×Ô¶¨ÒåUI_PAINTÏûÏ¢(¶¨Ê±¼ì²âÎÞÐ§ÇøÓò) ²»ÔÊÐíÓÐ×Ó´°¿Ú 
+	//Window            //ç»å…¸å¸¦è¾¹æ¡†å¸¦ç³»ç»Ÿèœå•WIN32çª—å£æ ·å¼
+	//BorderlessWindow //æ— è¾¹æ¡† å¸¦é˜´å½± ä¸é€æ˜Žçª—å£   å±å¹•å¤–æ‹–å…¥ä¼šé‡ç»˜     å¸¸è§„æŽ¥å—WM_PAINTæ¶ˆæ¯ 
+	//LayeredWindow	  //æ— è¾¹æ¡†  å¸¦é˜´å½± çª—å£é€æ˜Žå¼‚å½¢ çª—å£å¤§å°å‘ç”Ÿæ”¹å˜é‡ç»˜ è‡ªå®šä¹‰UI_PAINTæ¶ˆæ¯(å®šæ—¶æ£€æµ‹æ— æ•ˆåŒºåŸŸ) ä¸å…è®¸æœ‰å­çª—å£ 
 	using Form = BorderlessWindow;
 };

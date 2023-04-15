@@ -11,7 +11,7 @@ namespace EzUI {
 	public:
 		CheckBox();
 		virtual	~CheckBox();
-		int Indent = 2;//Ëõ½ø
+		int Indent = 2;//ç¼©è¿›
 		void SetCheck(bool checked = true);
 		bool GetCheck();
 		void OnMouseClick(MouseButton btn, const Point& pt)override;
