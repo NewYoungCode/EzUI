@@ -61,7 +61,7 @@ title.AddControl(&closeBtn);//添加控件
 
 Label labelBottom;
 
-labelBottom.SetText(L"这是一个简单的窗口示例 !");
+labelBottom.SetText(L"this is a simple window!");
 
 mainLayout.AddControl(&title);//添加标题
 
