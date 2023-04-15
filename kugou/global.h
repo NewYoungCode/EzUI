@@ -132,7 +132,7 @@ public:
 		songName.HoverStyle.ForeColor = Color::Orange;
 
 		AlbumName.SetFixedWidth(180);
-		AlbumName.SetText(utf8("��") + s.AlbumName + utf8("��"));
+		AlbumName.SetText(s.AlbumName);
 		AlbumName.TextAlign = TextAlign::MiddleLeft;
 		AlbumName.Cursor = Cursor::HAND;
 		AlbumName.Style.ForeColor = Color(150, 150, 150);
