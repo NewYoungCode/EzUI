@@ -19,15 +19,20 @@ namespace EzUI {
 		EString Tolower()const;
 		EString Toupper()const;
 	public:
+		//主要的转换函数
+		static void AnyToUnicode(const std::string& src_str, UINT codePage, std::wstring* out_wstr);
+		static void UnicodeToAny(const std::wstring& unicode_wstr, UINT codePage, std::string* out_str);
+		//
 		static void ANSIToUniCode(const std::string& str, std::wstring* outStr);
 		static void ANSIToUTF8(const std::string& str, std::string* outStr);
 		static void UnicodeToANSI(const std::wstring& wstr, std::string* outStr);
 		static void UnicodeToUTF8(const std::wstring& wstr, std::string* outStr);
 		static void UTF8ToANSI(const std::string& str, std::string* outStr);
 		static void UTF8ToUnicode(const std::string& str, std::wstring* outStr);
+		//
 		static void Tolower(std::string* str_in_out);
 		static void Toupper(std::string* str_in_out);
-		static void Erase(std::string* str_in_out,const char&ch);
+		static void Erase(std::string* str_in_out, const char& ch);
 		static void Replace(std::string* str_in_out, const std::string& oldText, const std::string& newText);
 		static void Split(const std::string& str_in, const std::string& ch, std::vector<std::string>* strs_out);
 	};

@@ -341,10 +341,7 @@ namespace EzUI {
 			tme.hwndTrack = _hWnd;
 			TrackMouseEvent(&tme);
 			OnMouseMove({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
-			//Debug::Log("message OnMouseMove");
 			_mouseIn = true;
-			//给hwndTip发送消息告诉现在移动到什么位置了
-			//SendMessage(_hWndTip, TTM_TRACKPOSITION, 0, lParam);
 			break;
 		}
 		case WM_LBUTTONDOWN:

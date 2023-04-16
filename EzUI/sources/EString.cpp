@@ -70,70 +70,57 @@ namespace EzUI {
 		return str;
 	}
 
+	void EString::AnyToUnicode(const std::string& src_str, UINT codePage, std::wstring* out_wstr) {
+		std::wstring& wstrCmd = *out_wstr;
+		int bytes = ::MultiByteToWideChar(codePage, 0, src_str.c_str(), src_str.size(), NULL, 0);
+		wstrCmd.resize(bytes);
+		bytes = ::MultiByteToWideChar(codePage, 0, src_str.c_str(), src_str.size(), const_cast<wchar_t*>(wstrCmd.c_str()), wstrCmd.size());
+	}
+	void EString::UnicodeToAny(const std::wstring& wstr, UINT codePage, std::string* out_str) {
+		std::string& strCmd = *out_str;
+		int bytes = ::WideCharToMultiByte(codePage, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
+		strCmd.resize(bytes);
+		bytes = ::WideCharToMultiByte(codePage, 0, wstr.c_str(), wstr.size(), const_cast<char*>(strCmd.c_str()), strCmd.size(), NULL, NULL);
+	}
+
 	//以下是静态函数
 	void EString::ANSIToUniCode(const std::string& str, std::wstring* outStr)
 	{
-		std::wstring& wstrCmd = *outStr;
-		int bytes = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.size(), NULL, 0);
-		wstrCmd.resize(bytes);
-		bytes = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.size(), const_cast<wchar_t*>(wstrCmd.c_str()), wstrCmd.size());
-	}
-	void EString::ANSIToUTF8(const std::string& str, std::string* outStr)
-	{
-		if (::GetACP() == CP_UTF8) {
-			*outStr = str;//如果本身就是utf8则不需要转换
-			return;
-		}
-		int nwLen = ::MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, NULL, 0);
-		wchar_t* pwBuf = new wchar_t[nwLen + 1];
-		ZeroMemory(pwBuf, nwLen * 2 + 2);
-		::MultiByteToWideChar(CP_ACP, 0, str.c_str(), str.length(), pwBuf, nwLen);
-		int nLen = ::WideCharToMultiByte(CP_UTF8, 0, pwBuf, -1, NULL, NULL, NULL, NULL);
-		char* pBuf = new char[nLen + 1];
-		ZeroMemory(pBuf, nLen + 1);
-		::WideCharToMultiByte(CP_UTF8, 0, pwBuf, nwLen, pBuf, nLen, NULL, NULL);
-		*outStr = pBuf;
-		delete[]pwBuf;
-		delete[]pBuf;
+		AnyToUnicode(str, ::GetACP(), outStr);
 	}
 	void EString::UnicodeToANSI(const std::wstring& wstr, std::string* outStr)
 	{
-		std::string& strCmd = *outStr;
-		int bytes = ::WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
-		strCmd.resize(bytes);
-		bytes = ::WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), wstr.size(), const_cast<char*>(strCmd.c_str()), strCmd.size(), NULL, NULL);
+		UnicodeToAny(wstr, ::GetACP(), outStr);
 	}
-	void EString::UnicodeToUTF8(const std::wstring& wstr, std::string* outStr)
+	void EString::ANSIToUTF8(const std::string& str, std::string* outStr)
 	{
-		int bytes = ::WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
-		std::string& strCmd = *outStr;
-		strCmd.resize(bytes);
-		bytes = ::WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), wstr.size(), const_cast<char*>(strCmd.c_str()), strCmd.size(), NULL, NULL);
-	}
-	void EString::UTF8ToANSI(const std::string& str, std::string* outStr) {
-		if (::GetACP() == CP_UTF8) {
+		UINT codePage = ::GetACP();
+		if (codePage == CP_UTF8) {
 			*outStr = str;//如果本身就是utf8则不需要转换
 			return;
 		}
-		int nwLen = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
-		wchar_t* pwBuf = new wchar_t[nwLen + 1];
-		memset(pwBuf, 0, nwLen * 2 + 2);
-		MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), pwBuf, nwLen);
-		int nLen = WideCharToMultiByte(CP_ACP, 0, pwBuf, -1, NULL, NULL, NULL, NULL);
-		char* pBuf = new char[nLen + 1];
-		memset(pBuf, 0, nLen + 1);
-		WideCharToMultiByte(CP_ACP, 0, pwBuf, nwLen, pBuf, nLen, NULL, NULL);
-		*outStr = pBuf;
-		delete[]pBuf;
-		delete[]pwBuf;
+		std::wstring wstr;
+		AnyToUnicode(str, codePage, &wstr);
+		UnicodeToUTF8(wstr, outStr);
+	}
+	void EString::UTF8ToANSI(const std::string& str, std::string* outStr) {
+		UINT codePage = ::GetACP();
+		if (codePage == CP_UTF8) {
+			*outStr = str;//如果本身就是utf8则不需要转换
+			return;
+		}
+		std::wstring wstr;
+		UTF8ToUnicode(str, &wstr);
+		UnicodeToAny(wstr, codePage, outStr);
+	}
+	void EString::UnicodeToUTF8(const std::wstring& wstr, std::string* outStr)
+	{
+		UnicodeToAny(wstr, CP_UTF8, outStr);
 	}
 	void EString::UTF8ToUnicode(const std::string& str, std::wstring* outStr) {
-		int newLen = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
-		wchar_t* buffer = new wchar_t[newLen + 1]{ 0 };
-		::MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, buffer, newLen);
-		*outStr = buffer;
-		delete[] buffer;
+		AnyToUnicode(str, CP_UTF8, outStr);
 	}
+
 	void EString::Tolower(std::string* str_in_out)
 	{
 		std::string& str = *str_in_out;
@@ -204,5 +191,4 @@ namespace EzUI {
 			}
 		}
 	}
-
 };

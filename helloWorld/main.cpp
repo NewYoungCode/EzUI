@@ -15,62 +15,61 @@
 
 using namespace EzUI;
 
-int APIENTRY wWinMain( HINSTANCE hInstance,  HINSTANCE hPrevInstance,  LPWSTR lpCmdLine,  int nCmdShow)
-
+int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
 
-Application app;//消息循环对象
+	Application app;//消息循环对象
 
-BorderlessWindow frm(800, 600);//无边框窗口
+	BorderlessWindow frm(800, 600);//无边框窗口
 
-VLayout mainLayout;//窗口中的main布局
+	VLayout mainLayout;//窗口中的main布局
 
-mainLayout.Style.BackgroundColor = Color::White;//主布局背景颜色
+	mainLayout.Style.BackgroundColor = Color::White;//主布局背景颜色
 
-HLayout title;//标题
+	HLayout title;//标题
 
-title.SetFixedHeight(45);//设置固定高度
+	title.SetFixedHeight(45);//设置固定高度
 
-title.Style.BackgroundColor = Color::Pink;//控件背景颜色
+	title.Style.BackgroundColor = Color::Pink;//控件背景颜色
 
-title.Action = ControlAction::MoveWindow;//可移动窗口的行为
+	title.Action = ControlAction::MoveWindow;//可移动窗口的行为
 
-Label text;//标题文字
+	Label text;//标题文字
 
-text.Action = ControlAction::MoveWindow;//可移动窗口的行为
+	text.Action = ControlAction::MoveWindow;//可移动窗口的行为
 
-text.SetText(L"hello world ");//给label设置文字
+	text.SetText(L"hello world ");//给label设置文字
 
-title.AddControl(&text);//添加控件
+	title.AddControl(&text);//添加控件
 
-Label closeBtn;//关闭按钮
+	Label closeBtn;//关闭按钮
 
-closeBtn.Action = ControlAction::Close;//关闭窗口的行为
+	closeBtn.Action = ControlAction::Close;//关闭窗口的行为
 
-closeBtn.Style.FontFamily = L"Marlett";//设置成icon字体
+	closeBtn.Style.FontFamily = L"Marlett";//设置成icon字体
 
-closeBtn.Style.FontSize = 13;//字体大小
+	closeBtn.Style.FontSize = 13;//字体大小
 
-closeBtn.HoverStyle.ForeColor = Color::White;//伪样式 鼠标悬浮字体颜色变成白色
+	closeBtn.HoverStyle.ForeColor = Color::White;//伪样式 鼠标悬浮字体颜色变成白色
 
-closeBtn.SetFixedWidth(45);//设置绝对高度
+	closeBtn.SetFixedWidth(45);//设置绝对高度
 
-closeBtn.SetText(L"r");//窗口的关闭按钮icon
+	closeBtn.SetText(L"r");//窗口的关闭按钮icon
 
-title.AddControl(&closeBtn);//添加控件
+	title.AddControl(&closeBtn);//添加控件
 
-Label labelBottom;
+	Label labelBottom;
 
-labelBottom.SetText(L"this is a simple window!");
+	labelBottom.SetText(L"这是一个简单的窗口示例!");
 
-mainLayout.AddControl(&title);//添加标题
+	mainLayout.AddControl(&title);//添加标题
 
-mainLayout.AddControl(&labelBottom);//添加控件
+	mainLayout.AddControl(&labelBottom);//添加控件
 
-frm.SetLayout(&mainLayout);//给窗口设置布局
+	frm.SetLayout(&mainLayout);//给窗口设置布局
 
-frm.Show();//显示窗口
+	frm.Show();//显示窗口
 
-return app.exec();//进行消息循环
+	return app.exec();//进行消息循环
 
 }
