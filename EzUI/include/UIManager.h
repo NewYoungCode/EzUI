@@ -37,7 +37,7 @@ namespace EzUI {
 		void LoadStyle(Control* ctl, const EString& selectorName);
 		void AnalysisStyle(const EString& styleStr);
 		void LoadFromFile(const EString& filename);
-		void LoadFromRaw(const EString& xmlRaw);
+		void LoadFromRaw(const char* xmlRaw);
 	protected:
 		virtual void OnBuildControl(const EString& nodeName, Control** outCtl);
 		virtual void OnSetAttribute(Control* ctl, const EString& attrName, const EString& attrValue);

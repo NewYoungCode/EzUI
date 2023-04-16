@@ -4,7 +4,6 @@
 #include "Button.h"
 
 #include "resource.h"
-#include "testFrm.h"
 
 class DesktopWallper :public BorderlessWindow
 {
@@ -21,7 +20,7 @@ HWND _workerw = nullptr;
 //		_workerw = FindWindowEx(0, tophandle, L"WorkerW", 0);
 //	}
 //	return true;
-//}//��������Ļص�����
+//}
 //
 //HWND GetWorkerW() {
 //	int result;
@@ -30,7 +29,7 @@ HWND _workerw = nullptr;
 //	EnumWindows(EnumWindowsProc, (LPARAM)nullptr);
 //	    ShowWindow(_workerw,SW_HIDE);
 //	return windowHandle;
-//}//��ȡ������ײ�ľ��
+//}
 //
 
 #include <shellscalingapi.h>
@@ -43,16 +42,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
 
 	Curl_Global_Init();
-	EzUI::Application app;//���·����Դ
-	//SetProcessDPIAware();
-	//SetProcessDpiAwareness(PROCESS_DPI_AWARENESS::PROCESS_PER_MONITOR_DPI_AWARE);
-	//ui::Application app(IDR_FILE3,"File", "123456");//����vs�Զ�����Դ
 
+	//EzUI::Application app;
+	EzUI::Application app("res.zip");//指定资源文件
+	//EzUI::Application app(ID_FILE,"zip","");//指定vs中资源文件
 	MainFrm frm;
 	frm.Show();
-
-	// TestFrom tf;
-	// tf.Show();
 
 	return app.exec();
 

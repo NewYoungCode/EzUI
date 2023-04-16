@@ -16,7 +16,6 @@ namespace EzUI {
 		HCURSOR _hCursor = NULL;//鼠标样式
 		Point _lastLocation;//上一次大小
 		Size _lastSize;//上一次大小
-		Rect _lastRect;
 		Rect _lastDrawRect;//最后一次显示的位置
 		int _eventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnChar | Event::OnKeyDown | Event::OnKeyUp;//默认添加到主窗口通知函数中可拦截
 		std::mutex _rePaintMtx;
@@ -35,13 +34,13 @@ namespace EzUI {
 		EzUI::Cursor Cursor = EzUI::Cursor::None;//鼠标样式
 		int MousePassThrough = 0;//忽略的鼠标消息
 		const bool IsXmlControl = false;//是否是xml加载进来的
+		bool Visible = true;//控件是否可见
 		EString Name;//控件的ObjectName ID
 		ControlState State = ControlState::Static;//控件状态
 		ControlAction Action = ControlAction::None;//控件行为
 		ControlStyle Style;//默认样式
 		ControlStyle HoverStyle;//鼠标悬浮样式
 		ControlStyle ActiveStyle;//鼠标按下样式
-		bool Visible = true;//控件是否可见
 		Control* Parent = NULL;//父控件
 		Controls VisibleControls;//基于控件中的可见控件
 		DockStyle Dock = DockStyle::None;//dock样式

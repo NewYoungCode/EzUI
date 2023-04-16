@@ -48,7 +48,7 @@ namespace EzUI {
 		HZipResource = OpenZip(fileName.utf16().c_str(), password.empty() ? NULL : password.c_str());
 #ifdef _DEBUG
 		if (HZipResource == NULL) {
-			::MessageBoxW(NULL, L"Open ZipResource Fail !", L"Error", 0);
+			::MessageBoxW(NULL, fileName.utf16().c_str(), L"Failed to open zip", MB_ICONWARNING);
 		}
 #endif
 	}

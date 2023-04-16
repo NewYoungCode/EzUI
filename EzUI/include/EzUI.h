@@ -4,6 +4,7 @@
 #include "unzip.h"
 #include "RenderType.h"
 #include "Direct2DRender.h"
+#include <fstream>
 namespace EzUI {
 	extern WCHAR WindowClassName[];
 	//全局资源句柄
@@ -11,10 +12,8 @@ namespace EzUI {
 	extern UI_EXPORT HGLOBAL HVSResource;//vs中的资源文件句柄
 	//获取当前线程ID
 	extern UI_EXPORT size_t GetThreadId();
-	//从全局zip获取资源
-	extern UI_EXPORT bool GetGlobalResource(const EString& fileName, std::string** outData);
-	//从全局zip获取资源
-	extern UI_EXPORT bool GetGlobalResource(const EString& fileName, IStream** outData);
+	//从获取文件资源
+	extern UI_EXPORT bool GetResource(const EString& fileName, std::string* outData);
 
 	using RectF = RenderType::RectF;
 	using Size = RenderType::Size;
@@ -90,13 +89,13 @@ namespace EzUI {
 		Image(HBITMAP hBitmap) :DXImage(hBitmap) {}
 		Image(IStream* iStream) :DXImage(iStream) {}
 		Image(const EString& fileOrRes) {
-			IStream* iStream = NULL;
-			if (GetGlobalResource(fileOrRes, &iStream)) {
-				this->CreateFormStream(iStream);
-				iStream->Release();
-			}
-			else {
-				this->CreateFromFile(fileOrRes.utf16());
+			//从资源中获取
+			std::string data;
+			GetResource(fileOrRes, &data);
+			IStream* stream = SHCreateMemStream((BYTE*)data.c_str(), data.size());
+			if (stream) {
+				this->CreateFormStream(stream);
+				stream->Release();
 			}
 		}
 	};
@@ -454,7 +453,6 @@ namespace EzUI {
 			char buf[1025]{ 0 };
 			auto count = sprintf_s((buf), 1024, formatStr.c_str(), std::forward<T>(args)...);
 			buf[count] = '\n';
-			buf[count + 1] = NULL;
 			OutputDebugStringW(EString(buf).utf16().c_str());
 #endif
 		}

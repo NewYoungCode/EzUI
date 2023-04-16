@@ -128,6 +128,9 @@ namespace EzUI {
 		ASSERT(MainLayout);
 		::ShowWindow(_hWnd, cmdShow);
 	}
+	void Window::ShowMax() {
+		Show(SW_MAXIMIZE);
+	}
 	int Window::ShowModal(bool wait)
 	{
 		_OwnerHwnd = ::GetWindowOwner(_hWnd);
@@ -172,6 +175,24 @@ namespace EzUI {
 		}
 		switch (uMsg)
 		{
+		case WM_GETMINMAXINFO:
+		{
+			MONITORINFO monitor{ 0 };
+			monitor.cbSize = sizeof(MONITORINFO);
+			::GetMonitorInfoW(::MonitorFromWindow(_hWnd, MONITOR_DEFAULTTOPRIMARY), &monitor);
+			RECT rcWork = monitor.rcWork;
+			//是否为主要显示器
+			if (monitor.dwFlags != MONITORINFOF_PRIMARY) {
+				::OffsetRect(&rcWork, -rcWork.left, -rcWork.top);
+			}
+			//保证窗口在最大化的时候始终在工作区 不会遮挡任务栏
+			MINMAXINFO* pMMInfo = (MINMAXINFO*)lParam;
+			pMMInfo->ptMaxPosition.x = rcWork.left;
+			pMMInfo->ptMaxPosition.y = rcWork.top;
+			pMMInfo->ptMaxSize.x = rcWork.right - rcWork.left;
+			pMMInfo->ptMaxSize.y = rcWork.bottom - rcWork.top;
+			break;
+		}
 		case  WM_IME_STARTCOMPOSITION://
 		{
 			HIMC hIMC = ImmGetContext(_hWnd);
@@ -416,11 +437,11 @@ namespace EzUI {
 #ifdef DEBUGPAINT
 		if (PublicData.Debug) {
 			EzUI::DrawRectangle(pt, rePaintRect, Color::Red);
-	}
+		}
 #endif
 		pt->EndDraw();
 		EzUI::ReleaseRender(pt);
-}
+	}
 
 	void Window::InitData(const DWORD& ExStyle)
 	{
@@ -712,7 +733,7 @@ namespace EzUI {
 			_inputControl->Trigger(args);
 			return;
 		}
-		}
+	}
 	void Window::OnKeyUp(WPARAM wParam, LPARAM lParam) {
 		if (_inputControl) { //
 			KeyboardEventArgs args(Event::OnKeyUp, wParam, lParam);
@@ -762,7 +783,7 @@ namespace EzUI {
 			}
 			if (sender->Action == ControlAction::Max) {
 				if (!IsZoomed(_hWnd)) {
-					::ShowWindow(_hWnd, SW_MAXIMIZE);
+					this->ShowMax();
 				}
 				else {
 					::ShowWindow(_hWnd, SW_SHOWNORMAL);
@@ -791,4 +812,4 @@ namespace EzUI {
 		return false;
 	}
 
-	};
+};

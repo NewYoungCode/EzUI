@@ -7,38 +7,57 @@ namespace EzUI {
 		std::thread::id threadId = std::this_thread::get_id();
 		return *(size_t*)&threadId;
 	}
+
 	std::mutex _resourceMtx;
-	bool GetGlobalResource(const EString& fileName, std::string** _outData) {
-		std::unique_lock<std::mutex> autoLock(_resourceMtx);
-		//Debug::Log("threadId %d", GetThreadId());
+	bool FindZipResource(const EString& fileName, int* index, size_t* fileSize) {
 		if (HZipResource) {
 			ZIPENTRY z;
-			int index;
-			ZRESULT zresult = FindZipItem(HZipResource, fileName.c_str(), false, &index, &z);
-			if (zresult == 0) {
-				std::string* outData = new std::string;
-				outData->resize(z.unc_size);
-				zresult = UnzipItem(HZipResource, index, (void*)outData->c_str(), z.unc_size);
-				if (zresult != 0) {//解压失败
-					delete outData;
-					return false;
-				}
-				*_outData = outData;
+			ZRESULT ret = FindZipItem(HZipResource, fileName.c_str(), false, index, &z);
+			if (ret == 0 && z.unc_size != 0) {
+				*fileSize = z.unc_size;
 				return true;
 			}
 		}
 		return false;
 	}
-
-	bool GetGlobalResource(const EString& fileName, IStream** _outData) {
-		std::string* memStream = NULL;
-		if (GetGlobalResource(fileName, &memStream)) {
-			*_outData = SHCreateMemStream((byte*)memStream->c_str(), memStream->size());
-			delete memStream;
+	bool UnZipResource(const EString& fileName, std::string* outData) {
+		std::unique_lock<std::mutex> autoLock(_resourceMtx);
+		int index;
+		size_t fileSize;
+		if (FindZipResource(fileName, &index, &fileSize)) {
+			outData->resize(fileSize);
+			UnzipItem(HZipResource, index, (void*)(outData->c_str()), fileSize);
 			return true;
 		}
 		return false;
 	}
+	bool GetResource(const EString& filename, std::string* outFileData) {
+		FILE* file(0);
+		_wfopen_s(&file, filename.utf16().c_str(), L"rb");
+		if (file) {
+			std::ifstream ifs(file);
+			std::stringstream ss;
+			ss << ifs.rdbuf();
+			*outFileData = ss.str();
+			ifs.close();
+			::fclose(file);
+			return true;
+		}
+		else {
+			return UnZipResource(filename, outFileData);
+		}
+	}
+
+	//bool GetGlobalResource(const EString& fileName, IStream** _outData) {
+	//	void* memBuf;
+	//	size_t memCount = 0;
+	//	if ((memCount = UnZipResource(fileName, &memBuf))) {
+	//		*_outData = SHCreateMemStream((byte*)memBuf, memCount);
+	//		delete[] memBuf;
+	//		return true;
+	//	}
+	//	return false;
+	//}
 
 	size_t __count_onsize = 0;
 

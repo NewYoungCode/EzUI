@@ -219,14 +219,13 @@ namespace EzUI {
 		ss << ifs.rdbuf();
 		ifs.close();
 		::fclose(file);
-
-		LoadFromRaw(ss.str());
+		LoadFromRaw(ss.str().c_str());
 	}
 
-	void UIManager::LoadFromRaw(const EString& xmlRaw)
+	void UIManager::LoadFromRaw(const char* xmlRaw)
 	{
 		TiXmlDocument doc;
-		auto result = doc.Parse(xmlRaw.c_str(), NULL, TiXmlEncoding::TIXML_ENCODING_UTF8);
+		auto result = doc.Parse(xmlRaw, NULL, TiXmlEncoding::TIXML_ENCODING_UTF8);
 		//doc.Parse
 		TiXmlElement* element = doc.FirstChildElement();//read frist element
 
@@ -340,14 +339,10 @@ namespace EzUI {
 		}
 	}
 	UIManager::UIManager(const EString& fileName) {
-		std::string* memStream = NULL;
-		if (GetGlobalResource(fileName, &memStream)) {
-			LoadFromRaw(*memStream);
-			delete memStream;
-		}
-		else {
-			LoadFromFile(fileName);
-		}
+		std::string data;
+		GetResource(fileName, &data);
+		LoadFromRaw((const char*)data.c_str());
+		//LoadFromFile(fileName);
 	}
 
 	Controls& UIManager::GetControls() {

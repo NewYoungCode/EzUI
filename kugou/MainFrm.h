@@ -5,7 +5,7 @@
 #include "Timer.h"
 #include "TabLayout.h"
 class MainFrm :
-	public Form
+	public Window
 {
 private:
 	VlcPlayer player;

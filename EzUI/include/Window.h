@@ -66,6 +66,7 @@ namespace EzUI {
 		void SetLayout(EzUI::Control* layout);
 		void SetText(const EString& text);
 		virtual void Show(int cmdShow = SW_SHOW);
+		virtual void ShowMax();
 		int ShowModal(bool wait = true);//参数 wait 是否阻塞
 		void Close(int code = 0);
 		virtual void Hide();

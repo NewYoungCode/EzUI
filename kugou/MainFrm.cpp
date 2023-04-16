@@ -118,7 +118,7 @@ void MainFrm::InitForm() {
 	int a = 0;
 
 }
-MainFrm::MainFrm() :Form(1022, 670)
+MainFrm::MainFrm() :Window(1022, 670)
 {
 	InitForm();
 	auto main = FindControl("main");
