@@ -2,14 +2,8 @@
 
 namespace EzUI {
 
-	HScrollBar::HScrollBar() :_maxRight(0)
-	{
-
-	}
-
-	HScrollBar::~HScrollBar()
-	{
-	}
+	HScrollBar::HScrollBar() :_maxRight(0) {}
+	HScrollBar::~HScrollBar() {}
 
 	void HScrollBar::SetMaxRight(int maxRight)
 	{
@@ -22,7 +16,7 @@ namespace EzUI {
 		}
 		else {
 			//滑块高度
-			_sliderWidth =(int)(rect.Width * 1.0 * rect.Width / _maxRight);
+			_sliderWidth = (int)(rect.Width * 1.0 * rect.Width / _maxRight);
 		}
 		Move(sliderX);
 	}
@@ -50,7 +44,7 @@ namespace EzUI {
 		if (_sliderWidth >= Width()) {
 			return;
 		}
-		EzUI:: FillRectangle(e.Painter,Rect{ 0,0,Width(),Height()}, GetBackgroundColor());
+		EzUI::FillRectangle(e.Painter, Rect{ 0,0,Width(),Height() }, GetBackgroundColor());
 	}
 
 	void HScrollBar::OwnerSize(const Size& parentSize) {
@@ -69,7 +63,7 @@ namespace EzUI {
 	void HScrollBar::OnForePaint(PaintEventArgs& args)
 	{
 		//滑块rect
-		Rect sliderRect(0, 0,Width(), Height());
+		Rect sliderRect(0, 0, Width(), Height());
 		sliderRect.X = (INT)sliderX;
 		sliderRect.Width = _sliderWidth;
 		if (_sliderWidth >= Width()) {
@@ -83,7 +77,7 @@ namespace EzUI {
 		if (radius > sliderRect.Width) {
 			radius = sliderRect.Width;
 		}
-		EzUI::FillRectangle(args.Painter,sliderRect, GetForeColor(this->State), radius);
+		EzUI::FillRectangle(args.Painter, sliderRect, GetForeColor(this->State), radius);
 	}
 
 	void HScrollBar::OnMouseDown(MouseButton mBtn, const Point& point) {

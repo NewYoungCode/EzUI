@@ -50,6 +50,9 @@ namespace EzUI {
 		if (vlc_media) {
 			libvlc_media_release(vlc_media);
 		}
+		if (vlc_inst) {
+			libvlc_free(vlc_inst);
+		}
 		if (BuffBitmap) {
 			delete BuffBitmap;
 		}

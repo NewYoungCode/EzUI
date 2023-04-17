@@ -1,7 +1,7 @@
 #include "HList.h"
 
 namespace EzUI {
-	HList::HList()
+	void HList::Init()
 	{
 		this->hScrollBar = new HScrollBar;
 		if (hScrollBar) {
@@ -10,9 +10,24 @@ namespace EzUI {
 			hScrollBar->_controlsLocationX = &LocationX;
 		}
 	}
-
+	HList::HList()
+	{
+		Init();
+	}
+	HList::HList(Control* parent) :Control(parent)
+	{
+		Init();
+	}
 	HList::~HList()
 	{
+		if (hScrollBar) {
+			delete hScrollBar;
+		}
+	}
+
+	int HList::ContentLenght() {
+	
+		return _maxRight;
 	}
 
 	void HList::OnLayout() {
@@ -48,7 +63,7 @@ namespace EzUI {
 		_maxRight += ctl->Margin.Left;
 		int& x = (int&)ctl->X();
 		x = _maxRight;
-		_maxRight += (ctl->Width()+ctl->Margin.Right);
+		_maxRight += (ctl->Width() + ctl->Margin.Right);
 		LocationX.insert(std::pair<Control*, int>(ctl, ctl->X()));
 	}
 	ControlIterator HList::RemoveControl(Control* ctl)
@@ -56,7 +71,7 @@ namespace EzUI {
 		size_t before = GetControls().size();//记录一开始的控件数量
 		ControlIterator nextIt = __super::RemoveControl(ctl);//删除控件
 		if (GetControls().size() < before) {//如果控件数量比开始少 则 删除成功
-			int outWidth = ( ctl->Width() +ctl->Margin.GetHSpace());//删除控件留出来的空白区域宽度
+			int outWidth = (ctl->Width() + ctl->Margin.GetHSpace());//删除控件留出来的空白区域宽度
 			_maxRight -= outWidth;//减去空白区域宽度
 			LocationX.erase(ctl);//将记录X坐标的map也要删除控件
 			for (auto i = nextIt; i != GetControls().end(); i++)//从删除的下一个控件开始往前移动X坐标
@@ -100,7 +115,7 @@ namespace EzUI {
 	}
 	void HList::ChildPainting(Controls& controls, PaintEventArgs& args) {
 		VisibleControls.clear();
-		auto rect = Rect(0, 0,Width(), Height());
+		auto rect = Rect(0, 0, Width(), Height());
 		//绘制子控件
 		for (auto i = controls.begin(); i != controls.end(); i++)
 		{

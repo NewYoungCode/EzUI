@@ -1,13 +1,9 @@
 #include "Label.h"
 namespace EzUI {
-
-	Label::Label()
-	{
-	}
-	Label::~Label()
-	{
-
-	}
+#define __MAX_FLOAT 16777216
+	Label::Label() {}
+	Label::Label(Control* parent) :Control(parent) {}
+	Label::~Label() {}
 	void Label::OnForePaint(PaintEventArgs& args)
 	{
 		__super::OnForePaint(args);
@@ -20,10 +16,10 @@ namespace EzUI {
 				Size ellipsisTextSize;
 				TextFormat textFormat(fontF, fontSize, TextAlign::TopLeft);
 				{
-					TextLayout textLayout(EllipsisText.utf16(), { 16777216, Height() }, &textFormat);
+					TextLayout textLayout(EllipsisText.utf16(), { __MAX_FLOAT, Height() }, &textFormat);
 					ellipsisTextSize = textLayout.GetFontSize();
 				}
-				TextLayout textLayout(_wstr, { 16777216, Height() }, &textFormat);
+				TextLayout textLayout(_wstr, { __MAX_FLOAT, Height() }, &textFormat);
 				if (textLayout.GetFontSize().Width > Width()) {//当文字显示超出的时候 宽度
 					int pos = 0;
 					BOOL isTrailingHit;
@@ -33,7 +29,7 @@ namespace EzUI {
 					{
 						//从最后往前删除文字 直到可以显示正常为止
 						drawText.erase(drawText.size() - 1, 1);
-						TextLayout textLayout(drawText, { 16777216, Height() }, &textFormat);
+						TextLayout textLayout(drawText, { __MAX_FLOAT, Height() }, &textFormat);
 						if (textLayout.GetFontSize().Width + ellipsisTextSize.Width < Width()) {
 							drawText.append(EllipsisText.utf16());
 							break;
@@ -41,7 +37,7 @@ namespace EzUI {
 					}
 				}
 			}
-			EzUI::DrawString(args.Painter,!drawText.empty() ? drawText : EllipsisText.utf16(), fontF, fontSize, fontColor, Rect(0, 0, Width(), Height()), TextAlign, _underline);
+			EzUI::DrawString(args.Painter, !drawText.empty() ? drawText : EllipsisText.utf16(), fontF, fontSize, fontColor, Rect(0, 0, Width(), Height()), TextAlign, _underline);
 		}
 	}
 

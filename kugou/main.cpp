@@ -40,16 +40,31 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ LPWSTR    lpCmdLine,
 	_In_ int       nCmdShow)
 {
-
 	Curl_Global_Init();
-
-	//EzUI::Application app;
-	EzUI::Application app("res.zip");//指定资源文件
-	//EzUI::Application app(ID_FILE,"zip","");//指定vs中资源文件
+	EzUI::Application app;
 	MainFrm frm;
 	frm.Show();
-
 	return app.exec();
+
+	/*for (size_t i = 0; i < 2; i++)
+	{
+		Sleep(1000);
+	}*/
+
+	for (size_t i = 0; i < 5000; i++) {
+		EzUI::Application app;// ("res.zip");//指定资源文件
+		//EzUI::Application app("res.zip");//指定资源文件
+		//EzUI::Application app(ID_FILE,"zip","");//指定vs中资源文件
+		MainFrm frm;
+		frm.Show();
+		return app.exec();
+		//BorderlessWindow wd(500,400);
+	}
+
+	for (size_t i = 0; i < 99999999; i++)
+	{
+		Sleep(1000);
+	}
 
 	//HWND workWnd = GetWorkerW();
 	//::ShowWindow(workWnd, SW_HIDE);

@@ -6,13 +6,16 @@ namespace EzUI {
 		public Control, public IScroll
 	{
 	private:
-		HScrollBar* hScrollBar = NULL;
-	public:
 		int _maxRight = 0;
+		HScrollBar* hScrollBar = NULL;
+		void Init();
+	public:
 		bool AutoWidth = false;//是否根据内容自动宽度
 	public:
 		HList();
+		HList(Control* parent);
 		virtual ~HList();
+		int ContentLenght();
 		virtual void OnLayout()override;
 		virtual	void AddControl(Control* ctl) override;
 		virtual ControlIterator RemoveControl(Control* ctl)override;

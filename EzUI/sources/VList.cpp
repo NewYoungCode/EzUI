@@ -1,6 +1,6 @@
 #include "VList.h"
 namespace EzUI {
-	VList::VList()
+	void VList::Init()
 	{
 		this->vScrollBar = new VScrollBar;
 		if (vScrollBar) {
@@ -9,8 +9,22 @@ namespace EzUI {
 			vScrollBar->_controlsLocationY = &LocationY;
 		}
 	}
+	VList::VList()
+	{
+		Init();
+	}
+	VList::VList(Control* parent) :Control(parent)
+	{
+		Init();
+	}
 	VList::~VList()
 	{
+		if (vScrollBar) {
+			delete vScrollBar;
+		}
+	}
+	int VList::ContentLenght() {
+		return _maxBottom;
 	}
 	void VList::OnLayout() {
 		__super::OnLayout();

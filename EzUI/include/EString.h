@@ -7,10 +7,10 @@ namespace EzUI {
 	public:
 		size_t length() const;//the utf8 length
 		EString();
-		EString(const std::string& str);
-		EString(const char* szbuf);
-		EString(const wchar_t* szbuf);
-		EString(const std::wstring& wstr);
+		EString(const std::string& str)noexcept;
+		EString(const char* szbuf)noexcept;
+		EString(const wchar_t* szbuf)noexcept;
+		EString(const std::wstring& wstr)noexcept;
 		std::wstring utf16() const;
 		std::string ansi() const;
 		EString Erase(const char& _char)const;

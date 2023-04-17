@@ -6,7 +6,7 @@ namespace EzUI {
 		return _nowStyle.##_filed;\
 	}\*/  \
 ControlStyle& style = GetStyle(this->State);\
-if(style.##_filed.valid ){\
+if(style.##_filed.IsValid() ){\
 	return style.##_filed; \
 }\
 	return this->Style.##_filed;\
@@ -27,6 +27,10 @@ Event(this , ##__VA_ARGS__); \
 	UI_BINDFUNC(HImage, BackgroundImage);
 
 	Control::Control() {}
+	Control::Control(Control* parent) {
+		parent->AddControl(this);
+	}
+
 	Control::Control(const Control&) {}
 	Control& Control::operator=(const Control&) {
 		return *this;
@@ -48,37 +52,34 @@ Event(this , ##__VA_ARGS__); \
 		}
 		OnBackgroundPaint(args);//先绘制背景
 		OnForePaint(args);//再绘制前景
-
 	}
 
 	void Control::OnBackgroundPaint(PaintEventArgs& e)
 	{
-		Color backgroundColor = GetBackgroundColor();
-		HImage backgroundImage = GetBackgroundImage();
-		UI_Int radius = GetRadius();
-		if (backgroundColor.valid) {
+		auto backgroundColor = GetBackgroundColor();
+		auto backgroundImage = GetBackgroundImage();
+		if (backgroundColor.IsValid()) {
 			EzUI::FillRectangle(e.Painter, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundColor);
 		}
-		if (backgroundImage.valid && backgroundImage) {
+		if (backgroundImage.IsValid()) {
 			EzUI::DrawImage(e.Painter, backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage->SizeMode, backgroundImage->Padding);
 		}
 	}
 	void Control::OnForePaint(PaintEventArgs& e) {
-		HImage foreImage = GetForeImage();
-		if (foreImage.valid && foreImage) {
+		auto foreImage = GetForeImage();
+		if (foreImage.IsValid()) {
 			EzUI::DrawImage(e.Painter, foreImage, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage->SizeMode, foreImage->Padding);
 		}
 	}
 	void Control::OnBorderPaint(PaintEventArgs& e)
 	{
-		Color borderColor = GetBorderColor();
-		if (!borderColor.valid) return;//边框无效颜色不绘制
-
-		UI_Int radius = GetRadius();
-		UI_Int borderLeft = GetBorderLeft();
-		UI_Int borderTop = GetBorderTop();
-		UI_Int borderRight = GetBorderRight();
-		UI_Int borderBottom = GetBorderBottom();
+		auto borderColor = GetBorderColor();
+		if (!borderColor.IsValid()) return;//边框无效颜色不绘制
+		auto radius = GetRadius();
+		auto borderLeft = GetBorderLeft();
+		auto borderTop = GetBorderTop();
+		auto borderRight = GetBorderRight();
+		auto borderBottom = GetBorderBottom();
 
 		bool hasBorder = borderLeft || borderTop || borderTop || borderBottom;
 		if (!hasBorder) return;//边框为0不绘制
@@ -261,19 +262,19 @@ Event(this , ##__VA_ARGS__); \
 		UI_Int _FontSize;
 	loop:
 		_FontSize = this->GetStyle(_state).FontSize; //先看看对应状态的是否有 有效字段
-		if (_FontSize.valid) {
+		if (_FontSize.IsValid()) {
 			return _FontSize;//如果当前控件里面查找到就返回
 		}
 		Control* pControl = this->Parent;
 		while (pControl)//如果没有则从父控件里面查找对应的样式
 		{
 			_FontSize = pControl->GetStyle(_state).FontSize;
-			if (_FontSize.valid) {
+			if (_FontSize.IsValid()) {
 				return _FontSize;//如果从父控件里面查找到就返回
 			}
 			pControl = pControl->Parent;
 		}
-		if (!(_FontSize.valid) && _state != ControlState::Static) {
+		if (!(_FontSize.IsValid()) && _state != ControlState::Static) {
 			_state = ControlState::Static;//如果从父样式中仍然未找到,则找静态样式
 			goto loop;
 		}
@@ -290,19 +291,19 @@ Event(this , ##__VA_ARGS__); \
 		Color _ForeColor;
 	loop:
 		_ForeColor = this->GetStyle(_state).ForeColor; //先看看对应状态的是否有 有效字段
-		if (_ForeColor.valid) {
+		if (_ForeColor.IsValid()) {
 			return _ForeColor;//如果当前控件里面查找到就返回
 		}
 		Control* pControl = this->Parent;
 		while (pControl)//如果没有则从父控件里面查找对应的样式
 		{
 			_ForeColor = pControl->GetStyle(_state).ForeColor;
-			if (_ForeColor.valid) {
+			if (_ForeColor.IsValid()) {
 				return _ForeColor;//如果从父控件里面查找到就返回
 			}
 			pControl = pControl->Parent;
 		}
-		if (!(_ForeColor.valid) && _state != ControlState::Static) {
+		if (!(_ForeColor.IsValid()) && _state != ControlState::Static) {
 			_state = ControlState::Static;//如果从父样式中仍然未找到,则找静态样式
 			goto loop;
 		}
@@ -705,6 +706,9 @@ Event(this , ##__VA_ARGS__); \
 		if (_hCursor) {
 			::DestroyCursor(_hCursor);
 		}
+		/*if (Parent) {
+			Parent->RemoveControl(this);
+		}*/
 		//销毁控件前请先将控件从父容器中移除
 		if (this->GetScrollBar()) {
 			delete this->GetScrollBar();

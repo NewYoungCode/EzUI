@@ -1,6 +1,7 @@
 #include "ComBox.h"
 namespace EzUI {
-	ComBox::ComBox() {
+	void ComBox::Init()
+	{
 		Style.BorderColor = Color(239, 239, 239);
 		Style.BackgroundColor = Color::White;
 		Style.SetBorder(Color(239, 239, 239), 1);
@@ -26,9 +27,16 @@ namespace EzUI {
 			int height = OwnerRect.bottom - OwnerRect.top;
 			//::MoveWindow(poupWnd->Hwnd(), clientPos.x, clientPos.y, rect.Width, rect.Height, FALSE);
 			//根据内容自动高度
-			::MoveWindow(poupWnd->Hwnd(), clientPos.x, clientPos.y, rect.Width, vlist._maxBottom, FALSE);
+			::MoveWindow(poupWnd->Hwnd(), clientPos.x, clientPos.y, rect.Width, vlist.ContentLenght(), FALSE);
 			poupWnd->Show(SW_SHOW);
 		};
+	}
+	ComBox::ComBox() {
+		Init();
+	}
+	ComBox::ComBox(Control* parent) :HLayout(parent)
+	{
+		Init();
 	}
 	ComBox::~ComBox() {
 		if (poupWnd) {

@@ -14,8 +14,10 @@ namespace EzUI {
 		Label label;
 		VList vlist;
 		PoupWindow* poupWnd = NULL;
+		void Init();
 	public:
 		ComBox();
+		ComBox(Control*parent);
 		virtual ~ComBox();
 		size_t AddItem(const EString& text);
 		void RemoveItem(size_t pos);

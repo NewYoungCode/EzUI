@@ -29,11 +29,11 @@ namespace EzUI {
 		int _fixedHeight = 0;//绝对高度
 		Rect _rect;//控件矩形区域(基于父控件)
 	public:
+		void* const UIManager = NULL;//记录由哪个UIManager管理
 		EzUI::Margin Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数
 		WindowData* PublicData = NULL;//窗口上的公共数据
 		EzUI::Cursor Cursor = EzUI::Cursor::None;//鼠标样式
 		int MousePassThrough = 0;//忽略的鼠标消息
-		const bool IsXmlControl = false;//是否是xml加载进来的
 		bool Visible = true;//控件是否可见
 		EString Name;//控件的ObjectName ID
 		ControlState State = ControlState::Static;//控件状态
@@ -115,6 +115,7 @@ namespace EzUI {
 		HCURSOR GetCursor();
 	public:
 		Control();
+		Control(Control* parent);
 		virtual ~Control();
 		void DestroySpacers();
 		//普通样式
@@ -173,9 +174,9 @@ namespace EzUI {
 			SetFixedWidth(fixedWidth);
 		}
 	};
-
 	class  ScrollBar :public Control, public IScrollBar {
 	public:
+		ScrollBar(Control* parent) = delete;
 		ScrollBar() {
 			Style.ForeColor = { 205,205,205 };//the bar backgroundcolor
 			Style.BackgroundColor = { 240,240,240 };//the bar backgroundcolor

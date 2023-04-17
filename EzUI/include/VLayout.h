@@ -5,6 +5,8 @@ namespace EzUI {
 		public Control
 	{
 	public:
+		VLayout();
+		VLayout(Control* parent);
 		virtual ~VLayout();
 	public:
 		void OnSize(const Size& size)override;

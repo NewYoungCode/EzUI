@@ -53,6 +53,16 @@ namespace EzUI {
 		}
 	}
 
+	HLayout::HLayout()
+	{
+	}
+	HLayout::HLayout(Control* parent):Control(parent)
+	{
+	}
+	HLayout::~HLayout()
+	{
+	}
+
 	void HLayout::OnSize(const Size& size) {
 		__super::OnSize(size);
 		ResumeLayout();

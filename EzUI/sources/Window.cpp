@@ -108,12 +108,12 @@ namespace EzUI {
 		ASSERT(layout);
 		MainLayout = layout;
 		if (MainLayout->Style.FontFamily.empty()) {
-			MainLayout->Style.FontFamily = TEXT("Microsoft YaHei");
+			MainLayout->Style.FontFamily = "Microsoft YaHei";
 		}
-		if (!MainLayout->Style.FontSize.valid) {
+		if (!MainLayout->Style.FontSize.IsValid()) {
 			MainLayout->Style.FontSize = 12;
 		}
-		if (!MainLayout->Style.ForeColor.valid) {
+		if (!MainLayout->Style.ForeColor.IsValid()) {
 			MainLayout->Style.ForeColor = Color::Black;
 		}
 		MainLayout->PublicData = &PublicData;
@@ -153,14 +153,14 @@ namespace EzUI {
 		return _closeCode;
 	}
 	void Window::Hide() {
-		::ShowWindow(_hWnd, SW_HIDE);
+		Show(SW_HIDE);
 	}
 	bool Window::IsVisible() {
 		return ::IsWindowVisible(_hWnd) ? true : false;
 	}
 	void Window::SetVisible(bool flag) {
 		if (flag) {
-			::ShowWindow(_hWnd, SW_RESTORE);
+			Show(SW_RESTORE);
 			::SetForegroundWindow(_hWnd);
 		}
 		else {
@@ -209,20 +209,24 @@ namespace EzUI {
 			{
 				return TRUE;
 			}
+			if (y == _rectClient.Height) {
+				y -= 1;//神奇!如果输入位置和等于窗口的高 那么输入法就会跑到左上角去
+			}
 			cpf.ptCurrentPos.x = x;
 			cpf.ptCurrentPos.y = y;
 			ImmSetCompositionWindow(hIMC, &cpf);
 			ImmReleaseContext(_hWnd, hIMC);
+			//Debug::Log("%d %d", x, y);
 			break;
 		}
 		case WM_IME_COMPOSITION:
 		{
-			HIMC        hIMC;
-			ImmGetContext(_hWnd);
-			hIMC = ImmGetContext(_hWnd);
-			char buf[256]{ 0 };
-			BOOL b = ImmGetCompositionString(hIMC, GCS_COMPSTR, buf, 255);
-			b = ImmReleaseContext(_hWnd, hIMC);
+			/*		HIMC        hIMC;
+					ImmGetContext(_hWnd);
+					hIMC = ImmGetContext(_hWnd);
+					char buf[256]{ 0 };
+					BOOL b = ImmGetCompositionString(hIMC, GCS_COMPSTR, buf, 255);
+					b = ImmReleaseContext(_hWnd, hIMC);*/
 			break;
 		}
 		case WM_ERASEBKGND: {
@@ -629,9 +633,10 @@ namespace EzUI {
 
 	void Window::OnMouseDown(MouseButton mbtn, const Point& point)
 	{
-		::SetFocus(_hWnd);
-		_mouseDown = true;
 		::SetCapture(_hWnd);
+		//::SetFocus(_hWnd);
+		_mouseDown = true;
+
 		//寻早控件
 		Point relativePoint;
 		Control* outCtl = this->FindControl(point, relativePoint);
@@ -653,8 +658,12 @@ namespace EzUI {
 	}
 	void Window::OnMouseUp(MouseButton mbtn, const Point& point)
 	{
-		_mouseDown = false;
 		::ReleaseCapture();
+		if (_mouseDown == false) {
+			return;
+		}
+		_mouseDown = false;
+
 		if (_inputControl) {
 			auto ctlRect = _inputControl->GetClientRect();
 			MouseEventArgs args;
@@ -684,6 +693,8 @@ namespace EzUI {
 		}
 		_lastBtn = mbtn;
 		_lastDownTime = _time;
+
+		OnMouseMove(point);
 	}
 
 	void Window::OnMouseClick(MouseButton mbtn, const Point& point) {
@@ -765,11 +776,11 @@ namespace EzUI {
 		if (pt.y >= rc.bottom - x)return HTBOTTOM;//
 		return HTCLIENT;//ָ
 	}
-
 	void Window::MoveWindow() {
-		::ReleaseCapture();//会导致avtiveStyle失效
-		SendMessage(_hWnd, 161, 2, NULL);
-		SendMessage(_hWnd, 0x0202, 0, NULL);
+		::ReleaseCapture();
+		SendMessage(Hwnd(), WM_NCLBUTTONDOWN, HTCAPTION, NULL);//模拟鼠标按住标题栏移动窗口
+		//SendMessage(Hwnd(), WM_NCLBUTTONUP, NULL, NULL);//松开
+		SendMessage(Hwnd(), WM_LBUTTONUP, NULL, NULL);//松开
 	}
 	bool Window::OnNotify(Control* sender, EventArgs& args) {
 		if (args.EventType == Event::OnMouseDown) {
@@ -778,7 +789,7 @@ namespace EzUI {
 				return true;
 			}
 			if (sender->Action == ControlAction::Mini) {
-				::ShowWindow(_hWnd, SW_MINIMIZE);
+				Show(SW_MINIMIZE);
 				return false;
 			}
 			if (sender->Action == ControlAction::Max) {
@@ -786,7 +797,7 @@ namespace EzUI {
 					this->ShowMax();
 				}
 				else {
-					::ShowWindow(_hWnd, SW_SHOWNORMAL);
+					Show(SW_SHOWNORMAL);
 				}
 				return false;
 			}

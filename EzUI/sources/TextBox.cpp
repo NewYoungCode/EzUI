@@ -13,14 +13,11 @@ namespace EzUI {
 	}
 
 	TextBox::TextBox() {
-		Cursor = Cursor::IBEAM;
-		timer.Interval = 500;
-		timer.Tick = [&](Windows::Timer*) {
-			if (!careRect.IsEmptyArea() && _focus) {
-				_careShow = !_careShow;
-				this->Invalidate();
-			}
-		};
+		Init();
+	}
+	TextBox::TextBox(Control* parent):Control(parent)
+	{
+		Init();
 	}
 	void TextBox::OnChar(WPARAM wParam, LPARAM lParam)
 	{
@@ -247,6 +244,17 @@ namespace EzUI {
 
 	void TextBox::OnKeyUp(WPARAM wParam, LPARAM lParam) {
 		__super::OnKeyUp(wParam, lParam);
+	}
+	void TextBox::Init()
+	{
+		Cursor = Cursor::IBEAM;
+		timer.Interval = 500;
+		timer.Tick = [&](Windows::Timer*) {
+			if (!careRect.IsEmptyArea() && _focus) {
+				_careShow = !_careShow;
+				this->Invalidate();
+			}
+		};
 	}
 	void TextBox::Analysis()
 	{

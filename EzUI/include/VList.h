@@ -7,12 +7,15 @@ namespace EzUI {
 	{
 	private:
 		VScrollBar* vScrollBar = NULL;
-	public:
 		int _maxBottom = 0;
+		void Init();
+	public:
 		bool AutoHeight = false;//根据内容的高度自动变化
 	public:
 		VList();
+		VList(Control*parent);
 		virtual ~VList();
+		int ContentLenght();//获取内容实际长度
 		virtual void OnLayout()override;
 		virtual	void AddControl(Control* ctl) override;
 		virtual ControlIterator RemoveControl(Control* ctl)override;

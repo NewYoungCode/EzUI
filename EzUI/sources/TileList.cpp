@@ -10,7 +10,7 @@ namespace EzUI {
 		RefreshScroll(_MaxBottom);
 	}
 
-	TileList::TileList()
+	void TileList::Init()
 	{
 		this->vScrollBar = new VScrollBar;
 		if (vScrollBar) {
@@ -19,8 +19,20 @@ namespace EzUI {
 			vScrollBar->_controlsLocationY = &LocationY;
 		}
 	}
+
+	TileList::TileList()
+	{
+		Init();
+	}
+	TileList::TileList(Control* parent) :Control(parent)
+	{
+		Init();
+	}
 	TileList::~TileList()
 	{
+		if (vScrollBar) {
+			delete vScrollBar;
+		}
 	}
 	ScrollBar* TileList::GetScrollBar()
 	{

@@ -41,9 +41,8 @@ namespace EzUI {
 		Rect(const RECT& winRect);
 	};
 	class UI_EXPORT Color :public RenderType::Color {
-	public:
-		bool valid = false;
 	private:
+		bool valid = false;
 		void _MakeARGB(const EString& colorStr);
 	public:
 		Color();
@@ -55,6 +54,7 @@ namespace EzUI {
 		Color(IN ARGB argb);
 		Color& operator=(const Color& Align_Right_Color);
 		COLORREF COLORRE() const;
+		const bool& IsValid() { return valid; };
 	};
 	class UI_EXPORT EBitmap {
 	public:
@@ -86,6 +86,8 @@ namespace EzUI {
 #if USED_Direct2D
 	class Image :public DXImage {
 	public:
+		void* UImanager = NULL;
+	public:
 		Image(HBITMAP hBitmap) :DXImage(hBitmap) {}
 		Image(IStream* iStream) :DXImage(iStream) {}
 		Image(const EString& fileOrRes) {
@@ -105,19 +107,32 @@ namespace EzUI {
 	class Tuple {
 	private:
 		T value = NULL;
-	public:
 		bool valid = false;
+		Tuple(const T& value) = delete;
+	public:
 		Tuple() :valid(false) {
 		}
-		Tuple(const T& value) {
-			this->value = value;
-			valid = true;
+		T& operator =(const T& _value) {
+			this->value = _value;
+			this->valid = true;
+			return this->value;
 		}
 		operator T () {
 			return value;
 		}
+		T Value() {
+			return value;
+		}
 		T operator->() {
 			return value;
+		}
+		//是否有效(启用 && 不为NULL)
+		bool IsValid() {
+			return valid && value != NULL;
+		}
+		//设置是否启用
+		void Enable(bool enabel) {
+			valid = enabel;
 		}
 	};
 	template<typename T>
@@ -388,9 +403,8 @@ namespace EzUI {
 		UI_Int BorderBottom;//底部边框
 		Color BorderColor;//边框颜色
 		Color BackgroundColor;//背景颜色
-		HImage BackgroundImage;//背景图片
-		HImage ForeImage;//前景图片
-
+		HImage BackgroundImage;//背景图片 如果指定的图片被删除 请必须将此置零
+		HImage ForeImage;//前景图片 如果指定的图片被删除 请必须将此置零
 		EString FontFamily;//字体名称   具有继承性
 		UI_Int FontSize;//字体大小       具有继承性
 		Color ForeColor;//前景颜色      具有继承性
@@ -402,8 +416,8 @@ namespace EzUI {
 		virtual ~ControlStyle() {}
 		void SetBorder(const Color& color, int width);
 		bool IsValid();
-		void SetStyleSheet(const EString& styleStr);
-		void SetStyle(const EString& key, const EString& value);
+		void SetStyleSheet(const EString& styleStr, void* UImanager = NULL);
+		void SetStyle(const EString& key, const EString& value, void* UImanager = NULL);
 	};
 	class UI_EXPORT IScroll {
 	public:
@@ -453,7 +467,9 @@ namespace EzUI {
 			char buf[1025]{ 0 };
 			auto count = sprintf_s((buf), 1024, formatStr.c_str(), std::forward<T>(args)...);
 			buf[count] = '\n';
-			OutputDebugStringW(EString(buf).utf16().c_str());
+			buf[count + 1] = 0;
+			auto wstr = EString(buf).utf16();
+			OutputDebugStringW(wstr.c_str());
 #endif
 		}
 	};

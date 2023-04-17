@@ -1,14 +1,19 @@
 #include "MainFrm.h"
 #define refreshImage WM_UIMESSAGE+1
-
+#include "ComBox.h"
 void MainFrm::InitForm() {
 	this->Zoom = true;
 
-	UIManager um("xml/main.htm");
-
-	auto root = um.GetRoot();
-
-	SetLayout(root);
+	umg.LoadFile("xml/main.htm");
+	umg.SetupUI(this);
+	//ComBox *cbx=new ComBox;
+	//cbx->SetFixedHeight(30);
+	//cbx->AddItem("选项1");
+	//cbx->AddItem("选项2");
+	//cbx->AddItem("选项3");
+	//cbx->AddItem("选项4");
+	//MainLayout->AddControl(cbx);
+	//MainLayout->AddControl(new VSpacer(1));
 
 	playingImage = new Image(L"imgs/play.png");
 	pauseImage = new Image(L"imgs/pause.png");
@@ -16,6 +21,7 @@ void MainFrm::InitForm() {
 	//如果你仍需要使用win32原生控件请给窗口设置 主布局 然后就可以添加win32原生控件了(注:layeredwindow不支持原生控件)
 	//HWND btn = ::CreateWindowW(L"Button", L"hello world", WS_POPUP | WS_VISIBLE, 600, 10, 100, 30, NULL, NULL, GetModuleHandle(NULL), 0);
 	//::SetParent(btn, Hwnd());
+	//return;
 
 	auto main2 = FindControl("main2");
 	main2->Style.BackgroundColor = Color(100, 0, 0, 0);
@@ -81,7 +87,6 @@ void MainFrm::InitForm() {
 
 	FindControl("vlcDock")->AddControl(&player);
 	SongView();
-
 	playerBar = FindControl("playerBar");
 	playerBar2 = FindControl("rate");
 	playerBar2->MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseClick;
@@ -91,7 +96,6 @@ void MainFrm::InitForm() {
 
 	bkImage = new Image(L"imgs/defaultBackground.jpg");
 	bkImage->SizeMode = ImageSizeMode::CenterImage;
-
 	headImg = new Image(L"imgs/headImg.jpg");
 	headImg->SizeMode = ImageSizeMode::CenterImage;
 	singer->Style.BackgroundImage = headImg;
@@ -101,41 +105,47 @@ void MainFrm::InitForm() {
 	timer->Tick = [=](Windows::Timer*) {
 		Task();
 	};
-
 	auto main = FindControl("main");
 	player.Tag = (UINT_PTR)main;
-
 	player.AddEventNotify(Event::OnPaint);
 	main->AddEventNotify(Event::OnPaint);
-
-	auto code = ::GetACP();
-
-	EString aaa=("你好a");
-	EString::ANSIToUTF8("库狗",&aaa);
-
-	((Label*)FindControl("songName"))->SetText("酷狗");
-	EString kg = "酷狗";
-	int a = 0;
-
 }
-MainFrm::MainFrm() :Window(1022, 670)
+MainFrm::MainFrm() :BorderlessWindow(1022, 670)
 {
 	InitForm();
-	auto main = FindControl("main");
-	//main->Style.Radius =5;
-	//main->Style.BackgroundColor = Color(100, 255, 0, 0);
-	//MainLayout->Style.Radius = 50;
-	//CloseShadow();
 }
 MainFrm::~MainFrm()
 {
-
-	timer->Stop();
+	if (timer) {
+		timer->Stop();
+		delete timer;
+	}
 	if (downloadTask) {
 		downloadTask->get();
 		delete downloadTask;
 	}
-
+	if (cfg) {
+		delete cfg;
+	}
+	//如果是UIManager创建的则交由UIManager自行释放
+	/*if (bkImage && bkImage->UImanager == NULL) {
+		delete bkImage;
+	}
+	if (headImg && headImg->UImanager == NULL) {
+		delete headImg;
+	}
+	if (playingImage && playingImage->UImanager == NULL) {
+		delete playingImage;
+	}
+	if (pauseImage && pauseImage->UImanager == NULL) {
+		delete pauseImage;
+	}*/
+	if (searchList) {
+		searchList->Clear(true);
+	}
+	if (localList) {
+		localList->Clear(true);
+	}
 }
 void MainFrm::OnClose(bool& cal) {
 	Application::exit(0);
@@ -233,7 +243,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			if (tabCtrl->GetPageIndex() == 1) {
 				PaintEventArgs& arg = (PaintEventArgs&)args;
 				Image img(player.BuffBitmap->_bitmap);
-				EzUI::DrawImage( arg.Painter,&img, main->GetRect(), ImageSizeMode::CenterImage);
+				EzUI::DrawImage(arg.Painter, &img, main->GetRect(), ImageSizeMode::CenterImage);
 				return true;
 			}
 			return false;
@@ -458,16 +468,16 @@ void MainFrm::NextPage(int a, int b) {
 	}
 }
 void  MainFrm::SongView() {
-	centerLeft->Style.BackgroundColor = Color(0, 0, 0, 0);
+	/*centerLeft->Style.BackgroundColor = Color(0, 0, 0, 0);
 	tools->Style.BorderBottom = 1;
 	tools->Style.BorderColor = Color(238, 238, 238);
-	main->Style.BackgroundImage.valid = false;
+	main->Style.BackgroundImage.Enable(false);
 	localList->GetScrollBar()->Style.BackgroundColor = Color(50, 200, 200, 200);
 	localList->GetScrollBar()->Style.ForeColor = Color(217, 217, 217);
 	localList->GetScrollBar()->ActiveStyle.ForeColor = Color(191, 191, 191);
 	center->Style.BackgroundColor = Color::White;
 	center->Style.ForeColor = Color::Black;
-	main->Invalidate();
+	main->Invalidate();*/
 }
 void  MainFrm::LrcView() {
 	centerLeft->Style.BackgroundColor = Color(100, 200, 200, 200);

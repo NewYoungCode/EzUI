@@ -12,21 +12,21 @@ namespace EzUI {
 		return count;
 	}
 	EString::EString() {}
-	EString::EString(const std::string& str) {
+	EString::EString(const std::string& str)noexcept {
 		this->resize(str.size());
 		::memcpy((void*)c_str(), str.c_str(), str.size());
 	}
-	EString::EString(const char* szbuf) {
+	EString::EString(const char* szbuf)noexcept {
 		if (szbuf == NULL)return;
 		size_t len = ::strlen(szbuf);
 		this->resize(len);
 		::memcpy((void*)c_str(), szbuf, len);
 	}
-	EString::EString(const wchar_t* szbuf) {
+	EString::EString(const wchar_t* szbuf)noexcept {
 		if (szbuf == NULL)return;
 		EString::UnicodeToUTF8(szbuf, this);
 	}
-	EString::EString(const std::wstring& wstr) {
+	EString::EString(const std::wstring& wstr)noexcept {
 		EString::UnicodeToUTF8(wstr, this);
 	}
 

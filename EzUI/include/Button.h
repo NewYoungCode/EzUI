@@ -4,8 +4,11 @@ namespace EzUI {
 	class UI_EXPORT Button :
 		public Label
 	{
+	private:
+		void Init();
 	public:
 		Button();
+		Button(Control* parent);
 		virtual ~Button();
 	};
 };

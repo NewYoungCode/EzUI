@@ -64,6 +64,7 @@ namespace EzUI {
 		if (HVSResource) {
 			FreeResource(HVSResource);
 		}
+		UnregisterClassW(WindowClassName, GetModuleHandle(NULL));
 	}
 
 	int Application::exec()

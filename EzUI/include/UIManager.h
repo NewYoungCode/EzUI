@@ -31,22 +31,25 @@ namespace EzUI {
 		};
 	private:
 		std::list<UIManager::Selector> Selectors;//样式集合
-		std::list<Control*> controls;//加载的控件集合
+		std::list<Control*> controls;
 		void LoadControl(void* node, Control* control);
 		Control* BuildControl(void* node);
 		void LoadStyle(Control* ctl, const EString& selectorName);
 		void AnalysisStyle(const EString& styleStr);
-		void LoadFromFile(const EString& filename);
 		void LoadFromRaw(const char* xmlRaw);
+		void FreeImage(ControlStyle& style);//删除由此管理器创建的图像
+		void FreeControl(Control* ctl);//删除由此管理器创建的控件
 	protected:
 		virtual void OnBuildControl(const EString& nodeName, Control** outCtl);
 		virtual void OnSetAttribute(Control* ctl, const EString& attrName, const EString& attrValue);
 	public:
+		void SetupUI(Window* window);
 		UIFunc<void(const EString& nodeName, Control** outCtl)> EventBuilControl;//用于自定义控件
 		UIFunc<void(Control* ctl, const EString& attrName, const EString& attrValue)> EventSetAttribute;//用于自定义控件
-		UIManager(const EString& fileOrRes);
-		Controls& GetControls();
-		Control* GetRoot();
+		void LoadFile(const EString& fileName);
+		virtual ~UIManager();
+		Control* GetNodeByName(const EString& nodeName = "");
+		Control* GetNode(size_t pos = 0);
 	};
 
 	//选择器

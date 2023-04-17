@@ -6,13 +6,15 @@ namespace EzUI {
 	{
 		//Cursor = IDC_HAND;
 		TextAlign = TextAlign::MiddleLeft;
-
 	}
-
+	CheckBox::CheckBox(Control* parent) :Label(parent)
+	{
+		//Cursor = IDC_HAND;
+		TextAlign = TextAlign::MiddleLeft;
+	}
 	CheckBox::~CheckBox()
 	{
 	}
-
 	void CheckBox::SetCheck(bool checked)
 	{
 		_checked = checked;

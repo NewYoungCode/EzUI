@@ -30,6 +30,7 @@ namespace EzUI {
 		Windows::Timer timer;//用于光标闪烁
 		bool _careShow = false;//用于光标闪烁
 	private:
+		void Init();
 		void Analysis();//分析字符串
 		void Insert(const std::wstring& str);//插入文字
 		bool DeleteRange();//删除选中内容
@@ -57,6 +58,7 @@ namespace EzUI {
 		Color SelectColor = Color(100, 255, 0, 0);//选中颜色
 	public:
 		TextBox();
+		TextBox(Control*parent);
 		virtual ~TextBox();
 		const EString GetText();
 		EventTextChange TextChange = NULL;

@@ -19,6 +19,7 @@ namespace EzUI {
 		bool AutoHeight = false;
 		Size GetFontWidth();
 		Label();
+		Label(Control* parent);
 		virtual ~Label();
 		virtual void SetAttribute(const EString& key, const EString& value)override;
 		void SetText(const EString& text);

@@ -10,6 +10,7 @@ namespace EzUI {
 		int _index = 0;
 	public:
 		TabLayout();
+		TabLayout(Control* parent);;
 		virtual ~TabLayout();
 		void SetPageIndex(int index);
 		virtual void AddControl(Control* ctl);

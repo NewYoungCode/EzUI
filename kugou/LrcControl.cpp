@@ -71,7 +71,6 @@ void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
 
 void LrcControl::Clear()
 {
-
 	timer->Stop();
 	LrcNow = NULL;
 	for (auto& it : LrcList) {
@@ -83,7 +82,16 @@ void LrcControl::Clear()
 
 LrcControl::~LrcControl()
 {
-	Clear();
+	if (timer) {
+		timer->Stop();
+		delete timer;
+	}
+	if (LrcNow) {
+		delete LrcNow;
+	}
+	for (auto& it : LrcList) {
+		delete it;
+	}
 }
 
 LrcControl::LrcControl()

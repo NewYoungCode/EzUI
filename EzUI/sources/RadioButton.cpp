@@ -8,6 +8,12 @@ namespace EzUI {
 		TextAlign = TextAlign::MiddleLeft;
 	}
 
+	RadioButton::RadioButton(Control* parent):Label(parent)
+	{
+		//Cursor = IDC_HAND;
+		TextAlign = TextAlign::MiddleLeft;
+	}
+
 	RadioButton::~RadioButton()
 	{
 	}

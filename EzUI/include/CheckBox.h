@@ -10,7 +10,8 @@ namespace EzUI {
 		bool _checked = false;
 	public:
 		CheckBox();
-		virtual	~CheckBox();
+		CheckBox(Control*parent);
+		virtual~CheckBox();
 		int Indent = 2;//缩进
 		void SetCheck(bool checked = true);
 		bool GetCheck();

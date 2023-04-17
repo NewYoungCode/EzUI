@@ -11,6 +11,7 @@ namespace EzUI {
 	public:
 		int Indent = 2;//缩进
 		RadioButton();
+		RadioButton(Control*parent);
 		virtual	~RadioButton();
 		void SetCheck(bool checked = true);
 		bool GetCheck();

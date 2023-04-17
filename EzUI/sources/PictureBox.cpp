@@ -1,5 +1,7 @@
 #include "PictureBox.h"
 namespace EzUI {
+	PictureBox::PictureBox(){}
+	PictureBox::PictureBox(Control* parent) :Control(parent){}
 	PictureBox::~PictureBox() {
 		if (_gifTask) {
 			_exit = true;
@@ -36,7 +38,7 @@ namespace EzUI {
 							rePaint = false;
 						}
 						if (Parent && rePaint) {
-							Rect parentRect =Rect(0,0, Parent->Width(), Parent->Height());
+							Rect parentRect = Rect(0, 0, Parent->Width(), Parent->Height());
 							if (!parentRect.IntersectsWith(this->GetRect())) {
 								rePaint = false;
 							}
@@ -53,7 +55,7 @@ namespace EzUI {
 	void PictureBox::OnForePaint(PaintEventArgs& arg) {
 		if (_img) {
 			std::unique_lock<std::mutex> autoLock(_mtx);
-			EzUI::DrawImage(arg.Painter,_img, Rect(0, 0, Width(), Height()), _img->SizeMode, _img->Padding);
+			EzUI::DrawImage(arg.Painter, _img, Rect(0, 0, Width(), Height()), _img->SizeMode, _img->Padding);
 		}
 		__super::OnForePaint(arg);
 	}
@@ -64,6 +66,4 @@ namespace EzUI {
 			SetImage(img);
 		}
 	}
-
-
 };

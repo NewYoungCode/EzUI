@@ -269,12 +269,12 @@ namespace EzUI {
 		BorderBottom = width;//底部边框
 	}
 	bool ControlStyle::IsValid() {
-		return  Radius.valid ||
-			BorderLeft.valid || BorderTop.valid || BorderRight.valid || BorderBottom.valid || BorderColor.valid || BackgroundColor.valid ||
-			BackgroundImage.valid || ForeImage.valid ||
-			!FontFamily.empty() || FontSize.valid || ForeColor.valid;
+		return  Radius.IsValid() ||
+			BorderLeft.IsValid() || BorderTop.IsValid() || BorderRight.IsValid() || BorderBottom.IsValid() || BorderColor.IsValid() || BackgroundColor.IsValid() ||
+			BackgroundImage.IsValid() || ForeImage.IsValid() ||
+			!FontFamily.empty() || FontSize.IsValid() || ForeColor.IsValid();
 	}
-	void ControlStyle::SetStyleSheet(const EString& styleStr)
+	void ControlStyle::SetStyleSheet(const EString& styleStr, void* UImanager)
 	{
 		auto attrs = styleStr.Split(";");
 		for (auto& it : attrs) {
@@ -282,10 +282,10 @@ namespace EzUI {
 			if (pos == -1)continue;
 			EString key = it.substr(0, pos);
 			EString value = it.substr(pos + 1);
-			this->SetStyle(key, value);
+			this->SetStyle(key, value, UImanager);
 		}
 	}
-	void ControlStyle::SetStyle(const EString& key, const EString& _value)
+	void ControlStyle::SetStyle(const EString& key, const EString& _value, void* UImanager)
 	{
 		EString& value = (EString&)_value;
 		ControlStyle* style = this;
@@ -298,11 +298,13 @@ namespace EzUI {
 			if (key == "background-image") {
 				value = value.Erase('"');//删除双引号;
 				style->BackgroundImage = new Image(value);
+				style->BackgroundImage->UImanager = UImanager;
 				break;
 			}
 			if (key == "fore-image") {
 				value = value.Erase('"');//删除双引号;
 				style->ForeImage = new Image(value);
+				style->ForeImage->UImanager = UImanager;
 				break;
 			}
 			if (key == "border-color") {

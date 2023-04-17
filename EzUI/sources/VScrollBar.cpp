@@ -1,14 +1,8 @@
 #include "VScrollBar.h"
 namespace EzUI {
 
-	VScrollBar::VScrollBar() :_maxBottom(0)
-	{
-
-	}
-
-	VScrollBar::~VScrollBar()
-	{
-	}
+	VScrollBar::VScrollBar() :_maxBottom(0){}
+	VScrollBar::~VScrollBar(){}
 
 	void VScrollBar::SetMaxBottom(int maxBottom)
 	{
@@ -51,7 +45,7 @@ namespace EzUI {
 			return;
 		}
 		Color color = GetBackgroundColor();
-		if (color.valid) {
+		if (color.IsValid()) {
 			EzUI::FillRectangle(e.Painter, Rect{ 0,0,Width(),Height() }, GetBackgroundColor());
 		}
 	}
@@ -88,7 +82,7 @@ namespace EzUI {
 			radius = sliderRect.Height;
 		}
 		Color color = GetForeColor();
-		if (color.valid) {
+		if (color.IsValid()) {
 			EzUI::FillRectangle(args.Painter, sliderRect, color, radius);
 		}
 	}

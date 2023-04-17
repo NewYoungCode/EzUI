@@ -149,7 +149,10 @@ namespace EzUI {
 			this->OnSetAttribute(ctl, attrName, attrValue);
 		} while ((attr = attr->Next()));
 
-		((bool)(ctl->IsXmlControl)) = true;//标记为xml加载进来的控件
+		//弹簧不用管 释放控件时,弹簧被被自动释放掉
+		if (!dynamic_cast<Spacer*>(ctl)) {
+			(void*)(ctl->UIManager) = this;
+		}
 
 		{//加载样式 使用标签选择器
 			LoadStyle(ctl, tagStr);
@@ -177,13 +180,13 @@ namespace EzUI {
 			EString style_hover = ctl->GetAttribute("style:hover");//内联样式语法
 			EString style_active = ctl->GetAttribute("style:active");//内联样式语法
 			if (!sytle_static.empty()) {
-				ctl->Style.SetStyleSheet(sytle_static);
+				ctl->Style.SetStyleSheet(sytle_static, this);
 			}
 			if (!style_hover.empty()) {
-				ctl->HoverStyle.SetStyleSheet(style_hover);
+				ctl->HoverStyle.SetStyleSheet(style_hover, this);
 			}
 			if (!style_active.empty()) {
-				ctl->ActiveStyle.SetStyleSheet(style_active);
+				ctl->ActiveStyle.SetStyleSheet(style_active, this);
 			}
 		}
 		return ctl;
@@ -208,18 +211,6 @@ namespace EzUI {
 				nextChild = nextChild->NextSiblingElement();
 			}
 		}
-	}
-
-	void UIManager::LoadFromFile(const EString& filename)
-	{
-		FILE* file(0);
-		_wfopen_s(&file, filename.utf16().c_str(), L"rb");
-		std::ifstream ifs(file);
-		std::stringstream ss;
-		ss << ifs.rdbuf();
-		ifs.close();
-		::fclose(file);
-		LoadFromRaw(ss.str().c_str());
 	}
 
 	void UIManager::LoadFromRaw(const char* xmlRaw)
@@ -258,7 +249,7 @@ namespace EzUI {
 			//处理css的注释
 			auto pos1 = style.find("/*");
 			auto pos2 = style.find("*/", pos1 + 2);
-			if (pos1 != size_t(-1) && pos1 != size_t(-1)) {
+			if (pos1 != size_t(-1) && pos2 != size_t(-1)) {
 				style.erase(pos1, pos2 - pos1 + 2);
 			}
 			else {
@@ -316,13 +307,13 @@ namespace EzUI {
 		for (auto& it : Selectors) {
 			if (it.selectorName == selectorName) {
 				if (it.styleType == UIManager::Style::Static) {
-					ctl->Style.SetStyleSheet(it.styleStr);
+					ctl->Style.SetStyleSheet(it.styleStr, this);
 				}
 				if (it.styleType == UIManager::Style::Hover) {
-					ctl->HoverStyle.SetStyleSheet(it.styleStr);
+					ctl->HoverStyle.SetStyleSheet(it.styleStr, this);
 				}
 				if (it.styleType == UIManager::Style::Active) {
-					ctl->ActiveStyle.SetStyleSheet(it.styleStr);
+					ctl->ActiveStyle.SetStyleSheet(it.styleStr, this);
 				}
 			}
 		}
@@ -338,19 +329,62 @@ namespace EzUI {
 			EventSetAttribute(ctl, attrName, attrValue);
 		}
 	}
-	UIManager::UIManager(const EString& fileName) {
+	void UIManager::SetupUI(Window* window)
+	{
+		window->SetLayout(GetNode(0));
+	}
+
+	void UIManager::LoadFile(const EString& fileName) {
 		std::string data;
 		GetResource(fileName, &data);
 		LoadFromRaw((const char*)data.c_str());
-		//LoadFromFile(fileName);
 	}
 
-	Controls& UIManager::GetControls() {
-		return controls;
+	void UIManager::FreeImage(ControlStyle& style) {
+		//如果已经释放过 请记得置零 以免让UI管理器这边报错
+		auto& backgroundImage = style.BackgroundImage;
+		if (backgroundImage && backgroundImage->UImanager == this) {
+			delete backgroundImage;
+		}
+		auto& foreImage = style.ForeImage;
+		if (foreImage && foreImage->UImanager == this) {
+			delete foreImage;
+		}
 	}
-	Control* UIManager::GetRoot() {
-		if (controls.size() > 0) {
-			return *controls.begin();
+
+	void UIManager::FreeControl(Control* ctl)
+	{
+		for (auto& it : ctl->GetControls()) {
+			if (it->UIManager == this) {
+				FreeControl(it);
+			}
+		}
+		FreeImage(ctl->Style);
+		FreeImage(ctl->HoverStyle);
+		FreeImage(ctl->ActiveStyle);
+		delete ctl;
+	}
+	UIManager::~UIManager() {
+		for (auto& it : controls) {
+			FreeControl(it);
+		}
+	}
+
+	Control* UIManager::GetNodeByName(const EString& nodeName) {
+		for (auto& it : controls) {
+			if (it->Name == nodeName) {
+				return it;
+			}
+		}
+		return NULL;
+	}
+	Control* UIManager::GetNode(size_t pos) {
+		size_t _pos = 0;
+		for (auto& it : controls) {
+			if (pos == _pos) {
+				return it;
+			}
+			_pos++;
 		}
 		return NULL;
 	}

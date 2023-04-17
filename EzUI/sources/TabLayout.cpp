@@ -4,6 +4,9 @@ namespace EzUI {
 	TabLayout::TabLayout()
 	{
 	}
+	TabLayout::TabLayout(Control* parent) :Control(parent)
+	{
+	}
 	TabLayout::~TabLayout()
 	{
 	}

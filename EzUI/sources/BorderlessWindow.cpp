@@ -38,12 +38,15 @@ namespace EzUI {
 		switch (uMsg)
 		{
 		case WM_NCHITTEST: {
-
 			if (!::IsZoomed(Hwnd()) && Zoom) {
 				return ZoomWindow(lParam);
 			}
 			break;
 		}
+						 /*	case WM_NCLBUTTONUP: {
+								 ShowMax();
+								 break;
+							 }*/
 		default:
 			break;
 		}
