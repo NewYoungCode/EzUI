@@ -10,7 +10,7 @@ namespace EzUI {
 		if (!_wstr.empty()) {
 			std::wstring drawText(_wstr);
 			std::wstring fontF = GetFontFamily().utf16();
-			UI_Int fontSize = GetFontSize();
+			int fontSize = GetFontSize();
 			Color fontColor = GetForeColor();
 			if (!EllipsisText.empty()) { //水平文本溢出的显示方案
 				Size ellipsisTextSize;

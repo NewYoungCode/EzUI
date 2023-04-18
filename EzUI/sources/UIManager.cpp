@@ -342,11 +342,11 @@ namespace EzUI {
 
 	void UIManager::FreeImage(ControlStyle& style) {
 		//如果已经释放过 请记得置零 以免让UI管理器这边报错
-		auto& backgroundImage = style.BackgroundImage;
+		Image* backgroundImage = style.BackgroundImage;
 		if (backgroundImage && backgroundImage->UImanager == this) {
 			delete backgroundImage;
 		}
-		auto& foreImage = style.ForeImage;
+		Image* foreImage = style.ForeImage;
 		if (foreImage && foreImage->UImanager == this) {
 			delete foreImage;
 		}

@@ -119,18 +119,18 @@ namespace EzUI {
 		virtual ~Control();
 		void DestroySpacers();
 		//普通样式
-		HImage GetForeImage(ControlState _state = ControlState::None);
-		HImage GetBackgroundImage(ControlState _state = ControlState::None);
-		UI_Int GetRadius(ControlState _state = ControlState::None);
-		UI_Int GetBorderLeft(ControlState _state = ControlState::None);
-		UI_Int GetBorderTop(ControlState _state = ControlState::None);
-		UI_Int GetBorderRight(ControlState _state = ControlState::None);
-		UI_Int GetBorderBottom(ControlState _state = ControlState::None);
+		Image* GetForeImage(ControlState _state = ControlState::None);
+		Image* GetBackgroundImage(ControlState _state = ControlState::None);
+		int GetRadius(ControlState _state = ControlState::None);
+		int GetBorderLeft(ControlState _state = ControlState::None);
+		int GetBorderTop(ControlState _state = ControlState::None);
+		int GetBorderRight(ControlState _state = ControlState::None);
+		int GetBorderBottom(ControlState _state = ControlState::None);
 		Color GetBorderColor(ControlState _state = ControlState::None);
 		Color GetBackgroundColor(ControlState _state = ControlState::None);
 		//具有继承性样式
 		EString GetFontFamily(ControlState _state = ControlState::None);//获取默认控件状态下字体Family
-		UI_Int GetFontSize(ControlState _state = ControlState::None);//获取默认控件状态下字体大小样式
+		int GetFontSize(ControlState _state = ControlState::None);//获取默认控件状态下字体大小样式
 		Color GetForeColor(ControlState _state = ControlState::None);//获取默认控件状态下前景色
 		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::Static);//
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性

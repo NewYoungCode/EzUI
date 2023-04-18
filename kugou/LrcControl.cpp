@@ -86,9 +86,6 @@ LrcControl::~LrcControl()
 		timer->Stop();
 		delete timer;
 	}
-	if (LrcNow) {
-		delete LrcNow;
-	}
 	for (auto& it : LrcList) {
 		delete it;
 	}

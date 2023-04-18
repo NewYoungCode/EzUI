@@ -4,7 +4,7 @@
 #include "unzip.h"
 #include "RenderType.h"
 #include "Direct2DRender.h"
-#include <fstream>
+
 namespace EzUI {
 	extern WCHAR WindowClassName[];
 	//全局资源句柄
@@ -42,19 +42,16 @@ namespace EzUI {
 	};
 	class UI_EXPORT Color :public RenderType::Color {
 	private:
-		bool valid = false;
 		void _MakeARGB(const EString& colorStr);
 	public:
 		Color();
 		virtual ~Color() {}
 		Color& operator=(const EString& colorStr);
 		Color(const EString& colorStr);
-		Color(IN BYTE r, IN BYTE g, IN BYTE b);
-		Color(IN BYTE a, IN BYTE r, IN BYTE g, IN BYTE b);
-		Color(IN ARGB argb);
+		Color(BYTE r, BYTE g, BYTE b);
+		Color(BYTE a, BYTE r, BYTE g, BYTE b);
+		Color(ARGB argb);
 		Color& operator=(const Color& Align_Right_Color);
-		COLORREF COLORRE() const;
-		const bool& IsValid() { return valid; };
 	};
 	class UI_EXPORT EBitmap {
 	public:
@@ -103,55 +100,6 @@ namespace EzUI {
 	};
 #endif
 
-	template<typename T>
-	class Tuple {
-	private:
-		T value = NULL;
-		bool valid = false;
-		Tuple(const T& value) = delete;
-	public:
-		Tuple() :valid(false) {
-		}
-		T& operator =(const T& _value) {
-			this->value = _value;
-			this->valid = true;
-			return this->value;
-		}
-		operator T () {
-			return value;
-		}
-		T Value() {
-			return value;
-		}
-		T operator->() {
-			return value;
-		}
-		//是否有效(启用 && 不为NULL)
-		bool IsValid() {
-			return valid && value != NULL;
-		}
-		//设置是否启用
-		void Enable(bool enabel) {
-			valid = enabel;
-		}
-	};
-	template<typename T>
-	class SafeObject {
-	private:
-		SafeObject(const SafeObject& right) {}
-		SafeObject& operator=(const SafeObject& right) {}
-	public:
-		T* ptr = NULL;
-		SafeObject(T* _ptr) {
-			ptr = _ptr;
-		}
-		operator T* () {
-			return ptr;
-		}
-		~SafeObject() {
-			if (ptr) delete ptr;
-		}
-	};
 	//感觉c#的委托很好用 所以抄袭一个
 	template<class out, class...in>
 	class Delegate {
@@ -372,11 +320,6 @@ namespace EzUI {
 		}
 	};
 
-
-	typedef Tuple<float> UI_Float;
-	typedef Tuple<int> UI_Int;
-	typedef Tuple<size_t> UI_UInt;//
-	typedef Tuple<Image*> HImage;
 	typedef std::map<EString, EString> Attributes;//属性集合
 	typedef std::map<EString, EString>::iterator AttributeIterator;
 	typedef std::list<Control*> Controls;//控件集合
@@ -396,18 +339,18 @@ namespace EzUI {
 	class UI_EXPORT ControlStyle {
 	public:
 		//UI_Float Opacity;//整体不透明度
-		UI_Int Radius;//圆角系数
-		UI_Int BorderLeft;//左边边框
-		UI_Int BorderTop;//顶部边框
-		UI_Int BorderRight;//右边边框
-		UI_Int BorderBottom;//底部边框
-		Color BorderColor;//边框颜色
-		Color BackgroundColor;//背景颜色
-		HImage BackgroundImage;//背景图片 如果指定的图片被删除 请必须将此置零
-		HImage ForeImage;//前景图片 如果指定的图片被删除 请必须将此置零
-		EString FontFamily;//字体名称   具有继承性
-		UI_Int FontSize;//字体大小       具有继承性
-		Color ForeColor;//前景颜色      具有继承性
+		int Radius = 0;//圆角系数
+		int BorderLeft = 0;//左边边框
+		int BorderTop = 0;//顶部边框
+		int BorderRight = 0;//右边边框
+		int BorderBottom = 0;//底部边框
+		Color BorderColor = 0;//边框颜色
+		Color BackgroundColor = 0;//背景颜色
+		Image* BackgroundImage = NULL;//背景图片 如果指定的图片被删除 请必须将此置零
+		Image* ForeImage = NULL;//前景图片 如果指定的图片被删除 请必须将此置零
+		EString FontFamily;//字体名称 具有继承性
+		int FontSize = 0;//字体大小 具有继承性
+		Color ForeColor;//前景颜色  具有继承性
 	private:
 		void operator=(const ControlStyle& right) {} //禁止直接赋值 因为这样会导致 Color执行拷贝使得Color变得不合法的有效
 		ControlStyle(const ControlStyle& right) {} //禁止拷贝 
@@ -415,7 +358,6 @@ namespace EzUI {
 		ControlStyle() {}
 		virtual ~ControlStyle() {}
 		void SetBorder(const Color& color, int width);
-		bool IsValid();
 		void SetStyleSheet(const EString& styleStr, void* UImanager = NULL);
 		void SetStyle(const EString& key, const EString& value, void* UImanager = NULL);
 	};

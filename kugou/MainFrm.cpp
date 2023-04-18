@@ -3,7 +3,6 @@
 #include "ComBox.h"
 void MainFrm::InitForm() {
 	this->Zoom = true;
-
 	umg.LoadFile("xml/main.htm");
 	umg.SetupUI(this);
 	//ComBox *cbx=new ComBox;
@@ -468,16 +467,16 @@ void MainFrm::NextPage(int a, int b) {
 	}
 }
 void  MainFrm::SongView() {
-	/*centerLeft->Style.BackgroundColor = Color(0, 0, 0, 0);
+	centerLeft->Style.BackgroundColor = Color(0, 0, 0, 0);
 	tools->Style.BorderBottom = 1;
 	tools->Style.BorderColor = Color(238, 238, 238);
-	main->Style.BackgroundImage.Enable(false);
+	main->Style.BackgroundImage = NULL;
 	localList->GetScrollBar()->Style.BackgroundColor = Color(50, 200, 200, 200);
 	localList->GetScrollBar()->Style.ForeColor = Color(217, 217, 217);
 	localList->GetScrollBar()->ActiveStyle.ForeColor = Color(191, 191, 191);
 	center->Style.BackgroundColor = Color::White;
 	center->Style.ForeColor = Color::Black;
-	main->Invalidate();*/
+	Invalidate();
 }
 void  MainFrm::LrcView() {
 	centerLeft->Style.BackgroundColor = Color(100, 200, 200, 200);
@@ -489,7 +488,7 @@ void  MainFrm::LrcView() {
 	main->Style.BackgroundImage = bkImage;
 	center->Style.BackgroundColor = Color(0, 0, 0, 0);
 	center->Style.ForeColor = Color::White;
-	main->Invalidate();
+	Invalidate();
 }
 
 LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)

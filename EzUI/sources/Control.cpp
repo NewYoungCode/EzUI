@@ -1,30 +1,39 @@
 #include "Control.h"
 namespace EzUI {
-
+	bool __IsValid(const int& value) {
+		return value != 0;
+	}
+	bool __IsValid(const Image* value) {
+		return value != NULL;
+	}
+	bool __IsValid(const Color& value) {
+		return value.GetValue() != 0;
+	}
+	bool __IsValid(const EString& value) {
+		return !value.empty();
+	}
 #define UI_BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed(ControlState _state)  { \
-/*if (_state == ControlState::None && _nowStyle. ##_filed.valid) {\
-		return _nowStyle.##_filed;\
-	}\*/  \
 ControlStyle& style = GetStyle(this->State);\
-if(style.##_filed.IsValid() ){\
+if(__IsValid(style.##_filed)){\
 	return style.##_filed; \
 }\
 	return this->Style.##_filed;\
 }\
 
+	UI_BINDFUNC(int, Radius);
+	UI_BINDFUNC(int, BorderLeft);
+	UI_BINDFUNC(int, BorderTop);
+	UI_BINDFUNC(int, BorderRight);
+	UI_BINDFUNC(int, BorderBottom);
+	UI_BINDFUNC(Color, BorderColor);
+	UI_BINDFUNC(Color, BackgroundColor);
+	UI_BINDFUNC(Image*, ForeImage);
+	UI_BINDFUNC(Image*, BackgroundImage);
+
 	//触发事件宏
 #define UI_TRIGGER(Event,...)  if( ##Event){ \
 Event(this , ##__VA_ARGS__); \
 }
-	UI_BINDFUNC(UI_Int, Radius);
-	UI_BINDFUNC(UI_Int, BorderLeft);
-	UI_BINDFUNC(UI_Int, BorderTop);
-	UI_BINDFUNC(UI_Int, BorderRight);
-	UI_BINDFUNC(UI_Int, BorderBottom);
-	UI_BINDFUNC(Color, BorderColor);
-	UI_BINDFUNC(Color, BackgroundColor);
-	UI_BINDFUNC(HImage, ForeImage);
-	UI_BINDFUNC(HImage, BackgroundImage);
 
 	Control::Control() {}
 	Control::Control(Control* parent) {
@@ -56,32 +65,32 @@ Event(this , ##__VA_ARGS__); \
 
 	void Control::OnBackgroundPaint(PaintEventArgs& e)
 	{
-		auto backgroundColor = GetBackgroundColor();
-		auto backgroundImage = GetBackgroundImage();
-		if (backgroundColor.IsValid()) {
+		Color backgroundColor = GetBackgroundColor();
+		Image* backgroundImage = GetBackgroundImage();
+		if (backgroundColor.GetValue() != 0) {
 			EzUI::FillRectangle(e.Painter, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundColor);
 		}
-		if (backgroundImage.IsValid()) {
+		if (backgroundImage != NULL) {
 			EzUI::DrawImage(e.Painter, backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage->SizeMode, backgroundImage->Padding);
 		}
 	}
 	void Control::OnForePaint(PaintEventArgs& e) {
-		auto foreImage = GetForeImage();
-		if (foreImage.IsValid()) {
+		Image* foreImage = GetForeImage();
+		if (foreImage) {
 			EzUI::DrawImage(e.Painter, foreImage, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage->SizeMode, foreImage->Padding);
 		}
 	}
 	void Control::OnBorderPaint(PaintEventArgs& e)
 	{
-		auto borderColor = GetBorderColor();
-		if (!borderColor.IsValid()) return;//边框无效颜色不绘制
+		Color borderColor = GetBorderColor();
+		if (borderColor.GetValue() == 0) return;//边框无效颜色不绘制
 		auto radius = GetRadius();
 		auto borderLeft = GetBorderLeft();
 		auto borderTop = GetBorderTop();
 		auto borderRight = GetBorderRight();
 		auto borderBottom = GetBorderBottom();
 
-		bool hasBorder = borderLeft || borderTop || borderTop || borderBottom;
+		bool hasBorder = borderLeft || borderTop || borderRight || borderBottom;
 		if (!hasBorder) return;//边框为0不绘制
 
 		if (radius > 0 && hasBorder) {
@@ -233,25 +242,25 @@ Event(this , ##__VA_ARGS__); \
 		EString _FontFamily;
 	loop:
 		_FontFamily = this->GetStyle(_state).FontFamily; //先看看对应状态的是否有 有效字段
-		if (!_FontFamily.empty()) {
+		if (__IsValid(_FontFamily)) {
 			return _FontFamily;//如果当前控件里面查找到就返回
 		}
 		Control* pControl = this->Parent;
 		while (pControl)//如果没有则从父控件里面查找对应的样式
 		{
 			_FontFamily = pControl->GetStyle(_state).FontFamily;
-			if (!_FontFamily.empty()) {
+			if (__IsValid(_FontFamily)) {
 				return _FontFamily;//如果从父控件里面查找到就返回
 			}
 			pControl = pControl->Parent;
 		}
-		if (_FontFamily.empty() && _state != ControlState::Static) {
+		if (!__IsValid(_FontFamily) && _state != ControlState::Static) {
 			_state = ControlState::Static;//如果从父样式中仍然未找到,则找静态样式
 			goto loop;
 		}
 		return _FontFamily;
 	}
-	UI_Int  Control::GetFontSize(ControlState _state)
+	int  Control::GetFontSize(ControlState _state)
 	{
 		/*if (_state == ControlState::None && _nowStyle.FontSize.valid) {
 			return _nowStyle.FontSize;
@@ -259,22 +268,22 @@ Event(this , ##__VA_ARGS__); \
 		if (_state == ControlState::None) {
 			_state = this->State;
 		}
-		UI_Int _FontSize;
+		int _FontSize;
 	loop:
 		_FontSize = this->GetStyle(_state).FontSize; //先看看对应状态的是否有 有效字段
-		if (_FontSize.IsValid()) {
+		if (__IsValid(_FontSize)) {
 			return _FontSize;//如果当前控件里面查找到就返回
 		}
 		Control* pControl = this->Parent;
 		while (pControl)//如果没有则从父控件里面查找对应的样式
 		{
 			_FontSize = pControl->GetStyle(_state).FontSize;
-			if (_FontSize.IsValid()) {
+			if (__IsValid(_FontSize)) {
 				return _FontSize;//如果从父控件里面查找到就返回
 			}
 			pControl = pControl->Parent;
 		}
-		if (!(_FontSize.IsValid()) && _state != ControlState::Static) {
+		if (!__IsValid(_FontSize) && _state != ControlState::Static) {
 			_state = ControlState::Static;//如果从父样式中仍然未找到,则找静态样式
 			goto loop;
 		}
@@ -291,19 +300,19 @@ Event(this , ##__VA_ARGS__); \
 		Color _ForeColor;
 	loop:
 		_ForeColor = this->GetStyle(_state).ForeColor; //先看看对应状态的是否有 有效字段
-		if (_ForeColor.IsValid()) {
+		if (__IsValid(_ForeColor)) {
 			return _ForeColor;//如果当前控件里面查找到就返回
 		}
 		Control* pControl = this->Parent;
 		while (pControl)//如果没有则从父控件里面查找对应的样式
 		{
 			_ForeColor = pControl->GetStyle(_state).ForeColor;
-			if (_ForeColor.IsValid()) {
+			if (__IsValid(_ForeColor)) {
 				return _ForeColor;//如果从父控件里面查找到就返回
 			}
 			pControl = pControl->Parent;
 		}
-		if (!(_ForeColor.IsValid()) && _state != ControlState::Static) {
+		if (!__IsValid(_ForeColor) && _state != ControlState::Static) {
 			_state = ControlState::Static;//如果从父样式中仍然未找到,则找静态样式
 			goto loop;
 		}

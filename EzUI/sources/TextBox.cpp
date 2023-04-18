@@ -56,14 +56,11 @@ namespace EzUI {
 				Invalidate();//刷新
 				break;
 			}
-
-
 		} while (false);
 
 		if (wParam < 32)return;//控制字符
 
-	/*	static EString ccc;
-		ccc.append()*/
+
 		DeleteRange();//先删除是否有选中的区域
 		WCHAR buf[2]{ (WCHAR)wParam ,0 };
 		Insert(buf);//插入新的字符

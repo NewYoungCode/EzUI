@@ -169,7 +169,6 @@ namespace EzUI {
 			::DeleteBitmap(_bitmap);
 		}
 	}
-
 	void Rect::StringToRect(const EString& str) {
 		auto rectStr = str.Split(",");
 		if (str.empty()) {
@@ -195,32 +194,26 @@ namespace EzUI {
 		Height = winRect.bottom - winRect.top;
 	}
 
-
 	Color::Color()
 	{
-		Argb = (ARGB)Color::Transparent;
-		valid = false;
+		Argb = 0;
 	}
 	Color::Color(const EString& colorStr) {
 		_MakeARGB(colorStr);
 	}
 	Color::Color(IN BYTE r, IN BYTE g, IN BYTE b) {
 		Argb = MakeARGB(255, r, g, b);
-		valid = true;
 	}
 	Color::Color(IN BYTE a, IN BYTE r, IN BYTE g, IN BYTE b)
 	{
 		Argb = MakeARGB(a, r, g, b);
-		valid = true;
 	}
 	Color::Color(IN ARGB argb)
 	{
 		Argb = argb;
-		valid = true;
 	}
 	Color& Color::operator=(const Color& Align_Right_Color) {
 		Argb = Align_Right_Color.GetValue();
-		valid = Align_Right_Color.valid;
 		return *this;
 	}
 	Color& Color::operator=(const EString& colorStr) {
@@ -237,7 +230,6 @@ namespace EzUI {
 			sscanf_s(gStr.c_str(), "%x", &g);
 			sscanf_s(bStr.c_str(), "%x", &b);
 			Argb = MakeARGB(255, r, g, b);
-			valid = true;
 			return;
 		}
 		if (colorStr.find("rgb") == 0) { //"rgb(255,100,2,3)"
@@ -251,28 +243,15 @@ namespace EzUI {
 			g = std::stoi(rgbList.at(1));
 			b = std::stoi(rgbList.at(2));
 			Argb = MakeARGB((byte)(255 * (a > 1 ? 1 : a)), r, g, b);
-			valid = true;
 			return;
 		}
-
 	}
-	COLORREF Color::COLORRE() const {
-		byte r = GetR(), g = GetG(), b = GetB();
-		return RGB(r, g, b);
-	}
-
 	void ControlStyle::SetBorder(const Color& color, int width) { //对所有border有效
 		BorderColor = color;
 		BorderLeft = width;//左边边框
 		BorderTop = width;//顶部边框
 		BorderRight = width;//右边边框
 		BorderBottom = width;//底部边框
-	}
-	bool ControlStyle::IsValid() {
-		return  Radius.IsValid() ||
-			BorderLeft.IsValid() || BorderTop.IsValid() || BorderRight.IsValid() || BorderBottom.IsValid() || BorderColor.IsValid() || BackgroundColor.IsValid() ||
-			BackgroundImage.IsValid() || ForeImage.IsValid() ||
-			!FontFamily.empty() || FontSize.IsValid() || ForeColor.IsValid();
 	}
 	void ControlStyle::SetStyleSheet(const EString& styleStr, void* UImanager)
 	{

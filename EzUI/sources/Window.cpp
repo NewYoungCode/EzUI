@@ -110,10 +110,10 @@ namespace EzUI {
 		if (MainLayout->Style.FontFamily.empty()) {
 			MainLayout->Style.FontFamily = "Microsoft YaHei";
 		}
-		if (!MainLayout->Style.FontSize.IsValid()) {
+		if (MainLayout->Style.FontSize == 0) {
 			MainLayout->Style.FontSize = 12;
 		}
-		if (!MainLayout->Style.ForeColor.IsValid()) {
+		if (MainLayout->Style.ForeColor.GetValue() == 0) {
 			MainLayout->Style.ForeColor = Color::Black;
 		}
 		MainLayout->PublicData = &PublicData;
@@ -166,6 +166,15 @@ namespace EzUI {
 		else {
 			Hide();
 		}
+	}
+
+	void Window::Invalidate()
+	{
+		MainLayout->Invalidate();
+	}
+	void Window::Refresh()
+	{
+		MainLayout->Refresh();
 	}
 
 	LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -693,8 +702,7 @@ namespace EzUI {
 		}
 		_lastBtn = mbtn;
 		_lastDownTime = _time;
-
-		OnMouseMove(point);
+		//OnMouseMove(point);
 	}
 
 	void Window::OnMouseClick(MouseButton mbtn, const Point& point) {
@@ -779,7 +787,6 @@ namespace EzUI {
 	void Window::MoveWindow() {
 		::ReleaseCapture();
 		SendMessage(Hwnd(), WM_NCLBUTTONDOWN, HTCAPTION, NULL);//模拟鼠标按住标题栏移动窗口
-		//SendMessage(Hwnd(), WM_NCLBUTTONUP, NULL, NULL);//松开
 		SendMessage(Hwnd(), WM_LBUTTONUP, NULL, NULL);//松开
 	}
 	bool Window::OnNotify(Control* sender, EventArgs& args) {
