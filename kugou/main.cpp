@@ -41,15 +41,32 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ int       nCmdShow)
 {
 	Curl_Global_Init();
-	EzUI::Application app;
-	MainFrm frm;
-	frm.Show();
-	return app.exec();
 
-	/*for (size_t i = 0; i < 2; i++)
-	{
-		Sleep(1000);
-	}*/
+	int cccc = sizeof(Control);
+
+	if (1) {
+		EzUI::Application app;
+		MainFrm frm;
+		frm.Show();
+		return app.exec();
+	}
+
+	if (0) {
+		for (size_t i = 0; i < 2; i++)
+		{
+			Sleep(1000);
+		}
+		for (size_t i = 0; i < 99999999; i++)
+		{
+			EzUI::Application app;
+			MainFrm frm;
+		}
+		for (size_t i = 0; i < 2000; i++)
+		{
+			Sleep(1000);
+		}
+		return 0;
+	}
 
 	for (size_t i = 0; i < 5000; i++) {
 		EzUI::Application app;// ("res.zip");//指定资源文件

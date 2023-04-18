@@ -30,6 +30,9 @@ namespace EzUI {
 			EString styleStr;
 		};
 	private:
+		std::function<void(Image*)> BuildImageCallback;
+		std::list<Control*> freeControls;
+		std::list<Image*> freeImages;
 		std::list<UIManager::Selector> Selectors;//样式集合
 		std::list<Control*> controls;
 		void LoadControl(void* node, Control* control);
@@ -37,17 +40,16 @@ namespace EzUI {
 		void LoadStyle(Control* ctl, const EString& selectorName);
 		void AnalysisStyle(const EString& styleStr);
 		void LoadFromRaw(const char* xmlRaw);
-		void FreeImage(ControlStyle& style);//删除由此管理器创建的图像
-		void FreeControl(Control* ctl);//删除由此管理器创建的控件
 	protected:
-		virtual void OnBuildControl(const EString& nodeName, Control** outCtl);
+		virtual Control* OnBuildControl(const EString& nodeName);
 		virtual void OnSetAttribute(Control* ctl, const EString& attrName, const EString& attrValue);
 	public:
+		UIManager();
+		virtual ~UIManager();
 		void SetupUI(Window* window);
-		UIFunc<void(const EString& nodeName, Control** outCtl)> EventBuilControl;//用于自定义控件
+		UIFunc<Control*(const EString& nodeName)> EventBuilControl;//用于自定义控件
 		UIFunc<void(Control* ctl, const EString& attrName, const EString& attrValue)> EventSetAttribute;//用于自定义控件
 		void LoadFile(const EString& fileName);
-		virtual ~UIManager();
 		Control* GetNodeByName(const EString& nodeName = "");
 		Control* GetNode(size_t pos = 0);
 	};

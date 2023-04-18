@@ -108,15 +108,15 @@ namespace EzUI {
 				break;
 			}
 			if (ctl == NULL) {
-				this->OnBuildControl(tagStr, &ctl);
+				ctl = this->OnBuildControl(tagStr);
 			}
 			if (ctl == NULL) {
-#ifdef _DEBUG
 				::MessageBoxA(NULL, EString("UnKnow Element " + tagStr).c_str(), "UIManager Erro", NULL);
-#endif // _DEBUG
 				ctl = new Control;
 			}
 		} while (false);
+
+		freeControls.push_front(ctl);
 
 		//内联样式
 		EString inlineStyle;
@@ -149,10 +149,6 @@ namespace EzUI {
 			this->OnSetAttribute(ctl, attrName, attrValue);
 		} while ((attr = attr->Next()));
 
-		//弹簧不用管 释放控件时,弹簧被被自动释放掉
-		if (!dynamic_cast<Spacer*>(ctl)) {
-			(void*)(ctl->UIManager) = this;
-		}
 
 		{//加载样式 使用标签选择器
 			LoadStyle(ctl, tagStr);
@@ -180,13 +176,13 @@ namespace EzUI {
 			EString style_hover = ctl->GetAttribute("style:hover");//内联样式语法
 			EString style_active = ctl->GetAttribute("style:active");//内联样式语法
 			if (!sytle_static.empty()) {
-				ctl->Style.SetStyleSheet(sytle_static, this);
+				ctl->Style.SetStyleSheet(sytle_static, BuildImageCallback);
 			}
 			if (!style_hover.empty()) {
-				ctl->HoverStyle.SetStyleSheet(style_hover, this);
+				ctl->HoverStyle.SetStyleSheet(style_hover, BuildImageCallback);
 			}
 			if (!style_active.empty()) {
-				ctl->ActiveStyle.SetStyleSheet(style_active, this);
+				ctl->ActiveStyle.SetStyleSheet(style_active, BuildImageCallback);
 			}
 		}
 		return ctl;
@@ -307,27 +303,34 @@ namespace EzUI {
 		for (auto& it : Selectors) {
 			if (it.selectorName == selectorName) {
 				if (it.styleType == UIManager::Style::Static) {
-					ctl->Style.SetStyleSheet(it.styleStr, this);
+					ctl->Style.SetStyleSheet(it.styleStr, BuildImageCallback);
 				}
 				if (it.styleType == UIManager::Style::Hover) {
-					ctl->HoverStyle.SetStyleSheet(it.styleStr, this);
+					ctl->HoverStyle.SetStyleSheet(it.styleStr, BuildImageCallback);
 				}
 				if (it.styleType == UIManager::Style::Active) {
-					ctl->ActiveStyle.SetStyleSheet(it.styleStr, this);
+					ctl->ActiveStyle.SetStyleSheet(it.styleStr, BuildImageCallback);
 				}
 			}
 		}
 	}
 
-	void UIManager::OnBuildControl(const EString& nodeName, Control** outCtl) {
+	Control* UIManager::OnBuildControl(const EString& nodeName) {
 		if (EventBuilControl) {
-			EventBuilControl(nodeName, outCtl);
+			return EventBuilControl(nodeName);
 		}
+		return NULL;
 	}
 	void UIManager::OnSetAttribute(Control* ctl, const EString& attrName, const EString& attrValue) {
 		if (EventSetAttribute) {
 			EventSetAttribute(ctl, attrName, attrValue);
 		}
+	}
+	UIManager::UIManager()
+	{
+		BuildImageCallback = [this](Image* img)->void {
+			this->freeImages.push_back((Image*)img);
+		};
 	}
 	void UIManager::SetupUI(Window* window)
 	{
@@ -339,37 +342,14 @@ namespace EzUI {
 		GetResource(fileName, &data);
 		LoadFromRaw((const char*)data.c_str());
 	}
-
-	void UIManager::FreeImage(ControlStyle& style) {
-		//如果已经释放过 请记得置零 以免让UI管理器这边报错
-		Image* backgroundImage = style.BackgroundImage;
-		if (backgroundImage && backgroundImage->UImanager == this) {
-			delete backgroundImage;
-		}
-		Image* foreImage = style.ForeImage;
-		if (foreImage && foreImage->UImanager == this) {
-			delete foreImage;
-		}
-	}
-
-	void UIManager::FreeControl(Control* ctl)
-	{
-		for (auto& it : ctl->GetControls()) {
-			if (it->UIManager == this) {
-				FreeControl(it);
-			}
-		}
-		FreeImage(ctl->Style);
-		FreeImage(ctl->HoverStyle);
-		FreeImage(ctl->ActiveStyle);
-		delete ctl;
-	}
 	UIManager::~UIManager() {
-		for (auto& it : controls) {
-			FreeControl(it);
+		for (auto& it : freeControls) {
+			delete it;
+		}
+		for (auto& it : freeImages) {
+			delete it;
 		}
 	}
-
 	Control* UIManager::GetNodeByName(const EString& nodeName) {
 		for (auto& it : controls) {
 			if (it->Name == nodeName) {

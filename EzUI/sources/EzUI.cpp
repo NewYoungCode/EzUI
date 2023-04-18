@@ -48,17 +48,6 @@ namespace EzUI {
 		}
 	}
 
-	//bool GetGlobalResource(const EString& fileName, IStream** _outData) {
-	//	void* memBuf;
-	//	size_t memCount = 0;
-	//	if ((memCount = UnZipResource(fileName, &memBuf))) {
-	//		*_outData = SHCreateMemStream((byte*)memBuf, memCount);
-	//		delete[] memBuf;
-	//		return true;
-	//	}
-	//	return false;
-	//}
-
 	size_t __count_onsize = 0;
 
 	EBitmap::EBitmap(WORD width, WORD height, PixelFormat piexlFormat) {//默认24位不透明位图
@@ -253,7 +242,7 @@ namespace EzUI {
 		BorderRight = width;//右边边框
 		BorderBottom = width;//底部边框
 	}
-	void ControlStyle::SetStyleSheet(const EString& styleStr, void* UImanager)
+	void ControlStyle::SetStyleSheet(const EString& styleStr, const std::function<void(Image*)>& callback)
 	{
 		auto attrs = styleStr.Split(";");
 		for (auto& it : attrs) {
@@ -261,10 +250,10 @@ namespace EzUI {
 			if (pos == -1)continue;
 			EString key = it.substr(0, pos);
 			EString value = it.substr(pos + 1);
-			this->SetStyle(key, value, UImanager);
+			this->SetStyle(key, value, callback);
 		}
 	}
-	void ControlStyle::SetStyle(const EString& key, const EString& _value, void* UImanager)
+	void ControlStyle::SetStyle(const EString& key, const EString& _value, const std::function<void(Image*)>& callback)
 	{
 		EString& value = (EString&)_value;
 		ControlStyle* style = this;
@@ -277,13 +266,17 @@ namespace EzUI {
 			if (key == "background-image") {
 				value = value.Erase('"');//删除双引号;
 				style->BackgroundImage = new Image(value);
-				style->BackgroundImage->UImanager = UImanager;
+				if (callback) {
+					callback(style->BackgroundImage);
+				}
 				break;
 			}
 			if (key == "fore-image") {
 				value = value.Erase('"');//删除双引号;
 				style->ForeImage = new Image(value);
-				style->ForeImage->UImanager = UImanager;
+				if (callback) {
+					callback(style->ForeImage);
+				}
 				break;
 			}
 			if (key == "border-color") {
@@ -333,7 +326,6 @@ namespace EzUI {
 			}
 		} while (false);
 	}
-
 
 	IControl::IControl() {}
 	IControl::~IControl() {

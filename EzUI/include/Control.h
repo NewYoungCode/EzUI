@@ -9,7 +9,6 @@ namespace EzUI {
 		bool _mouseIn = false;//鼠标是否在控件内
 		bool _load = false;//是否load
 		Controls _controls;//子控件
-		Controls _spacer;//存储控件下布局的的弹簧集合
 		//布局状态AddControl丶RemoveControl丶OnSize时候此标志为挂起 调用ResumeLayout标志为布局中 当调用OnLayout()之后此标志为None
 		EzUI::LayoutState _layoutState = EzUI::LayoutState::None;
 		std::wstring _tipsText;//鼠标悬浮的提示文字
@@ -19,8 +18,8 @@ namespace EzUI {
 		Rect _lastDrawRect;//最后一次显示的位置
 		int _eventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnChar | Event::OnKeyDown | Event::OnKeyUp;//默认添加到主窗口通知函数中可拦截
 		std::mutex _rePaintMtx;
-		Control(const Control&);
-		Control& operator=(const Control&);
+		Control(const Control&) = delete;
+		Control& operator=(const Control&)=delete;
 		bool IsRePaint();
 		bool CheckEventPassThrough(const Event& eventType);
 		bool CheckEventNotify(const Event& eventType);
@@ -29,7 +28,6 @@ namespace EzUI {
 		int _fixedHeight = 0;//绝对高度
 		Rect _rect;//控件矩形区域(基于父控件)
 	public:
-		void* const UIManager = NULL;//记录由哪个UIManager管理
 		EzUI::Margin Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数
 		WindowData* PublicData = NULL;//窗口上的公共数据
 		EzUI::Cursor Cursor = EzUI::Cursor::None;//鼠标样式

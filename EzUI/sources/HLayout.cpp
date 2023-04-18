@@ -52,7 +52,6 @@ namespace EzUI {
 			maxRight += it->Margin.Right;
 		}
 	}
-
 	HLayout::HLayout()
 	{
 	}
@@ -62,7 +61,6 @@ namespace EzUI {
 	HLayout::~HLayout()
 	{
 	}
-
 	void HLayout::OnSize(const Size& size) {
 		__super::OnSize(size);
 		ResumeLayout();

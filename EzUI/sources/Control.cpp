@@ -39,11 +39,6 @@ Event(this , ##__VA_ARGS__); \
 	Control::Control(Control* parent) {
 		parent->AddControl(this);
 	}
-
-	Control::Control(const Control&) {}
-	Control& Control::operator=(const Control&) {
-		return *this;
-	}
 	void Control::ChildPainting(Controls& controls, PaintEventArgs& args)
 	{
 		VisibleControls.clear();
@@ -540,6 +535,7 @@ Event(this , ##__VA_ARGS__); \
 		WindowData* winData = PublicData;
 		MouseEventArgs& args = (MouseEventArgs&)_args;
 
+		//如果主窗口有具有焦点的控件 那么才可以继续往下派发消息
 #define CONTROL_IN_WINDOW (winData->InputControl || winData->FocusControl)
 		if (CONTROL_IN_WINDOW && CheckEventPassThrough(args.EventType)) {//检查鼠标穿透
 			MouseEventArgs copy_args = args;
@@ -715,23 +711,29 @@ Event(this , ##__VA_ARGS__); \
 		if (_hCursor) {
 			::DestroyCursor(_hCursor);
 		}
-		/*if (Parent) {
-			Parent->RemoveControl(this);
-		}*/
+		if (PublicData) {
+			PublicData->RemoveControl(this);
+			PublicData = NULL;
+		}
 		//销毁控件前请先将控件从父容器中移除
+		if (Parent) {
+			Parent->RemoveControl(this);
+		}
 		if (this->GetScrollBar()) {
 			delete this->GetScrollBar();
 		}
 		DestroySpacers();
+		Parent = NULL;
 	}
 	void Control::DestroySpacers() {
 		//控件释放的时候自动释放弹簧
-		for (auto it = _spacer.begin(); it != _spacer.end(); it++)
-		{
-			this->RemoveControl(*it);
-			delete* it;
+		Controls temp = _controls;
+		for (auto& it : temp) {
+			if (dynamic_cast<Spacer*>(it)) {
+				this->RemoveControl(it);
+				delete it;
+			}
 		}
-		_spacer.clear();
 	}
 
 	size_t Control::Index()
@@ -754,12 +756,6 @@ Event(this , ##__VA_ARGS__); \
 		_controls.push_back(ctl);
 		ctl->PublicData = this->PublicData;
 		ctl->Parent = this;
-		Size sz{ _rect.Width,_rect.Height };
-		//如果控件是一个弹簧对象
-		if (dynamic_cast<Spacer*>(ctl)) {
-			_spacer.push_back(ctl);//控件内收集弹簧对象 当本控件执行析构函数的时候 自动会释放控件内弹簧对象
-		}
-
 		this->TryPendLayout();//添加控件需要将布局重新挂起
 	}
 	ControlIterator Control::RemoveControl(Control* ctl)
@@ -787,7 +783,6 @@ Event(this , ##__VA_ARGS__); \
 			PublicData = NULL;
 		}
 		_load = false;
-		Parent = NULL;
 	}
 	Control* Control::FindControl(const EString& objectName)
 	{
@@ -881,7 +876,7 @@ Event(this , ##__VA_ARGS__); \
 		for (auto i = temp.begin(); i != temp.end(); i++)
 		{
 			(*i)->OnRemove();
-			if (freeControls && !(dynamic_cast<Spacer*>(*i))) {//弹簧不能删除 弹簧必须使用DestroySpacers()函数删除
+			if (freeControls) {
 				delete* i;
 			}
 		}

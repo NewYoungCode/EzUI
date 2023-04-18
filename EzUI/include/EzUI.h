@@ -83,8 +83,7 @@ namespace EzUI {
 #if USED_Direct2D
 	class Image :public DXImage {
 	public:
-		void* UImanager = NULL;
-	public:
+		virtual ~Image() {}
 		Image(HBITMAP hBitmap) :DXImage(hBitmap) {}
 		Image(IStream* iStream) :DXImage(iStream) {}
 		Image(const EString& fileOrRes) {
@@ -100,26 +99,6 @@ namespace EzUI {
 	};
 #endif
 
-	//感觉c#的委托很好用 所以抄袭一个
-	template<class out, class...in>
-	class Delegate {
-		using TFunc = std::function<out(in...)>;
-		std::map<size_t, TFunc> callbacks;
-	public:
-		auto operator+=(const TFunc& callback) {
-			auto pair = std::pair<size_t, TFunc>(size_t(&callback), callback);
-			callbacks.emplace(pair);
-			return size_t(&callback);
-		}
-		void operator-=(size_t eventid) {
-			callbacks.erase(eventid);
-		}
-		void operator()(in... args) {
-			for (auto& it : callbacks) {
-				it.second(std::forward<in>(args)...);
-			}
-		}
-	};
 	struct WindowData {
 		void* Window = NULL;//窗口类实例
 		Control* FocusControl = NULL;//具有焦点的控件
@@ -358,8 +337,8 @@ namespace EzUI {
 		ControlStyle() {}
 		virtual ~ControlStyle() {}
 		void SetBorder(const Color& color, int width);
-		void SetStyleSheet(const EString& styleStr, void* UImanager = NULL);
-		void SetStyle(const EString& key, const EString& value, void* UImanager = NULL);
+		void SetStyleSheet(const EString& styleStr, const std::function<void(Image*)>& callback = NULL);
+		void SetStyle(const EString& key, const EString& value, const std::function<void(Image*)>& callback = NULL);
 	};
 	class UI_EXPORT IScroll {
 	public:

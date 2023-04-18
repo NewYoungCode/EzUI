@@ -93,9 +93,7 @@ LrcControl::~LrcControl()
 
 LrcControl::LrcControl()
 {
-
 	//ActiveStyle.BackgroundColor = Color(200,100,200,100);
-
 	timer = new Timer;
 	timer->Interval = 2;
 	timer->Tick = [=]() {
@@ -127,7 +125,7 @@ void LrcControl::LoadLrc(const EString& lrcData)
 
 	if (LrcList.size() > 0)
 	{
-		LrcNow = LrcList[0];//�����һ����Ĭ���ǵ�һ���ʱ�ɫ
+		LrcNow = LrcList[0];//
 		timer->Start();
 	}
 }

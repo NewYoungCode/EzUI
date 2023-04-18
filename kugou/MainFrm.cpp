@@ -1,48 +1,42 @@
 #include "MainFrm.h"
 #define refreshImage WM_UIMESSAGE+1
 #include "ComBox.h"
+MainFrm::MainFrm() :BorderlessWindow(1022, 670)
+{
+	InitForm();
+}
 void MainFrm::InitForm() {
 	this->Zoom = true;
 	umg.LoadFile("xml/main.htm");
 	umg.SetupUI(this);
-	//ComBox *cbx=new ComBox;
-	//cbx->SetFixedHeight(30);
-	//cbx->AddItem("选项1");
-	//cbx->AddItem("选项2");
-	//cbx->AddItem("选项3");
-	//cbx->AddItem("选项4");
-	//MainLayout->AddControl(cbx);
-	//MainLayout->AddControl(new VSpacer(1));
-
+	//create object
 	playingImage = new Image(L"imgs/play.png");
 	pauseImage = new Image(L"imgs/pause.png");
-	control = (TabLayout*)FindControl("control");
-	//如果你仍需要使用win32原生控件请给窗口设置 主布局 然后就可以添加win32原生控件了(注:layeredwindow不支持原生控件)
-	//HWND btn = ::CreateWindowW(L"Button", L"hello world", WS_POPUP | WS_VISIBLE, 600, 10, 100, 30, NULL, NULL, GetModuleHandle(NULL), 0);
-	//::SetParent(btn, Hwnd());
-	//return;
+	bkImage = new Image(L"imgs/defaultBackground.jpg");
+	bkImage->SizeMode = ImageSizeMode::CenterImage;
+	headImg = new Image(L"imgs/headImg.jpg");
+	headImg->SizeMode = ImageSizeMode::CenterImage;
 
-	auto main2 = FindControl("main2");
-	main2->Style.BackgroundColor = Color(100, 0, 0, 0);
-
+	cfg = new ConfigIni(Path::StartPath() + "\\list.ini");
+	//findControl
 	main = FindControl("main");
+	main2 = FindControl("main2");
+	tools = FindControl("tools");
 	center = FindControl("center");
 	centerLeft = FindControl("centerLeft");
-	tools = FindControl("tools");
-
+	control = (TabLayout*)FindControl("control");
+	time = (Label*)FindControl("time");
+	singer = (Label*)FindControl("singer");
+	playerBar2 = this->FindControl("rate");
+	playerBar = this->FindControl("playerBar");
 	tabCtrl = (TabLayout*)FindControl("rightView");
-	//MainLayout->Style.Radius =1;//圆角窗口
-	//CloseShadow();//关闭窗口阴影
-
-	//this is test
-	FindControl("lrcView2")->AddControl(&lrcCtl);//添加歌词控件
-
 	localList = (VList*)this->FindControl("playList");
-
-	//localList->AutoHeight = true;
-
 	searchList = (VList*)this->FindControl("searchList");
-	searchEdit = (TextBox*)FindControl("searchEdit");
+	searchEdit = (TextBox*)this->FindControl("searchEdit");
+
+	this->FindControl("vlcDock")->AddControl(&player);
+	this->FindControl("lrcView2")->AddControl(&lrcCtl);//添加歌词控件
+
 	//美化左侧本地列表的滚动条
 	localList->GetScrollBar()->Name = "testBar";
 	localList->GetScrollBar()->SetFixedWidth(9);
@@ -51,17 +45,16 @@ void MainFrm::InitForm() {
 	localList->GetScrollBar()->Style.ForeColor = Color(217, 217, 217);
 	localList->GetScrollBar()->ActiveStyle.ForeColor = Color(191, 191, 191);
 	//美化搜索列表的滚动条
-	//searchList->ScrollBar->SetFixedWidth(9);
+	searchList->GetScrollBar()->SetFixedWidth(9);
 	searchList->GetScrollBar()->Style.Radius = 9;
 	searchList->GetScrollBar()->Style.BackgroundColor = Color(50, 200, 200, 200);
 	searchList->GetScrollBar()->Style.ForeColor = Color(250, 200, 200, 200);
 	searchList->GetScrollBar()->ActiveStyle.ForeColor = Color(250, 200, 200, 200);
 	//集体设置右上角的最大化 最小化 关闭按钮 的悬浮效果
-
 	$(this->FindControl("btns")->GetControls()).CssHover("color:#ffffff;");
-
-	cfg = new ConfigIni(Path::StartPath() + "\\list.ini");
-
+	main2->Style.BackgroundColor = Color(100, 0, 0, 0);
+	singer->Style.BackgroundImage = headImg;
+	//加载左侧播放过的音乐
 	for (auto&& _it : cfg->GetSections()) {
 		EString name = cfg->ReadString("name", "", _it);
 		int  dur = cfg->ReadInt("dur", 0, _it);
@@ -69,49 +62,27 @@ void MainFrm::InitForm() {
 		SongItem* it = new SongItem(name, toTimeStr(dur));
 		it->SetAttribute("FileHash", _it);
 		it->SetAttribute("SingerName", singer);
-
 		it->SetTips(name);
 		localList->AddControl(it);
 	}
-
-	//gif动态
-	//auto pxImage = new PictureBox;
-	//pxImage->SetFixedHeight(200);
-	//pxImage->SetImage(new Image("imgs/xmt.gif"));
-	//localList->AddControl(pxImage);
-
+	//滚动条滚动事件 滚动条滚动到底部加载剩余音乐
 	searchList->GetScrollBar()->Rolling = [=](int a, int b)->void {
 		NextPage(a, b);
 	};
 
-	FindControl("vlcDock")->AddControl(&player);
-	SongView();
-	playerBar = FindControl("playerBar");
-	playerBar2 = FindControl("rate");
+	//忽略一些事件 可穿透父控件
 	playerBar2->MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseClick;
-
-	time = (Label*)FindControl("time");
-	singer = (Label*)FindControl("singer");
-
-	bkImage = new Image(L"imgs/defaultBackground.jpg");
-	bkImage->SizeMode = ImageSizeMode::CenterImage;
-	headImg = new Image(L"imgs/headImg.jpg");
-	headImg->SizeMode = ImageSizeMode::CenterImage;
-	singer->Style.BackgroundImage = headImg;
-
+	//创建启动一个实时获取歌曲进度以及状态
 	timer = new Windows::Timer;
 	timer->Interval = 10;
 	timer->Tick = [=](Windows::Timer*) {
 		Task();
 	};
-	auto main = FindControl("main");
+	//添加一些事件到窗口中的OnNotify函数进行拦截
 	player.Tag = (UINT_PTR)main;
 	player.AddEventNotify(Event::OnPaint);
 	main->AddEventNotify(Event::OnPaint);
-}
-MainFrm::MainFrm() :BorderlessWindow(1022, 670)
-{
-	InitForm();
+	SongView();//
 }
 MainFrm::~MainFrm()
 {
@@ -126,19 +97,18 @@ MainFrm::~MainFrm()
 	if (cfg) {
 		delete cfg;
 	}
-	//如果是UIManager创建的则交由UIManager自行释放
-	/*if (bkImage && bkImage->UImanager == NULL) {
+	if (bkImage) {
 		delete bkImage;
 	}
-	if (headImg && headImg->UImanager == NULL) {
+	if (headImg) {
 		delete headImg;
 	}
-	if (playingImage && playingImage->UImanager == NULL) {
+	if (playingImage) {
 		delete playingImage;
 	}
-	if (pauseImage && pauseImage->UImanager == NULL) {
+	if (pauseImage) {
 		delete pauseImage;
-	}*/
+	}
 	if (searchList) {
 		searchList->Clear(true);
 	}
@@ -361,7 +331,8 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				cfg->DeleteSection(hash);
 			}
 			this;
-			auto it = localList->RemoveControl(songItem);
+			localList;
+			//auto it = localList->RemoveControl(songItem);
 			delete songItem;
 			return false;
 		}
@@ -494,12 +465,10 @@ void  MainFrm::LrcView() {
 LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
 {
 	if (refreshImage == msg) {
-
 		if (headImg) {
 
 			singer->Invalidate();
 		}
-
 		FindControl("lrcView")->Trigger(Event::OnMouseClick);
 		return 0;
 	}
