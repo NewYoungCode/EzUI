@@ -342,6 +342,32 @@ namespace EzUI {
 		GetResource(fileName, &data);
 		LoadFromRaw((const char*)data.c_str());
 	}
+	void UIManager::Free(Control** ctl)
+	{
+		auto itor = std::find(freeControls.begin(), freeControls.end(), *ctl);
+		if (itor != freeControls.end()) {
+			delete* itor;
+			freeControls.erase(itor);
+		}
+		else
+		{
+			delete* ctl;
+		}
+		*ctl = NULL;
+	}
+	void UIManager::Free(Image** img)
+	{
+		auto itor = std::find(freeImages.begin(), freeImages.end(), *img);
+		if (itor != freeImages.end()) {
+			delete* itor;
+			freeImages.erase(itor);
+		}
+		else
+		{
+			delete* img;
+		}
+		*img = NULL;
+	}
 	UIManager::~UIManager() {
 		for (auto& it : freeControls) {
 			delete it;
