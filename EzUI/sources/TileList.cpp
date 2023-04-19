@@ -5,19 +5,16 @@ namespace EzUI {
 	void TileList::Clear(bool freeChilds)
 	{
 		__super::Clear(freeChilds);
-		LocationY.clear();
+		vScrollBar.Location.clear();
 		_MaxBottom = 0;
 		RefreshScroll(_MaxBottom);
 	}
 
 	void TileList::Init()
 	{
-		this->vScrollBar = new VScrollBar;
-		if (vScrollBar) {
-			vScrollBar->SetHeight(Height());
-			vScrollBar->Parent = this;
-			vScrollBar->_controlsLocationY = &LocationY;
-		}
+
+		vScrollBar.SetHeight(Height());
+		vScrollBar.Parent = this;
 	}
 
 	TileList::TileList()
@@ -30,13 +27,10 @@ namespace EzUI {
 	}
 	TileList::~TileList()
 	{
-		if (vScrollBar) {
-			delete vScrollBar;
-		}
 	}
 	ScrollBar* TileList::GetScrollBar()
 	{
-		return this->vScrollBar;
+		return &vScrollBar;
 	}
 	void TileList::OnSize(const Size& sz)
 	{
@@ -49,20 +43,18 @@ namespace EzUI {
 		if (AutoHeight) {
 			this->_fixedHeight = _maxBottom;
 			this->_rect.Height = _maxBottom;
-			vScrollBar->Visible = false;
+			vScrollBar.Visible = false;
 		}
 		else {
-			vScrollBar->Visible = true;
+			vScrollBar.Visible = true;
 		}
-		if (vScrollBar) {
-			vScrollBar->SetMaxBottom(_maxBottom);
-		}
+		vScrollBar.SetMaxBottom(_maxBottom);
 	}
 	void TileList::OnLayout()
 	{
 		__super::OnLayout();
 
-		LocationY.clear();
+		vScrollBar.Location.clear();
 		_MaxBottom = 0;
 
 		const int& maxWith = this->Width();
@@ -87,7 +79,7 @@ namespace EzUI {
 			refX = x;//设置X坐标
 			refY = y + it.Margin.Top;//设置Y坐标+上边距
 
-			LocationY.insert(std::pair<Control*, int>(&it, refY));
+			vScrollBar.Location.insert(std::pair<Control*, int>(&it, refY));
 
 			int itemSpace = it.Height() + it.Margin.GetVSpace();//当前控件垂直占用的空间
 			if (maxHeight < itemSpace) {

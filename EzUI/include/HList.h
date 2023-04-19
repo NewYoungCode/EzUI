@@ -3,11 +3,11 @@
 #include "HScrollBar.h"
 namespace EzUI {
 	class UI_EXPORT  HList :
-		public Control, public IScroll
+		public Control
 	{
 	private:
 		int _maxRight = 0;
-		HScrollBar* hScrollBar = NULL;
+		HScrollBar hScrollBar;
 		void Init();
 	public:
 		bool AutoWidth = false;//是否根据内容自动宽度

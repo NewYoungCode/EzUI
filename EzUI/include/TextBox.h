@@ -45,7 +45,7 @@ namespace EzUI {
 		virtual void OnRemove()override;
 		virtual void OnSize(const Size& size)override;
 		virtual void OnForePaint(PaintEventArgs& e) override;
-		virtual void OnChar(WPARAM wParam, LPARAM lParam) override;
+		virtual void OnKeyChar(WPARAM wParam, LPARAM lParam) override;
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam)override;
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam)override;
 		virtual void OnMouseDown(MouseButton mbtn, const Point& point)override;
@@ -58,11 +58,12 @@ namespace EzUI {
 		Color SelectColor = Color(100, 255, 0, 0);//选中颜色
 	public:
 		TextBox();
-		TextBox(Control*parent);
+		TextBox(Control* parent);
 		virtual ~TextBox();
+		virtual void SetAttribute(const EString& key, const EString& value)override;
+		virtual Rect GetCareRect()override;
 		const EString GetText();
 		EventTextChange TextChange = NULL;
-		virtual void SetAttribute(const EString& key, const EString& value)override;
 		void SetText(const EString& text);
 	};
 };

@@ -3,10 +3,10 @@
 #include "VScrollBar.h"
 namespace EzUI {
 	class UI_EXPORT VList :
-		public Control, public IScroll
+		public Control
 	{
 	private:
-		VScrollBar* vScrollBar = NULL;
+		VScrollBar vScrollBar;
 		int _maxBottom = 0;
 		void Init();
 	public:

@@ -47,8 +47,8 @@ namespace EzUI {
 		UIManager();
 		virtual ~UIManager();
 		void SetupUI(Window* window);
-		UIFunc<Control* (const EString& nodeName)> EventBuilControl;//用于自定义控件
-		UIFunc<void(Control* ctl, const EString& attrName, const EString& attrValue)> EventSetAttribute;//用于自定义控件
+		std::function<Control* (const EString& nodeName)> EventBuilControl;//用于自定义控件
+		std::function<void(Control* ctl, const EString& attrName, const EString& attrValue)> EventSetAttribute;//用于自定义控件
 		void LoadFile(const EString& fileName);
 		Control* GetNodeByName(const EString& nodeName = "");
 		Control* GetNode(size_t pos = 0);

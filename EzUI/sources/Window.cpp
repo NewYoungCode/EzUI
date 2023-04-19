@@ -61,6 +61,9 @@ namespace EzUI {
 
 	Control* Window::FindControl(const EString& objectName)
 	{
+		if (!MainLayout) {
+			return NULL;
+		}
 		return this->MainLayout->FindControl(objectName);
 	}
 
@@ -125,7 +128,7 @@ namespace EzUI {
 	}
 	void Window::Show(int cmdShow)
 	{
-		ASSERT(MainLayout);
+		//ASSERT(MainLayout);
 		::ShowWindow(_hWnd, cmdShow);
 	}
 	void Window::ShowMax() {
@@ -170,11 +173,15 @@ namespace EzUI {
 
 	void Window::Invalidate()
 	{
-		MainLayout->Invalidate();
+		if (MainLayout) {
+			MainLayout->Invalidate();
+		}
 	}
 	void Window::Refresh()
 	{
-		MainLayout->Refresh();
+		if (MainLayout) {
+			MainLayout->Refresh();
+		}
 	}
 
 	LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -204,27 +211,22 @@ namespace EzUI {
 		}
 		case  WM_IME_STARTCOMPOSITION://
 		{
-			HIMC hIMC = ImmGetContext(_hWnd);
-			COMPOSITIONFORM cpf{ 0 };
-			cpf.dwStyle = CFS_POINT;
-			int x = 0;
-			int y = 0;
 			if (_inputControl) {
-				auto& ime = *_inputControl;
-				x = ime.GetClientRect().X;
-				y = ime.GetClientRect().Y + ime.GetClientRect().Height;
+				HIMC hIMC = ImmGetContext(_hWnd);
+				COMPOSITIONFORM cpf{ 0 };
+				cpf.dwStyle = CFS_POINT;
+				Control* input = _inputControl;
+				Rect rect = input->GetCareRect();
+				int	x = input->GetClientRect().X + rect.X;
+				int y = input->GetClientRect().Y + rect.Y + rect.Height;
+				if (y == _rectClient.Height) {
+					y -= 1;//神奇!如果输入位置和等于窗口的高 那么输入法就会跑到左上角去
+				}
+				cpf.ptCurrentPos.x = x;
+				cpf.ptCurrentPos.y = y;
+				ImmSetCompositionWindow(hIMC, &cpf);
+				ImmReleaseContext(_hWnd, hIMC);
 			}
-			else
-			{
-				return TRUE;
-			}
-			if (y == _rectClient.Height) {
-				y -= 1;//神奇!如果输入位置和等于窗口的高 那么输入法就会跑到左上角去
-			}
-			cpf.ptCurrentPos.x = x;
-			cpf.ptCurrentPos.y = y;
-			ImmSetCompositionWindow(hIMC, &cpf);
-			ImmReleaseContext(_hWnd, hIMC);
 			//Debug::Log("%d %d", x, y);
 			break;
 		}
@@ -300,9 +302,8 @@ namespace EzUI {
 			if (rePaint) {
 				//Debug::Log("SWP_NOCOPYBITS!");
 				//丢弃工作区的整个内容。 如果未指定此标志，则会在调整或重新定位窗口后保存并复制回工作区的有效内容。
-				if (MainLayout) {
-					MainLayout->Invalidate();
-				}
+				Invalidate();
+
 			}
 			Point point = _rect.GetLocation();
 			if (!_lastPoint.Equals(point)) {
@@ -331,14 +332,14 @@ namespace EzUI {
 			break;
 		}
 		case WM_CHAR: {
-			OnChar(wParam, lParam);
+			OnKeyChar(wParam, lParam);
 			break;
 		}
 		case WM_KEYDOWN:
 		{
 			if (wParam == VK_F11) {
 				PublicData.Debug = !PublicData.Debug;
-				MainLayout->Invalidate();
+				Invalidate();
 			}
 			OnKeyDown(wParam, lParam);
 			break;
@@ -359,7 +360,7 @@ namespace EzUI {
 			::ScreenToClient(Hwnd(), &p1);
 			Point point{ p1.x,p1.y };
 			Point relativePoint;
-			Control* outCtl = this->FindControl(point, relativePoint);//找到当前控件的位置
+			Control* outCtl = this->FindControl(point, &relativePoint);//找到当前控件的位置
 			HCURSOR cursor = NULL;
 			if (outCtl && (cursor = outCtl->GetCursor())) {
 				::SetCursor(cursor);
@@ -426,6 +427,9 @@ namespace EzUI {
 
 	void Window::OnPaint(HDC winHDC, const Rect& rePaintRect)
 	{
+		if (!MainLayout) {
+			return;
+		}
 
 #ifdef COUNT_ONPAINT
 		StopWatch sw;
@@ -507,16 +511,16 @@ namespace EzUI {
 		return true;
 	}
 
-	Control* Window::FindControl(const Point& clientPoint, Point& outPoint) {
-		outPoint = clientPoint;
+	Control* Window::FindControl(const Point clientPoint, Point* outPoint) {
+		*outPoint = clientPoint;
 		Control* outCtl = MainLayout;
 	UI_Loop:
 		Control* scrollBar = outCtl->GetScrollBar();
 		if (scrollBar && scrollBar->GetClientRect().Contains(clientPoint)) {
 			if (scrollBar->Visible) {
 				auto barRect = scrollBar->GetClientRect();
-				outPoint.X = clientPoint.X - barRect.X;
-				outPoint.Y = clientPoint.Y - barRect.Y;
+				(*outPoint).X = clientPoint.X - barRect.X;
+				(*outPoint).Y = clientPoint.Y - barRect.Y;
 				outCtl = scrollBar;
 				return outCtl;
 			}
@@ -541,8 +545,8 @@ namespace EzUI {
 			if (it.GetClientRect().Contains(clientPoint)) {
 				outCtl = &it;
 				auto ctlRect = it.GetClientRect();
-				outPoint.X = clientPoint.X - ctlRect.X;
-				outPoint.Y = clientPoint.Y - ctlRect.Y;
+				(*outPoint).X = clientPoint.X - ctlRect.X;
+				(*outPoint).Y = clientPoint.Y - ctlRect.Y;
 				goto UI_Loop;
 			}
 		}
@@ -562,7 +566,7 @@ namespace EzUI {
 		}
 
 		Point relativePoint;
-		Control* outCtl = this->FindControl(point, relativePoint);//找到当前控件的位置
+		Control* outCtl = this->FindControl(point, &relativePoint);//找到当前控件的位置
 		MouseEventArgs args;
 		args.Location = relativePoint;
 
@@ -630,7 +634,7 @@ namespace EzUI {
 	void Window::OnMouseDoubleClick(MouseButton mbtn, const Point& point)
 	{
 		Point relativePoint;
-		Control* outCtl = this->FindControl(point, relativePoint);
+		Control* outCtl = this->FindControl(point, &relativePoint);
 		if (outCtl) {
 			MouseEventArgs args;
 			args.Button = mbtn;
@@ -648,7 +652,7 @@ namespace EzUI {
 
 		//寻早控件
 		Point relativePoint;
-		Control* outCtl = this->FindControl(point, relativePoint);
+		Control* outCtl = this->FindControl(point, &relativePoint);
 		MouseEventArgs args;
 		args.Button = mbtn;
 		args.Location = relativePoint;
@@ -711,6 +715,9 @@ namespace EzUI {
 
 	void Window::OnSize(const Size& sz)
 	{
+		if (!MainLayout) {
+			return;
+		}
 #ifdef COUNT_ONSIZE
 		StopWatch sw;
 #endif
@@ -738,10 +745,10 @@ namespace EzUI {
 
 	}
 
-	void Window::OnChar(WPARAM wParam, LPARAM lParam)
+	void Window::OnKeyChar(WPARAM wParam, LPARAM lParam)
 	{
 		if (_inputControl) { //
-			KeyboardEventArgs args(Event::OnChar, wParam, lParam);
+			KeyboardEventArgs args(Event::OnKeyChar, wParam, lParam);
 			_inputControl->Trigger(args);
 			return;
 		}

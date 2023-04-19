@@ -26,7 +26,6 @@ namespace EzUI {
 	private:
 		Window(const Window&) {};
 		bool IsInWindow(Control& pControl, Control& it);//控件是否在窗口的可见区域
-		Control* FindControl(const Point& clientPoint, Point& outPoint);//根据坐标获取控件
 	protected:
 		LRESULT ZoomWindow(const LPARAM& lParam);//缩放窗口
 		void MoveWindow();//鼠标按下移动窗口
@@ -43,7 +42,7 @@ namespace EzUI {
 		virtual void OnClose(bool& Cancel);
 		virtual void OnDestroy();
 		virtual void OnLoad();
-		virtual void OnChar(WPARAM wParam, LPARAM lParam);
+		virtual void OnKeyChar(WPARAM wParam, LPARAM lParam);
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam);
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);
 		virtual void OnMove(const Point& point);
@@ -74,5 +73,6 @@ namespace EzUI {
 		void SetVisible(bool flag);
 		void Invalidate();//使区域无效(延迟刷新)
 		void Refresh();//立即更新所有无效区域(立即刷新)
+		Control* FindControl(const Point clientPoint, Point* outPoint);//根据坐标获取控件
 	};
 };

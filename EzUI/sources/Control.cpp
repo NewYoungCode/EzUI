@@ -512,8 +512,8 @@ Event(this , ##__VA_ARGS__); \
 		}
 		switch (args.EventType)
 		{
-		case Event::OnChar: {
-			OnChar(args.wParam, args.lParam);
+		case Event::OnKeyChar: {
+			OnKeyChar(args.wParam, args.lParam);
 			break;
 		}
 		case Event::OnKeyDown: {
@@ -641,11 +641,6 @@ Event(this , ##__VA_ARGS__); \
 		//bool isScrollBar = dynamic_cast<EzUI::ScrollBar*>(this);
 		//r = isScrollBar ? 0 : r;//因为滚动条是不需要有圆角的
 
-#if USED_Skia
-//针对矩形控件
-		EzUI::PushAxisAlignedClip(pt, Rect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height));
-#endif
-
 #if USED_Direct2D
 		if (r > 0) {
 			//处理圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分) 带抗锯齿
@@ -685,10 +680,6 @@ Event(this , ##__VA_ARGS__); \
 		//恢复偏移
 		EzUI::SetTransform(pt, 0, 0);
 
-
-#if USED_Skia
-		EzUI::PopAxisAlignedClip(pt);//弹出
-#endif
 
 #if USED_Direct2D
 		if (r > 0) {
@@ -844,6 +835,10 @@ Event(this , ##__VA_ARGS__); \
 			PublicData->UpdateWindow();//立即更新全部无效区域
 		}
 	}
+	Rect Control::GetCareRect()
+	{
+		return Rect();
+	}
 	void Control::ComputeClipRect()
 	{
 		if (Parent) {
@@ -884,9 +879,15 @@ Event(this , ##__VA_ARGS__); \
 		_controls.clear();//清空子控件集合
 		DestroySpacers();//清空弹簧并删除弹簧
 	}
-	void Control::OnChar(WPARAM wParam, LPARAM lParam) {}
-	void Control::OnKeyDown(WPARAM wParam, LPARAM lParam) {}
-	void Control::OnKeyUp(WPARAM wParam, LPARAM lParam) {}
+	void Control::OnKeyChar(WPARAM wParam, LPARAM lParam) {
+		UI_TRIGGER(KeyChar, wParam, lParam);
+	}
+	void Control::OnKeyDown(WPARAM wParam, LPARAM lParam) {
+		UI_TRIGGER(KeyDown, wParam, lParam);
+	}
+	void Control::OnKeyUp(WPARAM wParam, LPARAM lParam) {
+		UI_TRIGGER(KeyUp, wParam, lParam);
+	}
 	void Control::OnMouseMove(const Point& point)
 	{
 		UI_TRIGGER(MouseMove, point);

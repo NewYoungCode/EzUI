@@ -11,8 +11,6 @@ namespace EzUI {
 		int  pointX = 0;
 		int _sliderWidth = 0;
 		bool mouseDown = false;
-	public:
-		std::map<Control*, int>* _controlsLocationX = NULL;
 	protected:
 		virtual void OnSize(const Size& size)override;
 		virtual void OnForePaint(PaintEventArgs& args) override;

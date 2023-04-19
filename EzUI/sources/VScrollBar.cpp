@@ -152,13 +152,13 @@ namespace EzUI {
 		double rate = distanceTotal * 1.0 / (_maxBottom - Parent->Height());//滑块可用总高度 / list item高度总和 * 当前滑块坐标的坐标
 		double offsetY = sliderY / rate;
 		if (Parent && distanceTotal > 0) {
-			for (auto& it : *_controlsLocationY) { //挨个移动坐标
+			for (auto& it : this->Location) { //挨个移动坐标
 				it.first->SetRect({ it.first->X(), (int)(it.second - offsetY), it.first->Width(),it.first->Height() });
 			}
 			Parent->Invalidate();
 		}
 		else if (Parent) {//当滚动条不可用的的时候
-			for (auto& it : *_controlsLocationY) { //使用原坐标 挨个移动坐标
+			for (auto& it : this->Location) { //使用原坐标 挨个移动坐标
 				it.first->SetRect({ it.first->X(), (int)(it.second), it.first->Width(),it.first->Height() });
 			}
 			Parent->Invalidate();

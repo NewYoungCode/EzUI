@@ -3,12 +3,8 @@
 namespace EzUI {
 	void HList::Init()
 	{
-		this->hScrollBar = new HScrollBar;
-		if (hScrollBar) {
-			hScrollBar->SetWidth(Width());//滚动条宽度
-			hScrollBar->Parent = this;
-			hScrollBar->_controlsLocationX = &LocationX;
-		}
+		hScrollBar.SetWidth(Width());//滚动条宽度
+		hScrollBar.Parent = this;
 	}
 	HList::HList()
 	{
@@ -20,13 +16,10 @@ namespace EzUI {
 	}
 	HList::~HList()
 	{
-		if (hScrollBar) {
-			delete hScrollBar;
-		}
 	}
 
 	int HList::ContentLenght() {
-	
+
 		return _maxRight;
 	}
 
@@ -64,7 +57,7 @@ namespace EzUI {
 		int& x = (int&)ctl->X();
 		x = _maxRight;
 		_maxRight += (ctl->Width() + ctl->Margin.Right);
-		LocationX.insert(std::pair<Control*, int>(ctl, ctl->X()));
+		hScrollBar.Location.insert(std::pair<Control*, int>(ctl, ctl->X()));
 	}
 	ControlIterator HList::RemoveControl(Control* ctl)
 	{
@@ -73,12 +66,12 @@ namespace EzUI {
 		if (GetControls().size() < before) {//如果控件数量比开始少 则 删除成功
 			int outWidth = (ctl->Width() + ctl->Margin.GetHSpace());//删除控件留出来的空白区域宽度
 			_maxRight -= outWidth;//减去空白区域宽度
-			LocationX.erase(ctl);//将记录X坐标的map也要删除控件
+			hScrollBar.Location.erase(ctl);//将记录X坐标的map也要删除控件
 			for (auto i = nextIt; i != GetControls().end(); i++)//从删除的下一个控件开始往前移动X坐标
 			{
 				Control* it = *i;
 				it->SetRect(Rect(it->X() - outWidth, it->Y(), it->Width(), it->Height()));//自身移动
-				LocationX[it] -= outWidth;//记录的原始坐标移动
+				hScrollBar.Location[it] -= outWidth;//记录的原始坐标移动
 			}
 			RefreshScroll(_maxRight);//通知滚动条容器最大边界值已经改变
 		}
@@ -87,7 +80,7 @@ namespace EzUI {
 
 	void HList::Clear(bool freeControls) {
 		__super::Clear(freeControls);
-		LocationX.clear();
+		hScrollBar.Location.clear();
 		_maxRight = 0;
 		RefreshScroll(_maxRight);
 	}
@@ -100,18 +93,16 @@ namespace EzUI {
 		if (AutoWidth) {
 			this->_fixedWidth = _maxRight;
 			this->_rect.Width = _maxRight;
-			hScrollBar->Visible = false;
+			hScrollBar.Visible = false;
 		}
 		else {
-			hScrollBar->Visible = true;
+			hScrollBar.Visible = true;
 		}
-		if (hScrollBar) {
-			hScrollBar->SetMaxRight(_maxRight);
-		}
+		hScrollBar.SetMaxRight(_maxRight);
 	}
 	ScrollBar* HList::GetScrollBar()
 	{
-		return this->hScrollBar;
+		return &hScrollBar;
 	}
 	void HList::ChildPainting(Controls& controls, PaintEventArgs& args) {
 		VisibleControls.clear();

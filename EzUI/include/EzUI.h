@@ -106,10 +106,10 @@ namespace EzUI {
 		size_t PaintCount = 0;
 		bool Debug = false;//是否开启debug模式
 		HWND HANDLE = NULL;//窗口句柄
-		UIFunc<void(void*)> InvalidateRect = NULL;//使一个区域无效
-		UIFunc<void()> UpdateWindow = NULL;//立即更新全部无效区域
-		UIFunc<bool(Control*, EventArgs&)> Notify = NULL;//
-		UIFunc<void(Control*)> RemoveControl = NULL;//清空控件标记等等...
+		std::function<void(void*)> InvalidateRect = NULL;//使一个区域无效
+		std::function<void()> UpdateWindow = NULL;//立即更新全部无效区域
+		std::function<bool(Control*, EventArgs&)> Notify = NULL;//
+		std::function<void(Control*)> RemoveControl = NULL;//清空控件标记等等...
 	};
 	class StopWatch {
 	private:
@@ -149,7 +149,7 @@ namespace EzUI {
 		OnKeyUp = 512,
 		OnPaint = 1024,
 		OnKillFocus = 2048,
-		OnChar = 4096,
+		OnKeyChar = 4096,
 		OnLocation = 8192,
 		OnSize = 16384,
 		OnTextChange = 32768,
@@ -303,17 +303,20 @@ namespace EzUI {
 	typedef std::map<EString, EString>::iterator AttributeIterator;
 	typedef std::list<Control*> Controls;//控件集合
 	typedef std::list<Control*>::iterator ControlIterator;//
-	typedef UIFunc<void(Control*, const Point&)> EventMouseMove;  //移动事件
-	typedef UIFunc<void(Control*, const Point&)> EventMouseEnter;//移入事件
-	typedef UIFunc<void(Control*, short, const Point&)> EventMouseWheel;//滚轮事件
-	typedef UIFunc<void(Control*)> EventMouseLeave;//鼠标离开事件
-	typedef UIFunc<void(Control*, MouseButton, const Point&)> EventMouseDown; //鼠标按下事件
-	typedef UIFunc<void(Control*, MouseButton, const Point&)> EventMouseUp;//鼠标抬起
-	typedef UIFunc<void(Control*, MouseButton, const Point&)> EventMouseClick;//鼠标单击
-	typedef UIFunc<void(Control*, MouseButton, const Point&)> EventMouseDoubleClick;//鼠标双击
-	typedef UIFunc<void(int, int)> EventScrollRolling;//滚动条滚动事件
-	typedef UIFunc<void(PaintEventArgs&)> EventPaint;//绘制
-	typedef UIFunc<void(EString)> EventTextChange;//文字变更事件
+	typedef std::function<void(Control*, const Point&)> EventMouseMove;  //移动事件
+	typedef std::function<void(Control*, const Point&)> EventMouseEnter;//移入事件
+	typedef std::function<void(Control*, short, const Point&)> EventMouseWheel;//滚轮事件
+	typedef std::function<void(Control*)> EventMouseLeave;//鼠标离开事件
+	typedef std::function<void(Control*, MouseButton, const Point&)> EventMouseDown; //鼠标按下事件
+	typedef std::function<void(Control*, MouseButton, const Point&)> EventMouseUp;//鼠标抬起
+	typedef std::function<void(Control*, MouseButton, const Point&)> EventMouseClick;//鼠标单击
+	typedef std::function<void(Control*, MouseButton, const Point&)> EventMouseDoubleClick;//鼠标双击
+	typedef std::function<void(Control*, WPARAM, LPARAM)> EventKeyChar;//输入事件(WM_CHAR)
+	typedef std::function<void(Control*, WPARAM, LPARAM)> EventKeyDown;//键盘按下事件
+	typedef std::function<void(Control*, WPARAM, LPARAM)> EventKeyUp;//键盘弹起事件
+	typedef std::function<void(int, int)> EventScrollRolling;//滚动条滚动事件
+	typedef std::function<void(PaintEventArgs&)> EventPaint;//绘制
+	typedef std::function<void(EString)> EventTextChange;//文字变更事件
 
 	class UI_EXPORT ControlStyle {
 	public:
@@ -340,22 +343,6 @@ namespace EzUI {
 		void SetStyleSheet(const EString& styleStr, const std::function<void(Image*)>& callback = NULL);
 		void SetStyle(const EString& key, const EString& value, const std::function<void(Image*)>& callback = NULL);
 	};
-	class UI_EXPORT IScroll {
-	public:
-		std::map<Control*, int> LocationX;
-		std::map<Control*, int> LocationY;
-		virtual ~IScroll() {};
-	};
-	class UI_EXPORT IScrollBar {
-	public:
-		virtual void Move(double pos) = 0;
-		virtual Rect GetSliderRect() = 0;//
-		virtual int RollingCurrent() = 0;
-		virtual int RollingTotal() = 0;//
-		virtual void OwnerSize(const Size& parentSize) = 0;
-		EventScrollRolling Rolling = NULL;//滚动事件
-		virtual ~IScrollBar() {};
-	};
 	class UI_EXPORT IControl {
 	private:
 		Attributes _attrs;
@@ -373,7 +360,7 @@ namespace EzUI {
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point) = 0;
 		virtual void OnSize(const Size& size) = 0;
 		virtual void OnLoad() = 0;
-		virtual void OnChar(WPARAM wParam, LPARAM lParam) = 0;
+		virtual void OnKeyChar(WPARAM wParam, LPARAM lParam) = 0;
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam) = 0;
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam) = 0;
 	public:

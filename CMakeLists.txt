@@ -27,6 +27,17 @@ set_target_properties(EzUI PROPERTIES LINKER_LANGUAGE CXX)
 project(helloWorld)
 add_executable(helloWorld WIN32 ./helloWorld/main.cpp)
 target_link_libraries(helloWorld PRIVATE EzUI)
+set_target_properties(helloWorld PROPERTIES LINKER_LANGUAGE CXX)
+
+
+#Designer设计器
+project(Designer)
+file(GLOB DesignerSrc ./Designer/*.cpp)
+file(GLOB DesignerH ./Designer/*.h)
+add_executable(Designer WIN32 ${DesignerH} ${DesignerSrc})
+target_link_libraries(Designer PRIVATE EzUI)
+set_target_properties(EzUI PROPERTIES LINKER_LANGUAGE CXX)
+
 
 #模仿酷狗音乐demo
 project(kugouDemo)

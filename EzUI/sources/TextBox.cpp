@@ -19,7 +19,7 @@ namespace EzUI {
 	{
 		Init();
 	}
-	void TextBox::OnChar(WPARAM wParam, LPARAM lParam)
+	void TextBox::OnKeyChar(WPARAM wParam, LPARAM lParam)
 	{
 		//Debug::Log(utf8("按下了%d"), wParam);
 		do
@@ -417,6 +417,12 @@ namespace EzUI {
 	{
 		text = _text.utf16();
 		Analysis();
+	}
+	Rect TextBox::GetCareRect()
+	{
+		Rect rect(careRect);
+		rect.X += x;//偏移
+		return rect;
 	}
 	void TextBox::SetAttribute(const EString& key, const EString& value) {
 		__super::SetAttribute(key, value);

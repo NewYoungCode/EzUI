@@ -16,13 +16,14 @@ namespace EzUI {
 		Point _lastLocation;//上一次大小
 		Size _lastSize;//上一次大小
 		Rect _lastDrawRect;//最后一次显示的位置
-		int _eventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnChar | Event::OnKeyDown | Event::OnKeyUp;//默认添加到主窗口通知函数中可拦截
+		int _eventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnKeyChar | Event::OnKeyDown | Event::OnKeyUp;//默认添加到主窗口通知函数中可拦截
 		std::mutex _rePaintMtx;
 		Control(const Control&) = delete;
-		Control& operator=(const Control&)=delete;
-		bool IsRePaint();
-		bool CheckEventPassThrough(const Event& eventType);
-		bool CheckEventNotify(const Event& eventType);
+		Control& operator=(const Control&) = delete;
+		bool IsRePaint();//是否需要重绘
+		bool CheckEventPassThrough(const Event& eventType);//检查事件是否已经过滤
+		bool CheckEventNotify(const Event& eventType);//检查事件是否通知到主窗口中
+		void ComputeClipRect();//计算基于父控件的裁剪区域
 	protected:
 		int _fixedWidth = 0;//绝对宽度
 		int _fixedHeight = 0;//绝对高度
@@ -52,6 +53,9 @@ namespace EzUI {
 		EventMouseUp MouseUp;//鼠标抬起
 		EventMouseClick MouseClick;//鼠标单击
 		EventMouseDoubleClick MouseDoubleClick;//鼠标双击
+		EventKeyChar KeyChar;//WM_CHAR消息
+		EventKeyDown KeyDown;//键盘按下
+		EventKeyUp KeyUp;//键盘弹起
 		EventPaint Painting;//绘制事件
 	protected:
 		ControlStyle& GetStyle(const ControlState& _state);//获取当前控件状态下的样式信息
@@ -74,7 +78,7 @@ namespace EzUI {
 		virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point);//鼠标双击
 		virtual void OnMouseEnter(const Point& point);//鼠标移入
 		virtual void OnMouseEvent(const MouseEventArgs& args);//鼠标事件消息
-		virtual void OnChar(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
+		virtual void OnKeyChar(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);//键盘弹起
 	public:
@@ -117,26 +121,26 @@ namespace EzUI {
 		virtual ~Control();
 		void DestroySpacers();
 		//普通样式
-		Image* GetForeImage(ControlState _state = ControlState::None);
-		Image* GetBackgroundImage(ControlState _state = ControlState::None);
 		int GetRadius(ControlState _state = ControlState::None);
 		int GetBorderLeft(ControlState _state = ControlState::None);
 		int GetBorderTop(ControlState _state = ControlState::None);
 		int GetBorderRight(ControlState _state = ControlState::None);
 		int GetBorderBottom(ControlState _state = ControlState::None);
+		Image* GetForeImage(ControlState _state = ControlState::None);
+		Image* GetBackgroundImage(ControlState _state = ControlState::None);
 		Color GetBorderColor(ControlState _state = ControlState::None);
 		Color GetBackgroundColor(ControlState _state = ControlState::None);
 		//具有继承性样式
+		Color GetForeColor(ControlState _state = ControlState::None);//获取默认控件状态下前景色
 		EString GetFontFamily(ControlState _state = ControlState::None);//获取默认控件状态下字体Family
 		int GetFontSize(ControlState _state = ControlState::None);//获取默认控件状态下字体大小样式
-		Color GetForeColor(ControlState _state = ControlState::None);//获取默认控件状态下前景色
 		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::Static);//
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性
 		Controls& GetControls();//获取当前所有子控件
 		Control* GetControl(size_t pos);//使用下标获取控件
 		Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
 		Controls FindControl(const EString& attr, const EString& attrValue);//使用属性查找
-		size_t Index();
+		size_t Index();//获取当前控件在父容器下的索引
 		virtual void AddControl(Control* ctl);//添加控件
 		virtual ControlIterator RemoveControl(Control* ctl);//删除控件 返回下一个迭代器
 		virtual void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件
@@ -144,11 +148,15 @@ namespace EzUI {
 		bool IsVisible();//当前是否显示在窗口内
 		virtual bool Invalidate();// 使当前控件的区域为无效区域
 		virtual void Refresh();// 使当前控件区域为无效区域并且立即更新全部的无效区域
-		void ComputeClipRect();//计算基于父控件的裁剪区域
+		virtual Rect GetCareRect();//获取光标位置
 	};
 
 	//添加弹簧无需用户手动释放,
 	class Spacer :public Control {
+	private:
+		//弹簧不允许再出现子控件
+		void AddControl(Control* ctl) {};
+		ControlIterator RemoveControl() {};
 	public:
 		virtual ~Spacer() {};
 	};
@@ -172,9 +180,20 @@ namespace EzUI {
 			SetFixedWidth(fixedWidth);
 		}
 	};
-	class  ScrollBar :public Control, public IScrollBar {
+	class ScrollBar :public Control {
 	public:
-		ScrollBar(Control* parent) = delete;
+		std::map<Control*, int> Location;
+	private:
+		//滚动条不允许再出现子控件
+		void AddControl(Control* ctl) {};
+		ControlIterator RemoveControl() {};
+	public:
+		virtual void Move(double pos) = 0;
+		virtual Rect GetSliderRect() = 0;//
+		virtual int RollingCurrent() = 0;
+		virtual int RollingTotal() = 0;//
+		virtual void OwnerSize(const Size& parentSize) = 0;
+		EventScrollRolling Rolling = NULL;//滚动事件
 		ScrollBar() {
 			Style.ForeColor = { 205,205,205 };//the bar backgroundcolor
 			Style.BackgroundColor = { 240,240,240 };//the bar backgroundcolor
