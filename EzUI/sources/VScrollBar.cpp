@@ -101,7 +101,6 @@ namespace EzUI {
 
 	void VScrollBar::OnMouseDown(MouseButton mBtn, const Point& point) {
 		__super::OnMouseDown(mBtn, point);
-
 		Rect sliderRect(0, (INT)sliderY, Width(), _sliderHeight);
 		if (_sliderHeight == Height()) { return; }
 		if (mBtn == MouseButton::Left && sliderRect.Contains({ point.X,point.Y })) {
@@ -112,13 +111,6 @@ namespace EzUI {
 
 	void VScrollBar::OnMouseEnter(const Point& pt) {
 		__super::OnMouseEnter(pt);
-
-		//{//滚动条效果
-		//	SetWidth(8);
-		//	Style.Radius = 8;
-		//	OnLayout(Size(Parent->Width(), Parent->Height()), true);
-		//	Invalidate();
-		//}
 	}
 
 	void VScrollBar::OnMouseUp(MouseButton mBtn, const Point& point)
@@ -131,13 +123,6 @@ namespace EzUI {
 	{
 		__super::OnMouseLeave();
 		mouseDown = false;
-
-		//{//滚动条效果
-		//	SetWidth(5);
-		//	Style.Radius = 5;
-		//	OnLayout(Size(Parent->Width(), Parent->Height()), true);
-		//	Invalidate();
-		//}
 	}
 
 	void VScrollBar::OnMouseMove(const Point& point)
@@ -148,11 +133,13 @@ namespace EzUI {
 			sliderY += offsetY;
 			pointY = point.Y;
 			Move(sliderY);
-			//Invalidate();//用户拖动鼠标的时候 需要提高响应速度 显得丝滑
 		}
 	}
 
 	void VScrollBar::Move(double posY) {
+		if (Parent == NULL) {
+			return;
+		}
 		sliderY = posY;
 		if (sliderY <= 0) { //滑块在顶部
 			sliderY = 0;
@@ -160,21 +147,21 @@ namespace EzUI {
 		if (sliderY + _sliderHeight >= GetRect().Height) { //滑块在最底部
 			sliderY = GetRect().Height - _sliderHeight;
 		}
-		int  distanceTotal = Height() - _sliderHeight;//当前滑块可用滑道的总距离
+		int distanceTotal = Height() - _sliderHeight;//当前滑块可用滑道的总距离
 		double rate = distanceTotal * 1.0 / (_maxBottom - Parent->Height());//滑块可用总高度 / list item高度总和 * 当前滑块坐标的坐标
 		double offsetY = sliderY / rate;
-		if (Parent && distanceTotal > 0) {
+		if (distanceTotal > 0) {
 			for (auto& it : this->Location) { //挨个移动坐标
 				it.first->SetRect({ it.first->X(), (int)(it.second - offsetY), it.first->Width(),it.first->Height() });
 			}
-			Parent->Invalidate();
 		}
-		else if (Parent) {//当滚动条不可用的的时候
+		else {//当滚动条不可用的的时候
 			for (auto& it : this->Location) { //使用原坐标 挨个移动坐标
 				it.first->SetRect({ it.first->X(), (int)(it.second), it.first->Width(),it.first->Height() });
 			}
-			Parent->Invalidate();
 		}
+		Parent->Invalidate();
+		//Parent->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
 		if (Rolling) {
 			Rolling(RollingCurrent(), RollingTotal());
 		}

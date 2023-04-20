@@ -11,13 +11,13 @@ namespace EzUI {
 				while (brun)
 				{
 					if (Tick) {
-						Tick();
+						Tick(this);
 					}
 					Sleep(Interval);
 				}
 			}
 		public:
-			std::function<void()> Tick;
+			std::function<void(Timer*)> Tick;
 			size_t Interval = -1;
 		public:
 			Timer() {}

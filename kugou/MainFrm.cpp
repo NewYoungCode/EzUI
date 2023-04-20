@@ -73,9 +73,9 @@ void MainFrm::InitForm() {
 	//忽略一些事件 可穿透父控件
 	playerBar2->MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseClick;
 	//创建启动一个实时获取歌曲进度以及状态
-	timer = new Windows::Timer;
+	timer = new Thread::Timer;
 	timer->Interval = 10;
-	timer->Tick = [=](Windows::Timer*) {
+	timer->Tick = [=](Thread::Timer*) {
 		Task();
 	};
 	//添加一些事件到窗口中的OnNotify函数进行拦截

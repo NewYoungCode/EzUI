@@ -264,7 +264,7 @@ namespace EzUI {
 			Rect paintRect{ r.left,r.top,r.right - r.left, r.bottom - r.top };
 			OnPaint(pst.hdc, paintRect);
 			EndPaint(_hWnd, &pst);
-			break;
+			return 0;
 		}
 
 		case WM_NOTIFY: {
@@ -326,9 +326,6 @@ namespace EzUI {
 			else {
 				return TRUE;
 			}
-			break;
-		}
-		case SWP_HIDEWINDOW: {
 			break;
 		}
 		case WM_CHAR: {
@@ -454,11 +451,11 @@ namespace EzUI {
 #ifdef DEBUGPAINT
 		if (PublicData.Debug) {
 			EzUI::DrawRectangle(pt, rePaintRect, Color::Red);
-		}
+	}
 #endif
 		pt->EndDraw();
 		EzUI::ReleaseRender(pt);
-	}
+}
 
 	void Window::InitData(const DWORD& ExStyle)
 	{
@@ -624,11 +621,11 @@ namespace EzUI {
 			args.Location = point;
 			args.EventType = Event::OnMouseWheel;
 			scrollBar->Trigger(args);
-			PublicData.UpdateWindow();
-			POINT p1{ 0 };
+			//PublicData.UpdateWindow();
+		/*	POINT p1{ 0 };
 			::GetCursorPos(&p1);
 			::ScreenToClient(_hWnd, &p1);
-			OnMouseMove({ p1.x, p1.y });
+			OnMouseMove({ p1.x, p1.y });*/
 		}
 	}
 	void Window::OnMouseDoubleClick(MouseButton mbtn, const Point& point)
@@ -837,4 +834,4 @@ namespace EzUI {
 		return false;
 	}
 
-};
+	};

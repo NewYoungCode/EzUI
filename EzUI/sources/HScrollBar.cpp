@@ -2,7 +2,7 @@
 
 namespace EzUI {
 
-	HScrollBar::HScrollBar() :_maxRight(0) {}
+	HScrollBar::HScrollBar() {}
 	HScrollBar::~HScrollBar() {}
 
 	void HScrollBar::SetMaxRight(int maxRight)
@@ -109,11 +109,13 @@ namespace EzUI {
 			sliderX += offsetX;
 			pointX = point.X;
 			Move(sliderX);
-			//Invalidate();//用户拖动鼠标的时候 需要提高响应速度 显得丝滑
 		}
 	}
 
 	void HScrollBar::Move(double posY) {
+		if (Parent == NULL) {
+			return;
+		}
 		sliderX = posY;
 
 		if (sliderX <= 0) { //滑块在顶部
@@ -125,18 +127,18 @@ namespace EzUI {
 		int  distanceTotal = Width() - _sliderWidth;//当前滑块可用滑道的总距离
 		double rate = distanceTotal * 1.0 / (_maxRight - Parent->Width());//滑块可用总高度 / list item高度总和 * 当前滑块坐标的坐标
 		double offsetX = sliderX / rate;
-		if (Parent && distanceTotal > 0) {
+		if (distanceTotal > 0) {
 			for (auto& it : this->Location) { //挨个移动坐标
 				it.first->SetRect({ (int)(it.second - offsetX), it.first->Y(), it.first->Width(),it.first->Height() });
 			}
-			Parent->Invalidate();
 		}
-		else if (Parent) {//当滚动条不可用的的时候
+		else {//当滚动条不可用的的时候
 			for (auto& it : this->Location) { //使用原坐标
 				it.first->SetRect({ (int)(it.second), it.first->Y(), it.first->Width(),it.first->Height() });
 			}
-			Parent->Invalidate();
 		}
+		Parent->Invalidate();
+		//Parent->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
 		if (Rolling) {
 			Rolling(RollingCurrent(), RollingTotal());
 		}

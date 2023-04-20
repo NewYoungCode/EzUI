@@ -19,7 +19,7 @@ private:
 	TabLayout* tabCtrl, * control;
 	Control* main, * main2, * center, * centerLeft, * tools, * playerBar, * playerBar2;
 	//need new 
-	Windows::Timer* timer = NULL;
+	Thread::Timer* timer = NULL;
 	ConfigIni* cfg = NULL;
 	Image* playingImage = NULL, * pauseImage = NULL;
 	Image* bkImage = NULL, * headImg = NULL;
