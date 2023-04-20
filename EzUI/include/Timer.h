@@ -68,18 +68,15 @@ namespace EzUI {
 		private:
 			static void  CALLBACK TimeProc(HWND hwnd, UINT message, UINT_PTR iTimerID, DWORD dwTime)
 			{
-				_timerMtx.lock();
 				Timer* timer = (Timer*)_timers[iTimerID];
 				if (timer && timer->Tick) {
 					timer->Tick(timer);
 				}
-				_timerMtx.unlock();
 			}
 		public:
 			void Stop() {
 				if (TimerId) {
 					auto ret = ::KillTimer(NULL, TimerId);
-					//_timers.erase(TimerId);
 					Erase(TimerId);
 					TimerId = NULL;
 					started = false;
@@ -90,9 +87,7 @@ namespace EzUI {
 					return;
 				}
 				Stop();
-
 				TimerId = ::SetTimer(NULL, TimerId, Interval, Timer::TimeProc);
-				//_timers.insert(std::pair<UINT_PTR, UINT_PTR>(TimerId, (UINT_PTR)this));
 				InsertTimer(TimerId, (UINT_PTR)this);
 				started = true;
 			}

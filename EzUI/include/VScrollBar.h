@@ -1,12 +1,15 @@
 #pragma once
 #include "Control.h"
-
+#include "Timer.h"
 namespace EzUI {
 
 	class UI_EXPORT VScrollBar :
 		public ScrollBar
 	{
 	private:
+		int _rollCount = 0;
+		int _speed = 0;
+		Windows::Timer _timer;
 		int _maxBottom = 0;
 		double sliderY = 0;
 		int  pointY = 0;

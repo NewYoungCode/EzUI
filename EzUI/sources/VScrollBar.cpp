@@ -1,8 +1,20 @@
 #include "VScrollBar.h"
 namespace EzUI {
 
-	VScrollBar::VScrollBar() :_maxBottom(0){}
-	VScrollBar::~VScrollBar(){}
+	VScrollBar::VScrollBar() {
+		_timer.Interval = 5;
+		_timer.Tick = [this](Windows::Timer* tm)->void {
+			sliderY += _speed;
+			Move(sliderY);
+			_rollCount--;
+			if (_rollCount <= 0) {
+				tm->Stop();
+			}
+		};
+	}
+	VScrollBar::~VScrollBar() {
+		_timer.Stop();
+	}
 
 	void VScrollBar::SetMaxBottom(int maxBottom)
 	{
@@ -45,8 +57,8 @@ namespace EzUI {
 			return;
 		}
 		Color color = GetBackgroundColor();
-		if (color.GetValue()!=0) {
-			EzUI::FillRectangle(e.Painter, Rect{ 0,0,Width(),Height() }, GetBackgroundColor());
+		if (color.GetValue() != 0) {
+			EzUI::FillRectangle(e.Painter, Rect{ 0,0,Width(),Height() }, color);
 		}
 	}
 
@@ -168,11 +180,15 @@ namespace EzUI {
 		}
 	}
 
-
 	void VScrollBar::OnMouseWheel(short zDelta, const Point& point) {
-		//double offset = (Height() - GetSliderHeight())*0.01 + 0.9;
-		double offset = 5;
-		sliderY += (zDelta > 0 ? -offset : offset);
-		Move(sliderY);
+		int fx = (zDelta > 0 ? -5 : 5);//滚动方向
+		if (fx != _speed) {//如果滚动方向与上次不同 即可停止
+			_rollCount = 1;//滚动一次
+		}
+		else {
+			_rollCount += 5;//将滚动五次
+		}
+		_speed = fx;//控制方向与速度
+		_timer.Start();
 	}
 };

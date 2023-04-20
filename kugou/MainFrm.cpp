@@ -1,7 +1,7 @@
 #include "MainFrm.h"
 #define refreshImage WM_UIMESSAGE+1
 #include "ComBox.h"
-MainFrm::MainFrm() :BorderlessWindow(1022, 670)
+MainFrm::MainFrm() :BorderlessWindow(1020, 690)
 {
 	InitForm();
 }
