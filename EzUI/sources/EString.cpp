@@ -92,6 +92,21 @@ namespace EzUI {
 	{
 		UnicodeToAny(wstr, ::GetACP(), outStr);
 	}
+
+	void EString::GBKToUTF8(const std::string& str, std::string* outStr) {
+		const int gbkCodePage = 936;
+		std::wstring wstr;
+		AnyToUnicode(str, gbkCodePage, &wstr);
+		UnicodeToUTF8(wstr, outStr);
+	}
+
+	void EString::UTF8ToGBK(const std::string& str, std::string* outStr) {
+		const int gbkCodePage = 936;
+		std::wstring wstr;
+		UTF8ToUnicode(str, &wstr);
+		UnicodeToAny(wstr, gbkCodePage, outStr);
+	}
+
 	void EString::ANSIToUTF8(const std::string& str, std::string* outStr)
 	{
 		UINT codePage = ::GetACP();
@@ -120,6 +135,7 @@ namespace EzUI {
 	void EString::UTF8ToUnicode(const std::string& str, std::wstring* outStr) {
 		AnyToUnicode(str, CP_UTF8, outStr);
 	}
+
 
 	void EString::Tolower(std::string* str_in_out)
 	{
@@ -160,7 +176,8 @@ namespace EzUI {
 		std::string& newStr = *str_in_out;
 		size_t pos;
 		pos = newStr.find(oldText);
-		for (; pos != std::string::npos;) {
+		while (pos != std::string::npos)
+		{
 			newStr.replace(pos, oldText.size(), newText);
 			pos = newStr.find(oldText);
 		}
@@ -177,7 +194,7 @@ namespace EzUI {
 			arr.push_back(buf);
 			return;
 		}
-		for (; pos != std::string::npos;) {
+		while (pos != std::string::npos) {
 			auto item = buf.substr(0, pos);
 			if (!item.empty()) {
 				arr.push_back(item);

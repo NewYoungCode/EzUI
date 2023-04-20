@@ -44,8 +44,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	//Spacer sp;
 	//sp.AddControl(0);
-
-
 	int cccc = sizeof(Control);
 
 	if (1) {

@@ -23,6 +23,8 @@ namespace EzUI {
 		static void AnyToUnicode(const std::string& src_str, UINT codePage, std::wstring* out_wstr);
 		static void UnicodeToAny(const std::wstring& unicode_wstr, UINT codePage, std::string* out_str);
 		//
+		static void GBKToUTF8(const std::string& str, std::string* outStr);
+		static void UTF8ToGBK(const std::string& str, std::string* outStr);
 		static void ANSIToUniCode(const std::string& str, std::wstring* outStr);
 		static void ANSIToUTF8(const std::string& str, std::string* outStr);
 		static void UnicodeToANSI(const std::wstring& wstr, std::string* outStr);
