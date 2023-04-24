@@ -39,13 +39,13 @@ void MainFrm::InitForm() {
 
 	//美化左侧本地列表的滚动条
 	localList->GetScrollBar()->Name = "testBar";
-	localList->GetScrollBar()->SetFixedWidth(9);
+	localList->GetScrollBar()->SetWidth(9);
 	localList->GetScrollBar()->Style.Radius = 9;
 	localList->GetScrollBar()->Style.BackgroundColor = Color(50, 200, 200, 200);
 	localList->GetScrollBar()->Style.ForeColor = Color(217, 217, 217);
 	localList->GetScrollBar()->ActiveStyle.ForeColor = Color(191, 191, 191);
 	//美化搜索列表的滚动条
-	searchList->GetScrollBar()->SetFixedWidth(9);
+	searchList->GetScrollBar()->SetWidth(9);
 	searchList->GetScrollBar()->Style.Radius = 9;
 	searchList->GetScrollBar()->Style.BackgroundColor = Color(50, 200, 200, 200);
 	searchList->GetScrollBar()->Style.ForeColor = Color(250, 200, 200, 200);

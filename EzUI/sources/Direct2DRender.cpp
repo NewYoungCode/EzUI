@@ -11,7 +11,6 @@ namespace EzUI {
 		IDWriteFactory* g_WriteFactory = NULL;
 		IWICImagingFactory* g_ImageFactory = NULL;
 	}
-
 #define __FloatRate 0.003921568627451
 #define __To_D2D_COLOR_F(color) D2D_COLOR_F{FLOAT(color.GetR() * __FloatRate), FLOAT(color.GetG() * __FloatRate), FLOAT(color.GetB() * __FloatRate),FLOAT(color.GetA() * __FloatRate)}
 #define __To_D2D_RectF(rect) D2D_RECT_F{(FLOAT)rect.X,(FLOAT)rect.Y,(FLOAT)rect.GetRight(),(FLOAT)rect.GetBottom() }
@@ -27,6 +26,7 @@ namespace EzUI {
 		}
 	}
 
+	//SafeSolidColorBrush
 	class SafeSolidColorBrush {
 		ID2D1SolidColorBrush* value = NULL;
 	public:
@@ -41,6 +41,130 @@ namespace EzUI {
 		}
 	};
 
+	//TextFormat
+	TextFormat::TextFormat(const std::wstring& fontFamily, int fontSize, TextAlign textAlign) {
+		D2D::g_WriteFactory->CreateTextFormat(fontFamily.c_str(), NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, (FLOAT)fontSize, L"", &value);
+#define __Top DWRITE_PARAGRAPH_ALIGNMENT_NEAR
+#define	__Bottom DWRITE_PARAGRAPH_ALIGNMENT_FAR
+#define	__Left DWRITE_TEXT_ALIGNMENT_LEADING
+#define	__Right DWRITE_TEXT_ALIGNMENT_TRAILING
+#define	__Middle DWRITE_PARAGRAPH_ALIGNMENT_CENTER
+#define __Center DWRITE_TEXT_ALIGNMENT_CENTER
+		do
+		{
+			if (textAlign == TextAlign::BottomCenter) {
+				value->SetParagraphAlignment(__Bottom);
+				value->SetTextAlignment(__Center);
+				break;
+			}
+			if (textAlign == TextAlign::BottomLeft) {
+				value->SetParagraphAlignment(__Bottom);
+				value->SetTextAlignment(__Left);
+				break;
+			}
+			if (textAlign == TextAlign::BottomRight) {
+				value->SetParagraphAlignment(__Bottom);
+				value->SetTextAlignment(__Right);
+				break;
+			}
+			if (textAlign == TextAlign::MiddleCenter) {
+				value->SetParagraphAlignment(__Middle);
+				value->SetTextAlignment(__Center);
+				break;
+			}
+			if (textAlign == TextAlign::MiddleLeft) {
+				value->SetParagraphAlignment(__Middle);
+				value->SetTextAlignment(__Left);
+				break;
+			}
+			if (textAlign == TextAlign::MiddleRight) {
+				value->SetParagraphAlignment(__Middle);
+				value->SetTextAlignment(__Right);
+				break;
+			}
+			if (textAlign == TextAlign::TopCenter) {
+				value->SetParagraphAlignment(__Top);
+				value->SetTextAlignment(__Center);
+				break;
+			}
+			if (textAlign == TextAlign::TopLeft) {
+				value->SetParagraphAlignment(__Top);
+				value->SetTextAlignment(__Left);
+				break;
+			}
+			if (textAlign == TextAlign::TopRight) {
+				value->SetParagraphAlignment(__Top);
+				value->SetTextAlignment(__Right);
+				break;
+			}
+		} while (0);
+#undef __Top 
+#undef __Bottom 
+#undef __Left 
+#undef __Right 
+#undef __Middle 
+#undef __Center 
+	}
+	IDWriteTextFormat* TextFormat::operator->() {
+		return value;
+	}
+	TextFormat::operator IDWriteTextFormat* () {
+		return value;
+	}
+	TextFormat::~TextFormat() {
+		if (value) {
+			value->Release();
+		}
+	}
+	//TextLayout
+	TextLayout::TextLayout(const std::wstring& text, __Size maxSize, TextFormat* pTextFormat) {
+		D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), pTextFormat->value, (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &value);
+	}
+	__Point TextLayout::HitTestPoint(const __Point& pt, int& textPos, BOOL& isTrailingHit) {
+		DWRITE_HIT_TEST_METRICS hitTestMetrics;
+		//BOOL isTrailingHit;
+		BOOL isInside;
+		{
+			FLOAT x = (FLOAT)pt.X, y = (FLOAT)pt.Y;
+			value->HitTestPoint(
+				(FLOAT)x,
+				(FLOAT)y,
+				&isTrailingHit,
+				&isInside,
+				&hitTestMetrics
+			);
+		}
+		int posX = (int)(hitTestMetrics.left + 0.5);
+		if (isTrailingHit) {//判断前侧还是尾侧
+			posX += (int)(hitTestMetrics.width + 0.5);
+		}
+		textPos = hitTestMetrics.textPosition;
+		return __Point{ posX,(int)(hitTestMetrics.top + 0.5) };//返回光标所在的位置
+	}
+	__Point TextLayout::HitTestTextPosition(int textPos, BOOL isTrailingHit) {
+		DWRITE_HIT_TEST_METRICS hitTestMetrics;
+		FLOAT X, Y;
+		value->HitTestTextPosition(textPos, isTrailingHit, &X, &Y, &hitTestMetrics);
+		return __Point((int)(X + 0.5), (int)(Y + 0.5));
+	}
+	__Size TextLayout::GetFontSize() {
+		DWRITE_TEXT_METRICS textMetrics;
+		value->GetMetrics(&textMetrics);
+		D2D1_SIZE_F size = D2D1::SizeF(ceil(textMetrics.widthIncludingTrailingWhitespace), ceil(textMetrics.height));
+		return  __Size{ (int)(size.width + 0.5) ,(int)((size.height / textMetrics.lineCount) + 0.5) };
+	}
+	IDWriteTextLayout* TextLayout::operator->() {
+		return value;
+	}
+	TextLayout::operator IDWriteTextLayout* () {
+		return value;
+	}
+	TextLayout::~TextLayout() {
+		if (value) {
+			value->Release();
+		}
+	}
+	//DXImage
 	void DXImage::DecodeOfRender(ID2D1RenderTarget* render) {
 		if (d2dBitmap != NULL) {
 			if (d2dBitmap) {
@@ -60,7 +184,6 @@ namespace EzUI {
 	UINT DXImage::GetHeight() {
 		return Height;
 	}
-
 	void DXImage::CreateFormStream(IStream* istram) {
 		if (D2D::g_ImageFactory) {
 			D2D::g_ImageFactory->CreateDecoderFromStream(istram, NULL, WICDecodeMetadataCacheOnDemand, &bitmapdecoder);//
@@ -73,7 +196,6 @@ namespace EzUI {
 			Init();
 		}
 	}
-
 	void DXImage::CreateFromFile(const std::wstring& filew)
 	{
 		if (D2D::g_ImageFactory) {
@@ -98,7 +220,6 @@ namespace EzUI {
 			int a = 0;
 		}
 	}
-	//跳转到下一帧 并且获取下一帧的延迟
 	size_t DXImage::NextFrame() {
 		if (_framePos >= _frameCount) {
 			_framePos = 0;
@@ -120,7 +241,6 @@ namespace EzUI {
 		_framePos++;
 		return 60;
 	}
-
 	DXImage::DXImage(HBITMAP hBitmap) {
 		if (D2D::g_ImageFactory) {
 			D2D::g_ImageFactory->CreateBitmapFromHBITMAP(hBitmap, NULL, WICBitmapUsePremultipliedAlpha, &bitMap);
@@ -220,7 +340,7 @@ namespace EzUI {
 		}
 	}
 
-	ID2D1DCRenderTarget* CreateRender(HDC _dc, int Width, int Height)
+	ID2D1DCRenderTarget* CreateRender(HDC _dc, int x, int y, int Width, int Height)
 	{
 		D2D1_RENDER_TARGET_PROPERTIES defaultOption = D2D1::RenderTargetProperties(
 			D2D1_RENDER_TARGET_TYPE_DEFAULT,
@@ -234,7 +354,7 @@ namespace EzUI {
 		);
 		ID2D1DCRenderTarget* d2dRender = NULL;
 		HRESULT	hr = D2D::g_Direct2dFactory->CreateDCRenderTarget(&defaultOption, (ID2D1DCRenderTarget**)&d2dRender);
-		RECT rc{ 0,0,Width ,Height };
+		RECT rc{ x,y,x + Width ,y + Height };
 		((ID2D1DCRenderTarget*)d2dRender)->BindDC(_dc, &rc);
 		return d2dRender;
 	}

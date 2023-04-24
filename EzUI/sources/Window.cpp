@@ -433,7 +433,7 @@ namespace EzUI {
 #endif // COUNT_ONPAINT
 
 #if USED_Direct2D
-		auto pt = EzUI::CreateRender(winHDC, GetClientRect().Width, GetClientRect().Height);
+		auto pt = EzUI::CreateRender(winHDC,0,0, GetClientRect().Width, GetClientRect().Height);
 		pt->BeginDraw();
 		PaintEventArgs args(pt);
 		args.DC = winHDC;

@@ -29,135 +29,33 @@ namespace EzUI {
 	}
 
 	class TextFormat {
+	private:
+		TextFormat() = delete;
+		TextFormat(const TextFormat& _copy) = delete;
+		TextFormat& operator=(const TextFormat& _copy) = delete;
 	public:
 		IDWriteTextFormat* value = NULL;
 	public:
-		TextFormat(const std::wstring& fontFamily, int fontSize, TextAlign textAlign) {
-			D2D::g_WriteFactory->CreateTextFormat(fontFamily.c_str(), NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, (FLOAT)fontSize, L"", &value);
-#define __Top DWRITE_PARAGRAPH_ALIGNMENT_NEAR
-#define	__Bottom DWRITE_PARAGRAPH_ALIGNMENT_FAR
-#define	__Left DWRITE_TEXT_ALIGNMENT_LEADING
-#define	__Right DWRITE_TEXT_ALIGNMENT_TRAILING
-#define	__Middle DWRITE_PARAGRAPH_ALIGNMENT_CENTER
-#define __Center DWRITE_TEXT_ALIGNMENT_CENTER
-			do
-			{
-				if (textAlign == TextAlign::BottomCenter) {
-					value->SetParagraphAlignment(__Bottom);
-					value->SetTextAlignment(__Center);
-					break;
-				}
-				if (textAlign == TextAlign::BottomLeft) {
-					value->SetParagraphAlignment(__Bottom);
-					value->SetTextAlignment(__Left);
-					break;
-				}
-				if (textAlign == TextAlign::BottomRight) {
-					value->SetParagraphAlignment(__Bottom);
-					value->SetTextAlignment(__Right);
-					break;
-				}
-				if (textAlign == TextAlign::MiddleCenter) {
-					value->SetParagraphAlignment(__Middle);
-					value->SetTextAlignment(__Center);
-					break;
-				}
-				if (textAlign == TextAlign::MiddleLeft) {
-					value->SetParagraphAlignment(__Middle);
-					value->SetTextAlignment(__Left);
-					break;
-				}
-				if (textAlign == TextAlign::MiddleRight) {
-					value->SetParagraphAlignment(__Middle);
-					value->SetTextAlignment(__Right);
-					break;
-				}
-				if (textAlign == TextAlign::TopCenter) {
-					value->SetParagraphAlignment(__Top);
-					value->SetTextAlignment(__Center);
-					break;
-				}
-				if (textAlign == TextAlign::TopLeft) {
-					value->SetParagraphAlignment(__Top);
-					value->SetTextAlignment(__Left);
-					break;
-				}
-				if (textAlign == TextAlign::TopRight) {
-					value->SetParagraphAlignment(__Top);
-					value->SetTextAlignment(__Right);
-					break;
-				}
-			} while (0);
-#undef __Top 
-#undef __Bottom 
-#undef __Left 
-#undef __Right 
-#undef __Middle 
-#undef __Center 
-		}
-		IDWriteTextFormat* operator->() {
-			return value;
-		}
-		operator IDWriteTextFormat* () {
-			return value;
-		}
-		virtual ~TextFormat() {
-			if (value) {
-				value->Release();
-			}
-		}
+		TextFormat(const std::wstring& fontFamily, int fontSize, TextAlign textAlign);
+		IDWriteTextFormat* operator->();
+		operator IDWriteTextFormat* ();
+		virtual ~TextFormat();
 	};
 	class TextLayout {
+	private:
+		TextLayout() = delete;
+		TextLayout(const TextLayout& _copy) = delete;
+		TextLayout& operator=(const TextLayout& _copy) = delete;
 	public:
 		IDWriteTextLayout* value = NULL;
 	public:
-		TextLayout(const std::wstring& text, __Size maxSize, TextFormat* pTextFormat) {
-			D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), pTextFormat->value, (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &value);
-		}
-		__Point HitTestPoint(const __Point& pt, int& textPos, BOOL& isTrailingHit) {
-			DWRITE_HIT_TEST_METRICS hitTestMetrics;
-			//BOOL isTrailingHit;
-			BOOL isInside;
-			{
-				FLOAT x = (FLOAT)pt.X, y = (FLOAT)pt.Y;
-				value->HitTestPoint(
-					(FLOAT)x,
-					(FLOAT)y,
-					&isTrailingHit,
-					&isInside,
-					&hitTestMetrics
-				);
-			}
-			int posX = (int)(hitTestMetrics.left + 0.5);
-			if (isTrailingHit) {//判断前侧还是尾侧
-				posX += (int)(hitTestMetrics.width + 0.5);
-			}
-			textPos = hitTestMetrics.textPosition;
-			return __Point{ posX,(int)(hitTestMetrics.top + 0.5) };//返回光标所在的位置
-		}
-		__Point HitTestTextPosition(int textPos, BOOL isTrailingHit) {
-			DWRITE_HIT_TEST_METRICS hitTestMetrics;
-			FLOAT X, Y;
-			value->HitTestTextPosition(textPos, isTrailingHit, &X, &Y, &hitTestMetrics);
-			return __Point((int)(X + 0.5), (int)(Y + 0.5));
-		}
-		__Size GetFontSize() {
-			DWRITE_TEXT_METRICS textMetrics;
-			value->GetMetrics(&textMetrics);
-			D2D1_SIZE_F size = D2D1::SizeF(ceil(textMetrics.widthIncludingTrailingWhitespace), ceil(textMetrics.height));
-			return  __Size{ (int)(size.width + 0.5) ,(int)((size.height / textMetrics.lineCount) + 0.5) };
-		}
-		IDWriteTextLayout* operator->() {
-			return value;
-		}
-		operator IDWriteTextLayout* () {
-			return value;
-		}
-		virtual ~TextLayout() {
-			if (value) {
-				value->Release();
-			}
-		}
+		TextLayout(const std::wstring& text, __Size maxSize, TextFormat* pTextFormat);
+		__Point HitTestPoint(const __Point& pt, int& textPos, BOOL& isTrailingHit);
+		__Point HitTestTextPosition(int textPos, BOOL isTrailingHit);
+		__Size GetFontSize();
+		IDWriteTextLayout* operator->();
+		operator IDWriteTextLayout* ();
+		virtual ~TextLayout();
 	};
 
 	class Geometry
@@ -257,7 +155,7 @@ namespace EzUI {
 namespace EzUI {
 	UI_EXPORT void RenderInitialize();//全局初始化direct2d
 	UI_EXPORT void RenderUnInitialize();//释放direct2d
-	UI_EXPORT ID2D1DCRenderTarget* CreateRender(HDC _dc, int Width, int Height);
+	UI_EXPORT ID2D1DCRenderTarget* CreateRender(HDC _dc,int x,int y, int Width, int Height);
 	UI_EXPORT void ReleaseRender(ID2D1DCRenderTarget* d2dRender);
 	UI_EXPORT void FillRectangle(ID2D1RenderTarget* d2dRender, const __Rect& _rect, const __Color& color, int _radius = 0);
 	UI_EXPORT void DrawRectangle(ID2D1RenderTarget* d2dRender, const  __Rect& _rect, const  __Color& color, int width = 1, int _radius = 0);
