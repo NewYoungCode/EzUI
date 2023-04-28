@@ -433,7 +433,6 @@ namespace EzUI {
 #endif // COUNT_ONPAINT
 
 #if USED_Direct2D
-
 		D2DRender d2d(winHDC, 0, 0, GetClientRect().Width, GetClientRect().Height);
 		PaintEventArgs args(d2d);
 		args.DC = winHDC;
@@ -441,10 +440,6 @@ namespace EzUI {
 		args.PublicData->PaintCount = 0;
 		args.InvalidRectangle = rePaintRect;
 		MainLayout->Rending(args);//
-
-		/*d2d.SetColor(Color::Red);
-		d2d.DrawRectangle(rePaintRect);*/
-
 #endif
 
 #ifdef COUNT_ONPAINT
@@ -728,7 +723,7 @@ namespace EzUI {
 		Debug::Log("OnSize Count(%d) (%d,%d) %dms\n", __count_onsize, sz.Width, sz.Height, sw.ElapsedMilliseconds());
 #endif
 
-		}
+	}
 
 	void Window::OnRect(const Rect& rect)
 	{
@@ -837,4 +832,4 @@ namespace EzUI {
 		return false;
 	}
 
-	};
+};

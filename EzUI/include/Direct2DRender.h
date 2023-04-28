@@ -153,6 +153,13 @@ namespace EzUI {
 
 		}
 	};
+
+	class Bezier {
+	public:
+		__Point point1;
+		__Point point2;
+		__Point point3;
+	};
 };
 
 namespace EzUI {
@@ -182,6 +189,8 @@ namespace EzUI {
 		void PopLayer();//弹出最后一个裁剪
 		void DrawImage(IImage* _image, const __Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Margin& margin = 0);//绘制图像
 		void SetTransform(int xOffset, int yOffset, int angle = 0);//对画布进行旋转和偏移
+		void DrawBezier(const __Point& startPoint, const Bezier& points, int width = 1);
+		void DrawBezier(const __Point& startPoint, std::list<Bezier>& points, int width = 1);
 	};
 	using Painter = D2DRender;
 };

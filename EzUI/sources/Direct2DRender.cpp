@@ -14,6 +14,7 @@ namespace EzUI {
 #define __FloatRate 0.003921568627451
 #define __To_D2D_COLOR_F(color) D2D_COLOR_F{FLOAT(color.GetR() * __FloatRate), FLOAT(color.GetG() * __FloatRate), FLOAT(color.GetB() * __FloatRate),FLOAT(color.GetA() * __FloatRate)}
 #define __To_D2D_RectF(rect) D2D_RECT_F{(FLOAT)rect.X,(FLOAT)rect.Y,(FLOAT)rect.GetRight(),(FLOAT)rect.GetBottom() }
+#define __To_D2D_PointF(pt)  D2D1_POINT_2F{(FLOAT)pt.X,(FLOAT)pt.Y}
 
 	template<typename Interface>
 	inline void SafeRelease(
@@ -436,6 +437,38 @@ namespace EzUI {
 			// 设置x和y方向的偏移
 			render->SetTransform(D2D1::Matrix3x2F::Translation((FLOAT)xOffset, (FLOAT)yOffset));
 		}
+	}
+
+	void D2DRender::DrawBezier(const __Point& startPoint, const Bezier& points, int width) {
+		ID2D1GeometrySink* pSink = NULL;
+		ID2D1PathGeometry* pathGeometry = NULL;
+		D2D::g_Direct2dFactory->CreatePathGeometry(&pathGeometry);
+		pathGeometry->Open(&pSink);
+		pSink->BeginFigure(__To_D2D_PointF(startPoint) , D2D1_FIGURE_BEGIN_FILLED);
+		D2D1_BEZIER_SEGMENT bzr { __To_D2D_PointF(points.point1) ,__To_D2D_PointF(points.point2) ,__To_D2D_PointF(points.point3)};
+		pSink->AddBezier(bzr);
+		pSink->EndFigure(D2D1_FIGURE_END_OPEN);
+		pSink->Close();
+		render->DrawGeometry(pathGeometry, GetBrush(), (FLOAT)width);
+		SafeRelease(&pathGeometry);
+		SafeRelease(&pSink);
+	}
+	void D2DRender::DrawBezier(const __Point& startPoint, std::list<Bezier>& beziers, int width)
+	{
+		ID2D1GeometrySink* pSink = NULL;
+		ID2D1PathGeometry* pathGeometry = NULL;
+		D2D::g_Direct2dFactory->CreatePathGeometry(&pathGeometry);
+		pathGeometry->Open(&pSink);
+		pSink->BeginFigure(__To_D2D_PointF(startPoint), D2D1_FIGURE_BEGIN_FILLED);
+		for (auto& it : beziers) {
+			D2D1_BEZIER_SEGMENT bzr{ __To_D2D_PointF(it.point1) ,__To_D2D_PointF(it.point2) ,__To_D2D_PointF(it.point3) };
+			pSink->AddBezier(bzr);
+		}
+		pSink->EndFigure(D2D1_FIGURE_END_OPEN);
+		pSink->Close();
+		render->DrawGeometry(pathGeometry, GetBrush(), (FLOAT)width);
+		SafeRelease(&pathGeometry);
+		SafeRelease(&pSink);
 	}
 	void D2DRender::PushLayer(const Geometry& dxGeometry) {
 		ID2D1Layer* layer = NULL;
