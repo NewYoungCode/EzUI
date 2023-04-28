@@ -31,7 +31,7 @@ namespace EzUI {
 		SetCheck(!_checked);
 	}
 
-	void CheckBox::OnForePaint(PaintEventArgs& args)
+	void CheckBox::OnForePaint(PaintEventArgs& e)
 	{
 		int fontHeight = Height();
 		if (!_wstr.empty()) {
@@ -44,12 +44,15 @@ namespace EzUI {
 		}
 		int y = (Height() - fontHeight) / 2;
 
-		EzUI::FillRectangle(args.Painter, { 0,y,fontHeight,fontHeight }, Color(200, 255, 255, 255));
+		e.Graphics.SetColor(Color(200, 255, 255, 255));
+		e.Graphics.FillRectangle({ 0,y,fontHeight,fontHeight });
 		if (!_checked) {
-			EzUI::FillRectangle(args.Painter, { 0 + 2,y + 2,fontHeight - 4,fontHeight - 4 }, Color(200, 0, 0, 0));
+			e.Graphics.SetColor(Color(200, 0, 0, 0));
+			e.Graphics.FillRectangle({ 0 + 2,y + 2,fontHeight - 4,fontHeight - 4 });
 		}
 		else {
-			EzUI::FillRectangle(args.Painter, { 0 + 3,y + 3,fontHeight - 6,fontHeight - 6 }, Color(200, 0, 160, 0), 2);
+			e.Graphics.SetColor(Color(200, 0, 160, 0));
+			e.Graphics.FillRectangle({ 0 + 3,y + 3,fontHeight - 6,fontHeight - 6 }, 2);
 		}
 	}
 };

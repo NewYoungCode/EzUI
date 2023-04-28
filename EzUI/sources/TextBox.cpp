@@ -15,7 +15,7 @@ namespace EzUI {
 	TextBox::TextBox() {
 		Init();
 	}
-	TextBox::TextBox(Control* parent):Control(parent)
+	TextBox::TextBox(Control* parent) :Control(parent)
 	{
 		Init();
 	}
@@ -265,9 +265,9 @@ namespace EzUI {
 		careRect = Rect();
 		if (GetFontFamily().empty() || GetFontSize() == 0 || GetRect().IsEmptyArea()) return;
 		if (textFormat) delete textFormat;
-		textFormat = new TextFormat(GetFontFamily().utf16(), GetFontSize(), TextAlign::MiddleLeft);
+		textFormat = new TextFormat(GetFontFamily().utf16(), GetFontSize());
 		if (textLayout) delete textLayout;
-		textLayout = new TextLayout(text, { 16777216, Height() }, textFormat);
+		textLayout = new TextLayout(text, textFormat);
 
 		FontBox = textLayout->GetFontSize();
 
@@ -442,28 +442,42 @@ namespace EzUI {
 
 		Color fontColor = GetForeColor();
 
+		e.Graphics.SetFont(GetFontFamily().utf16(), GetFontSize());
+
 		if (text.empty()) {
 			byte r = fontColor.GetR() - 30;
 			byte g = fontColor.GetG() - 30;
 			byte b = fontColor.GetB() - 30;
-			EzUI::DrawString(e.Painter, Placeholder.utf16(), GetFontFamily().utf16(), GetFontSize(), Color(r, g, b), { 0,0,Width(),Height() }, TextAlign::MiddleLeft);
+			e.Graphics.SetColor(Color(r, g, b));
+			e.Graphics.DrawString(Placeholder.utf16(), Rect(0, 0, Width(), Height()), TextAlign::MiddleLeft);
 		}
+
+		e.Graphics.SetColor(fontColor);
+		int y = 0;
 		if (textLayout) {
-			EzUI::DrawTextLayout(e.Painter, { x,0 }, textLayout->value, fontColor);
+			Size fontBox = textLayout->GetFontSize();
+			y = (Height() - fontBox.Height) / 2;
+			e.Graphics.DrawString(*textLayout, { x, y });
 		}
 		if (!selectRect.IsEmptyArea()) {
 			Rect rect(selectRect);
 			rect.X += x;//偏移
-			EzUI::FillRectangle(e.Painter, rect, SelectColor);
+			rect.Y = y;
+
+			e.Graphics.SetColor(SelectColor);
+			e.Graphics.FillRectangle(rect);
 		}
 		if (!careRect.IsEmptyArea() && _focus) {
 			if (_careShow) {
 				Rect rect(careRect);
 				rect.X += x;//偏移
+				rect.Y = y;
 				if (rect.X == this->Width()) {//如果刚好处于边界
 					rect.X = this->Width() - 1;
 				}
-				EzUI::FillRectangle(e.Painter, rect, fontColor);
+
+				e.Graphics.SetColor(fontColor);
+				e.Graphics.FillRectangle(rect);
 			}
 		}
 	}

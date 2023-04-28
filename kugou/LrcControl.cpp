@@ -54,16 +54,18 @@ void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
 		Rect drawRec(GetRect());
 		//arg.Painter.DrawRectangle(Color::Gray, drawRec);
 		if (GetRect().Contains(rectangle))
-		{ //�����ڴ������ڵĸ�ʲſ��Ի���
+		{ 
 			if (LrcNow == &lrc)
 			{
-				//arg.Painter.DrawRectangle(Color::Red, rectangle);
-				EzUI::DrawString(arg.Painter, lrc.text.utf16(), GetFontFamily().utf16(), GetFontSize() + 0, Color(211, 174, 87), rectangle, TextAlign::MiddleCenter);
+				arg.Graphics.SetColor(Color(211, 174, 87));
+				arg.Graphics.SetFont(GetFontFamily().utf16(), GetFontSize()+3);
+				arg.Graphics.DrawString( lrc.text.utf16(), rectangle, TextAlign::MiddleCenter);
 			}
 			else
 			{
-				//arg.Painter.DrawRectangle(Color::Red, rectangle);
-				EzUI::DrawString(arg.Painter, lrc.text.utf16(), GetFontFamily().utf16(), GetFontSize(), GetForeColor(), rectangle, TextAlign::MiddleCenter);
+				arg.Graphics.SetColor(GetForeColor());
+				arg.Graphics.SetFont(GetFontFamily().utf16(), GetFontSize());
+				arg.Graphics.DrawString(lrc.text.utf16(), rectangle, TextAlign::MiddleCenter);
 			}
 		}
 	}

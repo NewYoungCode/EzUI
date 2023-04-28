@@ -58,7 +58,8 @@ namespace EzUI {
 		}
 		Color color = GetBackgroundColor();
 		if (color.GetValue() != 0) {
-			EzUI::FillRectangle(e.Painter, Rect{ 0,0,Width(),Height() }, color);
+			e.Graphics.SetColor(color);
+			e.Graphics.FillRectangle( Rect{ 0,0,Width(),Height() });
 		}
 	}
 
@@ -95,7 +96,8 @@ namespace EzUI {
 		}
 		Color color = GetForeColor();
 		if (color.GetValue() != 0) {
-			EzUI::FillRectangle(args.Painter, sliderRect, color, radius);
+			args.Graphics.SetColor(color);
+			args.Graphics.FillRectangle(sliderRect, radius);
 		}
 	}
 

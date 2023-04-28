@@ -212,7 +212,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			if (tabCtrl->GetPageIndex() == 1) {
 				PaintEventArgs& arg = (PaintEventArgs&)args;
 				Image img(player.BuffBitmap->_bitmap);
-				EzUI::DrawImage(arg.Painter, &img, main->GetRect(), ImageSizeMode::CenterImage);
+				arg.Graphics.DrawImage(&img, main->GetRect(), ImageSizeMode::CenterImage);
 				return true;
 			}
 			return false;

@@ -55,7 +55,7 @@ namespace EzUI {
 	void PictureBox::OnForePaint(PaintEventArgs& arg) {
 		if (_img) {
 			std::unique_lock<std::mutex> autoLock(_mtx);
-			EzUI::DrawImage(arg.Painter, _img, Rect(0, 0, Width(), Height()), _img->SizeMode, _img->Padding);
+			arg.Graphics.DrawImage( _img, Rect(0, 0, Width(), Height()), _img->SizeMode, _img->Padding);
 		}
 		__super::OnForePaint(arg);
 	}

@@ -27,18 +27,19 @@ namespace EzUI {
 		extern IDWriteFactory* g_WriteFactory;
 		extern IWICImagingFactory* g_ImageFactory;
 	}
-
 	class TextFormat {
 	private:
 		TextFormat() = delete;
 		TextFormat(const TextFormat& _copy) = delete;
 		TextFormat& operator=(const TextFormat& _copy) = delete;
-	public:
 		IDWriteTextFormat* value = NULL;
 	public:
-		TextFormat(const std::wstring& fontFamily, int fontSize, TextAlign textAlign);
+		TextFormat(const std::wstring& fontFamily, int fontSize);
 		IDWriteTextFormat* operator->();
 		operator IDWriteTextFormat* ();
+		IDWriteTextFormat* Get() {
+			return value;
+		}
 		virtual ~TextFormat();
 	};
 	class TextLayout {
@@ -46,18 +47,19 @@ namespace EzUI {
 		TextLayout() = delete;
 		TextLayout(const TextLayout& _copy) = delete;
 		TextLayout& operator=(const TextLayout& _copy) = delete;
-	public:
 		IDWriteTextLayout* value = NULL;
 	public:
-		TextLayout(const std::wstring& text, __Size maxSize, TextFormat* pTextFormat);
+		TextLayout(const std::wstring& text, TextFormat* pTextFormat, TextAlign textAlgin = TextAlign::TopLeft, __Size maxSize = __Size{ 16777216,16777216 });
 		__Point HitTestPoint(const __Point& pt, int& textPos, BOOL& isTrailingHit);
 		__Point HitTestTextPosition(int textPos, BOOL isTrailingHit);
 		__Size GetFontSize();
 		IDWriteTextLayout* operator->();
 		operator IDWriteTextLayout* ();
+		IDWriteTextLayout* Get() const {
+			return value;
+		}
 		virtual ~TextLayout();
 	};
-
 	class Geometry
 	{
 	public:
@@ -122,8 +124,6 @@ namespace EzUI {
 			Combine(out, a, b, D2D1_COMBINE_MODE::D2D1_COMBINE_MODE_EXCLUDE);
 		}
 	};
-
-
 	class UI_EXPORT DXImage : public IImage {
 	protected:
 		IWICBitmapDecoder* bitmapdecoder = NULL;
@@ -134,7 +134,7 @@ namespace EzUI {
 		UINT Height = 0;
 	public:
 		ID2D1Bitmap* d2dBitmap = NULL;
-	protected:
+	public:
 		void CreateFormStream(IStream* istram);
 		void CreateFromFile(const std::wstring& file);
 		void Init();
@@ -148,27 +148,41 @@ namespace EzUI {
 		virtual size_t NextFrame()override;
 		DXImage() {}
 		virtual ~DXImage();
+	public:
+		static DXImage* FromFile() {
+
+		}
 	};
-	using Painter = ID2D1RenderTarget;
 };
 
 namespace EzUI {
 	UI_EXPORT void RenderInitialize();//全局初始化direct2d
 	UI_EXPORT void RenderUnInitialize();//释放direct2d
-	UI_EXPORT ID2D1DCRenderTarget* CreateRender(HDC _dc,int x,int y, int Width, int Height);
-	UI_EXPORT void ReleaseRender(ID2D1DCRenderTarget* d2dRender);
-	UI_EXPORT void FillRectangle(ID2D1RenderTarget* d2dRender, const __Rect& _rect, const __Color& color, int _radius = 0);
-	UI_EXPORT void DrawRectangle(ID2D1RenderTarget* d2dRender, const  __Rect& _rect, const  __Color& color, int width = 1, int _radius = 0);
-	UI_EXPORT void SetTransform(ID2D1RenderTarget* d2dRender, int xOffset, int yOffset);
-	UI_EXPORT void DrawLine(ID2D1RenderTarget* d2dRender, const __Color& color, const __Point& _A, const __Point& _B, int width);
-	//正规矩形速度快!!! 不支持异形抗锯齿裁剪
-	UI_EXPORT void PushAxisAlignedClip(ID2D1RenderTarget* d2dRender, const __Rect& rectBounds);
-	UI_EXPORT void PopAxisAlignedClip(ID2D1RenderTarget* d2dRender);
-	//layer巨tm的耗性能!!! 但是可以异形抗锯齿裁剪
-	UI_EXPORT void PushLayer(ID2D1RenderTarget* d2dRender, const Geometry& dxGeometry);
-	UI_EXPORT void PopLayer(ID2D1RenderTarget* d2dRender);//弹出最后一个裁剪
-	UI_EXPORT void DrawImage(ID2D1RenderTarget* d2dRender, IImage* _image, const __Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Margin& margin = 0);
-	UI_EXPORT void DrawTextLayout(ID2D1RenderTarget* d2dRender, const __Point& startLacation, IDWriteTextLayout* textLayout, const __Color& color);
-	UI_EXPORT void DrawString(ID2D1RenderTarget* d2dRender, const std::wstring& text, const std::wstring& fontFamily, int fontSize, const  __Color& color, const  __Rect& _rect, EzUI::TextAlign textAlign, bool underLine = false);
+
+	class UI_EXPORT D2DRender {
+	private:
+		std::list<bool> layers;
+		ID2D1DCRenderTarget* render = NULL;
+		ID2D1SolidColorBrush* brush = NULL;
+		TextFormat* textFormat = NULL;
+	private:
+		ID2D1SolidColorBrush* GetBrush();
+	public:
+		D2DRender(HDC dc, int x, int y, int width, int height);
+		virtual ~D2DRender();
+		void SetFont(const std::wstring& fontFamily, int fontSize);//必须先调用
+		void SetColor(const __Color& color);//会之前必须调用
+		void DrawString(const TextLayout& textLayout, __Point = { 0,0 });//根据已有的布局绘制文字
+		void DrawString(const std::wstring& text, const  __Rect& _rect, EzUI::TextAlign textAlign, size_t underLinePos1 = 0, size_t underLineCount = 0);
+		void DrawLine(const __Point& _A, const __Point& _B, int width);//绘制一条线
+		void DrawRectangle(const  __Rect& _rect, int _radius = 0, int width = 1);//绘制矩形
+		void FillRectangle(const __Rect& _rect, int _radius = 0);//填充矩形
+		void PushLayer(const __Rect& rectBounds);//速度较快
+		void PushLayer(const Geometry& dxGeometry);//比较耗性能!!! 但是可以异形抗锯齿裁剪
+		void PopLayer();//弹出最后一个裁剪
+		void DrawImage(IImage* _image, const __Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Margin& margin = 0);//绘制图像
+		void SetTransform(int xOffset, int yOffset, int angle = 0);//对画布进行旋转和偏移
+	};
+	using Painter = D2DRender;
 };
 #endif

@@ -63,16 +63,20 @@ Event(this , ##__VA_ARGS__); \
 		Color backgroundColor = GetBackgroundColor();
 		Image* backgroundImage = GetBackgroundImage();
 		if (backgroundColor.GetValue() != 0) {
-			EzUI::FillRectangle(e.Painter, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundColor);
+			e.Graphics.SetColor(backgroundColor);
+			e.Graphics.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height });
+			//EzUI::FillRectangle(e.Painter, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundColor);
 		}
 		if (backgroundImage != NULL) {
-			EzUI::DrawImage(e.Painter, backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage->SizeMode, backgroundImage->Padding);
+			e.Graphics.DrawImage(backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage->SizeMode, backgroundImage->Padding);
+		//	EzUI::DrawImage(e.Painter, backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage->SizeMode, backgroundImage->Padding);
 		}
 	}
 	void Control::OnForePaint(PaintEventArgs& e) {
 		Image* foreImage = GetForeImage();
 		if (foreImage) {
-			EzUI::DrawImage(e.Painter, foreImage, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage->SizeMode, foreImage->Padding);
+			e.Graphics.DrawImage(foreImage, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage->SizeMode, foreImage->Padding);
+			//EzUI::DrawImage(e.Painter, foreImage, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage->SizeMode, foreImage->Padding);
 		}
 	}
 	void Control::OnBorderPaint(PaintEventArgs& e)
@@ -88,21 +92,28 @@ Event(this , ##__VA_ARGS__); \
 		bool hasBorder = borderLeft || borderTop || borderRight || borderBottom;
 		if (!hasBorder) return;//边框为0不绘制
 
+		e.Graphics.SetColor(borderColor);
+
 		if (radius > 0 && hasBorder) {
-			EzUI::DrawRectangle(e.Painter, Rect{ 0,0,_rect.Width,_rect.Height }, borderColor, borderLeft, radius);
+			e.Graphics.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, radius,borderLeft);
+			//EzUI::DrawRectangle(e.Painter, Rect{ 0,0,_rect.Width,_rect.Height }, borderColor, borderLeft, radius);
 			return;
 		}
 		if (borderLeft > 0) {
-			EzUI::DrawLine(e.Painter, borderColor, Point{ 0,0 }, Point{ 0,_rect.Height }, borderLeft);
+			e.Graphics.DrawLine(Point{ 0,0 }, Point{ 0,_rect.Height }, borderLeft);
+			//EzUI::DrawLine(e.Painter, borderColor, Point{ 0,0 }, Point{ 0,_rect.Height }, borderLeft);
 		}
 		if (borderTop > 0) {
-			EzUI::DrawLine(e.Painter, borderColor, Point{ 0,0 }, Point{ _rect.Width,0 }, borderTop);
+			e.Graphics.DrawLine(Point{ 0,0 }, Point{ _rect.Width,0 }, borderTop);
+			//EzUI::DrawLine(e.Painter, borderColor, Point{ 0,0 }, Point{ _rect.Width,0 }, borderTop);
 		}
 		if (borderRight > 0) {
-			EzUI::DrawLine(e.Painter, borderColor, Point{ _rect.Width,0 }, Point{ _rect.Width,_rect.Height }, borderRight);
+			e.Graphics.DrawLine(Point{ _rect.Width,0 }, Point{ _rect.Width,_rect.Height }, borderRight);
+			//EzUI::DrawLine(e.Painter, borderColor, Point{ _rect.Width,0 }, Point{ _rect.Width,_rect.Height }, borderRight);
 		}
 		if (borderBottom > 0) {
-			EzUI::DrawLine(e.Painter, borderColor, Point{ 0,_rect.Height }, Point{ _rect.Width,_rect.Height }, borderBottom);
+			e.Graphics.DrawLine(Point{ 0,_rect.Height }, Point{ _rect.Width,_rect.Height }, borderBottom);
+			//EzUI::DrawLine(e.Painter, borderColor, Point{ 0,_rect.Height }, Point{ _rect.Width,_rect.Height }, borderBottom);
 		}
 	}
 
@@ -615,7 +626,7 @@ Event(this , ##__VA_ARGS__); \
 		auto clientRect = this->GetClientRect();//获取基于父窗口的最表
 		if (clientRect.IsEmptyArea()) { return; }
 		auto& invalidRect = args.InvalidRectangle;
-		auto& pt = args.Painter;
+		auto& pt = args.Graphics;
 		Rect _ClipRect = clientRect;
 		this->ComputeClipRect();//重新计算基于父亲的裁剪区域
 		if (!Rect::Intersect(_ClipRect, this->ClipRect, invalidRect)) {//和重绘区域进行裁剪
@@ -635,7 +646,7 @@ Event(this , ##__VA_ARGS__); \
 
 
 		//设置绘制偏移
-		SetTransform(pt, clientRect.X, clientRect.Y);
+		pt.SetTransform(clientRect.X, clientRect.Y);
 
 		int r = GetRadius();
 		//bool isScrollBar = dynamic_cast<EzUI::ScrollBar*>(this);
@@ -648,11 +659,11 @@ Event(this , ##__VA_ARGS__); \
 			Geometry _clientRect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height);
 			Geometry outClipRect;
 			Geometry::Intersect(outClipRect, roundRect, _clientRect);
-			EzUI::PushLayer(pt, outClipRect);
+			pt.PushLayer( outClipRect);
 		}
 		else {
 			//针对矩形控件
-			EzUI::PushAxisAlignedClip(pt, Rect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height));
+			pt.PushLayer( Rect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height));
 		}
 #endif 
 		//开始绘制
@@ -670,29 +681,20 @@ Event(this , ##__VA_ARGS__); \
 			scrollbar->PublicData = args.PublicData;
 			Rect barRect = scrollbar->GetClientRect();
 			//设置偏移
-			EzUI::SetTransform(pt, barRect.X, barRect.Y);
+			pt.SetTransform(barRect.X, barRect.Y);
 			scrollbar->Rending(args);
 		}
 		//设置偏移
-		EzUI::SetTransform(pt, clientRect.X, clientRect.Y);
+		pt.SetTransform( clientRect.X, clientRect.Y);
 		//绘制边框
 		this->OnBorderPaint(args);//绘制边框
 		//恢复偏移
-		EzUI::SetTransform(pt, 0, 0);
+		pt.SetTransform( 0, 0);
 
-
-#if USED_Direct2D
-		if (r > 0) {
-			EzUI::PopLayer(pt);//弹出
-		}
-		else {
-			EzUI::PopAxisAlignedClip(pt);//弹出
-
-		}
-#endif 
+		pt.PopLayer();//弹出
 #ifdef DEBUGPAINT
 		if (PublicData->Debug) {
-			EzUI::DrawRectangle(pt, GetClientRect(), Color::White);
+			pt.DrawRectangle(GetClientRect(), Color::White);
 		}
 #endif
 	}

@@ -42,8 +42,23 @@ namespace EzUI {
 	};
 
 	//TextFormat
-	TextFormat::TextFormat(const std::wstring& fontFamily, int fontSize, TextAlign textAlign) {
+	TextFormat::TextFormat(const std::wstring& fontFamily, int fontSize) {
 		D2D::g_WriteFactory->CreateTextFormat(fontFamily.c_str(), NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, (FLOAT)fontSize, L"", &value);
+	}
+	IDWriteTextFormat* TextFormat::operator->() {
+		return value;
+	}
+	TextFormat::operator IDWriteTextFormat* () {
+		return value;
+	}
+	TextFormat::~TextFormat() {
+		if (value) {
+			value->Release();
+		}
+	}
+	//TextLayout
+	TextLayout::TextLayout(const std::wstring& text, TextFormat* pTextFormat, TextAlign textAlign, __Size maxSize) {
+		D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), pTextFormat->Get(), (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &value);
 #define __Top DWRITE_PARAGRAPH_ALIGNMENT_NEAR
 #define	__Bottom DWRITE_PARAGRAPH_ALIGNMENT_FAR
 #define	__Left DWRITE_TEXT_ALIGNMENT_LEADING
@@ -104,21 +119,6 @@ namespace EzUI {
 #undef __Right 
 #undef __Middle 
 #undef __Center 
-	}
-	IDWriteTextFormat* TextFormat::operator->() {
-		return value;
-	}
-	TextFormat::operator IDWriteTextFormat* () {
-		return value;
-	}
-	TextFormat::~TextFormat() {
-		if (value) {
-			value->Release();
-		}
-	}
-	//TextLayout
-	TextLayout::TextLayout(const std::wstring& text, __Size maxSize, TextFormat* pTextFormat) {
-		D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), pTextFormat->value, (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &value);
 	}
 	__Point TextLayout::HitTestPoint(const __Point& pt, int& textPos, BOOL& isTrailingHit) {
 		DWRITE_HIT_TEST_METRICS hitTestMetrics;
@@ -339,9 +339,7 @@ namespace EzUI {
 			SafeRelease(&D2D::g_ImageFactory);
 		}
 	}
-
-	ID2D1DCRenderTarget* CreateRender(HDC _dc, int x, int y, int Width, int Height)
-	{
+	D2DRender::D2DRender(HDC dc, int x, int y, int width, int height) {
 		D2D1_RENDER_TARGET_PROPERTIES defaultOption = D2D1::RenderTargetProperties(
 			D2D1_RENDER_TARGET_TYPE_DEFAULT,
 			D2D1::PixelFormat(
@@ -352,78 +350,116 @@ namespace EzUI {
 			D2D1_RENDER_TARGET_USAGE_NONE,
 			D2D1_FEATURE_LEVEL_DEFAULT
 		);
-		ID2D1DCRenderTarget* d2dRender = NULL;
-		HRESULT	hr = D2D::g_Direct2dFactory->CreateDCRenderTarget(&defaultOption, (ID2D1DCRenderTarget**)&d2dRender);
-		RECT rc{ x,y,x + Width ,y + Height };
-		((ID2D1DCRenderTarget*)d2dRender)->BindDC(_dc, &rc);
-		return d2dRender;
+		HRESULT	hr = D2D::g_Direct2dFactory->CreateDCRenderTarget(&defaultOption, (ID2D1DCRenderTarget**)&render);
+		RECT rc{ x,y,x + width ,y + height };
+		((ID2D1DCRenderTarget*)render)->BindDC(dc, &rc);
+		render->BeginDraw();
 	}
-	void ReleaseRender(ID2D1DCRenderTarget* d2dRender) {
-		SafeRelease(&d2dRender);
-	}
-	void FillRectangle(ID2D1RenderTarget* d2dRender, const __Rect& _rect, const __Color& color, int _radius) {
-		if (color.GetValue() == 0) {
-			return;
+	D2DRender::~D2DRender() {
+		if (render) {
+			render->EndDraw();
 		}
-		SafeSolidColorBrush sb(d2dRender, color);
-		const __Rect& rect = _rect;
-		if (_radius > 0) {
-			float radius = _radius / 2.0f;
-			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), radius, radius };
-			d2dRender->FillRoundedRectangle(roundRect, sb);
+		if (textFormat) {
+			delete textFormat;
+		}
+		SafeRelease(&render);
+		SafeRelease(&brush);
+	}
+	void D2DRender::SetFont(const std::wstring& fontFamily, int fontSize) {
+		if (textFormat != NULL) {
+			delete textFormat;
+		}
+		textFormat = new TextFormat(fontFamily, fontSize);
+	}
+	ID2D1SolidColorBrush* D2DRender::GetBrush()
+	{
+		if (brush == NULL) {
+			render->CreateSolidColorBrush(D2D_COLOR_F{ 0,0,0,1 }, &brush);
+		}
+		return brush;
+	}
+	void D2DRender::SetColor(const __Color& color) {
+		if (brush == NULL) {
+			render->CreateSolidColorBrush(__To_D2D_COLOR_F(color), &brush);
 		}
 		else {
-			d2dRender->FillRectangle(__To_D2D_RectF(rect), sb);
+			brush->SetColor(__To_D2D_COLOR_F(color));
 		}
 	}
-	void DrawRectangle(ID2D1RenderTarget* d2dRender, const  __Rect& _rect, const  __Color& color, int width, int _radius)
-	{
-		if (color.GetValue() == 0) {
-			return;
-		}
+	void D2DRender::DrawString(const TextLayout& textLayout, __Point startLacation) {
+		render->DrawTextLayout(D2D1_POINT_2F{ (FLOAT)(startLacation.X) ,(FLOAT)(startLacation.Y) }, textLayout.Get(), GetBrush());
+	}
+	void D2DRender::DrawString(const std::wstring& text, const  __Rect& _rect, EzUI::TextAlign textAlign, size_t underLinePos, size_t underLineCount) {
 		const __Rect& rect = _rect;
-		SafeSolidColorBrush sb(d2dRender, color);
-		if (_radius > 0) {
-			float radius = _radius / 2.0f;
-			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), radius, radius };
-			d2dRender->DrawRoundedRectangle(roundRect, sb);
+		TextLayout textLayout(text, this->textFormat, textAlign, __Size{ rect.Width, rect.Height });
+		if (underLineCount > 0) {
+			textLayout->SetUnderline(TRUE, { underLinePos,underLineCount });
 		}
-		else {
-			d2dRender->DrawRectangle(__To_D2D_RectF(rect), sb);
-		}
+		this->DrawString(textLayout, { _rect.X,_rect.Y });
 	}
-	void SetTransform(ID2D1RenderTarget* d2dRender, int xOffset, int yOffset)
-	{
-		// 设置x和y方向的偏移
-		d2dRender->SetTransform(D2D1::Matrix3x2F::Translation((FLOAT)xOffset, (FLOAT)yOffset));
-	}
-	void DrawLine(ID2D1RenderTarget* d2dRender, const __Color& color, const __Point& _A, const __Point& _B, int width)
-	{
+	void D2DRender::DrawLine(const __Point& _A, const __Point& _B, int width) {
 		const __Point& A = _A;
 		const __Point& B = _B;
-
-		SafeSolidColorBrush sb(d2dRender, color);
-		d2dRender->DrawLine(D2D1_POINT_2F{ (float)A.X,(float)A.Y }, D2D1_POINT_2F{ (float)B.X,(float)B.Y }, sb, (FLOAT)width);
+		render->DrawLine(D2D1_POINT_2F{ (float)A.X,(float)A.Y }, D2D1_POINT_2F{ (float)B.X,(float)B.Y }, GetBrush(), (FLOAT)width);
 	}
-	void PushAxisAlignedClip(ID2D1RenderTarget* d2dRender, const __Rect& rectBounds) {
-		d2dRender->PushAxisAlignedClip(__To_D2D_RectF(rectBounds), D2D1_ANTIALIAS_MODE::D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+	void D2DRender::DrawRectangle(const  __Rect& _rect, int _radius, int width) {
+		const __Rect& rect = _rect;
+		if (_radius > 0) {
+			float radius = _radius / 2.0f;
+			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), radius, radius };
+			render->DrawRoundedRectangle(roundRect, GetBrush());
+		}
+		else {
+			render->DrawRectangle(__To_D2D_RectF(rect), GetBrush());
+		}
 	}
-	void PopAxisAlignedClip(ID2D1RenderTarget* d2dRender) {//弹出最后一个裁剪
-		d2dRender->PopAxisAlignedClip();
+	void D2DRender::FillRectangle(const __Rect& _rect, int _radius) {
+		const __Rect& rect = _rect;
+		if (_radius > 0) {
+			float radius = _radius / 2.0f;
+			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), radius, radius };
+			render->FillRoundedRectangle(roundRect, GetBrush());
+		}
+		else {
+			render->FillRectangle(__To_D2D_RectF(rect), GetBrush());
+		}
 	}
-	void PushLayer(ID2D1RenderTarget* d2dRender, const Geometry& dxGeometry)
+	void D2DRender::SetTransform(int xOffset, int yOffset, int angle)
 	{
+		if (xOffset == 0 && yOffset == 0 && angle == 0) {
+			render->SetTransform(D2D1::Matrix3x2F::Identity());
+		}
+		else if (angle != 0) {
+			render->SetTransform(D2D1::Matrix3x2F::Rotation(angle, D2D1::Point2F(xOffset, yOffset)));
+		}
+		else if (angle == 0) {
+			// 设置x和y方向的偏移
+			render->SetTransform(D2D1::Matrix3x2F::Translation((FLOAT)xOffset, (FLOAT)yOffset));
+		}
+	}
+	void D2DRender::PushLayer(const Geometry& dxGeometry) {
 		ID2D1Layer* layer = NULL;
-		d2dRender->CreateLayer(&layer);
-		d2dRender->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.rgn), layer);//放入layer
+		render->CreateLayer(&layer);
+		render->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.rgn), layer);//放入layer
 		layer->Release();
+		layers.push_back(false);
 	}
-	void PopLayer(ID2D1RenderTarget* d2dRender)//弹出最后一个裁剪
-	{
-		d2dRender->PopLayer();
+	void D2DRender::PushLayer(const __Rect& rectBounds) {
+		render->PushAxisAlignedClip(__To_D2D_RectF(rectBounds), D2D1_ANTIALIAS_MODE::D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+		layers.push_back(true);
 	}
-	void DrawImage(ID2D1RenderTarget* d2dRender, IImage* _image, const __Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Margin& margin)
-	{
+	void D2DRender::PopLayer() {
+		if (layers.size() > 0) {
+			if (*layers.rbegin() == true) {
+				render->PopAxisAlignedClip();
+			}
+			else {
+				render->PopLayer();
+			}
+			layers.pop_back();
+		}
+	}
+	void D2DRender::DrawImage(IImage* _image, const __Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Margin& margin) {
 		_NOREND_IMAGE_
 			if (_image == NULL) return;
 		DXImage* image = (DXImage*)_image;
@@ -434,28 +470,13 @@ namespace EzUI {
 		rect.Width -= margin.Right * 2;
 		rect.Height -= margin.Bottom * 2;
 		//解码
-		image->DecodeOfRender(d2dRender);
+		image->DecodeOfRender(render);
 		//转换坐标,缩放
 		__Size imgSize(image->GetWidth(), image->GetHeight());
 		__Rect drawRect = EzUI::Transformation(imageSizeMode, rect, imgSize);
 		//开始绘制
 		if (image->d2dBitmap == NULL) return;
-		d2dRender->DrawBitmap(image->d2dBitmap, __To_D2D_RectF(drawRect));
-	}
-	void DrawTextLayout(ID2D1RenderTarget* d2dRender, const __Point& startLacation, IDWriteTextLayout* textLayout, const __Color& color)
-	{
-		SafeSolidColorBrush sb(d2dRender, color);
-		d2dRender->DrawTextLayout(D2D1_POINT_2F{ (FLOAT)(startLacation.X) ,(FLOAT)(startLacation.Y) }, textLayout, sb);
-	}
-	void DrawString(ID2D1RenderTarget* d2dRender, const std::wstring& text, const std::wstring& fontFamily, int fontSize, const  __Color& color, const  __Rect& _rect, EzUI::TextAlign textAlign, bool underLine)
-	{
-		const __Rect& rect = _rect;
-		TextFormat textFormat(fontFamily, fontSize, textAlign);
-		TextLayout textLayout(text, __Size{ rect.Width, rect.Height }, &textFormat);
-		if (underLine) {
-			textLayout->SetUnderline(TRUE, { 0,(UINT32)text.size() });
-		}
-		DrawTextLayout(d2dRender, { _rect.X,_rect.Y }, textLayout, color);
+		render->DrawBitmap(image->d2dBitmap, __To_D2D_RectF(drawRect));
 	}
 };
 
