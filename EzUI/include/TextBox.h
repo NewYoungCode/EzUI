@@ -14,7 +14,6 @@ namespace EzUI {
 		Rect selectRect;//选中的字符矩形
 		Rect careRect;//光标位置
 		Size FontBox;//文字占用空间
-		TextFormat* textFormat = NULL;//字体格式
 		TextLayout* textLayout = NULL;//字体布局
 		Point A;//A点
 		BOOL A_isTrailingHit;//如果是1表示是字符的后半边

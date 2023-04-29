@@ -27,99 +27,52 @@ namespace EzUI {
 		}
 	}
 
-	//SafeSolidColorBrush
-	class SafeSolidColorBrush {
-		ID2D1SolidColorBrush* value = NULL;
-	public:
-		SafeSolidColorBrush(ID2D1RenderTarget* render, const __Color& color) {
-			render->CreateSolidColorBrush(__To_D2D_COLOR_F(color), &value);
-		}
-		~SafeSolidColorBrush() {
-			SafeRelease(&value);
-		}
-		operator ID2D1SolidColorBrush* () {
-			return value;
-		}
-	};
-
 	//TextFormat
-	TextFormat::TextFormat(const std::wstring& fontFamily, int fontSize) {
+	Font::Font(const std::wstring& fontFamily, int fontSize) {
+		this->fontFamily = fontFamily;
+		this->fontSize = fontSize;
 		D2D::g_WriteFactory->CreateTextFormat(fontFamily.c_str(), NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, (FLOAT)fontSize, L"", &value);
 	}
-	IDWriteTextFormat* TextFormat::operator->() {
-		return value;
-	}
-	TextFormat::operator IDWriteTextFormat* () {
-		return value;
-	}
-	TextFormat::~TextFormat() {
-		if (value) {
+	Font::~Font() {
+		if (value && !Ref) {
 			value->Release();
 		}
 	}
+	const int& Font::GetFontSize()const {
+		return fontSize;
+	}
+	const std::wstring& Font::GetFontFamily()const {
+		return fontFamily;
+	}
+	void Font::Copy(const Font& _copy) {
+		((Font&)(_copy)).Ref = true;
+		this->value = _copy.Get();
+		this->fontFamily = _copy.GetFontFamily();
+		this->fontSize = _copy.GetFontSize();
+	}
+	IDWriteTextFormat* Font::Get() const {
+		return value;
+	}
+	Font::Font(const Font& _copy) {
+		Copy(_copy);
+	}
+	Font& Font::operator=(const Font& _copy) {
+		Copy(_copy);
+		return *this;
+	}
+	bool Font::operator==(const Font& _right) {
+		if (_right.GetFontFamily() == this->GetFontFamily() && _right.GetFontSize() == this->GetFontSize()) {
+			return true;
+		}
+		return false;
+	}
 	//TextLayout
-	TextLayout::TextLayout(const std::wstring& text, TextFormat* pTextFormat, TextAlign textAlign, __Size maxSize) {
-		D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), pTextFormat->Get(), (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &value);
-#define __Top DWRITE_PARAGRAPH_ALIGNMENT_NEAR
-#define	__Bottom DWRITE_PARAGRAPH_ALIGNMENT_FAR
-#define	__Left DWRITE_TEXT_ALIGNMENT_LEADING
-#define	__Right DWRITE_TEXT_ALIGNMENT_TRAILING
-#define	__Middle DWRITE_PARAGRAPH_ALIGNMENT_CENTER
-#define __Center DWRITE_TEXT_ALIGNMENT_CENTER
-		do
-		{
-			if (textAlign == TextAlign::BottomCenter) {
-				value->SetParagraphAlignment(__Bottom);
-				value->SetTextAlignment(__Center);
-				break;
-			}
-			if (textAlign == TextAlign::BottomLeft) {
-				value->SetParagraphAlignment(__Bottom);
-				value->SetTextAlignment(__Left);
-				break;
-			}
-			if (textAlign == TextAlign::BottomRight) {
-				value->SetParagraphAlignment(__Bottom);
-				value->SetTextAlignment(__Right);
-				break;
-			}
-			if (textAlign == TextAlign::MiddleCenter) {
-				value->SetParagraphAlignment(__Middle);
-				value->SetTextAlignment(__Center);
-				break;
-			}
-			if (textAlign == TextAlign::MiddleLeft) {
-				value->SetParagraphAlignment(__Middle);
-				value->SetTextAlignment(__Left);
-				break;
-			}
-			if (textAlign == TextAlign::MiddleRight) {
-				value->SetParagraphAlignment(__Middle);
-				value->SetTextAlignment(__Right);
-				break;
-			}
-			if (textAlign == TextAlign::TopCenter) {
-				value->SetParagraphAlignment(__Top);
-				value->SetTextAlignment(__Center);
-				break;
-			}
-			if (textAlign == TextAlign::TopLeft) {
-				value->SetParagraphAlignment(__Top);
-				value->SetTextAlignment(__Left);
-				break;
-			}
-			if (textAlign == TextAlign::TopRight) {
-				value->SetParagraphAlignment(__Top);
-				value->SetTextAlignment(__Right);
-				break;
-			}
-		} while (0);
-#undef __Top 
-#undef __Bottom 
-#undef __Left 
-#undef __Right 
-#undef __Middle 
-#undef __Center 
+	TextLayout::TextLayout(const std::wstring& text, const Font& pTextFormat, TextAlign textAlign, __Size maxSize) {
+		D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), pTextFormat.Get(), (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &value);
+		SetTextAlign(textAlign);
+	}
+	IDWriteTextLayout* TextLayout::Get() const {
+		return value;
 	}
 	__Point TextLayout::HitTestPoint(const __Point& pt, int& textPos, BOOL& isTrailingHit) {
 		DWRITE_HIT_TEST_METRICS hitTestMetrics;
@@ -148,17 +101,51 @@ namespace EzUI {
 		value->HitTestTextPosition(textPos, isTrailingHit, &X, &Y, &hitTestMetrics);
 		return __Point((int)(X + 0.5), (int)(Y + 0.5));
 	}
-	__Size TextLayout::GetFontSize() {
+	__Size TextLayout::GetFontBox() {
 		DWRITE_TEXT_METRICS textMetrics;
 		value->GetMetrics(&textMetrics);
 		D2D1_SIZE_F size = D2D1::SizeF(ceil(textMetrics.widthIncludingTrailingWhitespace), ceil(textMetrics.height));
 		return  __Size{ (int)(size.width + 0.5) ,(int)((size.height / textMetrics.lineCount) + 0.5) };
 	}
-	IDWriteTextLayout* TextLayout::operator->() {
-		return value;
+	void TextLayout::SetTextAlign(TextAlign textAlign) {
+#define __Top DWRITE_PARAGRAPH_ALIGNMENT_NEAR
+#define	__Bottom DWRITE_PARAGRAPH_ALIGNMENT_FAR
+#define	__Left DWRITE_TEXT_ALIGNMENT_LEADING
+#define	__Right DWRITE_TEXT_ALIGNMENT_TRAILING
+#define	__Middle DWRITE_PARAGRAPH_ALIGNMENT_CENTER
+#define __Center DWRITE_TEXT_ALIGNMENT_CENTER
+		//垂直对其方式
+		if (((int)textAlign & (int)Align::Top) == (int)Align::Top) {
+			value->SetParagraphAlignment(__Top);
+		}
+		if (((int)textAlign & (int)Align::Mid) == (int)Align::Mid) {
+			value->SetParagraphAlignment(__Middle);
+		}
+		if (((int)textAlign & (int)Align::Bottom) == (int)Align::Bottom) {
+			value->SetParagraphAlignment(__Bottom);
+		}
+		//水平对其方式
+		if (((int)textAlign & (int)Align::Left) == (int)Align::Left) {
+			value->SetTextAlignment(__Left);
+		}
+		if (((int)textAlign & (int)Align::Center) == (int)Align::Center) {
+			value->SetTextAlignment(__Center);
+		}
+		if (((int)textAlign & (int)Align::Right) == (int)Align::Right) {
+			value->SetTextAlignment(__Right);
+		}
+#undef __Top 
+#undef __Bottom 
+#undef __Left 
+#undef __Right 
+#undef __Middle 
+#undef __Center
 	}
-	TextLayout::operator IDWriteTextLayout* () {
-		return value;
+	void TextLayout::SetUnderline(size_t pos, size_t count)
+	{
+		if (count > 0) {
+			value->SetUnderline(TRUE, { pos,count });
+		}
 	}
 	TextLayout::~TextLayout() {
 		if (value) {
@@ -360,17 +347,12 @@ namespace EzUI {
 		if (render) {
 			render->EndDraw();
 		}
-		if (textFormat) {
-			delete textFormat;
+		if (font) {
+			delete font;
 		}
 		SafeRelease(&render);
 		SafeRelease(&brush);
-	}
-	void D2DRender::SetFont(const std::wstring& fontFamily, int fontSize) {
-		if (textFormat != NULL) {
-			delete textFormat;
-		}
-		textFormat = new TextFormat(fontFamily, fontSize);
+		SafeRelease(&pStrokeStyle);
 	}
 	ID2D1SolidColorBrush* D2DRender::GetBrush()
 	{
@@ -378,6 +360,27 @@ namespace EzUI {
 			render->CreateSolidColorBrush(D2D_COLOR_F{ 0,0,0,1 }, &brush);
 		}
 		return brush;
+	}
+	ID2D1StrokeStyle* D2DRender::GetStrokeStyle() {
+		return pStrokeStyle;
+	}
+	void D2DRender::SetFont(const std::wstring& fontFamily, int fontSize) {
+		if (font != NULL) {
+			if (font->GetFontFamily() == fontFamily && font->GetFontSize() == fontSize) {
+				return;
+			}
+			delete font;
+		}
+		font = new Font(fontFamily, fontSize);
+	}
+	void D2DRender::SetFont(const Font& _copy_font) {
+		if (font != NULL) {
+			if (*font == _copy_font) {
+				return;
+			}
+			delete font;
+		}
+		font = new Font(_copy_font);
 	}
 	void D2DRender::SetColor(const __Color& color) {
 		if (brush == NULL) {
@@ -387,31 +390,43 @@ namespace EzUI {
 			brush->SetColor(__To_D2D_COLOR_F(color));
 		}
 	}
+	void D2DRender::SetStrokeStyle(StrokeStyle strokeStyle, int dashWidth)
+	{
+		if (pStrokeStyle != NULL) {
+			SafeRelease(&pStrokeStyle);
+		}
+		if (strokeStyle == StrokeStyle::Dash) {
+			float* dashes = new float[] {(FLOAT)dashWidth, (FLOAT)dashWidth };
+			const int count = 2;
+			D2D::g_Direct2dFactory->CreateStrokeStyle(D2D1::StrokeStyleProperties(
+				D2D1_CAP_STYLE_FLAT, D2D1_CAP_STYLE_FLAT, D2D1_CAP_STYLE_ROUND,
+				D2D1_LINE_JOIN_ROUND, 10.0f, D2D1_DASH_STYLE_CUSTOM, 0.0f),
+				dashes, count, &pStrokeStyle);
+			delete[] dashes;
+		}
+	}
 	void D2DRender::DrawString(const TextLayout& textLayout, __Point startLacation) {
 		render->DrawTextLayout(D2D1_POINT_2F{ (FLOAT)(startLacation.X) ,(FLOAT)(startLacation.Y) }, textLayout.Get(), GetBrush());
 	}
-	void D2DRender::DrawString(const std::wstring& text, const  __Rect& _rect, EzUI::TextAlign textAlign, size_t underLinePos, size_t underLineCount) {
+	void D2DRender::DrawString(const std::wstring& text, const  __Rect& _rect, EzUI::TextAlign textAlign) {
 		const __Rect& rect = _rect;
-		TextLayout textLayout(text, this->textFormat, textAlign, __Size{ rect.Width, rect.Height });
-		if (underLineCount > 0) {
-			textLayout->SetUnderline(TRUE, { underLinePos,underLineCount });
-		}
+		TextLayout textLayout(text, *font, textAlign, __Size{ rect.Width, rect.Height });
 		this->DrawString(textLayout, { _rect.X,_rect.Y });
 	}
 	void D2DRender::DrawLine(const __Point& _A, const __Point& _B, int width) {
 		const __Point& A = _A;
 		const __Point& B = _B;
-		render->DrawLine(D2D1_POINT_2F{ (float)A.X,(float)A.Y }, D2D1_POINT_2F{ (float)B.X,(float)B.Y }, GetBrush(), (FLOAT)width);
+		render->DrawLine(D2D1_POINT_2F{ (float)A.X,(float)A.Y }, D2D1_POINT_2F{ (float)B.X,(float)B.Y }, GetBrush(), (FLOAT)width, GetStrokeStyle());
 	}
 	void D2DRender::DrawRectangle(const  __Rect& _rect, int _radius, int width) {
 		const __Rect& rect = _rect;
 		if (_radius > 0) {
 			float radius = _radius / 2.0f;
 			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), radius, radius };
-			render->DrawRoundedRectangle(roundRect, GetBrush());
+			render->DrawRoundedRectangle(roundRect, GetBrush(), width, GetStrokeStyle());
 		}
 		else {
-			render->DrawRectangle(__To_D2D_RectF(rect), GetBrush());
+			render->DrawRectangle(__To_D2D_RectF(rect), GetBrush(), width, GetStrokeStyle());
 		}
 	}
 	void D2DRender::FillRectangle(const __Rect& _rect, int _radius) {
@@ -438,18 +453,17 @@ namespace EzUI {
 			render->SetTransform(D2D1::Matrix3x2F::Translation((FLOAT)xOffset, (FLOAT)yOffset));
 		}
 	}
-
 	void D2DRender::DrawBezier(const __Point& startPoint, const Bezier& points, int width) {
 		ID2D1GeometrySink* pSink = NULL;
 		ID2D1PathGeometry* pathGeometry = NULL;
 		D2D::g_Direct2dFactory->CreatePathGeometry(&pathGeometry);
 		pathGeometry->Open(&pSink);
-		pSink->BeginFigure(__To_D2D_PointF(startPoint) , D2D1_FIGURE_BEGIN_FILLED);
-		D2D1_BEZIER_SEGMENT bzr { __To_D2D_PointF(points.point1) ,__To_D2D_PointF(points.point2) ,__To_D2D_PointF(points.point3)};
+		pSink->BeginFigure(__To_D2D_PointF(startPoint), D2D1_FIGURE_BEGIN_FILLED);
+		D2D1_BEZIER_SEGMENT bzr{ __To_D2D_PointF(points.point1) ,__To_D2D_PointF(points.point2) ,__To_D2D_PointF(points.point3) };
 		pSink->AddBezier(bzr);
 		pSink->EndFigure(D2D1_FIGURE_END_OPEN);
 		pSink->Close();
-		render->DrawGeometry(pathGeometry, GetBrush(), (FLOAT)width);
+		render->DrawGeometry(pathGeometry, GetBrush(), (FLOAT)width, GetStrokeStyle());
 		SafeRelease(&pathGeometry);
 		SafeRelease(&pSink);
 	}
@@ -466,7 +480,7 @@ namespace EzUI {
 		}
 		pSink->EndFigure(D2D1_FIGURE_END_OPEN);
 		pSink->Close();
-		render->DrawGeometry(pathGeometry, GetBrush(), (FLOAT)width);
+		render->DrawGeometry(pathGeometry, GetBrush(), (FLOAT)width, GetStrokeStyle());
 		SafeRelease(&pathGeometry);
 		SafeRelease(&pSink);
 	}

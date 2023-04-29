@@ -8,24 +8,23 @@ namespace EzUI {
 		__super::OnForePaint(args);
 		if (!_wstr.empty()) {
 			std::wstring drawText(_wstr);
-			std::wstring fontF = GetFontFamily().utf16();
-			int fontSize = GetFontSize();
-			Color fontColor = GetForeColor();
 
-			args.Graphics.SetColor(fontColor);
-			args.Graphics.SetFont(fontF, fontSize);
+			std::wstring fontFamily = GetFontFamily().utf16();
+			int fontSize = GetFontSize();
+			Font font(fontFamily, fontSize);
+			args.Graphics.SetFont(font);
+			args.Graphics.SetColor(GetForeColor());
 
 			std::wstring wEllipsisText = EllipsisText.utf16();
 
 			if (!wEllipsisText.empty()) { //水平文本溢出的显示方案
 				Size ellipsisTextSize;
-				TextFormat textFormat(fontF, fontSize);
 				{
-					TextLayout textLayout(wEllipsisText, &textFormat);
-					ellipsisTextSize = textLayout.GetFontSize();
+					TextLayout textLayout(wEllipsisText, font);
+					ellipsisTextSize = textLayout.GetFontBox();
 				}
-				TextLayout textLayout(_wstr, &textFormat);
-				if (textLayout.GetFontSize().Width > Width()) {//当文字显示超出的时候 宽度
+				TextLayout textLayout(_wstr, font);
+				if (textLayout.GetFontBox().Width > Width()) {//当文字显示超出的时候 宽度
 					int pos = 0;
 					BOOL isTrailingHit;
 					textLayout.HitTestPoint({ Width(),0 }, pos, isTrailingHit);//对文字进行命中测试
@@ -34,15 +33,20 @@ namespace EzUI {
 					{
 						//从最后往前删除文字 直到可以显示正常为止
 						drawText.erase(drawText.size() - 1, 1);
-						TextLayout textLayout(drawText, &textFormat);
-						if (textLayout.GetFontSize().Width + ellipsisTextSize.Width < Width()) {
+						TextLayout textLayout(drawText, font);
+						if (textLayout.GetFontBox().Width + ellipsisTextSize.Width < Width()) {
 							drawText.append(wEllipsisText);
 							break;
 						}
 					}
 				}
 			}
-			args.Graphics.DrawString( !drawText.empty() ? drawText : EllipsisText.utf16(),  Rect(0, 0, Width(), Height()), TextAlign, _underline);
+			std::wstring viewStr = !drawText.empty() ? drawText : EllipsisText.utf16();
+			TextLayout textLayout(viewStr, font, this->TextAlign, Size(Width(), Height()));
+			if (this->_underline) {//下划线
+				textLayout.SetUnderline(0, viewStr.size());
+			}
+			args.Graphics.DrawString(textLayout);
 		}
 	}
 
@@ -115,12 +119,10 @@ namespace EzUI {
 		//	}
 		//}
 	}
-
 	void Label::SetUnderline(bool enable)
 	{
 		_underline = enable;
 	}
-
 	EString Label::GetText()const
 	{
 		return EString(_wstr);

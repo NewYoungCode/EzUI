@@ -27,20 +27,23 @@ namespace EzUI {
 		extern IDWriteFactory* g_WriteFactory;
 		extern IWICImagingFactory* g_ImageFactory;
 	}
-	class TextFormat {
+	class Font {
 	private:
-		TextFormat() = delete;
-		TextFormat(const TextFormat& _copy) = delete;
-		TextFormat& operator=(const TextFormat& _copy) = delete;
+		Font() = delete;
+		std::wstring fontFamily;
+		int fontSize = 0;
 		IDWriteTextFormat* value = NULL;
+		void Copy(const Font& _copy);
 	public:
-		TextFormat(const std::wstring& fontFamily, int fontSize);
-		IDWriteTextFormat* operator->();
-		operator IDWriteTextFormat* ();
-		IDWriteTextFormat* Get() {
-			return value;
-		}
-		virtual ~TextFormat();
+		bool Ref = false;
+		Font(const Font& _copy);
+		Font(const std::wstring& fontFamily, int fontSize);
+		const int& GetFontSize()const;
+		const std::wstring& GetFontFamily()const;
+		IDWriteTextFormat* Get() const;
+		Font& operator=(const Font& _copy);
+		bool operator==(const Font& _right);
+		virtual ~Font();
 	};
 	class TextLayout {
 	private:
@@ -49,15 +52,13 @@ namespace EzUI {
 		TextLayout& operator=(const TextLayout& _copy) = delete;
 		IDWriteTextLayout* value = NULL;
 	public:
-		TextLayout(const std::wstring& text, TextFormat* pTextFormat, TextAlign textAlgin = TextAlign::TopLeft, __Size maxSize = __Size{ 16777216,16777216 });
+		TextLayout(const std::wstring& text, const Font& pTextFormat, TextAlign textAlgin = TextAlign::TopLeft, __Size maxSize = __Size{ 16777216,16777216 });
 		__Point HitTestPoint(const __Point& pt, int& textPos, BOOL& isTrailingHit);
 		__Point HitTestTextPosition(int textPos, BOOL isTrailingHit);
-		__Size GetFontSize();
-		IDWriteTextLayout* operator->();
-		operator IDWriteTextLayout* ();
-		IDWriteTextLayout* Get() const {
-			return value;
-		}
+		__Size GetFontBox();
+		void SetTextAlign(TextAlign textAlign);
+		IDWriteTextLayout* Get() const;
+		void SetUnderline(size_t pos = 0, size_t count = 0);
 		virtual ~TextLayout();
 	};
 	class Geometry
@@ -166,31 +167,41 @@ namespace EzUI {
 	UI_EXPORT void RenderInitialize();//全局初始化direct2d
 	UI_EXPORT void RenderUnInitialize();//释放direct2d
 
+	enum class StrokeStyle
+	{
+		Solid,//实线
+		Dash//虚线
+	};
+
 	class UI_EXPORT D2DRender {
 	private:
 		std::list<bool> layers;
 		ID2D1DCRenderTarget* render = NULL;
 		ID2D1SolidColorBrush* brush = NULL;
-		TextFormat* textFormat = NULL;
-	private:
-		ID2D1SolidColorBrush* GetBrush();
+		Font* font = NULL;
+		ID2D1StrokeStyle* pStrokeStyle = NULL;
 	public:
-		D2DRender(HDC dc, int x, int y, int width, int height);
+		ID2D1SolidColorBrush* GetBrush();
+		ID2D1StrokeStyle* GetStrokeStyle();
+	public:
+		D2DRender(HDC dc, int x, int y, int width, int height);//创建dx绘图对象
 		virtual ~D2DRender();
 		void SetFont(const std::wstring& fontFamily, int fontSize);//必须先调用
+		void SetFont(const Font& _copy_font);//必须先调用
 		void SetColor(const __Color& color);//会之前必须调用
+		void SetStrokeStyle(StrokeStyle strokeStyle = StrokeStyle::Solid, int dashWidth = 3);//设置样式 虚线/实线
 		void DrawString(const TextLayout& textLayout, __Point = { 0,0 });//根据已有的布局绘制文字
-		void DrawString(const std::wstring& text, const  __Rect& _rect, EzUI::TextAlign textAlign, size_t underLinePos1 = 0, size_t underLineCount = 0);
+		void DrawString(const std::wstring& text, const  __Rect& _rect, EzUI::TextAlign textAlign);//绘制文字
 		void DrawLine(const __Point& _A, const __Point& _B, int width);//绘制一条线
 		void DrawRectangle(const  __Rect& _rect, int _radius = 0, int width = 1);//绘制矩形
 		void FillRectangle(const __Rect& _rect, int _radius = 0);//填充矩形
 		void PushLayer(const __Rect& rectBounds);//速度较快
-		void PushLayer(const Geometry& dxGeometry);//比较耗性能!!! 但是可以异形抗锯齿裁剪
+		void PushLayer(const Geometry& dxGeometry);//比较耗性能,但是可以异形抗锯齿裁剪
 		void PopLayer();//弹出最后一个裁剪
 		void DrawImage(IImage* _image, const __Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Margin& margin = 0);//绘制图像
 		void SetTransform(int xOffset, int yOffset, int angle = 0);//对画布进行旋转和偏移
-		void DrawBezier(const __Point& startPoint, const Bezier& points, int width = 1);
-		void DrawBezier(const __Point& startPoint, std::list<Bezier>& points, int width = 1);
+		void DrawBezier(const __Point& startPoint, const Bezier& points, int width = 1);//贝塞尔线
+		void DrawBezier(const __Point& startPoint, std::list<Bezier>& points, int width = 1);//贝塞尔线
 	};
 	using Painter = D2DRender;
 };

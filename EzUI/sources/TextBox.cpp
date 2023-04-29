@@ -3,7 +3,6 @@ namespace EzUI {
 #define FontHeight  FontBox.Height
 	TextBox::~TextBox() {
 		timer.Stop();
-		if (textFormat) delete textFormat;
 		if (textLayout) delete textLayout;
 	}
 
@@ -264,12 +263,11 @@ namespace EzUI {
 		selectRect = Rect();
 		careRect = Rect();
 		if (GetFontFamily().empty() || GetFontSize() == 0 || GetRect().IsEmptyArea()) return;
-		if (textFormat) delete textFormat;
-		textFormat = new TextFormat(GetFontFamily().utf16(), GetFontSize());
+		Font font(GetFontFamily().utf16(), GetFontSize());
 		if (textLayout) delete textLayout;
-		textLayout = new TextLayout(text, textFormat);
+		textLayout = new TextLayout(text, font);
 
-		FontBox = textLayout->GetFontSize();
+		FontBox = textLayout->GetFontBox();
 
 		if (FontBox.Width < this->Width()) {
 			x = 0;
@@ -367,7 +365,7 @@ namespace EzUI {
 				}
 
 				//当鼠标往左侧移动
-				int textWidth = textLayout->GetFontSize().Width;
+				int textWidth = textLayout->GetFontBox().Width;
 				if (lastX > point.X) {
 					lastX = point.X;
 					if (textWidth > Width() && x < 0 && point.X < 0) {
@@ -445,9 +443,9 @@ namespace EzUI {
 		e.Graphics.SetFont(GetFontFamily().utf16(), GetFontSize());
 
 		if (text.empty()) {
-			byte r = fontColor.GetR() - 30;
-			byte g = fontColor.GetG() - 30;
-			byte b = fontColor.GetB() - 30;
+			byte r = fontColor.GetR() - 20;
+			byte g = fontColor.GetG() - 20;
+			byte b = fontColor.GetB() - 20;
 			e.Graphics.SetColor(Color(r, g, b));
 			e.Graphics.DrawString(Placeholder.utf16(), Rect(0, 0, Width(), Height()), TextAlign::MiddleLeft);
 		}
@@ -455,7 +453,7 @@ namespace EzUI {
 		e.Graphics.SetColor(fontColor);
 		int y = 0;
 		if (textLayout) {
-			Size fontBox = textLayout->GetFontSize();
+			Size fontBox = textLayout->GetFontBox();
 			y = (Height() - fontBox.Height) / 2;
 			e.Graphics.DrawString(*textLayout, { x, y });
 		}
