@@ -87,32 +87,33 @@ namespace EzUI {
 		MainLayout->SetRect(this->GetClientRect());
 		MainLayout->Invalidate();
 	}
-	void LayeredWindow::OnPaint(HDC _hdc, const Rect& rePaintRect) {
-		//Rect& clientRect = GetClientRect();//
-		//Painter pt(_hdc, clientRect.Width, clientRect.Height);//
-		//PaintEventArgs args(pt);
-		//args.InvalidRectangle = rePaintRect;//
-		//args.PublicData = &PublicData;
-		//args.DC = _hdc;
-		//MainLayout->Rending(args);//
+	void LayeredWindow::OnPaint(PaintEventArgs& args) {
+		if (MainLayout) {
+			MainLayout->Rending(args);//
+		}
 	}
+
+	void LayeredWindow::Rending(HDC winHDC, const Rect& rePaintRect) {
+		Rect& clientRect = GetClientRect();//
+		Painter pt(winHDC, clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height);//
+		PaintEventArgs args(pt);
+		args.InvalidRectangle = _InvalidateRect;//
+		args.PublicData = &PublicData;
+		args.DC = winHDC;
+		OnPaint(args);//开始重绘
+	}
+
 	LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		//if (uMsg == WM_PAINT)
-		//{
-		//	PAINTSTRUCT pst;//也许这样能避免锁屏之后一直发送WM_PAINT消息的问题
-		//	BeginPaint(Hwnd(), &pst);
-		//	RECT& r = pst.rcPaint;
-		//	EndPaint(Hwnd(), &pst);
-		//	return ::DefWindowProc(Hwnd(), uMsg, wParam, lParam);
-		//}
 		if (uMsg == WM_PAINT) //layeredWindow
 		{
 			if (_winBitmap) {
 				_winBitmap->Earse(_InvalidateRect);//清除背景
-				OnPaint(_winBitmap->GetDC(), _InvalidateRect);//开始重绘
-				PushDC(_winBitmap->GetDC());//updatelaredwindow 更新窗口
+				HDC winHDC = _winBitmap->GetDC();
+				Rending(winHDC, _InvalidateRect);
+				PushDC(winHDC);//updatelaredwindow 更新窗口
 				_InvalidateRect = { 0,0,0,0 };//重置区域
+				return 0;
 			}
 			return ::DefWindowProc(Hwnd(), uMsg, wParam, lParam);
 		}

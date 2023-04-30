@@ -525,6 +525,60 @@ namespace EzUI {
 		if (image->d2dBitmap == NULL) return;
 		render->DrawBitmap(image->d2dBitmap, __To_D2D_RectF(drawRect));
 	}
+	void D2DRender::DrawEllipse(const __Point&& point, int radiusX, int radiusY, int width)
+	{
+		D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F((FLOAT)point.X, (FLOAT)point.Y), radiusX, radiusY);
+		render->DrawEllipse(ellipse, GetBrush(), (FLOAT)width, this->GetStrokeStyle());
+	}
+	void D2DRender::FillEllipse(const __Point&& point, int radiusX, int radiusY)
+	{
+		D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F((FLOAT)point.X, (FLOAT)point.Y), radiusX, radiusY);
+		render->FillEllipse(ellipse, GetBrush());
+	}
+	void D2DRender::DrawArc(const __Rect& rect, int startAngle, int sweepAngle, int width) {
+		//
+		//// 创建几何图形
+		//ID2D1PathGeometry* pGeometry;
+		//if (SUCCEEDED( D2D::g_Direct2dFactory->CreatePathGeometry(&pGeometry))) {
+		//	// 利用几何图形创建几何图形笔
+		//	ID2D1GeometrySink* pSink;
+		//	if (SUCCEEDED(pGeometry->Open(&pSink))) {
+		//		pSink->BeginFigure(startPoint, D2D1_FIGURE_BEGIN_HOLLOW);
+		//		// 添加弧线路径
+		//		pSink->AddArc(D2D1::ArcSegment(D2D1::Point2F(startPoint.x + radiusX * cos(startAngle * M_PI / 180),
+		//			startPoint.y - radiusY * sin(startAngle * M_PI / 180)),
+		//			D2D1::SizeF(radiusX, radiusY), 0, sweepAngle > 0 ? D2D1_SWEEP_DIRECTION_CLOCKWISE : D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE,
+		//			D2D1_ARC_SIZE_SMALL));
+		//		pSink->EndFigure(D2D1_FIGURE_END_OPEN);
+
+		//		// 释放几何图形笔
+		//		pSink->Release();
+		//	}
+		//	// 创建几何图形笔
+		//	ID2D1StrokeStyle* strokeStyle;
+		//	if (SUCCEEDED(pRenderTarget->CreateStrokeStyle(D2D1::StrokeStyleProperties(strokeWidth), nullptr, 0, &strokeStyle))) {
+		//		render->DrawGeometry(pGeometry, pBrush, strokeWidth, strokeStyle);
+		//		// 释放几何图形笔
+		//		strokeStyle->Release();
+		//	}
+		//	// 释放几何图形
+		//	pGeometry->Release();
+	}
+	void D2DRender::DrawArc(const __Point& point1, const __Point& point2, const __Point& point3, int width)
+	{
+
+	}
+	void D2DRender::DrawPath(const D2DPath& path, int width)
+	{
+		render->DrawGeometry(path.Get(), GetBrush(), (FLOAT)width, this->GetStrokeStyle());
+	}
+	void D2DRender::FillPath(const D2DPath& path)
+	{
+		render->FillGeometry(path.Get(), GetBrush());
+	}
+	ID2D1DCRenderTarget* D2DRender::Get() {
+		return render;
+	}
 };
 
 #endif

@@ -259,14 +259,13 @@ namespace EzUI {
 				OnLoad();
 			}
 			PAINTSTRUCT pst;
-			BeginPaint(_hWnd, &pst);
+			HDC winHDC = BeginPaint(_hWnd, &pst);
 			RECT& r = pst.rcPaint;
-			Rect paintRect{ r.left,r.top,r.right - r.left, r.bottom - r.top };
-			OnPaint(pst.hdc, paintRect);
+			Rect rePaintRect{ r.left,r.top,r.right - r.left, r.bottom - r.top };
+			Rending(winHDC, rePaintRect);
 			EndPaint(_hWnd, &pst);
 			return 0;
 		}
-
 		case WM_NOTIFY: {
 			LPNMTTDISPINFO lpnmttdi = (LPNMTTDISPINFO)lParam;
 			if (lpnmttdi->hdr.code == TTN_GETDISPINFO) {
@@ -421,38 +420,37 @@ namespace EzUI {
 		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
 	}
 
-
-	void Window::OnPaint(HDC winHDC, const Rect& rePaintRect)
-	{
-		if (!MainLayout) {
-			return;
-		}
-
+	void Window::Rending(HDC winHDC, const Rect& rePaintRect) {
 #ifdef COUNT_ONPAINT
 		StopWatch sw;
 #endif // COUNT_ONPAINT
-
 #if USED_Direct2D
-		D2DRender d2d(winHDC, 0, 0, GetClientRect().Width, GetClientRect().Height);
-		PaintEventArgs args(d2d);
+		Painter graphics(winHDC, 0, 0, GetClientRect().Width, GetClientRect().Height);
+		PaintEventArgs args(graphics);
 		args.DC = winHDC;
 		args.PublicData = &PublicData;
 		args.PublicData->PaintCount = 0;
 		args.InvalidRectangle = rePaintRect;
-		MainLayout->Rending(args);//
+		OnPaint(args);
 #endif
-
 #ifdef COUNT_ONPAINT
 		char buf[256]{ 0 };
-		sprintf(buf, "OnPaint Count(%d) (%d,%d,%d,%d) %dms \n", args.PublicData->PaintCount, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, sw.ElapsedMilliseconds());
+		sprintf(buf, "OnPaint Count(%d) (%d,%d,%d,%d) %dms \n", args.PublicData->PaintCount, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, (int)sw.ElapsedMilliseconds());
 		OutputDebugStringA(buf);
 #endif // COUNT_ONPAINT
 #ifdef DEBUGPAINT
 		if (PublicData.Debug) {
-			d2d.SetColor(Color::Red);
-			d2d.DrawRectangle(rePaintRect);
+			graphics.SetColor(Color::Red);
+			graphics.DrawRectangle(rePaintRect);
 		}
 #endif
+	}
+
+	void Window::OnPaint(PaintEventArgs& arg)
+	{
+		if (MainLayout) {
+			MainLayout->Rending(arg);//
+		}
 	}
 
 	void Window::InitData(const DWORD& ExStyle)

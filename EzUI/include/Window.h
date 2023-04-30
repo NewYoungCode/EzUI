@@ -36,7 +36,8 @@ namespace EzUI {
 		virtual void OnMouseDown(MouseButton mbtn, const Point& point);
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point);
 		virtual void OnMouseClick(MouseButton mbtn, const Point& point);
-		virtual void OnPaint(HDC hdc, const Rect& rect);
+		virtual void Rending(HDC winDC, const Rect& rePaint);
+		virtual void OnPaint(PaintEventArgs& arg);
 		virtual void OnSize(const Size& sz);
 		virtual void OnRect(const Rect& rect);
 		virtual void OnClose(bool& Cancel);

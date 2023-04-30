@@ -15,7 +15,8 @@ namespace EzUI {
 		void InvalidateRect(const Rect& rect);
 		EBitmap* _winBitmap = NULL;
 		virtual void OnSize(const Size& sz)override;
-		void OnPaint(HDC hdc, const Rect& rePaintRect) override;
+		virtual void Rending(HDC winHDC, const Rect& rePaintRect)override;
+		virtual void OnPaint(PaintEventArgs& args) override;
 		void OnRect(const Rect& rect);
 		void SetShadow(int width);
 		LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;

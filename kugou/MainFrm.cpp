@@ -416,6 +416,19 @@ void MainFrm::Task() {
 	}
 }
 
+void MainFrm::OnPaint(PaintEventArgs& arg)
+{
+	__super::OnPaint(arg);
+
+	arg.Graphics.SetFont(L"华康少女字体", 50);
+	arg.Graphics.SetColor(Color::Black);
+	arg.Graphics.SetTransform(GetClientRect().Width/2, GetClientRect().Height/2, 90);
+	arg.Graphics.DrawString(L"我TM反啦...", GetClientRect() ,TextAlign::MiddleCenter);
+	arg.Graphics.SetTransform(0,0,0);
+
+}
+
+
 void MainFrm::NextPage(int a, int b) {
 	//Debug::Log("%d %d", a, b);
 	if (a != 0 && a >= b && global::nextPage) {

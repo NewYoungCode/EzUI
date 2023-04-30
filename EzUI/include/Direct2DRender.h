@@ -125,6 +125,58 @@ namespace EzUI {
 			Combine(out, a, b, D2D1_COMBINE_MODE::D2D1_COMBINE_MODE_EXCLUDE);
 		}
 	};
+
+	class D2DPath {
+	private:
+		ID2D1GeometrySink* pSink = NULL;
+		ID2D1PathGeometry* pathGeometry = NULL;
+		bool isBegin = false;
+	public:
+		D2DPath() {
+			D2D::g_Direct2dFactory->CreatePathGeometry(&pathGeometry);
+			pathGeometry->Open(&pSink);
+		}
+		void AddRectangle(const __Rect& rect) {
+			if (!isBegin) {
+				pSink->BeginFigure({ (FLOAT)rect.GetLeft(),(FLOAT)rect.GetTop() }, D2D1_FIGURE_BEGIN_FILLED);
+				isBegin = true;
+			}
+			else {
+				pSink->AddLine({ (FLOAT)rect.GetLeft(),(FLOAT)rect.GetTop() });
+			}
+			pSink->AddLine({ (FLOAT)rect.GetRight(),(FLOAT)rect.GetTop() });
+			pSink->AddLine({ (FLOAT)rect.GetRight(),(FLOAT)rect.GetBottom() });
+			pSink->AddLine({ (FLOAT)rect.GetLeft(),(FLOAT)rect.GetBottom() });
+		}
+		void AddArc(const __Rect& rect, int startAngle, int sweepAngle) {
+
+		}
+		void AddLine(const __Rect& rect) {
+
+		}
+		void CloseFigure() {
+			pSink->EndFigure(D2D1_FIGURE_END_OPEN);
+			pSink->Close();
+		}
+		virtual ~D2DPath() {
+			if (pathGeometry) {
+				pathGeometry->Release();
+			}
+			if (pSink) {
+				pSink->Release();
+			}
+		}
+		ID2D1PathGeometry* Get()const {
+			return pathGeometry;
+		}
+		ID2D1GeometrySink* operator ->() {
+			return pSink;
+		}
+		ID2D1PathGeometry* operator *() {
+			return pathGeometry;
+		}
+	};
+
 	class UI_EXPORT DXImage : public IImage {
 	protected:
 		IWICBitmapDecoder* bitmapdecoder = NULL;
@@ -202,6 +254,13 @@ namespace EzUI {
 		void SetTransform(int xOffset, int yOffset, int angle = 0);//对画布进行旋转和偏移
 		void DrawBezier(const __Point& startPoint, const Bezier& points, int width = 1);//贝塞尔线
 		void DrawBezier(const __Point& startPoint, std::list<Bezier>& points, int width = 1);//贝塞尔线
+		void DrawEllipse(const __Point&& point, int radiusX, int radiusY, int width = 1);
+		void FillEllipse(const __Point&& point, int radiusX, int radiusY);
+		void DrawArc(const __Rect& rect, int startAngle, int sweepAngle, int width = 1);//未实现
+		void DrawArc(const __Point& point1, const __Point& point2, const __Point& point3, int width = 1);//绘制弧线 未实现
+		void DrawPath(const D2DPath& path, int width = 1);//绘制path 未实现
+		void FillPath(const D2DPath& path);//填充Path 未实现
+		ID2D1DCRenderTarget* Get();//获取原生DX对象
 	};
 	using Painter = D2DRender;
 };

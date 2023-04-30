@@ -35,6 +35,7 @@ protected:
 	void LrcView();
 	void InitForm();
 	void DownLoadImage(EString SingerName, EString headImageUrl);
+	void OnPaint(PaintEventArgs& arg);
 public:
 	MainFrm();
 	virtual ~MainFrm();
