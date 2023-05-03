@@ -38,4 +38,5 @@ namespace EzUI {
 		static void Replace(std::string* str_in_out, const std::string& oldText, const std::string& newText);
 		static void Split(const std::string& str_in, const std::string& ch, std::vector<std::string>* strs_out);
 	};
+#define utf8(text) EString(L##text)
 };
