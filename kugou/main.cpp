@@ -42,6 +42,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
 	Curl_Global_Init();
 
+	//std::vector<FileSystem::FileInfo> result;
+	//FileSystem::Find("D:/buf", result);
+	//for (auto& it : result) {
+	//	std::string outData;
+	//	File::ReadFile(it.FullName, outData);
+	//	outData = Text::UTF8ToANSI(outData);
+	//	File::WriteFile(outData, it.FullName);
+	//}
+
 	//Spacer sp;
 	//sp.AddControl(0);
 	int cccc = sizeof(Control);
@@ -71,9 +80,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	}
 
 	for (size_t i = 0; i < 5000; i++) {
-		EzUI::Application app;// ("res.zip");//æŒ‡å®šèµ„æºæ–‡ä»¶
-		//EzUI::Application app("res.zip");//æŒ‡å®šèµ„æºæ–‡ä»¶
-		//EzUI::Application app(ID_FILE,"zip","");//æŒ‡å®švsä¸­èµ„æºæ–‡ä»¶
+		EzUI::Application app;// ("res.zip");//Ö¸¶¨×ÊÔ´ÎÄ¼þ
+		//EzUI::Application app("res.zip");//Ö¸¶¨×ÊÔ´ÎÄ¼þ
+		//EzUI::Application app(ID_FILE,"zip","");//Ö¸¶¨vsÖÐ×ÊÔ´ÎÄ¼þ
 		MainFrm frm;
 		frm.Show();
 		return app.exec();

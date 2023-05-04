@@ -10,7 +10,7 @@ namespace EzUI {
 		HScrollBar hScrollBar;
 		void Init();
 	public:
-		bool AutoWidth = false;//鏄惁鏍规嵁鍐呭鑷姩瀹藉害
+		bool AutoWidth = false;//是否根据内容自动宽度
 	public:
 		HList();
 		HList(Control* parent);

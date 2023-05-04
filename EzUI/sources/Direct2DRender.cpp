@@ -89,11 +89,11 @@ namespace EzUI {
 			);
 		}
 		int posX = (int)(hitTestMetrics.left + 0.5);
-		if (isTrailingHit) {//åˆ¤æ–­å‰ä¾§è¿˜æ˜¯å°¾ä¾§
+		if (isTrailingHit) {//ÅÐ¶ÏÇ°²à»¹ÊÇÎ²²à
 			posX += (int)(hitTestMetrics.width + 0.5);
 		}
 		textPos = hitTestMetrics.textPosition;
-		return __Point{ posX,(int)(hitTestMetrics.top + 0.5) };//è¿”å›žå…‰æ ‡æ‰€åœ¨çš„ä½ç½®
+		return __Point{ posX,(int)(hitTestMetrics.top + 0.5) };//·µ»Ø¹â±êËùÔÚµÄÎ»ÖÃ
 	}
 	__Point TextLayout::HitTestTextPosition(int textPos, BOOL isTrailingHit) {
 		DWRITE_HIT_TEST_METRICS hitTestMetrics;
@@ -114,7 +114,7 @@ namespace EzUI {
 #define	__Right DWRITE_TEXT_ALIGNMENT_TRAILING
 #define	__Middle DWRITE_PARAGRAPH_ALIGNMENT_CENTER
 #define __Center DWRITE_TEXT_ALIGNMENT_CENTER
-		//åž‚ç›´å¯¹å…¶æ–¹å¼
+		//´¹Ö±¶ÔÆä·½Ê½
 		if (((int)textAlign & (int)Align::Top) == (int)Align::Top) {
 			value->SetParagraphAlignment(__Top);
 		}
@@ -124,7 +124,7 @@ namespace EzUI {
 		if (((int)textAlign & (int)Align::Bottom) == (int)Align::Bottom) {
 			value->SetParagraphAlignment(__Bottom);
 		}
-		//æ°´å¹³å¯¹å…¶æ–¹å¼
+		//Ë®Æ½¶ÔÆä·½Ê½
 		if (((int)textAlign & (int)Align::Left) == (int)Align::Left) {
 			value->SetTextAlignment(__Left);
 		}
@@ -283,7 +283,7 @@ namespace EzUI {
 					D2D1_RENDER_TARGET_USAGE_NONE,
 					D2D1_FEATURE_LEVEL_DEFAULT
 				);
-				//åˆå§‹åŒ–ä¸€ä¸‹DXè®©ç¬¬ä¸€æ¬¡å¯åŠ¨çª—å£å¿«ä¸€ç‚¹
+				//³õÊ¼»¯Ò»ÏÂDXÈÃµÚÒ»´ÎÆô¶¯´°¿Ú¿ìÒ»µã
 				ID2D1DCRenderTarget* initRender = NULL;
 				HRESULT	hr = D2D::g_Direct2dFactory->CreateDCRenderTarget(&defaultOption, (ID2D1DCRenderTarget**)&initRender);
 				SafeRelease(&initRender);
@@ -296,16 +296,16 @@ namespace EzUI {
 			}
 		}
 		if (D2D::g_ImageFactory == NULL) {
-			_GUID imageFactoryOld{ 0xcacaf262, 0x9370, 0x4615, 0xa1, 0x3b, 0x9f, 0x55, 0x39, 0xda, 0x4c, 0xa };//xp  win7 æ—§ç‰ˆ
-			_GUID WICImagingFactoryId = CLSID_WICImagingFactory;//å½“å‰å¹³å°
+			_GUID imageFactoryOld{ 0xcacaf262, 0x9370, 0x4615, 0xa1, 0x3b, 0x9f, 0x55, 0x39, 0xda, 0x4c, 0xa };//xp  win7 ¾É°æ
+			_GUID WICImagingFactoryId = CLSID_WICImagingFactory;//µ±Ç°Æ½Ì¨
 		ImagingFactoryInit:
 			hr = CoCreateInstance(WICImagingFactoryId, NULL, CLSCTX_INPROC_SERVER, __uuidof(IWICImagingFactory), (LPVOID*)&D2D::g_ImageFactory);
 			if (hr != S_OK) {
-				//if (hr == 0x800401F0) {//æœªåˆå§‹åŒ–com è‡ªå·±åœ¨å…¨å±€åˆå§‹åŒ–ä¸€ä¸‹å°±å¥½äº† (è‡ªå·±æŽ§åˆ¶åˆå§‹åŒ–æ—¶æœº)
+				//if (hr == 0x800401F0) {//Î´³õÊ¼»¯com ×Ô¼ºÔÚÈ«¾Ö³õÊ¼»¯Ò»ÏÂ¾ÍºÃÁË (×Ô¼º¿ØÖÆ³õÊ¼»¯Ê±»ú)
 				//	::CoInitialize(NULL);
 				//	goto ImagingFactory;
 				//}
-				if (hr == 0x80040154) {//æ²¡æœ‰æ³¨å†Œç±» ä¸ç”¨win7çš„sdkç”Ÿæˆçš„ç¨‹åºåœ¨ä¸‹win7ç³»ç»Ÿä¸Šè¿è¡Œä¼šå‡ºçŽ°æ­¤é”™è¯¯
+				if (hr == 0x80040154) {//Ã»ÓÐ×¢²áÀà ²»ÓÃwin7µÄsdkÉú³ÉµÄ³ÌÐòÔÚÏÂwin7ÏµÍ³ÉÏÔËÐÐ»á³öÏÖ´Ë´íÎó
 					WICImagingFactoryId = imageFactoryOld;
 					goto ImagingFactoryInit;
 				}
@@ -396,7 +396,7 @@ namespace EzUI {
 			SafeRelease(&pStrokeStyle);
 		}
 		if (strokeStyle == StrokeStyle::Dash) {
-			float* dashes = new float[] {(FLOAT)dashWidth, (FLOAT)dashWidth };
+			float* dashes = new float[2] {(FLOAT)dashWidth, (FLOAT)dashWidth };
 			const int count = 2;
 			D2D::g_Direct2dFactory->CreateStrokeStyle(D2D1::StrokeStyleProperties(
 				D2D1_CAP_STYLE_FLAT, D2D1_CAP_STYLE_FLAT, D2D1_CAP_STYLE_ROUND,
@@ -423,10 +423,10 @@ namespace EzUI {
 		if (_radius > 0) {
 			float radius = _radius / 2.0f;
 			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), radius, radius };
-			render->DrawRoundedRectangle(roundRect, GetBrush(), width, GetStrokeStyle());
+			render->DrawRoundedRectangle(roundRect, GetBrush(), (FLOAT)width, GetStrokeStyle());
 		}
 		else {
-			render->DrawRectangle(__To_D2D_RectF(rect), GetBrush(), width, GetStrokeStyle());
+			render->DrawRectangle(__To_D2D_RectF(rect), GetBrush(), (FLOAT)width, GetStrokeStyle());
 		}
 	}
 	void D2DRender::FillRectangle(const __Rect& _rect, int _radius) {
@@ -449,7 +449,7 @@ namespace EzUI {
 			render->SetTransform(D2D1::Matrix3x2F::Rotation(angle, D2D1::Point2F(xOffset, yOffset)));
 		}
 		else if (angle == 0) {
-			// è®¾ç½®xå’Œyæ–¹å‘çš„åç§»
+			// ÉèÖÃxºÍy·½ÏòµÄÆ«ÒÆ
 			render->SetTransform(D2D1::Matrix3x2F::Translation((FLOAT)xOffset, (FLOAT)yOffset));
 		}
 	}
@@ -487,7 +487,7 @@ namespace EzUI {
 	void D2DRender::PushLayer(const Geometry& dxGeometry) {
 		ID2D1Layer* layer = NULL;
 		render->CreateLayer(&layer);
-		render->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.rgn), layer);//æ”¾å…¥layer
+		render->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.rgn), layer);//·ÅÈëlayer
 		layer->Release();
 		layers.push_back(false);
 	}
@@ -510,18 +510,18 @@ namespace EzUI {
 		_NOREND_IMAGE_
 			if (_image == NULL) return;
 		DXImage* image = (DXImage*)_image;
-		//è®¡ç®—åæ ‡
+		//¼ÆËã×ø±ê
 		__Rect rect = _rect;
 		rect.X += margin.Left;
 		rect.Y += margin.Top;
 		rect.Width -= margin.Right * 2;
 		rect.Height -= margin.Bottom * 2;
-		//è§£ç 
+		//½âÂë
 		image->DecodeOfRender(render);
-		//è½¬æ¢åæ ‡,ç¼©æ”¾
+		//×ª»»×ø±ê,Ëõ·Å
 		__Size imgSize(image->GetWidth(), image->GetHeight());
 		__Rect drawRect = EzUI::Transformation(imageSizeMode, rect, imgSize);
-		//å¼€å§‹ç»˜åˆ¶
+		//¿ªÊ¼»æÖÆ
 		if (image->d2dBitmap == NULL) return;
 		render->DrawBitmap(image->d2dBitmap, __To_D2D_RectF(drawRect));
 	}
@@ -537,31 +537,31 @@ namespace EzUI {
 	}
 	void D2DRender::DrawArc(const __Rect& rect, int startAngle, int sweepAngle, int width) {
 		//
-		//// åˆ›å»ºå‡ ä½•å›¾å½¢
+		//// ´´½¨¼¸ºÎÍ¼ÐÎ
 		//ID2D1PathGeometry* pGeometry;
 		//if (SUCCEEDED( D2D::g_Direct2dFactory->CreatePathGeometry(&pGeometry))) {
-		//	// åˆ©ç”¨å‡ ä½•å›¾å½¢åˆ›å»ºå‡ ä½•å›¾å½¢ç¬”
+		//	// ÀûÓÃ¼¸ºÎÍ¼ÐÎ´´½¨¼¸ºÎÍ¼ÐÎ±Ê
 		//	ID2D1GeometrySink* pSink;
 		//	if (SUCCEEDED(pGeometry->Open(&pSink))) {
 		//		pSink->BeginFigure(startPoint, D2D1_FIGURE_BEGIN_HOLLOW);
-		//		// æ·»åŠ å¼§çº¿è·¯å¾„
+		//		// Ìí¼Ó»¡ÏßÂ·¾¶
 		//		pSink->AddArc(D2D1::ArcSegment(D2D1::Point2F(startPoint.x + radiusX * cos(startAngle * M_PI / 180),
 		//			startPoint.y - radiusY * sin(startAngle * M_PI / 180)),
 		//			D2D1::SizeF(radiusX, radiusY), 0, sweepAngle > 0 ? D2D1_SWEEP_DIRECTION_CLOCKWISE : D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE,
 		//			D2D1_ARC_SIZE_SMALL));
 		//		pSink->EndFigure(D2D1_FIGURE_END_OPEN);
 
-		//		// é‡Šæ”¾å‡ ä½•å›¾å½¢ç¬”
+		//		// ÊÍ·Å¼¸ºÎÍ¼ÐÎ±Ê
 		//		pSink->Release();
 		//	}
-		//	// åˆ›å»ºå‡ ä½•å›¾å½¢ç¬”
+		//	// ´´½¨¼¸ºÎÍ¼ÐÎ±Ê
 		//	ID2D1StrokeStyle* strokeStyle;
 		//	if (SUCCEEDED(pRenderTarget->CreateStrokeStyle(D2D1::StrokeStyleProperties(strokeWidth), nullptr, 0, &strokeStyle))) {
 		//		render->DrawGeometry(pGeometry, pBrush, strokeWidth, strokeStyle);
-		//		// é‡Šæ”¾å‡ ä½•å›¾å½¢ç¬”
+		//		// ÊÍ·Å¼¸ºÎÍ¼ÐÎ±Ê
 		//		strokeStyle->Release();
 		//	}
-		//	// é‡Šæ”¾å‡ ä½•å›¾å½¢
+		//	// ÊÍ·Å¼¸ºÎÍ¼ÐÎ
 		//	pGeometry->Release();
 	}
 	void D2DRender::DrawArc(const __Point& point1, const __Point& point2, const __Point& point3, int width)

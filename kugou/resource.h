@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ 生成的包含文件。
-// 供 KuGou.rc 使用
+// Microsoft Visual C++ ?????????????
+// ?? KuGou.rc ???
 //
 
 // Next default values for new objects

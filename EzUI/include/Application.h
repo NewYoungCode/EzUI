@@ -19,9 +19,9 @@ namespace EzUI {
 		}
 	public:
 		Application();
-		//ä½¿ç”¨vsä¸­çš„èµ„æºIDåŠ è½½èµ„æºåŒ… resIDèµ„æºID custResTypeè‡ªå®šä¹‰èµ„æºç±»å‹åç§° å¯†ç 
+		//Ê¹ÓÃvsÖĞµÄ×ÊÔ´ID¼ÓÔØ×ÊÔ´°ü resID×ÊÔ´ID custResType×Ô¶¨Òå×ÊÔ´ÀàĞÍÃû³Æ ÃÜÂë
 		Application(int resID, const EString& custResType, const EString&password="");
-		//ä½¿ç”¨æœ¬åœ°æ–‡ä»¶åç§°åŠ è½½èµ„æºåŒ…
+		//Ê¹ÓÃ±¾µØÎÄ¼şÃû³Æ¼ÓÔØ×ÊÔ´°ü
 		Application(const EString& fileName, const EString& password = "");
 		virtual ~Application();
 		int exec();

@@ -11,22 +11,22 @@ namespace EzUI {
 	}
 
 	void Application::Init() {
-		//è®¾è®¡çª—å£
+		//Éè¼Æ´°¿Ú
 		::HINSTANCE hInstance = GetModuleHandleW(NULL);
 		::WNDCLASSW    wc{ 0 };
-		wc.lpfnWndProc = EzUI_WndProc;//çª—å£è¿‡ç¨‹
+		wc.lpfnWndProc = EzUI_WndProc;//´°¿Ú¹ı³Ì
 		wc.hInstance = hInstance;//
-		wc.hCursor = LoadCursor(NULL, IDC_ARROW);//å…‰æ ‡
-		wc.lpszClassName = WindowClassName;//ç±»å
+		wc.hCursor = LoadCursor(NULL, IDC_ARROW);//¹â±ê
+		wc.lpszClassName = WindowClassName;//ÀàÃû
 
-		if (!RegisterClassW(&wc)) //æ³¨å†Œçª—å£
+		if (!RegisterClassW(&wc)) //×¢²á´°¿Ú
 		{
 			::MessageBoxW(NULL, L"This program requires Windows NT !",
 				wc.lpszClassName, MB_ICONERROR);
 			return;
 		}
 		::SetCurrentDirectoryW(Application::StartPath().c_str());
-		::CoInitialize(NULL);//åˆå§‹åŒ–com
+		::CoInitialize(NULL);//³õÊ¼»¯com
 		RenderInitialize();
 	}
 	Application::Application(int resID, const EString& custResType, const EString& password) {
@@ -42,7 +42,7 @@ namespace EzUI {
 		HVSResource = LoadResource(hInst, hRsrc);
 		HZipResource = OpenZip((void*)HVSResource, len, password.empty() ? NULL : password.c_str());
 	}
-	//ä½¿ç”¨æœ¬åœ°æ–‡ä»¶åç§°åŠ è½½èµ„æºåŒ…
+	//Ê¹ÓÃ±¾µØÎÄ¼şÃû³Æ¼ÓÔØ×ÊÔ´°ü
 	Application::Application(const EString& fileName, const EString& password) {
 		Init();
 		HZipResource = OpenZip(fileName.utf16().c_str(), password.empty() ? NULL : password.c_str());

@@ -9,13 +9,13 @@ namespace EzUI {
 	{
 
 		this->_maxRight = maxRight;
-		//è®¡ç®—æ»šåŠ¨æ¡ç›¸å…³
+		//¼ÆËã¹ö¶¯ÌõÏà¹Ø
 		auto& rect = GetRect();
 		if (rect.Width >= _maxRight) {
 			_sliderWidth = rect.Width;
 		}
 		else {
-			//æ»‘å—é«˜åº¦
+			//»¬¿é¸ß¶È
 			_sliderWidth = (int)(rect.Width * 1.0 * rect.Width / _maxRight);
 		}
 		Move(sliderX);
@@ -54,16 +54,16 @@ namespace EzUI {
 
 	void HScrollBar::OnSize(const Size& size)
 	{
-		//æ­¤å¤„éœ€è¦å±è”½
+		//´Ë´¦ĞèÒªÆÁ±Î
 	}
 	const Rect& HScrollBar::GetRect()
 	{
-		//æ­¤å¤„éœ€è¦å±è”½
+		//´Ë´¦ĞèÒªÆÁ±Î
 		return _rect;
 	}
 	void HScrollBar::OnForePaint(PaintEventArgs& args)
 	{
-		//æ»‘å—rect
+		//»¬¿érect
 		Rect sliderRect(0, 0, Width(), Height());
 		sliderRect.X = (INT)sliderX;
 		sliderRect.Width = _sliderWidth;
@@ -73,7 +73,7 @@ namespace EzUI {
 		if (sliderRect.Width <= 0) {
 			sliderRect.Width = 1;
 		}
-		//ç»˜åˆ¶æ»‘å—
+		//»æÖÆ»¬¿é
 		int radius = GetRadius();
 		if (radius > sliderRect.Width) {
 			radius = sliderRect.Width;
@@ -121,27 +121,27 @@ namespace EzUI {
 		}
 		sliderX = posY;
 
-		if (sliderX <= 0) { //æ»‘å—åœ¨é¡¶éƒ¨
+		if (sliderX <= 0) { //»¬¿éÔÚ¶¥²¿
 			sliderX = 0;
 		}
-		if (sliderX + _sliderWidth >= GetRect().Width) { //æ»‘å—åœ¨æœ€åº•éƒ¨
+		if (sliderX + _sliderWidth >= GetRect().Width) { //»¬¿éÔÚ×îµ×²¿
 			sliderX = GetRect().Width - _sliderWidth;
 		}
-		int  distanceTotal = Width() - _sliderWidth;//å½“å‰æ»‘å—å¯ç”¨æ»‘é“çš„æ€»è·ç¦»
-		double rate = distanceTotal * 1.0 / (_maxRight - Parent->Width());//æ»‘å—å¯ç”¨æ€»é«˜åº¦ / list itemé«˜åº¦æ€»å’Œ * å½“å‰æ»‘å—åæ ‡çš„åæ ‡
+		int  distanceTotal = Width() - _sliderWidth;//µ±Ç°»¬¿é¿ÉÓÃ»¬µÀµÄ×Ü¾àÀë
+		double rate = distanceTotal * 1.0 / (_maxRight - Parent->Width());//»¬¿é¿ÉÓÃ×Ü¸ß¶È / list item¸ß¶È×ÜºÍ * µ±Ç°»¬¿é×ø±êµÄ×ø±ê
 		double offsetX = sliderX / rate;
 		if (distanceTotal > 0) {
-			for (auto& it : this->Location) { //æŒ¨ä¸ªç§»åŠ¨åæ ‡
+			for (auto& it : this->Location) { //°¤¸öÒÆ¶¯×ø±ê
 				it.first->SetRect({ (int)(it.second - offsetX), it.first->Y(), it.first->Width(),it.first->Height() });
 			}
 		}
-		else {//å½“æ»šåŠ¨æ¡ä¸å¯ç”¨çš„çš„æ—¶å€™
-			for (auto& it : this->Location) { //ä½¿ç”¨åŸåæ ‡
+		else {//µ±¹ö¶¯Ìõ²»¿ÉÓÃµÄµÄÊ±ºò
+			for (auto& it : this->Location) { //Ê¹ÓÃÔ­×ø±ê
 				it.first->SetRect({ (int)(it.second), it.first->Y(), it.first->Width(),it.first->Height() });
 			}
 		}
 		Parent->Invalidate();
-		//Parent->Refresh();//å¯ä»¥ç”¨Refresh,è¿™æ ·æ»šåŠ¨çš„æ—¶å€™çš„æ—¶å€™æ˜¾å¾—ä¸æ»‘
+		//Parent->Refresh();//¿ÉÒÔÓÃRefresh,ÕâÑù¹ö¶¯µÄÊ±ºòµÄÊ±ºòÏÔµÃË¿»¬
 		if (Rolling) {
 			Rolling(RollingCurrent(), RollingTotal());
 		}

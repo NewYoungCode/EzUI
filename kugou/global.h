@@ -28,9 +28,9 @@ struct Song {
 	EString SingerName;
 	EString MvHash;
 	int Duration;
-	EString AlbumID;//ר��ID
-	EString AlbumName;//ר��
-	int QualityLevel;//�ȶ�
+	EString AlbumID;//???ID
+	EString AlbumName;//???
+	int QualityLevel;//???
 };
 
 class SongItem :public HBox {
@@ -193,12 +193,12 @@ namespace global {
 		WebClient wc;
 		wc.AddHeader("Accept", " */*");
 		wc.AddHeader("Accept-Language", " en-US,en;q=0.8,zh-Hans-CN;q=0.5,zh-Hans;q=0.2");
-		//wc.AddHeader("Accept-Encoding", " gzip, deflate");//ע�͵� ��Ϊ�������᷵��gzip
+		//wc.AddHeader("Accept-Encoding", " gzip, deflate");//???? ?????????????gzip
 		wc.AddHeader("User-Agent", " Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");
 		wc.AddHeader("Host", host);
 		wc.AddHeader("Connection", " Keep-Alive");
 		wc.AddHeader("Cache-Control", " no-cache");
-		EString userid = "1581500898";//�ṷ���û�ID ������������󲻵���ȷ������
+		EString userid = "1581500898";//???????ID ????????????????????????
 		newUrl += "&userid=" + userid;
 		return wc.HttpGet(newUrl, resp);
 	}
@@ -239,7 +239,7 @@ namespace global {
 		JObject json(resp);
 
 		if (json["status"].asInt() != 200) {
-			return EString(L"[00:00.00]无歌词");
+			return EString(L"[00:00.00]�޸��");
 		}
 
 		EString id = (*json["candidates"].begin())["id"].asString();

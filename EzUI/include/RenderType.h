@@ -915,11 +915,11 @@ namespace EzUI {
 			Left = Top = Right = Bottom = distanceAll;
 			return *this;
 		}
-		//è·å–å‚ç›´æ‰€å ç©ºé—´
+		//»ñÈ¡´¹Ö±ËùÕ¼¿Õ¼ä
 		size_t GetVSpace() {
 			return Top + Bottom;
 		}
-		//è·å–æ°´å¹³æ‰€å ç©ºé—´
+		//»ñÈ¡Ë®Æ½ËùÕ¼¿Õ¼ä
 		size_t GetHSpace() {
 			return Left + Right;
 		}
@@ -927,17 +927,17 @@ namespace EzUI {
 
 	enum class ImageSizeMode {
 		//
-		// æ‘˜è¦:
-		//     Owneræ§ä»¶ ä¸­çš„å›¾åƒè¢«æ‹‰ä¼¸æˆ–æ”¶ç¼©ï¼Œä»¥é€‚åˆ Owneræ§ä»¶
-		//     çš„å¤§å°ã€‚
+		// ÕªÒª:
+		//     Owner¿Ø¼ş ÖĞµÄÍ¼Ïñ±»À­Éì»òÊÕËõ£¬ÒÔÊÊºÏ Owner¿Ø¼ş
+		//     µÄ´óĞ¡¡£
 		StretchImage = 1,
-		// æ‘˜è¦:
-		//     å¦‚æœ Owneræ§ä»¶ æ¯”å›¾åƒå¤§ï¼Œåˆ™å›¾åƒå°†å±…ä¸­æ˜¾ç¤ºã€‚å¦‚æœå›¾åƒæ¯” Owneræ§ä»¶
-		//     å¤§ï¼Œåˆ™å›¾ç‰‡å°†å±…äº Owneræ§ä»¶ ä¸­å¿ƒï¼Œè€Œå¤–è¾¹ç¼˜å°†è¢«å‰ªè£æ‰ã€‚
+		// ÕªÒª:
+		//     Èç¹û Owner¿Ø¼ş ±ÈÍ¼Ïñ´ó£¬ÔòÍ¼Ïñ½«¾ÓÖĞÏÔÊ¾¡£Èç¹ûÍ¼Ïñ±È Owner¿Ø¼ş
+		//     ´ó£¬ÔòÍ¼Æ¬½«¾ÓÓÚ Owner¿Ø¼ş ÖĞĞÄ£¬¶øÍâ±ßÔµ½«±»¼ô²Ãµô¡£
 		CenterImage = 3,
 		//
-		// æ‘˜è¦:
-		//     å›¾åƒå¤§å°æŒ‰å…¶åŸæœ‰çš„å¤§å°æ¯”ä¾‹è¢«å¢åŠ æˆ–å‡å°ã€‚
+		// ÕªÒª:
+		//     Í¼Ïñ´óĞ¡°´ÆäÔ­ÓĞµÄ´óĞ¡±ÈÀı±»Ôö¼Ó»ò¼õĞ¡¡£
 		Zoom = 4
 	};
 
@@ -966,66 +966,66 @@ namespace EzUI {
 		Center = Align_Center
 	};
 	enum  class TextAlign :int {
-		// æ‘˜è¦: 
-		   //     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šé¡¶éƒ¨å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå·¦è¾¹å¯¹é½ã€‚
+		// ÕªÒª: 
+		   //     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏ¶¥²¿¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏ×ó±ß¶ÔÆë¡£
 		TopLeft = Align_Top | Align_Left,
 		//
-		// æ‘˜è¦: 
-		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šé¡¶éƒ¨å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå±…ä¸­å¯¹é½ã€‚
+		// ÕªÒª: 
+		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏ¶¥²¿¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏ¾ÓÖĞ¶ÔÆë¡£
 		TopCenter = Align_Top | Align_Center,
 		//
-		// æ‘˜è¦: 
-		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šé¡¶éƒ¨å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå³è¾¹å¯¹é½ã€‚
+		// ÕªÒª: 
+		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏ¶¥²¿¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏÓÒ±ß¶ÔÆë¡£
 		TopRight = Align_Top | Align_Right,
 		//
-		// æ‘˜è¦: 
-		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šä¸­é—´å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå·¦è¾¹å¯¹é½ã€‚
+		// ÕªÒª: 
+		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏÖĞ¼ä¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏ×ó±ß¶ÔÆë¡£
 		MiddleLeft = Align_Mid | Align_Left,
 		//
-		// æ‘˜è¦: 
-		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šä¸­é—´å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå±…ä¸­å¯¹é½ã€‚
+		// ÕªÒª: 
+		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏÖĞ¼ä¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏ¾ÓÖĞ¶ÔÆë¡£
 		MiddleCenter = Align_Mid | Align_Center,
 		//
-		// æ‘˜è¦: 
-		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šä¸­é—´å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå³è¾¹å¯¹é½ã€‚
+		// ÕªÒª: 
+		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏÖĞ¼ä¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏÓÒ±ß¶ÔÆë¡£
 		MiddleRight = Align_Mid | Align_Right,
 		//
-		// æ‘˜è¦: 
-		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šåº•è¾¹å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå·¦è¾¹å¯¹é½ã€‚
+		// ÕªÒª: 
+		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏµ×±ß¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏ×ó±ß¶ÔÆë¡£
 		BottomLeft = Align_Bottom | Align_Left,
 		//
-		// æ‘˜è¦: 
-		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šåº•è¾¹å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå±…ä¸­å¯¹é½ã€‚
+		// ÕªÒª: 
+		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏµ×±ß¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏ¾ÓÖĞ¶ÔÆë¡£
 		BottomCenter = Align_Bottom | Align_Center,
 		//
-		// æ‘˜è¦: 
-		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šåº•è¾¹å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå³è¾¹å¯¹é½ã€‚
+		// ÕªÒª: 
+		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏµ×±ß¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏÓÒ±ß¶ÔÆë¡£
 		BottomRight = Align_Bottom | Align_Right
 	};
 
 	enum class FontStyle :int {
 		NORMAL = 0
 		/*DWRITE_FONT_STYLE_NORMAL
-		å­—ä½“æ ·å¼ ï¼šæ­£å¸¸ã€‚
+		×ÖÌåÑùÊ½ £ºÕı³£¡£
 		DWRITE_FONT_STYLE_OBLIQUE
-		å­—ä½“æ ·å¼ ï¼šå€¾æ–œã€‚
+		×ÖÌåÑùÊ½ £ºÇãĞ±¡£
 		DWRITE_FONT_STYLE_ITALIC
-		å­—ä½“æ ·å¼ ï¼šæ–œä½“ã€‚*/
+		×ÖÌåÑùÊ½ £ºĞ±Ìå¡£*/
 	};
 
 	class  IImage {
 	protected:
-		size_t _frameCount = 0;//æ€»å¸§æ•°
-		size_t _framePos = 0;//å½“å‰å¸§ç‡ç´¢å¼•
+		size_t _frameCount = 0;//×ÜÖ¡Êı
+		size_t _framePos = 0;//µ±Ç°Ö¡ÂÊË÷Òı
 	public:
-		EzUI::Padding Padding;// æ§ä»¶ä¸å›¾ç‰‡çš„è·ç¦» è¯¥æ•°å€¼è¶Šå¤§ å›¾ç‰‡å°†è¶Šå° å‚è€ƒwebå‰ç«¯
-		ImageSizeMode SizeMode = ImageSizeMode::Zoom;// å›¾åƒæ˜¾ç¤ºæ¨¡å¼
+		EzUI::Padding Padding;// ¿Ø¼şÓëÍ¼Æ¬µÄ¾àÀë ¸ÃÊıÖµÔ½´ó Í¼Æ¬½«Ô½Ğ¡ ²Î¿¼webÇ°¶Ë
+		ImageSizeMode SizeMode = ImageSizeMode::Zoom;// Í¼ÏñÏÔÊ¾Ä£Ê½
 	public:
 		virtual ~IImage() {}
 		size_t FrameCount() {
 			return _frameCount;
 		}
-		//è·³è½¬åˆ°ä¸‹ä¸€å¸§ å¹¶ä¸”è·å–ä¸‹ä¸€å¸§çš„å»¶è¿Ÿ
+		//Ìø×ªµ½ÏÂÒ»Ö¡ ²¢ÇÒ»ñÈ¡ÏÂÒ»Ö¡µÄÑÓ³Ù
 		virtual size_t NextFrame() {
 			if (_framePos >= _frameCount) {
 				_framePos = 0;
@@ -1041,11 +1041,11 @@ namespace EzUI {
 			return rect;
 		}
 
-		//å®¢æˆ·ç«¯æ•°æ®
+		//¿Í»§¶ËÊı¾İ
 		float clientWidth = (float)rect.Width;
 		float clientHeight = (float)rect.Height;
 		float clientRate = clientWidth / clientHeight;
-		//å›¾ç‰‡æ•°æ®
+		//Í¼Æ¬Êı¾İ
 		float imgWidth = (float)imgSize.Width;
 		float imgHeight = (float)imgSize.Height;
 		float imgRate = imgWidth / imgHeight;
@@ -1066,18 +1066,18 @@ namespace EzUI {
 		}
 		if (imageSizeMode == ImageSizeMode::CenterImage) {
 			if (clientRate < imgRate) {
-				//1000 670 å®¢æˆ·ç«¯
-				//1000 300 å›¾ç‰‡
-				//2233 670     ç¼©æ”¾åçš„å›¾ç‰‡å¤§å° 
-				float zoomWidth = clientHeight / imgHeight * imgWidth + 0.5f;//å›¾ç‰‡åº”è¯¥è¿™ä¹ˆå®½æ‰å¯¹
+				//1000 670 ¿Í»§¶Ë
+				//1000 300 Í¼Æ¬
+				//2233 670     Ëõ·ÅºóµÄÍ¼Æ¬´óĞ¡ 
+				float zoomWidth = clientHeight / imgHeight * imgWidth + 0.5f;//Í¼Æ¬Ó¦¸ÃÕâÃ´¿í²Å¶Ô
 				float x = (zoomWidth - clientWidth) / 2 + 0.5f;
 				return RenderType::Rect{ (INT)(rect.X - x),rect.Y,(INT)zoomWidth,(INT)clientHeight };
 			}
 			else {
-				//1000 600 å®¢æˆ·ç«¯
-				//400  600 å›¾ç‰‡
-				//1000 1500     ç¼©æ”¾åçš„å›¾ç‰‡å¤§å° 
-				float zoomHeight = clientWidth / imgWidth * imgHeight + 0.5f;//å›¾ç‰‡åº”è¯¥è¿™ä¹ˆé«˜æ‰å¯¹
+				//1000 600 ¿Í»§¶Ë
+				//400  600 Í¼Æ¬
+				//1000 1500     Ëõ·ÅºóµÄÍ¼Æ¬´óĞ¡ 
+				float zoomHeight = clientWidth / imgWidth * imgHeight + 0.5f;//Í¼Æ¬Ó¦¸ÃÕâÃ´¸ß²Å¶Ô
 				float y = (zoomHeight - clientHeight) / 2 + 0.5f;
 				return RenderType::Rect{ rect.X, (INT)(rect.Y - y)  , (INT)clientWidth, (INT)zoomHeight };
 			}

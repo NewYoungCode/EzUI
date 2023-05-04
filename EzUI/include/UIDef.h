@@ -84,8 +84,8 @@
 #define DEBUGLOG //
 #endif
 
-//#define COUNT_ONSIZE //统计OnSize耗时
-#define COUNT_ONPAINT//统计绘制耗时
+//#define COUNT_ONSIZE //ͳ��OnSize��ʱ
+#define COUNT_ONPAINT//ͳ�ƻ��ƺ�ʱ
 
-//下面的渲染方式只能选一个
-#define USED_Direct2D 1  //DX绘制 性能好 内存占用高
+//�������Ⱦ��ʽֻ��ѡһ��
+#define USED_Direct2D 1  //DX���� ���ܺ� �ڴ�ռ�ø�

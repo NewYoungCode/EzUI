@@ -30,7 +30,7 @@ if(__IsValid(style.##_filed)){\
 	UI_BINDFUNC(Image*, ForeImage);
 	UI_BINDFUNC(Image*, BackgroundImage);
 
-	//è§¦å‘äº‹ä»¶å®
+	//´¥·¢ÊÂ¼şºê
 #define UI_TRIGGER(Event,...)  if( ##Event){ \
 Event(this , ##__VA_ARGS__); \
 }
@@ -42,20 +42,20 @@ Event(this , ##__VA_ARGS__); \
 	void Control::ChildPainting(Controls& controls, PaintEventArgs& args)
 	{
 		VisibleControls.clear();
-		//ç»˜åˆ¶å­æ§ä»¶
+		//»æÖÆ×Ó¿Ø¼ş
 		for (auto& it : controls) {
 			VisibleControls.push_back(it);
 			it->Rending(args);
 		}
-		//å­æ§ä»¶ç»˜åˆ¶å®Œæ¯•
+		//×Ó¿Ø¼ş»æÖÆÍê±Ï
 	}
 	void Control::OnPaint(PaintEventArgs& args)
 	{
 		if (Painting) {
 			Painting(args);
 		}
-		OnBackgroundPaint(args);//å…ˆç»˜åˆ¶èƒŒæ™¯
-		OnForePaint(args);//å†ç»˜åˆ¶å‰æ™¯
+		OnBackgroundPaint(args);//ÏÈ»æÖÆ±³¾°
+		OnForePaint(args);//ÔÙ»æÖÆÇ°¾°
 	}
 
 	void Control::OnBackgroundPaint(PaintEventArgs& e)
@@ -82,7 +82,7 @@ Event(this , ##__VA_ARGS__); \
 	void Control::OnBorderPaint(PaintEventArgs& e)
 	{
 		Color borderColor = GetBorderColor();
-		if (borderColor.GetValue() == 0) return;//è¾¹æ¡†æ— æ•ˆé¢œè‰²ä¸ç»˜åˆ¶
+		if (borderColor.GetValue() == 0) return;//±ß¿òÎŞĞ§ÑÕÉ«²»»æÖÆ
 		auto radius = GetRadius();
 		auto borderLeft = GetBorderLeft();
 		auto borderTop = GetBorderTop();
@@ -90,7 +90,7 @@ Event(this , ##__VA_ARGS__); \
 		auto borderBottom = GetBorderBottom();
 
 		bool hasBorder = borderLeft || borderTop || borderRight || borderBottom;
-		if (!hasBorder) return;//è¾¹æ¡†ä¸º0ä¸ç»˜åˆ¶
+		if (!hasBorder) return;//±ß¿òÎª0²»»æÖÆ
 
 		e.Graphics.SetColor(borderColor);
 
@@ -139,15 +139,15 @@ Event(this , ##__VA_ARGS__); \
 		do
 		{
 			if (_state == ControlState::Static) {
-				this->Style.SetStyleSheet(styleStr);//é»˜è®¤æ ·å¼
+				this->Style.SetStyleSheet(styleStr);//Ä¬ÈÏÑùÊ½
 				break;
 			}
 			if (_state == ControlState::Hover) {
-				this->HoverStyle.SetStyleSheet(styleStr);//æ‚¬æµ®æ ·å¼
+				this->HoverStyle.SetStyleSheet(styleStr);//Ğü¸¡ÑùÊ½
 				break;
 			}
 			if (_state == ControlState::Active) {
-				this->ActiveStyle.SetStyleSheet(styleStr);//é¼ æ ‡æŒ‰ä¸‹æ ·å¼
+				this->ActiveStyle.SetStyleSheet(styleStr);//Êó±ê°´ÏÂÑùÊ½
 				break;
 			}
 		} while (false);
@@ -167,7 +167,7 @@ Event(this , ##__VA_ARGS__); \
 				this->SetRect(Rect(attrValue));
 				break;
 			}
-			if (attrName == "margin") {//éµå¾ªwebå‰ç«¯çš„è§„åˆ™
+			if (attrName == "margin") {//×ñÑ­webÇ°¶ËµÄ¹æÔò
 				auto strs = attrValue.Split(",");
 				if (strs.size() == 1) {
 					this->Margin = std::stoi(strs[0]);
@@ -195,11 +195,11 @@ Event(this , ##__VA_ARGS__); \
 				this->SetLocation({ this->GetRect().X, std::stoi(attrValue) });
 				break;
 			}
-			if (attrName == "width") {//å¦‚æœå•ç‹¬è®¾ç½®äº†å®½é«˜é‚£å°±æ˜¯ç»å¯¹å®½é«˜äº†
+			if (attrName == "width") {//Èç¹ûµ¥¶ÀÉèÖÃÁË¿í¸ßÄÇ¾ÍÊÇ¾ø¶Ô¿í¸ßÁË
 				this->SetFixedWidth(std::stoi(attrValue));
 				break;
 			}
-			if (attrName == "height") {//å¦‚æœå•ç‹¬è®¾ç½®äº†å®½é«˜é‚£å°±æ˜¯ç»å¯¹å®½é«˜äº†
+			if (attrName == "height") {//Èç¹ûµ¥¶ÀÉèÖÃÁË¿í¸ßÄÇ¾ÍÊÇ¾ø¶Ô¿í¸ßÁË
 				this->SetFixedHeight(std::stoi(attrValue));
 				break;
 			}
@@ -247,21 +247,21 @@ Event(this , ##__VA_ARGS__); \
 		}
 		EString _FontFamily;
 	loop:
-		_FontFamily = this->GetStyle(_state).FontFamily; //å…ˆçœ‹çœ‹å¯¹åº”çŠ¶æ€çš„æ˜¯å¦æœ‰ æœ‰æ•ˆå­—æ®µ
+		_FontFamily = this->GetStyle(_state).FontFamily; //ÏÈ¿´¿´¶ÔÓ¦×´Ì¬µÄÊÇ·ñÓĞ ÓĞĞ§×Ö¶Î
 		if (__IsValid(_FontFamily)) {
-			return _FontFamily;//å¦‚æœå½“å‰æ§ä»¶é‡Œé¢æŸ¥æ‰¾åˆ°å°±è¿”å›
+			return _FontFamily;//Èç¹ûµ±Ç°¿Ø¼şÀïÃæ²éÕÒµ½¾Í·µ»Ø
 		}
 		Control* pControl = this->Parent;
-		while (pControl)//å¦‚æœæ²¡æœ‰åˆ™ä»çˆ¶æ§ä»¶é‡Œé¢æŸ¥æ‰¾å¯¹åº”çš„æ ·å¼
+		while (pControl)//Èç¹ûÃ»ÓĞÔò´Ó¸¸¿Ø¼şÀïÃæ²éÕÒ¶ÔÓ¦µÄÑùÊ½
 		{
 			_FontFamily = pControl->GetStyle(_state).FontFamily;
 			if (__IsValid(_FontFamily)) {
-				return _FontFamily;//å¦‚æœä»çˆ¶æ§ä»¶é‡Œé¢æŸ¥æ‰¾åˆ°å°±è¿”å›
+				return _FontFamily;//Èç¹û´Ó¸¸¿Ø¼şÀïÃæ²éÕÒµ½¾Í·µ»Ø
 			}
 			pControl = pControl->Parent;
 		}
 		if (!__IsValid(_FontFamily) && _state != ControlState::Static) {
-			_state = ControlState::Static;//å¦‚æœä»çˆ¶æ ·å¼ä¸­ä»ç„¶æœªæ‰¾åˆ°,åˆ™æ‰¾é™æ€æ ·å¼
+			_state = ControlState::Static;//Èç¹û´Ó¸¸ÑùÊ½ÖĞÈÔÈ»Î´ÕÒµ½,ÔòÕÒ¾²Ì¬ÑùÊ½
 			goto loop;
 		}
 		return _FontFamily;
@@ -276,21 +276,21 @@ Event(this , ##__VA_ARGS__); \
 		}
 		int _FontSize;
 	loop:
-		_FontSize = this->GetStyle(_state).FontSize; //å…ˆçœ‹çœ‹å¯¹åº”çŠ¶æ€çš„æ˜¯å¦æœ‰ æœ‰æ•ˆå­—æ®µ
+		_FontSize = this->GetStyle(_state).FontSize; //ÏÈ¿´¿´¶ÔÓ¦×´Ì¬µÄÊÇ·ñÓĞ ÓĞĞ§×Ö¶Î
 		if (__IsValid(_FontSize)) {
-			return _FontSize;//å¦‚æœå½“å‰æ§ä»¶é‡Œé¢æŸ¥æ‰¾åˆ°å°±è¿”å›
+			return _FontSize;//Èç¹ûµ±Ç°¿Ø¼şÀïÃæ²éÕÒµ½¾Í·µ»Ø
 		}
 		Control* pControl = this->Parent;
-		while (pControl)//å¦‚æœæ²¡æœ‰åˆ™ä»çˆ¶æ§ä»¶é‡Œé¢æŸ¥æ‰¾å¯¹åº”çš„æ ·å¼
+		while (pControl)//Èç¹ûÃ»ÓĞÔò´Ó¸¸¿Ø¼şÀïÃæ²éÕÒ¶ÔÓ¦µÄÑùÊ½
 		{
 			_FontSize = pControl->GetStyle(_state).FontSize;
 			if (__IsValid(_FontSize)) {
-				return _FontSize;//å¦‚æœä»çˆ¶æ§ä»¶é‡Œé¢æŸ¥æ‰¾åˆ°å°±è¿”å›
+				return _FontSize;//Èç¹û´Ó¸¸¿Ø¼şÀïÃæ²éÕÒµ½¾Í·µ»Ø
 			}
 			pControl = pControl->Parent;
 		}
 		if (!__IsValid(_FontSize) && _state != ControlState::Static) {
-			_state = ControlState::Static;//å¦‚æœä»çˆ¶æ ·å¼ä¸­ä»ç„¶æœªæ‰¾åˆ°,åˆ™æ‰¾é™æ€æ ·å¼
+			_state = ControlState::Static;//Èç¹û´Ó¸¸ÑùÊ½ÖĞÈÔÈ»Î´ÕÒµ½,ÔòÕÒ¾²Ì¬ÑùÊ½
 			goto loop;
 		}
 		return _FontSize;
@@ -305,21 +305,21 @@ Event(this , ##__VA_ARGS__); \
 		}
 		Color _ForeColor;
 	loop:
-		_ForeColor = this->GetStyle(_state).ForeColor; //å…ˆçœ‹çœ‹å¯¹åº”çŠ¶æ€çš„æ˜¯å¦æœ‰ æœ‰æ•ˆå­—æ®µ
+		_ForeColor = this->GetStyle(_state).ForeColor; //ÏÈ¿´¿´¶ÔÓ¦×´Ì¬µÄÊÇ·ñÓĞ ÓĞĞ§×Ö¶Î
 		if (__IsValid(_ForeColor)) {
-			return _ForeColor;//å¦‚æœå½“å‰æ§ä»¶é‡Œé¢æŸ¥æ‰¾åˆ°å°±è¿”å›
+			return _ForeColor;//Èç¹ûµ±Ç°¿Ø¼şÀïÃæ²éÕÒµ½¾Í·µ»Ø
 		}
 		Control* pControl = this->Parent;
-		while (pControl)//å¦‚æœæ²¡æœ‰åˆ™ä»çˆ¶æ§ä»¶é‡Œé¢æŸ¥æ‰¾å¯¹åº”çš„æ ·å¼
+		while (pControl)//Èç¹ûÃ»ÓĞÔò´Ó¸¸¿Ø¼şÀïÃæ²éÕÒ¶ÔÓ¦µÄÑùÊ½
 		{
 			_ForeColor = pControl->GetStyle(_state).ForeColor;
 			if (__IsValid(_ForeColor)) {
-				return _ForeColor;//å¦‚æœä»çˆ¶æ§ä»¶é‡Œé¢æŸ¥æ‰¾åˆ°å°±è¿”å›
+				return _ForeColor;//Èç¹û´Ó¸¸¿Ø¼şÀïÃæ²éÕÒµ½¾Í·µ»Ø
 			}
 			pControl = pControl->Parent;
 		}
 		if (!__IsValid(_ForeColor) && _state != ControlState::Static) {
-			_state = ControlState::Static;//å¦‚æœä»çˆ¶æ ·å¼ä¸­ä»ç„¶æœªæ‰¾åˆ°,åˆ™æ‰¾é™æ€æ ·å¼
+			_state = ControlState::Static;//Èç¹û´Ó¸¸ÑùÊ½ÖĞÈÔÈ»Î´ÕÒµ½,ÔòÕÒ¾²Ì¬ÑùÊ½
 			goto loop;
 		}
 		return _ForeColor;
@@ -494,30 +494,30 @@ Event(this , ##__VA_ARGS__); \
 		if (this->_layoutState == LayoutState::Layouting) {
 			return;
 		}
-		this->_layoutState = LayoutState::Layouting;//å¸ƒå±€ä¸­
+		this->_layoutState = LayoutState::Layouting;//²¼¾ÖÖĞ
 		this->OnLayout();
-		this->_layoutState = LayoutState::None;//å¸ƒå±€å®Œæˆéœ€è¦å°†å¸ƒå±€æ ‡å¿—é‡ç½®
+		this->_layoutState = LayoutState::None;//²¼¾ÖÍê³ÉĞèÒª½«²¼¾Ö±êÖ¾ÖØÖÃ
 	}
 	void Control::OnLayout() {
-		if (GetScrollBar()) {//å¦‚æœå­˜åœ¨æ»šåŠ¨æ¡å°±è®¾ç½®æ»šåŠ¨æ¡çš„çŸ©å½¢ä½ç½®
+		if (GetScrollBar()) {//Èç¹û´æÔÚ¹ö¶¯Ìõ¾ÍÉèÖÃ¹ö¶¯ÌõµÄ¾ØĞÎÎ»ÖÃ
 			GetScrollBar()->OwnerSize({ _rect.Width,_rect.Height });
 		}
 	}
 
-	//ä¸“é—¨å¤„ç†é”®ç›˜æ¶ˆæ¯çš„
+	//×¨ÃÅ´¦Àí¼üÅÌÏûÏ¢µÄ
 	void Control::OnKeyBoardEvent(const KeyboardEventArgs& args) {
 		if (PublicData == NULL) return;
 		WindowData* winData = PublicData;
 #define CONTROL_IN_WINDOW (winData->InputControl || winData->FocusControl)
-		bool b1 = this->CheckEventNotify(args.EventType);//å…ˆæ£€æŸ¥æ˜¯å¦æ ‡è®°é€šçŸ¥åˆ°ä¸»çª—å£
+		bool b1 = this->CheckEventNotify(args.EventType);//ÏÈ¼ì²éÊÇ·ñ±ê¼ÇÍ¨Öªµ½Ö÷´°¿Ú
 		if (!b1) {
 			return;
 		}
-		bool b2 = winData->Notify(this, (KeyboardEventArgs&)args);//çœ‹ä¸»çª—å£é‚£è¾¹æ€ä¹ˆè¯´
+		bool b2 = winData->Notify(this, (KeyboardEventArgs&)args);//¿´Ö÷´°¿ÚÄÇ±ßÔõÃ´Ëµ
 		if (b2) {
 			return;
 		}
-		bool b3 = CONTROL_IN_WINDOW;//æ£€æŸ¥æ˜¯å¦åˆ é™¤äº†æ§ä»¶
+		bool b3 = CONTROL_IN_WINDOW;//¼ì²éÊÇ·ñÉ¾³ıÁË¿Ø¼ş
 		if (!b3) {
 			return;
 		}
@@ -540,30 +540,30 @@ Event(this , ##__VA_ARGS__); \
 		}
 	}
 
-	//ä¸“é—¨å¤„ç†é¼ æ ‡æ¶ˆæ¯çš„
+	//×¨ÃÅ´¦ÀíÊó±êÏûÏ¢µÄ
 	void Control::OnMouseEvent(const MouseEventArgs& _args) {
 		if (PublicData == NULL) return;
 		WindowData* winData = PublicData;
 		MouseEventArgs& args = (MouseEventArgs&)_args;
 
-		//å¦‚æœä¸»çª—å£æœ‰å…·æœ‰ç„¦ç‚¹çš„æ§ä»¶ é‚£ä¹ˆæ‰å¯ä»¥ç»§ç»­å¾€ä¸‹æ´¾å‘æ¶ˆæ¯
+		//Èç¹ûÖ÷´°¿ÚÓĞ¾ßÓĞ½¹µãµÄ¿Ø¼ş ÄÇÃ´²Å¿ÉÒÔ¼ÌĞøÍùÏÂÅÉ·¢ÏûÏ¢
 #define CONTROL_IN_WINDOW (winData->InputControl || winData->FocusControl)
-		if (CONTROL_IN_WINDOW && CheckEventPassThrough(args.EventType)) {//æ£€æŸ¥é¼ æ ‡ç©¿é€
+		if (CONTROL_IN_WINDOW && CheckEventPassThrough(args.EventType)) {//¼ì²éÊó±ê´©Í¸
 			MouseEventArgs copy_args = args;
 			copy_args.Location.X += this->X();
 			copy_args.Location.Y += this->Y();
-			this->Parent->OnMouseEvent(copy_args);//å¦‚æœè®¾ç½®äº†ç©¿é€å°±ç›´æ¥å‘é€ç»™ä¸Šä¸€å±‚æ§ä»¶
+			this->Parent->OnMouseEvent(copy_args);//Èç¹ûÉèÖÃÁË´©Í¸¾ÍÖ±½Ó·¢ËÍ¸øÉÏÒ»²ã¿Ø¼ş
 		}
 
-		bool b1 = this->CheckEventNotify(args.EventType);//å…ˆæ£€æŸ¥æ˜¯å¦æ ‡è®°é€šçŸ¥åˆ°ä¸»çª—å£
+		bool b1 = this->CheckEventNotify(args.EventType);//ÏÈ¼ì²éÊÇ·ñ±ê¼ÇÍ¨Öªµ½Ö÷´°¿Ú
 		if (!b1) {
 			return;
 		}
-		bool b2 = winData->Notify(this, args);//çœ‹ä¸»çª—å£é‚£è¾¹æ€ä¹ˆè¯´
+		bool b2 = winData->Notify(this, args);//¿´Ö÷´°¿ÚÄÇ±ßÔõÃ´Ëµ
 		if (b2) {
 			return;
 		}
-		bool b3 = CONTROL_IN_WINDOW;//æ£€æŸ¥æ˜¯å¦åˆ é™¤äº†æ§ä»¶
+		bool b3 = CONTROL_IN_WINDOW;//¼ì²éÊÇ·ñÉ¾³ıÁË¿Ø¼ş
 		if (!b3) {
 			return;
 		}
@@ -617,19 +617,19 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::Rending(PaintEventArgs& args) {
 		this->PublicData = args.PublicData;
-		if (!Visible) { return; }//å¦‚æœæ§ä»¶è®¾ç½®ä¸ºä¸å¯è§ç›´æ¥ä¸ç»˜åˆ¶
+		if (!Visible) { return; }//Èç¹û¿Ø¼şÉèÖÃÎª²»¿É¼ûÖ±½Ó²»»æÖÆ
 
-		if (this->IsPendLayout()) {//ç»˜åˆ¶çš„æ—¶å€™ä¼šæ£€æŸ¥æ—¶å€™æœ‰æŒ‚èµ·çš„å¸ƒå±€ å¦‚æœæœ‰ ç«‹å³è®©å¸ƒå±€ç”Ÿæ•ˆå¹¶é‡ç½®å¸ƒå±€æ ‡å¿—
+		if (this->IsPendLayout()) {//»æÖÆµÄÊ±ºò»á¼ì²éÊ±ºòÓĞ¹ÒÆğµÄ²¼¾Ö Èç¹ûÓĞ Á¢¼´ÈÃ²¼¾ÖÉúĞ§²¢ÖØÖÃ²¼¾Ö±êÖ¾
 			this->ResumeLayout();
 		}
 
-		auto clientRect = this->GetClientRect();//è·å–åŸºäºçˆ¶çª—å£çš„æœ€è¡¨
+		auto clientRect = this->GetClientRect();//»ñÈ¡»ùÓÚ¸¸´°¿ÚµÄ×î±í
 		if (clientRect.IsEmptyArea()) { return; }
 		auto& invalidRect = args.InvalidRectangle;
 		auto& pt = args.Graphics;
 		Rect _ClipRect = clientRect;
-		this->ComputeClipRect();//é‡æ–°è®¡ç®—åŸºäºçˆ¶äº²çš„è£å‰ªåŒºåŸŸ
-		if (!Rect::Intersect(_ClipRect, this->ClipRect, invalidRect)) {//å’Œé‡ç»˜åŒºåŸŸè¿›è¡Œè£å‰ª
+		this->ComputeClipRect();//ÖØĞÂ¼ÆËã»ùÓÚ¸¸Ç×µÄ²Ã¼ôÇøÓò
+		if (!Rect::Intersect(_ClipRect, this->ClipRect, invalidRect)) {//ºÍÖØ»æÇøÓò½øĞĞ²Ã¼ô
 			return;
 		}
 		if (!_load) {
@@ -637,24 +637,24 @@ Event(this , ##__VA_ARGS__); \
 			_load = true;
 		}
 
-		//ç»˜åˆ¶æ•°é‡+1
+		//»æÖÆÊıÁ¿+1
 		args.PublicData->PaintCount++;
 
 		_rePaintMtx.lock();
-		this->_lastDrawRect = _ClipRect;//è®°å½•æœ€åä¸€æ¬¡ç»˜åˆ¶çš„åŒºåŸŸ
+		this->_lastDrawRect = _ClipRect;//¼ÇÂ¼×îºóÒ»´Î»æÖÆµÄÇøÓò
 		_rePaintMtx.unlock();
 
 
-		//è®¾ç½®ç»˜åˆ¶åç§»
+		//ÉèÖÃ»æÖÆÆ«ÒÆ
 		pt.SetTransform(clientRect.X, clientRect.Y);
 
 		int r = GetRadius();
 		//bool isScrollBar = dynamic_cast<EzUI::ScrollBar*>(this);
-		//r = isScrollBar ? 0 : r;//å› ä¸ºæ»šåŠ¨æ¡æ˜¯ä¸éœ€è¦æœ‰åœ†è§’çš„
+		//r = isScrollBar ? 0 : r;//ÒòÎª¹ö¶¯ÌõÊÇ²»ĞèÒªÓĞÔ²½ÇµÄ
 
 #if USED_Direct2D
 		if (r > 0) {
-			//å¤„ç†åœ†è§’æ§ä»¶ ä½¿ç”¨çº¹ç†çš„æ–¹å¼ (è¿™æ ·åšæ˜¯ä¸ºäº†æ§ä»¶å†…éƒ¨æ— è®ºæ€ä¹ˆç»˜åˆ¶éƒ½ä¸ä¼šè¶…å‡ºåœ†è§’éƒ¨åˆ†) å¸¦æŠ—é”¯é½¿
+			//´¦ÀíÔ²½Ç¿Ø¼ş Ê¹ÓÃÎÆÀíµÄ·½Ê½ (ÕâÑù×öÊÇÎªÁË¿Ø¼şÄÚ²¿ÎŞÂÛÔõÃ´»æÖÆ¶¼²»»á³¬³öÔ²½Ç²¿·Ö) ´ø¿¹¾â³İ
 			Geometry roundRect(0, 0, clientRect.Width, clientRect.Height, r);
 			Geometry _clientRect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height);
 			Geometry outClipRect;
@@ -662,36 +662,36 @@ Event(this , ##__VA_ARGS__); \
 			pt.PushLayer( outClipRect);
 		}
 		else {
-			//é’ˆå¯¹çŸ©å½¢æ§ä»¶
+			//Õë¶Ô¾ØĞÎ¿Ø¼ş
 			pt.PushLayer( Rect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height));
 		}
 #endif 
-		//å¼€å§‹ç»˜åˆ¶
+		//¿ªÊ¼»æÖÆ
 		bool isIntercept = false;
-		if (CheckEventNotify(Event::OnPaint)) {//æ£€æŸ¥å½“å‰äº‹ä»¶æ˜¯å¦éœ€è¦è¢«é€šçŸ¥åˆ°ä¸»çª—å£
-			isIntercept = this->PublicData->Notify(this, args);//çœ‹çœ‹é‚£è¾¹æ˜¯å¦å¤„ç†
+		if (CheckEventNotify(Event::OnPaint)) {//¼ì²éµ±Ç°ÊÂ¼şÊÇ·ñĞèÒª±»Í¨Öªµ½Ö÷´°¿Ú
+			isIntercept = this->PublicData->Notify(this, args);//¿´¿´ÄÇ±ßÊÇ·ñ´¦Àí
 		}
 		if (!isIntercept) {
-			this->OnPaint(args);//ç»˜åˆ¶åŸºæœ¬ä¸Šä¸‹æ–‡
+			this->OnPaint(args);//»æÖÆ»ù±¾ÉÏÏÂÎÄ
 		}
-		this->ChildPainting(this->_controls, args);//ç»˜åˆ¶å­æ§ä»¶
-		//ç»˜åˆ¶æ»šåŠ¨æ¡
+		this->ChildPainting(this->_controls, args);//»æÖÆ×Ó¿Ø¼ş
+		//»æÖÆ¹ö¶¯Ìõ
 		EzUI::ScrollBar* scrollbar = NULL;
 		if (scrollbar = this->GetScrollBar()) {
 			scrollbar->PublicData = args.PublicData;
 			Rect barRect = scrollbar->GetClientRect();
-			//è®¾ç½®åç§»
+			//ÉèÖÃÆ«ÒÆ
 			pt.SetTransform(barRect.X, barRect.Y);
 			scrollbar->Rending(args);
 		}
-		//è®¾ç½®åç§»
+		//ÉèÖÃÆ«ÒÆ
 		pt.SetTransform( clientRect.X, clientRect.Y);
-		//ç»˜åˆ¶è¾¹æ¡†
-		this->OnBorderPaint(args);//ç»˜åˆ¶è¾¹æ¡†
-		//æ¢å¤åç§»
+		//»æÖÆ±ß¿ò
+		this->OnBorderPaint(args);//»æÖÆ±ß¿ò
+		//»Ö¸´Æ«ÒÆ
 		pt.SetTransform( 0, 0);
 
-		pt.PopLayer();//å¼¹å‡º
+		pt.PopLayer();//µ¯³ö
 #ifdef DEBUGPAINT
 		if (PublicData->Debug) {
 			pt.DrawRectangle(GetClientRect(), Color::White);
@@ -708,7 +708,7 @@ Event(this , ##__VA_ARGS__); \
 			PublicData->RemoveControl(this);
 			PublicData = NULL;
 		}
-		//é”€æ¯æ§ä»¶å‰è¯·å…ˆå°†æ§ä»¶ä»çˆ¶å®¹å™¨ä¸­ç§»é™¤
+		//Ïú»Ù¿Ø¼şÇ°ÇëÏÈ½«¿Ø¼ş´Ó¸¸ÈİÆ÷ÖĞÒÆ³ı
 		if (Parent) {
 			Parent->RemoveControl(this);
 		}
@@ -719,7 +719,7 @@ Event(this , ##__VA_ARGS__); \
 		Parent = NULL;
 	}
 	void Control::DestroySpacers() {
-		//æ§ä»¶é‡Šæ”¾çš„æ—¶å€™è‡ªåŠ¨é‡Šæ”¾å¼¹ç°§
+		//¿Ø¼şÊÍ·ÅµÄÊ±ºò×Ô¶¯ÊÍ·Åµ¯»É
 		Controls temp = _controls;
 		for (auto& it : temp) {
 			if (dynamic_cast<Spacer*>(it)) {
@@ -749,7 +749,7 @@ Event(this , ##__VA_ARGS__); \
 		_controls.push_back(ctl);
 		ctl->PublicData = this->PublicData;
 		ctl->Parent = this;
-		this->TryPendLayout();//æ·»åŠ æ§ä»¶éœ€è¦å°†å¸ƒå±€é‡æ–°æŒ‚èµ·
+		this->TryPendLayout();//Ìí¼Ó¿Ø¼şĞèÒª½«²¼¾ÖÖØĞÂ¹ÒÆğ
 	}
 	ControlIterator Control::RemoveControl(Control* ctl)
 	{
@@ -757,7 +757,7 @@ Event(this , ##__VA_ARGS__); \
 		ControlIterator it1 = ::std::find(_controls.begin(), _controls.end(), ctl);
 		if (it1 != _controls.end()) {
 			ctl->OnRemove();
-			this->TryPendLayout();//ç§»é™¤æ§ä»¶éœ€è¦å°†å¸ƒå±€é‡æ–°æŒ‚èµ·
+			this->TryPendLayout();//ÒÆ³ı¿Ø¼şĞèÒª½«²¼¾ÖÖØĞÂ¹ÒÆğ
 			nextIt = _controls.erase(it1);
 			ControlIterator it2 = ::std::find(VisibleControls.begin(), VisibleControls.end(), ctl);
 			if (it2 != VisibleControls.end()) {
@@ -834,7 +834,7 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::Refresh() {
 		if (Invalidate()) {
-			PublicData->UpdateWindow();//ç«‹å³æ›´æ–°å…¨éƒ¨æ— æ•ˆåŒºåŸŸ
+			PublicData->UpdateWindow();//Á¢¼´¸üĞÂÈ«²¿ÎŞĞ§ÇøÓò
 		}
 	}
 	Rect Control::GetCareRect()
@@ -844,11 +844,11 @@ Event(this , ##__VA_ARGS__); \
 	void Control::ComputeClipRect()
 	{
 		if (Parent) {
-			Rect& ClipRectRef = *(Rect*)(&this->ClipRect);//å¼•ç”¨çˆ¶æ§ä»¶çš„è£å‰ªåŒºåŸŸ
-			Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->ClipRect);//è‡ªèº«å’Œçˆ¶æ§ä»¶å¯¹æ¯”è¾ƒè£å‰ªåŒºåŸŸ
+			Rect& ClipRectRef = *(Rect*)(&this->ClipRect);//ÒıÓÃ¸¸¿Ø¼şµÄ²Ã¼ôÇøÓò
+			Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->ClipRect);//×ÔÉíºÍ¸¸¿Ø¼ş¶Ô±È½Ï²Ã¼ôÇøÓò
 		}
 		else {
-			Rect& ClipRectRef = *(Rect*)(&this->ClipRect);//å¼•ç”¨çˆ¶æ§ä»¶çš„è£å‰ªåŒºåŸŸ
+			Rect& ClipRectRef = *(Rect*)(&this->ClipRect);//ÒıÓÃ¸¸¿Ø¼şµÄ²Ã¼ôÇøÓò
 			ClipRectRef = this->GetClientRect();
 		}
 	}
@@ -877,9 +877,9 @@ Event(this , ##__VA_ARGS__); \
 				delete* i;
 			}
 		}
-		VisibleControls.clear();//æ¸…ç©ºå¯è§æ§ä»¶
-		_controls.clear();//æ¸…ç©ºå­æ§ä»¶é›†åˆ
-		DestroySpacers();//æ¸…ç©ºå¼¹ç°§å¹¶åˆ é™¤å¼¹ç°§
+		VisibleControls.clear();//Çå¿Õ¿É¼û¿Ø¼ş
+		_controls.clear();//Çå¿Õ×Ó¿Ø¼ş¼¯ºÏ
+		DestroySpacers();//Çå¿Õµ¯»É²¢É¾³ıµ¯»É
 	}
 	void Control::OnKeyChar(WPARAM wParam, LPARAM lParam) {
 		UI_TRIGGER(KeyChar, wParam, lParam);
@@ -943,7 +943,7 @@ Event(this , ##__VA_ARGS__); \
 	}
 
 	bool Control::IsRePaint() {
-		/* //ç¼“å­˜æ–¹å¼,æ­¤æ–¹å¼å¯èƒ½ä¼šé€ æˆæ ·å¼æ®‹ç•™
+		/* //»º´æ·½Ê½,´Ë·½Ê½¿ÉÄÜ»áÔì³ÉÑùÊ½²ĞÁô
 		_nowStyle.BackgroundColor = GetBackgroundColor();
 		_nowStyle.BackgroundImage = GetBackgroundImage();
 		_nowStyle.BorderBottom = GetBorderBottom();
@@ -968,7 +968,7 @@ Event(this , ##__VA_ARGS__); \
 			Invalidate();
 		}
 		if (PublicData) {
-			if (!_tipsText.empty()) {//è®¾ç½®æç¤ºæ–‡å­—
+			if (!_tipsText.empty()) {//ÉèÖÃÌáÊ¾ÎÄ×Ö
 				//PublicData->SetTips(this, _tipsText);
 			}
 		}
@@ -1008,9 +1008,9 @@ Event(this , ##__VA_ARGS__); \
 	void Control::OnSize(const Size& size)
 	{
 		__count_onsize++;
-		this->TryPendLayout();//å°†è‡ªå·±æŒ‚èµ·
+		this->TryPendLayout();//½«×Ô¼º¹ÒÆğ
 		if (Parent) {
-			Parent->TryPendLayout();//å°†çˆ¶æ§ä»¶æŒ‚èµ·
+			Parent->TryPendLayout();//½«¸¸¿Ø¼ş¹ÒÆğ
 		}
 	}
 	void Control::OnKillFocus()

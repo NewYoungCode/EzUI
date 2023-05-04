@@ -1,6 +1,6 @@
-//WIN32 desktop application UI framework (2d graphical library:direct2d,åæœŸå¯èƒ½ä¼šé‡‡ç”¨å…¶ä»–è·¨å¹³å°çš„2då›¾å½¢åº“å¯¹æ•´ä¸ªUIæ¡†æ¶è¿›è¡Œè·¨å¹³å°)
+//WIN32 desktop application UI framework (2d graphical library:direct2d,ºóÆÚ¿ÉÄÜ»á²ÉÓÃÆäËû¿çÆ½Ì¨µÄ2dÍ¼ĞÎ¿â¶ÔÕû¸öUI¿ò¼Ü½øĞĞ¿çÆ½Ì¨)
 
-//email:718987717@qq.com //qqç¾¤: 758485934
+//email:718987717@qq.com //qqÈº: 758485934
 
 #include <Windows.h>
 
@@ -26,38 +26,38 @@ public:
 int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
 
-	Application app;//æ¶ˆæ¯å¾ªç¯å¯¹è±¡
+	Application app;//ÏûÏ¢Ñ­»·¶ÔÏó
 
-	MainFrm frm(800, 600);//æ— è¾¹æ¡†çª—å£
-	VLayout mainLayout;//çª—å£ä¸­çš„mainå¸ƒå±€
+	MainFrm frm(800, 600);//ÎŞ±ß¿ò´°¿Ú
+	VLayout mainLayout;//´°¿ÚÖĞµÄmain²¼¾Ö
 
-	mainLayout.Style.BackgroundColor = Color::White;//ä¸»å¸ƒå±€èƒŒæ™¯é¢œè‰²
-	//HLayout title(&mainLayout);//æ ‡é¢˜
-	//title.SetFixedHeight(45);//è®¾ç½®å›ºå®šé«˜åº¦
-	//title.Style.BackgroundColor = Color::Pink;//æ§ä»¶èƒŒæ™¯é¢œè‰²
-	//title.Action = ControlAction::MoveWindow;//å¯ç§»åŠ¨çª—å£çš„è¡Œä¸º
+	mainLayout.Style.BackgroundColor = Color::White;//Ö÷²¼¾Ö±³¾°ÑÕÉ«
+	//HLayout title(&mainLayout);//±êÌâ
+	//title.SetFixedHeight(45);//ÉèÖÃ¹Ì¶¨¸ß¶È
+	//title.Style.BackgroundColor = Color::Pink;//¿Ø¼ş±³¾°ÑÕÉ«
+	//title.Action = ControlAction::MoveWindow;//¿ÉÒÆ¶¯´°¿ÚµÄĞĞÎª
 
-	//Label text(&title);//æ ‡é¢˜æ–‡å­—
-	//text.Action = ControlAction::MoveWindow;//å¯ç§»åŠ¨çª—å£çš„è¡Œä¸º
-	//text.SetText(L"hello world ");//ç»™labelè®¾ç½®æ–‡å­—
+	//Label text(&title);//±êÌâÎÄ×Ö
+	//text.Action = ControlAction::MoveWindow;//¿ÉÒÆ¶¯´°¿ÚµÄĞĞÎª
+	//text.SetText(L"hello world ");//¸ølabelÉèÖÃÎÄ×Ö
 
-	Label closeBtn;//å…³é—­æŒ‰é’®
+	Label closeBtn;//¹Ø±Õ°´Å¥
 
-	closeBtn.Action = ControlAction::Close;//å…³é—­çª—å£çš„è¡Œä¸º
+	closeBtn.Action = ControlAction::Close;//¹Ø±Õ´°¿ÚµÄĞĞÎª
 
-	closeBtn.Style.FontFamily = L"Marlett";//è®¾ç½®æˆiconå­—ä½“
+	closeBtn.Style.FontFamily = L"Marlett";//ÉèÖÃ³Éicon×ÖÌå
 
-	closeBtn.Style.FontSize = 13;//å­—ä½“å¤§å°
+	closeBtn.Style.FontSize = 13;//×ÖÌå´óĞ¡
 
-	closeBtn.HoverStyle.ForeColor = Color::White;//ä¼ªæ ·å¼ é¼ æ ‡æ‚¬æµ®å­—ä½“é¢œè‰²å˜æˆç™½è‰²
+	closeBtn.HoverStyle.ForeColor = Color::White;//Î±ÑùÊ½ Êó±êĞü¸¡×ÖÌåÑÕÉ«±ä³É°×É«
 
-	closeBtn.SetFixedWidth(45);//è®¾ç½®ç»å¯¹é«˜åº¦
+	closeBtn.SetFixedWidth(45);//ÉèÖÃ¾ø¶Ô¸ß¶È
 
-	closeBtn.SetText(L"r");//çª—å£çš„å…³é—­æŒ‰é’®icon
+	closeBtn.SetText(L"r");//´°¿ÚµÄ¹Ø±Õ°´Å¥icon
 
 
 	//Label labelBottom;
-	//labelBottom.SetText(L"è¿™æ˜¯ä¸€ä¸ªç®€å•çš„çª—å£ç¤ºä¾‹!");
+	//labelBottom.SetText(L"ÕâÊÇÒ»¸ö¼òµ¥µÄ´°¿ÚÊ¾Àı!");
 
 	TileList list(&mainLayout);
 
@@ -68,12 +68,12 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 		lb->SetFixedSize({ 50,30 });
 	}
 
-	//mainLayout.AddControl(&labelBottom);//æ·»åŠ æ§ä»¶
+	//mainLayout.AddControl(&labelBottom);//Ìí¼Ó¿Ø¼ş
 
-	frm.SetLayout(&mainLayout);//ç»™çª—å£è®¾ç½®å¸ƒå±€
+	frm.SetLayout(&mainLayout);//¸ø´°¿ÚÉèÖÃ²¼¾Ö
 
-	frm.Show();//æ˜¾ç¤ºçª—å£
+	frm.Show();//ÏÔÊ¾´°¿Ú
 
-	return app.exec();//è¿›è¡Œæ¶ˆæ¯å¾ªç¯
+	return app.exec();//½øĞĞÏûÏ¢Ñ­»·
 
 }

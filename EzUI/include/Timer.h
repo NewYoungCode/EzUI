@@ -2,7 +2,7 @@
 #include "EzUI.h"
 namespace EzUI {
 	namespace Thread {
-		class Timer //å¦å¼€çº¿ç¨‹åšTimer ä¸å»ºè®®å¤„ç†UIç›¸å…³çš„æ“ä½œ è¯·è‡ªè¡Œæ§åˆ¶çº¿ç¨‹åŒæ­¥
+		class Timer //Áí¿ªÏß³Ì×öTimer ²»½¨Òé´¦ÀíUIÏà¹ØµÄ²Ù×÷ Çë×ÔĞĞ¿ØÖÆÏß³ÌÍ¬²½
 		{
 		private:
 			bool brun = false;
@@ -47,7 +47,7 @@ namespace EzUI {
 	namespace Windows {
 		static std::map<UINT_PTR, UINT_PTR> _timers;
 		static std::mutex _timerMtx;
-		class Timer {//åœ¨æ“ä½œUIçš„æ—¶å€™å»ºè®®ä½¿ç”¨æ­¤Timerç±»
+		class Timer {//ÔÚ²Ù×÷UIµÄÊ±ºò½¨ÒéÊ¹ÓÃ´ËTimerÀà
 		private:
 			static void InsertTimer(UINT_PTR TimerId, UINT_PTR timer) {
 				_timerMtx.lock();

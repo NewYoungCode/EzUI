@@ -33,7 +33,7 @@ namespace EzUI {
 		std::function<void(Image*)> BuildImageCallback;
 		std::list<Control*> freeControls;
 		std::list<Image*> freeImages;
-		std::list<UIManager::Selector> Selectors;//æ ·å¼é›†åˆ
+		std::list<UIManager::Selector> Selectors;//ÑùÊ½¼¯ºÏ
 		std::list<Control*> controls;
 		void LoadControl(void* node, Control* control);
 		Control* BuildControl(void* node);
@@ -47,8 +47,8 @@ namespace EzUI {
 		UIManager();
 		virtual ~UIManager();
 		void SetupUI(Window* window);
-		std::function<Control* (const EString& nodeName)> EventBuilControl;//ç”¨äºè‡ªå®šä¹‰æ§ä»¶
-		std::function<void(Control* ctl, const EString& attrName, const EString& attrValue)> EventSetAttribute;//ç”¨äºè‡ªå®šä¹‰æ§ä»¶
+		std::function<Control* (const EString& nodeName)> EventBuilControl;//ÓÃÓÚ×Ô¶¨Òå¿Ø¼ş
+		std::function<void(Control* ctl, const EString& attrName, const EString& attrValue)> EventSetAttribute;//ÓÃÓÚ×Ô¶¨Òå¿Ø¼ş
 		void LoadFile(const EString& fileName);
 		Control* GetNodeByName(const EString& nodeName = "");
 		Control* GetNode(size_t pos = 0);
@@ -56,7 +56,7 @@ namespace EzUI {
 		void Free(Image**img);
 	};
 
-	//é€‰æ‹©å™¨
+	//Ñ¡ÔñÆ÷
 	class UI_EXPORT _Selector
 	{
 	private:

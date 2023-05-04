@@ -24,7 +24,7 @@ class LrcControl :
 	Lrc* LrcNow = NULL;
 	Timer* timer = NULL;
 	/// <summary>
-	 /// 上下居中的Y坐标值
+	 /// ??????е?Y?????
 	 /// </summary>
 	int VerticalCenter = 0;
 	std::vector<Lrc*> LrcList;
@@ -34,9 +34,9 @@ public:
 	LrcControl();
 	virtual ~LrcControl();
 	/// <summary>
-/// 传入进度时间滚动到所在时间的位置
+/// ???????????????????????λ??
 /// </summary>
-/// <param name="postion">时间/秒</param>
+/// <param name="postion">???/??</param>
 /// 
 	void Task();
 	void ChangePostion(int postion);
@@ -44,7 +44,7 @@ public:
 	void OnBackgroundPaint(PaintEventArgs& arg)override;
 	void LoadLrc(const EString& lrcData);
 	/// <summary>
-	/// 清除所有歌词
+	/// ??????и??
 	/// </summary>
 	void Clear();
 };

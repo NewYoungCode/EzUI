@@ -15,7 +15,7 @@ namespace EzUI {
 
 		int fixedHeight = 0;
 		int fixedTotal = 0;
-		int count = 0;//鍙鎺т欢鎬绘暟
+		int count = 0;//可见控件总数
 		for (auto& it : GetControls()) {
 			if (it->Visible == false)continue;
 			count++;
@@ -33,7 +33,7 @@ namespace EzUI {
 		double otherHeight = Height() * 1.0 - fixedHeight;
 		double autoHeight = otherHeight / autoTotal;
 		double maxBottom = 0;
-		//鎺掑簭
+		//排序
 		for (auto& it : GetControls()) {
 			if (it->Visible == false)continue;
 

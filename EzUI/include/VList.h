@@ -10,12 +10,12 @@ namespace EzUI {
 		int _maxBottom = 0;
 		void Init();
 	public:
-		bool AutoHeight = false;//æ ¹æ®å†…å®¹çš„é«˜åº¦è‡ªåŠ¨å˜åŒ–
+		bool AutoHeight = false;//¸ù¾İÄÚÈİµÄ¸ß¶È×Ô¶¯±ä»¯
 	public:
 		VList();
 		VList(Control*parent);
 		virtual ~VList();
-		int ContentLenght();//è·å–å†…å®¹å®é™…é•¿åº¦
+		int ContentLenght();//»ñÈ¡ÄÚÈİÊµ¼Ê³¤¶È
 		virtual void OnLayout()override;
 		virtual	void AddControl(Control* ctl) override;
 		virtual ControlIterator RemoveControl(Control* ctl)override;

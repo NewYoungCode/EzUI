@@ -4,7 +4,7 @@
 #include "tinyxml/tinystr.h"
 
 namespace EzUI {
-	//å»é™¤ç©ºæ ¼æˆ–è€…å…¶ä»–ç¬¦å· åŒå¼•å·å†…çš„ç©ºæ ¼ä¸ä¼šå»é™¤
+	//È¥³ı¿Õ¸ñ»òÕßÆäËû·ûºÅ Ë«ÒıºÅÄÚµÄ¿Õ¸ñ²»»áÈ¥³ı
 	void TrimStyle(EString& str, CHAR _char = ' ') {
 		CHAR* bufStr = new CHAR[str.size() + 1]{ 0 };
 		size_t pos = 0;
@@ -118,7 +118,7 @@ namespace EzUI {
 
 		freeControls.push_front(ctl);
 
-		//å†…è”æ ·å¼
+		//ÄÚÁªÑùÊ½
 		EString inlineStyle;
 		EString inlineStyle_active;
 		EString inlineStyle_hover;
@@ -150,12 +150,12 @@ namespace EzUI {
 		} while ((attr = attr->Next()));
 
 
-		{//åŠ è½½æ ·å¼ ä½¿ç”¨æ ‡ç­¾é€‰æ‹©å™¨
+		{//¼ÓÔØÑùÊ½ Ê¹ÓÃ±êÇ©Ñ¡ÔñÆ÷
 			LoadStyle(ctl, tagStr);
 			LoadStyle(ctl, tagStr + ":active");
 			LoadStyle(ctl, tagStr + ":hover");
 		}
-		{//åŠ è½½æ ·å¼ ä½¿ç”¨ç±»é€‰æ‹©å™¨  
+		{//¼ÓÔØÑùÊ½ Ê¹ÓÃÀàÑ¡ÔñÆ÷  
 			EString _class = ctl->GetAttribute("class");
 			EString::Replace(&_class, "  ", " ");
 			auto classs = _class.Split(" ");
@@ -165,16 +165,16 @@ namespace EzUI {
 				LoadStyle(ctl, "." + className + ":hover");
 			}
 		}
-		if (!(ctl->Name.empty())) {//åŠ è½½æ ·å¼ ä½¿ç”¨IDé€‰æ‹©å™¨ 
+		if (!(ctl->Name.empty())) {//¼ÓÔØÑùÊ½ Ê¹ÓÃIDÑ¡ÔñÆ÷ 
 			LoadStyle(ctl, "#" + ctl->Name);
 			LoadStyle(ctl, "#" + ctl->Name + ":active");
 			LoadStyle(ctl, "#" + ctl->Name + ":hover");
 		}
 
-		{//å†…è”æ ·å¼
-			EString sytle_static = ctl->GetAttribute("style");//å†…è”æ ·å¼è¯­æ³•
-			EString style_hover = ctl->GetAttribute("style:hover");//å†…è”æ ·å¼è¯­æ³•
-			EString style_active = ctl->GetAttribute("style:active");//å†…è”æ ·å¼è¯­æ³•
+		{//ÄÚÁªÑùÊ½
+			EString sytle_static = ctl->GetAttribute("style");//ÄÚÁªÑùÊ½Óï·¨
+			EString style_hover = ctl->GetAttribute("style:hover");//ÄÚÁªÑùÊ½Óï·¨
+			EString style_active = ctl->GetAttribute("style:active");//ÄÚÁªÑùÊ½Óï·¨
 			if (!sytle_static.empty()) {
 				ctl->Style.SetStyleSheet(sytle_static, BuildImageCallback);
 			}
@@ -191,14 +191,14 @@ namespace EzUI {
 		TiXmlElement* node = (TiXmlElement*)_node;
 
 		TiXmlElement* fristChild = NULL;
-		if ((fristChild = node->FirstChildElement()))//å…ˆå¯»æ‰¾å­æ§ä»¶
+		if ((fristChild = node->FirstChildElement()))//ÏÈÑ°ÕÒ×Ó¿Ø¼ş
 		{
 			//Debug::Log("node %s", fristChild->Value());
 			Control* ctl = BuildControl(fristChild);
 			LoadControl(fristChild, ctl);
 			control->AddControl(ctl);
 			TiXmlElement* nextChild = fristChild->NextSiblingElement();
-			while (nextChild)//ç„¶åå¯»æ‰¾å…„å¼Ÿ
+			while (nextChild)//È»ºóÑ°ÕÒĞÖµÜ
 			{
 				//Debug::Log("node %s", nextChild->Value());
 				Control* ctl2 = BuildControl(nextChild);
@@ -217,7 +217,7 @@ namespace EzUI {
 		TiXmlElement* element = doc.FirstChildElement();//read frist element
 
 		std::list<TiXmlElement*> controlNodes;
-		//å…ˆå¤„ç†æ ·å¼
+		//ÏÈ´¦ÀíÑùÊ½
 		do
 		{
 			if (element == NULL) break;
@@ -228,21 +228,21 @@ namespace EzUI {
 				controlNodes.push_back(element);
 			}
 		} while ((element = element->NextSiblingElement()));
-		//ç„¶åå¤„ç†æ§ä»¶
+		//È»ºó´¦Àí¿Ø¼ş
 		for (auto& element : controlNodes) {
-			Control* control = BuildControl(element);//å…ˆåŠ è½½æ ¹èŠ‚ç‚¹
-			LoadControl(element, control);//åŠ è½½å­èŠ‚ç‚¹
+			Control* control = BuildControl(element);//ÏÈ¼ÓÔØ¸ù½Úµã
+			LoadControl(element, control);//¼ÓÔØ×Ó½Úµã
 			if (control) controls.push_back(control);
 		}
 	}
 
 	void UIManager::AnalysisStyle(const EString& styleStr) {
 		EString style = styleStr;
-		//å¤„ç†ç©ºæ ¼ åŒå¼•å·å†…çš„ç©ºæ ¼ä¸å¤„ç†
+		//´¦Àí¿Õ¸ñ Ë«ÒıºÅÄÚµÄ¿Õ¸ñ²»´¦Àí
 		TrimStyle(style);
 		while (true)
 		{
-			//å¤„ç†cssçš„æ³¨é‡Š
+			//´¦ÀícssµÄ×¢ÊÍ
 			auto pos1 = style.find("/*");
 			auto pos2 = style.find("*/", pos1 + 2);
 			if (pos1 != size_t(-1) && pos2 != size_t(-1)) {
@@ -252,7 +252,7 @@ namespace EzUI {
 				break;
 			}
 		}
-		//åˆ†ç¦»æ¯ä¸ªæ ·å¼
+		//·ÖÀëÃ¿¸öÑùÊ½
 		std::list<EString> strs;
 		while (true)
 		{
@@ -265,7 +265,7 @@ namespace EzUI {
 				break;
 			}
 		}
-		//è§£ææ ·å¼ç±»å‹
+		//½âÎöÑùÊ½ÀàĞÍ
 		for (auto& style : strs) {
 			size_t pos2 = style.find("}");
 			if (pos2 == -1)break;
@@ -277,10 +277,10 @@ namespace EzUI {
 			if (pos4 != size_t(-1)) {
 				style_type = name.substr(pos4 + 1);
 			}
-			//è€ƒè™‘åˆ°å¤šä¸ªé€‰æ‹©å™¨
+			//¿¼ÂÇµ½¶à¸öÑ¡ÔñÆ÷
 			auto names = name.Split(",");
 			for (auto& name : names) {
-				//æ·»åŠ è‡³é›†åˆ
+				//Ìí¼ÓÖÁ¼¯ºÏ
 				UIManager::Selector selector;
 				selector.selectorName = name;
 				selector.styleStr = str;

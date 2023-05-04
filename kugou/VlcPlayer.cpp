@@ -71,17 +71,17 @@ namespace EzUI {
 	void VlcPlayer::OpenPath(const EString& file)
 	{
 		if (vlc_player) {
-			libvlc_media_player_stop(vlc_player);//ֹͣ����
-			libvlc_media_player_release(vlc_player);//�ͷ�֮ǰ�Ĳ���ý����
+			libvlc_media_player_stop(vlc_player);//??????
+			libvlc_media_player_release(vlc_player);//??????????y????
 		}
 		if (vlc_media) {
 			libvlc_media_release(vlc_media);
 		}
 		vlc_media = libvlc_media_new_path(vlc_inst, file.c_str());
-		libvlc_media_parse(vlc_media);//����
-		_Duration = libvlc_media_get_duration(vlc_media);//��ȡý��ʱ��
+		libvlc_media_parse(vlc_media);//????
+		_Duration = libvlc_media_get_duration(vlc_media);//???y?????
 
-		vlc_player = libvlc_media_player_new_from_media(vlc_media);//����ý��
+		vlc_player = libvlc_media_player_new_from_media(vlc_media);//????y??
 
 		libvlc_video_set_format_callbacks(vlc_player, setup, (libvlc_video_cleanup_cb)this);
 		libvlc_video_set_callbacks(vlc_player, lock, unlock, display, this);
@@ -89,16 +89,16 @@ namespace EzUI {
 	void VlcPlayer::OpenUrl(const EString& url)
 	{
 		if (vlc_player) {
-			libvlc_media_player_stop(vlc_player);//ֹͣ���� vlc��bug �˴������
-			libvlc_media_player_release(vlc_player);//�ͷ�֮ǰ�Ĳ���ý����
+			libvlc_media_player_stop(vlc_player);//?????? vlc??bug ????????
+			libvlc_media_player_release(vlc_player);//??????????y????
 		}
 		if (vlc_media) {
 			libvlc_media_release(vlc_media);
 		}
 		vlc_media = libvlc_media_new_location(vlc_inst, url.c_str());
-		libvlc_media_parse(vlc_media);//����
-		_Duration = libvlc_media_get_duration(vlc_media);//��ȡý��ʱ��
-		vlc_player = libvlc_media_player_new_from_media(vlc_media);//����ý��
+		libvlc_media_parse(vlc_media);//????
+		_Duration = libvlc_media_get_duration(vlc_media);//???y?????
+		vlc_player = libvlc_media_player_new_from_media(vlc_media);//????y??
 		libvlc_video_set_format_callbacks(vlc_player, setup, (libvlc_video_cleanup_cb)this);
 		libvlc_video_set_callbacks(vlc_player, lock, unlock, display, this);
 	}
@@ -132,7 +132,7 @@ namespace EzUI {
 	void VlcPlayer::SetPosition(float f_pos)
 	{
 		if (vlc_player) {
-			//��֪��Ϊʲô ���ý��ȾͲ��Ų����� ��ʱû�о�
+			//???????? ???y???????????? ?????��?
 			libvlc_media_player_set_position(vlc_player, f_pos);
 		}
 	}

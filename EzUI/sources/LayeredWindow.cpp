@@ -21,7 +21,7 @@ namespace EzUI {
 				if (!_InvalidateRect.IsEmptyArea()) {
 					::PostMessage(Hwnd(), WM_PAINT, NULL, NULL);
 				}
-				Sleep(5);//æ£€æµ‹æ— æ•ˆåŒºåŸŸçš„å»¶æ—¶ 200fps
+				Sleep(5);//¼ì²âÎŞĞ§ÇøÓòµÄÑÓÊ± 200fps
 			}
 			});
 	}
@@ -76,7 +76,7 @@ namespace EzUI {
 		}
 		if (rect.GetRight() > Width) {
 			rect.Width = Width - rect.X;
-		} //è¿™æ®µä»£ç æ˜¯ä¿è¯é‡ç»˜åŒºåŸŸä¸€å®šæ˜¯åœ¨çª—å£å†…
+		} //Õâ¶Î´úÂëÊÇ±£Ö¤ÖØ»æÇøÓòÒ»¶¨ÊÇÔÚ´°¿ÚÄÚ
 		Rect::Union(_InvalidateRect, _InvalidateRect, rect);
 	}
 	void LayeredWindow::OnSize(const Size& sz) {
@@ -100,7 +100,7 @@ namespace EzUI {
 		args.InvalidRectangle = _InvalidateRect;//
 		args.PublicData = &PublicData;
 		args.DC = winHDC;
-		OnPaint(args);//å¼€å§‹é‡ç»˜
+		OnPaint(args);//¿ªÊ¼ÖØ»æ
 	}
 
 	LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -108,11 +108,11 @@ namespace EzUI {
 		if (uMsg == WM_PAINT) //layeredWindow
 		{
 			if (_winBitmap) {
-				_winBitmap->Earse(_InvalidateRect);//æ¸…é™¤èƒŒæ™¯
+				_winBitmap->Earse(_InvalidateRect);//Çå³ı±³¾°
 				HDC winHDC = _winBitmap->GetDC();
 				Rending(winHDC, _InvalidateRect);
-				PushDC(winHDC);//updatelaredwindow æ›´æ–°çª—å£
-				_InvalidateRect = { 0,0,0,0 };//é‡ç½®åŒºåŸŸ
+				PushDC(winHDC);//updatelaredwindow ¸üĞÂ´°¿Ú
+				_InvalidateRect = { 0,0,0,0 };//ÖØÖÃÇøÓò
 				return 0;
 			}
 			return ::DefWindowProc(Hwnd(), uMsg, wParam, lParam);
@@ -137,7 +137,7 @@ namespace EzUI {
 		blendFunc.BlendOp = AC_SRC_OVER;
 		blendFunc.AlphaFormat = AC_SRC_ALPHA;
 		blendFunc.BlendFlags = 0;
-		::UpdateLayeredWindow(Hwnd(), NULL, NULL, &size, hdc, &point, 0, &blendFunc, ULW_OPAQUE);//ä¸é€æ˜
-		//::UpdateLayeredWindow(Hwnd(), NULL, NULL, &size, hdc, &point, 0, &blendFunc, ULW_ALPHA);//é€æ˜
+		::UpdateLayeredWindow(Hwnd(), NULL, NULL, &size, hdc, &point, 0, &blendFunc, ULW_OPAQUE);//²»Í¸Ã÷
+		//::UpdateLayeredWindow(Hwnd(), NULL, NULL, &size, hdc, &point, 0, &blendFunc, ULW_ALPHA);//Í¸Ã÷
 	}
 }

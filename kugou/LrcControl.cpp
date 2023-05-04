@@ -120,9 +120,9 @@ void LrcControl::LoadLrc(const EString& lrcData)
 		auto gbk2 = Text::UTF8ToANSI(it);
 		int fen = std::atoi(it.substr(1, 2).c_str());
 		float miao = std::atof(it.substr(4, 5).c_str());
-		int postion = (fen * 60 * 1000 + miao * 1000);//ת���ɺ���
+		int postion = (fen * 60 * 1000 + miao * 1000);//????????
 		LrcList.push_back(new Lrc(postion, text, Point(0, VerticalCenter)));
-		VerticalCenter += (FontHeight + marginVertical);//��ֱ�������
+		VerticalCenter += (FontHeight + marginVertical);//??????????
 	}
 
 	if (LrcList.size() > 0)

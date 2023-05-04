@@ -19,14 +19,14 @@ namespace EzUI {
 	void VScrollBar::SetMaxBottom(int maxBottom)
 	{
 		this->_maxBottom = maxBottom;
-		//è®¡ç®—æ»šåŠ¨æ¡ç›¸å…³
+		//¼ÆËã¹ö¶¯ÌõÏà¹Ø
 		auto& rect = GetRect();
 		if (rect.Height >= _maxBottom) {
 			_sliderHeight = rect.Height;
 		}
 		else {
 			if (_maxBottom != 0) {
-				//æ»‘å—é«˜åº¦
+				//»¬¿é¸ß¶È
 				_sliderHeight = (int)(rect.Height * 1.0 * rect.Height / _maxBottom);
 			}
 		}
@@ -69,17 +69,17 @@ namespace EzUI {
 
 	void VScrollBar::OnSize(const Size& size)
 	{
-		//æ­¤å¤„éœ€è¦å±è”½
+		//´Ë´¦ĞèÒªÆÁ±Î
 	}
 	const Rect& VScrollBar::GetRect()
 	{
-		//æ­¤å¤„éœ€è¦å±è”½
+		//´Ë´¦ĞèÒªÆÁ±Î
 		return _rect;
 	}
 
 	void VScrollBar::OnForePaint(PaintEventArgs& args)
 	{
-		//æ»‘å—rect
+		//»¬¿érect
 		Rect sliderRect(0, 0, Width(), Height());
 		sliderRect.Y = (INT)sliderY;
 		sliderRect.Height = _sliderHeight;
@@ -89,7 +89,7 @@ namespace EzUI {
 		if (sliderRect.Height <= 0) {
 			sliderRect.Height = 1;
 		}
-		//ç»˜åˆ¶æ»‘å—
+		//»æÖÆ»¬¿é
 		int radius = GetRadius();
 		if (radius > sliderRect.Height) {
 			radius = sliderRect.Height;
@@ -143,41 +143,41 @@ namespace EzUI {
 			return;
 		}
 		sliderY = posY;
-		if (sliderY <= 0) { //æ»‘å—åœ¨é¡¶éƒ¨
+		if (sliderY <= 0) { //»¬¿éÔÚ¶¥²¿
 			sliderY = 0;
 		}
-		if (sliderY + _sliderHeight >= GetRect().Height) { //æ»‘å—åœ¨æœ€åº•éƒ¨
+		if (sliderY + _sliderHeight >= GetRect().Height) { //»¬¿éÔÚ×îµ×²¿
 			sliderY = GetRect().Height - _sliderHeight;
 		}
-		int distanceTotal = Height() - _sliderHeight;//å½“å‰æ»‘å—å¯ç”¨æ»‘é“çš„æ€»è·ç¦»
-		double rate = distanceTotal * 1.0 / (_maxBottom - Parent->Height());//æ»‘å—å¯ç”¨æ€»é«˜åº¦ / list itemé«˜åº¦æ€»å’Œ * å½“å‰æ»‘å—åæ ‡çš„åæ ‡
+		int distanceTotal = Height() - _sliderHeight;//µ±Ç°»¬¿é¿ÉÓÃ»¬µÀµÄ×Ü¾àÀë
+		double rate = distanceTotal * 1.0 / (_maxBottom - Parent->Height());//»¬¿é¿ÉÓÃ×Ü¸ß¶È / list item¸ß¶È×ÜºÍ * µ±Ç°»¬¿é×ø±êµÄ×ø±ê
 		double offsetY = sliderY / rate;
 		if (distanceTotal > 0) {
-			for (auto& it : this->Location) { //æŒ¨ä¸ªç§»åŠ¨åæ ‡
+			for (auto& it : this->Location) { //°¤¸öÒÆ¶¯×ø±ê
 				it.first->SetRect({ it.first->X(), (int)(it.second - offsetY), it.first->Width(),it.first->Height() });
 			}
 		}
-		else {//å½“æ»šåŠ¨æ¡ä¸å¯ç”¨çš„çš„æ—¶å€™
-			for (auto& it : this->Location) { //ä½¿ç”¨åŸåæ ‡ æŒ¨ä¸ªç§»åŠ¨åæ ‡
+		else {//µ±¹ö¶¯Ìõ²»¿ÉÓÃµÄµÄÊ±ºò
+			for (auto& it : this->Location) { //Ê¹ÓÃÔ­×ø±ê °¤¸öÒÆ¶¯×ø±ê
 				it.first->SetRect({ it.first->X(), (int)(it.second), it.first->Width(),it.first->Height() });
 			}
 		}
 		Parent->Invalidate();
-		//Parent->Refresh();//å¯ä»¥ç”¨Refresh,è¿™æ ·æ»šåŠ¨çš„æ—¶å€™çš„æ—¶å€™æ˜¾å¾—ä¸æ»‘
+		//Parent->Refresh();//¿ÉÒÔÓÃRefresh,ÕâÑù¹ö¶¯µÄÊ±ºòµÄÊ±ºòÏÔµÃË¿»¬
 		if (Rolling) {
 			Rolling(RollingCurrent(), RollingTotal());
 		}
 	}
 
 	void VScrollBar::OnMouseWheel(short zDelta, const Point& point) {
-		int fx = (zDelta > 0 ? -5 : 5);//æ»šåŠ¨æ–¹å‘
-		if (fx != _speed) {//å¦‚æœæ»šåŠ¨æ–¹å‘ä¸ä¸Šæ¬¡ä¸åŒ å³å¯åœæ­¢
-			_rollCount = 1;//æ»šåŠ¨ä¸€æ¬¡
+		int fx = (zDelta > 0 ? -5 : 5);//¹ö¶¯·½Ïò
+		if (fx != _speed) {//Èç¹û¹ö¶¯·½ÏòÓëÉÏ´Î²»Í¬ ¼´¿ÉÍ£Ö¹
+			_rollCount = 1;//¹ö¶¯Ò»´Î
 		}
 		else {
-			_rollCount += 5;//å°†æ»šåŠ¨äº”æ¬¡
+			_rollCount += 5;//½«¹ö¶¯Îå´Î
 		}
-		_speed = fx;//æ§åˆ¶æ–¹å‘ä¸é€Ÿåº¦
+		_speed = fx;//¿ØÖÆ·½ÏòÓëËÙ¶È
 		_timer.Start();
 	}
 };

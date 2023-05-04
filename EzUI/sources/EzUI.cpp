@@ -50,7 +50,7 @@ namespace EzUI {
 
 	size_t __count_onsize = 0;
 
-	EBitmap::EBitmap(WORD width, WORD height, PixelFormat piexlFormat) {//é»˜è®¤24ä½ä¸é€æ˜ä½å›¾
+	EBitmap::EBitmap(WORD width, WORD height, PixelFormat piexlFormat) {//Ä¬ÈÏ24Î»²»Í¸Ã÷Î»Í¼
 		biteCount = (byte)piexlFormat;
 		this->Width = width;
 		this->Height = height;
@@ -68,23 +68,23 @@ namespace EzUI {
 	}
 
 	void EBitmap::SetPixel(int x, int y, const Color& color) {
-		DWORD* point = (DWORD*)this->point + (x + y * this->Width);//èµ·å§‹åœ°å€+åæ ‡åç§»	
+		DWORD* point = (DWORD*)this->point + (x + y * this->Width);//ÆğÊ¼µØÖ·+×ø±êÆ«ÒÆ	
 		if (biteCount == 32) { //argb
-			((BYTE*)point)[3] = color.GetA();//ä¿®æ”¹Aé€šé“æ•°å€¼
+			((BYTE*)point)[3] = color.GetA();//ĞŞ¸ÄAÍ¨µÀÊıÖµ
 		}
-		((BYTE*)point)[2] = color.GetR();//ä¿®æ”¹Ré€šé“æ•°å€¼
-		((BYTE*)point)[1] = color.GetG();//ä¿®æ”¹Gé€šé“æ•°å€¼
-		((BYTE*)point)[0] = color.GetB();//ä¿®æ”¹Bé€šé“æ•°å€¼
+		((BYTE*)point)[2] = color.GetR();//ĞŞ¸ÄRÍ¨µÀÊıÖµ
+		((BYTE*)point)[1] = color.GetG();//ĞŞ¸ÄGÍ¨µÀÊıÖµ
+		((BYTE*)point)[0] = color.GetB();//ĞŞ¸ÄBÍ¨µÀÊıÖµ
 	}
 	Color EBitmap::GetPixel(int x, int y) {
-		DWORD* point = (DWORD*)this->point + (x + y * this->Width);//èµ·å§‹åœ°å€+åæ ‡åç§»
+		DWORD* point = (DWORD*)this->point + (x + y * this->Width);//ÆğÊ¼µØÖ·+×ø±êÆ«ÒÆ
 		BYTE a = 255, r, g, b;
 		if (biteCount == 32) { //argb
 			a = ((BYTE*)point)[3];
 		}
-		r = ((BYTE*)point)[2];//ä¿®æ”¹Ré€šé“æ•°å€¼
-		g = ((BYTE*)point)[1];//ä¿®æ”¹Gé€šé“æ•°å€¼
-		b = ((BYTE*)point)[0];//ä¿®æ”¹Bé€šé“æ•°å€¼
+		r = ((BYTE*)point)[2];//ĞŞ¸ÄRÍ¨µÀÊıÖµ
+		g = ((BYTE*)point)[1];//ĞŞ¸ÄGÍ¨µÀÊıÖµ
+		b = ((BYTE*)point)[0];//ĞŞ¸ÄBÍ¨µÀÊıÖµ
 		return Color(a, r, g, b);
 	}
 
@@ -106,8 +106,8 @@ namespace EzUI {
 		}
 		for (int y = rect.Y; y < rect.GetBottom(); y++)
 		{
-			DWORD* point = (DWORD*)this->point + (rect.X + y * this->Width);//èµ·å§‹åœ°å€+åæ ‡åç§»
-			::memset(point, 0, rect.Width * 4);//æŠ¹é™¤
+			DWORD* point = (DWORD*)this->point + (rect.X + y * this->Width);//ÆğÊ¼µØÖ·+×ø±êÆ«ÒÆ
+			::memset(point, 0, rect.Width * 4);//Ä¨³ı
 		}
 	}
 	void EBitmap::FillRect(const Rect& _rect, const Color& color) {
@@ -140,8 +140,8 @@ namespace EzUI {
 
 		for (int y = rect.Y; y < rect.GetBottom(); y++)
 		{
-			DWORD* point = (DWORD*)this->point + (rect.X + y * this->Width);//èµ·å§‹åœ°å€+åæ ‡åç§»
-			::memset(point, 255, rect.Width * 4);//æŠ¹é™¤
+			DWORD* point = (DWORD*)this->point + (rect.X + y * this->Width);//ÆğÊ¼µØÖ·+×ø±êÆ«ÒÆ
+			::memset(point, 255, rect.Width * 4);//Ä¨³ı
 		}
 	}
 
@@ -162,7 +162,7 @@ namespace EzUI {
 		auto rectStr = str.Split(",");
 		if (str.empty()) {
 			X = Y = Width = Height = 0;
-			return;//å¦‚æœæ²¡å†™çŸ©å½¢åŒºåŸŸ
+			return;//Èç¹ûÃ»Ğ´¾ØĞÎÇøÓò
 		}
 		X = std::stoi(rectStr.at(0));
 		Y = std::stoi(rectStr.at(1));
@@ -227,7 +227,7 @@ namespace EzUI {
 			EString rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
 			auto rgbList = rgbStr.Split(",");
 			unsigned char r, g, b;
-			float a = rgbList.size() == 3 ? 1 : std::stof(rgbList.at(3));//é€æ˜ç™¾åˆ†æ¯” 0~1
+			float a = rgbList.size() == 3 ? 1 : std::stof(rgbList.at(3));//Í¸Ã÷°Ù·Ö±È 0~1
 			r = std::stoi(rgbList.at(0));
 			g = std::stoi(rgbList.at(1));
 			b = std::stoi(rgbList.at(2));
@@ -235,12 +235,12 @@ namespace EzUI {
 			return;
 		}
 	}
-	void ControlStyle::SetBorder(const Color& color, int width) { //å¯¹æ‰€æœ‰borderæœ‰æ•ˆ
+	void ControlStyle::SetBorder(const Color& color, int width) { //¶ÔËùÓĞborderÓĞĞ§
 		BorderColor = color;
-		BorderLeft = width;//å·¦è¾¹è¾¹æ¡†
-		BorderTop = width;//é¡¶éƒ¨è¾¹æ¡†
-		BorderRight = width;//å³è¾¹è¾¹æ¡†
-		BorderBottom = width;//åº•éƒ¨è¾¹æ¡†
+		BorderLeft = width;//×ó±ß±ß¿ò
+		BorderTop = width;//¶¥²¿±ß¿ò
+		BorderRight = width;//ÓÒ±ß±ß¿ò
+		BorderBottom = width;//µ×²¿±ß¿ò
 	}
 	void ControlStyle::SetStyleSheet(const EString& styleStr, const std::function<void(Image*)>& callback)
 	{
@@ -264,7 +264,7 @@ namespace EzUI {
 				break;
 			}
 			if (key == "background-image") {
-				value = value.Erase('"');//åˆ é™¤åŒå¼•å·;
+				value = value.Erase('"');//É¾³ıË«ÒıºÅ;
 				style->BackgroundImage = new Image(value);
 				if (callback) {
 					callback(style->BackgroundImage);
@@ -272,7 +272,7 @@ namespace EzUI {
 				break;
 			}
 			if (key == "fore-image") {
-				value = value.Erase('"');//åˆ é™¤åŒå¼•å·;
+				value = value.Erase('"');//É¾³ıË«ÒıºÅ;
 				style->ForeImage = new Image(value);
 				if (callback) {
 					callback(style->ForeImage);
@@ -296,7 +296,7 @@ namespace EzUI {
 				break;
 			}
 			if (key == "font-family") {
-				value = value.Erase('"');//åˆ é™¤åŒå¼•å·;
+				value = value.Erase('"');//É¾³ıË«ÒıºÅ;
 				style->FontFamily = value;
 				break;
 			}

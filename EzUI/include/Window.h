@@ -10,25 +10,25 @@ namespace EzUI {
 		Rect _downRect;
 		bool _load = false;
 		bool _mouseIn = false;
-		bool _mouseDown = false;//é¼ æ ‡æ˜¯å¦å·²ç»æŒ‰ä¸‹
+		bool _mouseDown = false;//Êó±êÊÇ·ñÒÑ¾­°´ÏÂ
 		std::chrono::system_clock::time_point _lastDownTime = std::chrono::system_clock::from_time_t(0);
-		Size _lastSize;//ä¸Šä¸€æ¬¡å®¢æˆ·ç«¯å¤§å°çš„ä¿¡æ¯
-		Point _lastPoint;//ä¸Šä¸€æ¬¡ç§»åŠ¨çš„åæ ‡
+		Size _lastSize;//ÉÏÒ»´Î¿Í»§¶Ë´óĞ¡µÄĞÅÏ¢
+		Point _lastPoint;//ÉÏÒ»´ÎÒÆ¶¯µÄ×ø±ê
 		MouseButton _lastBtn = MouseButton::None;
 		int _closeCode = 0;
 		HWND _OwnerHwnd = NULL;
 		HWND _hWnd = NULL;
-		Rect _rect;//åŸºäºæ¡Œé¢çš„åæ ‡
-		Rect _rectClient;//å®¢æˆ·ç»˜å›¾åŒºåŸŸ
+		Rect _rect;//»ùÓÚ×ÀÃæµÄ×ø±ê
+		Rect _rectClient;//¿Í»§»æÍ¼ÇøÓò
 		void InitData(const DWORD& ExStyle);
 	public:
-		WindowData PublicData;//å­˜å‚¨å…¬å…±æ•°æ®
+		WindowData PublicData;//´æ´¢¹«¹²Êı¾İ
 	private:
 		Window(const Window&) {};
-		bool IsInWindow(Control& pControl, Control& it);//æ§ä»¶æ˜¯å¦åœ¨çª—å£çš„å¯è§åŒºåŸŸ
+		bool IsInWindow(Control& pControl, Control& it);//¿Ø¼şÊÇ·ñÔÚ´°¿ÚµÄ¿É¼ûÇøÓò
 	protected:
-		LRESULT ZoomWindow(const LPARAM& lParam);//ç¼©æ”¾çª—å£
-		void MoveWindow();//é¼ æ ‡æŒ‰ä¸‹ç§»åŠ¨çª—å£
+		LRESULT ZoomWindow(const LPARAM& lParam);//Ëõ·Å´°¿Ú
+		void MoveWindow();//Êó±ê°´ÏÂÒÆ¶¯´°¿Ú
 		virtual void OnMouseMove(const Point& point);
 		virtual void OnMouseLeave();
 		virtual void OnMouseWheel(short zDelta, const Point& point);
@@ -47,13 +47,13 @@ namespace EzUI {
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam);
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);
 		virtual void OnMove(const Point& point);
-		//é¼ æ ‡ é”®ç›˜ é‡ç»˜ ä¼šè¿›å…¥æ­¤å‡½æ•°,è¿”å›trueå°†ä¸å†æ´¾å‘ç»™senderæ§ä»¶å¤„ç† æ³¨æ„:å°½é‡ä¸è¦åœ¨æ­¤å‡½æ•°å†…éƒ¨åˆ é™¤è‡ªèº«æ§ä»¶(é¼ æ ‡å’Œé”®ç›˜äº‹ä»¶å†…å¯ä»¥åˆ é™¤)
+		//Êó±ê ¼üÅÌ ÖØ»æ »á½øÈë´Ëº¯Êı,·µ»Øtrue½«²»ÔÙÅÉ·¢¸øsender¿Ø¼ş´¦Àí ×¢Òâ:¾¡Á¿²»ÒªÔÚ´Ëº¯ÊıÄÚ²¿É¾³ı×ÔÉí¿Ø¼ş(Êó±êºÍ¼üÅÌÊÂ¼şÄÚ¿ÉÒÔÉ¾³ı)
 		virtual bool OnNotify(Control* sender, EventArgs& args);
 	public:
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	public:
-		Control* MainLayout = NULL;//å¸ƒå±€
-		bool Zoom = true;//æ˜¯å¦æ”¯æŒç¼©æ”¾
+		Control* MainLayout = NULL;//²¼¾Ö
+		bool Zoom = true;//ÊÇ·ñÖ§³ÖËõ·Å
 		Window(int width, int height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
 		virtual ~Window();
 		Control* FindControl(const EString& objectName);
@@ -67,13 +67,13 @@ namespace EzUI {
 		void SetText(const EString& text);
 		virtual void Show(int cmdShow = SW_SHOW);
 		virtual void ShowMax();
-		int ShowModal(bool wait = true);//å‚æ•° wait æ˜¯å¦é˜»å¡
+		int ShowModal(bool wait = true);//²ÎÊı wait ÊÇ·ñ×èÈû
 		void Close(int code = 0);
 		virtual void Hide();
 		bool IsVisible();
 		void SetVisible(bool flag);
-		void Invalidate();//ä½¿åŒºåŸŸæ— æ•ˆ(å»¶è¿Ÿåˆ·æ–°)
-		void Refresh();//ç«‹å³æ›´æ–°æ‰€æœ‰æ— æ•ˆåŒºåŸŸ(ç«‹å³åˆ·æ–°)
-		Control* FindControl(const Point clientPoint, Point* outPoint);//æ ¹æ®åæ ‡è·å–æ§ä»¶
+		void Invalidate();//Ê¹ÇøÓòÎŞĞ§(ÑÓ³ÙË¢ĞÂ)
+		void Refresh();//Á¢¼´¸üĞÂËùÓĞÎŞĞ§ÇøÓò(Á¢¼´Ë¢ĞÂ)
+		Control* FindControl(const Point clientPoint, Point* outPoint);//¸ù¾İ×ø±ê»ñÈ¡¿Ø¼ş
 	};
 };
