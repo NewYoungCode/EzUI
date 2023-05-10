@@ -19,9 +19,9 @@ namespace EzUI {
 			while (bRunTask)
 			{
 				if (!_InvalidateRect.IsEmptyArea()) {
-					::PostMessage(Hwnd(), WM_PAINT, NULL, NULL);
+					::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
 				}
-				Sleep(5);//检测无效区域的延时 200fps
+				Sleep(2);//检测无效区域的延时
 			}
 			});
 	}
@@ -95,7 +95,7 @@ namespace EzUI {
 
 	void LayeredWindow::Rending(HDC winHDC, const Rect& rePaintRect) {
 		Rect& clientRect = GetClientRect();//
-		Painter pt(winHDC, clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height);//
+		D2DRender pt(winHDC, clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height);//
 		PaintEventArgs args(pt);
 		args.InvalidRectangle = _InvalidateRect;//
 		args.PublicData = &PublicData;

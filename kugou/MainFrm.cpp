@@ -1,7 +1,7 @@
 #include "MainFrm.h"
 #define refreshImage WM_UIMESSAGE+1
 #include "ComBox.h"
-MainFrm::MainFrm() :BorderlessWindow(1020, 690)
+MainFrm::MainFrm() :Form(1020, 690)
 {
 	InitForm();
 }
@@ -364,7 +364,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			FindControl("mvView")->Trigger(Event::OnMouseClick);
 			player.OpenUrl(urls[urls.size() - 1]);
 			player.Play();
-
+			this->SetText(json["songname"].asString());
 			((Label*)FindControl("songName"))->SetText(json["songname"].asString());
 			((Label*)FindControl("songName"))->Invalidate();
 
@@ -420,11 +420,11 @@ void MainFrm::OnPaint(PaintEventArgs& arg)
 {
 	__super::OnPaint(arg);
 
-	arg.Graphics.SetFont(L"华康少女字体", 50);
-	arg.Graphics.SetColor(Color::Black);
-	arg.Graphics.SetTransform(GetClientRect().Width/2, GetClientRect().Height/2, 90);
-	arg.Graphics.DrawString(L"我TM反啦...", GetClientRect() ,TextAlign::MiddleCenter);
-	arg.Graphics.SetTransform(0,0,0);
+	//arg.Graphics.SetFont(L"宋体", 50);
+	//arg.Graphics.SetColor(Color::Black);
+	//arg.Graphics.SetTransform(GetClientRect().Width/2, GetClientRect().Height/2, 90);
+	//arg.Graphics.DrawString(L"我TM反啦...", GetClientRect() ,TextAlign::MiddleCenter);
+	//arg.Graphics.SetTransform(0,0,0);
 
 }
 

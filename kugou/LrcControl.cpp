@@ -42,7 +42,6 @@ void LrcControl::Task()
 		}
 	}
 	Invalidate();
-	//Refresh();
 }
 void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
 

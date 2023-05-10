@@ -19,7 +19,7 @@ namespace EzUI {
 		EString Tolower()const;
 		EString Toupper()const;
 	public:
-		//????????????
+		//base convert
 		static void AnyToUnicode(const std::string& src_str, UINT codePage, std::wstring* out_wstr);
 		static void UnicodeToAny(const std::wstring& unicode_wstr, UINT codePage, std::string* out_str);
 		//

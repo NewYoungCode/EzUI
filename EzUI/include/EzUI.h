@@ -290,11 +290,13 @@ namespace EzUI {
 	// 为 OnPaint 事件提供数据。
 	class PaintEventArgs :public EventArgs {
 	public:
+		PaintEventArgs(const PaintEventArgs&) = delete;
+		PaintEventArgs& operator=(const PaintEventArgs&) = delete;
 		WindowData* PublicData = NULL;
 		HDC DC = NULL;
-		EzUI::Painter& Graphics;//画家
+		EzUI::D2DRender& Graphics;//画家
 		Rect InvalidRectangle;//WM_PAINT里面的无效区域
-		PaintEventArgs(EzUI::Painter& _painter) :Graphics(_painter) {
+		PaintEventArgs(EzUI::D2DRender& _painter) :Graphics(_painter) {
 			EventType = Event::OnPaint;
 		}
 	};

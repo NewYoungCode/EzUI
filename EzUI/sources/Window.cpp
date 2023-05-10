@@ -425,7 +425,7 @@ namespace EzUI {
 		StopWatch sw;
 #endif // COUNT_ONPAINT
 #if USED_Direct2D
-		Painter graphics(winHDC, 0, 0, GetClientRect().Width, GetClientRect().Height);
+		D2DRender graphics(winHDC, 0, 0, GetClientRect().Width, GetClientRect().Height);
 		PaintEventArgs args(graphics);
 		args.DC = winHDC;
 		args.PublicData = &PublicData;

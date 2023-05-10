@@ -262,6 +262,5 @@ namespace EzUI {
 		void FillPath(const D2DPath& path);//填充Path 未实现
 		ID2D1DCRenderTarget* Get();//获取原生DX对象
 	};
-	using Painter = D2DRender;
 };
 #endif
