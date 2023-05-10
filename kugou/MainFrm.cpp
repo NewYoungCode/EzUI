@@ -420,6 +420,14 @@ void MainFrm::OnPaint(PaintEventArgs& arg)
 {
 	__super::OnPaint(arg);
 
+	/*DXImage img(200, 30);
+	{
+		DXRender pt(&img);
+		pt.SetColor(Color(200, 10, 20, 200));
+		pt.FillRectangle({ 0,0,200,30 });
+	}
+	arg.Graphics.DrawImage(&img, { 10,10,200,30 });*/
+
 	//arg.Graphics.SetFont(L"ËÎÌו", 50);
 	//arg.Graphics.SetColor(Color::Black);
 	//arg.Graphics.SetTransform(GetClientRect().Width/2, GetClientRect().Height/2, 90);

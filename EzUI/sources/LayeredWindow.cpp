@@ -95,7 +95,7 @@ namespace EzUI {
 
 	void LayeredWindow::Rending(HDC winHDC, const Rect& rePaintRect) {
 		Rect& clientRect = GetClientRect();//
-		D2DRender pt(winHDC, clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height);//
+		DXRender pt(winHDC, clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height);//
 		PaintEventArgs args(pt);
 		args.InvalidRectangle = _InvalidateRect;//
 		args.PublicData = &PublicData;

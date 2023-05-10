@@ -294,9 +294,9 @@ namespace EzUI {
 		PaintEventArgs& operator=(const PaintEventArgs&) = delete;
 		WindowData* PublicData = NULL;
 		HDC DC = NULL;
-		EzUI::D2DRender& Graphics;//画家
+		EzUI::DXRender& Graphics;//画家
 		Rect InvalidRectangle;//WM_PAINT里面的无效区域
-		PaintEventArgs(EzUI::D2DRender& _painter) :Graphics(_painter) {
+		PaintEventArgs(EzUI::DXRender& _painter) :Graphics(_painter) {
 			EventType = Event::OnPaint;
 		}
 	};

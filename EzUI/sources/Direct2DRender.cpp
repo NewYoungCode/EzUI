@@ -154,16 +154,17 @@ namespace EzUI {
 	}
 	//DXImage
 	void DXImage::DecodeOfRender(ID2D1RenderTarget* render) {
+		HRESULT hr = 0;
 		if (d2dBitmap != NULL) {
 			if (d2dBitmap) {
 				SafeRelease(&d2dBitmap);
 			}
 		}
 		if (fmtcovter) {
-			render->CreateBitmapFromWicBitmap(fmtcovter, 0, &d2dBitmap);
+			hr = render->CreateBitmapFromWicBitmap(fmtcovter, 0, &d2dBitmap);
 		}
 		if (bitMap) {
-			render->CreateBitmapFromWicBitmap(bitMap, &d2dBitmap);
+			hr = render->CreateBitmapFromWicBitmap(bitMap, &d2dBitmap);
 		}
 	}
 	UINT DXImage::GetWidth() {
@@ -238,6 +239,18 @@ namespace EzUI {
 	}
 	DXImage::DXImage(const std::wstring& file) {
 		CreateFromFile(file);
+	}
+	DXImage::DXImage(UINT width, UINT height)
+	{
+		HRESULT hr = D2D::g_ImageFactory->CreateBitmap(width, height, GUID_WICPixelFormat32bppBGRA, WICBitmapCreateCacheOption::WICBitmapCacheOnDemand, &bitMap);
+	}
+	ID2D1Bitmap* DXImage::Get()
+	{
+		return d2dBitmap;
+	}
+	IWICBitmap* DXImage::GetIWICBitmap()
+	{
+		return bitMap;
 	}
 	DXImage::DXImage(IStream* istram) {
 		CreateFormStream(istram);
@@ -327,7 +340,7 @@ namespace EzUI {
 			SafeRelease(&D2D::g_ImageFactory);
 		}
 	}
-	D2DRender::D2DRender(HDC dc, int x, int y, int width, int height) {
+	DXRender::DXRender(HDC dc, int x, int y, int width, int height) {
 		D2D1_RENDER_TARGET_PROPERTIES defaultOption = D2D1::RenderTargetProperties(
 			D2D1_RENDER_TARGET_TYPE_DEFAULT,
 			D2D1::PixelFormat(
@@ -343,7 +356,24 @@ namespace EzUI {
 		((ID2D1DCRenderTarget*)render)->BindDC(dc, &rc);
 		render->BeginDraw();
 	}
-	D2DRender::~D2DRender() {
+
+	DXRender::DXRender(DXImage* dxImage) {
+		D2D1_RENDER_TARGET_PROPERTIES defaultOption = D2D1::RenderTargetProperties(
+			D2D1_RENDER_TARGET_TYPE_DEFAULT,
+			D2D1::PixelFormat(
+				DXGI_FORMAT_B8G8R8A8_UNORM,
+				D2D1_ALPHA_MODE_IGNORE),
+			0,
+			0,
+			D2D1_RENDER_TARGET_USAGE_NONE,
+			D2D1_FEATURE_LEVEL_DEFAULT
+		);
+		HRESULT hr = D2D::g_Direct2dFactory->CreateWicBitmapRenderTarget(dxImage->GetIWICBitmap(), defaultOption, (ID2D1RenderTarget**)&render);
+		render->BeginDraw();
+	}
+
+
+	DXRender::~DXRender() {
 		if (render) {
 			render->EndDraw();
 		}
@@ -354,17 +384,17 @@ namespace EzUI {
 		SafeRelease(&brush);
 		SafeRelease(&pStrokeStyle);
 	}
-	ID2D1SolidColorBrush* D2DRender::GetBrush()
+	ID2D1SolidColorBrush* DXRender::GetBrush()
 	{
 		if (brush == NULL) {
 			render->CreateSolidColorBrush(D2D_COLOR_F{ 0,0,0,1 }, &brush);
 		}
 		return brush;
 	}
-	ID2D1StrokeStyle* D2DRender::GetStrokeStyle() {
+	ID2D1StrokeStyle* DXRender::GetStrokeStyle() {
 		return pStrokeStyle;
 	}
-	void D2DRender::SetFont(const std::wstring& fontFamily, int fontSize) {
+	void DXRender::SetFont(const std::wstring& fontFamily, int fontSize) {
 		if (font != NULL) {
 			if (font->GetFontFamily() == fontFamily && font->GetFontSize() == fontSize) {
 				return;
@@ -373,7 +403,7 @@ namespace EzUI {
 		}
 		font = new Font(fontFamily, fontSize);
 	}
-	void D2DRender::SetFont(const Font& _copy_font) {
+	void DXRender::SetFont(const Font& _copy_font) {
 		if (font != NULL) {
 			if (*font == _copy_font) {
 				return;
@@ -382,7 +412,7 @@ namespace EzUI {
 		}
 		font = new Font(_copy_font);
 	}
-	void D2DRender::SetColor(const __Color& color) {
+	void DXRender::SetColor(const __Color& color) {
 		if (brush == NULL) {
 			render->CreateSolidColorBrush(__To_D2D_COLOR_F(color), &brush);
 		}
@@ -390,13 +420,13 @@ namespace EzUI {
 			brush->SetColor(__To_D2D_COLOR_F(color));
 		}
 	}
-	void D2DRender::SetStrokeStyle(StrokeStyle strokeStyle, int dashWidth)
+	void DXRender::SetStrokeStyle(StrokeStyle strokeStyle, int dashWidth)
 	{
 		if (pStrokeStyle != NULL) {
 			SafeRelease(&pStrokeStyle);
 		}
 		if (strokeStyle == StrokeStyle::Dash) {
-			float* dashes = new float[2] {(FLOAT)dashWidth, (FLOAT)dashWidth };
+			float* dashes = new float[2]{ (FLOAT)dashWidth, (FLOAT)dashWidth };
 			const int count = 2;
 			D2D::g_Direct2dFactory->CreateStrokeStyle(D2D1::StrokeStyleProperties(
 				D2D1_CAP_STYLE_FLAT, D2D1_CAP_STYLE_FLAT, D2D1_CAP_STYLE_ROUND,
@@ -405,20 +435,20 @@ namespace EzUI {
 			delete[] dashes;
 		}
 	}
-	void D2DRender::DrawString(const TextLayout& textLayout, __Point startLacation) {
+	void DXRender::DrawString(const TextLayout& textLayout, __Point startLacation) {
 		render->DrawTextLayout(D2D1_POINT_2F{ (FLOAT)(startLacation.X) ,(FLOAT)(startLacation.Y) }, textLayout.Get(), GetBrush());
 	}
-	void D2DRender::DrawString(const std::wstring& text, const  __Rect& _rect, EzUI::TextAlign textAlign) {
+	void DXRender::DrawString(const std::wstring& text, const  __Rect& _rect, EzUI::TextAlign textAlign) {
 		const __Rect& rect = _rect;
 		TextLayout textLayout(text, *font, textAlign, __Size{ rect.Width, rect.Height });
 		this->DrawString(textLayout, { _rect.X,_rect.Y });
 	}
-	void D2DRender::DrawLine(const __Point& _A, const __Point& _B, int width) {
+	void DXRender::DrawLine(const __Point& _A, const __Point& _B, int width) {
 		const __Point& A = _A;
 		const __Point& B = _B;
 		render->DrawLine(D2D1_POINT_2F{ (float)A.X,(float)A.Y }, D2D1_POINT_2F{ (float)B.X,(float)B.Y }, GetBrush(), (FLOAT)width, GetStrokeStyle());
 	}
-	void D2DRender::DrawRectangle(const  __Rect& _rect, int _radius, int width) {
+	void DXRender::DrawRectangle(const  __Rect& _rect, int _radius, int width) {
 		const __Rect& rect = _rect;
 		if (_radius > 0) {
 			float radius = _radius / 2.0f;
@@ -429,7 +459,7 @@ namespace EzUI {
 			render->DrawRectangle(__To_D2D_RectF(rect), GetBrush(), (FLOAT)width, GetStrokeStyle());
 		}
 	}
-	void D2DRender::FillRectangle(const __Rect& _rect, int _radius) {
+	void DXRender::FillRectangle(const __Rect& _rect, int _radius) {
 		const __Rect& rect = _rect;
 		if (_radius > 0) {
 			float radius = _radius / 2.0f;
@@ -440,7 +470,7 @@ namespace EzUI {
 			render->FillRectangle(__To_D2D_RectF(rect), GetBrush());
 		}
 	}
-	void D2DRender::SetTransform(int xOffset, int yOffset, int angle)
+	void DXRender::SetTransform(int xOffset, int yOffset, int angle)
 	{
 		if (xOffset == 0 && yOffset == 0 && angle == 0) {
 			render->SetTransform(D2D1::Matrix3x2F::Identity());
@@ -453,7 +483,7 @@ namespace EzUI {
 			render->SetTransform(D2D1::Matrix3x2F::Translation((FLOAT)xOffset, (FLOAT)yOffset));
 		}
 	}
-	void D2DRender::DrawBezier(const __Point& startPoint, const Bezier& points, int width) {
+	void DXRender::DrawBezier(const __Point& startPoint, const Bezier& points, int width) {
 		ID2D1GeometrySink* pSink = NULL;
 		ID2D1PathGeometry* pathGeometry = NULL;
 		D2D::g_Direct2dFactory->CreatePathGeometry(&pathGeometry);
@@ -467,7 +497,7 @@ namespace EzUI {
 		SafeRelease(&pathGeometry);
 		SafeRelease(&pSink);
 	}
-	void D2DRender::DrawBezier(const __Point& startPoint, std::list<Bezier>& beziers, int width)
+	void DXRender::DrawBezier(const __Point& startPoint, std::list<Bezier>& beziers, int width)
 	{
 		ID2D1GeometrySink* pSink = NULL;
 		ID2D1PathGeometry* pathGeometry = NULL;
@@ -484,18 +514,18 @@ namespace EzUI {
 		SafeRelease(&pathGeometry);
 		SafeRelease(&pSink);
 	}
-	void D2DRender::PushLayer(const Geometry& dxGeometry) {
+	void DXRender::PushLayer(const Geometry& dxGeometry) {
 		ID2D1Layer* layer = NULL;
 		render->CreateLayer(&layer);
 		render->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.rgn), layer);//放入layer
 		layer->Release();
 		layers.push_back(false);
 	}
-	void D2DRender::PushLayer(const __Rect& rectBounds) {
+	void DXRender::PushLayer(const __Rect& rectBounds) {
 		render->PushAxisAlignedClip(__To_D2D_RectF(rectBounds), D2D1_ANTIALIAS_MODE::D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 		layers.push_back(true);
 	}
-	void D2DRender::PopLayer() {
+	void DXRender::PopLayer() {
 		if (layers.size() > 0) {
 			if (*layers.rbegin() == true) {
 				render->PopAxisAlignedClip();
@@ -506,10 +536,9 @@ namespace EzUI {
 			layers.pop_back();
 		}
 	}
-	void D2DRender::DrawImage(IImage* _image, const __Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Margin& margin) {
+	void DXRender::DrawImage(DXImage* image, const __Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Margin& margin) {
 		_NOREND_IMAGE_
-			if (_image == NULL) return;
-		DXImage* image = (DXImage*)_image;
+			if (image == NULL) return;
 		//计算坐标
 		__Rect rect = _rect;
 		rect.X += margin.Left;
@@ -522,20 +551,20 @@ namespace EzUI {
 		__Size imgSize(image->GetWidth(), image->GetHeight());
 		__Rect drawRect = EzUI::Transformation(imageSizeMode, rect, imgSize);
 		//开始绘制
-		if (image->d2dBitmap == NULL) return;
-		render->DrawBitmap(image->d2dBitmap, __To_D2D_RectF(drawRect));
+		if (image->Get() == NULL) return;
+		render->DrawBitmap(image->Get(), __To_D2D_RectF(drawRect));
 	}
-	void D2DRender::DrawEllipse(const __Point&& point, int radiusX, int radiusY, int width)
+	void DXRender::DrawEllipse(const __Point& point, int radiusX, int radiusY, int width)
 	{
 		D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F((FLOAT)point.X, (FLOAT)point.Y), radiusX, radiusY);
 		render->DrawEllipse(ellipse, GetBrush(), (FLOAT)width, this->GetStrokeStyle());
 	}
-	void D2DRender::FillEllipse(const __Point&& point, int radiusX, int radiusY)
+	void DXRender::FillEllipse(const __Point& point, int radiusX, int radiusY)
 	{
 		D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F((FLOAT)point.X, (FLOAT)point.Y), radiusX, radiusY);
 		render->FillEllipse(ellipse, GetBrush());
 	}
-	void D2DRender::DrawArc(const __Rect& rect, int startAngle, int sweepAngle, int width) {
+	void DXRender::DrawArc(const __Rect& rect, int startAngle, int sweepAngle, int width) {
 		//
 		//// 创建几何图形
 		//ID2D1PathGeometry* pGeometry;
@@ -564,19 +593,19 @@ namespace EzUI {
 		//	// 释放几何图形
 		//	pGeometry->Release();
 	}
-	void D2DRender::DrawArc(const __Point& point1, const __Point& point2, const __Point& point3, int width)
+	void DXRender::DrawArc(const __Point& point1, const __Point& point2, const __Point& point3, int width)
 	{
 
 	}
-	void D2DRender::DrawPath(const D2DPath& path, int width)
+	void DXRender::DrawPath(const DXPath& path, int width)
 	{
 		render->DrawGeometry(path.Get(), GetBrush(), (FLOAT)width, this->GetStrokeStyle());
 	}
-	void D2DRender::FillPath(const D2DPath& path)
+	void DXRender::FillPath(const DXPath& path)
 	{
 		render->FillGeometry(path.Get(), GetBrush());
 	}
-	ID2D1DCRenderTarget* D2DRender::Get() {
+	ID2D1DCRenderTarget* DXRender::Get() {
 		return render;
 	}
 };

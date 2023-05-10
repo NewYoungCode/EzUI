@@ -126,13 +126,13 @@ namespace EzUI {
 		}
 	};
 
-	class D2DPath {
+	class DXPath {
 	private:
 		ID2D1GeometrySink* pSink = NULL;
 		ID2D1PathGeometry* pathGeometry = NULL;
 		bool isBegin = false;
 	public:
-		D2DPath() {
+		DXPath() {
 			D2D::g_Direct2dFactory->CreatePathGeometry(&pathGeometry);
 			pathGeometry->Open(&pSink);
 		}
@@ -158,7 +158,7 @@ namespace EzUI {
 			pSink->EndFigure(D2D1_FIGURE_END_OPEN);
 			pSink->Close();
 		}
-		virtual ~D2DPath() {
+		virtual ~DXPath() {
 			if (pathGeometry) {
 				pathGeometry->Release();
 			}
@@ -185,7 +185,6 @@ namespace EzUI {
 		IWICBitmap* bitMap = NULL;//从HBITMAP中加载
 		UINT Width = 0;
 		UINT Height = 0;
-	public:
 		ID2D1Bitmap* d2dBitmap = NULL;
 	public:
 		void CreateFormStream(IStream* istram);
@@ -196,15 +195,14 @@ namespace EzUI {
 		DXImage(HBITMAP hBitmap);
 		DXImage(IStream* istram);
 		DXImage(const std::wstring& file);
+		DXImage(UINT width, UINT height);
+		ID2D1Bitmap* Get();
+		IWICBitmap* GetIWICBitmap();
 		UINT GetWidth();
 		UINT GetHeight();
 		virtual size_t NextFrame()override;
 		DXImage() {}
 		virtual ~DXImage();
-	public:
-		static DXImage* FromFile() {
-
-		}
 	};
 
 	class Bezier {
@@ -225,7 +223,7 @@ namespace EzUI {
 		Dash//虚线
 	};
 
-	class UI_EXPORT D2DRender {
+	class UI_EXPORT DXRender {
 	private:
 		std::list<bool> layers;
 		ID2D1DCRenderTarget* render = NULL;
@@ -236,8 +234,9 @@ namespace EzUI {
 		ID2D1SolidColorBrush* GetBrush();
 		ID2D1StrokeStyle* GetStrokeStyle();
 	public:
-		D2DRender(HDC dc, int x, int y, int width, int height);//创建dx绘图对象
-		virtual ~D2DRender();
+		DXRender(DXImage* dxImage);
+		DXRender(HDC dc, int x, int y, int width, int height);//创建dx绘图对象
+		virtual ~DXRender();
 		void SetFont(const std::wstring& fontFamily, int fontSize);//必须先调用
 		void SetFont(const Font& _copy_font);//必须先调用
 		void SetColor(const __Color& color);//会之前必须调用
@@ -250,16 +249,16 @@ namespace EzUI {
 		void PushLayer(const __Rect& rectBounds);//速度较快
 		void PushLayer(const Geometry& dxGeometry);//比较耗性能,但是可以异形抗锯齿裁剪
 		void PopLayer();//弹出最后一个裁剪
-		void DrawImage(IImage* _image, const __Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Margin& margin = 0);//绘制图像
+		void DrawImage(DXImage* _image, const __Rect& _rect, const ImageSizeMode& imageSizeMode= ImageSizeMode::StretchImage, const EzUI::Margin& margin = 0);//绘制图像
 		void SetTransform(int xOffset, int yOffset, int angle = 0);//对画布进行旋转和偏移
 		void DrawBezier(const __Point& startPoint, const Bezier& points, int width = 1);//贝塞尔线
 		void DrawBezier(const __Point& startPoint, std::list<Bezier>& points, int width = 1);//贝塞尔线
-		void DrawEllipse(const __Point&& point, int radiusX, int radiusY, int width = 1);
-		void FillEllipse(const __Point&& point, int radiusX, int radiusY);
+		void DrawEllipse(const __Point& point, int radiusX, int radiusY, int width = 1);
+		void FillEllipse(const __Point& point, int radiusX, int radiusY);
 		void DrawArc(const __Rect& rect, int startAngle, int sweepAngle, int width = 1);//未实现
 		void DrawArc(const __Point& point1, const __Point& point2, const __Point& point3, int width = 1);//绘制弧线 未实现
-		void DrawPath(const D2DPath& path, int width = 1);//绘制path 未实现
-		void FillPath(const D2DPath& path);//填充Path 未实现
+		void DrawPath(const DXPath& path, int width = 1);//绘制path 未实现
+		void FillPath(const DXPath& path);//填充Path 未实现
 		ID2D1DCRenderTarget* Get();//获取原生DX对象
 	};
 };
