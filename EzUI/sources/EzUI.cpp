@@ -158,83 +158,6 @@ namespace EzUI {
 			::DeleteBitmap(_bitmap);
 		}
 	}
-	void Rect::StringToRect(const EString& str) {
-		auto rectStr = str.Split(",");
-		if (str.empty()) {
-			X = Y = Width = Height = 0;
-			return;//如果没写矩形区域
-		}
-		X = std::stoi(rectStr.at(0));
-		Y = std::stoi(rectStr.at(1));
-		Width = std::stoi(rectStr.at(2));
-		Height = std::stoi(rectStr.at(3));
-	}
-	Rect::Rect(const EString& rect) {
-		StringToRect(rect);
-	}
-	Rect& Rect::operator=(const EString& rect) {
-		StringToRect(rect);
-		return *this;
-	}
-	Rect::Rect(const RECT& winRect) {
-		X = winRect.left;
-		Y = winRect.top;
-		Width = winRect.right - winRect.left;
-		Height = winRect.bottom - winRect.top;
-	}
-
-	Color::Color()
-	{
-		Argb = 0;
-	}
-	Color::Color(const EString& colorStr) {
-		_MakeARGB(colorStr);
-	}
-	Color::Color(IN BYTE r, IN BYTE g, IN BYTE b) {
-		Argb = MakeARGB(255, r, g, b);
-	}
-	Color::Color(IN BYTE a, IN BYTE r, IN BYTE g, IN BYTE b)
-	{
-		Argb = MakeARGB(a, r, g, b);
-	}
-	Color::Color(IN ARGB argb)
-	{
-		Argb = argb;
-	}
-	Color& Color::operator=(const Color& Align_Right_Color) {
-		Argb = Align_Right_Color.GetValue();
-		return *this;
-	}
-	Color& Color::operator=(const EString& colorStr) {
-		_MakeARGB(colorStr);
-		return *this;
-	}
-	void Color::_MakeARGB(const EString& colorStr) {
-		if (colorStr.find("#") == 0) { //"#4e6ef2"
-			auto rStr = colorStr.substr(1, 2);
-			auto gStr = colorStr.substr(3, 2);
-			auto bStr = colorStr.substr(5, 2);
-			unsigned int r, g, b;
-			sscanf_s(rStr.c_str(), "%x", &r);
-			sscanf_s(gStr.c_str(), "%x", &g);
-			sscanf_s(bStr.c_str(), "%x", &b);
-			Argb = MakeARGB(255, r, g, b);
-			return;
-		}
-		if (colorStr.find("rgb") == 0) { //"rgb(255,100,2,3)"
-			int pos1 = colorStr.find("(");
-			int pos2 = colorStr.rfind(")");
-			EString rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
-			auto rgbList = rgbStr.Split(",");
-			unsigned char r, g, b;
-			float a = rgbList.size() == 3 ? 1 : std::stof(rgbList.at(3));//透明百分比 0~1
-			r = std::stoi(rgbList.at(0));
-			g = std::stoi(rgbList.at(1));
-			b = std::stoi(rgbList.at(2));
-			Argb = MakeARGB((byte)(255 * (a > 1 ? 1 : a)), r, g, b);
-			return;
-		}
-	}
 	void ControlStyle::SetBorder(const Color& color, int width) { //对所有border有效
 		BorderColor = color;
 		BorderLeft = width;//左边边框
@@ -260,7 +183,7 @@ namespace EzUI {
 		do
 		{
 			if (key == "background-color") {
-				style->BackgroundColor = value;
+				style->BackgroundColor =Convert::StringToColor(value);
 				break;
 			}
 			if (key == "background-image") {
@@ -280,11 +203,11 @@ namespace EzUI {
 				break;
 			}
 			if (key == "border-color") {
-				style->BorderColor = value;
+				style->BorderColor = Convert::StringToColor(value);
 				break;
 			}
 			if (key == "color" || key == "fore-color") {
-				style->ForeColor = value;
+				style->ForeColor = Convert::StringToColor(value);
 				break;
 			}
 			if (key == "radius" || key == "border-radius") {

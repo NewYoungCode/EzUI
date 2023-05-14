@@ -461,7 +461,11 @@ namespace EzUI {
 		if ((ExStyle & WS_EX_LAYERED) != WS_EX_LAYERED) {
 			PublicData.InvalidateRect = [=](void* _rect)->void {
 				//Debug::Log("threadId %d",EzUI::GetThreadId());
-				RECT r = ((Rect*)_rect)->WinRECT();
+				RECT r;
+				r.left = ((Rect*)_rect)->GetLeft();
+				r.top = ((Rect*)_rect)->GetTop();
+				r.right = ((Rect*)_rect)->GetRight();
+				r.bottom = ((Rect*)_rect)->GetBottom();
 				::InvalidateRect(_hWnd, &r, FALSE);
 				//::SendMessage(_hWnd, UI_PAINT, (WPARAM)_rect, NULL);
 			};
@@ -710,7 +714,7 @@ namespace EzUI {
 	{
 		if (!MainLayout) {
 			return;
-		}
+}
 #ifdef COUNT_ONSIZE
 		StopWatch sw;
 #endif

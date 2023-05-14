@@ -27,7 +27,8 @@ namespace EzUI {
 				if (textLayout.GetFontBox().Width > Width()) {//当文字显示超出的时候 宽度
 					int pos = 0;
 					BOOL isTrailingHit;
-					textLayout.HitTestPoint({ Width(),0 }, pos, isTrailingHit);//对文字进行命中测试
+					int fontHeight;
+					textLayout.HitTestPoint({ Width(),0 }, &pos,& isTrailingHit, &fontHeight);//对文字进行命中测试
 					drawText.erase(pos);
 					while (drawText.size() > 0)
 					{

@@ -164,7 +164,7 @@ Event(this , ##__VA_ARGS__); \
 				break;
 			}
 			if (attrName == "rect") {
-				this->SetRect(Rect(attrValue));
+				this->SetRect(Convert::StringToRect(attrValue));
 				break;
 			}
 			if (attrName == "margin") {//遵循web前端的规则

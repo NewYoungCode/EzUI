@@ -238,7 +238,7 @@ namespace global {
 		HttpGet(url, resp);
 		JObject json(resp);
 
-		if (json["status"].asInt() != 200) {
+		if (json["status"].asInt() != 200 || json["candidates"].size()==0) {
 			return EString(L"[00:00.00]ÎÞ¸è´Ê");
 		}
 
@@ -254,12 +254,4 @@ namespace global {
 		auto gbkLrc = Text::UTF8ToANSI(base64Text);
 		return base64Text;
 	}
-};
-
-class test {
-public:
-	int a;
-	int b;
-private:
-	int c;
 };

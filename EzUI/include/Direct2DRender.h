@@ -9,7 +9,7 @@
 // C RunTime Header Files:
 #include <stdlib.h>
 #include <malloc.h>
-#include <memory.h>
+#include <memory.h> 
 #include <wchar.h>
 #include <math.h>
 #include <d2d1.h>
@@ -21,7 +21,7 @@
 #include <map>
 #include "RenderType.h"
 namespace EzUI {
-
+#define __MAXFLOAT 16777216
 	namespace D2D {
 		extern ID2D1Factory* g_Direct2dFactory;
 		extern IDWriteFactory* g_WriteFactory;
@@ -45,18 +45,68 @@ namespace EzUI {
 		bool operator==(const Font& _right);
 		virtual ~Font();
 	};
+
+	//文本命中测试数据
+	class HitTestMetrics {
+	public:
+		size_t Length;
+		size_t TextPos;//命中的下标
+		RectF FontBox;//文字的矩形位置
+		bool IsTrailingHit;//命中位置是否在尾部
+	public:
+		Rect GetCare() {
+			float x = FontBox.X;
+			if (IsTrailingHit) {
+				x += FontBox.Width;
+			}
+			float y = FontBox.Y;
+			return Rect((int)x, (int)y, 1, (int)(FontBox.Height + 0.5));
+		}
+		int GetFontHeight() {
+			return (int)(FontBox.Height + 0.5);
+		}
+		//int& textPos = *_textPos;
+		//BOOL& isTrailingHit = *_isTrailingHit;
+		//DWRITE_HIT_TEST_METRICS hitTestMetrics;
+		//BOOL isInside;
+		//{
+		//	FLOAT x = (FLOAT)pt.X, y = (FLOAT)pt.Y;
+		//	value->HitTestPoint(
+		//		(FLOAT)x,
+		//		(FLOAT)y,
+		//		&isTrailingHit,
+		//		&isInside,
+		//		&hitTestMetrics
+		//	);
+		//}
+		//int posX = (int)(hitTestMetrics.left + 0.5);
+		//if (isTrailingHit) {//判断前侧还是尾侧
+		//	posX += (int)(hitTestMetrics.width + 0.5);
+		//}
+		//*fontHeight = (int)(hitTestMetrics.height + 0.5);
+		//textPos = hitTestMetrics.textPosition;
+		//return __Point{ posX,(int)(hitTestMetrics.top + 0.5) };//返回光标所在的位置
+	};
+
 	class TextLayout {
 	private:
 		TextLayout() = delete;
 		TextLayout(const TextLayout& _copy) = delete;
 		TextLayout& operator=(const TextLayout& _copy) = delete;
 		IDWriteTextLayout* value = NULL;
-	public:
-		TextLayout(const std::wstring& text, const Font& pTextFormat, TextAlign textAlgin = TextAlign::TopLeft, __Size maxSize = __Size{ 16777216,16777216 });
-		__Point HitTestPoint(const __Point& pt, int& textPos, BOOL& isTrailingHit);
-		__Point HitTestTextPosition(int textPos, BOOL isTrailingHit);
-		__Size GetFontBox();
+		DWRITE_TEXT_METRICS textMetrics;
 		void SetTextAlign(TextAlign textAlign);
+	public:
+		TextLayout(const std::wstring& text, const Font& pTextFormat, TextAlign textAlgin = TextAlign::TopLeft, Size maxSize = Size{ __MAXFLOAT,__MAXFLOAT });
+		Point HitTestPoint(const Point& pt, int* outTextPos, BOOL* outIsTrailingHit, int* fontHeight);
+		void TextLayout::HitTestPoint(const Point& pt, HitTestMetrics* hitTestMetrics);//根据坐标执行命中测试
+		Point HitTestTextPosition(int textPos, BOOL isTrailingHit);//根据文字下标执行命中测试
+		int Width();
+		int Height();
+		Size GetFontBox();//获取文字绘制的时候占用多少行
+		Rect GetLineBox(int lineIndex);
+		int GetFontHeight();//获取字体高度
+		int GetLineCount();//获取一共有多少行
 		IDWriteTextLayout* Get() const;
 		void SetUnderline(size_t pos = 0, size_t count = 0);
 		virtual ~TextLayout();
@@ -136,7 +186,7 @@ namespace EzUI {
 			D2D::g_Direct2dFactory->CreatePathGeometry(&pathGeometry);
 			pathGeometry->Open(&pSink);
 		}
-		void AddRectangle(const __Rect& rect) {
+		void AddRectangle(const Rect& rect) {
 			if (!isBegin) {
 				pSink->BeginFigure({ (FLOAT)rect.GetLeft(),(FLOAT)rect.GetTop() }, D2D1_FIGURE_BEGIN_FILLED);
 				isBegin = true;
@@ -148,10 +198,10 @@ namespace EzUI {
 			pSink->AddLine({ (FLOAT)rect.GetRight(),(FLOAT)rect.GetBottom() });
 			pSink->AddLine({ (FLOAT)rect.GetLeft(),(FLOAT)rect.GetBottom() });
 		}
-		void AddArc(const __Rect& rect, int startAngle, int sweepAngle) {
+		void AddArc(const Rect& rect, int startAngle, int sweepAngle) {
 
 		}
-		void AddLine(const __Rect& rect) {
+		void AddLine(const Rect& rect) {
 
 		}
 		void CloseFigure() {
@@ -207,9 +257,9 @@ namespace EzUI {
 
 	class Bezier {
 	public:
-		__Point point1;
-		__Point point2;
-		__Point point3;
+		Point point1;
+		Point point2;
+		Point point3;
 	};
 };
 
@@ -239,24 +289,24 @@ namespace EzUI {
 		virtual ~DXRender();
 		void SetFont(const std::wstring& fontFamily, int fontSize);//必须先调用
 		void SetFont(const Font& _copy_font);//必须先调用
-		void SetColor(const __Color& color);//会之前必须调用
+		void SetColor(const Color& color);//会之前必须调用
 		void SetStrokeStyle(StrokeStyle strokeStyle = StrokeStyle::Solid, int dashWidth = 3);//设置样式 虚线/实线
-		void DrawString(const TextLayout& textLayout, __Point = { 0,0 });//根据已有的布局绘制文字
-		void DrawString(const std::wstring& text, const  __Rect& _rect, EzUI::TextAlign textAlign);//绘制文字
-		void DrawLine(const __Point& _A, const __Point& _B, int width);//绘制一条线
-		void DrawRectangle(const  __Rect& _rect, int _radius = 0, int width = 1);//绘制矩形
-		void FillRectangle(const __Rect& _rect, int _radius = 0);//填充矩形
-		void PushLayer(const __Rect& rectBounds);//速度较快
+		void DrawString(const TextLayout& textLayout, Point = { 0,0 });//根据已有的布局绘制文字
+		void DrawString(const std::wstring& text, const   Rect& _rect, EzUI::TextAlign textAlign);//绘制文字
+		void DrawLine(const Point& _A, const  Point& _B, int width = 1);//绘制一条线
+		void DrawRectangle(const Rect& _rect, int _radius = 0, int width = 1);//绘制矩形
+		void FillRectangle(const Rect& _rect, int _radius = 0);//填充矩形
+		void PushLayer(const Rect& rectBounds);//速度较快
 		void PushLayer(const Geometry& dxGeometry);//比较耗性能,但是可以异形抗锯齿裁剪
 		void PopLayer();//弹出最后一个裁剪
-		void DrawImage(DXImage* _image, const __Rect& _rect, const ImageSizeMode& imageSizeMode= ImageSizeMode::StretchImage, const EzUI::Margin& margin = 0);//绘制图像
+		void DrawImage(DXImage* _image, const  Rect& _rect, const ImageSizeMode& imageSizeMode = ImageSizeMode::StretchImage, const EzUI::Margin& margin = 0);//绘制图像
 		void SetTransform(int xOffset, int yOffset, int angle = 0);//对画布进行旋转和偏移
-		void DrawBezier(const __Point& startPoint, const Bezier& points, int width = 1);//贝塞尔线
-		void DrawBezier(const __Point& startPoint, std::list<Bezier>& points, int width = 1);//贝塞尔线
-		void DrawEllipse(const __Point& point, int radiusX, int radiusY, int width = 1);
-		void FillEllipse(const __Point& point, int radiusX, int radiusY);
-		void DrawArc(const __Rect& rect, int startAngle, int sweepAngle, int width = 1);//未实现
-		void DrawArc(const __Point& point1, const __Point& point2, const __Point& point3, int width = 1);//绘制弧线 未实现
+		void DrawBezier(const Point& startPoint, const Bezier& points, int width = 1);//贝塞尔线
+		void DrawBezier(const Point& startPoint, std::list<Bezier>& points, int width = 1);//贝塞尔线
+		void DrawEllipse(const Point& point, int radiusX, int radiusY, int width = 1);
+		void FillEllipse(const Point& point, int radiusX, int radiusY);
+		void DrawArc(const Rect& rect, int startAngle, int sweepAngle, int width = 1);//未实现
+		void DrawArc(const Point& point1, const  Point& point2, const Point& point3, int width = 1);//绘制弧线 未实现
 		void DrawPath(const DXPath& path, int width = 1);//绘制path 未实现
 		void FillPath(const DXPath& path);//填充Path 未实现
 		ID2D1DCRenderTarget* Get();//获取原生DX对象

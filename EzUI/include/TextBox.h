@@ -6,14 +6,18 @@ namespace EzUI {
 		public Control
 	{
 	private:
+		int lastWidth = 0;
+		int lastHeight= 0;
+		bool multiLine = false;
 		std::wstring text;//文字
 		bool _down = false;//是否具有焦点中
 		bool _focus = false;//是否具有焦点中
 		Point point_Start;//开始选中的位置
 		Point point_End;//结束位置
-		Rect selectRect;//选中的字符矩形
+		std::list<Rect> selectRects;
+		//Rect selectRect;//选中的字符矩形
 		Rect careRect;//光标位置
-		Size FontBox;//文字占用空间
+		Font* font = NULL;//字体
 		TextLayout* textLayout = NULL;//字体布局
 		Point A;//A点
 		BOOL A_isTrailingHit;//如果是1表示是字符的后半边
@@ -22,9 +26,9 @@ namespace EzUI {
 		BOOL B_isTrailingHit;//如果是1表示是字符的后半边
 		int B_TextPos = 0;//点击了第几个字符
 		int TextPos = 0;//当前文字的下标 0~text.size()
-		int x = 0;//用于左右滚动
+		int scrollX = 0;//用于左右滚动
+		int scrollY = 0;//用于y轴滚动
 		int lastX = 0;//上一个x位置
-		int y = 0;//用于垂直滚动 预留
 		int lastY = 0;//上一个y位置 预留
 		Windows::Timer timer;//用于光标闪烁
 		bool _careShow = false;//用于光标闪烁
@@ -64,5 +68,7 @@ namespace EzUI {
 		const EString GetText();
 		EventTextChange TextChange = NULL;
 		void SetText(const EString& text);
+		bool IsMultiLine();
+		void SetMultiLine(bool multiLine);
 	};
 };

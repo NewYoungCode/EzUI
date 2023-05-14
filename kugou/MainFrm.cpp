@@ -4,6 +4,12 @@
 MainFrm::MainFrm() :Form(1020, 690)
 {
 	InitForm();
+	//textArea.Style.SetBorder(Color::White, 1);
+	//textArea.SetLocation({ 100, 0 });
+	//textArea.SetFixedSize({ 200,50 });
+	//textArea.SetText(L"hello");
+	////textArea.HoverStyle.FontSize = 22;
+	//MainLayout->AddControl(&textArea);
 }
 void MainFrm::InitForm() {
 	this->Zoom = true;

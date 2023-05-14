@@ -8,7 +8,7 @@ namespace EzUI {
 	protected:
 		std::wstring _wstr;
 		bool _underline = false;
-		RectF fontBox;
+		Rect fontBox;
 	protected:
 		virtual void OnForePaint(PaintEventArgs& args) override;
 	public:

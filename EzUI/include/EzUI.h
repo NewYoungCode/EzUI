@@ -15,44 +15,54 @@ namespace EzUI {
 	//从获取文件资源
 	extern UI_EXPORT bool GetResource(const EString& fileName, std::string* outData);
 
-	using RectF = RenderType::RectF;
-	using Size = RenderType::Size;
-	using SizeF = RenderType::SizeF;
-	using Point = RenderType::Point;
-	using PointF = RenderType::PointF;
-	using ARGB = RenderType::ARGB;
-
 	class EventArgs;
 	class Control;
 	class Spacer;
 	class ScrollBar;
 	enum class Cursor :ULONG_PTR;
 
-	class UI_EXPORT Rect :public RenderType::Rect {
-	private:
-		void StringToRect(const EString& str);
-	public:
-		Rect() :RenderType::Rect() {};
-		virtual ~Rect() {};
-		Rect(IN INT x, IN INT y, IN INT width, IN INT height) :RenderType::Rect(x, y, width, height) {};
-		Rect(IN const Point& location, IN const Size& size) :RenderType::Rect(location, size) {};
-		Rect(const EString& rect);
-		Rect& operator=(const EString& rect);
-		Rect(const RECT& winRect);
-	};
-	class UI_EXPORT Color :public RenderType::Color {
-	private:
-		void _MakeARGB(const EString& colorStr);
-	public:
-		Color();
-		virtual ~Color() {}
-		Color& operator=(const EString& colorStr);
-		Color(const EString& colorStr);
-		Color(BYTE r, BYTE g, BYTE b);
-		Color(BYTE a, BYTE r, BYTE g, BYTE b);
-		Color(ARGB argb);
-		Color& operator=(const Color& Align_Right_Color);
-	};
+	namespace Convert {
+		inline Rect StringToRect(const EString& str) {
+			auto rectStr = str.Split(",");
+			Rect rect;
+			if (str.empty()) {
+				return rect;//如果没写矩形区域
+			}
+			rect.X = std::stoi(rectStr.at(0));
+			rect.Y = std::stoi(rectStr.at(1));
+			rect.Width = std::stoi(rectStr.at(2));
+			rect.Height = std::stoi(rectStr.at(3));
+			return rect;
+		}
+		inline Color StringToColor(const EString& colorStr) {
+			if (colorStr.find("#") == 0) { //"#4e6ef2"
+				auto rStr = colorStr.substr(1, 2);
+				auto gStr = colorStr.substr(3, 2);
+				auto bStr = colorStr.substr(5, 2);
+				unsigned int r, g, b;
+				sscanf_s(rStr.c_str(), "%x", &r);
+				sscanf_s(gStr.c_str(), "%x", &g);
+				sscanf_s(bStr.c_str(), "%x", &b);
+				//Argb = MakeARGB(255, r, g, b);
+				return Color(255, r, g, b);
+			}
+			if (colorStr.find("rgb") == 0) { //"rgb(255,100,2,3)"
+				int pos1 = colorStr.find("(");
+				int pos2 = colorStr.rfind(")");
+				EString rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
+				auto rgbList = rgbStr.Split(",");
+				unsigned char r, g, b;
+				float a = rgbList.size() == 3 ? 1 : std::stof(rgbList.at(3));//透明百分比 0~1
+				r = std::stoi(rgbList.at(0));
+				g = std::stoi(rgbList.at(1));
+				b = std::stoi(rgbList.at(2));
+				//Argb = MakeARGB((byte)(255 * (a > 1 ? 1 : a)), r, g, b);
+				return Color((byte)(255 * (a > 1 ? 1 : a)), r, g, b);
+			}
+			return Color();
+		}
+	}
+
 	class UI_EXPORT EBitmap {
 	public:
 		enum class PixelFormat :int {
@@ -75,7 +85,6 @@ namespace EzUI {
 		Color GetPixel(int x, int y);
 		void Earse(const Rect& rect);//抹除矩形内容
 		void FillRect(const Rect& rect, const Color& color);//
-
 		HDC& GetDC();
 		virtual ~EBitmap();
 	};

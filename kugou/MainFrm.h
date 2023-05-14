@@ -25,6 +25,7 @@ private:
 	Image* bkImage = NULL, * headImg = NULL;
 	std::future<void>* downloadTask = NULL;
 	int lastWidth = -1;
+	//TextArea textArea;
 protected:
 	virtual void OnKeyDown(WPARAM wparam, LPARAM lParam)override;
 	bool OnNotify(Control* sender, EventArgs& args)override;

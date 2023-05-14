@@ -61,12 +61,27 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
 	TileList list(&mainLayout);
 
-	for (size_t i = 0; i < 99999; i++)
+	TextBox text(&mainLayout);
+	//text.SetFixedSize({ 100,50 });
+	text.Style.SetBorder(Color::Gray, 1);
+	text.SetMultiLine(true);
+	text.Margin.Left = 20;
+	text.Margin.Right = 20;
+	text.SetText(L"啊撒旦艰苦换个房间看电视进\r\n口的方式但是几乎都是复活节过段时间韩国hsdghjhjgjhghjend啊撒旦艰苦换个房间看电视进口的方式但是几乎都是复活节过段时间韩国hsdghjhjgjhghjend啊撒旦艰苦换个房间看电视进口的方式但是几乎都是复活节过段时间韩国hsdghjhjgjhghjend啊撒旦艰苦换个房间看电视进口的方式但是几乎都是复活节过段时间韩国hsdghjhjgjhghjend");
+
+	Button btn(&mainLayout);
+	btn.SetText(L"单行/多行切换");
+	btn.SetFixedSize({ 150,40 });
+	btn.MouseClick = [&text](Control*, MouseButton, const Point&)->void {
+		text.SetMultiLine(!text.IsMultiLine());
+		text.Invalidate();
+	};
+	/*for (size_t i = 0; i < 99999; i++)
 	{
 		Button* lb = new Button(&list);
 		lb->SetText("button" + std::to_string(i));
 		lb->SetFixedSize({ 50,30 });
-	}
+	}*/
 
 	//mainLayout.AddControl(&labelBottom);//添加控件
 

@@ -67,16 +67,18 @@ namespace EzUI {
 		return false;
 	}
 	//TextLayout
-	TextLayout::TextLayout(const std::wstring& text, const Font& pTextFormat, TextAlign textAlign, __Size maxSize) {
+	TextLayout::TextLayout(const std::wstring& text, const Font& pTextFormat, TextAlign textAlign, Size maxSize) {
 		D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), pTextFormat.Get(), (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &value);
 		SetTextAlign(textAlign);
+		value->GetMetrics(&textMetrics);
 	}
 	IDWriteTextLayout* TextLayout::Get() const {
 		return value;
 	}
-	__Point TextLayout::HitTestPoint(const __Point& pt, int& textPos, BOOL& isTrailingHit) {
+	Point TextLayout::HitTestPoint(const Point& pt, int* _textPos, BOOL* _isTrailingHit, int* fontHeight) {
+		int& textPos = *_textPos;
+		BOOL& isTrailingHit = *_isTrailingHit;
 		DWRITE_HIT_TEST_METRICS hitTestMetrics;
-		//BOOL isTrailingHit;
 		BOOL isInside;
 		{
 			FLOAT x = (FLOAT)pt.X, y = (FLOAT)pt.Y;
@@ -92,21 +94,79 @@ namespace EzUI {
 		if (isTrailingHit) {//判断前侧还是尾侧
 			posX += (int)(hitTestMetrics.width + 0.5);
 		}
+		*fontHeight = (int)(hitTestMetrics.height + 0.5);
 		textPos = hitTestMetrics.textPosition;
-		return __Point{ posX,(int)(hitTestMetrics.top + 0.5) };//返回光标所在的位置
+		return Point{ posX,(int)(hitTestMetrics.top + 0.5) };//返回光标所在的位置
 	}
-	__Point TextLayout::HitTestTextPosition(int textPos, BOOL isTrailingHit) {
+
+	void TextLayout::HitTestPoint(const Point& pt, HitTestMetrics* outHitTestMetrics) {
+		BOOL isTrailingHit;
+		DWRITE_HIT_TEST_METRICS hitTestMetrics;
+		BOOL isInside;
+		{
+			FLOAT x = (FLOAT)pt.X, y = (FLOAT)pt.Y;
+			value->HitTestPoint(
+				(FLOAT)x,
+				(FLOAT)y,
+				&isTrailingHit,
+				&isInside,
+				&hitTestMetrics
+			);
+		}
+		outHitTestMetrics->Length = hitTestMetrics.length;
+		outHitTestMetrics->TextPos = hitTestMetrics.textPosition;
+		outHitTestMetrics->IsTrailingHit = isTrailingHit;
+		outHitTestMetrics->FontBox.X = hitTestMetrics.left;
+		outHitTestMetrics->FontBox.Y = hitTestMetrics.top;
+		outHitTestMetrics->FontBox.Width = hitTestMetrics.width;
+		outHitTestMetrics->FontBox.Height = hitTestMetrics.height;
+	}
+
+	Point TextLayout::HitTestTextPosition(int textPos, BOOL isTrailingHit) {
 		DWRITE_HIT_TEST_METRICS hitTestMetrics;
 		FLOAT X, Y;
 		value->HitTestTextPosition(textPos, isTrailingHit, &X, &Y, &hitTestMetrics);
-		return __Point((int)(X + 0.5), (int)(Y + 0.5));
+		return Point((int)(X + 0.5), (int)(Y + 0.5));
 	}
-	__Size TextLayout::GetFontBox() {
-		DWRITE_TEXT_METRICS textMetrics;
-		value->GetMetrics(&textMetrics);
-		D2D1_SIZE_F size = D2D1::SizeF(ceil(textMetrics.widthIncludingTrailingWhitespace), ceil(textMetrics.height));
-		return  __Size{ (int)(size.width + 0.5) ,(int)((size.height / textMetrics.lineCount) + 0.5) };
+	Size TextLayout::GetFontBox() {
+		FLOAT width = textMetrics.widthIncludingTrailingWhitespace;
+		FLOAT height = textMetrics.height;
+		return  Size{ (int)(width + 0.5) ,(int)(height + 0.5) };
 	}
+	int TextLayout::Width() {
+		FLOAT width = textMetrics.widthIncludingTrailingWhitespace;
+		return (int)(width + 0.5);
+	}
+	int TextLayout::Height() {
+		FLOAT width = textMetrics.height;
+		return (int)(width + 0.5);
+	}
+
+	int TextLayout::GetFontHeight() {
+		FLOAT height = textMetrics.height;
+		return  (int)((height / textMetrics.lineCount) + 0.5);
+	}
+	int TextLayout::GetLineCount() {
+		return textMetrics.lineCount;
+	}
+
+	Rect TextLayout::GetLineBox(int lineIndex) {
+		UINT lineCount = GetLineCount();
+		//// 获取每一行的宽高
+		DWRITE_LINE_METRICS* hitTestMetrics = new DWRITE_LINE_METRICS[lineCount]{ 0 };
+		FLOAT x = 0;
+		FLOAT y = 0;
+		value->GetLineMetrics(hitTestMetrics, lineCount, &lineCount);
+		float count = 0;
+		for (UINT32 i = 0; i < lineCount; i++)
+		{
+			auto it = hitTestMetrics[i];
+			int pause = 0;
+		}
+		delete[] hitTestMetrics;
+		return Rect();
+	}
+
 	void TextLayout::SetTextAlign(TextAlign textAlign) {
 #define __Top DWRITE_PARAGRAPH_ALIGNMENT_NEAR
 #define	__Bottom DWRITE_PARAGRAPH_ALIGNMENT_FAR
@@ -412,7 +472,7 @@ namespace EzUI {
 		}
 		font = new Font(_copy_font);
 	}
-	void DXRender::SetColor(const __Color& color) {
+	void DXRender::SetColor(const Color& color) {
 		if (brush == NULL) {
 			render->CreateSolidColorBrush(__To_D2D_COLOR_F(color), &brush);
 		}
@@ -435,21 +495,21 @@ namespace EzUI {
 			delete[] dashes;
 		}
 	}
-	void DXRender::DrawString(const TextLayout& textLayout, __Point startLacation) {
+	void DXRender::DrawString(const TextLayout& textLayout, Point startLacation) {
 		render->DrawTextLayout(D2D1_POINT_2F{ (FLOAT)(startLacation.X) ,(FLOAT)(startLacation.Y) }, textLayout.Get(), GetBrush());
 	}
-	void DXRender::DrawString(const std::wstring& text, const  __Rect& _rect, EzUI::TextAlign textAlign) {
-		const __Rect& rect = _rect;
-		TextLayout textLayout(text, *font, textAlign, __Size{ rect.Width, rect.Height });
+	void DXRender::DrawString(const std::wstring& text, const  Rect& _rect, EzUI::TextAlign textAlign) {
+		const Rect& rect = _rect;
+		TextLayout textLayout(text, *font, textAlign, Size{ rect.Width, rect.Height });
 		this->DrawString(textLayout, { _rect.X,_rect.Y });
 	}
-	void DXRender::DrawLine(const __Point& _A, const __Point& _B, int width) {
-		const __Point& A = _A;
-		const __Point& B = _B;
+	void DXRender::DrawLine(const Point& _A, const Point& _B, int width) {
+		const Point& A = _A;
+		const Point& B = _B;
 		render->DrawLine(D2D1_POINT_2F{ (float)A.X,(float)A.Y }, D2D1_POINT_2F{ (float)B.X,(float)B.Y }, GetBrush(), (FLOAT)width, GetStrokeStyle());
 	}
-	void DXRender::DrawRectangle(const  __Rect& _rect, int _radius, int width) {
-		const __Rect& rect = _rect;
+	void DXRender::DrawRectangle(const  Rect& _rect, int _radius, int width) {
+		const Rect& rect = _rect;
 		if (_radius > 0) {
 			float radius = _radius / 2.0f;
 			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), radius, radius };
@@ -459,8 +519,8 @@ namespace EzUI {
 			render->DrawRectangle(__To_D2D_RectF(rect), GetBrush(), (FLOAT)width, GetStrokeStyle());
 		}
 	}
-	void DXRender::FillRectangle(const __Rect& _rect, int _radius) {
-		const __Rect& rect = _rect;
+	void DXRender::FillRectangle(const Rect& _rect, int _radius) {
+		const Rect& rect = _rect;
 		if (_radius > 0) {
 			float radius = _radius / 2.0f;
 			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), radius, radius };
@@ -476,14 +536,14 @@ namespace EzUI {
 			render->SetTransform(D2D1::Matrix3x2F::Identity());
 		}
 		else if (angle != 0) {
-			render->SetTransform(D2D1::Matrix3x2F::Rotation(angle, D2D1::Point2F(xOffset, yOffset)));
+			render->SetTransform(D2D1::Matrix3x2F::Rotation(angle, D2D1::Point2F((FLOAT)xOffset, (FLOAT)yOffset)));
 		}
 		else if (angle == 0) {
 			// 设置x和y方向的偏移
 			render->SetTransform(D2D1::Matrix3x2F::Translation((FLOAT)xOffset, (FLOAT)yOffset));
 		}
 	}
-	void DXRender::DrawBezier(const __Point& startPoint, const Bezier& points, int width) {
+	void DXRender::DrawBezier(const Point& startPoint, const Bezier& points, int width) {
 		ID2D1GeometrySink* pSink = NULL;
 		ID2D1PathGeometry* pathGeometry = NULL;
 		D2D::g_Direct2dFactory->CreatePathGeometry(&pathGeometry);
@@ -497,7 +557,7 @@ namespace EzUI {
 		SafeRelease(&pathGeometry);
 		SafeRelease(&pSink);
 	}
-	void DXRender::DrawBezier(const __Point& startPoint, std::list<Bezier>& beziers, int width)
+	void DXRender::DrawBezier(const Point& startPoint, std::list<Bezier>& beziers, int width)
 	{
 		ID2D1GeometrySink* pSink = NULL;
 		ID2D1PathGeometry* pathGeometry = NULL;
@@ -521,7 +581,7 @@ namespace EzUI {
 		layer->Release();
 		layers.push_back(false);
 	}
-	void DXRender::PushLayer(const __Rect& rectBounds) {
+	void DXRender::PushLayer(const Rect& rectBounds) {
 		render->PushAxisAlignedClip(__To_D2D_RectF(rectBounds), D2D1_ANTIALIAS_MODE::D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 		layers.push_back(true);
 	}
@@ -536,11 +596,11 @@ namespace EzUI {
 			layers.pop_back();
 		}
 	}
-	void DXRender::DrawImage(DXImage* image, const __Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Margin& margin) {
+	void DXRender::DrawImage(DXImage* image, const Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Margin& margin) {
 		_NOREND_IMAGE_
 			if (image == NULL) return;
 		//计算坐标
-		__Rect rect = _rect;
+		Rect rect = _rect;
 		rect.X += margin.Left;
 		rect.Y += margin.Top;
 		rect.Width -= margin.Right * 2;
@@ -548,23 +608,23 @@ namespace EzUI {
 		//解码
 		image->DecodeOfRender(render);
 		//转换坐标,缩放
-		__Size imgSize(image->GetWidth(), image->GetHeight());
-		__Rect drawRect = EzUI::Transformation(imageSizeMode, rect, imgSize);
+		Size imgSize(image->GetWidth(), image->GetHeight());
+		Rect drawRect = EzUI::Transformation(imageSizeMode, rect, imgSize);
 		//开始绘制
 		if (image->Get() == NULL) return;
 		render->DrawBitmap(image->Get(), __To_D2D_RectF(drawRect));
 	}
-	void DXRender::DrawEllipse(const __Point& point, int radiusX, int radiusY, int width)
+	void DXRender::DrawEllipse(const Point& point, int radiusX, int radiusY, int width)
 	{
 		D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F((FLOAT)point.X, (FLOAT)point.Y), radiusX, radiusY);
 		render->DrawEllipse(ellipse, GetBrush(), (FLOAT)width, this->GetStrokeStyle());
 	}
-	void DXRender::FillEllipse(const __Point& point, int radiusX, int radiusY)
+	void DXRender::FillEllipse(const Point& point, int radiusX, int radiusY)
 	{
 		D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F((FLOAT)point.X, (FLOAT)point.Y), radiusX, radiusY);
 		render->FillEllipse(ellipse, GetBrush());
 	}
-	void DXRender::DrawArc(const __Rect& rect, int startAngle, int sweepAngle, int width) {
+	void DXRender::DrawArc(const Rect& rect, int startAngle, int sweepAngle, int width) {
 		//
 		//// 创建几何图形
 		//ID2D1PathGeometry* pGeometry;
@@ -593,7 +653,7 @@ namespace EzUI {
 		//	// 释放几何图形
 		//	pGeometry->Release();
 	}
-	void DXRender::DrawArc(const __Point& point1, const __Point& point2, const __Point& point3, int width)
+	void DXRender::DrawArc(const Point& point1, const Point& point2, const Point& point3, int width)
 	{
 
 	}

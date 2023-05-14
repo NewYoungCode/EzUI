@@ -10,108 +10,49 @@ namespace EzUI {
 #define REAL_TOLERANCE     (FLT_MIN * 100)
 #define REAL_EPSILON        1.192092896e-07F        /* FLT_EPSILON */
 
-		class Size;
-		class SizeF;
-		class Point;
-		class PointF;
-		class Rect;
-		class RectF;
-
-		class SizeF
+		template<typename T>
+		class __Size
 		{
 		public:
-			REAL Width;
-			REAL Height;
+			T Width;
+			T Height;
 		public:
-			SizeF()
-			{
-				Width = Height = 0.0f;
-			}
-
-			SizeF(IN const SizeF& size)
-			{
-				Width = size.Width;
-				Height = size.Height;
-			}
-
-			SizeF(IN REAL width,
-				IN REAL height)
-			{
-				Width = width;
-				Height = height;
-			}
-
-			SizeF operator+(IN const SizeF& sz) const
-			{
-				return SizeF(Width + sz.Width,
-					Height + sz.Height);
-			}
-
-			SizeF operator-(IN const SizeF& sz) const
-			{
-				return SizeF(Width - sz.Width,
-					Height - sz.Height);
-			}
-
-			bool Equals(IN const SizeF& sz) const
-			{
-				return (Width == sz.Width) && (Height == sz.Height);
-			}
-
-			bool Empty() const
-			{
-				return (Width == 0.0f && Height == 0.0f);
-			}
-
-
-		};
-
-		class Size
-		{
-		public:
-			INT Width;
-			INT Height;
-		public:
-			Size()
+			__Size()
 			{
 				Width = Height = 0;
 			}
-
-			Size(IN const Size& size)
+			__Size(const __Size& __Size)
 			{
-				Width = size.Width;
-				Height = size.Height;
+				Width = __Size.Width;
+				Height = __Size.Height;
 			}
-
-			Size(IN INT width,
-				IN INT height)
+			__Size(T width,
+				T height)
 			{
 				Width = width;
 				Height = height;
 			}
-
-			Size operator+(IN const Size& sz) const
+			__Size operator+(const __Size& sz) const
 			{
-				return Size(Width + sz.Width,
+				return __Size(Width + sz.Width,
 					Height + sz.Height);
 			}
-
-			Size operator-(IN const Size& sz) const
+			__Size operator-(const __Size& sz) const
 			{
-				return Size(Width - sz.Width,
+				return __Size(Width - sz.Width,
 					Height - sz.Height);
 			}
 
-			bool operator==(IN const Size& _right) const
+			bool operator==(const __Size& _right) const
 			{
 				return (Width == _right.Width && Height == _right.Height);
 			}
-			bool operator!=(IN const Size& _right) const
+			bool operator!=(const __Size& _right) const
 			{
 				return !(Width == _right.Width && Height == _right.Height);
 			}
 
-			bool Equals(IN const Size& sz) const
+			bool Equals(const __Size& sz) const
 			{
 				return (Width == sz.Width) && (Height == sz.Height);
 			}
@@ -120,316 +61,77 @@ namespace EzUI {
 			{
 				return (Width == 0 && Height == 0);
 			}
-
-
 		};
 
-		class PointF
+		template<typename T>
+		class __Point
 		{
 		public:
-			REAL X;
-			REAL Y;
+			T X;
+			T Y;
 		public:
-			PointF()
-			{
-				X = Y = 0.0f;
-			}
-
-			PointF(IN const PointF& point)
-			{
-				X = point.X;
-				Y = point.Y;
-			}
-
-			PointF(IN const SizeF& size)
-			{
-				X = size.Width;
-				Y = size.Height;
-			}
-
-			PointF(IN REAL x,
-				IN REAL y)
-			{
-				X = x;
-				Y = y;
-			}
-
-			PointF operator+(IN const PointF& point) const
-			{
-				return PointF(X + point.X,
-					Y + point.Y);
-			}
-
-			PointF operator-(IN const PointF& point) const
-			{
-				return PointF(X - point.X,
-					Y - point.Y);
-			}
-
-			bool Equals(IN const PointF& point)
-			{
-				return (X == point.X) && (Y == point.Y);
-			}
-
-
-		};
-
-		class Point
-		{
-		public:
-			INT X;
-			INT Y;
-		public:
-			Point()
+			__Point()
 			{
 				X = Y = 0;
 			}
 
-			Point(IN const Point& point)
+			__Point(const __Point& __Point)
 			{
-				X = point.X;
-				Y = point.Y;
+				X = __Point.X;
+				Y = __Point.Y;
 			}
 
-			Point(IN const Size& size)
+			__Point(const __Size<T>& __Size)
 			{
-				X = size.Width;
-				Y = size.Height;
+				X = __Size.Width;
+				Y = __Size.Height;
 			}
 
-			Point(IN INT x,
-				IN INT y)
-			{
-				X = x;
-				Y = y;
-			}
-
-			Point operator+(IN const Point& point) const
-			{
-				return Point(X + point.X,
-					Y + point.Y);
-			}
-
-			Point operator-(IN const Point& point) const
-			{
-				return Point(X - point.X,
-					Y - point.Y);
-			}
-
-			bool Equals(IN const Point& point)
-			{
-				return (X == point.X) && (Y == point.Y);
-			}
-
-
-		};
-		class RectF
-		{
-		public:
-			REAL X;
-			REAL Y;
-			REAL Width;
-			REAL Height;
-		public:
-
-			RectF()
-			{
-				X = Y = Width = Height = 0.0f;
-			}
-
-			RectF(IN REAL x,
-				IN REAL y,
-				IN REAL width,
-				IN REAL height)
+			__Point(T x,
+				T y)
 			{
 				X = x;
 				Y = y;
-				Width = width;
-				Height = height;
 			}
-			/*		RectF(const Rect& rect) {
-						X = (FLOAT)rect.X;
-						Y = (FLOAT)rect.Y;
-						Width = (FLOAT)rect.Width;
-						Height = (FLOAT)rect.Height;
-					}*/
 
-			RectF(IN const PointF& location,
-				IN const SizeF& size)
+			__Point operator+(const __Point& __Point) const
 			{
-				X = location.X;
-				Y = location.Y;
-				Width = size.Width;
-				Height = size.Height;
+				return __Point(X + __Point.X,
+					Y + __Point.Y);
 			}
 
-			RectF* Clone() const
+			__Point operator-(const __Point& __Point) const
 			{
-				return new RectF(X, Y, Width, Height);
+				return __Point(X - __Point.X,
+					Y - __Point.Y);
 			}
 
-			void GetLocation(OUT PointF* point) const
+			bool Equals(const __Point& __Point)
 			{
-				point->X = X;
-				point->Y = Y;
+				return (X == __Point.X) && (Y == __Point.Y);
 			}
-
-			void GetSize(OUT SizeF* size) const
-			{
-				size->Width = Width;
-				size->Height = Height;
-			}
-
-			void GetBounds(OUT RectF* rect) const
-			{
-				rect->X = X;
-				rect->Y = Y;
-				rect->Width = Width;
-				rect->Height = Height;
-			}
-
-			REAL GetLeft() const
-			{
-				return X;
-			}
-
-			REAL GetTop() const
-			{
-				return Y;
-			}
-
-			REAL GetRight() const
-			{
-				return X + Width;
-			}
-
-			REAL GetBottom() const
-			{
-				return Y + Height;
-			}
-
-			bool IsEmptyArea() const
-			{
-				return (Width <= REAL_EPSILON) || (Height <= REAL_EPSILON);
-			}
-
-			bool Equals(IN const RectF& rect) const
-			{
-				return X == rect.X &&
-					Y == rect.Y &&
-					Width == rect.Width &&
-					Height == rect.Height;
-			}
-
-			bool Contains(IN REAL x,
-				IN REAL y) const
-			{
-				return x >= X && x < X + Width &&
-					y >= Y && y < Y + Height;
-			}
-
-			bool Contains(IN const PointF& pt) const
-			{
-				return Contains(pt.X, pt.Y);
-			}
-
-			bool Contains(IN const RectF& rect) const
-			{
-				return (X <= rect.X) && (rect.GetRight() <= GetRight()) &&
-					(Y <= rect.Y) && (rect.GetBottom() <= GetBottom());
-			}
-
-			void Inflate(IN REAL dx,
-				IN REAL dy)
-			{
-				X -= dx;
-				Y -= dy;
-				Width += 2 * dx;
-				Height += 2 * dy;
-			}
-
-			void Inflate(IN const PointF& point)
-			{
-				Inflate(point.X, point.Y);
-			}
-
-			bool Intersect(IN const RectF& rect)
-			{
-				return Intersect(*this, *this, rect);
-			}
-
-			static bool Intersect(OUT RectF& c,
-				IN const RectF& a,
-				IN const RectF& b)
-			{
-				REAL right = min(a.GetRight(), b.GetRight());
-				REAL bottom = min(a.GetBottom(), b.GetBottom());
-				REAL left = max(a.GetLeft(), b.GetLeft());
-				REAL top = max(a.GetTop(), b.GetTop());
-
-				c.X = left;
-				c.Y = top;
-				c.Width = right - left;
-				c.Height = bottom - top;
-				return !c.IsEmptyArea();
-			}
-
-			bool IntersectsWith(IN const RectF& rect) const
-			{
-				return (GetLeft() < rect.GetRight() &&
-					GetTop() < rect.GetBottom() &&
-					GetRight() > rect.GetLeft() &&
-					GetBottom() > rect.GetTop());
-			}
-
-			static bool Union(OUT RectF& c,
-				IN const RectF& a,
-				IN const RectF& b)
-			{
-				REAL right = max(a.GetRight(), b.GetRight());
-				REAL bottom = max(a.GetBottom(), b.GetBottom());
-				REAL left = min(a.GetLeft(), b.GetLeft());
-				REAL top = min(a.GetTop(), b.GetTop());
-
-				c.X = left;
-				c.Y = top;
-				c.Width = right - left;
-				c.Height = bottom - top;
-				return !c.IsEmptyArea();
-			}
-
-			void Offset(IN const PointF& point)
-			{
-				Offset(point.X, point.Y);
-			}
-
-			void Offset(IN REAL dx,
-				IN REAL dy)
-			{
-				X += dx;
-				Y += dy;
-			}
-
 
 		};
-		class Rect
+
+		template<typename T>
+		class __Rect
 		{
 		public:
-			INT X;
-			INT Y;
-			INT Width;
-			INT Height;
+			T X;
+			T Y;
+			T Width;
+			T Height;
 		public:
 
-			Rect()
+			__Rect()
 			{
 				X = Y = Width = Height = 0;
 			}
 
-			Rect(IN INT x,
-				IN INT y,
-				IN INT width,
-				IN INT height)
+			__Rect(T x,
+				T y,
+				T width,
+				T height)
 			{
 				X = x;
 				Y = y;
@@ -437,106 +139,79 @@ namespace EzUI {
 				Height = height;
 			}
 
-			Rect(IN const Point& location,
-				IN const Size& size)
-			{
+			__Rect(const __Point<T>& location, const __Size<T>& size) {
 				X = location.X;
 				Y = location.Y;
 				Width = size.Width;
 				Height = size.Height;
 			}
 
-			Rect* Clone() const
+			__Point<T> GetLocation() const
 			{
-				return new Rect(X, Y, Width, Height);
+				return __Point<T>{ X, Y };
 			}
 
-			void GetLocation(OUT Point* point) const
+			__Size<T> GetSize() const
 			{
-				point->X = X;
-				point->Y = Y;
-			}
-			Point GetLocation() const
-			{
-				return Point{ X,Y };
+				return __Size<T>(Width, Height);
 			}
 
-			void GetSize(OUT Size* size) const
-			{
-				size->Width = Width;
-				size->Height = Height;
-			}
-			Size GetSize() const
-			{
-				return Size{ Width,Height };
-			}
 
-			void GetBounds(OUT Rect* rect) const
-			{
-				rect->X = X;
-				rect->Y = Y;
-				rect->Width = Width;
-				rect->Height = Height;
-			}
-
-			INT GetLeft() const
+			T GetLeft() const
 			{
 				return X;
 			}
 
-			INT GetTop() const
+			T GetTop() const
 			{
 				return Y;
 			}
-
-			INT GetRight() const
+			T GetRight() const
 			{
 				return X + Width;
 			}
-
-			INT GetBottom() const
+			T GetBottom() const
 			{
 				return Y + Height;
 			}
-
 			bool IsEmptyArea() const
 			{
 				return (Width <= 0) || (Height <= 0);
 			}
 
-			bool Equals(IN const Rect& rect) const
+			bool Equals(const __Rect& __Rect) const
 			{
-				return X == rect.X &&
-					Y == rect.Y &&
-					Width == rect.Width &&
-					Height == rect.Height;
+				return X == __Rect.X &&
+					Y == __Rect.Y &&
+					Width == __Rect.Width &&
+					Height == __Rect.Height;
 			}
 
-			bool  operator == (const Rect& right) {
+			bool  operator == (const __Rect& right) {
 				return Equals(right);
 			}
 
-			bool Contains(IN INT x,
-				IN INT y) const
+			bool Contains(T x,
+				T y) const
 			{
 				return x >= X && x < X + Width &&
 					y >= Y && y < Y + Height;
 			}
 
-			bool Contains(IN const Point& pt) const
+			bool Contains(const __Point<T>& pt) const
 			{
 				return Contains(pt.X, pt.Y);
 			}
 
-			bool Contains(IN const Rect& rect) const
+			bool Contains(const __Rect& __Rect) const
 			{
-				return (X <= rect.X) && (rect.GetRight() <= GetRight()) &&
-					(Y <= rect.Y) && (rect.GetBottom() <= GetBottom());
+				return (X <= __Rect.X) && (__Rect.GetRight() <= GetRight()) &&
+					(Y <= __Rect.Y) && (__Rect.GetBottom() <= GetBottom());
 
 			}
 
-			void Inflate(IN INT dx,
-				IN INT dy)
+			void Inflate(T dx,
+				T dy)
 			{
 				X -= dx;
 				Y -= dy;
@@ -544,27 +219,27 @@ namespace EzUI {
 				Height += 2 * dy;
 			}
 
-			void Inflate(IN const Point& point)
+			void Inflate(const __Point<T>& point)
 			{
 				Inflate(point.X, point.Y);
 			}
 
-			bool Intersect(IN const Rect& rect)
+			bool Intersect(const __Rect& __Rect)
 			{
-				return Intersect(*this, *this, rect);
+				return Intersect(*this, *this, __Rect);
 			}
-			RECT WinRECT() const {
-				return RECT{ X,Y,GetRight(),GetBottom() };
+			__Rect WinRECT() const {
+				return __Rect{ X,Y,GetRight(),GetBottom() };
 			}
 
-			static bool Intersect(OUT Rect& c,
-				IN const Rect& a,
-				IN const Rect& b)
+			static bool Intersect(__Rect& c,
+				const __Rect& a,
+				const __Rect& b)
 			{
-				INT right = min(a.GetRight(), b.GetRight());
-				INT bottom = min(a.GetBottom(), b.GetBottom());
-				INT left = max(a.GetLeft(), b.GetLeft());
-				INT top = max(a.GetTop(), b.GetTop());
+				T right = min(a.GetRight(), b.GetRight());
+				T bottom = min(a.GetBottom(), b.GetBottom());
+				T left = max(a.GetLeft(), b.GetLeft());
+				T top = max(a.GetTop(), b.GetTop());
 
 				c.X = left;
 				c.Y = top;
@@ -573,31 +248,22 @@ namespace EzUI {
 				return !c.IsEmptyArea();
 			}
 
-			bool IntersectsWith(IN const Rect& rect) const
+			bool IntersectsWith(const __Rect& __Rect) const
 			{
-				return (GetLeft() < rect.GetRight() &&
-					GetTop() < rect.GetBottom() &&
-					GetRight() > rect.GetLeft() &&
-					GetBottom() > rect.GetTop());
+				return (GetLeft() < __Rect.GetRight() &&
+					GetTop() < __Rect.GetBottom() &&
+					GetRight() > __Rect.GetLeft() &&
+					GetBottom() > __Rect.GetTop());
 			}
 
-			static bool Union(OUT Rect& c,
-				IN const Rect& a,
-				IN const Rect& b)
+			static bool Union(__Rect& c,
+				const __Rect& a,
+				const __Rect& b)
 			{
-				/*	if (a.IsEmptyArea()) {
-						c = b;
-						return !c.IsEmptyArea();
-					}
-					else if (b.IsEmptyArea()) {
-						c = a;
-						return !c.IsEmptyArea();
-					}*/
-
-				INT right = max(a.GetRight(), b.GetRight());
-				INT bottom = max(a.GetBottom(), b.GetBottom());
-				INT left = min(a.GetLeft(), b.GetLeft());
-				INT top = min(a.GetTop(), b.GetTop());
+				T right = max(a.GetRight(), b.GetRight());
+				T bottom = max(a.GetBottom(), b.GetBottom());
+				T left = min(a.GetLeft(), b.GetLeft());
+				T top = min(a.GetTop(), b.GetTop());
 
 				c.X = left;
 				c.Y = top;
@@ -605,22 +271,16 @@ namespace EzUI {
 				c.Height = bottom - top;
 				return !c.IsEmptyArea();
 			}
-
-			void Offset(IN const Point& point)
+			void Offset(const __Point<T>& point)
 			{
 				Offset(point.X, point.Y);
 			}
-
-
-
-			void Offset(IN INT dx,
-				IN INT dy)
+			void Offset(T dx,
+				T dy)
 			{
 				X += dx;
 				Y += dy;
 			}
-
-
 		};
 		class Color
 		{
@@ -630,7 +290,7 @@ namespace EzUI {
 
 			Color()
 			{
-				Argb = (ARGB)Color::Black;
+				Argb = 0;
 			}
 
 			// Construct an opaque Color object with
@@ -638,22 +298,22 @@ namespace EzUI {
 			//
 			// Color values are not premultiplied.
 
-			Color(IN BYTE r,
-				IN BYTE g,
-				IN BYTE b)
+			Color(BYTE r,
+				BYTE g,
+				BYTE b)
 			{
 				Argb = MakeARGB(255, r, g, b);
 			}
 
-			Color(IN BYTE a,
-				IN BYTE r,
-				IN BYTE g,
-				IN BYTE b)
+			Color(BYTE a,
+				BYTE r,
+				BYTE g,
+				BYTE b)
 			{
 				Argb = MakeARGB(a, r, g, b);
 			}
 
-			Color(IN ARGB argb)
+			Color(ARGB argb)
 			{
 				Argb = argb;
 			}
@@ -703,168 +363,25 @@ namespace EzUI {
 				return Argb;
 			}
 
-			void SetValue(IN ARGB argb)
+			void SetValue(ARGB argb)
 			{
 				Argb = argb;
 			}
-
-			void SetFromCOLORREF(IN COLORREF rgb)
-			{
-				Argb = MakeARGB(255, GetRValue(rgb), GetGValue(rgb), GetBValue(rgb));
-			}
-
-			COLORREF ToCOLORREF() const
-			{
-				return RGB(GetRed(), GetGreen(), GetBlue());
-			}
-
 		public:
 
 			// Common color constants
 
 			enum
 			{
-				AliceBlue = 0xFFF0F8FF,
-				AntiqueWhite = 0xFFFAEBD7,
-				Aqua = 0xFF00FFFF,
-				Aquamarine = 0xFF7FFFD4,
-				Azure = 0xFFF0FFFF,
-				Beige = 0xFFF5F5DC,
-				Bisque = 0xFFFFE4C4,
-				Black = 0xFF000000,
-				BlanchedAlmond = 0xFFFFEBCD,
-				Blue = 0xFF0000FF,
-				BlueViolet = 0xFF8A2BE2,
-				Brown = 0xFFA52A2A,
-				BurlyWood = 0xFFDEB887,
-				CadetBlue = 0xFF5F9EA0,
-				Chartreuse = 0xFF7FFF00,
-				Chocolate = 0xFFD2691E,
-				Coral = 0xFFFF7F50,
-				CornflowerBlue = 0xFF6495ED,
-				Cornsilk = 0xFFFFF8DC,
-				Crimson = 0xFFDC143C,
-				Cyan = 0xFF00FFFF,
-				DarkBlue = 0xFF00008B,
-				DarkCyan = 0xFF008B8B,
-				DarkGoldenrod = 0xFFB8860B,
-				DarkGray = 0xFFA9A9A9,
-				DarkGreen = 0xFF006400,
-				DarkKhaki = 0xFFBDB76B,
-				DarkMagenta = 0xFF8B008B,
-				DarkOliveGreen = 0xFF556B2F,
-				DarkOrange = 0xFFFF8C00,
-				DarkOrchid = 0xFF9932CC,
-				DarkRed = 0xFF8B0000,
-				DarkSalmon = 0xFFE9967A,
-				DarkSeaGreen = 0xFF8FBC8B,
-				DarkSlateBlue = 0xFF483D8B,
-				DarkSlateGray = 0xFF2F4F4F,
-				DarkTurquoise = 0xFF00CED1,
-				DarkViolet = 0xFF9400D3,
-				DeepPink = 0xFFFF1493,
-				DeepSkyBlue = 0xFF00BFFF,
-				DimGray = 0xFF696969,
-				DodgerBlue = 0xFF1E90FF,
-				Firebrick = 0xFFB22222,
-				FloralWhite = 0xFFFFFAF0,
-				ForestGreen = 0xFF228B22,
-				Fuchsia = 0xFFFF00FF,
-				Gainsboro = 0xFFDCDCDC,
-				GhostWhite = 0xFFF8F8FF,
-				Gold = 0xFFFFD700,
-				Goldenrod = 0xFFDAA520,
-				Gray = 0xFF808080,
-				Green = 0xFF008000,
-				GreenYellow = 0xFFADFF2F,
-				Honeydew = 0xFFF0FFF0,
-				HotPink = 0xFFFF69B4,
-				IndianRed = 0xFFCD5C5C,
-				Indigo = 0xFF4B0082,
-				Ivory = 0xFFFFFFF0,
-				Khaki = 0xFFF0E68C,
-				Lavender = 0xFFE6E6FA,
-				LavenderBlush = 0xFFFFF0F5,
-				LawnGreen = 0xFF7CFC00,
-				LemonChiffon = 0xFFFFFACD,
-				LightBlue = 0xFFADD8E6,
-				LightCoral = 0xFFF08080,
-				LightCyan = 0xFFE0FFFF,
-				LightGoldenrodYellow = 0xFFFAFAD2,
-				LightGray = 0xFFD3D3D3,
-				LightGreen = 0xFF90EE90,
-				LightPink = 0xFFFFB6C1,
-				LightSalmon = 0xFFFFA07A,
-				LightSeaGreen = 0xFF20B2AA,
-				LightSkyBlue = 0xFF87CEFA,
-				LightSlateGray = 0xFF778899,
-				LightSteelBlue = 0xFFB0C4DE,
-				LightYellow = 0xFFFFFFE0,
-				Lime = 0xFF00FF00,
-				LimeGreen = 0xFF32CD32,
-				Linen = 0xFFFAF0E6,
-				Magenta = 0xFFFF00FF,
-				Maroon = 0xFF800000,
-				MediumAquamarine = 0xFF66CDAA,
-				MediumBlue = 0xFF0000CD,
-				MediumOrchid = 0xFFBA55D3,
-				MediumPurple = 0xFF9370DB,
-				MediumSeaGreen = 0xFF3CB371,
-				MediumSlateBlue = 0xFF7B68EE,
-				MediumSpringGreen = 0xFF00FA9A,
-				MediumTurquoise = 0xFF48D1CC,
-				MediumVioletRed = 0xFFC71585,
-				MidnightBlue = 0xFF191970,
-				MintCream = 0xFFF5FFFA,
-				MistyRose = 0xFFFFE4E1,
-				Moccasin = 0xFFFFE4B5,
-				NavajoWhite = 0xFFFFDEAD,
-				Navy = 0xFF000080,
-				OldLace = 0xFFFDF5E6,
-				Olive = 0xFF808000,
-				OliveDrab = 0xFF6B8E23,
-				Orange = 0xFFFFA500,
-				OrangeRed = 0xFFFF4500,
-				Orchid = 0xFFDA70D6,
-				PaleGoldenrod = 0xFFEEE8AA,
-				PaleGreen = 0xFF98FB98,
-				PaleTurquoise = 0xFFAFEEEE,
-				PaleVioletRed = 0xFFDB7093,
-				PapayaWhip = 0xFFFFEFD5,
-				PeachPuff = 0xFFFFDAB9,
-				Peru = 0xFFCD853F,
-				Pink = 0xFFFFC0CB,
-				Plum = 0xFFDDA0DD,
-				PowderBlue = 0xFFB0E0E6,
-				Purple = 0xFF800080,
 				Red = 0xFFFF0000,
-				RosyBrown = 0xFFBC8F8F,
-				RoyalBlue = 0xFF4169E1,
-				SaddleBrown = 0xFF8B4513,
-				Salmon = 0xFFFA8072,
-				SandyBrown = 0xFFF4A460,
-				SeaGreen = 0xFF2E8B57,
-				SeaShell = 0xFFFFF5EE,
-				Sienna = 0xFFA0522D,
-				Silver = 0xFFC0C0C0,
-				SkyBlue = 0xFF87CEEB,
-				SlateBlue = 0xFF6A5ACD,
-				SlateGray = 0xFF708090,
-				Snow = 0xFFFFFAFA,
-				SpringGreen = 0xFF00FF7F,
-				SteelBlue = 0xFF4682B4,
-				Tan = 0xFFD2B48C,
-				Teal = 0xFF008080,
-				Thistle = 0xFFD8BFD8,
-				Tomato = 0xFFFF6347,
-				Transparent = 0x00FFFFFF,
-				Turquoise = 0xFF40E0D0,
-				Violet = 0xFFEE82EE,
-				Wheat = 0xFFF5DEB3,
+				Green = 0xFF008000,
+				Blue = 0xFF0000FF,
+				Black = 0xFF000000,
+				Gray = 0xFF808080,
+				Orange = 0xFFFFA500,
+				Pink = 0xFFFFC0CB,
 				White = 0xFFFFFFFF,
-				WhiteSmoke = 0xFFF5F5F5,
-				Yellow = 0xFFFFFF00,
-				YellowGreen = 0xFF9ACD32
+				Yellow = 0xFFFFFF00
 			};
 
 			// Shift count and bit mask for A, R, G, B components
@@ -887,10 +404,10 @@ namespace EzUI {
 
 			// Assemble A, R, G, B values into a 32-bit integer
 
-			static ARGB MakeARGB(IN BYTE a,
-				IN BYTE r,
-				IN BYTE g,
-				IN BYTE b)
+			static ARGB MakeARGB(BYTE a,
+				BYTE r,
+				BYTE g,
+				BYTE b)
 			{
 				return (((ARGB)(b) << BlueShift) |
 					((ARGB)(g) << GreenShift) |
@@ -900,7 +417,35 @@ namespace EzUI {
 
 
 		};
+
+		template<typename T>
+		class __Line {
+		public:
+			__Point<T> pointA;
+			__Point<T> pointB;
+		public:
+			__Line() {
+				pointA.X = 0;
+				pointA.Y = 0;
+				pointB.X = 0;
+				pointB.Y = 0;
+			}
+			__Line(const __Point<T>& _pointA, const __Point<T>& _pointB) {
+				this->pointA = _pointA;
+				this->pointB = _pointB;
+			}
+		};
 	};
+
+	typedef  RenderType::__Point<INT> Point;
+	typedef  RenderType::__Point<FLOAT> PointF;
+	typedef  RenderType::__Line<INT> Line;
+	typedef  RenderType::__Line<FLOAT> LineF;
+	typedef  RenderType::__Size<INT> Size;
+	typedef  RenderType::__Size<FLOAT> SizeF;
+	typedef  RenderType::__Rect<INT> Rect;
+	typedef  RenderType::__Rect<FLOAT> RectF;
+	typedef  RenderType::Color Color;
 
 	typedef struct Distance {
 	public:
@@ -1035,7 +580,7 @@ namespace EzUI {
 		}
 	};
 
-	inline RenderType::Rect Transformation(ImageSizeMode imageSizeMode, const RenderType::Rect& rect, const RenderType::Size& imgSize) {
+	inline Rect Transformation(ImageSizeMode imageSizeMode, const Rect& rect, const Size& imgSize) {
 
 		if (imageSizeMode == ImageSizeMode::StretchImage) {
 			return rect;
@@ -1053,15 +598,13 @@ namespace EzUI {
 		if (imageSizeMode == ImageSizeMode::Zoom) {
 			if (clientRate < imgRate) {
 				float zoomHeight = clientWidth / imgWidth * imgHeight + 0.5f;
-				RenderType::SizeF sz{ clientWidth,zoomHeight };
-				float y = (clientHeight - sz.Height) / 2 + rect.Y;
-				return RenderType::Rect{ rect.X  ,(INT)y, (INT)sz.Width, (INT)sz.Height };
+				float y = (clientHeight - zoomHeight) / 2 + rect.Y;
+				return Rect(rect.X, (INT)y, (INT)clientWidth, (INT)zoomHeight);
 			}
 			else {
 				float zoomWidth = clientHeight / imgHeight * imgWidth + 0.5f;
-				RenderType::SizeF sz{ zoomWidth,clientHeight };
-				float x = (clientWidth - sz.Width) / 2 + rect.X;
-				return RenderType::Rect{ (INT)x  , rect.Y, (INT)sz.Width, (INT)sz.Height };
+				float x = (clientWidth - zoomWidth) / 2 + rect.X;
+				return Rect((INT)x, rect.Y, (INT)zoomWidth, (INT)clientHeight);
 			}
 		}
 		if (imageSizeMode == ImageSizeMode::CenterImage) {
@@ -1071,7 +614,7 @@ namespace EzUI {
 				//2233 670     缩放后的图片大小 
 				float zoomWidth = clientHeight / imgHeight * imgWidth + 0.5f;//图片应该这么宽才对
 				float x = (zoomWidth - clientWidth) / 2 + 0.5f;
-				return RenderType::Rect{ (INT)(rect.X - x),rect.Y,(INT)zoomWidth,(INT)clientHeight };
+				return Rect((INT)(rect.X - x), rect.Y, (INT)zoomWidth, (INT)clientHeight);
 			}
 			else {
 				//1000 600 客户端
@@ -1079,17 +622,9 @@ namespace EzUI {
 				//1000 1500     缩放后的图片大小 
 				float zoomHeight = clientWidth / imgWidth * imgHeight + 0.5f;//图片应该这么高才对
 				float y = (zoomHeight - clientHeight) / 2 + 0.5f;
-				return RenderType::Rect{ rect.X, (INT)(rect.Y - y)  , (INT)clientWidth, (INT)zoomHeight };
+				return Rect(rect.X, (INT)(rect.Y - y), (INT)clientWidth, (INT)zoomHeight);
 			}
 		}
 		return rect;
 	}
-#define __Rect RenderType::Rect
-#define __RectF RenderType::RectF
-#define __Color RenderType::Color
-#define __Point RenderType::Point
-#define __PointF RenderType::PointF
-#define __ARGB RenderType::ARGB
-#define __Size RenderType::Size
-#define __SizeF RenderType::SizeF
 };

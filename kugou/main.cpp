@@ -42,6 +42,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
 	Curl_Global_Init();
 
+	//{
+	//	TextArea ta;
+	//	return 0;
+	//}
+
 	//std::vector<FileSystem::FileInfo> result;
 	//FileSystem::Find("D:/buf", result);
 	//for (auto& it : result) {

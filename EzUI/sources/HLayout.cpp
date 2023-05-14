@@ -36,10 +36,10 @@ namespace EzUI {
 			if (y == 0) {
 				y = it->Margin.Top;
 			}
-			if (y == 0 && height <this->Height() ) {
-				y = int((this->Height() * 1.0 - height) / 2 + 0.5);
-			}
-
+			////首次布局中当位置未被指定的时候进行一次居中
+			//if (y == 0 && height <this->Height() ) {
+			//	y = int((this->Height() * 1.0 - height) / 2 + 0.5);
+			//}
 			if (it->GetFixedWidth() > 0) {
 				it->SetRect({ (int)maxRight ,y,it->GetFixedWidth() ,height });
 				maxRight += it->Width();

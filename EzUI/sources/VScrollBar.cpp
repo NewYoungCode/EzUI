@@ -175,7 +175,7 @@ namespace EzUI {
 			_rollCount = 1;//滚动一次
 		}
 		else {
-			_rollCount += 5;//将滚动五次
+			_rollCount += 3;//将滚动五次
 		}
 		_speed = fx;//控制方向与速度
 		_timer.Start();

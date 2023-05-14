@@ -96,7 +96,7 @@ namespace EzUI {
 		BOOL empty = ::GetWindowRect(OwnerWnd, &Orect);
 		Size paintSize{ Orect.right - Orect.left,Orect.bottom - Orect.top };//父控件作图大小
 
-		clipRect = { {_shadowWidth ,_shadowWidth},paintSize };//裁剪区域
+		clipRect = Rect({ _shadowWidth ,_shadowWidth }, paintSize);//裁剪区域
 		int x = 0;
 		int y = 0;
 		int width = paintSize.Width + _shadowWidth * 2;
@@ -120,7 +120,7 @@ namespace EzUI {
 
 		POINT point{ 0,0 };
 		SIZE size{ rect.Width,  rect.Height };
-		BLENDFUNCTION blend{0};
+		BLENDFUNCTION blend{ 0 };
 		blend.BlendOp = AC_SRC_OVER;
 		blend.BlendFlags = 0;
 		blend.AlphaFormat = AC_SRC_ALPHA;
