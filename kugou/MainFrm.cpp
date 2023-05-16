@@ -338,7 +338,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			}
 			this;
 			localList;
-			//auto it = localList->RemoveControl(songItem);
+			//localList->RemoveControl(songItem);
 			delete songItem;
 			return false;
 		}
@@ -351,6 +351,9 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			}
 			else if (sender->Index() == 1) {
 				LrcView();
+			}
+			else {
+				Invalidate();
 			}
 		}
 		if (!sender->GetAttribute("mvhash").empty()) {
@@ -375,6 +378,10 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			((Label*)FindControl("songName"))->Invalidate();
 
 			player.SetDuration(json["timelength"].asInt() / 1000);
+
+			EString filehash = sender->Parent->GetAttribute("FileHash");
+			EString lrcData = global::GetSongLrc(filehash);
+			lrcCtl.LoadLrc(lrcData);
 			timer->Start();
 		}
 		if (sender == playerBar) {

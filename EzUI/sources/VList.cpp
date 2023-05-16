@@ -21,11 +21,10 @@ namespace EzUI {
 	}
 	void VList::OnLayout() {
 		__super::OnLayout();
-
+		vScrollBar.Location.clear();
 		_maxBottom = 0;
 		for (auto& it : GetControls()) {
 			if (it->Visible == false)continue;
-
 			{
 				//处理margin和x坐标
 				int	width = it->GetFixedWidth();
@@ -41,53 +40,13 @@ namespace EzUI {
 				}
 				it->SetRect(Rect{ x,_maxBottom,width,it->Height() });
 			}
-
+			vScrollBar.Location.insert(std::pair<Control*, int>(it, it->Y()));
 			_maxBottom += it->Height();
 			_maxBottom += it->Margin.GetVSpace();
 		}
 		RefreshScroll(_maxBottom);
 	}
-	void VList::AddControl(Control* ctl)
-	{
-		__super::AddControl(ctl);
-		_maxBottom += ctl->Margin.Top;
-		int& y = (int&)ctl->Y();
-		y = _maxBottom;
-		_maxBottom += (ctl->Height() + ctl->Margin.Bottom);
-		vScrollBar.Location.insert(std::pair<Control*, int>(ctl, ctl->Y()));
-	}
 
-	ControlIterator VList::RemoveControl(Control* ctl)
-	{
-		size_t before = GetControls().size();//记录一开始的控件数量
-		ControlIterator nextIt = __super::RemoveControl(ctl);//删除控件
-		if (GetControls().size() < before) {//如果控件数量比开始少 则 删除成功
-			int outHeight = (ctl->Height() + ctl->Margin.GetVSpace());//删除控件留出来的空白区域宽度
-
-			_maxBottom -= outHeight;//减去空白区域高度
-			vScrollBar.Location.erase(ctl);//将记录Y坐标的map也要删除控件
-			for (ControlIterator i = nextIt; i != GetControls().end(); i++)//从删除的下一个控件开始往前移动X坐标
-			{
-				Control* it = *i;
-				it->SetRect(Rect(it->X(), it->Y() - outHeight, it->Width(), it->Height()));//自身移动
-				int& locationY = vScrollBar.Location[it] -= outHeight;//记录的坐标也要移动
-			}
-			RefreshScroll(_maxBottom);//通知滚动条容器最大边界值已经改变
-		}
-		return nextIt;
-	}
-
-	void VList::Clear(bool freeChilds) {
-		__super::Clear(freeChilds);
-		vScrollBar.Location.clear();
-		_maxBottom = 0;
-		RefreshScroll(_maxBottom);
-	}
-
-	void VList::OnSize(const Size& size) {
-		__super::OnSize(size);
-		RefreshScroll(_maxBottom);
-	}
 
 	void VList::RefreshScroll(const int& _maxBottom) {
 		if (AutoHeight) {

@@ -16,9 +16,7 @@ namespace EzUI {
 		TileList(Control*parent);
 		virtual ~TileList();
 		virtual void Clear(bool freeList = false)override;
-		virtual void OnSize(const Size& sz) override;
 		virtual void OnLayout()override;
-		virtual void ResumeLayout() override;
 		virtual void RefreshScroll(const int& _maxBottom);
 		virtual ScrollBar* GetScrollBar()override;
 	};

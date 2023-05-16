@@ -69,7 +69,7 @@ Event(this , ##__VA_ARGS__); \
 		}
 		if (backgroundImage != NULL) {
 			e.Graphics.DrawImage(backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage->SizeMode, backgroundImage->Padding);
-		//	EzUI::DrawImage(e.Painter, backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage->SizeMode, backgroundImage->Padding);
+			//	EzUI::DrawImage(e.Painter, backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage->SizeMode, backgroundImage->Padding);
 		}
 	}
 	void Control::OnForePaint(PaintEventArgs& e) {
@@ -95,7 +95,7 @@ Event(this , ##__VA_ARGS__); \
 		e.Graphics.SetColor(borderColor);
 
 		if (radius > 0 && hasBorder) {
-			e.Graphics.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, radius,borderLeft);
+			e.Graphics.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, radius, borderLeft);
 			//EzUI::DrawRectangle(e.Painter, Rect{ 0,0,_rect.Width,_rect.Height }, borderColor, borderLeft, radius);
 			return;
 		}
@@ -659,11 +659,11 @@ Event(this , ##__VA_ARGS__); \
 			Geometry _clientRect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height);
 			Geometry outClipRect;
 			Geometry::Intersect(outClipRect, roundRect, _clientRect);
-			pt.PushLayer( outClipRect);
+			pt.PushLayer(outClipRect);
 		}
 		else {
 			//针对矩形控件
-			pt.PushLayer( Rect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height));
+			pt.PushLayer(Rect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height));
 		}
 #endif 
 		//开始绘制
@@ -685,11 +685,11 @@ Event(this , ##__VA_ARGS__); \
 			scrollbar->Rending(args);
 		}
 		//设置偏移
-		pt.SetTransform( clientRect.X, clientRect.Y);
+		pt.SetTransform(clientRect.X, clientRect.Y);
 		//绘制边框
 		this->OnBorderPaint(args);//绘制边框
 		//恢复偏移
-		pt.SetTransform( 0, 0);
+		pt.SetTransform(0, 0);
 
 		pt.PopLayer();//弹出
 #ifdef DEBUGPAINT
@@ -751,20 +751,18 @@ Event(this , ##__VA_ARGS__); \
 		ctl->Parent = this;
 		this->TryPendLayout();//添加控件需要将布局重新挂起
 	}
-	ControlIterator Control::RemoveControl(Control* ctl)
+	void Control::RemoveControl(Control* ctl)
 	{
-		ControlIterator nextIt;
 		ControlIterator it1 = ::std::find(_controls.begin(), _controls.end(), ctl);
 		if (it1 != _controls.end()) {
 			ctl->OnRemove();
 			this->TryPendLayout();//移除控件需要将布局重新挂起
-			nextIt = _controls.erase(it1);
+			_controls.erase(it1);
 			ControlIterator it2 = ::std::find(VisibleControls.begin(), VisibleControls.end(), ctl);
 			if (it2 != VisibleControls.end()) {
 				VisibleControls.erase(it2);
 			}
 		}
-		return nextIt;
 	}
 	void Control::OnRemove()
 	{

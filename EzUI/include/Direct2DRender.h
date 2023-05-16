@@ -27,7 +27,7 @@ namespace EzUI {
 		extern IDWriteFactory* g_WriteFactory;
 		extern IWICImagingFactory* g_ImageFactory;
 	}
-	class Font {
+	class UI_EXPORT Font {
 	private:
 		Font() = delete;
 		std::wstring fontFamily;
@@ -47,7 +47,7 @@ namespace EzUI {
 	};
 
 	//文本命中测试数据
-	class HitTestMetrics {
+	class UI_EXPORT HitTestMetrics {
 	public:
 		size_t Length;
 		size_t TextPos;//命中的下标
@@ -65,30 +65,9 @@ namespace EzUI {
 		int GetFontHeight() {
 			return (int)(FontBox.Height + 0.5);
 		}
-		//int& textPos = *_textPos;
-		//BOOL& isTrailingHit = *_isTrailingHit;
-		//DWRITE_HIT_TEST_METRICS hitTestMetrics;
-		//BOOL isInside;
-		//{
-		//	FLOAT x = (FLOAT)pt.X, y = (FLOAT)pt.Y;
-		//	value->HitTestPoint(
-		//		(FLOAT)x,
-		//		(FLOAT)y,
-		//		&isTrailingHit,
-		//		&isInside,
-		//		&hitTestMetrics
-		//	);
-		//}
-		//int posX = (int)(hitTestMetrics.left + 0.5);
-		//if (isTrailingHit) {//判断前侧还是尾侧
-		//	posX += (int)(hitTestMetrics.width + 0.5);
-		//}
-		//*fontHeight = (int)(hitTestMetrics.height + 0.5);
-		//textPos = hitTestMetrics.textPosition;
-		//return __Point{ posX,(int)(hitTestMetrics.top + 0.5) };//返回光标所在的位置
 	};
 
-	class TextLayout {
+	class UI_EXPORT TextLayout {
 	private:
 		TextLayout() = delete;
 		TextLayout(const TextLayout& _copy) = delete;
@@ -111,7 +90,7 @@ namespace EzUI {
 		void SetUnderline(size_t pos = 0, size_t count = 0);
 		virtual ~TextLayout();
 	};
-	class Geometry
+	class UI_EXPORT Geometry
 	{
 	public:
 		bool Ref = false;
@@ -176,7 +155,7 @@ namespace EzUI {
 		}
 	};
 
-	class DXPath {
+	class UI_EXPORT DXPath {
 	private:
 		ID2D1GeometrySink* pSink = NULL;
 		ID2D1PathGeometry* pathGeometry = NULL;

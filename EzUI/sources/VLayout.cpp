@@ -61,12 +61,4 @@ namespace EzUI {
 			maxBottom += it->Margin.Bottom;
 		}
 	}
-
-
-
-	void VLayout::OnSize(const Size& sz) {
-		__super::OnSize(sz);
-		ResumeLayout();
-	}
-
 };

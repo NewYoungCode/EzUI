@@ -5,14 +5,10 @@ namespace EzUI {
 	void TileList::Clear(bool freeChilds)
 	{
 		__super::Clear(freeChilds);
-		vScrollBar.Location.clear();
-		_MaxBottom = 0;
-		RefreshScroll(_MaxBottom);
 	}
 
 	void TileList::Init()
 	{
-
 		vScrollBar.SetHeight(Height());
 		vScrollBar.Parent = this;
 	}
@@ -31,12 +27,6 @@ namespace EzUI {
 	ScrollBar* TileList::GetScrollBar()
 	{
 		return &vScrollBar;
-	}
-	void TileList::OnSize(const Size& sz)
-	{
-		__super::OnSize(sz);
-		ResumeLayout();
-		RefreshScroll(_MaxBottom);
 	}
 
 	void TileList::RefreshScroll(const int& _maxBottom) {
@@ -62,7 +52,7 @@ namespace EzUI {
 		int x = 0;
 		int y = 0;
 		for (auto& _it : GetControls()) {
-
+			if (_it->Visible == false)continue;
 			Control& it = *_it;
 			int _x = it.Margin.Left + it.Width();
 
@@ -74,12 +64,12 @@ namespace EzUI {
 			}
 
 			x += it.Margin.Left;//左边距
-			int& refX = (int&)it.X();//引用x
-			int& refY = (int&)it.Y();//引用y
-			refX = x;//设置X坐标
-			refY = y + it.Margin.Top;//设置Y坐标+上边距
-
-			vScrollBar.Location.insert(std::pair<Control*, int>(&it, refY));
+			int newX = it.X();//
+			int newY = it.Y();//
+			newX = x;//设置X坐标
+			newY = y + it.Margin.Top;//设置Y坐标+上边距
+			it.SetRect(Rect(newX, newY, it.Width(), it.Height()));
+			vScrollBar.Location.insert(std::pair<Control*, int>(&it, newY));
 
 			int itemSpace = it.Height() + it.Margin.GetVSpace();//当前控件垂直占用的空间
 			if (maxHeight < itemSpace) {
@@ -91,8 +81,5 @@ namespace EzUI {
 			_MaxBottom = y + maxHeight;
 		}
 		RefreshScroll(_MaxBottom);
-	}
-	void TileList::ResumeLayout() {
-		__super::ResumeLayout();
 	}
 };

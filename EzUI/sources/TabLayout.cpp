@@ -33,27 +33,8 @@ namespace EzUI {
 		this->EndLayout();
 	}
 
-	void TabLayout::AddControl(Control* ctl) {
-		__super::AddControl(ctl);
-		if (ctl->Visible == true) {
-			//ResumeLayout();
-		}
-	}
-
-	ControlIterator TabLayout::RemoveControl(Control* ctl)
-	{
-		ControlIterator it = __super::RemoveControl(ctl);
-		return it;
-	}
-
 	int TabLayout::GetPageIndex()
 	{
 		return _index;
-	}
-
-	void TabLayout::OnSize(const Size& sz)
-	{
-		__super::OnSize(sz);
-		ResumeLayout();
 	}
 };

@@ -536,7 +536,7 @@ namespace EzUI {
 			render->SetTransform(D2D1::Matrix3x2F::Identity());
 		}
 		else if (angle != 0) {
-			render->SetTransform(D2D1::Matrix3x2F::Rotation(angle, D2D1::Point2F((FLOAT)xOffset, (FLOAT)yOffset)));
+			render->SetTransform(D2D1::Matrix3x2F::Rotation((FLOAT)angle, D2D1::Point2F((FLOAT)xOffset, (FLOAT)yOffset)));
 		}
 		else if (angle == 0) {
 			// 设置x和y方向的偏移
@@ -616,12 +616,12 @@ namespace EzUI {
 	}
 	void DXRender::DrawEllipse(const Point& point, int radiusX, int radiusY, int width)
 	{
-		D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F((FLOAT)point.X, (FLOAT)point.Y), radiusX, radiusY);
+		D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F((FLOAT)point.X, (FLOAT)point.Y), (FLOAT)radiusX, (FLOAT)radiusY);
 		render->DrawEllipse(ellipse, GetBrush(), (FLOAT)width, this->GetStrokeStyle());
 	}
 	void DXRender::FillEllipse(const Point& point, int radiusX, int radiusY)
 	{
-		D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F((FLOAT)point.X, (FLOAT)point.Y), radiusX, radiusY);
+		D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F((FLOAT)point.X, (FLOAT)point.Y), (FLOAT)radiusX, (FLOAT)radiusY);
 		render->FillEllipse(ellipse, GetBrush());
 	}
 	void DXRender::DrawPoint(const Point& pt) {

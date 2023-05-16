@@ -17,10 +17,6 @@ namespace EzUI {
 		virtual ~HList();
 		int ContentLenght();
 		virtual void OnLayout()override;
-		virtual	void AddControl(Control* ctl) override;
-		virtual ControlIterator RemoveControl(Control* ctl)override;
-		virtual void Clear(bool freeControls) override;
-		virtual	void OnSize(const Size& size) override;
 		virtual void ChildPainting(Controls& controls, PaintEventArgs& args)override;
 		virtual void RefreshScroll(const int& _maxRight);
 		virtual ScrollBar* GetScrollBar()override;

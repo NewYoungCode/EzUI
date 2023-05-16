@@ -9,6 +9,7 @@
 #include "Button.h"
 #include "TileList.h"
 #include "VList.h"
+#include "HList.h"
 #include "HLayout.h"
 #include "VLayout.h"
 #include "Application.h"
@@ -55,11 +56,24 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
 	closeBtn.SetText(L"r");//窗口的关闭按钮icon
 
-
 	//Label labelBottom;
 	//labelBottom.SetText(L"这是一个简单的窗口示例!");
-
 	TileList list(&mainLayout);
+	for (size_t i = 0; i < 50; i++)
+	{
+		Label* lb = new Label;// (&list);
+		lb->Dock = DockStyle::Horizontal;
+		lb->SetText(std::to_string(i));
+		lb->SetFixedSize({ 0,30 });
+		lb->Style.BackgroundColor = Color::Pink;
+		lb->HoverStyle.BackgroundColor = Color::Gray;
+		lb->Margin = 1;
+		lb->MouseClick = [&list](Control* sd, MouseButton, const Point&)->void {
+			list.RemoveControl(sd);
+			list.Invalidate();
+		};
+		list.AddControl(lb);
+	}
 
 	TextBox text(&mainLayout);
 	//text.SetFixedSize({ 100,50 });

@@ -15,10 +15,10 @@
 #include "base64.h"
 #include "ConfigIni.h"
 
-#ifdef _DEBUG
-#pragma comment(lib,"CommonD.lib")
-#else
+#ifdef NDEBUG
 #pragma comment(lib,"Common.lib")
+#else
+#pragma comment(lib,"CommonD.lib")
 #endif
 
 using namespace EzUI;

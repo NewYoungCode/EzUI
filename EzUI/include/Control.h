@@ -142,7 +142,7 @@ namespace EzUI {
 		Controls FindControl(const EString& attr, const EString& attrValue);//使用属性查找
 		size_t Index();//获取当前控件在父容器下的索引
 		virtual void AddControl(Control* ctl);//添加控件
-		virtual ControlIterator RemoveControl(Control* ctl);//删除控件 返回下一个迭代器
+		virtual void RemoveControl(Control* ctl);//删除控件 返回下一个迭代器
 		virtual void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件
 		virtual void Rending(PaintEventArgs& args);//绘制函数
 		bool IsVisible();//当前是否显示在窗口内
