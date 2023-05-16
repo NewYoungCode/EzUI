@@ -596,15 +596,15 @@ namespace EzUI {
 			layers.pop_back();
 		}
 	}
-	void DXRender::DrawImage(DXImage* image, const Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Margin& margin) {
+	void DXRender::DrawImage(DXImage* image, const Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Padding& padding) {
 		_NOREND_IMAGE_
 			if (image == NULL) return;
 		//计算坐标
 		Rect rect = _rect;
-		rect.X += margin.Left;
-		rect.Y += margin.Top;
-		rect.Width -= margin.Right * 2;
-		rect.Height -= margin.Bottom * 2;
+		rect.X += padding.Left;
+		rect.Y += padding.Top;
+		rect.Width -= padding.Right * 2;
+		rect.Height -= padding.Bottom * 2;
 		//解码
 		image->DecodeOfRender(render);
 		//转换坐标,缩放
@@ -622,6 +622,10 @@ namespace EzUI {
 	void DXRender::FillEllipse(const Point& point, int radiusX, int radiusY)
 	{
 		D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F((FLOAT)point.X, (FLOAT)point.Y), radiusX, radiusY);
+		render->FillEllipse(ellipse, GetBrush());
+	}
+	void DXRender::DrawPoint(const Point& pt) {
+		D2D1_ELLIPSE ellipse = D2D1::Ellipse(__To_D2D_PointF(pt), 0.5, 0.5);
 		render->FillEllipse(ellipse, GetBrush());
 	}
 	void DXRender::DrawArc(const Rect& rect, int startAngle, int sweepAngle, int width) {

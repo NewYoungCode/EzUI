@@ -70,6 +70,33 @@ namespace EzUI {
 		Analysis();//分析字符串
 		Invalidate();//刷新
 	}
+
+	void TextBox::BuildSelectedRect() {
+		selectRects.clear();
+		if (textLayout) {
+			Point point1, point2;
+			if ((A_TextPos + A_isTrailingHit) < (B_TextPos + B_isTrailingHit)) {
+				point1 = textLayout->HitTestTextPosition(A_TextPos, A_isTrailingHit);
+				point2 = textLayout->HitTestTextPosition(B_TextPos, B_isTrailingHit);
+			}
+			else {
+				point2 = textLayout->HitTestTextPosition(A_TextPos, A_isTrailingHit);
+				point1 = textLayout->HitTestTextPosition(B_TextPos, B_isTrailingHit);
+			}
+			if (point1.Y != point2.Y) {//多行
+				Rect rect1(point1.X, point1.Y, textLayout->GetFontBox().Width - point1.X, textLayout->GetFontHeight());
+				Rect rect2(0, point2.Y, point2.X, textLayout->GetFontHeight());
+				Rect rect3(0, rect1.GetBottom(), textLayout->GetFontBox().Width, rect2.GetTop() - rect1.GetBottom());
+				selectRects.push_back(rect1);
+				selectRects.push_back(rect3);
+				selectRects.push_back(rect2);
+			}
+			else {
+				selectRects.push_back(Rect(point1.X, point1.Y, point2.X - point1.X, textLayout->GetFontHeight()));
+			}
+		}
+	}
+
 	bool TextBox::SelectedAll() {
 		if (textLayout && !text.empty()) {
 			A = Point{ 0,0 };
@@ -80,22 +107,7 @@ namespace EzUI {
 			B_isTrailingHit = TRUE;
 			B_TextPos = text.size() - 1;
 
-			Point point1 = textLayout->HitTestTextPosition(0, FALSE);
-			Point point2 = textLayout->HitTestTextPosition(text.size(), FALSE);
-
-			selectRects.clear();
-			//std::list<Rect> selectRects;
-			if (point1.Y != point2.Y) {//多行
-				Rect rect1(point1.X, point1.Y, textLayout->GetFontBox().Width, textLayout->GetFontHeight());
-				Rect rect2(0, point2.Y, point2.X, textLayout->GetFontHeight());
-				Rect rect3(0, rect1.GetBottom(), textLayout->GetFontBox().Width, rect2.GetTop() - rect1.GetBottom());
-				selectRects.push_back(rect1);
-				selectRects.push_back(rect3);
-				selectRects.push_back(rect2);
-			}
-			else {
-				selectRects.push_back(Rect(point1.X, point1.Y, point2.X - point1.X, textLayout->GetFontHeight()));
-			}
+			BuildSelectedRect();
 			return true;
 		}
 		return false;
@@ -103,7 +115,7 @@ namespace EzUI {
 	bool TextBox::GetSelectedRange(int* outPos, int* outCount) {
 		if (selectRects.size() > 0) {
 			int pos, count;
-			if (A.X < B.X) {
+			if ((A_TextPos + A_isTrailingHit) < (B_TextPos + B_isTrailingHit)) {
 				int pos1 = A_TextPos;
 				if (A_isTrailingHit == 1) {
 					pos1 += 1;
@@ -194,8 +206,10 @@ namespace EzUI {
 			//获取剪贴板数据
 			HANDLE hClipboard = GetClipboardData(CF_TEXT);
 			EString buf((CHAR*)GlobalLock(hClipboard));
-			EString::Replace(&buf, "\r", "");//行编辑框不允许有换行符
-			EString::Replace(&buf, "\n", "");//行编辑框不允许有换行符
+			if (!multiLine) {
+				EString::Replace(&buf, "\r", "");//行编辑框不允许有换行符
+				EString::Replace(&buf, "\n", "");//行编辑框不允许有换行符
+			}
 			std::wstring wBuf;
 
 			EString::ANSIToUniCode(buf, &wBuf);
@@ -360,15 +374,7 @@ namespace EzUI {
 				selectRects.clear();// = Rect();
 				B = textLayout->HitTestPoint(point_End, &B_TextPos, &B_isTrailingHit, &fontHeight);
 
-				//selectRect.X = A.X;
-				//selectRect.Y = A.Y;
-				//selectRect.Height = fontHeight;
-				//selectRect.Width = B.X - A.X;
-				//if (selectRect.Width < 0) {
-				//	selectRect.X = B.X;
-				//	selectRect.Y = B.Y;
-				//	selectRect.Width = -selectRect.Width;
-				//}
+				BuildSelectedRect();
 
 				if (!multiLine) {//单行
 					//当鼠标往左侧移动
@@ -484,22 +490,16 @@ namespace EzUI {
 			//scrollY = (Height() - fontBox.Height) / 2;
 			e.Graphics.DrawString(*textLayout, { scrollX, scrollY });
 		}
-		//if (!selectRect.IsEmptyArea()) {
-		//	Rect rect(selectRect);
-		//	rect.X += scrollX;//偏移
-		//	rect.Y += scrollY;
-
-		//	e.Graphics.SetColor(SelectColor);
-		//	e.Graphics.FillRectangle(rect);
-		//}
 
 		if (selectRects.size() > 0) {
 			e.Graphics.SetColor(SelectColor);
 			for (auto& it : selectRects) {
-				Rect rect(it);
-				rect.X += scrollX;//偏移
-				rect.Y += scrollY;
-				e.Graphics.FillRectangle(rect);
+				if (!it.IsEmptyArea()) {
+					Rect rect(it);
+					rect.X += scrollX;//偏移
+					rect.Y += scrollY;
+					e.Graphics.FillRectangle(rect);
+				}
 			}
 		}
 

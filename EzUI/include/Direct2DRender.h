@@ -299,12 +299,13 @@ namespace EzUI {
 		void PushLayer(const Rect& rectBounds);//速度较快
 		void PushLayer(const Geometry& dxGeometry);//比较耗性能,但是可以异形抗锯齿裁剪
 		void PopLayer();//弹出最后一个裁剪
-		void DrawImage(DXImage* _image, const  Rect& _rect, const ImageSizeMode& imageSizeMode = ImageSizeMode::StretchImage, const EzUI::Margin& margin = 0);//绘制图像
+		void DrawImage(DXImage* _image, const  Rect& _rect, const ImageSizeMode& imageSizeMode = ImageSizeMode::StretchImage, const EzUI::Padding& padding = 0);//绘制图像
 		void SetTransform(int xOffset, int yOffset, int angle = 0);//对画布进行旋转和偏移
 		void DrawBezier(const Point& startPoint, const Bezier& points, int width = 1);//贝塞尔线
 		void DrawBezier(const Point& startPoint, std::list<Bezier>& points, int width = 1);//贝塞尔线
 		void DrawEllipse(const Point& point, int radiusX, int radiusY, int width = 1);
 		void FillEllipse(const Point& point, int radiusX, int radiusY);
+		void DrawPoint(const Point& pt);
 		void DrawArc(const Rect& rect, int startAngle, int sweepAngle, int width = 1);//未实现
 		void DrawArc(const Point& point1, const  Point& point2, const Point& point3, int width = 1);//绘制弧线 未实现
 		void DrawPath(const DXPath& path, int width = 1);//绘制path 未实现

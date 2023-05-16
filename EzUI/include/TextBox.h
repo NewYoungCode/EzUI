@@ -49,6 +49,7 @@ namespace EzUI {
 		virtual void OnSize(const Size& size)override;
 		virtual void OnForePaint(PaintEventArgs& e) override;
 		virtual void OnKeyChar(WPARAM wParam, LPARAM lParam) override;
+		virtual void BuildSelectedRect();
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam)override;
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam)override;
 		virtual void OnMouseDown(MouseButton mbtn, const Point& point)override;

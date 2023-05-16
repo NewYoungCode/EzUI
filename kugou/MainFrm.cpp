@@ -426,6 +426,10 @@ void MainFrm::OnPaint(PaintEventArgs& arg)
 {
 	__super::OnPaint(arg);
 
+
+	//arg.Graphics.SetColor(Color::Red);
+	//arg.Graphics.DrawEllipse({ 200,70 }, 50, 50);
+	//arg.Graphics.DrawPoint({ 200,70 });
 	/*DXImage img(200, 30);
 	{
 		DXRender pt(&img);

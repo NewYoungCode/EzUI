@@ -39,7 +39,7 @@ namespace EzUI {
 				if (x == 0 && width < this->Width()) {
 					x = int((this->Width() * 1.0 - width) / 2 + 0.5);
 				}
-				it->SetRect(Rect{ x,it->Y(),width,it->Height() });
+				it->SetRect(Rect{ x,_maxBottom,width,it->Height() });
 			}
 
 			_maxBottom += it->Height();
@@ -54,7 +54,7 @@ namespace EzUI {
 		int& y = (int&)ctl->Y();
 		y = _maxBottom;
 		_maxBottom += (ctl->Height() + ctl->Margin.Bottom);
-	vScrollBar.	Location.insert(std::pair<Control*, int>(ctl, ctl->Y()));
+		vScrollBar.Location.insert(std::pair<Control*, int>(ctl, ctl->Y()));
 	}
 
 	ControlIterator VList::RemoveControl(Control* ctl)

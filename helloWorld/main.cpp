@@ -67,7 +67,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	text.SetMultiLine(true);
 	text.Margin.Left = 20;
 	text.Margin.Right = 20;
-	text.SetText(L"啊撒旦艰苦换个房间看电视进\r\n口的方式但是几乎都是复活节过段时间韩国hsdghjhjgjhghjend啊撒旦艰苦换个房间看电视进口的方式但是几乎都是复活节过段时间韩国hsdghjhjgjhghjend啊撒旦艰苦换个房间看电视进口的方式但是几乎都是复活节过段时间韩国hsdghjhjgjhghjend啊撒旦艰苦换个房间看电视进口的方式但是几乎都是复活节过段时间韩国hsdghjhjgjhghjend");
+	text.SetText(L"啊撒旦艰苦换个房间看电视进\n口的方式但是几乎都是复活节过段时间韩国");
 
 	Button btn(&mainLayout);
 	btn.SetText(L"单行/多行切换");
