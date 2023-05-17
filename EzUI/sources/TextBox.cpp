@@ -51,15 +51,16 @@ namespace EzUI {
 				}
 				break;
 			}
-			if (wParam == 26) {//ctrl+z³·Ïú
-				break;
-			}
 			if (wParam == 22) {
 				Paste();//Õ³Ìù
 				Analysis();//·ÖÎö×Ö·û´®
 				Invalidate();//Ë¢ÐÂ
 				break;
 			}
+			if (wParam == 26) {//ctrl+z³·Ïú
+				break;
+			}
+			
 		} while (false);
 
 		if (wParam < 32)return;//¿ØÖÆ×Ö·û
@@ -282,7 +283,7 @@ namespace EzUI {
 
 		if (!multiLine) {//µ¥ÐÐ±à¼­¿ò
 			font->Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
-			textLayout = new TextLayout(text, *font, TextAlign::MiddleLeft, Size{ __MAXFLOAT,Height() });
+			textLayout = new TextLayout(text, *font, Size{ __MAXFLOAT,Height() }, TextAlign::MiddleLeft);
 			if (textLayout->GetFontBox().Width < this->Width()) {
 				scrollX = 0;
 			}
@@ -292,7 +293,7 @@ namespace EzUI {
 		}
 		else {//¶àÐÐ±à¼­¿ò
 			font->Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);
-			textLayout = new TextLayout(text, *font, TextAlign::TopLeft, Size{ Width(),__MAXFLOAT });
+			textLayout = new TextLayout(text, *font, Size{ Width(),__MAXFLOAT }, TextAlign::TopLeft);
 		}
 		BuildCare();
 	}
@@ -330,7 +331,7 @@ namespace EzUI {
 		__super::OnMouseDown(mbtn, point);
 		_focus = true;
 		lastX = 0;
-		Invalidate();
+		lastY = 0;
 		_careShow = true;
 		timer.Start();
 
@@ -356,6 +357,19 @@ namespace EzUI {
 	}
 	void TextBox::OnMouseWheel(short zDelta, const Point& point) {
 		__super::OnMouseWheel(zDelta, point);
+	}
+
+	void TextBox::OnLayout()
+	{
+		__super::OnLayout();
+		if (!multiLine && Height() != lastHeight) {
+			lastHeight = Height();
+			Analysis();
+		}
+		if (multiLine && Width() != lastWidth) {
+			lastWidth = Width();
+			Analysis();
+		}
 	}
 
 	Point TextBox::ConvertPoint(const Point& pt) {
@@ -409,6 +423,7 @@ namespace EzUI {
 		__super::OnMouseUp(mbtn, point);
 		_down = false;
 		lastX = 0;
+		lastY = 0;
 		Invalidate();
 		this;
 	}
@@ -457,37 +472,32 @@ namespace EzUI {
 			SetText(value);
 		}
 	}
-	void TextBox::OnSize(const Size& sz) {
-		__super::OnSize(sz);
-		if (!multiLine && sz.Height != lastHeight) {
-			lastHeight = sz.Height;
-			Analysis();
-		}
-		if (multiLine && sz.Width != lastWidth) {
-			lastWidth = sz.Width;
-			Analysis();
-		}
-	}
+
 	void TextBox::OnForePaint(PaintEventArgs& e) {
-		if (font) { delete font; }
-		font = new Font(GetFontFamily().utf16(), GetFontSize());
-		if (textLayout == NULL) {
+		std::wstring fontFamily = GetFontFamily().utf16();
+		int fontSize = GetFontSize();
+
+		if (font == NULL || ((font != NULL) && (font->GetFontFamily() != fontFamily || font->GetFontSize() != fontSize))) {
+			if (font != NULL) {
+				delete font;
+			}
+			font = new Font(fontFamily, fontSize);
 			Analysis();
 		}
+
 		Color fontColor = GetForeColor();
-		e.Graphics.SetFont(GetFontFamily().utf16(), GetFontSize());
+		e.Graphics.SetFont(fontFamily, fontSize);
 		if (text.empty()) {
 			byte r = fontColor.GetR() - 20;
 			byte g = fontColor.GetG() - 20;
 			byte b = fontColor.GetB() - 20;
 			e.Graphics.SetColor(Color(r, g, b));
-			e.Graphics.DrawString(Placeholder.utf16(), Rect(0, 0, Width(), Height()), TextAlign::MiddleLeft);
+			e.Graphics.DrawString(Placeholder.utf16(), Rect(0, 0, Width(), Height()), multiLine ? TextAlign::TopLeft : TextAlign::MiddleLeft);
 		}
 
 		e.Graphics.SetColor(fontColor);
 		if (textLayout) {
 			Size fontBox = textLayout->GetFontBox();
-			//scrollY = (Height() - fontBox.Height) / 2;
 			e.Graphics.DrawString(*textLayout, { scrollX, scrollY });
 		}
 

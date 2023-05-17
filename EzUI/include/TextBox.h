@@ -14,8 +14,7 @@ namespace EzUI {
 		bool _focus = false;//是否具有焦点中
 		Point point_Start;//开始选中的位置
 		Point point_End;//结束位置
-		std::list<Rect> selectRects;
-		//Rect selectRect;//选中的字符矩形
+		std::list<Rect> selectRects;//选中的字符矩形
 		Rect careRect;//光标位置
 		Font* font = NULL;//字体
 		TextLayout* textLayout = NULL;//字体布局
@@ -29,7 +28,7 @@ namespace EzUI {
 		int scrollX = 0;//用于左右滚动
 		int scrollY = 0;//用于y轴滚动
 		int lastX = 0;//上一个x位置
-		int lastY = 0;//上一个y位置 预留
+		int lastY = 0;//上一个y位置 
 		Windows::Timer timer;//用于光标闪烁
 		bool _careShow = false;//用于光标闪烁
 	private:
@@ -46,7 +45,6 @@ namespace EzUI {
 		Point ConvertPoint(const Point& pt);//坐标转换
 	protected:
 		virtual void OnRemove()override;
-		virtual void OnSize(const Size& size)override;
 		virtual void OnForePaint(PaintEventArgs& e) override;
 		virtual void OnKeyChar(WPARAM wParam, LPARAM lParam) override;
 		virtual void BuildSelectedRect();
@@ -57,6 +55,7 @@ namespace EzUI {
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point)override;
 		virtual void OnKillFocus() override;
 		virtual void OnMouseWheel(short zDelta, const Point& point)override;
+		virtual void OnLayout();
 	public:
 		EString Placeholder;//placeholder懂得都懂 (在没有文字的情况下显示的文字)
 		Color SelectColor = Color(100, 255, 0, 0);//选中颜色

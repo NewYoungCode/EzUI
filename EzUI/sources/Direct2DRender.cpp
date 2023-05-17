@@ -67,8 +67,8 @@ namespace EzUI {
 		return false;
 	}
 	//TextLayout
-	TextLayout::TextLayout(const std::wstring& text, const Font& pTextFormat, TextAlign textAlign, Size maxSize) {
-		D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), pTextFormat.Get(), (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &value);
+	TextLayout::TextLayout(const std::wstring& text, const Font& font, Size maxSize, TextAlign textAlign) {
+		D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), font.Get(), (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &value);
 		SetTextAlign(textAlign);
 		value->GetMetrics(&textMetrics);
 	}
@@ -500,7 +500,7 @@ namespace EzUI {
 	}
 	void DXRender::DrawString(const std::wstring& text, const  Rect& _rect, EzUI::TextAlign textAlign) {
 		const Rect& rect = _rect;
-		TextLayout textLayout(text, *font, textAlign, Size{ rect.Width, rect.Height });
+		TextLayout textLayout(text, *font, Size{ rect.Width, rect.Height }, textAlign);
 		this->DrawString(textLayout, { _rect.X,_rect.Y });
 	}
 	void DXRender::DrawLine(const Point& _A, const Point& _B, int width) {

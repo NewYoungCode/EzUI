@@ -82,6 +82,8 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	text.Margin.Left = 20;
 	text.Margin.Right = 20;
 	text.SetText(L"啊撒旦艰苦换个房间看电视进\n口的方式但是几乎都是复活节过段时间韩国");
+	text.HoverStyle.FontSize = 50;
+	text.ActiveStyle.FontSize = 50;
 
 	Button btn(&mainLayout);
 	btn.SetText(L"单行/多行切换");
@@ -90,6 +92,9 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 		text.SetMultiLine(!text.IsMultiLine());
 		text.Invalidate();
 	};
+
+
+
 	/*for (size_t i = 0; i < 99999; i++)
 	{
 		Button* lb = new Button(&list);

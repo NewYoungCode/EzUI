@@ -43,7 +43,7 @@ namespace EzUI {
 				}
 			}
 			std::wstring viewStr = !drawText.empty() ? drawText : EllipsisText.utf16();
-			TextLayout textLayout(viewStr, font, this->TextAlign, Size(Width(), Height()));
+			TextLayout textLayout(viewStr, font, Size(Width(), Height()), this->TextAlign);
 			if (this->_underline) {//ÏÂ»®Ïß
 				textLayout.SetUnderline(0, viewStr.size());
 			}
