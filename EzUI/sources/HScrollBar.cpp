@@ -119,6 +119,7 @@ namespace EzUI {
 		if (Parent == NULL) {
 			return;
 		}
+		Parent->ResumeLayout();
 		sliderX = posY;
 
 		if (sliderX <= 0) { //滑块在顶部
@@ -131,20 +132,24 @@ namespace EzUI {
 		double rate = distanceTotal * 1.0 / (_maxRight - Parent->Width());//滑块可用总高度 / list item高度总和 * 当前滑块坐标的坐标
 		double offsetX = sliderX / rate;
 		if (distanceTotal > 0) {
-			for (auto& it : this->Location) { //挨个移动坐标
-				it.first->SetRect({ (int)(it.second - offsetX), it.first->Y(), it.first->Width(),it.first->Height() });
+			int x = -offsetX + 0.5;
+			//x = -x;
+			for (auto& it : Parent->GetControls()) { //挨个移动坐标
+				if (it->Visible == false) {
+					continue;
+				}
+				x += it->Margin.Left;
+				it->SetRect({ x, it->Y(), it->Width(),it->Height() });
+				x += it->Margin.Right;
+				x += it->Width();
+			}
+			Parent->Invalidate();
+			//Parent->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
+			if (Rolling) {
+				Rolling(RollingCurrent(), RollingTotal());
 			}
 		}
-		else {//当滚动条不可用的的时候
-			for (auto& it : this->Location) { //使用原坐标
-				it.first->SetRect({ (int)(it.second), it.first->Y(), it.first->Width(),it.first->Height() });
-			}
-		}
-		Parent->Invalidate();
-		//Parent->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
-		if (Rolling) {
-			Rolling(RollingCurrent(), RollingTotal());
-		}
+
 	}
 	void HScrollBar::OnMouseWheel(short zDelta, const Point& point) {
 		//double offset = (Width() - GetSliderWidth())*0.01 + 0.9;

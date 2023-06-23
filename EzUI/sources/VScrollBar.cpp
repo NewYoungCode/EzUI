@@ -19,17 +19,6 @@ namespace EzUI {
 	void VScrollBar::SetMaxBottom(int maxBottom)
 	{
 		this->_maxBottom = maxBottom;
-		//计算滚动条相关
-		auto& rect = GetRect();
-		if (rect.Height >= _maxBottom) {
-			_sliderHeight = rect.Height;
-		}
-		else {
-			if (_maxBottom != 0) {
-				//滑块高度
-				_sliderHeight = (int)(rect.Height * 1.0 * rect.Height / _maxBottom);
-			}
-		}
 		Move(sliderY);
 	}
 	int VScrollBar::RollingTotal()
@@ -59,7 +48,7 @@ namespace EzUI {
 		Color color = GetBackgroundColor();
 		if (color.GetValue() != 0) {
 			e.Graphics.SetColor(color);
-			e.Graphics.FillRectangle( Rect{ 0,0,Width(),Height() });
+			e.Graphics.FillRectangle(Rect{ 0,0,Width(),Height() });
 		}
 	}
 
@@ -69,6 +58,8 @@ namespace EzUI {
 
 	void VScrollBar::OnSize(const Size& size)
 	{
+
+
 		//此处需要屏蔽
 	}
 	const Rect& VScrollBar::GetRect()
@@ -142,31 +133,36 @@ namespace EzUI {
 		if (Parent == NULL) {
 			return;
 		}
+		Parent->ResumeLayout();
 		sliderY = posY;
 		if (sliderY <= 0) { //滑块在顶部
 			sliderY = 0;
 		}
+		//计算滚动条相关
+		if (Height() >= _maxBottom) {
+			_sliderHeight = Height();
+		}
+		else if (_maxBottom != 0) {
+			//滑块高度
+			_sliderHeight = (int)(Height() * 1.0 * Height() / _maxBottom);
+		}
 		if (sliderY + _sliderHeight >= GetRect().Height) { //滑块在最底部
-			sliderY = GetRect().Height - _sliderHeight;
+			sliderY = Height() - _sliderHeight;
 		}
 		int distanceTotal = Height() - _sliderHeight;//当前滑块可用滑道的总距离
 		double rate = distanceTotal * 1.0 / (_maxBottom - Parent->Height());//滑块可用总高度 / list item高度总和 * 当前滑块坐标的坐标
 		double offsetY = sliderY / rate;
 		if (distanceTotal > 0) {
-			for (auto& it : this->Location) { //挨个移动坐标
-				it.first->SetRect({ it.first->X(), (int)(it.second - offsetY), it.first->Width(),it.first->Height() });
+			int y = offsetY + 0.5;
+			y = -y;
+			Parent->MoveScroll(y);
+			Parent->Invalidate();
+			//Parent->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
+			if (Rolling) {
+				Rolling(RollingCurrent(), RollingTotal());
 			}
 		}
-		else {//当滚动条不可用的的时候
-			for (auto& it : this->Location) { //使用原坐标 挨个移动坐标
-				it.first->SetRect({ it.first->X(), (int)(it.second), it.first->Width(),it.first->Height() });
-			}
-		}
-		Parent->Invalidate();
-		//Parent->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
-		if (Rolling) {
-			Rolling(RollingCurrent(), RollingTotal());
-		}
+
 	}
 
 	void VScrollBar::OnMouseWheel(short zDelta, const Point& point) {

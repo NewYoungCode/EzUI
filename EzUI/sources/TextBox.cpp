@@ -60,7 +60,7 @@ namespace EzUI {
 			if (wParam == 26) {//ctrl+z撤销
 				break;
 			}
-			
+
 		} while (false);
 
 		if (wParam < 32)return;//控制字符
@@ -357,6 +357,43 @@ namespace EzUI {
 	}
 	void TextBox::OnMouseWheel(short zDelta, const Point& point) {
 		__super::OnMouseWheel(zDelta, point);
+		double offset = 20;
+		offset=(zDelta > 0 ? offset : -offset);
+		Move(offset);
+	}
+	void TextBox::Move(double _sliderY) {
+		int _maxBottom = textLayout->GetFontBox().Height;
+		int offset = _maxBottom - Height();
+		if (offset <= 0) {
+			scrollY = 0;
+			return;
+		}
+		scrollY += _sliderY;
+		if (scrollY > 0) {
+			scrollY = 0;
+		}
+		if (-scrollY > offset) {
+			scrollY = -offset;
+		}
+		//int _sliderHeight = 0;
+		////计算滚动条相关
+		//if (Height() >= _maxBottom) {
+		//	_sliderHeight = Height();
+		//}
+		//else if (_maxBottom != 0) {
+		//	//滑块高度
+		//	_sliderHeight = (int)(Height() * 1.0 * Height() / _maxBottom);
+		//}
+		//if (sliderY + _sliderHeight >= GetRect().Height) { //滑块在最底部
+		//	sliderY = GetRect().Height - _sliderHeight;
+		//}
+		//int distanceTotal = Height() - _sliderHeight;//当前滑块可用滑道的总距离
+		//double rate = distanceTotal * 1.0 / (_maxBottom - Parent->Height());//滑块可用总高度 / list item高度总和 * 当前滑块坐标的坐标
+		//double offsetY = sliderY / rate;
+
+		//int pause = 0;
+		//scrollY = offsetY;
+		Invalidate();
 	}
 
 	void TextBox::OnLayout()
@@ -385,7 +422,7 @@ namespace EzUI {
 			point_End = ConvertPoint(point);
 			if (textLayout) {
 				int fontHeight;
-				selectRects.clear();// = Rect();
+				selectRects.clear();//
 				B = textLayout->HitTestPoint(point_End, &B_TextPos, &B_isTrailingHit, &fontHeight);
 
 				BuildSelectedRect();

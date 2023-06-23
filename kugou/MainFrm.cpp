@@ -4,12 +4,23 @@
 MainFrm::MainFrm() :Form(1020, 690)
 {
 	InitForm();
-	//textArea.Style.SetBorder(Color::White, 1);
-	//textArea.SetLocation({ 100, 0 });
-	//textArea.SetFixedSize({ 200,50 });
-	//textArea.SetText(L"hello");
-	////textArea.HoverStyle.FontSize = 22;
-	//MainLayout->AddControl(&textArea);
+	ntfi.SetText(L"GameTool");
+
+	TextBox* textArea = new TextBox;
+	textArea->Style.SetBorder(Color::White, 1);
+	textArea->Style.FontSize = 20;
+	textArea->Style.BackgroundColor = Color::White;
+	textArea->SetLocation({ 100, 0 });
+	textArea->SetFixedHeight({ 300 });
+	textArea->SetMultiLine(true);
+
+	WebClient wc;
+	std::string resp;
+	wc.HttpGet("www.baidu.com", resp);
+	textArea->SetText(resp);
+	//MainLayout->AddControl(textArea);
+	//textArea->SetText(L"hello");
+
 }
 void MainFrm::InitForm() {
 	this->Zoom = true;
@@ -295,7 +306,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 
 				this->SetText(json["fileName"].asString());
 				((Label*)FindControl("songName"))->SetText(json["fileName"].asString());
-
+				ntfi.ShowBalloonTip(L"游戏模式", L"将自动禁用WIN键", 2000);
 				player.OpenUrl(playUrl);
 				player.SetDuration(dur);
 				player.Play();
@@ -308,6 +319,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			lrcCtl.LoadLrc(lrcData);
 			timer->Start();
 		}
+
 	}
 	if (args.EventType == Event::OnMouseClick) {
 
@@ -338,8 +350,13 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			}
 			this;
 			localList;
+			auto data = songItem->PublicData;
 			//localList->RemoveControl(songItem);
 			delete songItem;
+
+			Debug::Log("del 666 %p", data->InputControl);
+			Debug::Log("del 777 %p", data->FocusControl);
+
 			return false;
 		}
 		if (sender->GetAttribute("tablayout") == "rightView") {
@@ -432,8 +449,6 @@ void MainFrm::Task() {
 void MainFrm::OnPaint(PaintEventArgs& arg)
 {
 	__super::OnPaint(arg);
-
-
 	//arg.Graphics.SetColor(Color::Red);
 	//arg.Graphics.DrawEllipse({ 200,70 }, 50, 50);
 	//arg.Graphics.DrawPoint({ 200,70 });

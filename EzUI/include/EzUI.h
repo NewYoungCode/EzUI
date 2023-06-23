@@ -119,6 +119,7 @@ namespace EzUI {
 		std::function<void()> UpdateWindow = NULL;//立即更新全部无效区域
 		std::function<bool(Control*, EventArgs&)> Notify = NULL;//
 		std::function<void(Control*)> RemoveControl = NULL;//清空控件标记等等...
+		std::function<bool(Control*)> Contains = NULL;
 	};
 	class StopWatch {
 	private:

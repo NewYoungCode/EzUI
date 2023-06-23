@@ -31,6 +31,7 @@ namespace EzUI {
 		int lastY = 0;//上一个y位置 
 		Windows::Timer timer;//用于光标闪烁
 		bool _careShow = false;//用于光标闪烁
+		double sliderY = 0;
 	private:
 		void Init();
 		void Analysis();//分析字符串
@@ -55,6 +56,7 @@ namespace EzUI {
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point)override;
 		virtual void OnKillFocus() override;
 		virtual void OnMouseWheel(short zDelta, const Point& point)override;
+		void Move(double moveY);
 		virtual void OnLayout();
 	public:
 		EString Placeholder;//placeholder懂得都懂 (在没有文字的情况下显示的文字)

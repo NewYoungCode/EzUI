@@ -485,6 +485,9 @@ namespace EzUI {
 				//Debug::Log("remove _inputControl %p", delControl);
 			}
 		};
+		PublicData.Contains = [=](Control* control)->bool {
+			return this->FindControl(MainLayout, control);
+		};
 		PublicData.Notify = [=](Control* sender, EventArgs& args)->bool {
 			return OnNotify(sender, args);
 		};
@@ -506,6 +509,18 @@ namespace EzUI {
 			return false;
 		}
 		return true;
+	}
+
+	bool Window::FindControl(Control* nodeCtl, Control* findControl) {
+		if ((nodeCtl && nodeCtl == findControl) || (nodeCtl->GetScrollBar()== findControl)) {
+			return true;
+		}
+		for (auto& it : nodeCtl->GetControls()) {
+			if (FindControl(it, findControl)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	Control* Window::FindControl(const Point clientPoint, Point* outPoint) {
@@ -595,13 +610,13 @@ namespace EzUI {
 	void Window::OnMouseWheel(short zDelta, const Point& point)
 	{
 		if (_focusControl == NULL) return;
-		/*	if (_inputControl) {
-				MouseEventArgs args;
-				args.Delta = zDelta;
-				args.Location = point;
-				args.EventType = Event::OnMouseWheel;
-				_inputControl->Trigger(args);
-			}*/
+		if (_focusControl) {
+			MouseEventArgs args;
+			args.Delta = zDelta;
+			args.Location = point;
+			args.EventType = Event::OnMouseWheel;
+			_focusControl->Trigger(args);
+		}
 		ScrollBar* scrollBar = NULL;
 		if (_focusControl->GetScrollBar()) {
 			scrollBar = dynamic_cast<ScrollBar*>(_focusControl->GetScrollBar());
@@ -714,7 +729,7 @@ namespace EzUI {
 	{
 		if (!MainLayout) {
 			return;
-}
+		}
 #ifdef COUNT_ONSIZE
 		StopWatch sw;
 #endif

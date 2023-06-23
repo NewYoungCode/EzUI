@@ -4,11 +4,14 @@
 #include "LrcControl.h"
 #include "Timer.h"
 #include "TabLayout.h"
+#include "NotifyIcon.h"
+
 class MainFrm :
 	public Form
 {
 private:
 	//no new
+	NotifyIcon ntfi;
 	UIManager umg;
 	VlcPlayer player;
 	VList* localList = NULL, * searchList=NULL;

@@ -25,8 +25,27 @@ namespace EzUI {
 
 	void HList::OnLayout() {
 		__super::OnLayout();
-		hScrollBar.Location.clear();
 		_maxRight = 0;
+		_maxRight = MoveScroll(0);
+		RefreshScroll(_maxRight);
+	}
+	void HList::RefreshScroll(const int& _maxRight) {
+		if (AutoWidth) {
+			this->_fixedWidth = _maxRight;
+			this->_rect.Width = _maxRight;
+			hScrollBar.Visible = false;
+		}
+		else {
+			hScrollBar.Visible = true;
+		}
+		hScrollBar.SetMaxRight(_maxRight);
+	}
+	ScrollBar* HList::GetScrollBar()
+	{
+		return &hScrollBar;
+	}
+	int HList::MoveScroll(float offset) {
+		int _maxRight = (int)offset;
 		for (auto& it : GetControls()) {
 			if (it->Visible == false) continue;
 			//处理y坐标和margin
@@ -44,26 +63,10 @@ namespace EzUI {
 				}
 				it->SetRect(Rect(_maxRight, y, it->Width(), height));
 			}
-			hScrollBar.Location.insert(std::pair<Control*, int>(it, it->X()));
 			_maxRight += it->Width();
 			_maxRight += it->Margin.GetHSpace();
 		}
-		RefreshScroll(_maxRight);
-	}
-	void HList::RefreshScroll(const int& _maxRight) {
-		if (AutoWidth) {
-			this->_fixedWidth = _maxRight;
-			this->_rect.Width = _maxRight;
-			hScrollBar.Visible = false;
-		}
-		else {
-			hScrollBar.Visible = true;
-		}
-		hScrollBar.SetMaxRight(_maxRight);
-	}
-	ScrollBar* HList::GetScrollBar()
-	{
-		return &hScrollBar;
+		return _maxRight;
 	}
 	void HList::ChildPainting(Controls& controls, PaintEventArgs& args) {
 		VisibleControls.clear();

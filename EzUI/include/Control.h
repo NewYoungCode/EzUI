@@ -114,6 +114,7 @@ namespace EzUI {
 		void RemoveEventNotify(int eventType);
 		void SetCursor(const EString& fileName);
 		virtual ScrollBar* GetScrollBar();
+		virtual int MoveScroll(float offset);
 		HCURSOR GetCursor();
 	public:
 		Control();
@@ -181,8 +182,6 @@ namespace EzUI {
 		}
 	};
 	class ScrollBar :public Control {
-	public:
-		std::map<Control*, int> Location;
 	private:
 		//滚动条不允许再出现子控件
 		void AddControl(Control* ctl) {};

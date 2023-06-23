@@ -21,29 +21,8 @@ namespace EzUI {
 	}
 	void VList::OnLayout() {
 		__super::OnLayout();
-		vScrollBar.Location.clear();
 		_maxBottom = 0;
-		for (auto& it : GetControls()) {
-			if (it->Visible == false)continue;
-			{
-				//处理margin和x坐标
-				int	width = it->GetFixedWidth();
-				if (width == 0) {
-					width = this->Width() - it->Margin.GetHSpace();
-				}
-				int x = it->X();
-				if (x == 0) {
-					x = it->Margin.Left;
-				}
-				if (x == 0 && width < this->Width()) {
-					x = int((this->Width() * 1.0 - width) / 2 + 0.5);
-				}
-				it->SetRect(Rect{ x,_maxBottom,width,it->Height() });
-			}
-			vScrollBar.Location.insert(std::pair<Control*, int>(it, it->Y()));
-			_maxBottom += it->Height();
-			_maxBottom += it->Margin.GetVSpace();
-		}
+		_maxBottom = MoveScroll(_maxBottom);
 		RefreshScroll(_maxBottom);
 	}
 
@@ -63,6 +42,32 @@ namespace EzUI {
 	ScrollBar* VList::GetScrollBar()
 	{
 		return &vScrollBar;
+	}
+
+	int VList::MoveScroll(float offset)
+	{
+		int	_maxBottom = (int)offset;
+		for (auto& it : GetControls()) {
+			if (it->Visible == false)continue;
+			{
+				//处理margin和x坐标
+				int	width = it->GetFixedWidth();
+				if (width == 0) {
+					width = this->Width() - it->Margin.GetHSpace();
+				}
+				int x = it->X();
+				if (x == 0) {
+					x = it->Margin.Left;
+				}
+				if (x == 0 && width < this->Width()) {
+					x = int((this->Width() * 1.0 - width) / 2 + 0.5);
+				}
+				it->SetRect(Rect{ x,_maxBottom,width,it->Height() });
+			}
+			_maxBottom += it->Height();
+			_maxBottom += it->Margin.GetVSpace();
+		}
+		return _maxBottom;
 	}
 
 	/// <summary>

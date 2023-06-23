@@ -29,9 +29,10 @@ namespace EzUI {
 		int w = *width;
 		int h = *height;
 		VlcPlayer* vp = (VlcPlayer*)*opaque;
-		if (vp->BuffBitmap == NULL) {
-			vp->BuffBitmap = new EBitmap(w, h, EBitmap::PixelFormat::PixelFormatARGB);
+		if (vp->BuffBitmap != NULL) {
+			delete vp->BuffBitmap;
 		}
+		vp->BuffBitmap = new EBitmap(w, h, EBitmap::PixelFormat::PixelFormatARGB);
 		memcpy(chroma, "RV32", 4);
 		*pitches = w * 4;
 		*lines = h;
@@ -61,7 +62,7 @@ namespace EzUI {
 		__super::OnBackgroundPaint(pArg);
 		if (BuffBitmap) {
 			Image img(BuffBitmap->_bitmap);
-			pArg.Graphics.DrawImage( &img, GetRect(), ImageSizeMode::Zoom, 0);
+			pArg.Graphics.DrawImage(&img, GetRect(), ImageSizeMode::Zoom, 0);
 		}
 	}
 	void VlcPlayer::SetConfig()

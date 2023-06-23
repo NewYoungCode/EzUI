@@ -508,7 +508,7 @@ Event(this , ##__VA_ARGS__); \
 	void Control::OnKeyBoardEvent(const KeyboardEventArgs& args) {
 		if (PublicData == NULL) return;
 		WindowData* winData = PublicData;
-#define CONTROL_IN_WINDOW (winData->InputControl || winData->FocusControl)
+
 		bool b1 = this->CheckEventNotify(args.EventType);//先检查是否标记通知到主窗口
 		if (!b1) {
 			return;
@@ -517,7 +517,7 @@ Event(this , ##__VA_ARGS__); \
 		if (b2) {
 			return;
 		}
-		bool b3 = CONTROL_IN_WINDOW;//检查是否删除了控件
+		bool b3 = (winData->Contains(this));//检查是否删除了控件
 		if (!b3) {
 			return;
 		}
@@ -546,15 +546,12 @@ Event(this , ##__VA_ARGS__); \
 		WindowData* winData = PublicData;
 		MouseEventArgs& args = (MouseEventArgs&)_args;
 
-		//如果主窗口有具有焦点的控件 那么才可以继续往下派发消息
-#define CONTROL_IN_WINDOW (winData->InputControl || winData->FocusControl)
-		if (CONTROL_IN_WINDOW && CheckEventPassThrough(args.EventType)) {//检查鼠标穿透
+		if ((winData->Contains(this)) && CheckEventPassThrough(args.EventType)) {//检查鼠标穿透
 			MouseEventArgs copy_args = args;
 			copy_args.Location.X += this->X();
 			copy_args.Location.Y += this->Y();
 			this->Parent->OnMouseEvent(copy_args);//如果设置了穿透就直接发送给上一层控件
 		}
-
 		bool b1 = this->CheckEventNotify(args.EventType);//先检查是否标记通知到主窗口
 		if (!b1) {
 			return;
@@ -563,7 +560,7 @@ Event(this , ##__VA_ARGS__); \
 		if (b2) {
 			return;
 		}
-		bool b3 = CONTROL_IN_WINDOW;//检查是否删除了控件
+		bool b3 = (winData->Contains(this));//检查是否删除了控件
 		if (!b3) {
 			return;
 		}
@@ -589,7 +586,7 @@ Event(this , ##__VA_ARGS__); \
 				copy_args.EventType = Event::OnMouseEnter;
 				OnMouseEvent(copy_args);
 			}
-			if (CONTROL_IN_WINDOW) {
+			if ((winData->Contains(this))) {
 				OnMouseMove(args.Location);
 			}
 			break;
@@ -930,6 +927,11 @@ Event(this , ##__VA_ARGS__); \
 	{
 		return NULL;
 	}
+	int Control::MoveScroll(float offset)
+	{
+		return 0;
+	}
+
 	HCURSOR Control::GetCursor() {
 		if (_hCursor) {
 			return _hCursor;
