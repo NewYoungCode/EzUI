@@ -510,43 +510,52 @@ namespace EzUI {
 		Mid = Align_Mid,
 		Center = Align_Center
 	};
-	enum  class TextAlign :int {
-		// 摘要: 
+	enum class __Align :int {
+		   //
+		   // 摘要: 
+		   //     不做处理
+		   Normal = 0,
+		   //
+		   // 摘要: 
 		   //     内容在垂直方向上顶部对齐，在水平方向上左边对齐。
-		TopLeft = Align_Top | Align_Left,
-		//
-		// 摘要: 
-		//     内容在垂直方向上顶部对齐，在水平方向上居中对齐。
-		TopCenter = Align_Top | Align_Center,
-		//
-		// 摘要: 
-		//     内容在垂直方向上顶部对齐，在水平方向上右边对齐。
-		TopRight = Align_Top | Align_Right,
-		//
-		// 摘要: 
-		//     内容在垂直方向上中间对齐，在水平方向上左边对齐。
-		MiddleLeft = Align_Mid | Align_Left,
-		//
-		// 摘要: 
-		//     内容在垂直方向上中间对齐，在水平方向上居中对齐。
-		MiddleCenter = Align_Mid | Align_Center,
-		//
-		// 摘要: 
-		//     内容在垂直方向上中间对齐，在水平方向上右边对齐。
-		MiddleRight = Align_Mid | Align_Right,
-		//
-		// 摘要: 
-		//     内容在垂直方向上底边对齐，在水平方向上左边对齐。
-		BottomLeft = Align_Bottom | Align_Left,
-		//
-		// 摘要: 
-		//     内容在垂直方向上底边对齐，在水平方向上居中对齐。
-		BottomCenter = Align_Bottom | Align_Center,
-		//
-		// 摘要: 
-		//     内容在垂直方向上底边对齐，在水平方向上右边对齐。
-		BottomRight = Align_Bottom | Align_Right
+		   TopLeft = Align_Top | Align_Left,
+		   //
+		   // 摘要: 
+		   //     内容在垂直方向上顶部对齐，在水平方向上居中对齐。
+		   TopCenter = Align_Top | Align_Center,
+		   //
+		   // 摘要: 
+		   //     内容在垂直方向上顶部对齐，在水平方向上右边对齐。
+		   TopRight = Align_Top | Align_Right,
+		   //
+		   // 摘要: 
+		   //     内容在垂直方向上中间对齐，在水平方向上左边对齐。
+		   MiddleLeft = Align_Mid | Align_Left,
+		   //
+		   // 摘要: 
+		   //     内容在垂直方向上中间对齐，在水平方向上居中对齐。
+		   MiddleCenter = Align_Mid | Align_Center,
+		   //
+		   // 摘要: 
+		   //     内容在垂直方向上中间对齐，在水平方向上右边对齐。
+		   MiddleRight = Align_Mid | Align_Right,
+		   //
+		   // 摘要: 
+		   //     内容在垂直方向上底边对齐，在水平方向上左边对齐。
+		   BottomLeft = Align_Bottom | Align_Left,
+		   //
+		   // 摘要: 
+		   //     内容在垂直方向上底边对齐，在水平方向上居中对齐。
+		   BottomCenter = Align_Bottom | Align_Center,
+		   //
+		   // 摘要: 
+		   //     内容在垂直方向上底边对齐，在水平方向上右边对齐。
+		   BottomRight = Align_Bottom | Align_Right
 	};
+
+	typedef __Align TextAlign;
+	typedef __Align ControlAlign;
+
 
 	enum class FontStyle :int {
 		NORMAL = 0
