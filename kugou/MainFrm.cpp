@@ -20,6 +20,7 @@ MainFrm::MainFrm() :Form(1020, 690)
 	textArea->SetText(resp);
 	//MainLayout->AddControl(textArea);
 	//textArea->SetText(L"hello");
+	//MainLayout->Style.Radius =100;
 
 }
 void MainFrm::InitForm() {

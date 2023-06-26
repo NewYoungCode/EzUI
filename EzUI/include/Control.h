@@ -43,7 +43,6 @@ namespace EzUI {
 		Control* Parent = NULL;//父控件
 		Controls VisibleControls;//基于控件中的可见控件
 		DockStyle Dock = DockStyle::None;//dock样式
-		//ControlAlign ControlAlign = ControlAlign::Normal;//控件在父控件的对齐方式
 		const Rect ClipRect;//控件在窗口中的可见区域
 	public:
 		EventMouseMove MouseMove;//移动事件

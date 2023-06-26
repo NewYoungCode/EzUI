@@ -78,7 +78,7 @@ namespace EzUI {
 	public:
 		TextLayout(const std::wstring& text, const Font& font, Size maxSize = Size{ __MAXFLOAT,__MAXFLOAT }, TextAlign textAlgin = TextAlign::TopLeft);
 		Point HitTestPoint(const Point& pt, int* outTextPos, BOOL* outIsTrailingHit, int* fontHeight);
-		void TextLayout::HitTestPoint(const Point& pt, HitTestMetrics* hitTestMetrics);//根据坐标执行命中测试
+		void HitTestPoint(const Point& pt, HitTestMetrics* hitTestMetrics);//根据坐标执行命中测试
 		Point HitTestTextPosition(int textPos, BOOL isTrailingHit);//根据文字下标执行命中测试
 		int Width();
 		int Height();

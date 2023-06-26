@@ -245,11 +245,26 @@ namespace EzUI {
 		}
 
 		case WM_DISPLAYCHANGE: {
-			/*	auto width = LOWORD(lParam);
+				auto width = LOWORD(lParam);
 				auto height = HIWORD(lParam);;
-				EzUI::Scale = GetScale();
-				SetWindowPos(_hWnd, HWND_TOP, _rect.X * Scale, _rect.Y * Scale, _rect.Width * Scale, _rect.Height * Scale, SWP_NOZORDER | SWP_NOACTIVATE);
-				MainLayout->Invalidate();*/
+			//	EzUI::Scale = GetScale();
+				//SetWindowPos(_hWnd, HWND_TOP, _rect.X * Scale, _rect.Y * Scale, _rect.Width * Scale, _rect.Height * Scale, SWP_NOZORDER | SWP_NOACTIVATE);
+				//MainLayout->Invalidate();
+			break;
+		}
+		case WM_DPICHANGED:
+		{
+			/*g_dpi = HIWORD(wParam);
+			UpdateDpiDependentFontsAndResources();
+
+			RECT* const prcNewWindow = (RECT*)lParam;
+			SetWindowPos(hWnd,
+				NULL,
+				prcNewWindow->left,
+				prcNewWindow->top,
+				prcNewWindow->right - prcNewWindow->left,
+				prcNewWindow->bottom - prcNewWindow->top,
+				SWP_NOZORDER | SWP_NOACTIVATE);*/
 			break;
 		}
 		case WM_PAINT:
