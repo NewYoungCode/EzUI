@@ -20,6 +20,6 @@ namespace EzUI {
 		virtual void ChildPainting(Controls& controls, PaintEventArgs& args)override;
 		virtual void RefreshScroll(const int& _maxRight);
 		virtual ScrollBar* GetScrollBar()override;
-		virtual int MoveScroll(float offset) override;
+		virtual int MoveScroll(int offset) override;
 	};
 };

@@ -44,9 +44,9 @@ namespace EzUI {
 		return &vScrollBar;
 	}
 
-	int VList::MoveScroll(float offset)
+	int VList::MoveScroll(int offset)
 	{
-		int	_maxBottom = (int)offset;
+		int	_maxBottom = offset;
 		for (auto& it : GetControls()) {
 			if (it->Visible == false)continue;
 			{

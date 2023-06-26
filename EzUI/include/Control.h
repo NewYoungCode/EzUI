@@ -114,7 +114,7 @@ namespace EzUI {
 		void RemoveEventNotify(int eventType);
 		void SetCursor(const EString& fileName);
 		virtual ScrollBar* GetScrollBar();
-		virtual int MoveScroll(float offset);
+		virtual int MoveScroll(int offset);
 		HCURSOR GetCursor();
 	public:
 		Control();

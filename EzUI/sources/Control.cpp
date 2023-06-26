@@ -927,7 +927,7 @@ Event(this , ##__VA_ARGS__); \
 	{
 		return NULL;
 	}
-	int Control::MoveScroll(float offset)
+	int Control::MoveScroll(int offset)
 	{
 		return 0;
 	}

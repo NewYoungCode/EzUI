@@ -47,7 +47,7 @@ namespace EzUI {
 		_MaxBottom = MoveScroll(0);
 		RefreshScroll(_MaxBottom);
 	}
-	int TileList::MoveScroll(float offset) {
+	int TileList::MoveScroll(int offset) {
 		int _MaxBottom = 0;
 		const int& maxWith = this->Width();
 		int maxHeight = 0;//每行最高的那个

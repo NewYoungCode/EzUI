@@ -17,7 +17,7 @@ namespace EzUI {
 		virtual ~TileList();
 		virtual void Clear(bool freeList = false)override;
 		virtual void OnLayout()override;
-		int MoveScroll(float offset);
+		virtual int MoveScroll(int offset)override;
 		virtual void RefreshScroll(const int& _maxBottom);
 		virtual ScrollBar* GetScrollBar()override;
 	};

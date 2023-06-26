@@ -44,8 +44,8 @@ namespace EzUI {
 	{
 		return &hScrollBar;
 	}
-	int HList::MoveScroll(float offset) {
-		int _maxRight = (int)offset;
+	int HList::MoveScroll(int offset) {
+		int _maxRight = offset;
 		for (auto& it : GetControls()) {
 			if (it->Visible == false) continue;
 			//处理y坐标和margin
