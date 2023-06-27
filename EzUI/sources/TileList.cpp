@@ -35,7 +35,7 @@ namespace EzUI {
 			this->_rect.Height = _maxBottom;
 			vScrollBar.Visible = false;
 		}
-		else {
+		else if (vScrollBar.Visible == true) {
 			vScrollBar.Visible = true;
 		}
 		vScrollBar.SetMaxBottom(_maxBottom);

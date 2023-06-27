@@ -300,6 +300,7 @@ namespace EzUI {
 	// 为 OnPaint 事件提供数据。
 	class PaintEventArgs :public EventArgs {
 	public:
+		std::list<Point> OffSetPoint;//用于记录每次绘制控件的偏移位置
 		PaintEventArgs(const PaintEventArgs&) = delete;
 		PaintEventArgs& operator=(const PaintEventArgs&) = delete;
 		WindowData* PublicData = NULL;

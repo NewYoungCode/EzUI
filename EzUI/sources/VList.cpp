@@ -33,7 +33,7 @@ namespace EzUI {
 			this->_rect.Height = _maxBottom;
 			vScrollBar.Visible = false;
 		}
-		else {
+		else if(vScrollBar.Visible==true){
 			vScrollBar.Visible = true;
 		}
 		vScrollBar.SetMaxBottom(_maxBottom);
@@ -75,11 +75,11 @@ namespace EzUI {
 	/// </summary>
 	/// <param name="controls"></param>
 	/// <param name="args"></param>
-	void VList::ChildPainting(Controls& controls, PaintEventArgs& args) {
+	void VList::OnChildPainting(PaintEventArgs& args) {
 		VisibleControls.clear();
 		auto rect = Rect(0, 0, Width(), Height());
 		//»æÖÆ×Ó¿Ø¼þ
-		for (auto i = controls.begin(); i != controls.end(); i++)
+		for (auto i = GetControls().begin(); i != GetControls().end(); i++)
 		{
 			auto& it = **i;
 			if (rect.IntersectsWith(it.GetRect())) {

@@ -43,6 +43,14 @@ public:
 			delete del.Style.ForeImage;
 		}
 	}
+
+	virtual void OnChildPainting(PaintEventArgs& args)override {
+		__super::OnChildPainting(args);
+		//÷√∂• ªÊ÷∆…æ≥˝œﬂ
+		args.Graphics.SetColor(Color::Red);
+		args.Graphics.FillRectangle(Rect(0,17, 308, 2),0);
+	}
+
 	SongItem(const EString& _songName, const EString& _songTime = "03:56") {
 
 
@@ -238,7 +246,7 @@ namespace global {
 		HttpGet(url, resp);
 		JObject json(resp);
 
-		if (json["status"].asInt() != 200 || json["candidates"].size()==0) {
+		if (json["status"].asInt() != 200 || json["candidates"].size() == 0) {
 			return EString(L"[00:00.00]Œﬁ∏Ë¥ ");
 		}
 

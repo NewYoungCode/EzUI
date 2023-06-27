@@ -35,7 +35,7 @@ namespace EzUI {
 			this->_rect.Width = _maxRight;
 			hScrollBar.Visible = false;
 		}
-		else {
+		else if (hScrollBar.Visible == true) {
 			hScrollBar.Visible = true;
 		}
 		hScrollBar.SetMaxRight(_maxRight);
@@ -68,11 +68,11 @@ namespace EzUI {
 		}
 		return _maxRight;
 	}
-	void HList::ChildPainting(Controls& controls, PaintEventArgs& args) {
+	void HList::OnChildPainting( PaintEventArgs& args) {
 		VisibleControls.clear();
 		auto rect = Rect(0, 0, Width(), Height());
 		//»æÖÆ×Ó¿Ø¼þ
-		for (auto i = controls.begin(); i != controls.end(); i++)
+		for (auto i = GetControls().begin(); i != GetControls().end(); i++)
 		{
 			auto& it = **i;
 			if (rect.IntersectsWith(it.GetRect())) {

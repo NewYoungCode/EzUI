@@ -39,15 +39,20 @@ Event(this , ##__VA_ARGS__); \
 	Control::Control(Control* parent) {
 		parent->AddControl(this);
 	}
-	void Control::ChildPainting(Controls& controls, PaintEventArgs& args)
+	void Control::OnChildPainting(PaintEventArgs& args)
 	{
 		VisibleControls.clear();
 		//绘制子控件
-		for (auto& it : controls) {
+		for (auto& it : GetControls()) {
 			VisibleControls.push_back(it);
 			it->Rending(args);
 		}
 		//子控件绘制完毕
+		//设置偏移 用于置顶绘制
+		if (args.OffSetPoint.size() > 0) {
+			Point& offset = *(args.OffSetPoint.rbegin());
+			args.Graphics.SetTransform(offset.X, offset.Y);
+		}
 	}
 	void Control::OnPaint(PaintEventArgs& args)
 	{
@@ -614,13 +619,14 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::Rending(PaintEventArgs& args) {
 		this->PublicData = args.PublicData;
+
 		if (!Visible) { return; }//如果控件设置为不可见直接不绘制
 
 		if (this->IsPendLayout()) {//绘制的时候会检查时候有挂起的布局 如果有 立即让布局生效并重置布局标志
 			this->ResumeLayout();
 		}
 
-		auto clientRect = this->GetClientRect();//获取基于父窗口的最表
+		auto clientRect = this->GetClientRect();//获取基于窗口的位置
 		if (clientRect.IsEmptyArea()) { return; }
 		auto& invalidRect = args.InvalidRectangle;
 		auto& pt = args.Graphics;
@@ -644,6 +650,8 @@ Event(this , ##__VA_ARGS__); \
 
 		//设置绘制偏移
 		pt.SetTransform(clientRect.X, clientRect.Y);
+
+		args.OffSetPoint.push_back(Point(clientRect.X, clientRect.Y));
 
 		int r = GetRadius();
 		//bool isScrollBar = dynamic_cast<EzUI::ScrollBar*>(this);
@@ -671,7 +679,8 @@ Event(this , ##__VA_ARGS__); \
 		if (!isIntercept) {
 			this->OnPaint(args);//绘制基本上下文
 		}
-		this->ChildPainting(this->_controls, args);//绘制子控件
+
+		this->OnChildPainting(args);//绘制子控件
 		//绘制滚动条
 		EzUI::ScrollBar* scrollbar = NULL;
 		if (scrollbar = this->GetScrollBar()) {
@@ -685,13 +694,11 @@ Event(this , ##__VA_ARGS__); \
 		pt.SetTransform(clientRect.X, clientRect.Y);
 		//绘制边框
 		this->OnBorderPaint(args);//绘制边框
-		//恢复偏移
-		pt.SetTransform(0, 0);
-
+		args.OffSetPoint.pop_back();
 		pt.PopLayer();//弹出
 #ifdef DEBUGPAINT
 		if (PublicData->Debug) {
-			pt.DrawRectangle(GetClientRect(), Color::White);
+			pt.DrawRectangle(Rect(0, 0, clientRect.Width, clientRect.Height), Color::White);
 		}
 #endif
 	}

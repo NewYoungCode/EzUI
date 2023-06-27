@@ -60,7 +60,7 @@ namespace EzUI {
 	protected:
 		ControlStyle& GetStyle(const ControlState& _state);//获取当前控件状态下的样式信息
 		virtual void OnPaint(PaintEventArgs& args);//绘制 
-		virtual void ChildPainting(Controls& controls, PaintEventArgs& args);//子控件绘制 可以重载此函数优化鼠标操作性能
+		virtual void OnChildPainting(PaintEventArgs& args);//子控件绘制 可以重载此函数优化鼠标操作性能
 		virtual void OnBackgroundPaint(PaintEventArgs& painter);//背景绘制
 		virtual void OnForePaint(PaintEventArgs& e);//前景绘制
 		virtual void OnBorderPaint(PaintEventArgs& painter);//边框绘制
