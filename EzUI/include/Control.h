@@ -60,7 +60,7 @@ namespace EzUI {
 	protected:
 		ControlStyle& GetStyle(const ControlState& _state);//获取当前控件状态下的样式信息
 		virtual void OnPaint(PaintEventArgs& args);//绘制 
-		virtual void OnChildPainting(PaintEventArgs& args);//子控件绘制 可以重载此函数优化鼠标操作性能
+		virtual void OnChildPaint(PaintEventArgs& args);//子控件绘制 可以重载此函数优化鼠标操作性能
 		virtual void OnBackgroundPaint(PaintEventArgs& painter);//背景绘制
 		virtual void OnForePaint(PaintEventArgs& e);//前景绘制
 		virtual void OnBorderPaint(PaintEventArgs& painter);//边框绘制
@@ -145,7 +145,7 @@ namespace EzUI {
 		virtual void AddControl(Control* ctl);//添加控件
 		virtual void RemoveControl(Control* ctl);//删除控件 返回下一个迭代器
 		virtual void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件
-		virtual void Rending(PaintEventArgs& args);//绘制函数
+		void Rending(PaintEventArgs& args);//绘制函数
 		bool IsVisible();//当前是否显示在窗口内
 		virtual bool Invalidate();// 使当前控件的区域为无效区域
 		virtual void Refresh();// 使当前控件区域为无效区域并且立即更新全部的无效区域

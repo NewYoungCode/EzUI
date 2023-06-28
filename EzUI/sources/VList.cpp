@@ -70,12 +70,7 @@ namespace EzUI {
 		return _maxBottom;
 	}
 
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="controls"></param>
-	/// <param name="args"></param>
-	void VList::OnChildPainting(PaintEventArgs& args) {
+	void VList::OnChildPaint(PaintEventArgs& args) {
 		VisibleControls.clear();
 		auto rect = Rect(0, 0, Width(), Height());
 		//»æÖÆ×Ó¿Ø¼þ

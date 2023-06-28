@@ -44,8 +44,8 @@ public:
 		}
 	}
 
-	virtual void OnChildPainting(PaintEventArgs& args)override {
-		__super::OnChildPainting(args);
+	virtual void OnChildPaint(PaintEventArgs& args)override {
+		__super::OnChildPaint(args);
 		//÷√∂• ªÊ÷∆…æ≥˝œﬂ
 		args.Graphics.SetColor(Color::Red);
 		args.Graphics.FillRectangle(Rect(0,17, 308, 2),0);

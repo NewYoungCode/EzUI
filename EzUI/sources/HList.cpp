@@ -68,7 +68,7 @@ namespace EzUI {
 		}
 		return _maxRight;
 	}
-	void HList::OnChildPainting( PaintEventArgs& args) {
+	void HList::OnChildPaint( PaintEventArgs& args) {
 		VisibleControls.clear();
 		auto rect = Rect(0, 0, Width(), Height());
 		//»æÖÆ×Ó¿Ø¼þ

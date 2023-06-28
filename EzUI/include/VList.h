@@ -17,7 +17,7 @@ namespace EzUI {
 		virtual ~VList();
 		int ContentLenght();//获取内容实际长度
 		virtual void OnLayout()override;
-		virtual void OnChildPainting( PaintEventArgs& args)override;
+		virtual void OnChildPaint( PaintEventArgs& args)override;
 		virtual void RefreshScroll(const int& _maxBottom);
 		virtual ScrollBar* GetScrollBar() override;
 		virtual int MoveScroll(int offset) override;

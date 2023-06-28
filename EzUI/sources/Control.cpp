@@ -39,7 +39,7 @@ Event(this , ##__VA_ARGS__); \
 	Control::Control(Control* parent) {
 		parent->AddControl(this);
 	}
-	void Control::OnChildPainting(PaintEventArgs& args)
+	void Control::OnChildPaint(PaintEventArgs& args)
 	{
 		VisibleControls.clear();
 		//绘制子控件
@@ -680,7 +680,7 @@ Event(this , ##__VA_ARGS__); \
 			this->OnPaint(args);//绘制基本上下文
 		}
 
-		this->OnChildPainting(args);//绘制子控件
+		this->OnChildPaint(args);//绘制子控件
 		//绘制滚动条
 		EzUI::ScrollBar* scrollbar = NULL;
 		if (scrollbar = this->GetScrollBar()) {
