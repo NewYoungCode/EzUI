@@ -245,8 +245,8 @@ namespace EzUI {
 		}
 
 		case WM_DISPLAYCHANGE: {
-				auto width = LOWORD(lParam);
-				auto height = HIWORD(lParam);;
+			auto width = LOWORD(lParam);
+			auto height = HIWORD(lParam);;
 			//	EzUI::Scale = GetScale();
 				//SetWindowPos(_hWnd, HWND_TOP, _rect.X * Scale, _rect.Y * Scale, _rect.Width * Scale, _rect.Height * Scale, SWP_NOZORDER | SWP_NOACTIVATE);
 				//MainLayout->Invalidate();
@@ -527,7 +527,7 @@ namespace EzUI {
 	}
 
 	bool Window::FindControl(Control* nodeCtl, Control* findControl) {
-		if ((nodeCtl && nodeCtl == findControl) || (nodeCtl->GetScrollBar()== findControl)) {
+		if ((nodeCtl && nodeCtl == findControl) || (nodeCtl->GetScrollBar() == findControl)) {
 			return true;
 		}
 		for (auto& it : nodeCtl->GetControls()) {
@@ -542,6 +542,9 @@ namespace EzUI {
 		*outPoint = clientPoint;
 		Control* outCtl = MainLayout;
 	UI_Loop:
+		if (outCtl == NULL) {
+			return NULL;
+		}
 		Control* scrollBar = outCtl->GetScrollBar();
 		if (scrollBar && scrollBar->GetClientRect().Contains(clientPoint)) {
 			if (scrollBar->Visible) {
