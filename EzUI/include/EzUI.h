@@ -6,6 +6,13 @@
 #include "Direct2DRender.h"
 
 namespace EzUI {
+	struct MonitorInfo;
+	class EventArgs;
+	class Control;
+	class Spacer;
+	class ScrollBar;
+	enum class Cursor :ULONG_PTR;
+
 	extern WCHAR WindowClassName[];
 	//全局资源句柄
 	extern UI_EXPORT HZIP HZipResource;//zip文件中的全局资源句柄
@@ -14,12 +21,8 @@ namespace EzUI {
 	extern UI_EXPORT size_t GetThreadId();
 	//从获取文件资源
 	extern UI_EXPORT bool GetResource(const EString& fileName, std::string* outData);
-
-	class EventArgs;
-	class Control;
-	class Spacer;
-	class ScrollBar;
-	enum class Cursor :ULONG_PTR;
+	//获取当前所有监视器的信息
+	extern size_t GetMonitors(std::list<MonitorInfo>* outMonitorInfo);
 
 	namespace Convert {
 		inline Rect StringToRect(const EString& str) {
@@ -107,7 +110,16 @@ namespace EzUI {
 		}
 	};
 #endif
-
+	// 定义用于保存显示器信息的结构体
+	struct MonitorInfo {
+		//显示器的位置 多显示器下Y轴可能出现负数或者大于0的时候代表显示器在设置里面显示器是错位的(多显示器没有平行);
+		EzUI::Rect Rect;
+		EzUI::Rect WorkRect;//工作区域
+		Size Physical;//显示器物理宽高
+		float Scale = 1.0f;//显示器缩放比例
+		float FPS = 60;//显示器帧率
+		bool Primary = false;//是否为主显示器
+	};
 	struct WindowData {
 		void* Window = NULL;//窗口类实例
 		Control* FocusControl = NULL;//具有焦点的控件

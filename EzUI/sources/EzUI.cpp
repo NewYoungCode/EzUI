@@ -47,6 +47,47 @@ namespace EzUI {
 			return UnZipResource(filename, outFileData);
 		}
 	}
+	size_t GetMonitors(std::list<MonitorInfo>* outMonitorInfo)
+	{
+		outMonitorInfo->clear();
+		//// 枚举显示器回调函数
+		::EnumDisplayMonitors(NULL, NULL, [](HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData) ->BOOL {
+			// 获取当前所有显示器的信息
+			std::list<MonitorInfo>* monitors = (std::list<MonitorInfo>*)dwData;
+			MonitorInfo mt;
+			//逻辑宽高
+			mt.Rect.X = lprcMonitor->left;
+			mt.Rect.Y = lprcMonitor->top;
+			mt.Rect.Width = lprcMonitor->right - lprcMonitor->left;
+			mt.Rect.Height = lprcMonitor->bottom - lprcMonitor->top;
+			//获取显示器信息
+			MONITORINFOEX miex;
+			miex.cbSize = sizeof(MONITORINFOEX);
+			::GetMonitorInfo(hMonitor, &miex);
+			if ((miex.dwFlags & MONITORINFOF_PRIMARY) == MONITORINFOF_PRIMARY) {//是否为主显示器
+				mt.Primary = true;
+			}
+			//获取工作区域 自动排除任务栏
+			mt.WorkRect.X = miex.rcWork.left;
+			mt.WorkRect.Y = miex.rcWork.top;
+			mt.WorkRect.Width = miex.rcWork.right - miex.rcWork.left;
+			mt.WorkRect.Height = miex.rcWork.bottom - miex.rcWork.top;
+			//获取物理宽高
+			DEVMODE dm;
+			dm.dmSize = sizeof(DEVMODE);
+			dm.dmDriverExtra = 0;
+			::EnumDisplaySettings(miex.szDevice, ENUM_REGISTRY_SETTINGS, &dm);
+			mt.Physical.Width = dm.dmPelsWidth;//物理宽
+			mt.Physical.Height = dm.dmPelsHeight;//物理高
+			//计算缩放
+			mt.Scale = ((double)mt.Physical.Height / (double)mt.Rect.Height);
+			//显示器fps
+			mt.FPS = dm.dmDisplayFrequency;
+			monitors->push_back(mt);
+			return TRUE;
+			}, LPARAM(outMonitorInfo));
+		return outMonitorInfo->size();
+	}
 
 	size_t __count_onsize = 0;
 
@@ -183,7 +224,7 @@ namespace EzUI {
 		do
 		{
 			if (key == "background-color") {
-				style->BackgroundColor =Convert::StringToColor(value);
+				style->BackgroundColor = Convert::StringToColor(value);
 				break;
 			}
 			if (key == "background-image") {

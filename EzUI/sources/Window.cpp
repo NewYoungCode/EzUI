@@ -5,50 +5,31 @@ namespace EzUI {
 #define _focusControl PublicData.FocusControl
 #define _inputControl PublicData.InputControl
 
-	float GetScale() {
-		return 1.0f;
-
-		HWND hWnd = GetDesktopWindow();
-		HMONITOR hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
-		// 获取监视器逻辑宽度与高度
-		MONITORINFOEX miex;
-		miex.cbSize = sizeof(miex);
-		GetMonitorInfo(hMonitor, &miex);
-		int cxLogical = (miex.rcMonitor.right - miex.rcMonitor.left);
-		int cyLogical = (miex.rcMonitor.bottom - miex.rcMonitor.top);
-		// 获取监视器物理宽度与高度
-		DEVMODE dm;
-		dm.dmSize = sizeof(dm);
-		dm.dmDriverExtra = 0;
-		EnumDisplaySettings(miex.szDevice, ENUM_REGISTRY_SETTINGS, &dm);
-		int cxPhysical = dm.dmPelsWidth;
-		int cyPhysical = dm.dmPelsHeight;
-		// 缩放比例计算  实际上使用任何一个即可
-		double horzScale = ((double)cxPhysical / (double)cxLogical);
-		double vertScale = ((double)cyPhysical / (double)cyLogical);
-		//printf("%lf  %lf\n", horzScale, vertScale);
-		return (float)horzScale;
-	}
-
-
 	Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 	{
-		MONITORINFO monitor{ 0 };
-		monitor.cbSize = sizeof(MONITORINFO);
-		::GetMonitorInfo(::MonitorFromWindow(_hWnd, MONITOR_DEFAULTTONEAREST), &monitor);
-
-		const RECT& rcWork = monitor.rcWork;
-		int sw = rcWork.right - rcWork.left;//当前工作区域的宽
-		int sh = rcWork.bottom - rcWork.top;//当前工作区域的高
-		_rect.X = rcWork.left + (sw - width) / 2;//保证左右居中
-		_rect.Y = rcWork.top + (sh - height) / 2;//保证上下居中
+		//获取显示器 达到鼠标在哪个显示器 窗口就在哪个显示器中显示
+		std::list<MonitorInfo> outMonitorInfo;
+		GetMonitors(&outMonitorInfo);
+		POINT cursorPos;
+		::GetCursorPos(&cursorPos);
+		MonitorInfo* monitorInfo = NULL;
+		for (auto& it : outMonitorInfo) {
+			if (it.Rect.Contains(cursorPos.x, cursorPos.y)) {
+				monitorInfo = &it;
+				break;
+			}
+		}
+		int x = monitorInfo->WorkRect.X;
+		int y = monitorInfo->WorkRect.Y;
+		int sw = monitorInfo->WorkRect.Width;//当前工作区域的宽
+		int sh = monitorInfo->WorkRect.Height;//当前工作区域的高
+		_rect.X = x + (sw - width) / 2;//保证左右居中
+		_rect.Y = y + (sh - height) / 2;//保证上下居中
 		_rect.Width = width;
 		_rect.Height = height;
 
 		_hWnd = ::CreateWindowExW(ExStyle | WS_EX_ACCEPTFILES, WindowClassName, WindowClassName, dStyle,
 			_rect.X, _rect.Y, width, height, owner, NULL, GetModuleHandle(NULL), NULL);
-
-		//EzUI::Scale = GetScale();
 		InitData(ExStyle);//设置基本数据
 	}
 
@@ -137,9 +118,10 @@ namespace EzUI {
 	int Window::ShowModal(bool wait)
 	{
 		_OwnerHwnd = ::GetWindowOwner(_hWnd);
-		ASSERT(::IsWindow(_OwnerHwnd));
 		Show();
-		::EnableWindow(_OwnerHwnd, FALSE);
+		if (_OwnerHwnd) {
+			::EnableWindow(_OwnerHwnd, FALSE);
+		}
 		if (wait) {//
 			MSG msg{ 0 };
 			while (::IsWindow(_hWnd) && ::GetMessage(&msg, NULL, 0, 0) && msg.message != WM_QUIT)
@@ -152,7 +134,9 @@ namespace EzUI {
 				return _closeCode;
 			}
 		}
-		::SetForegroundWindow(_OwnerHwnd);
+		if (_OwnerHwnd) {
+			::SetForegroundWindow(_OwnerHwnd);
+		}
 		return _closeCode;
 	}
 	void Window::Hide() {
@@ -193,20 +177,32 @@ namespace EzUI {
 		{
 		case WM_GETMINMAXINFO:
 		{
-			MONITORINFO monitor{ 0 };
+			MONITORINFO monitor;
 			monitor.cbSize = sizeof(MONITORINFO);
-			::GetMonitorInfoW(::MonitorFromWindow(_hWnd, MONITOR_DEFAULTTOPRIMARY), &monitor);
-			RECT rcWork = monitor.rcWork;
-			//是否为主要显示器
-			if (monitor.dwFlags != MONITORINFOF_PRIMARY) {
-				::OffsetRect(&rcWork, -rcWork.left, -rcWork.top);
-			}
-			//保证窗口在最大化的时候始终在工作区 不会遮挡任务栏
+			::GetMonitorInfo(::MonitorFromWindow(_hWnd, MONITOR_DEFAULTTOPRIMARY), &monitor);
 			MINMAXINFO* pMMInfo = (MINMAXINFO*)lParam;
-			pMMInfo->ptMaxPosition.x = rcWork.left;
-			pMMInfo->ptMaxPosition.y = rcWork.top;
-			pMMInfo->ptMaxSize.x = rcWork.right - rcWork.left;
-			pMMInfo->ptMaxSize.y = rcWork.bottom - rcWork.top;
+			//是否为主显示器
+			if ((monitor.dwFlags & MONITORINFOF_PRIMARY) == MONITORINFOF_PRIMARY) {
+				//保证窗口在最大化的时候始终在工作区 不会遮挡任务栏
+				RECT& rcWork = monitor.rcWork;
+				pMMInfo->ptMaxPosition.x = rcWork.left;
+				pMMInfo->ptMaxPosition.y = rcWork.top;
+				pMMInfo->ptMaxSize.x = rcWork.right - rcWork.left;
+				pMMInfo->ptMaxSize.y = rcWork.bottom - rcWork.top;
+			}
+			else {
+				//获取主显示器
+				HMONITOR hMonitor = MonitorFromWindow(NULL, MONITOR_DEFAULTTOPRIMARY);
+				MONITORINFO monitorInfo;
+				monitorInfo.cbSize = sizeof(MONITORINFO);
+				::GetMonitorInfo(hMonitor, &monitorInfo);
+				RECT& rcWork = monitorInfo.rcMonitor;
+				pMMInfo->ptMaxPosition.x = rcWork.left;
+				pMMInfo->ptMaxPosition.y = rcWork.top;
+				pMMInfo->ptMaxSize.x = rcWork.right - rcWork.left;
+				pMMInfo->ptMaxSize.y = rcWork.bottom - rcWork.top;
+			}
+			//Debug::Log("%d %d %d %d", pMMInfo->ptMaxPosition.x, pMMInfo->ptMaxPosition.y, pMMInfo->ptMaxSize.x, pMMInfo->ptMaxSize.y);
 			break;
 		}
 		case  WM_IME_STARTCOMPOSITION://
@@ -373,7 +369,8 @@ namespace EzUI {
 			Point relativePoint;
 			Control* outCtl = this->FindControl(point, &relativePoint);//找到当前控件的位置
 			HCURSOR cursor = NULL;
-			if (outCtl && (cursor = outCtl->GetCursor())) {
+
+			if (::IsWindowEnabled(Hwnd()) && outCtl && (cursor = outCtl->GetCursor())) {
 				::SetCursor(cursor);
 				return TRUE;
 			}
@@ -542,9 +539,6 @@ namespace EzUI {
 		*outPoint = clientPoint;
 		Control* outCtl = MainLayout;
 	UI_Loop:
-		if (outCtl == NULL) {
-			return NULL;
-		}
 		Control* scrollBar = outCtl->GetScrollBar();
 		if (scrollBar && scrollBar->GetClientRect().Contains(clientPoint)) {
 			if (scrollBar->Visible) {

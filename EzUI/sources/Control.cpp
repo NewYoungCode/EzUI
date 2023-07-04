@@ -698,7 +698,7 @@ Event(this , ##__VA_ARGS__); \
 		pt.PopLayer();//µ¯³ö
 #ifdef DEBUGPAINT
 		if (PublicData->Debug) {
-			pt.DrawRectangle(Rect(0, 0, clientRect.Width, clientRect.Height), Color::White);
+			pt.DrawRectangle(Rect(0, 0, clientRect.Width, clientRect.Height));
 		}
 #endif
 	}

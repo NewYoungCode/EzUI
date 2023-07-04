@@ -47,8 +47,8 @@ public:
 	virtual void OnChildPaint(PaintEventArgs& args)override {
 		__super::OnChildPaint(args);
 		//÷√∂• ªÊ÷∆…æ≥˝œﬂ
-		args.Graphics.SetColor(Color::Red);
-		args.Graphics.FillRectangle(Rect(0,17, 308, 2),0);
+		//args.Graphics.SetColor(Color::Red);
+		//args.Graphics.FillRectangle(Rect(0,17, 308, 2),0);
 	}
 
 	SongItem(const EString& _songName, const EString& _songTime = "03:56") {

@@ -84,7 +84,7 @@
 #define DEBUGLOG //
 #endif
 
-#define COUNT_ONSIZE //统计OnSize耗时
+//#define COUNT_ONSIZE //统计OnSize耗时
 //#define COUNT_ONPAINT//统计绘制耗时
 
 //下面的渲染方式只能选一个
