@@ -384,17 +384,23 @@ namespace EzUI {
 			break;
 		}
 		case WM_SETCURSOR: {
-			POINT p1{ 0 };
-			::GetCursorPos(&p1);
-			::ScreenToClient(Hwnd(), &p1);
-			Point point{ p1.x,p1.y };
-			Point relativePoint;
-			Control* outCtl = this->FindControl(point, &relativePoint);//找到当前控件的位置
-			HCURSOR cursor = outCtl->Style.Cursor;
-
-			if (::IsWindowEnabled(Hwnd()) && outCtl && cursor) {
-				::SetCursor(cursor);
-				return TRUE;
+			if (::IsWindowEnabled(Hwnd())) {
+				POINT p1{ 0 };
+				::GetCursorPos(&p1);
+				::ScreenToClient(Hwnd(), &p1);
+				Point point{ p1.x,p1.y };
+				Point relativePoint;
+				Control* outCtl = this->FindControl(point, &relativePoint);//找到当前控件的位置
+				if (outCtl) {
+					if (outCtl->HoverStyle.Cursor != NULL) {
+						::SetCursor(outCtl->HoverStyle.Cursor);
+						return TRUE;
+					}
+					else if (outCtl->Style.Cursor != NULL) {
+						::SetCursor(outCtl->Style.Cursor);
+						return TRUE;
+					}
+				}
 			}
 			break;
 		}
@@ -452,7 +458,7 @@ namespace EzUI {
 		}
 		}
 		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
-	}
+		}
 
 	void Window::Rending(HDC winHDC, const Rect& rePaintRect) {
 #ifdef COUNT_ONPAINT
@@ -883,4 +889,4 @@ namespace EzUI {
 		return false;
 	}
 
-};
+		};
