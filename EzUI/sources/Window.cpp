@@ -49,11 +49,11 @@ namespace EzUI {
 	}
 
 
-	HWND& Window::Hwnd()
+	const HWND& Window::Hwnd()
 	{
 		return _hWnd;
 	}
-	Rect& Window::GetRect()
+	const Rect& Window::GetWindowRect()
 	{
 		if (_rect.IsEmptyArea()) {
 			RECT rect;
@@ -62,7 +62,7 @@ namespace EzUI {
 		}
 		return _rect;
 	}
-	Rect& Window::GetClientRect()
+	const Rect& Window::GetClientRect()
 	{
 		if (_rectClient.IsEmptyArea()) {
 			RECT rect;
@@ -74,6 +74,21 @@ namespace EzUI {
 	void Window::SetText(const EString& text)
 	{
 		::SetWindowTextW(_hWnd, text.utf16().c_str());
+	}
+	void Window::SetTopMost(bool top)
+	{
+		if (top) {
+			::SetWindowPos(Hwnd(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+		}
+		else {
+			::SetWindowPos(Hwnd(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+		}
+	}
+	bool Window::IsTopMost()
+	{
+		LONG_PTR exStyle = ::GetWindowLongPtr(Hwnd(), GWL_EXSTYLE);
+		bool isTop = ((exStyle & WS_EX_TOPMOST) == WS_EX_TOPMOST);
+		return isTop;
 	}
 	void Window::SetSize(const Size& size) {
 		RECT rect;
@@ -112,7 +127,14 @@ namespace EzUI {
 		//ASSERT(MainLayout);
 		::ShowWindow(_hWnd, cmdShow);
 	}
-	void Window::ShowMax() {
+	void Window::ShowNormal()
+	{
+		Show(SW_SHOWNORMAL);
+	}
+	void Window::ShowMinimized() {
+		Show(SW_MINIMIZE);
+	}
+	void Window::ShowMaximized() {
 		Show(SW_MAXIMIZE);
 	}
 	int Window::ShowModal(bool wait)
@@ -368,9 +390,9 @@ namespace EzUI {
 			Point point{ p1.x,p1.y };
 			Point relativePoint;
 			Control* outCtl = this->FindControl(point, &relativePoint);//找到当前控件的位置
-			HCURSOR cursor = NULL;
+			HCURSOR cursor = outCtl->Style.Cursor;
 
-			if (::IsWindowEnabled(Hwnd()) && outCtl && (cursor = outCtl->GetCursor())) {
+			if (::IsWindowEnabled(Hwnd()) && outCtl && cursor) {
 				::SetCursor(cursor);
 				return TRUE;
 			}
@@ -507,9 +529,8 @@ namespace EzUI {
 	}
 
 	bool Window::IsInWindow(Control& pControl, Control& it) {
-		Rect& winClientRect = GetClientRect();
+		const Rect& winClientRect = GetClientRect();
 		const Rect& rect = it.GetRect();//
-
 		if (rect.IsEmptyArea()) {
 			return false;
 		}
@@ -768,7 +789,6 @@ namespace EzUI {
 	{
 
 	}
-
 	void Window::OnKeyChar(WPARAM wParam, LPARAM lParam)
 	{
 		if (_inputControl) { //
@@ -796,7 +816,7 @@ namespace EzUI {
 	}
 	LRESULT Window::ZoomWindow(const  LPARAM& lParam) {
 		RECT rc;
-		GetWindowRect(Hwnd(), &rc);
+		::GetWindowRect(Hwnd(), &rc);
 		POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
 		int x = 4;//
 		if (pt.x < rc.left + x)
@@ -827,15 +847,15 @@ namespace EzUI {
 				return true;
 			}
 			if (sender->Action == ControlAction::Mini) {
-				Show(SW_MINIMIZE);
+				this->ShowMinimized();
 				return false;
 			}
 			if (sender->Action == ControlAction::Max) {
 				if (!IsZoomed(_hWnd)) {
-					this->ShowMax();
+					this->ShowMaximized();
 				}
 				else {
-					Show(SW_SHOWNORMAL);
+					this->ShowNormal();
 				}
 				return false;
 			}
@@ -848,6 +868,8 @@ namespace EzUI {
 			}
 		}
 		if (args.EventType == Event::OnMouseClick) {
+			//鼠标左侧按钮单击
+			//if (args.EventType == Event::OnMouseClick && ((MouseEventArgs&)(args)).Button == MouseButton::Left) {
 			EString  ctlName = sender->GetAttribute("tablayout");
 			if (!ctlName.empty()) {
 				TabLayout* tabLayout = dynamic_cast<TabLayout*>(FindControl(ctlName));

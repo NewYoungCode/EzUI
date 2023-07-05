@@ -94,7 +94,7 @@ namespace EzUI {
 	}
 
 	void LayeredWindow::Rending(HDC winHDC, const Rect& rePaintRect) {
-		Rect& clientRect = GetClientRect();//
+		const Rect& clientRect = GetClientRect();//
 		DXRender pt(winHDC, clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height);//
 		PaintEventArgs args(pt);
 		args.InvalidRectangle = _InvalidateRect;//
@@ -127,7 +127,7 @@ namespace EzUI {
 
 	void LayeredWindow::PushDC(HDC hdc) {
 
-		Rect& _rectClient = GetClientRect();
+		const Rect& _rectClient = GetClientRect();
 
 		POINT point{ _rectClient.X,_rectClient.Y };
 		SIZE size{ _rectClient.Width,  _rectClient.Height };

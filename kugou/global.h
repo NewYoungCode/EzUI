@@ -59,7 +59,7 @@ public:
 		//this->ShadowWidth = 5;
 		del.Style.ForeImage = new Image(L"imgs/del.png");
 		del.SetFixedSize({ 20,20 });
-		del.Cursor = Cursor::HAND;
+		del.Style.Cursor = LoadCursor(Cursor::HAND);
 		del.Name = "dellocal";
 		del.MousePassThrough = Event::OnHover;
 
@@ -142,7 +142,7 @@ public:
 		AlbumName.SetFixedWidth(180);
 		AlbumName.SetText(s.AlbumName);
 		AlbumName.TextAlign = TextAlign::MiddleLeft;
-		AlbumName.Cursor = Cursor::HAND;
+		AlbumName.Style.Cursor = LoadCursor(Cursor::HAND);
 		AlbumName.Style.ForeColor = Color(150, 150, 150);
 		AlbumName.MousePassThrough = Event::OnHover;
 
@@ -152,7 +152,7 @@ public:
 			mv.SetAttribute("mvhash", s.MvHash);
 			mv.Style.ForeImage = new Image(L"imgs/mvicon.png");;
 			mv.Style.ForeImage->Padding = 8;
-			mv.Cursor = Cursor::HAND;
+			mv.Style.Cursor = LoadCursor(Cursor::HAND);
 		}
 		else {
 			mv.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;

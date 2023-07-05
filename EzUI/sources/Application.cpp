@@ -11,12 +11,19 @@ namespace EzUI {
 	}
 
 	void Application::Init() {
+		//初始化公共控件库
+		INITCOMMONCONTROLSEX icex;
+		icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
+		icex.dwICC = ICC_WIN95_CLASSES;  // 或者使用其他需要的控件类别
+		InitCommonControlsEx(&icex);
+		//禁用DPI感知 避免应用程序自动放大
+		//SetProcessDPIAware();
 		//设计窗口
 		::HINSTANCE hInstance = GetModuleHandleW(NULL);
 		::WNDCLASSW    wc{ 0 };
 		wc.lpfnWndProc = EzUI_WndProc;//窗口过程
 		wc.hInstance = hInstance;//
-		wc.hCursor = LoadCursor(NULL, IDC_ARROW);//光标
+		wc.hCursor = LoadCursorW(NULL, IDC_ARROW);//光标
 		wc.lpszClassName = WindowClassName;//类名
 
 		if (!RegisterClassW(&wc)) //注册窗口
@@ -31,7 +38,7 @@ namespace EzUI {
 	}
 	Application::Application(int resID, const EString& custResType, const EString& password) {
 		Init();
-		HINSTANCE hInst = GetModuleHandle(NULL);
+		HINSTANCE hInst = ::GetModuleHandle(NULL);
 #ifdef UNICODE
 		HRSRC hRsrc = ::FindResource(hInst, MAKEINTRESOURCE(resID), custResType.utf16().c_str());
 #else

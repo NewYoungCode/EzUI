@@ -705,9 +705,6 @@ Event(this , ##__VA_ARGS__); \
 
 	Control::~Control()
 	{
-		if (_hCursor) {
-			::DestroyCursor(_hCursor);
-		}
 		if (PublicData) {
 			PublicData->RemoveControl(this);
 			PublicData = NULL;
@@ -923,13 +920,6 @@ Event(this , ##__VA_ARGS__); \
 	void Control::RemoveEventNotify(int eventType) {
 		_eventNotify = _eventNotify & ~eventType;
 	}
-
-	void Control::SetCursor(const EString& fileName) {
-		if (_hCursor) {
-			::DestroyCursor(_hCursor);
-		}
-		_hCursor = ::LoadCursorFromFileW(fileName.utf16().c_str());
-	}
 	ScrollBar* Control::GetScrollBar()
 	{
 		return NULL;
@@ -938,17 +928,6 @@ Event(this , ##__VA_ARGS__); \
 	{
 		return 0;
 	}
-
-	HCURSOR Control::GetCursor() {
-		if (_hCursor) {
-			return _hCursor;
-		}
-		if (this->Cursor != EzUI::Cursor::None) {
-			_hCursor = ::LoadCursor(NULL, (LPTSTR)this->Cursor);
-		}
-		return _hCursor;
-	}
-
 	bool Control::IsRePaint() {
 		/* //缓存方式,此方式可能会造成样式残留
 		_nowStyle.BackgroundColor = GetBackgroundColor();
@@ -984,6 +963,9 @@ Event(this , ##__VA_ARGS__); \
 	void Control::OnMouseDown(MouseButton mbtn, const Point& point)
 	{
 		this->State = ControlState::Active;
+		if (ActiveStyle.Cursor) {
+			::SetCursor(ActiveStyle.Cursor);
+		}
 		if (IsRePaint()) {
 			_stateRepaint = true;
 			Invalidate();

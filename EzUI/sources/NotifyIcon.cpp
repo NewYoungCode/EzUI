@@ -5,7 +5,7 @@ namespace EzUI {
 	LRESULT CALLBACK _NotifyIcon_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		LONG_PTR USERDATA = GetWindowLongPtr(hwnd, GWLP_USERDATA);
-		NotifyIcon* ntfi = dynamic_cast<NotifyIcon*>((NotifyIcon*)USERDATA);
+		NotifyIcon* ntfi = (NotifyIcon*)USERDATA;
 
 		switch (message)
 		{
@@ -51,7 +51,7 @@ namespace EzUI {
 			::WNDCLASSW    wc{ 0 };
 			wc.lpfnWndProc = _NotifyIcon_WndProc;//窗口过程
 			wc.hInstance = hInstance;//
-			wc.hCursor = LoadCursor(NULL, IDC_ARROW);//光标
+			wc.hCursor = ::LoadCursorW(NULL, IDC_ARROW);//光标
 			wc.lpszClassName = L"Class_EzUI_NotifyIcon";//类名
 			RegisterClassW(&wc); //注册窗口
 			__Init__RegeditClass__ = true;
@@ -60,13 +60,12 @@ namespace EzUI {
 		_hInstance = hInstance;
 		_hwnd = ::CreateWindowW(L"Class_EzUI_NotifyIcon", L"EzUI_NotifyIcon", WS_OVERLAPPEDWINDOW,
 			0, 0, 10, 10, NULL, NULL, _hInstance, NULL);
-		::SetWindowLongPtr(_hwnd, GWLP_USERDATA, (LONG_PTR)this);
-		_nid.cbSize = sizeof(NOTIFYICONDATA);//结构体长度
+		UI_SetUserData(_hwnd, this);
+		_nid.cbSize = sizeof(_nid);//结构体长度
 		_nid.hWnd = _hwnd;//窗口句柄
 		_nid.uCallbackMessage = UI_NOTIFYICON;//消息处理，这里很重要，处理鼠标点击
 		_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 		Shell_NotifyIconW(NIM_ADD, &_nid);
-
 	}
 
 	void NotifyIcon::SetIcon(short id)
@@ -77,8 +76,8 @@ namespace EzUI {
 	void NotifyIcon::SetIcon(HICON icon)
 	{
 		_nid.hIcon = icon;
+		_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 		Shell_NotifyIconW(NIM_MODIFY, &_nid);
-
 	}
 
 	void NotifyIcon::SetMenu(Menu* menu) {

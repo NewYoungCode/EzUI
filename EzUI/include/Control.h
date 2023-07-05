@@ -12,7 +12,6 @@ namespace EzUI {
 		//布局状态AddControl丶RemoveControl丶OnSize时候此标志为挂起 调用ResumeLayout标志为布局中 当调用OnLayout()之后此标志为None
 		EzUI::LayoutState _layoutState = EzUI::LayoutState::None;
 		std::wstring _tipsText;//鼠标悬浮的提示文字
-		HCURSOR _hCursor = NULL;//鼠标样式
 		Point _lastLocation;//上一次大小
 		Size _lastSize;//上一次大小
 		Rect _lastDrawRect;//最后一次显示的位置
@@ -31,7 +30,6 @@ namespace EzUI {
 	public:
 		EzUI::Margin Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数
 		WindowData* PublicData = NULL;//窗口上的公共数据
-		EzUI::Cursor Cursor = EzUI::Cursor::None;//鼠标样式
 		int MousePassThrough = 0;//忽略的鼠标消息
 		bool Visible = true;//控件是否可见
 		EString Name;//控件的ObjectName ID
@@ -112,10 +110,8 @@ namespace EzUI {
 		void Trigger(const KeyboardEventArgs& args);//触发键盘相关消息
 		void AddEventNotify(int eventType);//添加到主窗口ontify函数中可拦截
 		void RemoveEventNotify(int eventType);
-		void SetCursor(const EString& fileName);
 		virtual ScrollBar* GetScrollBar();
 		virtual int MoveScroll(int offset);
-		HCURSOR GetCursor();
 	public:
 		Control();
 		Control(Control* parent);

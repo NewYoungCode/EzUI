@@ -24,6 +24,10 @@ namespace EzUI {
 	//获取当前所有监视器的信息
 	extern size_t GetMonitors(std::list<MonitorInfo>* outMonitorInfo);
 
+	extern HCURSOR LoadCursor(Cursor cursorType);
+	extern HCURSOR LoadCursor(const EString& fileName);//需要释放
+	extern void FreeCursor(HCURSOR hCursor);
+
 	namespace Convert {
 		inline Rect StringToRect(const EString& str) {
 			auto rectStr = str.Split(",");
@@ -358,6 +362,7 @@ namespace EzUI {
 		EString FontFamily;//字体名称 具有继承性
 		int FontSize = 0;//字体大小 具有继承性
 		Color ForeColor;//前景颜色  具有继承性
+		HCURSOR Cursor = NULL;//鼠标样式
 	private:
 		void operator=(const ControlStyle& right) {} //禁止直接赋值 因为这样会导致 Color执行拷贝使得Color变得不合法的有效
 		ControlStyle(const ControlStyle& right) {} //禁止拷贝 

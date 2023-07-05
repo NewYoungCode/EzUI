@@ -9,7 +9,7 @@ namespace EzUI {
 	}
 	void TextBox::Init()
 	{
-		Cursor = Cursor::IBEAM;
+		Style.Cursor = LoadCursor(Cursor::IBEAM);
 		timer.Interval = 500;
 		timer.Tick = [&](Windows::Timer*) {
 			if (!careRect.IsEmptyArea() && _focus) {

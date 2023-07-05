@@ -45,6 +45,16 @@
 #define ASSERT(expr)  _ASSERTE(expr)
 #endif
 
+#undef LoadCursor
+extern HCURSOR LoadCursor(HINSTANCE hInstance, LPCTSTR lpCursorName);
+inline HCURSOR LoadCursor(HINSTANCE hInstance, LPCTSTR lpCursorName) {
+#ifdef UNICODE
+	return ::LoadCursorW(NULL, lpCursorName);
+#else
+	return ::LoadCursorA(NULL, lpCursorName);
+#endif // UNICODE
+	}
+
 #ifndef GCL_HCURSOR
 #define GCL_HCURSOR -12
 #endif

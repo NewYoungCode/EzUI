@@ -27,6 +27,7 @@ namespace EzUI {
 		Window(const Window&) {};
 		bool IsInWindow(Control& pControl, Control& it);
 		bool FindControl(Control* nodeCtl, Control* findControl);
+		Control* FindControl(const Point clientPoint, Point* outPoint);//根据坐标获取控件
 		//控件是否在窗口的可见区域
 	protected:
 		LRESULT ZoomWindow(const LPARAM& lParam);//缩放窗口
@@ -59,23 +60,27 @@ namespace EzUI {
 		Window(int width, int height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
 		virtual ~Window();
 		Control* FindControl(const EString& objectName);
-		HWND& Hwnd();
-		Rect& GetRect();
-		Rect& GetClientRect();
+		const HWND& Hwnd();//获取窗口句柄
+		const Rect& GetWindowRect();//获取窗口基于显示器的矩形
+		const Rect& GetClientRect();//获取客户区矩形
 		void SetSize(const Size& size);
-		void SetIcon(short id);
-		void SetIcon(HICON icon);
-		void SetLayout(EzUI::Control* layout);
-		void SetText(const EString& text);
+		void SetIcon(short id);//设置窗口ico
+		void SetIcon(HICON icon);//设置窗口ico
+		void SetLayout(EzUI::Control* layout);//设置窗口主布局
+		void SetText(const EString& text);//设置窗口标题
+		void SetTopMost(bool top);//设置与取消窗口置顶
+		bool IsTopMost();//窗口是否置顶
 		virtual void Show(int cmdShow = SW_SHOW);
-		virtual void ShowMax();
-		int ShowModal(bool wait = true);//参数 wait 是否阻塞
-		void Close(int code = 0);
+		void ShowNormal();
 		virtual void Hide();
+		void Close(int code = 0);
+		int ShowModal(bool wait = true);//参数 wait 是否阻塞
+		void ShowMinimized();//最小化窗口
+		void ShowMaximized();//最大化窗口
 		bool IsVisible();
 		void SetVisible(bool flag);
 		void Invalidate();//使区域无效(延迟刷新)
 		void Refresh();//立即更新所有无效区域(立即刷新)
-		Control* FindControl(const Point clientPoint, Point* outPoint);//根据坐标获取控件
+		
 	};
 };

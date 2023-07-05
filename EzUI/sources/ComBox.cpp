@@ -20,7 +20,7 @@ namespace EzUI {
 			HWND Owner = ::GetWindowOwner(poupWnd->Hwnd());
 			RECT OwnerRect;
 			::GetWindowRect(Owner, &OwnerRect);
-			auto rect = poupWnd->GetRect();
+			auto rect = poupWnd->GetWindowRect();
 			POINT mousePos{ _rect.X,_rect.GetBottom() };
 			POINT clientPos = mousePos;
 			ClientToScreen(Owner, &clientPos);

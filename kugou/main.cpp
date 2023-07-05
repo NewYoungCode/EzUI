@@ -45,7 +45,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ int       nCmdShow)
 {
 	Curl_Global_Init();
-	
 	//{
 	//	TextArea ta;
 	//	return 0;
@@ -64,8 +63,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//sp.AddControl(0);
 	int cccc = sizeof(Control);
 
-	std::list<MonitorInfo> infos;
-	EzUI::GetMonitors(&infos);
 
 	if (1) {
 		EzUI::Application app;

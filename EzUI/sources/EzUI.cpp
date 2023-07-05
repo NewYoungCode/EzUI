@@ -89,6 +89,18 @@ namespace EzUI {
 		return outMonitorInfo->size();
 	}
 
+	HCURSOR LoadCursor(Cursor cursorType)
+	{
+		return ::LoadCursorW(NULL, (LPTSTR)cursorType);
+	}
+	HCURSOR LoadCursor(const EString& fileName)
+	{
+		return ::LoadCursorFromFileW(fileName.utf16().c_str());
+	}
+	void FreeCursor(HCURSOR hCursor)
+	{
+		::DestroyCursor(hCursor);
+	}
 	size_t __count_onsize = 0;
 
 	EBitmap::EBitmap(WORD width, WORD height, PixelFormat piexlFormat) {//默认24位不透明位图
@@ -223,6 +235,17 @@ namespace EzUI {
 		ControlStyle* style = this;
 		do
 		{
+			if (key == "cursor") {
+				if (value == "pointer") {
+					style->Cursor = LoadCursor(EzUI::Cursor::HAND);
+					break;
+				}
+				else if (value == "help") {
+					style->Cursor = LoadCursor(EzUI::Cursor::HELP);
+					break;
+				}
+				break;
+			}
 			if (key == "background-color") {
 				style->BackgroundColor = Convert::StringToColor(value);
 				break;

@@ -3,32 +3,10 @@
 namespace EzUI {
 	MenuWindow::MenuWindow(int cx, int cy, HWND owner) :BorderlessWindow(cx, cy, owner)
 	{
+		this->Zoom = false;
 	}
 	LRESULT MenuWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		if (uMsg == WM_NCPAINT)
-		{
-			HWND hWnd = Hwnd();
-			HDC hdc;
-			hdc = GetWindowDC(hWnd);
-			// Paint into this DC
-			RECT rcWin;
-			GetWindowRect(hWnd, &rcWin);
-			OffsetRect(&rcWin, -rcWin.left, -rcWin.top);
-			auto b = CreateSolidBrush(RGB(255, 0, 0));
-
-			for (int i = 0; i < 4; i++)
-			{
-				FrameRect(hdc, &rcWin, b);
-				InflateRect(&rcWin, -1, -1);
-			}
-			ReleaseDC(hWnd, hdc);
-			return 0;
-		}
-
-		if (uMsg == WM_NCHITTEST) {
-			return ::DefWindowProc(Hwnd(), uMsg, wParam, lParam);
-		}
 		if (uMsg == WM_KILLFOCUS) {
 			HWND wnd = (HWND)wParam;
 			if (wnd != this->_boxShadow->_hWnd) {
@@ -39,25 +17,31 @@ namespace EzUI {
 	}
 	void MenuWindow::Show(int cmdShow)
 	{
-		HWND Owner = ::GetWindowOwner(Hwnd());
-		RECT OwnerRect;
-		::GetWindowRect(Owner, &OwnerRect);
-		auto rect = GetRect();
-
-		POINT mousePos;
-		GetCursorPos(&mousePos);
-		POINT clientPos = mousePos;
-		ScreenToClient(Owner, &clientPos);
-		//Debug::Log("%d %d", clientPos.x, clientPos.y);
-
-		int height = OwnerRect.bottom - OwnerRect.top;
-		//if (rect.Height>height  ) {
-		::MoveWindow(Hwnd(), mousePos.x, mousePos.y, rect.Width, rect.Height, FALSE);
-		/*}
-		else {
-			::MoveWindow(_hWnd, mousePos.x, mousePos.y- rect.Height, rect.Width, rect.Height, FALSE);
-		}*/
+		auto rect = this->GetClientRect();
+		//获取显示器 达到鼠标在哪个显示器 窗口就在哪个显示器中显示
+		std::list<MonitorInfo> outMonitorInfo;
+		GetMonitors(&outMonitorInfo);
+		POINT cursorPos;
+		::GetCursorPos(&cursorPos);
+		MonitorInfo* monitorInfo = NULL;
+		for (auto& it : outMonitorInfo) {
+			if (it.Rect.Contains(cursorPos.x, cursorPos.y)) {
+				monitorInfo = &it;
+				break;
+			}
+		}
+		int x = cursorPos.x;
+		int y = cursorPos.y;
+		int width = rect.Width;
+		int height = rect.Height;
+		if ((cursorPos.y + height) > monitorInfo->Rect.Height) {
+			y -= height;
+		}
+		if ((cursorPos.x + width) > monitorInfo->Rect.Width) {
+			x -= width;
+		}
 		__super::Show(cmdShow);
 		::SetForegroundWindow(Hwnd());
+		::SetWindowPos(Hwnd(), HWND_TOPMOST, x, y, width, height, NULL);
 	}
 };
