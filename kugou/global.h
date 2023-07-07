@@ -77,7 +77,6 @@ public:
 		//time.Style.BackgroundColor = Color(100,255, 255, 0);
 
 		this->SetFixedHeight(33);
-		this->Dock = DockStyle::Horizontal;
 		HoverStyle.BackgroundColor = Color(100, 230, 230, 230);
 
 		ActiveStyle.BackgroundColor = Color(100, 255, 230, 230);

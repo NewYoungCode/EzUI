@@ -212,18 +212,6 @@ Event(this , ##__VA_ARGS__); \
 				this->Visible = (::strcmp(attrValue.c_str(), "true") == 0 ? true : false);
 				break;
 			}
-			if (attrName == "dock") {
-				if (attrValue == "fill") {
-					this->Dock = DockStyle::Fill; break;
-				}
-				if (attrValue == "horizontal") {
-					this->Dock = DockStyle::Horizontal; break;
-				}
-				if (attrValue == "vertical") {
-					this->Dock = DockStyle::Vertical; break;
-				}
-				break;
-			}
 			if (attrName == "action") {
 				if (attrValue == "close") {
 					this->Action = ControlAction::Close; break;
@@ -444,49 +432,35 @@ Event(this , ##__VA_ARGS__); \
 		if (_fixedHeight) {
 			_rect.Height = _fixedHeight;
 		}
-		if (this->Parent) {
-			const Rect& pRect = Parent->GetRect();
-			while (Dock != DockStyle::None)
-			{
-				if (Dock == DockStyle::Fill) {
-					_rect = { 0,0,pRect.Width,pRect.Height };
-					break;
-				}
-				if (Dock == DockStyle::Vertical) {
-					_rect = { X(),0,Width(),pRect.Height };
-					break;
-				}
-				if (Dock == DockStyle::Horizontal) {
-					_rect = { 0,Y(),pRect.Width,Height() };
-					break;
-				}
-				break;
-			}
-		}
 
 		Point newLocation = _rect.GetLocation();
 		Size newSize = _rect.GetSize();
 
+		bool onRect = false;
 		if (!_lastLocation.Equals(newLocation)) {
 			if (PublicData && CheckEventNotify(Event::OnLocation)) {
-				LocationEventArgs args;
-				args.PrevLocation = _lastLocation;
-				args.Location = newLocation;
+				LocationEventArgs args(newLocation);
 				PublicData->Notify(this, args);
 			}
 			OnLocation(newLocation);
 			_lastLocation = newLocation;
+			onRect = true;
 		}
-
 		if (!newSize.Equals(_lastSize)) {
 			if (PublicData && CheckEventNotify(Event::OnSize)) {
-				SizeEventArgs args;
-				args.PrevSize = _lastSize;
-				args.Size = newSize;
+				SizeEventArgs args(newSize);
 				PublicData->Notify(this, args);
 			}
 			OnSize(newSize);
 			_lastSize = newSize;
+			onRect = true;
+		}
+		if (onRect) {
+			if (PublicData && CheckEventNotify(Event::OnRect)) {
+				RectEventArgs args(_rect);
+				PublicData->Notify(this, args);
+			}
+			OnRect(GetRect());
 		}
 
 	}
@@ -1002,7 +976,11 @@ Event(this , ##__VA_ARGS__); \
 			Parent->TryPendLayout();//½«¸¸¿Ø¼þ¹ÒÆð
 		}
 	}
-	void Control::OnKillFocus()
+	void Control::OnRect(const Rect& rect)
+	{
+
+	}
+	void Control::OnKillFocus(Control* control)
 	{
 	}
 };

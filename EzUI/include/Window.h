@@ -8,6 +8,8 @@ namespace EzUI {
 	{
 	private:
 		Rect _downRect;
+		Size _miniSize;
+		Size _maxSize;
 		bool _load = false;
 		bool _mouseIn = false;
 		bool _mouseDown = false;//鼠标是否已经按下
@@ -41,6 +43,7 @@ namespace EzUI {
 		virtual void OnMouseClick(MouseButton mbtn, const Point& point);
 		virtual void Rending(HDC winDC, const Rect& rePaint);
 		virtual void OnPaint(PaintEventArgs& arg);
+		virtual void OnLocation(const Point& point);
 		virtual void OnSize(const Size& sz);
 		virtual void OnRect(const Rect& rect);
 		virtual void OnClose(bool& Cancel);
@@ -49,7 +52,7 @@ namespace EzUI {
 		virtual void OnKeyChar(WPARAM wParam, LPARAM lParam);
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam);
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);
-		virtual void OnMove(const Point& point);
+		virtual void OnKillFocus(HWND hWnd);
 		//鼠标 键盘 重绘 会进入此函数,返回true将不再派发给sender控件处理 注意:尽量不要在此函数内部删除自身控件(鼠标和键盘事件内可以删除)
 		virtual bool OnNotify(Control* sender, EventArgs& args);
 	public:
@@ -64,6 +67,10 @@ namespace EzUI {
 		const Rect& GetWindowRect();//获取窗口基于显示器的矩形
 		const Rect& GetClientRect();//获取客户区矩形
 		void SetSize(const Size& size);
+		void SetLocation(const Point& pt);
+		void SetRect(const Rect& rect);
+		void SetMiniSize(const Size& size);
+		void SetMaxSize(const Size& size);
 		void SetIcon(short id);//设置窗口ico
 		void SetIcon(HICON icon);//设置窗口ico
 		void SetLayout(EzUI::Control* layout);//设置窗口主布局
@@ -71,9 +78,9 @@ namespace EzUI {
 		void SetTopMost(bool top);//设置与取消窗口置顶
 		bool IsTopMost();//窗口是否置顶
 		virtual void Show(int cmdShow = SW_SHOW);
-		void ShowNormal();
 		virtual void Hide();
-		void Close(int code = 0);
+		void ShowNormal();
+		void Close(int exitCode = 0);
 		int ShowModal(bool wait = true);//参数 wait 是否阻塞
 		void ShowMinimized();//最小化窗口
 		void ShowMaximized();//最大化窗口
@@ -81,6 +88,6 @@ namespace EzUI {
 		void SetVisible(bool flag);
 		void Invalidate();//使区域无效(延迟刷新)
 		void Refresh();//立即更新所有无效区域(立即刷新)
-		
+
 	};
 };

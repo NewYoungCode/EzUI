@@ -71,7 +71,6 @@ namespace EzUI {
 		lb->HoverStyle.BackgroundColor = Color(208, 208, 208);
 		lb->HoverStyle.ForeColor = Color::White;
 		//lb->Margin.Left = 30;
-		lb->Dock = DockStyle::Horizontal;
 		lb->SetFixedHeight(30);
 		vlist.AddControl(lb);
 		return lb->Index();

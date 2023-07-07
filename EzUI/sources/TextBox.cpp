@@ -464,9 +464,9 @@ namespace EzUI {
 		Invalidate();
 		this;
 	}
-	void TextBox::OnKillFocus()
+	void TextBox::OnKillFocus(Control* ctl)
 	{
-		__super::OnKillFocus();
+		__super::OnKillFocus(ctl);
 		_down = false;
 		_focus = false;
 		_careShow = false;

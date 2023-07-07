@@ -178,7 +178,8 @@ namespace EzUI {
 		OnKeyChar = 4096,
 		OnLocation = 8192,
 		OnSize = 16384,
-		OnTextChange = 32768,
+		OnRect = 32768,
+		OnTextChange = 65536,
 		OnActive = OnMouseDown | OnMouseUp,
 		OnHover = OnMouseEnter | OnMouseLeave
 	};
@@ -195,20 +196,6 @@ namespace EzUI {
 		Hover,//鼠标悬浮
 		Active,//鼠标按住
 		Disable//禁用
-	};
-	enum class DockStyle {
-		// 摘要:
-		//未设置
-		None,
-		// 摘要:
-		//在父控件中 左右保持
-		Horizontal,
-		// 摘要:
-		//在父控件中 上下保持
-		Vertical,
-		// 摘要:
-		// 铺满整个父控件
-		Fill
 	};
 	enum class MouseButton {
 		// 摘要: 
@@ -297,19 +284,25 @@ namespace EzUI {
 	//坐标发生改变
 	class LocationEventArgs :public EventArgs {
 	public:
-		EzUI::Point PrevLocation;
-		EzUI::Point Location;
-		LocationEventArgs() {
+		const EzUI::Point& Location;
+		LocationEventArgs(const EzUI::Point& location) : Location(location) {
 			this->EventType = Event::OnLocation;
 		}
 	};
 	//大小发生改变
 	class SizeEventArgs :public EventArgs {
 	public:
-		EzUI::Size PrevSize;
-		EzUI::Size Size;
-		SizeEventArgs() {
+		const EzUI::Size& Size;
+		SizeEventArgs(const EzUI::Size& size) :Size(size) {
 			this->EventType = Event::OnSize;
+		}
+	};
+	//矩形发生改变
+	class RectEventArgs :public EventArgs {
+	public:
+		const EzUI::Rect& Rect;
+		RectEventArgs(const EzUI::Rect& rect) : Rect(rect) {
+			this->EventType = Event::OnRect;
 		}
 	};
 	// 摘要: 
@@ -388,7 +381,9 @@ namespace EzUI {
 		virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point) = 0;
 		virtual void OnMouseDown(MouseButton mbtn, const Point& point) = 0;
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point) = 0;
+		virtual void OnLocation(const Point& pt) = 0;
 		virtual void OnSize(const Size& size) = 0;
+		virtual void OnRect(const Rect& rect) = 0;
 		virtual void OnLoad() = 0;
 		virtual void OnKeyChar(WPARAM wParam, LPARAM lParam) = 0;
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam) = 0;

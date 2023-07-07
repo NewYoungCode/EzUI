@@ -80,9 +80,9 @@ namespace EzUI {
 			mt.Physical.Width = dm.dmPelsWidth;//物理宽
 			mt.Physical.Height = dm.dmPelsHeight;//物理高
 			//计算缩放
-			mt.Scale = ((double)mt.Physical.Height / (double)mt.Rect.Height);
+			mt.Scale = ((float)mt.Physical.Height / (float)mt.Rect.Height);
 			//显示器fps
-			mt.FPS = dm.dmDisplayFrequency;
+			mt.FPS = (float)dm.dmDisplayFrequency;
 			monitors->push_back(mt);
 			return TRUE;
 			}, LPARAM(outMonitorInfo));

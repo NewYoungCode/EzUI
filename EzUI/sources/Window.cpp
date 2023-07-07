@@ -35,8 +35,8 @@ namespace EzUI {
 
 	Window::~Window()
 	{
-		if (::IsWindow(_hWnd)) {
-			::DestroyWindow(_hWnd);
+		if (::IsWindow(Hwnd())) {
+			::DestroyWindow(Hwnd());
 		}
 	}
 
@@ -91,9 +91,24 @@ namespace EzUI {
 		return isTop;
 	}
 	void Window::SetSize(const Size& size) {
-		RECT rect;
-		::GetWindowRect(_hWnd, &rect);
-		::MoveWindow(_hWnd, rect.left, rect.right, size.Width, size.Height, TRUE);
+		const Rect& rect = GetWindowRect();
+		::MoveWindow(Hwnd(), rect.X, rect.Y, size.Width, size.Height, FALSE);
+	}
+	void Window::SetLocation(const Point& pt) {
+		const Rect& rect = GetWindowRect();
+		::MoveWindow(Hwnd(), pt.X, pt.Y, rect.Width, rect.Height, FALSE);
+	}
+	void Window::SetRect(const Rect& rect)
+	{
+		::MoveWindow(Hwnd(), rect.X, rect.Y, rect.Width, rect.Height, FALSE);
+	}
+	void Window::SetMiniSize(const Size& size)
+	{
+		_miniSize = size;
+	}
+	void Window::SetMaxSize(const Size& size)
+	{
+		_maxSize = size;
 	}
 	void Window::SetIcon(short id)
 	{
@@ -101,7 +116,7 @@ namespace EzUI {
 	}
 	void Window::SetIcon(HICON icon)
 	{
-		::SendMessage(_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)icon);
+		::SendMessage(Hwnd(), WM_SETICON, ICON_SMALL, (LPARAM)icon);
 	}
 	void Window::SetLayout(EzUI::Control* layout) {
 		ASSERT(layout);
@@ -120,12 +135,12 @@ namespace EzUI {
 	}
 	void Window::Close(int code) {
 		_closeCode = code;
-		::SendMessage(_hWnd, WM_CLOSE, 0, 0);
+		::SendMessage(Hwnd(), WM_CLOSE, 0, 0);
 	}
 	void Window::Show(int cmdShow)
 	{
 		//ASSERT(MainLayout);
-		::ShowWindow(_hWnd, cmdShow);
+		::ShowWindow(Hwnd(), cmdShow);
 	}
 	void Window::ShowNormal()
 	{
@@ -139,17 +154,17 @@ namespace EzUI {
 	}
 	int Window::ShowModal(bool wait)
 	{
-		_OwnerHwnd = ::GetWindowOwner(_hWnd);
+		_OwnerHwnd = ::GetWindowOwner(Hwnd());
 		Show();
 		if (_OwnerHwnd) {
 			::EnableWindow(_OwnerHwnd, FALSE);
 		}
 		if (wait) {//
 			MSG msg{ 0 };
-			while (::IsWindow(_hWnd) && ::GetMessage(&msg, NULL, 0, 0) && msg.message != WM_QUIT)
+			while (::IsWindow(Hwnd()) && ::GetMessage(&msg, NULL, 0, 0) && msg.message != WM_QUIT)
 			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
+				::TranslateMessage(&msg);
+				::DispatchMessage(&msg);
 			}
 			if (msg.message == WM_QUIT) {//
 				::PostQuitMessage(msg.wParam);
@@ -165,12 +180,12 @@ namespace EzUI {
 		Show(SW_HIDE);
 	}
 	bool Window::IsVisible() {
-		return ::IsWindowVisible(_hWnd) ? true : false;
+		return ::IsWindowVisible(Hwnd()) ? true : false;
 	}
 	void Window::SetVisible(bool flag) {
 		if (flag) {
 			Show(SW_RESTORE);
-			::SetForegroundWindow(_hWnd);
+			::SetForegroundWindow(Hwnd());
 		}
 		else {
 			Hide();
@@ -199,10 +214,19 @@ namespace EzUI {
 		{
 		case WM_GETMINMAXINFO:
 		{
+			MINMAXINFO* pMMInfo = (MINMAXINFO*)lParam;
+			if (!_miniSize.Empty()) {
+				pMMInfo->ptMinTrackSize.x = _miniSize.Width;
+				pMMInfo->ptMinTrackSize.y = _miniSize.Height;
+			}
+			if (!_maxSize.Empty()) {
+				pMMInfo->ptMaxTrackSize.x = _maxSize.Width;
+				pMMInfo->ptMaxTrackSize.y = _maxSize.Height;
+				break;
+			}
 			MONITORINFO monitor;
 			monitor.cbSize = sizeof(MONITORINFO);
-			::GetMonitorInfo(::MonitorFromWindow(_hWnd, MONITOR_DEFAULTTOPRIMARY), &monitor);
-			MINMAXINFO* pMMInfo = (MINMAXINFO*)lParam;
+			::GetMonitorInfo(::MonitorFromWindow(Hwnd(), MONITOR_DEFAULTTOPRIMARY), &monitor);
 			//是否为主显示器
 			if ((monitor.dwFlags & MONITORINFOF_PRIMARY) == MONITORINFOF_PRIMARY) {
 				//保证窗口在最大化的时候始终在工作区 不会遮挡任务栏
@@ -292,11 +316,11 @@ namespace EzUI {
 				OnLoad();
 			}
 			PAINTSTRUCT pst;
-			HDC winHDC = BeginPaint(_hWnd, &pst);
+			HDC winHDC = ::BeginPaint(Hwnd(), &pst);
 			RECT& r = pst.rcPaint;
 			Rect rePaintRect{ r.left,r.top,r.right - r.left, r.bottom - r.top };
-			Rending(winHDC, rePaintRect);
-			EndPaint(_hWnd, &pst);
+			this->Rending(winHDC, rePaintRect);
+			::EndPaint(Hwnd(), &pst);
 			return 0;
 		}
 		case WM_NOTIFY: {
@@ -315,7 +339,7 @@ namespace EzUI {
 			}
 			//获取客户区的矩形
 			RECT rect;
-			::GetClientRect(_hWnd, &rect);
+			::GetClientRect(Hwnd(), &rect);
 			Point clientPoint{ rect.left,rect.top };
 			Size clientSize{ rect.right - rect.left,rect.bottom - rect.top };
 			//客户区矩形无效的时候
@@ -340,7 +364,7 @@ namespace EzUI {
 			Point point = _rect.GetLocation();
 			if (!_lastPoint.Equals(point)) {
 				_lastPoint = point;
-				OnMove(point);
+				OnLocation(point);
 			}
 			break;
 		}
@@ -409,7 +433,7 @@ namespace EzUI {
 			TRACKMOUSEEVENT tme{ 0 };
 			tme.cbSize = sizeof(tme);
 			tme.dwFlags = TME_LEAVE;
-			tme.hwndTrack = _hWnd;
+			tme.hwndTrack = Hwnd();
 			TrackMouseEvent(&tme);
 			OnMouseMove({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 			_mouseIn = true;
@@ -458,7 +482,7 @@ namespace EzUI {
 		}
 		}
 		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
-		}
+	}
 
 	void Window::Rending(HDC winHDC, const Rect& rePaintRect) {
 #ifdef COUNT_ONPAINT
@@ -484,7 +508,7 @@ namespace EzUI {
 			graphics.DrawRectangle(rePaintRect);
 		}
 #endif
-	}
+}
 
 	void Window::OnPaint(PaintEventArgs& arg)
 	{
@@ -495,7 +519,7 @@ namespace EzUI {
 
 	void Window::InitData(const DWORD& ExStyle)
 	{
-		PublicData.HANDLE = _hWnd;
+		PublicData.HANDLE = Hwnd();
 		PublicData.Window = this;
 
 		if ((ExStyle & WS_EX_LAYERED) != WS_EX_LAYERED) {
@@ -506,11 +530,11 @@ namespace EzUI {
 				r.top = ((Rect*)_rect)->GetTop();
 				r.right = ((Rect*)_rect)->GetRight();
 				r.bottom = ((Rect*)_rect)->GetBottom();
-				::InvalidateRect(_hWnd, &r, FALSE);
+				::InvalidateRect(Hwnd(), &r, FALSE);
 				//::SendMessage(_hWnd, UI_PAINT, (WPARAM)_rect, NULL);
 			};
 			PublicData.UpdateWindow = [=]()->void {
-				::UpdateWindow(_hWnd);
+				::UpdateWindow(Hwnd());
 			};
 		}
 
@@ -710,7 +734,7 @@ namespace EzUI {
 		//如果单机的不是上一个 那么上一个触发失去焦点事件
 		if (_inputControl != outCtl) {
 			if (_inputControl) {
-				_inputControl->OnKillFocus();//给上一个输入焦点触发失去焦点的事件
+				_inputControl->OnKillFocus(outCtl);//给上一个输入焦点触发失去焦点的事件
 			}
 			_inputControl = outCtl;
 		}
@@ -779,7 +803,7 @@ namespace EzUI {
 		Debug::Log("OnSize Count(%d) (%d,%d) %dms\n", __count_onsize, sz.Width, sz.Height, sw.ElapsedMilliseconds());
 #endif
 
-	}
+		}
 
 	void Window::OnRect(const Rect& rect)
 	{
@@ -817,8 +841,10 @@ namespace EzUI {
 			return;
 		}
 	}
-	void Window::OnMove(const Point& point) {
-
+	void Window::OnLocation(const Point& point) {
+	}
+	void Window::OnKillFocus(HWND hWnd)
+	{
 	}
 	LRESULT Window::ZoomWindow(const  LPARAM& lParam) {
 		RECT rc;
@@ -839,7 +865,7 @@ namespace EzUI {
 		}
 		if (pt.y < rc.top + x)return HTTOP;//
 		if (pt.y >= rc.bottom - x)return HTBOTTOM;//
-		return HTCLIENT;//?
+		return HTCLIENT;//
 	}
 	void Window::MoveWindow() {
 		::ReleaseCapture();
@@ -889,4 +915,4 @@ namespace EzUI {
 		return false;
 	}
 
-		};
+	};

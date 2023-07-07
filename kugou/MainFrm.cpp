@@ -22,6 +22,9 @@ MainFrm::MainFrm() :Form(1020, 690)
 	//textArea->SetText(L"hello");
 	//MainLayout->Style.Radius =100;
 
+	this->SetMiniSize({ 800,450 });
+	//this->SetMaxSize({ 1800,1012 });
+
 }
 void MainFrm::InitForm() {
 	this->Zoom = true;
@@ -482,7 +485,6 @@ void MainFrm::NextPage(int a, int b) {
 		}
 		if (!global::nextPage) {
 			Label* end = new Label;
-			end->Dock = DockStyle::Horizontal;
 			end->SetFixedHeight(35);
 			end->Style.BackgroundColor = Color(254, 249, 229);
 			end->SetText(L"已经没有更多数据");

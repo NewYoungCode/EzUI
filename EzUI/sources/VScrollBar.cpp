@@ -58,8 +58,6 @@ namespace EzUI {
 
 	void VScrollBar::OnSize(const Size& size)
 	{
-
-
 		//此处需要屏蔽
 	}
 	const Rect& VScrollBar::GetRect()

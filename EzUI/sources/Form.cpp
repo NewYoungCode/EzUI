@@ -10,7 +10,7 @@ namespace EzUI {
 		if (uMsg == WM_KILLFOCUS) {
 			HWND wnd = (HWND)wParam;
 			if (wnd != this->_boxShadow->_hWnd) {
-				this->Close();
+				this->OnKillFocus(wnd);
 			}
 		}
 		return __super::WndProc(uMsg, wParam, lParam);
@@ -43,5 +43,9 @@ namespace EzUI {
 		__super::Show(cmdShow);
 		::SetForegroundWindow(Hwnd());
 		::SetWindowPos(Hwnd(), HWND_TOPMOST, x, y, width, height, NULL);
+	}
+	void MenuWindow::OnKillFocus(HWND hWnd)
+	{
+		this->Close();
 	}
 };

@@ -4,6 +4,8 @@
 #include "LayeredWindow.h"
 namespace EzUI {
 	class  UI_EXPORT MenuWindow :public BorderlessWindow {
+	protected:
+		virtual void OnKillFocus(HWND hWnd) override;
 	public:
 		MenuWindow(int cx, int cy, HWND owner = NULL);
 		LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;

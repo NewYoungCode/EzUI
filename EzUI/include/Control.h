@@ -40,7 +40,6 @@ namespace EzUI {
 		ControlStyle ActiveStyle;//鼠标按下样式
 		Control* Parent = NULL;//父控件
 		Controls VisibleControls;//基于控件中的可见控件
-		DockStyle Dock = DockStyle::None;//dock样式
 		const Rect ClipRect;//控件在窗口中的可见区域
 	public:
 		EventMouseMove MouseMove;//移动事件
@@ -65,6 +64,7 @@ namespace EzUI {
 		virtual void OnLoad();//控件第一次加载 警告 此函数在LayerWindow里面不允许在函数内添加控件 但是允许设置控件参数  
 		virtual void OnLocation(const Point& pt);//坐标发生改变
 		virtual void OnSize(const Size& size) override;//大小发生改变
+		virtual void OnRect(const Rect& rect) override;
 		virtual void OnLayout();//布局代码在此 布局完成之后PendLayout设置成false
 		virtual void OnKeyBoardEvent(const KeyboardEventArgs& _args);//键盘事件消息
 		virtual void OnMouseMove(const Point& point);//鼠标在控件上移动
@@ -104,7 +104,7 @@ namespace EzUI {
 		void SetRect(const Rect& rect);//设置相对父控件矩形
 		virtual void ResumeLayout();//直接进行布局
 		virtual void SetTips(const EString& text);
-		virtual void OnKillFocus();//失去焦点的时候发生
+		virtual void OnKillFocus(Control*control);//失去焦点的时候发生
 		virtual void OnRemove();//被移除该做的事情
 		void Trigger(const MouseEventArgs& args);//触发鼠标相关消息
 		void Trigger(const KeyboardEventArgs& args);//触发键盘相关消息
