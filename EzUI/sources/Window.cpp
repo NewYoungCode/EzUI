@@ -225,7 +225,7 @@ namespace EzUI {
 				break;
 			}
 			MONITORINFO monitor;
-			monitor.cbSize = sizeof(MONITORINFO);
+			monitor.cbSize = sizeof(monitor);
 			::GetMonitorInfo(::MonitorFromWindow(Hwnd(), MONITOR_DEFAULTTOPRIMARY), &monitor);
 			//是否为主显示器
 			if ((monitor.dwFlags & MONITORINFOF_PRIMARY) == MONITORINFOF_PRIMARY) {
@@ -240,7 +240,7 @@ namespace EzUI {
 				//获取主显示器
 				HMONITOR hMonitor = MonitorFromWindow(NULL, MONITOR_DEFAULTTOPRIMARY);
 				MONITORINFO monitorInfo;
-				monitorInfo.cbSize = sizeof(MONITORINFO);
+				monitorInfo.cbSize = sizeof(monitorInfo);
 				::GetMonitorInfo(hMonitor, &monitorInfo);
 				RECT& rcWork = monitorInfo.rcMonitor;
 				pMMInfo->ptMaxPosition.x = rcWork.left;

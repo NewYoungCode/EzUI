@@ -64,10 +64,14 @@ public:
 		del.MousePassThrough = Event::OnHover;
 
 		songName.SetText(_songName);
-		songName.EllipsisText = "...";
+		songName.EllipsisText = "...";//文本超出容器之外采用省略号
 		songName.TextAlign = TextAlign::MiddleLeft;
 		songName.MousePassThrough = time.MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseDoubleClick;
 		songName.HoverStyle.FontSize = 15;
+
+		//自动宽高的支持
+		//songName.AutoWidth = songName.AutoHeight = true;
+		//time.AutoWidth = time.AutoHeight = true;
 
 		time.SetFixedWidth(50);
 		time.SetText(_songTime);

@@ -63,7 +63,7 @@ namespace EzUI {
 	const Rect& VScrollBar::GetRect()
 	{
 		//此处需要屏蔽
-		return _rect;
+		return __super::GetRect();
 	}
 
 	void VScrollBar::OnForePaint(PaintEventArgs& args)
@@ -79,14 +79,10 @@ namespace EzUI {
 			sliderRect.Height = 1;
 		}
 		//绘制滑块
-		int radius = GetRadius();
-		if (radius > sliderRect.Height) {
-			radius = sliderRect.Height;
-		}
 		Color color = GetForeColor();
 		if (color.GetValue() != 0) {
 			args.Graphics.SetColor(color);
-			args.Graphics.FillRectangle(sliderRect, radius);
+			args.Graphics.FillRectangle(sliderRect, GetRadius());
 		}
 	}
 

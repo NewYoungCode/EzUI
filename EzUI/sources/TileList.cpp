@@ -31,8 +31,7 @@ namespace EzUI {
 
 	void TileList::RefreshScroll(const int& _maxBottom) {
 		if (AutoHeight) {
-			this->_fixedHeight = _maxBottom;
-			this->_rect.Height = _maxBottom;
+			this->SetFixedHeight(_maxBottom);
 			vScrollBar.Visible = false;
 		}
 		else if (vScrollBar.Visible == true) {

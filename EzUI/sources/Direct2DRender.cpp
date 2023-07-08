@@ -400,6 +400,22 @@ namespace EzUI {
 			SafeRelease(&D2D::g_ImageFactory);
 		}
 	}
+	float GetMaxRadius(int width, int height, float _radius)
+	{
+		float radius = (float)_radius;//°ë¾¶
+		float diameter = radius * 2;//Ö±¾¶
+		if (width > height || width == height) {
+			if (diameter > height) {
+				radius = height / 2.0f;
+			}
+		}
+		else if (height > width) {
+			if (diameter > width) {
+				radius = width / 2.0f;
+			}
+		}
+		return  radius;
+	}
 	DXRender::DXRender(HDC dc, int x, int y, int width, int height) {
 		D2D1_RENDER_TARGET_PROPERTIES defaultOption = D2D1::RenderTargetProperties(
 			D2D1_RENDER_TARGET_TYPE_DEFAULT,
@@ -511,8 +527,8 @@ namespace EzUI {
 	void DXRender::DrawRectangle(const  Rect& _rect, int _radius, int width) {
 		const Rect& rect = _rect;
 		if (_radius > 0) {
-			float radius = _radius / 2.0f;
-			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), radius, radius };
+			float radius = GetMaxRadius(_rect.Width, _rect.Height, (float)_radius);
+			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), (float)radius, (float)radius };
 			render->DrawRoundedRectangle(roundRect, GetBrush(), (FLOAT)width, GetStrokeStyle());
 		}
 		else {
@@ -522,8 +538,8 @@ namespace EzUI {
 	void DXRender::FillRectangle(const Rect& _rect, int _radius) {
 		const Rect& rect = _rect;
 		if (_radius > 0) {
-			float radius = _radius / 2.0f;
-			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), radius, radius };
+			float radius = GetMaxRadius(_rect.Width, _rect.Height, (float)_radius);
+			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), (float)radius, (float)radius };
 			render->FillRoundedRectangle(roundRect, GetBrush());
 		}
 		else {

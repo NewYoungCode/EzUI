@@ -62,7 +62,7 @@ namespace EzUI {
 			mt.Rect.Height = lprcMonitor->bottom - lprcMonitor->top;
 			//获取显示器信息
 			MONITORINFOEX miex;
-			miex.cbSize = sizeof(MONITORINFOEX);
+			miex.cbSize = sizeof(miex);
 			::GetMonitorInfo(hMonitor, &miex);
 			if ((miex.dwFlags & MONITORINFOF_PRIMARY) == MONITORINFOF_PRIMARY) {//是否为主显示器
 				mt.Primary = true;
@@ -74,7 +74,7 @@ namespace EzUI {
 			mt.WorkRect.Height = miex.rcWork.bottom - miex.rcWork.top;
 			//获取物理宽高
 			DEVMODE dm;
-			dm.dmSize = sizeof(DEVMODE);
+			dm.dmSize = sizeof(dm);
 			dm.dmDriverExtra = 0;
 			::EnumDisplaySettings(miex.szDevice, ENUM_REGISTRY_SETTINGS, &dm);
 			mt.Physical.Width = dm.dmPelsWidth;//物理宽
@@ -107,9 +107,9 @@ namespace EzUI {
 		biteCount = (byte)piexlFormat;
 		this->Width = width;
 		this->Height = height;
-		memset(&bmi, 0, sizeof(BITMAPINFO));
+		memset(&bmi, 0, sizeof(bmi));
 		BITMAPINFOHEADER& bmih = bmi.bmiHeader;
-		bmih.biSize = sizeof(BITMAPINFOHEADER);
+		bmih.biSize = sizeof(bmih);
 		bmih.biBitCount = biteCount;
 		bmih.biCompression = BI_RGB;
 		bmih.biPlanes = 1;

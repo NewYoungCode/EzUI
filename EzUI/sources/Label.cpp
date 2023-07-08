@@ -3,20 +3,36 @@ namespace EzUI {
 	Label::Label() {}
 	Label::Label(Control* parent) :Control(parent) {}
 	Label::~Label() {}
+	void Label::Rending(PaintEventArgs& args) {
+		if (AutoWidth && AutoHeight) {
+			Size oldSize(Width(), Height());
+			std::wstring fontFamily = GetFontFamily().utf16();
+			int fontSize = GetFontSize();
+			Font font(fontFamily, fontSize);
+			TextLayout textLayout(_wstr, font);
+			Size fontBox = textLayout.GetFontBox();
+			if (fontBox != oldSize) {
+				SetFixedSize({ fontBox.Width,fontBox.Height });
+				if (Parent) {
+					Parent->TryPendLayout();
+					Parent->Invalidate();
+					return;
+				}
+			}
+		}
+		__super::Rending(args);
+	}
 	void Label::OnForePaint(PaintEventArgs& args)
 	{
 		__super::OnForePaint(args);
 		if (!_wstr.empty()) {
 			std::wstring drawText(_wstr);
-
 			std::wstring fontFamily = GetFontFamily().utf16();
 			int fontSize = GetFontSize();
 			Font font(fontFamily, fontSize);
 			args.Graphics.SetFont(font);
 			args.Graphics.SetColor(GetForeColor());
-
 			std::wstring wEllipsisText = EllipsisText.utf16();
-
 			if (!wEllipsisText.empty()) { //水平文本溢出的显示方案
 				Size ellipsisTextSize;
 				{
@@ -28,7 +44,7 @@ namespace EzUI {
 					int pos = 0;
 					BOOL isTrailingHit;
 					int fontHeight;
-					textLayout.HitTestPoint({ Width(),0 }, &pos,& isTrailingHit, &fontHeight);//对文字进行命中测试
+					textLayout.HitTestPoint({ Width(),0 }, &pos, &isTrailingHit, &fontHeight);//对文字进行命中测试
 					drawText.erase(pos);
 					while (drawText.size() > 0)
 					{
@@ -43,7 +59,7 @@ namespace EzUI {
 				}
 			}
 			std::wstring viewStr = !drawText.empty() ? drawText : EllipsisText.utf16();
-			TextLayout textLayout(viewStr, font, Size(Width(), Height()), this->TextAlign);
+			TextLayout textLayout(viewStr, font, Size(Width(), Height()), (AutoWidth && AutoHeight) ? TextAlign::TopLeft : this->TextAlign);
 			if (this->_underline) {//下划线
 				textLayout.SetUnderline(0, viewStr.size());
 			}
@@ -86,39 +102,19 @@ namespace EzUI {
 				this->SetText(value);
 				break;
 			}
+			if (key == "width" && value == "auto") {
+				this->AutoWidth = true;
+				return;
+			}
+			if (key == "height" && value == "auto") {
+				this->AutoHeight = true;
+				return;
+			}
 		} while (false);
 		__super::SetAttribute(key, value);
 	}
-	Size Label::GetFontWidth() {
-
-		return Size((int)fontBox.Width, (int)fontBox.Height);
-	}
-
 	void Label::SetText(const EString& text) {
 		_wstr = text.utf16();
-		//if (AutoWidth || AutoHeight) {
-		//	RectF box;
-		//	//计算字体的长度
-		//	HDC dc = ::GetDC(NULL);
-		//	/*Gdiplus::Graphics gp(dc);
-		//	std::wstring nickname = _text.utf16();
-		//	Gdiplus::FontFamily ff(GetFontFamily(this->State).utf16().c_str());
-		//	Gdiplus::Font f(&ff, GetFontSize(this->State));
-		//	gp.MeasureString(nickname.c_str(), nickname.size(), &f, PointF(0, 0), &box);*/
-		//	int autoW = box.Width + 1;
-		//	int autoH = box.Height + 1;
-		//	if (AutoWidth) {
-		//		SetFixedWidth(autoW);
-		//	}
-		//	if (AutoHeight) {
-		//		SetFixedHeight(autoH);
-		//	}
-		//	::ReleaseDC(NULL, dc);
-		//	Layout* pCtl = dynamic_cast<Layout*>(Parent);
-		//	if (pCtl) {
-		//		pCtl->ResumeLayout();
-		//	}
-		//}
 	}
 	void Label::SetUnderline(bool enable)
 	{

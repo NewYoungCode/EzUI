@@ -23,9 +23,8 @@ namespace EzUI {
 		bool CheckEventPassThrough(const Event& eventType);//检查事件是否已经过滤
 		bool CheckEventNotify(const Event& eventType);//检查事件是否通知到主窗口中
 		void ComputeClipRect();//计算基于父控件的裁剪区域
-	protected:
-		int _fixedWidth = 0;//绝对宽度
-		int _fixedHeight = 0;//绝对高度
+	//protected:
+		Size _fixedSize;//绝对Size
 		Rect _rect;//控件矩形区域(基于父控件)
 	public:
 		EzUI::Margin Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数
@@ -141,7 +140,7 @@ namespace EzUI {
 		virtual void AddControl(Control* ctl);//添加控件
 		virtual void RemoveControl(Control* ctl);//删除控件 返回下一个迭代器
 		virtual void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件
-		void Rending(PaintEventArgs& args);//绘制函数
+		virtual void Rending(PaintEventArgs& args);//绘制函数
 		bool IsVisible();//当前是否显示在窗口内
 		virtual bool Invalidate();// 使当前控件的区域为无效区域
 		virtual void Refresh();// 使当前控件区域为无效区域并且立即更新全部的无效区域

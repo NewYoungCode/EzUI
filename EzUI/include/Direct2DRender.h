@@ -27,6 +27,9 @@ namespace EzUI {
 		extern IDWriteFactory* g_WriteFactory;
 		extern IWICImagingFactory* g_ImageFactory;
 	}
+	UI_EXPORT void RenderInitialize();//全局初始化direct2d
+	UI_EXPORT void RenderUnInitialize();//释放direct2d
+	UI_EXPORT float GetMaxRadius(int width, int height, float _radius);//获取最大半径 用于自动适应border-radius属性
 	class UI_EXPORT Font {
 	private:
 		Font() = delete;
@@ -113,9 +116,8 @@ namespace EzUI {
 			D2D_RECT_F rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) };
 			D2D::g_Direct2dFactory->CreateRectangleGeometry(rectF, (ID2D1RectangleGeometry**)&rgn);
 		}
-		/*	Geometry(const __Rect& rect) :Geometry(rect.X, rect.Y, rect.Width, rect.Height) {};*/
 		Geometry(int x, int y, int width, int height, int _radius) {
-			float radius = _radius / 2.0f;
+			float radius = GetMaxRadius(width, height, (float)_radius);
 			D2D1_ROUNDED_RECT rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) ,radius ,radius };
 			D2D::g_Direct2dFactory->CreateRoundedRectangleGeometry(rectF, (ID2D1RoundedRectangleGeometry**)&rgn);
 		}
@@ -243,8 +245,6 @@ namespace EzUI {
 };
 
 namespace EzUI {
-	UI_EXPORT void RenderInitialize();//全局初始化direct2d
-	UI_EXPORT void RenderUnInitialize();//释放direct2d
 
 	enum class StrokeStyle
 	{

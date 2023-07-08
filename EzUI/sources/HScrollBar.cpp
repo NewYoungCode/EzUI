@@ -59,7 +59,7 @@ namespace EzUI {
 	const Rect& HScrollBar::GetRect()
 	{
 		//此处需要屏蔽
-		return _rect;
+		return __super::GetRect();
 	}
 	void HScrollBar::OnForePaint(PaintEventArgs& args)
 	{
@@ -74,13 +74,8 @@ namespace EzUI {
 			sliderRect.Width = 1;
 		}
 		//绘制滑块
-		int radius = GetRadius();
-		if (radius > sliderRect.Width) {
-			radius = sliderRect.Width;
-		}
-
 		args.Graphics.SetColor(GetForeColor(this->State));
-		args.Graphics.FillRectangle(sliderRect, radius);
+		args.Graphics.FillRectangle(sliderRect, GetRadius());
 	}
 
 	void HScrollBar::OnMouseDown(MouseButton mBtn, const Point& point) {

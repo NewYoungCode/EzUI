@@ -360,28 +360,28 @@ Event(this , ##__VA_ARGS__); \
 
 	void Control::SetFixedWidth(const int& fixedWidth)
 	{
-		_fixedWidth = fixedWidth;
+		_fixedSize.Width = fixedWidth;
 		SetRect({ _rect.X,_rect.Y,fixedWidth,_rect.Height });
 
 	}
 	void Control::SetFixedHeight(const int& fixedHeight)
 	{
-		_fixedHeight = fixedHeight;
+		_fixedSize.Height = fixedHeight;
 		SetRect({ _rect.X,_rect.Y,_rect.Width,fixedHeight });
 	}
 	void Control::SetFixedSize(const Size& size)
 	{
-		_fixedWidth = size.Width;
-		_fixedHeight = size.Height;
+		_fixedSize.Width = size.Width;
+		_fixedSize.Height = size.Height;
 		SetRect({ _rect.X,_rect.Y,size.Width,size.Height });
 	}
 	const int& Control::GetFixedWidth()
 	{
-		return _fixedWidth;
+		return _fixedSize.Width;
 	}
 	const int& Control::GetFixedHeight()
 	{
-		return _fixedHeight;
+		return _fixedSize.Height;
 	}
 	bool Control::CheckEventPassThrough(const Event& eventType)
 	{
@@ -426,11 +426,11 @@ Event(this , ##__VA_ARGS__); \
 	void Control::SetRect(const Rect& rect)
 	{
 		this->_rect = rect;
-		if (_fixedWidth) {
-			_rect.Width = _fixedWidth;
+		if (_fixedSize.Width) {
+			_rect.Width = _fixedSize.Width;
 		}
-		if (_fixedHeight) {
-			_rect.Height = _fixedHeight;
+		if (_fixedSize.Height) {
+			_rect.Height = _fixedSize.Height;
 		}
 
 		Point newLocation = _rect.GetLocation();

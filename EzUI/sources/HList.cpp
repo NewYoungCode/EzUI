@@ -31,8 +31,7 @@ namespace EzUI {
 	}
 	void HList::RefreshScroll(const int& _maxRight) {
 		if (AutoWidth) {
-			this->_fixedWidth = _maxRight;
-			this->_rect.Width = _maxRight;
+			this->SetFixedWidth(_maxRight);
 			hScrollBar.Visible = false;
 		}
 		else if (hScrollBar.Visible == true) {

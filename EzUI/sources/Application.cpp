@@ -13,7 +13,7 @@ namespace EzUI {
 	void Application::Init() {
 		//初始化公共控件库
 		INITCOMMONCONTROLSEX icex;
-		icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
+		icex.dwSize = sizeof(icex);
 		icex.dwICC = ICC_WIN95_CLASSES;  // 或者使用其他需要的控件类别
 		InitCommonControlsEx(&icex);
 		//禁用DPI感知 避免应用程序自动放大

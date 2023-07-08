@@ -82,6 +82,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	text.SetMultiLine(true);
 	text.Margin.Left = 20;
 	text.Margin.Right = 20;
+	text.Style.Radius =261;
 
 
 

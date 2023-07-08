@@ -8,7 +8,6 @@ namespace EzUI {
 	protected:
 		std::wstring _wstr;
 		bool _underline = false;
-		Rect fontBox;
 	protected:
 		virtual void OnForePaint(PaintEventArgs& args) override;
 	public:
@@ -22,6 +21,7 @@ namespace EzUI {
 		Label(Control* parent);
 		virtual ~Label();
 		virtual void SetAttribute(const EString& key, const EString& value)override;
+		virtual void Rending(PaintEventArgs& args)override;
 		void SetText(const EString& text);
 		void SetUnderline(bool enable = true);
 		EString GetText()const;
