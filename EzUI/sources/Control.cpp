@@ -70,18 +70,15 @@ Event(this , ##__VA_ARGS__); \
 		if (backgroundColor.GetValue() != 0) {
 			e.Graphics.SetColor(backgroundColor);
 			e.Graphics.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height });
-			//EzUI::FillRectangle(e.Painter, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundColor);
 		}
 		if (backgroundImage != NULL) {
 			e.Graphics.DrawImage(backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage->SizeMode, backgroundImage->Padding);
-			//	EzUI::DrawImage(e.Painter, backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage->SizeMode, backgroundImage->Padding);
 		}
 	}
 	void Control::OnForePaint(PaintEventArgs& e) {
 		Image* foreImage = GetForeImage();
 		if (foreImage) {
 			e.Graphics.DrawImage(foreImage, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage->SizeMode, foreImage->Padding);
-			//EzUI::DrawImage(e.Painter, foreImage, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage->SizeMode, foreImage->Padding);
 		}
 	}
 	void Control::OnBorderPaint(PaintEventArgs& e)
@@ -101,31 +98,23 @@ Event(this , ##__VA_ARGS__); \
 
 		if (radius > 0 && hasBorder) {
 			e.Graphics.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, radius, borderLeft);
-			//EzUI::DrawRectangle(e.Painter, Rect{ 0,0,_rect.Width,_rect.Height }, borderColor, borderLeft, radius);
 			return;
 		}
 		if (borderLeft > 0) {
 			e.Graphics.DrawLine(Point{ 0,0 }, Point{ 0,_rect.Height }, borderLeft);
-			//EzUI::DrawLine(e.Painter, borderColor, Point{ 0,0 }, Point{ 0,_rect.Height }, borderLeft);
 		}
 		if (borderTop > 0) {
 			e.Graphics.DrawLine(Point{ 0,0 }, Point{ _rect.Width,0 }, borderTop);
-			//EzUI::DrawLine(e.Painter, borderColor, Point{ 0,0 }, Point{ _rect.Width,0 }, borderTop);
 		}
 		if (borderRight > 0) {
 			e.Graphics.DrawLine(Point{ _rect.Width,0 }, Point{ _rect.Width,_rect.Height }, borderRight);
-			//EzUI::DrawLine(e.Painter, borderColor, Point{ _rect.Width,0 }, Point{ _rect.Width,_rect.Height }, borderRight);
 		}
 		if (borderBottom > 0) {
 			e.Graphics.DrawLine(Point{ 0,_rect.Height }, Point{ _rect.Width,_rect.Height }, borderBottom);
-			//EzUI::DrawLine(e.Painter, borderColor, Point{ 0,_rect.Height }, Point{ _rect.Width,_rect.Height }, borderBottom);
 		}
 	}
 
 	ControlStyle& Control::GetStyle(const ControlState& _state) {
-		/*if (_state == ControlState::None) {
-			return this->_nowStyle;
-		}*/
 		if (_state == ControlState::Static) {
 			return this->Style;
 		}

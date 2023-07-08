@@ -190,11 +190,7 @@ namespace EzUI {
 		EventScrollRolling Rolling = NULL;//滚动事件
 		ScrollBar() {
 			Style.ForeColor = Color(205, 205, 205);//the bar backgroundcolor
-			Style.BackgroundColor = Color(240, 240, 240);//the bar backgroundcolor
-			ActiveStyle.ForeColor = Color(166, 166, 166);
-			SetWidth(10);//滚动条高度
-			SetHeight(10);//滚动条宽度
-			Style.Radius = 10;
+			SetSize({ 10,10 });
 		}
 		virtual ~ScrollBar() {}
 	};
