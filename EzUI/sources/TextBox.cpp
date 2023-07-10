@@ -29,6 +29,9 @@ namespace EzUI {
 		do
 		{
 			if (wParam == VK_BACK) { //退格键
+				if (ReadOnly) {
+					break;
+				}
 				OnBackspace();//退格键的操作在里面
 				Analysis();//重新分析
 				Invalidate();//刷新
@@ -44,6 +47,9 @@ namespace EzUI {
 				break;
 			}
 			if (wParam == 24) {//ctrl+x裁剪
+				if (ReadOnly) {
+					break;
+				}
 				if (Copy()) {
 					DeleteRange();//因为是剪切 所以要删除选中的这段
 					Analysis();
@@ -52,19 +58,25 @@ namespace EzUI {
 				break;
 			}
 			if (wParam == 22) {
+				if (ReadOnly) {
+					break;
+				}
 				Paste();//粘贴
 				Analysis();//分析字符串
 				Invalidate();//刷新
 				break;
 			}
 			if (wParam == 26) {//ctrl+z撤销
+				if (ReadOnly) {
+					break;
+				}
 				break;
 			}
 
 		} while (false);
 
 		if (wParam < 32)return;//控制字符
-
+		if (ReadOnly) return;//只读
 		DeleteRange();//先删除是否有选中的区域
 		WCHAR buf[2]{ (WCHAR)wParam ,0 };//
 		Insert(buf);//插入新的字符
@@ -358,7 +370,7 @@ namespace EzUI {
 	void TextBox::OnMouseWheel(short zDelta, const Point& point) {
 		__super::OnMouseWheel(zDelta, point);
 		double offset = 20;
-		offset=(zDelta > 0 ? offset : -offset);
+		offset = (zDelta > 0 ? offset : -offset);
 		Move(offset);
 	}
 	void TextBox::Move(double _sliderY) {
@@ -503,10 +515,18 @@ namespace EzUI {
 	void TextBox::SetAttribute(const EString& key, const EString& value) {
 		__super::SetAttribute(key, value);
 		if (key == "placeholder") {
-			Placeholder = value;
+			this->Placeholder = value;
 		}
 		if (key == "text") {
-			SetText(value);
+			this->SetText(value);
+		}
+		if (key == "readonly") {
+			if (value == "true") {
+				this->ReadOnly = true;
+			}
+			if (value == "false") {
+				this->ReadOnly = false;
+			}
 		}
 	}
 
@@ -539,7 +559,7 @@ namespace EzUI {
 		}
 
 		if (selectRects.size() > 0) {
-			e.Graphics.SetColor(SelectColor);
+			e.Graphics.SetColor(SelectedColor);
 			for (auto& it : selectRects) {
 				if (!it.IsEmptyArea()) {
 					Rect rect(it);

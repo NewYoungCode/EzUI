@@ -13,7 +13,7 @@ namespace EzUI {
 		return !value.empty();
 	}
 #define UI_BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed(ControlState _state)  { \
-ControlStyle& style = GetStyle(this->State);\
+ControlStyle& style = this->GetStyle(this->State);\
 if(__IsValid(style.##_filed)){\
 	return style.##_filed; \
 }\
@@ -54,6 +54,7 @@ Event(this , ##__VA_ARGS__); \
 			args.Graphics.SetTransform(offset.X, offset.Y);
 		}
 	}
+
 	void Control::OnPaint(PaintEventArgs& args)
 	{
 		if (Painting) {
@@ -123,8 +124,6 @@ Event(this , ##__VA_ARGS__); \
 		}
 		if (_state == ControlState::Active) {
 			return this->ActiveStyle;
-		}
-		if (_state == ControlState::Disable) {
 		}
 		return this->Style;
 	}
@@ -216,6 +215,17 @@ Event(this , ##__VA_ARGS__); \
 				}
 				break;
 			}
+			if (attrName == "enable") {
+				if (attrValue == "true") {
+					this->Enable = true;
+					break;
+				}
+				if (attrValue == "false") {
+					this->Enable = false;
+					break;
+				}
+			}
+
 		} while (false);
 	}
 	void Control::OnLoad() {}
@@ -474,6 +484,7 @@ Event(this , ##__VA_ARGS__); \
 
 	//专门处理键盘消息的
 	void Control::OnKeyBoardEvent(const KeyboardEventArgs& args) {
+		if (Enable == false) return;
 		if (PublicData == NULL) return;
 		WindowData* winData = PublicData;
 
@@ -510,6 +521,7 @@ Event(this , ##__VA_ARGS__); \
 
 	//专门处理鼠标消息的
 	void Control::OnMouseEvent(const MouseEventArgs& _args) {
+		if (Enable == false) return;
 		if (PublicData == NULL) return;
 		WindowData* winData = PublicData;
 		MouseEventArgs& args = (MouseEventArgs&)_args;

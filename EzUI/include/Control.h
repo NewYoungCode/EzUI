@@ -31,6 +31,7 @@ namespace EzUI {
 		WindowData* PublicData = NULL;//窗口上的公共数据
 		int MousePassThrough = 0;//忽略的鼠标消息
 		bool Visible = true;//控件是否可见
+		bool Enable = true;//控件被启用 禁止状态下鼠标键盘消息将不可用
 		EString Name;//控件的ObjectName ID
 		ControlState State = ControlState::Static;//控件状态
 		ControlAction Action = ControlAction::None;//控件行为
@@ -54,7 +55,7 @@ namespace EzUI {
 		EventKeyUp KeyUp;//键盘弹起
 		EventPaint Painting;//绘制事件
 	protected:
-		ControlStyle& GetStyle(const ControlState& _state);//获取当前控件状态下的样式信息
+		virtual ControlStyle& GetStyle(const ControlState& _state);//获取当前控件状态下的样式信息
 		virtual void OnPaint(PaintEventArgs& args);//绘制 
 		virtual void OnChildPaint(PaintEventArgs& args);//子控件绘制 可以重载此函数优化鼠标操作性能
 		virtual void OnBackgroundPaint(PaintEventArgs& painter);//背景绘制
@@ -103,7 +104,7 @@ namespace EzUI {
 		void SetRect(const Rect& rect);//设置相对父控件矩形
 		virtual void ResumeLayout();//直接进行布局
 		virtual void SetTips(const EString& text);
-		virtual void OnKillFocus(Control*control);//失去焦点的时候发生
+		virtual void OnKillFocus(Control* control);//失去焦点的时候发生
 		virtual void OnRemove();//被移除该做的事情
 		void Trigger(const MouseEventArgs& args);//触发鼠标相关消息
 		void Trigger(const KeyboardEventArgs& args);//触发键盘相关消息
@@ -193,5 +194,20 @@ namespace EzUI {
 			SetSize({ 10,10 });
 		}
 		virtual ~ScrollBar() {}
+	};
+
+	class ISelect {
+	private:
+		bool _checked = false;
+	public:
+		ControlStyle CheckedStyle;//选中样式
+		virtual void SetCheck(bool checked)
+		{
+			_checked = checked;
+		}
+		virtual bool GetCheck()
+		{
+			return _checked;
+		}
 	};
 };

@@ -60,7 +60,8 @@ namespace EzUI {
 		virtual void OnLayout();
 	public:
 		EString Placeholder;//placeholder懂得都懂 (在没有文字的情况下显示的文字)
-		Color SelectColor = Color(100, 255, 0, 0);//选中颜色
+		Color SelectedColor = Color(100, 255, 0, 0);//选中颜色
+		bool ReadOnly = false;//是否只读
 	public:
 		TextBox();
 		TextBox(Control* parent);

@@ -20,6 +20,7 @@ namespace EzUI {
 	class UI_EXPORT UIManager {
 		enum class Style {
 			Static,
+			Checked,
 			Hover,
 			Active
 		};

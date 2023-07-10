@@ -145,6 +145,11 @@ namespace EzUI {
 				ctl->SetAttribute(attrName, attrValue);
 				continue;
 			}
+			if (std::strcmp(attrName, "checked") == 0) {
+				TrimStyle(attrValue);
+				ctl->SetAttribute(attrName, attrValue);
+				continue;
+			}
 			ctl->SetAttribute(attr->Name(), attrValue);
 			this->OnSetAttribute(ctl, attrName, attrValue);
 		} while ((attr = attr->Next()));
@@ -152,6 +157,7 @@ namespace EzUI {
 
 		{//加载样式 使用标签选择器
 			LoadStyle(ctl, tagStr);
+			LoadStyle(ctl, tagStr + ":checked");
 			LoadStyle(ctl, tagStr + ":active");
 			LoadStyle(ctl, tagStr + ":hover");
 		}
@@ -161,12 +167,14 @@ namespace EzUI {
 			auto classs = _class.Split(" ");
 			for (auto& className : classs) {
 				LoadStyle(ctl, "." + className);
+				LoadStyle(ctl, "." + className + ":checked");
 				LoadStyle(ctl, "." + className + ":active");
 				LoadStyle(ctl, "." + className + ":hover");
 			}
 		}
 		if (!(ctl->Name.empty())) {//加载样式 使用ID选择器 
 			LoadStyle(ctl, "#" + ctl->Name);
+			LoadStyle(ctl, "#" + ctl->Name + ":checked");
 			LoadStyle(ctl, "#" + ctl->Name + ":active");
 			LoadStyle(ctl, "#" + ctl->Name + ":hover");
 		}
@@ -175,6 +183,8 @@ namespace EzUI {
 			EString sytle_static = ctl->GetAttribute("style");//内联样式语法
 			EString style_hover = ctl->GetAttribute("style:hover");//内联样式语法
 			EString style_active = ctl->GetAttribute("style:active");//内联样式语法
+			EString style_checked = ctl->GetAttribute("style:checked");//内联样式语法
+
 			if (!sytle_static.empty()) {
 				ctl->Style.SetStyleSheet(sytle_static, BuildImageCallback);
 			}
@@ -183,6 +193,12 @@ namespace EzUI {
 			}
 			if (!style_active.empty()) {
 				ctl->ActiveStyle.SetStyleSheet(style_active, BuildImageCallback);
+			}
+			if (!style_checked.empty()) {
+				ISelect* ckBox = dynamic_cast<ISelect*>(ctl);
+				if (ckBox) {
+					ckBox->CheckedStyle.SetStyleSheet(style_checked, BuildImageCallback);
+				}
 			}
 		}
 		return ctl;
@@ -290,6 +306,9 @@ namespace EzUI {
 				else if (style_type == "active") {
 					selector.styleType = UIManager::Style::Active;
 				}
+				else if (style_type == "checked") {
+					selector.styleType = UIManager::Style::Checked;
+				}
 				else {
 					selector.styleType = UIManager::Style::Static;
 				}
@@ -310,6 +329,12 @@ namespace EzUI {
 				}
 				if (it.styleType == UIManager::Style::Active) {
 					ctl->ActiveStyle.SetStyleSheet(it.styleStr, BuildImageCallback);
+				}
+				if (it.styleType == UIManager::Style::Checked) {
+					ISelect* ckBox = dynamic_cast<ISelect*>(ctl);
+					if (ckBox) {
+						ckBox->CheckedStyle.SetStyleSheet(it.styleStr, BuildImageCallback);
+					}
 				}
 			}
 		}

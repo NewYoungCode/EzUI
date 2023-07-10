@@ -193,9 +193,9 @@ namespace EzUI {
 	enum class ControlState {
 		None,//无状态 则是使用_nowStyle缓存样式
 		Static,//静态
+		Checked,//选中状态
 		Hover,//鼠标悬浮
-		Active,//鼠标按住
-		Disable//禁用
+		Active//鼠标按住
 	};
 	enum class MouseButton {
 		// 摘要: 

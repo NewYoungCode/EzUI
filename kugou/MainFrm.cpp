@@ -25,6 +25,9 @@ MainFrm::MainFrm() :Form(1020, 690)
 	this->SetMiniSize({ 800,450 });
 	//this->SetMaxSize({ 1800,1012 });
 
+	auto lg= FindControl("login");
+	//lg->Enable = false;
+
 }
 void MainFrm::InitForm() {
 	this->Zoom = true;

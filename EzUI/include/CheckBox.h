@@ -4,19 +4,16 @@
 namespace EzUI {
 
 	class UI_EXPORT CheckBox :
-		public Label
+		public Label,public ISelect
 	{
 	protected:
-		bool _checked = false;
+		virtual ControlStyle& GetStyle(const ControlState& _state)override;
+		virtual void OnMouseClick(MouseButton btn, const Point& pt)override;	
 	public:
 		CheckBox();
-		CheckBox(Control*parent);
+		CheckBox(Control* parent);
 		virtual~CheckBox();
-		int Indent = 2;//Ëõ½ø
-		void SetCheck(bool checked = true);
-		bool GetCheck();
-		void OnMouseClick(MouseButton btn, const Point& pt)override;
-		virtual void OnForePaint(PaintEventArgs& args) override;
+		void SetAttribute(const EString& key, const EString& value)override;
 	};
 
 };
