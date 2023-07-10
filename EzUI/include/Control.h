@@ -56,6 +56,7 @@ namespace EzUI {
 		EventPaint Painting;//绘制事件
 	protected:
 		virtual ControlStyle& GetStyle(const ControlState& _state);//获取当前控件状态下的样式信息
+		virtual ControlStyle& GetDefaultStyle();//用于获取不同控件当前默认的
 		virtual void OnPaint(PaintEventArgs& args);//绘制 
 		virtual void OnChildPaint(PaintEventArgs& args);//子控件绘制 可以重载此函数优化鼠标操作性能
 		virtual void OnBackgroundPaint(PaintEventArgs& painter);//背景绘制
@@ -103,15 +104,15 @@ namespace EzUI {
 		void EndLayout();//结束布局
 		void SetRect(const Rect& rect);//设置相对父控件矩形
 		virtual void ResumeLayout();//直接进行布局
-		virtual void SetTips(const EString& text);
+		virtual void SetTips(const EString& text);//设置tips
 		virtual void OnKillFocus(Control* control);//失去焦点的时候发生
 		virtual void OnRemove();//被移除该做的事情
 		void Trigger(const MouseEventArgs& args);//触发鼠标相关消息
 		void Trigger(const KeyboardEventArgs& args);//触发键盘相关消息
-		void AddEventNotify(int eventType);//添加到主窗口ontify函数中可拦截
-		void RemoveEventNotify(int eventType);
-		virtual ScrollBar* GetScrollBar();
-		virtual int MoveScroll(int offset);
+		void AddEventNotify(int eventType);//添加到主窗口Ontify函数中可拦截
+		void RemoveEventNotify(int eventType);//移除一个主窗口的Ontify消息
+		virtual ScrollBar* GetScrollBar();//获取控件的滚动条
+		virtual int MoveScroll(int offset);//操作滚动条进行偏移滚动
 	public:
 		Control();
 		Control(Control* parent);
@@ -194,20 +195,5 @@ namespace EzUI {
 			SetSize({ 10,10 });
 		}
 		virtual ~ScrollBar() {}
-	};
-
-	class ISelect {
-	private:
-		bool _checked = false;
-	public:
-		ControlStyle CheckedStyle;//选中样式
-		virtual void SetCheck(bool checked)
-		{
-			_checked = checked;
-		}
-		virtual bool GetCheck()
-		{
-			return _checked;
-		}
 	};
 };

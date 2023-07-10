@@ -195,7 +195,7 @@ namespace EzUI {
 				ctl->ActiveStyle.SetStyleSheet(style_active, BuildImageCallback);
 			}
 			if (!style_checked.empty()) {
-				ISelect* ckBox = dynamic_cast<ISelect*>(ctl);
+				auto* ckBox = dynamic_cast<CheckBox*>(ctl);
 				if (ckBox) {
 					ckBox->CheckedStyle.SetStyleSheet(style_checked, BuildImageCallback);
 				}
@@ -331,7 +331,7 @@ namespace EzUI {
 					ctl->ActiveStyle.SetStyleSheet(it.styleStr, BuildImageCallback);
 				}
 				if (it.styleType == UIManager::Style::Checked) {
-					ISelect* ckBox = dynamic_cast<ISelect*>(ctl);
+					auto* ckBox = dynamic_cast<CheckBox*>(ctl);
 					if (ckBox) {
 						ckBox->CheckedStyle.SetStyleSheet(it.styleStr, BuildImageCallback);
 					}

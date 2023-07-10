@@ -13,10 +13,18 @@ namespace EzUI {
 		return !value.empty();
 	}
 #define UI_BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed(ControlState _state)  { \
-ControlStyle& style = this->GetStyle(this->State);\
-if(__IsValid(style.##_filed)){\
-	return style.##_filed; \
+/*先根据对应的状态来获取样式 */ \
+ControlStyle& stateStyle = this->GetStyle(this->State);\
+if(__IsValid(stateStyle.##_filed)){\
+	return stateStyle.##_filed; \
 }\
+/*获取不同的控件中默认样式 */ \
+	ControlStyle& defaultStyle = this->GetDefaultStyle(); \
+if(__IsValid(defaultStyle.##_filed)){\
+return  defaultStyle.##_filed;\
+\
+}\
+/*以上两种样式都未获取成功的情况下才采用此样式*/ \
 	return this->Style.##_filed;\
 }\
 
@@ -125,6 +133,9 @@ Event(this , ##__VA_ARGS__); \
 		if (_state == ControlState::Active) {
 			return this->ActiveStyle;
 		}
+		return this->Style;
+	}
+	ControlStyle& Control::GetDefaultStyle() {
 		return this->Style;
 	}
 	void Control::SetStyleSheet(const EString& styleStr, ControlState _state)

@@ -1,22 +1,13 @@
 #pragma once
-#include "Label.h"
-
+#include "CheckBox.h"
 namespace EzUI {
-
-	class UI_EXPORT  RadioButton :
-		public Label
+	class UI_EXPORT RadioButton :
+		public CheckBox
 	{
-	protected:
-		bool _checked = false;
 	public:
-		int Indent = 2;//Ëõ½ø
 		RadioButton();
-		RadioButton(Control*parent);
-		virtual	~RadioButton();
-		void SetCheck(bool checked = true);
-		bool GetCheck();
-		virtual void OnMouseClick(MouseButton btn, const Point& pt)override;
-		virtual void OnForePaint(PaintEventArgs& args) override;
+		RadioButton(Control* parent);
+		virtual void SetCheck(bool checked)override;
+		virtual~RadioButton();
 	};
-
 };

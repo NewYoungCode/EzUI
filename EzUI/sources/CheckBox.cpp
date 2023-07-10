@@ -10,6 +10,14 @@ namespace EzUI {
 	CheckBox::~CheckBox()
 	{
 	}
+	 void CheckBox::SetCheck(bool checked)
+	{
+		_checked = checked;
+	}
+	 bool CheckBox::GetCheck()
+	{
+		return _checked;
+	}
 	void CheckBox::SetAttribute(const EString& key, const EString& value)
 	{
 		__super::SetAttribute(key, value);
@@ -24,6 +32,13 @@ namespace EzUI {
 			}
 		}
 	}
+	ControlStyle& CheckBox::GetDefaultStyle()
+	{
+		if (GetCheck()) {
+			return this->CheckedStyle;
+		}
+		return __super::GetDefaultStyle();
+	}
 	ControlStyle& CheckBox::GetStyle(const ControlState& _state) {
 		if (_state == ControlState::Static) {
 			if (GetCheck()) {
@@ -32,6 +47,7 @@ namespace EzUI {
 		}
 		return __super::GetStyle(_state);
 	}
+
 	void CheckBox::OnMouseClick(MouseButton btn, const Point& pt) {
 		__super::OnMouseClick(btn, pt);
 		SetCheck(!GetCheck());

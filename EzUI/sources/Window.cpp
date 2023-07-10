@@ -370,9 +370,10 @@ namespace EzUI {
 		}
 		case WM_CLOSE:
 		{
-			bool Cancel = false;
-			OnClose(Cancel);
-			if (!Cancel) {
+			bool bClose = true;
+			OnClose(bClose);
+			if (bClose) {
+				//开始关闭窗口
 				if (_OwnerHwnd) {
 					::EnableWindow(_OwnerHwnd, TRUE);
 					_OwnerHwnd = NULL;
@@ -380,6 +381,7 @@ namespace EzUI {
 				::DestroyWindow(_hWnd);
 			}
 			else {
+				//关闭已取消
 				return TRUE;
 			}
 			break;
@@ -415,7 +417,7 @@ namespace EzUI {
 				Point point{ p1.x,p1.y };
 				Point relativePoint;
 				Control* outCtl = this->FindControl(point, &relativePoint);//找到当前控件的位置
-				if (outCtl) {
+				if (outCtl && outCtl->Enable) {
 					if (outCtl->HoverStyle.Cursor != NULL) {
 						::SetCursor(outCtl->HoverStyle.Cursor);
 						return TRUE;
@@ -508,7 +510,7 @@ namespace EzUI {
 			graphics.DrawRectangle(rePaintRect);
 		}
 #endif
-}
+	}
 
 	void Window::OnPaint(PaintEventArgs& arg)
 	{
@@ -803,12 +805,12 @@ namespace EzUI {
 		Debug::Log("OnSize Count(%d) (%d,%d) %dms\n", __count_onsize, sz.Width, sz.Height, sw.ElapsedMilliseconds());
 #endif
 
-		}
+	}
 
 	void Window::OnRect(const Rect& rect)
 	{
 	}
-	void Window::OnClose(bool& Cancel)
+	void Window::OnClose(bool& bClose)
 	{
 
 	}
@@ -915,4 +917,4 @@ namespace EzUI {
 		return false;
 	}
 
-	};
+};
