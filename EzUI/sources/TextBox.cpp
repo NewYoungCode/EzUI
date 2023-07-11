@@ -12,6 +12,10 @@ namespace EzUI {
 		Style.Cursor = LoadCursor(Cursor::IBEAM);
 		timer.Interval = 500;
 		timer.Tick = [&](Windows::Timer*) {
+			if (this->Enable == false || this->ReadOnly == true) {
+				_careShow = false;
+				return;
+			}
 			if (!careRect.IsEmptyArea() && _focus) {
 				_careShow = !_careShow;
 				this->Invalidate();
