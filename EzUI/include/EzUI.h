@@ -19,6 +19,8 @@ namespace EzUI {
 	extern UI_EXPORT HGLOBAL HVSResource;//vs中的资源文件句柄
 	//获取当前线程ID
 	extern UI_EXPORT size_t GetThreadId();
+	//解压文件
+	extern UI_EXPORT void UnZip(const EString& zipFileName, const EString& outPath, const EString& password = "", std::function<void(int index, int fileCount)> callback = NULL);
 	//从获取文件资源
 	extern UI_EXPORT bool GetResource(const EString& fileName, std::string* outData);
 	//获取当前所有监视器的信息

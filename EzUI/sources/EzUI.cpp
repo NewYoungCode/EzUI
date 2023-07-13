@@ -31,6 +31,42 @@ namespace EzUI {
 		}
 		return false;
 	}
+
+	void UnZip(const EString& zipFileName, const EString& outPath, const EString& password, std::function<void(int index, int fileCount)> callback) {
+		auto hz = OpenZip(zipFileName.utf16().c_str(), password.empty() ? NULL : password.c_str());
+		size_t count = 0;
+		ZIPENTRY ze;
+		GetZipItem(hz, -1, &ze);
+		int numitems = ze.index;
+		for (int i = 0; i < numitems; i++)
+		{
+			GetZipItem(hz, i, &ze);
+			EString outFile = outPath + "\\" + EString(ze.name);
+			do
+			{
+				::DeleteFileW(outFile.utf16().c_str());
+				if ((ze.attr & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY) {
+					::CreateDirectoryW(outFile.utf16().c_str(), NULL);
+					break;
+				}
+				size_t fileSize = ze.unc_size;
+				if (fileSize == 0)break;
+				char* buf = new char[fileSize] {0};
+				UnzipItem(hz, ze.index, (void*)buf, fileSize);
+				std::ofstream ofs(outFile.utf16(), std::ios::binary);
+				ofs.write(buf, fileSize);
+				ofs.flush();
+				ofs.close();
+				delete[] buf;
+			} while (false);
+			count++;
+			if (callback) {
+				callback(i, numitems);
+			}
+		}
+		CloseZipU(hz);
+	}
+
 	bool GetResource(const EString& filename, std::string* outFileData) {
 		FILE* file(0);
 		_wfopen_s(&file, filename.utf16().c_str(), L"rb");
