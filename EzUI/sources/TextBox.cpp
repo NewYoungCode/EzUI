@@ -518,20 +518,37 @@ namespace EzUI {
 	}
 	void TextBox::SetAttribute(const EString& key, const EString& value) {
 		__super::SetAttribute(key, value);
-		if (key == "placeholder") {
-			this->Placeholder = value;
-		}
-		if (key == "text") {
-			this->SetText(value);
-		}
-		if (key == "readonly") {
-			if (value == "true") {
-				this->ReadOnly = true;
+		do
+		{
+			if (key == "placeholder") {
+				this->Placeholder = value;
+				break;
 			}
-			if (value == "false") {
-				this->ReadOnly = false;
+			if (key == "text") {
+				this->SetText(value);
+				break;
 			}
-		}
+			if (key == "readonly") {
+				if (value == "true") {
+					this->ReadOnly = true;
+					break;
+				}
+				if (value == "false") {
+					this->ReadOnly = false;
+					break;
+				}
+			}
+			if (key == "multiline") {
+				if (value == "true") {
+					this->multiLine = true;
+					break;
+				}
+				if (value == "false") {
+					this->multiLine = false;
+					break;
+				}
+			}
+		} while (false);
 	}
 
 	void TextBox::OnForePaint(PaintEventArgs& e) {
