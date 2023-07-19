@@ -745,6 +745,17 @@ namespace EzUI {
 			args.EventType = Event::OnMouseDown;
 			_inputControl->Trigger(args);
 		}
+
+		//做双击消息处理
+		auto _time = std::chrono::system_clock::now();
+		auto diff = _time - _lastDownTime;
+		auto timeOffset = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//
+		if (timeOffset < 300 && _lastBtn == mbtn) {//300毫秒之内同一个按钮按下两次算双击消息
+			_lastDownTime = std::chrono::system_clock::from_time_t(0);
+			OnMouseDoubleClick(mbtn, point);
+		}
+		_lastBtn = mbtn;
+		_lastDownTime = _time;
 	}
 	void Window::OnMouseUp(MouseButton mbtn, const Point& point)
 	{
@@ -772,17 +783,6 @@ namespace EzUI {
 				_inputControl->Trigger(args);
 			}
 		}
-
-		//做双击消息处理
-		auto _time = std::chrono::system_clock::now();
-		auto diff = _time - _lastDownTime;
-		auto timeOffset = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//
-		if (timeOffset < 300 && _lastBtn == mbtn) {//300毫秒之内同一个按钮按下两次算双击消息
-			_lastDownTime = std::chrono::system_clock::from_time_t(0);
-			OnMouseDoubleClick(mbtn, point);
-		}
-		_lastBtn = mbtn;
-		_lastDownTime = _time;
 		//OnMouseMove(point);
 	}
 
@@ -794,7 +794,7 @@ namespace EzUI {
 	{
 		if (!MainLayout) {
 			return;
-		}
+	}
 #ifdef COUNT_ONSIZE
 		StopWatch sw;
 #endif
@@ -805,7 +805,7 @@ namespace EzUI {
 		Debug::Log("OnSize Count(%d) (%d,%d) %dms\n", __count_onsize, sz.Width, sz.Height, sw.ElapsedMilliseconds());
 #endif
 
-	}
+}
 
 	void Window::OnRect(const Rect& rect)
 	{
@@ -875,10 +875,21 @@ namespace EzUI {
 		SendMessage(Hwnd(), WM_LBUTTONUP, NULL, NULL);//松开
 	}
 	bool Window::OnNotify(Control* sender, EventArgs& args) {
+		if (args.EventType == Event::OnMouseDoubleClick) {
+			if (sender->Action == ControlAction::MoveWindow || sender == MainLayout) {
+				if (::IsZoomed(Hwnd())) {
+					this->ShowNormal();
+				}
+				else {
+					this->ShowMaximized();
+				}
+			}
+			return false;
+		}
 		if (args.EventType == Event::OnMouseDown) {
 			if (sender->Action == ControlAction::MoveWindow || sender == MainLayout) {
 				MoveWindow();
-				return true;
+				return false;
 			}
 			if (sender->Action == ControlAction::Mini) {
 				this->ShowMinimized();
@@ -906,13 +917,23 @@ namespace EzUI {
 			//if (args.EventType == Event::OnMouseClick && ((MouseEventArgs&)(args)).Button == MouseButton::Left) {
 			EString  ctlName = sender->GetAttribute("tablayout");
 			if (!ctlName.empty()) {
+				Controls ctls = sender->Parent->FindControl("tablayout", ctlName);
 				TabLayout* tabLayout = dynamic_cast<TabLayout*>(FindControl(ctlName));
-				if (tabLayout) {
-					tabLayout->SetPageIndex(sender->Index());
-					//tabLayout->ResumeLayout();
-					tabLayout->Invalidate();
+				if (tabLayout && sender->Parent) {
+					size_t pos = 0;
+					for (auto& it : ctls)
+					{
+						if (it == sender) {
+							tabLayout->SetPageIndex(pos);
+							//tabLayout->ResumeLayout();
+							tabLayout->Invalidate();
+							break;
+						}
+						pos++;
+					}
 				}
 			}
+
 		}
 		return false;
 	}

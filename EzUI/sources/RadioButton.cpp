@@ -1,5 +1,4 @@
 #include "RadioButton.h"
-
 namespace EzUI {
 	RadioButton::RadioButton()
 	{
@@ -7,14 +6,15 @@ namespace EzUI {
 	RadioButton::RadioButton(Control* parent) :CheckBox(parent)
 	{
 	}
-	void RadioButton::SetCheck(bool checked)
+	void RadioButton::OnMouseClick(MouseButton btn, const Point& pt)
 	{
-		__super::SetCheck(checked);
-		if (checked == true) {
+		__super::OnMouseClick(btn, pt);
+		if (GetCheck() == true) {
 			for (auto& it : Parent->GetControls()) {
 				RadioButton* rbtn = dynamic_cast<RadioButton*>(it);
 				if (rbtn && rbtn != this && rbtn->GetCheck() == true) {
 					rbtn->SetCheck(false);
+					rbtn->Invalidate();
 				}
 			}
 		}
@@ -22,4 +22,5 @@ namespace EzUI {
 	RadioButton::~RadioButton()
 	{
 	}
+
 };
