@@ -6,7 +6,7 @@ namespace EzUI {
 	class  UI_EXPORT LayeredWindow :public Window
 	{
 	private:
-		int _shadowWidth = SHADOWWIDTH;
+		int _shadowWidth = 12;
 		void PushDC(HDC hdc);
 		Rect _InvalidateRect;
 		bool bRunTask = true;
@@ -22,7 +22,7 @@ namespace EzUI {
 		LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
 	public:
 		ShadowWindow* _boxShadow = NULL;
-		LayeredWindow(int cx, int cy, HWND owner = NULL);
+		LayeredWindow(int width, int height, HWND owner = NULL);
 		void UpdateShadow();
 		void CloseShadow();
 		virtual ~LayeredWindow();

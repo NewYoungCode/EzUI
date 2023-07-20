@@ -311,16 +311,16 @@ namespace EzUI {
 		}
 		case WM_PAINT:
 		{
-			if (!_load) {
-				_load = true;
-				OnLoad();
-			}
 			PAINTSTRUCT pst;
 			HDC winHDC = ::BeginPaint(Hwnd(), &pst);
 			RECT& r = pst.rcPaint;
 			Rect rePaintRect{ r.left,r.top,r.right - r.left, r.bottom - r.top };
 			this->Rending(winHDC, rePaintRect);
 			::EndPaint(Hwnd(), &pst);
+			if (!_load) {
+				_load = true;
+				OnLoad();
+			}
 			return 0;
 		}
 		case WM_NOTIFY: {
@@ -773,7 +773,7 @@ namespace EzUI {
 			args.EventType = Event::OnMouseUp;
 			_inputControl->Trigger(args);//触发鼠标抬起事件
 
-			if (_inputControl && ctlRect.Contains(point)) {//如果焦点还在并且鼠标未移出控件内 触发click事件
+			if (_inputControl && ctlRect.Contains(point) && mbtn == _lastBtn) {//如果焦点还在并且鼠标未移出控件内 触发click事件
 				args.EventType = Event::OnMouseClick;
 				_inputControl->Trigger(args);
 			}
@@ -794,7 +794,7 @@ namespace EzUI {
 	{
 		if (!MainLayout) {
 			return;
-	}
+		}
 #ifdef COUNT_ONSIZE
 		StopWatch sw;
 #endif
@@ -805,7 +805,7 @@ namespace EzUI {
 		Debug::Log("OnSize Count(%d) (%d,%d) %dms\n", __count_onsize, sz.Width, sz.Height, sw.ElapsedMilliseconds());
 #endif
 
-}
+	}
 
 	void Window::OnRect(const Rect& rect)
 	{

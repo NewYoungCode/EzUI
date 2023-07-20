@@ -1,7 +1,7 @@
 #include "Form.h"
 
 namespace EzUI {
-	MenuWindow::MenuWindow(int cx, int cy, HWND owner) :BorderlessWindow(cx, cy, owner)
+	MenuWindow::MenuWindow(int width, int height, HWND owner) :BorderlessWindow(width, height, owner)
 	{
 		this->Zoom = false;
 	}

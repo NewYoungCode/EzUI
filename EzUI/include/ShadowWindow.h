@@ -1,6 +1,5 @@
 #pragma once
 #include "Window.h"
-#define SHADOWWIDTH 12
 
 namespace EzUI {
 	class UI_EXPORT ShadowWindow
@@ -15,7 +14,7 @@ namespace EzUI {
 		void setA(const int& x,const int& y,const BYTE& A);
 		bool SetShadow(int m_Width, int m_Height, size_t iSize);
 	public:
-		ShadowWindow(int cx, int cy, HWND OwnerWnd);//构造函数
+		ShadowWindow(int width, int height, HWND OwnerWnd);//构造函数
 		virtual ~ShadowWindow();
 		virtual void Update(int _marginWidth);//在父窗口发生改变的时候更新阴影区域
 	};

@@ -7,7 +7,7 @@
 #include "NotifyIcon.h"
 
 class MainFrm :
-	public Form
+	public BorderlessWindow
 {
 private:
 	//no new

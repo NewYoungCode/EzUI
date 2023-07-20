@@ -3,9 +3,9 @@
 namespace EzUI {
 
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
-	LayeredWindow::LayeredWindow(int cx, int cy, HWND owner) :Window(cx, cy, owner, WS_POPUP | WS_MINIMIZEBOX, WS_EX_LAYERED)
+	LayeredWindow::LayeredWindow(int width, int height, HWND owner) :Window(width, height, owner, WS_POPUP | WS_MINIMIZEBOX, WS_EX_LAYERED)
 	{
-		_boxShadow = new ShadowWindow(cx, cy, Hwnd());
+		_boxShadow = new ShadowWindow(width, height, Hwnd());
 		UpdateShadow();
 		PublicData.InvalidateRect = [=](void* _rect) ->void {
 			this->InvalidateRect(*(Rect*)_rect);
@@ -15,13 +15,14 @@ namespace EzUI {
 				::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
 			}
 		};
+
 		task = new std::thread([=]() {
 			while (bRunTask)
 			{
-				if (!_InvalidateRect.IsEmptyArea()) {
+				if (!_InvalidateRect.IsEmptyArea() && this->IsVisible()) {
 					::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
 				}
-				Sleep(2);//检测无效区域的延时
+				Sleep(1);//检测无效区域的延时
 			}
 			});
 	}
@@ -137,7 +138,6 @@ namespace EzUI {
 		blendFunc.BlendOp = AC_SRC_OVER;
 		blendFunc.AlphaFormat = AC_SRC_ALPHA;
 		blendFunc.BlendFlags = 0;
-		//::UpdateLayeredWindow(Hwnd(), NULL, NULL, &size, hdc, &point, 0, &blendFunc, ULW_OPAQUE);//不透明
 		::UpdateLayeredWindow(Hwnd(), NULL, NULL, &size, hdc, &point, 0, &blendFunc, ULW_ALPHA);//透明
 	}
 }

@@ -5,7 +5,7 @@ namespace EzUI {
 	//无边框带阴影的窗口 常规接受WM_PAINT消息
 	class UI_EXPORT BorderlessWindow :public Window {
 	private:
-		int _shadowWidth = SHADOWWIDTH;
+		int _shadowWidth = 12;
 	protected:
 		void OnRect(const Rect& rect) override;
 		LRESULT  WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;

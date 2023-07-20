@@ -9,6 +9,7 @@ namespace EzUI {
 	void RadioButton::OnMouseClick(MouseButton btn, const Point& pt)
 	{
 		__super::OnMouseClick(btn, pt);
+		SetCheck(true);
 		if (GetCheck() == true) {
 			for (auto& it : Parent->GetControls()) {
 				RadioButton* rbtn = dynamic_cast<RadioButton*>(it);

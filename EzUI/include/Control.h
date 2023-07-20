@@ -62,7 +62,7 @@ namespace EzUI {
 		virtual void OnBackgroundPaint(PaintEventArgs& painter);//背景绘制
 		virtual void OnForePaint(PaintEventArgs& e);//前景绘制
 		virtual void OnBorderPaint(PaintEventArgs& painter);//边框绘制
-		virtual void OnLoad();//控件第一次加载 警告 此函数在LayerWindow里面不允许在函数内添加控件 但是允许设置控件参数  
+		virtual void OnLoad();//控件第一次加载  
 		virtual void OnLocation(const Point& pt);//坐标发生改变
 		virtual void OnSize(const Size& size) override;//大小发生改变
 		virtual void OnRect(const Rect& rect) override;

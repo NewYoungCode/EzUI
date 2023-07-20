@@ -621,10 +621,6 @@ Event(this , ##__VA_ARGS__); \
 		if (!Rect::Intersect(_ClipRect, this->ClipRect, invalidRect)) {//和重绘区域进行裁剪
 			return;
 		}
-		if (!_load) {
-			OnLoad();
-			_load = true;
-		}
 
 		//绘制数量+1
 		args.PublicData->PaintCount++;
@@ -687,6 +683,10 @@ Event(this , ##__VA_ARGS__); \
 			pt.DrawRectangle(Rect(0, 0, clientRect.Width, clientRect.Height));
 		}
 #endif
+		if (!_load) {
+			OnLoad();
+			_load = true;
+		}
 	}
 
 	Control::~Control()

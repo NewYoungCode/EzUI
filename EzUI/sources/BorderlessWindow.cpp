@@ -2,7 +2,6 @@
 namespace EzUI {
 	BorderlessWindow::BorderlessWindow(int width, int height, HWND owner) : Window(width, height, owner, WS_POPUP | WS_MINIMIZEBOX, NULL)
 	{
-
 		_boxShadow = new ShadowWindow(width, height, Hwnd());
 		UpdateShadow();
 	}

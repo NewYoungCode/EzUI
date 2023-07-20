@@ -16,7 +16,6 @@ namespace EzUI {
 		TextAlign TextAlign = TextAlign::MiddleCenter;
 		bool AutoWidth = false;
 		bool AutoHeight = false;
-		Size GetFontWidth();
 		Label();
 		Label(Control* parent);
 		virtual ~Label();

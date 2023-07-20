@@ -1,7 +1,7 @@
 #include "MainFrm.h"
 #define refreshImage WM_UIMESSAGE+1
 #include "ComBox.h"
-MainFrm::MainFrm() :Form(1020, 690)
+MainFrm::MainFrm() :BorderlessWindow(1020, 690)
 {
 	InitForm();
 	ntfi.SetText(L"GameTool");

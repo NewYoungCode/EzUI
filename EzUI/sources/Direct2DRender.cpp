@@ -69,6 +69,7 @@ namespace EzUI {
 	//TextLayout
 	TextLayout::TextLayout(const std::wstring& text, const Font& font, Size maxSize, TextAlign textAlign) {
 		D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), font.Get(), (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &value);
+		if (value == NULL)return;
 		SetTextAlign(textAlign);
 		value->GetMetrics(&textMetrics);
 	}
@@ -123,6 +124,7 @@ namespace EzUI {
 	}
 
 	Point TextLayout::HitTestTextPosition(int textPos, BOOL isTrailingHit) {
+		if (value == NULL)return Point{ 0,0 };
 		DWRITE_HIT_TEST_METRICS hitTestMetrics;
 		FLOAT X, Y;
 		value->HitTestTextPosition(textPos, isTrailingHit, &X, &Y, &hitTestMetrics);
@@ -174,6 +176,7 @@ namespace EzUI {
 #define	__Right DWRITE_TEXT_ALIGNMENT_TRAILING
 #define	__Middle DWRITE_PARAGRAPH_ALIGNMENT_CENTER
 #define __Center DWRITE_TEXT_ALIGNMENT_CENTER
+		if (value == NULL)return;
 		//垂直对其方式
 		if (((int)textAlign & (int)Align::Top) == (int)Align::Top) {
 			value->SetParagraphAlignment(__Top);
