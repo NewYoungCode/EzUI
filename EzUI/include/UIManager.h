@@ -15,7 +15,6 @@
 #include "TabLayout.h"
 #include "PictureBox.h"
 #include "Window.h"
-#include "Form.h"
 namespace EzUI {
 	class UI_EXPORT UIManager {
 		enum class Style {
