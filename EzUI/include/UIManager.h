@@ -48,6 +48,7 @@ namespace EzUI {
 		UIManager();
 		virtual ~UIManager();
 		void SetupUI(Window* window);
+		void SetupUI(Control* parentCtl);
 		std::function<Control* (const EString& nodeName)> EventBuilControl;//用于自定义控件
 		std::function<void(Control* ctl, const EString& attrName, const EString& attrValue)> EventSetAttribute;//用于自定义控件
 		void LoadFile(const EString& fileName);

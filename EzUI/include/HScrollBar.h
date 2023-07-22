@@ -28,7 +28,7 @@ namespace EzUI {
 		virtual Rect GetSliderRect();
 		virtual void Move(double posX)override;
 		void SetMaxRight(int maxRight);
-
+		virtual bool IsDraw()override;
 		virtual int RollingTotal();//
 		virtual int RollingCurrent();
 	};

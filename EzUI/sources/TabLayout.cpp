@@ -23,9 +23,10 @@ namespace EzUI {
 		for (auto i = GetControls().begin(); i != GetControls().end(); i++)
 		{
 			(*i)->SetRect(Rect(0, 0, Width(), Height()));
-			(*i)->Visible = false;
+
+			(*i)->SetVisible(false);
 			if (pos == index) {
-				(*i)->Visible = true;
+				(*i)->SetVisible(true);
 				_index = pos;
 			}
 			pos++;

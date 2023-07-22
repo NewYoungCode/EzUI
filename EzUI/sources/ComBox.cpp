@@ -45,13 +45,13 @@ namespace EzUI {
 			poupWnd = NULL;
 		}
 	}
-	void ComBox::OnLoad() {
-		if (poupWnd == NULL) {
-			//默认200高度
-			poupWnd = new PoupWindow(Width(), 200, PublicData->HANDLE);
-			poupWnd->SetLayout(&vlist);
-		}
-	}
+	//void ComBox::OnLoad() {
+	//	if (poupWnd == NULL) {
+	//		//默认200高度
+	//		poupWnd = new PoupWindow(Width(), 200, PublicData->HANDLE);
+	//		poupWnd->SetLayout(&vlist);
+	//	}
+	//}
 
 	void ComBox::OnLayout() {
 		__super::OnLayout();

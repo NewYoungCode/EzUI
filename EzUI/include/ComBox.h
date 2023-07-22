@@ -4,7 +4,7 @@
 #include "VList.h"
 #include "HLayout.h"
 #include "TextBox.h"
-#include "PoupWindow.h"
+#include "ToolWindow.h"
 namespace EzUI {
 	class UI_EXPORT ComBox :
 		public HLayout
@@ -23,7 +23,7 @@ namespace EzUI {
 		void RemoveItem(size_t pos);
 	protected:
 		virtual void OnMouseClick( MouseButton btn, const Point& pt) override;
-		virtual void OnLoad() override;
+		//virtual void OnLoad() override;
 		virtual void OnLayout()override;
 	};
 };

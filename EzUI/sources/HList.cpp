@@ -32,10 +32,10 @@ namespace EzUI {
 	void HList::RefreshScroll(const int& _maxRight) {
 		if (AutoWidth) {
 			this->SetFixedWidth(_maxRight);
-			hScrollBar.Visible = false;
+			hScrollBar.SetVisible(false);
 		}
-		else if (hScrollBar.Visible == true) {
-			hScrollBar.Visible = true;
+		else if (hScrollBar.IsVisible() == true) {
+			hScrollBar.SetVisible(true);
 		}
 		hScrollBar.SetMaxRight(_maxRight);
 	}
@@ -46,7 +46,7 @@ namespace EzUI {
 	int HList::MoveScroll(int offset) {
 		int _maxRight = offset;
 		for (auto& it : GetControls()) {
-			if (it->Visible == false) continue;
+			if (it->IsVisible() == false) continue;
 			//处理y坐标和margin
 			{
 				int height = it->GetFixedHeight();

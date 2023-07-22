@@ -32,10 +32,10 @@ namespace EzUI {
 	void TileList::RefreshScroll(const int& _maxBottom) {
 		if (AutoHeight) {
 			this->SetFixedHeight(_maxBottom);
-			vScrollBar.Visible = false;
+			vScrollBar.SetVisible(false);
 		}
-		else if (vScrollBar.Visible == true) {
-			vScrollBar.Visible = true;
+		else if (vScrollBar.IsVisible() == true) {
+			vScrollBar.SetVisible(true);
 		}
 		vScrollBar.SetMaxBottom(_maxBottom);
 	}
@@ -53,7 +53,7 @@ namespace EzUI {
 		int x = 0;
 		int y = offset;
 		for (auto& _it : GetControls()) {
-			if (_it->Visible == false)continue;
+			if (_it->IsVisible() == false)continue;
 			Control& it = *_it;
 			int _x = it.Margin.Left + it.Width();
 

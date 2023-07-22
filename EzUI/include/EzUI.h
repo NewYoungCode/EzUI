@@ -386,7 +386,6 @@ namespace EzUI {
 		virtual void OnLocation(const Point& pt) = 0;
 		virtual void OnSize(const Size& size) = 0;
 		virtual void OnRect(const Rect& rect) = 0;
-		virtual void OnLoad() = 0;
 		virtual void OnKeyChar(WPARAM wParam, LPARAM lParam) = 0;
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam) = 0;
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam) = 0;

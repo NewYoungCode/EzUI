@@ -317,10 +317,6 @@ namespace EzUI {
 			Rect rePaintRect{ r.left,r.top,r.right - r.left, r.bottom - r.top };
 			this->Rending(winHDC, rePaintRect);
 			::EndPaint(Hwnd(), &pst);
-			if (!_load) {
-				_load = true;
-				OnLoad();
-			}
 			return 0;
 		}
 		case WM_NOTIFY: {
@@ -592,9 +588,9 @@ namespace EzUI {
 		*outPoint = clientPoint;
 		Control* outCtl = MainLayout;
 	UI_Loop:
-		Control* scrollBar = outCtl->GetScrollBar();
+		ScrollBar* scrollBar = outCtl->GetScrollBar();
 		if (scrollBar && scrollBar->GetClientRect().Contains(clientPoint)) {
-			if (scrollBar->Visible) {
+			if (scrollBar->IsDraw()) {
 				auto barRect = scrollBar->GetClientRect();
 				(*outPoint).X = clientPoint.X - barRect.X;
 				(*outPoint).Y = clientPoint.Y - barRect.Y;
@@ -613,7 +609,7 @@ namespace EzUI {
 
 		for (auto i = pTemp->rbegin(); i != pTemp->rend(); i++) {
 			Control& it = **i;
-			if (!it.Visible) {
+			if (!it.IsVisible()) {
 				continue;
 			}
 			if (!IsInWindow(*outCtl, it)) {
@@ -812,14 +808,9 @@ namespace EzUI {
 	}
 	void Window::OnClose(bool& bClose)
 	{
-
 	}
 	void Window::OnDestroy()
 	{
-	}
-	void Window::OnLoad()
-	{
-
 	}
 	void Window::OnKeyChar(WPARAM wParam, LPARAM lParam)
 	{

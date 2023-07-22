@@ -33,7 +33,7 @@ namespace EzUI {
 		virtual void OwnerSize(const Size& parentSize)override;
 		void SetMaxBottom(int maxBottom);
 		virtual Rect GetSliderRect();
-
+		virtual bool IsDraw() override;
 		virtual int RollingTotal();//
 		virtual int RollingCurrent();
 	};

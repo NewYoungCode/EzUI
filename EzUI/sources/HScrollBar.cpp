@@ -20,7 +20,13 @@ namespace EzUI {
 		}
 		Move(sliderX);
 	}
-
+	bool HScrollBar::IsDraw()
+	{
+		if (_sliderWidth >= Width()) {
+			return false;
+		}
+		return this->IsVisible();
+	}
 	int HScrollBar::RollingTotal()
 	{
 		auto sliderRect = GetSliderRect();

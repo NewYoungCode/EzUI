@@ -208,7 +208,7 @@ Event(this , ##__VA_ARGS__); \
 				break;
 			}
 			if (attrName == "visible" || attrName == "display") {
-				this->Visible = (::strcmp(attrValue.c_str(), "true") == 0 ? true : false);
+				this->_visible = (::strcmp(attrValue.c_str(), "true") == 0 ? true : false);
 				break;
 			}
 			if (attrName == "action") {
@@ -239,7 +239,6 @@ Event(this , ##__VA_ARGS__); \
 
 		} while (false);
 	}
-	void Control::OnLoad() {}
 	EString Control::GetFontFamily(ControlState _state)
 	{
 		/*if (_state == ControlState::None && !_nowStyle.FontFamily.empty()) {
@@ -606,7 +605,7 @@ Event(this , ##__VA_ARGS__); \
 	void Control::Rending(PaintEventArgs& args) {
 		this->PublicData = args.PublicData;
 
-		if (!Visible) { return; }//如果控件设置为不可见直接不绘制
+		if (!_visible) { return; }//如果控件设置为不可见直接不绘制
 
 		if (this->IsPendLayout()) {//绘制的时候会检查时候有挂起的布局 如果有 立即让布局生效并重置布局标志
 			this->ResumeLayout();
@@ -683,10 +682,6 @@ Event(this , ##__VA_ARGS__); \
 			pt.DrawRectangle(Rect(0, 0, clientRect.Width, clientRect.Height));
 		}
 #endif
-		if (!_load) {
-			OnLoad();
-			_load = true;
-		}
 	}
 
 	Control::~Control()
@@ -792,13 +787,22 @@ Event(this , ##__VA_ARGS__); \
 		}
 		return ctls;
 	}
-
+	void Control::SetVisible(bool flag) {
+		if (flag != this->_visible && this->Parent) {
+			this->Parent->TryPendLayout();
+		}
+		this->_visible = flag;
+	}
 	bool Control::IsVisible() {
-		bool visible = this->Visible;
+		return this->_visible;
+	}
+
+	bool Control::IsInWindow() {
+		bool visible = this->IsVisible();
 		Control* pCtl = this->Parent;
 		while (pCtl && visible)
 		{
-			visible = pCtl->Visible;
+			visible = pCtl->IsVisible();
 			pCtl = pCtl->Parent;
 		}
 		return visible;
@@ -851,6 +855,17 @@ Event(this , ##__VA_ARGS__); \
 			_pos++;
 		}
 		return NULL;
+	}
+	bool Control::Contains(Control* ctl) {
+		if (ctl != NULL && ctl == this || ctl->GetScrollBar() == this) {
+			return true;
+		}
+		for (auto& it : this->GetControls()) {
+			if (it->Contains(ctl)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	void Control::Clear(bool freeControls)
 	{

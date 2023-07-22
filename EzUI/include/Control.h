@@ -8,6 +8,7 @@ namespace EzUI {
 		bool _stateRepaint = false;//状态发生改变的时候绘制
 		bool _mouseIn = false;//鼠标是否在控件内
 		bool _load = false;//是否load
+		bool _visible = true;//控件是否可见 此标志为true的时候 可能实际中并不会可见 
 		Controls _controls;//子控件
 		//布局状态AddControl丶RemoveControl丶OnSize时候此标志为挂起 调用ResumeLayout标志为布局中 当调用OnLayout()之后此标志为None
 		EzUI::LayoutState _layoutState = EzUI::LayoutState::None;
@@ -23,14 +24,12 @@ namespace EzUI {
 		bool CheckEventPassThrough(const Event& eventType);//检查事件是否已经过滤
 		bool CheckEventNotify(const Event& eventType);//检查事件是否通知到主窗口中
 		void ComputeClipRect();//计算基于父控件的裁剪区域
-	//protected:
 		Size _fixedSize;//绝对Size
 		Rect _rect;//控件矩形区域(基于父控件)
 	public:
 		EzUI::Margin Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数
 		WindowData* PublicData = NULL;//窗口上的公共数据
 		int MousePassThrough = 0;//忽略的鼠标消息
-		bool Visible = true;//控件是否可见
 		bool Enable = true;//控件被启用 禁止状态下鼠标键盘消息将不可用
 		EString Name;//控件的ObjectName ID
 		ControlState State = ControlState::Static;//控件状态
@@ -62,7 +61,6 @@ namespace EzUI {
 		virtual void OnBackgroundPaint(PaintEventArgs& painter);//背景绘制
 		virtual void OnForePaint(PaintEventArgs& e);//前景绘制
 		virtual void OnBorderPaint(PaintEventArgs& painter);//边框绘制
-		virtual void OnLoad();//控件第一次加载  
 		virtual void OnLocation(const Point& pt);//坐标发生改变
 		virtual void OnSize(const Size& size) override;//大小发生改变
 		virtual void OnRect(const Rect& rect) override;
@@ -136,6 +134,7 @@ namespace EzUI {
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性
 		Controls& GetControls();//获取当前所有子控件
 		Control* GetControl(size_t pos);//使用下标获取控件
+		bool Contains(Control* ctl);//会递归循全部包含的控件是否存在
 		Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
 		Controls FindControl(const EString& attr, const EString& attrValue);//使用属性查找
 		size_t Index();//获取当前控件在父容器下的索引
@@ -143,7 +142,9 @@ namespace EzUI {
 		virtual void RemoveControl(Control* ctl);//删除控件 返回下一个迭代器
 		virtual void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件
 		virtual void Rending(PaintEventArgs& args);//绘制函数
-		bool IsVisible();//当前是否显示在窗口内
+		virtual void SetVisible(bool flag);//设置Visible标志
+		bool IsVisible();//获取Visible标志
+		virtual bool IsInWindow();//当前是否显示在窗口内 代表实际情况是否显示
 		virtual bool Invalidate();// 使当前控件的区域为无效区域
 		virtual void Refresh();// 使当前控件区域为无效区域并且立即更新全部的无效区域
 		virtual Rect GetCareRect();//获取光标位置
@@ -189,6 +190,7 @@ namespace EzUI {
 		virtual int RollingCurrent() = 0;
 		virtual int RollingTotal() = 0;//
 		virtual void OwnerSize(const Size& parentSize) = 0;
+		virtual bool IsDraw() = 0;//滚动条是否已经绘制且显示
 		EventScrollRolling Rolling = NULL;//滚动事件
 		ScrollBar() {
 			Style.ForeColor = Color(205, 205, 205);//the bar backgroundcolor

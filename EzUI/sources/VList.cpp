@@ -30,10 +30,10 @@ namespace EzUI {
 	void VList::RefreshScroll(const int& _maxBottom) {
 		if (AutoHeight) {
 			this->SetFixedHeight(_maxBottom);
-			vScrollBar.Visible = false;
+			vScrollBar.SetVisible ( false);
 		}
-		else if(vScrollBar.Visible==true){
-			vScrollBar.Visible = true;
+		else if(vScrollBar.IsVisible()==true){
+			vScrollBar.SetVisible(true);
 		}
 		vScrollBar.SetMaxBottom(_maxBottom);
 	}
@@ -47,7 +47,7 @@ namespace EzUI {
 	{
 		int	_maxBottom = offset;
 		for (auto& it : GetControls()) {
-			if (it->Visible == false)continue;
+			if (it->IsVisible() == false)continue;
 			{
 				//处理margin和x坐标
 				int	width = it->GetFixedWidth();

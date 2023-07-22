@@ -3,14 +3,15 @@
 #include "TextBox.h"
 
 namespace EzUI {
-
+	/// <summary>
+	/// Window //经典带边框带系统菜单WIN32窗口样式
+	/// </summary>
 	class UI_EXPORT Window :public IControl
 	{
 	private:
 		Rect _downRect;
 		Size _miniSize;
 		Size _maxSize;
-		bool _load = false;
 		bool _mouseIn = false;
 		bool _mouseDown = false;//鼠标是否已经按下
 		std::chrono::system_clock::time_point _lastDownTime = std::chrono::system_clock::from_time_t(0);
@@ -48,7 +49,6 @@ namespace EzUI {
 		virtual void OnRect(const Rect& rect);//当窗口矩形区域发生改变时发生
 		virtual void OnClose(bool& bClose);//当窗口收到WM_CLOSE消息时发生 
 		virtual void OnDestroy();//当窗口销毁时发生
-		virtual void OnLoad();//当窗口第一次加载时发生
 		virtual void OnKeyChar(WPARAM wParam, LPARAM lParam);//字符消息
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam);//键盘按下
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);//键盘抬起

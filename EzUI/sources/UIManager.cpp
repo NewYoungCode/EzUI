@@ -361,6 +361,10 @@ namespace EzUI {
 	{
 		window->SetLayout(GetNode(0));
 	}
+	void UIManager::SetupUI(Control* parentCtl)
+	{
+		parentCtl->AddControl(GetNode(0));
+	}
 
 	void UIManager::LoadFile(const EString& fileName) {
 		std::string data;

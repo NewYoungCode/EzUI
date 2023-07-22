@@ -2,7 +2,9 @@
 #include "Window.h"
 #include "ShadowWindow.h"
 namespace EzUI {
-	//无边框带阴影的窗口 常规接受WM_PAINT消息
+	/// <summary>
+	/// BorderlessWindow //无边框 带阴影 不透明窗口   屏幕外拖入会重绘     常规接受WM_PAINT消息 
+	/// </summary>
 	class UI_EXPORT BorderlessWindow :public Window {
 	private:
 		int _shadowWidth = 12;

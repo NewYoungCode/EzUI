@@ -5,7 +5,8 @@
 #include "Timer.h"
 #include "TabLayout.h"
 #include "NotifyIcon.h"
-
+#include "BorderlessWindow.h"
+#include "LayeredWindow.h"
 class MainFrm :
 	public BorderlessWindow
 {

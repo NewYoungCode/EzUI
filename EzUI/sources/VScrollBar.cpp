@@ -41,6 +41,15 @@ namespace EzUI {
 		return sliderRect;
 	}
 
+
+	bool VScrollBar::IsDraw()
+	{
+		if (_sliderHeight >= Height()) {
+			return false;
+		}
+		return this->IsVisible();
+	}
+
 	void VScrollBar::OnBackgroundPaint(PaintEventArgs& e) {
 		if (_sliderHeight >= Height()) {
 			return;

@@ -1,5 +1,4 @@
-#include "Form.h"
-
+#include "ToolWindow.h"
 namespace EzUI {
 	MenuWindow::MenuWindow(int width, int height, HWND owner) :BorderlessWindow(width, height, owner)
 	{
@@ -17,7 +16,7 @@ namespace EzUI {
 	}
 	void MenuWindow::Show(int cmdShow)
 	{
-		auto rect = this->GetClientRect();
+		const Rect& rect = this->GetClientRect();
 		//获取显示器 达到鼠标在哪个显示器 窗口就在哪个显示器中显示
 		std::list<MonitorInfo> outMonitorInfo;
 		GetMonitors(&outMonitorInfo);

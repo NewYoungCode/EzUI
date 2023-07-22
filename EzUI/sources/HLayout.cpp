@@ -6,7 +6,7 @@ namespace EzUI {
 		int fixedTotal = 0;
 		int count = 0;//可见控件总数
 		for (auto it : GetControls()) {
-			if (it->Visible == false) continue;
+			if (it->IsVisible() == false) continue;
 			count++;
 			auto width = it->GetFixedWidth();
 			if (width > 0) {
@@ -24,7 +24,7 @@ namespace EzUI {
 		double maxRight = 0;
 		//排序
 		for (auto& it : GetControls()) {
-			if (it->Visible == false) continue;
+			if (it->IsVisible() == false) continue;
 
 			maxRight += it->Margin.Left;
 			int height = it->GetFixedHeight();

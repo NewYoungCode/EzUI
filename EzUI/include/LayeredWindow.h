@@ -2,7 +2,9 @@
 #include "Window.h"
 #include "ShadowWindow.h"
 namespace EzUI {
-	//无边框 带阴影 分层窗口 不接受WM_PAINT消息 与常规窗口绘制消息不同 优点:屏幕外拖入窗体不会卡顿,不使用双缓冲 不闪烁 
+	/// <summary>
+	/// //LayeredWindow	  //无边框  带阴影 窗口透明异形 窗口大小发生改变重绘 (定时检测无效区域) 不允许有子窗口 
+	/// </summary>
 	class  UI_EXPORT LayeredWindow :public Window
 	{
 	private:
