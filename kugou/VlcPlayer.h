@@ -1,6 +1,6 @@
 #pragma once
 #include "Control.h"
-#include  "Form.h"
+#include  "BorderlessWindow.h"
 #include "Label.h"
 #include <mutex>
 #include "vlc/vlc.h"
