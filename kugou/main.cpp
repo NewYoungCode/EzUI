@@ -45,6 +45,19 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ int       nCmdShow)
 {
 	Curl_Global_Init();
+
+	//{
+	// 	由此鉴定 vlc就是存在bug
+	//	VlcPlayer vlc;
+	//	vlc.OpenUrl("http://fsmvpc.tx.kugou.com/202307221624/70a4be48bed5548dd0931964f37569b4/v2/63a2909518213c32968f2c909f595607/KGTX/CLTX002/63a2909518213c32968f2c909f595607.mp4");
+	//	vlc.Play();
+	//	new std::thread([=,&vlc]() {
+	//		Sleep(5000);
+	//		vlc.Stop();
+	//		});
+	//	Sleep(999999);
+	//	return 0;
+	//}
 	//{
 	//	TextArea ta;
 	//	return 0;

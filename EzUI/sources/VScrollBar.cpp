@@ -169,6 +169,9 @@ namespace EzUI {
 	}
 
 	void VScrollBar::OnMouseWheel(short zDelta, const Point& point) {
+		/*	double offset = 5;
+			sliderY += (zDelta > 0 ? -offset : offset);
+			Move(sliderY);*/
 		int fx = (zDelta > 0 ? -5 : 5);//滚动方向
 		if (fx != _speed) {//如果滚动方向与上次不同 即可停止
 			_rollCount = 1;//滚动一次

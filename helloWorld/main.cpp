@@ -5,7 +5,7 @@
 #include <Windows.h>
 
 #include "EzUI.h"
-#include "Form.h"
+#include "BorderlessWindow.h"
 #include "Button.h"
 #include "TileList.h"
 #include "VList.h"
@@ -28,6 +28,34 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 {
 
 	Application app;//消息循环对象
+
+	//{
+	//	MainFrm frm(800, 600);//无边框窗口
+
+	//	HLayout mainLayout;
+	//	frm.SetLayout(&mainLayout);
+	//	mainLayout.Style.BackgroundColor = Color::White;
+
+	//	Label lb1(&mainLayout);
+	//	Label lb2(&mainLayout);
+
+	//	Label lb3(&mainLayout);
+
+
+	//	lb1.SetMiniWidth(200);
+	//	lb1.SetMaxWidth(500);
+
+	//	lb3.SetMaxWidth(400);
+
+	//	lb1.SetText(L"我是label1");
+	//	lb2.SetText(L"我是label2");
+	//	lb3.SetText(L"我是label333");
+
+
+	//	frm.Show();
+
+	//	return app.exec();
+	//}
 
 	//keybd_event(VK_LWIN, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
 	MainFrm frm(800, 600);//无边框窗口
@@ -59,8 +87,9 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
 	//Label labelBottom;
 	//labelBottom.SetText(L"这是一个简单的窗口示例!");
-	TileList list(&mainLayout);
-	for (size_t i = 0; i < 50; i++)
+	HList list(&mainLayout);
+	list.SetAutoWidth(true);
+	for (size_t i = 0; i < 10; i++)
 	{
 		Label* lb = new Label;// (&list);
 		//lb->Dock = DockStyle::Horizontal;
@@ -82,7 +111,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	text.SetMultiLine(true);
 	text.Margin.Left = 20;
 	text.Margin.Right = 20;
-	text.Style.Radius =261;
+	text.Style.Radius = 261;
 
 
 

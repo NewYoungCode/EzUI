@@ -5,8 +5,8 @@ namespace EzUI {
 		int fixedWidth = 0;
 		int fixedTotal = 0;
 		int count = 0;//可见控件总数
-		for (auto it : GetControls()) {
-			if (it->IsVisible() == false) continue;
+		for (auto& it : GetControls()) {
+			if (it->IsVisible() == false || (it->IsAutoWidth() && it->GetFixedWidth() <= 0)) continue;
 			count++;
 			auto width = it->GetFixedWidth();
 			if (width > 0) {
@@ -37,16 +37,16 @@ namespace EzUI {
 				y = it->Margin.Top;
 			}
 			//首次布局中当位置未被指定的时候进行一次居中
-			if (y == 0 && height <this->Height() ) {
-				y = int((this->Height() * 1.0 - height) / 2 + 0.5);
-			}
-			if (it->GetFixedWidth() > 0) {
+			//if (y == 0 && height <this->Height() ) {
+			y = int((this->Height() * 1.0 - height) / 2 + 0.5);
+			//}
+			if (it->GetFixedWidth() > 0 || it->IsAutoWidth()) {
 				it->SetRect({ (int)maxRight ,y,it->GetFixedWidth() ,height });
 				maxRight += it->Width();
 			}
 			else {
 				it->SetRect({ (int)maxRight ,y,(int)autoWidth,height });
-				maxRight += autoWidth;
+				maxRight += it->Width();
 			}
 
 			maxRight += it->Margin.Right;
@@ -55,7 +55,7 @@ namespace EzUI {
 	HLayout::HLayout()
 	{
 	}
-	HLayout::HLayout(Control* parent):Control(parent)
+	HLayout::HLayout(Control* parent) :Control(parent)
 	{
 	}
 	HLayout::~HLayout()

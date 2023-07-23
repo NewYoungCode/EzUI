@@ -30,8 +30,6 @@ namespace EzUI {
 		Window(const Window&) {};
 		bool IsInWindow(Control& pControl, Control& it);
 		bool FindControl(Control* nodeCtl, Control* findControl);
-		Control* FindControl(const Point clientPoint, Point* outPoint);//根据坐标获取控件
-		//控件是否在窗口的可见区域
 	protected:
 		LRESULT ZoomWindow(const LPARAM& lParam);//缩放窗口
 		void MoveWindow();//鼠标按下移动窗口
@@ -62,6 +60,7 @@ namespace EzUI {
 		bool Zoom = true;//是否支持缩放
 		Window(int width, int height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
 		virtual ~Window();
+		Control* FindControl(const Point clientPoint, Point* outPoint);//根据坐标获取控件
 		Control* FindControl(const EString& objectName);//使用id寻找控件
 		const HWND& Hwnd();//获取窗口句柄
 		const Rect& GetWindowRect();//获取窗口基于显示器的矩形

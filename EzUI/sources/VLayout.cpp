@@ -3,7 +3,7 @@ namespace EzUI {
 	VLayout::VLayout()
 	{
 	}
-	VLayout::VLayout(Control* parent):Control(parent)
+	VLayout::VLayout(Control* parent) :Control(parent)
 	{
 	}
 	VLayout::~VLayout()
@@ -17,7 +17,7 @@ namespace EzUI {
 		int fixedTotal = 0;
 		int count = 0;//可见控件总数
 		for (auto& it : GetControls()) {
-			if (it->IsVisible() == false)continue;
+			if (it->IsVisible() == false || (it->IsAutoHeight() && it->GetFixedHeight() <= 0))continue;
 			count++;
 			auto height = it->GetFixedHeight();
 			if (height > 0) {
@@ -47,16 +47,16 @@ namespace EzUI {
 				x = it->Margin.Left;
 			}
 			//首次布局中当位置未被指定的时候进行一次居中
-			if (x== 0 && width < this->Width()) {
-				x = int((this->Width() * 1.0 - width) / 2 + 0.5);
-			}
-			if (it->GetFixedHeight() > 0) {
+			//if (x == 0 && width < this->Width()) {
+			x = int((this->Width() * 1.0 - width) / 2 + 0.5);
+			//}
+			if (it->GetFixedHeight() > 0 || it->IsAutoHeight()) {
 				it->SetRect({ x, (int)maxBottom,width, it->GetFixedHeight() });
 				maxBottom += it->Height();
 			}
 			else {
 				it->SetRect({ x ,(int)maxBottom,width ,(int)autoHeight });
-				maxBottom += autoHeight;
+				maxBottom += it->Height();
 			}
 			maxBottom += it->Margin.Bottom;
 		}

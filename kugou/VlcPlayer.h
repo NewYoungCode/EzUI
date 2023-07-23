@@ -29,6 +29,7 @@ namespace EzUI {
 		void OpenUrl(const EString& url);
 		void Play();
 		void Pause();
+		void Stop();
 		long long Duration();
 		void SetDuration(int dur);
 		long long Position();

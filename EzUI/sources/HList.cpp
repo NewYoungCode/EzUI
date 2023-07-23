@@ -19,7 +19,6 @@ namespace EzUI {
 	}
 
 	int HList::ContentLenght() {
-
 		return _maxRight;
 	}
 
@@ -28,10 +27,25 @@ namespace EzUI {
 		_maxRight = 0;
 		_maxRight = MoveScroll(0);
 		RefreshScroll(_maxRight);
+		if (AutoWidth && this->Width() != _maxRight) {
+			this->SetFixedWidth(_maxRight);
+			if (Parent) {
+				Parent->Invalidate();
+			}
+		}
 	}
+
+	void HList::SetAttribute(const EString& attrName, const EString& attrValue)
+	{
+		if (attrName == "width" && attrValue == "auto") {
+			this->AutoWidth = true;
+			return;
+		}
+		__super::SetAttribute(attrName, attrValue);
+	}
+
 	void HList::RefreshScroll(const int& _maxRight) {
 		if (AutoWidth) {
-			this->SetFixedWidth(_maxRight);
 			hScrollBar.SetVisible(false);
 		}
 		else if (hScrollBar.IsVisible() == true) {
@@ -67,7 +81,18 @@ namespace EzUI {
 		}
 		return _maxRight;
 	}
-	void HList::OnChildPaint( PaintEventArgs& args) {
+	bool HList::IsAutoWidth()
+	{
+		return this->AutoWidth;
+	}
+	void HList::SetAutoWidth(bool flag)
+	{
+		if (flag != this->AutoWidth && Parent) {
+			Parent->TryPendLayout();
+		}
+		this->AutoWidth = flag;
+	}
+	void HList::OnChildPaint(PaintEventArgs& args) {
 		VisibleControls.clear();
 		auto rect = Rect(0, 0, Width(), Height());
 		//»æÖÆ×Ó¿Ø¼þ

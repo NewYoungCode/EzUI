@@ -133,7 +133,7 @@ namespace EzUI {
 		double rate = distanceTotal * 1.0 / (_maxRight - Parent->Width());//滑块可用总高度 / list item高度总和 * 当前滑块坐标的坐标
 		double offsetX = sliderX / rate;
 		if (distanceTotal > 0) {
-			int x = -offsetX + 0.5;
+			int x = offsetX + 0.5;
 			x = -x;
 			Parent->MoveScroll(x);
 			Parent->Invalidate();

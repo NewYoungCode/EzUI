@@ -6,7 +6,6 @@ class MainFrm :
 {
 public:
 	MainFrm(int width, int height);
-	virtual void OnLoad()override;
 	virtual bool OnNotify(Control* sender, EventArgs& arg) override;
 	virtual void OnClose(bool& cal)override;
 private:

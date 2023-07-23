@@ -160,9 +160,9 @@ namespace EzUI {
 	extern size_t __count_onsize;
 
 	enum class LayoutState :byte {
-		None, //无状态 (无需布局)
-		Pend,//挂起中
-		Layouting//布局中
+		None=1, //无状态 (无需布局)
+		Pend=2,//挂起中
+		Layouting=4//布局中
 	};
 	enum Event :int {
 		OnMouseWheel = 1,
@@ -198,6 +198,20 @@ namespace EzUI {
 		Checked,//选中状态
 		Hover,//鼠标悬浮
 		Active//鼠标按住
+	};
+	enum class DockStyle {
+		// 摘要:
+		//未设置
+		None,
+		// 摘要:
+		//在父控件中 左右保持
+		Horizontal,
+		// 摘要:
+		//在父控件中 上下保持
+		Vertical,
+		// 摘要:
+		// 铺满整个父控件
+		Fill
 	};
 	enum class MouseButton {
 		// 摘要: 
@@ -393,7 +407,6 @@ namespace EzUI {
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//设置属性
 		virtual EString GetAttribute(const EString& attrName);//获取属性
 	};
-
 	namespace Debug {
 		template<typename ...T>
 		inline void Log(const EString& formatStr, T ...args) {

@@ -16,7 +16,6 @@ namespace EzUI {
 	void display(void* opaque, void* picture)
 	{
 		VlcPlayer* vp = (VlcPlayer*)opaque;
-		vp->Invalidate();
 		if ((Control*)vp->Tag) {
 			((Control*)vp->Tag)->Invalidate();
 		}
@@ -67,45 +66,32 @@ namespace EzUI {
 	}
 	void VlcPlayer::SetConfig()
 	{
-
 	}
 	void VlcPlayer::OpenPath(const EString& file)
 	{
-		if (vlc_player) {
-			libvlc_media_player_stop(vlc_player);//??????
-			libvlc_media_player_release(vlc_player);//??????????y????
-		}
-		if (vlc_media) {
-			libvlc_media_release(vlc_media);
-		}
+		this->Stop();
 		vlc_media = libvlc_media_new_path(vlc_inst, file.c_str());
-		libvlc_media_parse(vlc_media);//????
-		_Duration = libvlc_media_get_duration(vlc_media);//???y?????
-
-		vlc_player = libvlc_media_player_new_from_media(vlc_media);//????y??
-
+		libvlc_media_parse(vlc_media);//
+		_Duration = libvlc_media_get_duration(vlc_media);//
+		vlc_player = libvlc_media_player_new_from_media(vlc_media);//
 		libvlc_video_set_format_callbacks(vlc_player, setup, (libvlc_video_cleanup_cb)this);
 		libvlc_video_set_callbacks(vlc_player, lock, unlock, display, this);
 	}
 	void VlcPlayer::OpenUrl(const EString& url)
 	{
-		if (vlc_player) {
-			libvlc_media_player_stop(vlc_player);//?????? vlc??bug ????????
-			libvlc_media_player_release(vlc_player);//??????????y????
-		}
-		if (vlc_media) {
-			libvlc_media_release(vlc_media);
-		}
+		this->Stop();
 		vlc_media = libvlc_media_new_location(vlc_inst, url.c_str());
-		libvlc_media_parse(vlc_media);//????
-		_Duration = libvlc_media_get_duration(vlc_media);//???y?????
-		vlc_player = libvlc_media_player_new_from_media(vlc_media);//????y??
+		libvlc_media_parse(vlc_media);//
+		_Duration = libvlc_media_get_duration(vlc_media);//
+		vlc_player = libvlc_media_player_new_from_media(vlc_media);//
 		libvlc_video_set_format_callbacks(vlc_player, setup, (libvlc_video_cleanup_cb)this);
 		libvlc_video_set_callbacks(vlc_player, lock, unlock, display, this);
 	}
 	void VlcPlayer::Play()
 	{
 		if (vlc_player) {
+			int volume = 50;
+			libvlc_audio_set_volume(vlc_player, volume);
 			libvlc_media_player_play(vlc_player);
 		}
 	}
@@ -113,6 +99,19 @@ namespace EzUI {
 	{
 		if (vlc_player) {
 			libvlc_media_player_pause(vlc_player);
+		}
+	}
+	void VlcPlayer::Stop()
+	{
+		if (vlc_player) {
+			//https://forum.videolan.org/viewtopic.php?f=32&t=147724&p=484850&hilit=libvlc_media_player_stop+bug#p484835
+			libvlc_media_player_stop(vlc_player);//如果停止播放视频那么 vlc会崩溃 无法避免
+			libvlc_media_player_release(vlc_player);//
+			vlc_player = nullptr;
+		}
+		if (vlc_media) {
+			libvlc_media_release(vlc_media);
+			vlc_media = nullptr;
 		}
 	}
 	long long  VlcPlayer::Duration() {
@@ -133,7 +132,6 @@ namespace EzUI {
 	void VlcPlayer::SetPosition(float f_pos)
 	{
 		if (vlc_player) {
-			//???????? ???y???????????? ?????о?
 			libvlc_media_player_set_position(vlc_player, f_pos);
 		}
 	}

@@ -28,7 +28,7 @@ MainFrm::MainFrm(int width, int height) :Window(width, height)
 	for (auto& it : controlList) {
 		Label* ctl = new Label;
 		ctl->SetFixedHeight(30);
-		ctl->Dock = DockStyle::Horizontal;
+		ctl->SetDockStyle(DockStyle::Horizontal);
 		ctl->HoverStyle.BackgroundColor = Color(20, 10, 10, 10);
 		ctl->ActiveStyle.BackgroundColor = Color(20, 10, 10, 10);
 		ctl->ActiveStyle.FontSize = 11;
@@ -47,11 +47,9 @@ MainFrm::MainFrm(int width, int height) :Window(width, height)
 	mainLayout.AddControl(new Spacer);
 	mainLayout.AddControl(&right);
 
-}
-void MainFrm::OnLoad() {
+
 	::SetParent(ui->Hwnd(), this->Hwnd());
 	auto rect = ui->GetClientRect();
-
 	int x = (GetClientRect().Width - rect.Width) / 2;
 	int y = (GetClientRect().Height - rect.Height) / 2;
 	::MoveWindow(ui->Hwnd(), x, y, rect.Width, rect.Height, FALSE);

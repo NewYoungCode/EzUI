@@ -211,6 +211,18 @@ Event(this , ##__VA_ARGS__); \
 				this->_visible = (::strcmp(attrValue.c_str(), "true") == 0 ? true : false);
 				break;
 			}
+			if (attrName == "dock") {
+				if (attrValue == "fill") {
+					this->_dock = DockStyle::Fill; break;
+				}
+				if (attrValue == "horizontal") {
+					this->_dock = DockStyle::Horizontal; break;
+				}
+				if (attrValue == "vertical") {
+					this->_dock = DockStyle::Vertical; break;
+				}
+				break;
+			}
 			if (attrName == "action") {
 				if (attrValue == "close") {
 					this->Action = ControlAction::Close; break;
@@ -371,7 +383,6 @@ Event(this , ##__VA_ARGS__); \
 	{
 		_fixedSize.Width = fixedWidth;
 		SetRect({ _rect.X,_rect.Y,fixedWidth,_rect.Height });
-
 	}
 	void Control::SetFixedHeight(const int& fixedHeight)
 	{
@@ -411,10 +422,11 @@ Event(this , ##__VA_ARGS__); \
 		return this->_layoutState == LayoutState::Pend;
 	}
 
-	void Control::TryPendLayout() {
+	const LayoutState& Control::TryPendLayout() {
 		if (this->_layoutState == LayoutState::None) {
 			this->_layoutState = LayoutState::Pend;
 		}
+		return this->_layoutState;
 	}
 	void Control::EndLayout() {
 		this->_layoutState = LayoutState::None;
@@ -432,14 +444,42 @@ Event(this , ##__VA_ARGS__); \
 		}
 		return Rect{ x,y,rect.Width,rect.Height };
 	}
-	void Control::SetRect(const Rect& rect)
+	const DockStyle& Control::GetDockStyle()
+	{
+		return this->_dock;
+	}
+	void Control::SetDockStyle(const DockStyle& dockStyle)
+	{
+		if (dockStyle != this->_dock && Parent) {
+			Parent->TryPendLayout();
+		}
+		this->_dock = dockStyle;
+	}
+	const Rect& Control::SetRect(const Rect& rect)
 	{
 		this->_rect = rect;
-		if (_fixedSize.Width) {
-			_rect.Width = _fixedSize.Width;
+		if (GetFixedWidth() > 0) {
+			_rect.Width = GetFixedWidth();
 		}
-		if (_fixedSize.Height) {
-			_rect.Height = _fixedSize.Height;
+		if (GetFixedHeight() > 0) {
+			_rect.Height = GetFixedHeight();
+		}
+		while (_dock != DockStyle::None && this->Parent)
+		{
+			const Rect& pRect = Parent->GetRect();
+			if (_dock == DockStyle::Fill) {
+				_rect = Rect{ 0,0,pRect.Width,pRect.Height };
+				break;
+			}
+			if (_dock == DockStyle::Vertical) {
+				_rect = Rect{ X(),0,Width(),pRect.Height };
+				break;
+			}
+			if (_dock == DockStyle::Horizontal) {
+				_rect = Rect{ 0,Y(),pRect.Width,Height() };
+				break;
+			}
+			break;
 		}
 
 		Point newLocation = _rect.GetLocation();
@@ -471,7 +511,7 @@ Event(this , ##__VA_ARGS__); \
 			}
 			OnRect(GetRect());
 		}
-
+		return this->_rect;
 	}
 	void Control::SetTips(const EString& text)
 	{
@@ -830,6 +870,20 @@ Event(this , ##__VA_ARGS__); \
 	{
 		return Rect();
 	}
+	bool Control::IsAutoWidth()
+	{
+		return false;
+	}
+	bool Control::IsAutoHeight()
+	{
+		return false;
+	}
+	void Control::SetAutoWidth(bool flag)
+	{
+	}
+	void Control::SetAutoHeight(bool flag)
+	{
+	}
 	void Control::ComputeClipRect()
 	{
 		if (Parent) {
@@ -857,7 +911,8 @@ Event(this , ##__VA_ARGS__); \
 		return NULL;
 	}
 	bool Control::Contains(Control* ctl) {
-		if (ctl != NULL && ctl == this || ctl->GetScrollBar() == this) {
+		ASSERT(ctl);
+		if (ctl == this || ctl->GetScrollBar() == this) {
 			return true;
 		}
 		for (auto& it : this->GetControls()) {
@@ -1005,7 +1060,9 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::OnRect(const Rect& rect)
 	{
-
+		if (Parent) {
+			Parent->TryPendLayout();
+		}
 	}
 	void Control::OnKillFocus(Control* control)
 	{

@@ -107,11 +107,15 @@ namespace EzUI {
 				ctl = new PictureBox;
 				break;
 			}
+			if (tagStr == "iframe") {
+				ctl = new IFrame;
+				break;
+			}
 			if (ctl == NULL) {
 				ctl = this->OnBuildControl(tagStr);
 			}
 			if (ctl == NULL) {
-				::MessageBoxA(NULL, EString("UnKnow Element " + tagStr).c_str(), "UIManager Erro", NULL);
+				::MessageBoxA(NULL, EString("UnKnow Element \"" + tagStr + "\"").c_str(), "UIManager Erro", NULL);
 				ctl = new Control;
 			}
 		} while (false);
@@ -149,6 +153,12 @@ namespace EzUI {
 				TrimStyle(attrValue);
 				ctl->SetAttribute(attrName, attrValue);
 				continue;
+			}
+			if (std::strcmp(attrName, "src") == 0 && dynamic_cast<IFrame*>(ctl)) {
+				UIManager* umg = new UIManager;
+				umg->LoadFile(attrValue);
+				umg->SetupUI(ctl);
+				this->iFrames.push_back(umg);
 			}
 			ctl->SetAttribute(attr->Name(), attrValue);
 			this->OnSetAttribute(ctl, attrName, attrValue);
@@ -398,6 +408,9 @@ namespace EzUI {
 		*img = NULL;
 	}
 	UIManager::~UIManager() {
+		for (auto& it : iFrames) {
+			delete it;
+		}
 		for (auto& it : freeControls) {
 			delete it;
 		}

@@ -24,8 +24,9 @@ namespace EzUI {
 		bool CheckEventPassThrough(const Event& eventType);//检查事件是否已经过滤
 		bool CheckEventNotify(const Event& eventType);//检查事件是否通知到主窗口中
 		void ComputeClipRect();//计算基于父控件的裁剪区域
-		Size _fixedSize;//绝对Size
+		Size _fixedSize{ 0,0 };//绝对Size
 		Rect _rect;//控件矩形区域(基于父控件)
+		DockStyle _dock = DockStyle::None;//dock样式
 	public:
 		EzUI::Margin Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数
 		WindowData* PublicData = NULL;//窗口上的公共数据
@@ -97,10 +98,12 @@ namespace EzUI {
 		const int& GetFixedHeight();//获取绝对高度
 		virtual const Rect& GetRect();//获取相对与父控件矩形 布局计算后
 		Rect GetClientRect();//获取基于客户端的矩形
+		const DockStyle& GetDockStyle();//获取dock标志
+		void SetDockStyle(const DockStyle& dockStyle);
 		bool IsPendLayout();//是否含有挂起的布局
-		void TryPendLayout();//尝试挂起布局
+		const LayoutState& TryPendLayout();//尝试挂起布局 返回当前布局状态
 		void EndLayout();//结束布局
-		void SetRect(const Rect& rect);//设置相对父控件矩形
+		const Rect& SetRect(const Rect& rect);//设置相对父控件矩形 返回实际的rect
 		virtual void ResumeLayout();//直接进行布局
 		virtual void SetTips(const EString& text);//设置tips
 		virtual void OnKillFocus(Control* control);//失去焦点的时候发生
@@ -148,6 +151,10 @@ namespace EzUI {
 		virtual bool Invalidate();// 使当前控件的区域为无效区域
 		virtual void Refresh();// 使当前控件区域为无效区域并且立即更新全部的无效区域
 		virtual Rect GetCareRect();//获取光标位置
+		virtual bool IsAutoWidth();//是否自动高度
+		virtual bool IsAutoHeight();//是否自动高度
+		virtual void SetAutoWidth(bool flag);//设置自动宽度
+		virtual void SetAutoHeight(bool flag);//设置自动高度
 	};
 
 	//添加弹簧无需用户手动释放,

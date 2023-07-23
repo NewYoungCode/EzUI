@@ -24,15 +24,28 @@ namespace EzUI {
 		_maxBottom = 0;
 		_maxBottom = MoveScroll(_maxBottom);
 		RefreshScroll(_maxBottom);
+		if (AutoHeight && this->Height() != _maxBottom) {
+			this->SetFixedHeight(_maxBottom);
+			if (Parent) {
+				Parent->Invalidate();
+			}
+		}
 	}
 
+	void VList::SetAttribute(const EString& attrName, const EString& attrValue)
+	{
+		if (attrName == "height" && attrValue == "auto") {
+			this->AutoHeight = true;
+			return;
+		}
+		__super::SetAttribute(attrName, attrValue);
+	}
 
 	void VList::RefreshScroll(const int& _maxBottom) {
 		if (AutoHeight) {
-			this->SetFixedHeight(_maxBottom);
-			vScrollBar.SetVisible ( false);
+			vScrollBar.SetVisible(false);
 		}
-		else if(vScrollBar.IsVisible()==true){
+		else if (vScrollBar.IsVisible() == true) {
 			vScrollBar.SetVisible(true);
 		}
 		vScrollBar.SetMaxBottom(_maxBottom);
@@ -67,6 +80,19 @@ namespace EzUI {
 			_maxBottom += it->Margin.GetVSpace();
 		}
 		return _maxBottom;
+	}
+
+	bool VList::IsAutoHeight()
+	{
+		return this->AutoHeight;
+	}
+
+	void VList::SetAutoHeight(bool flag)
+	{
+		if (flag != this->AutoHeight && Parent) {
+			Parent->TryPendLayout();
+		}
+		this->AutoHeight = flag;
 	}
 
 	void VList::OnChildPaint(PaintEventArgs& args) {

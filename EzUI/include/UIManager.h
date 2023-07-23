@@ -14,6 +14,7 @@
 #include "TextBox.h"
 #include "TabLayout.h"
 #include "PictureBox.h"
+#include "IFrame.h"
 #include "Window.h"
 namespace EzUI {
 	class UI_EXPORT UIManager {
@@ -30,6 +31,7 @@ namespace EzUI {
 			EString styleStr;
 		};
 	private:
+		std::vector<UIManager*> iFrames;
 		std::function<void(Image*)> BuildImageCallback;
 		std::list<Control*> freeControls;
 		std::list<Image*> freeImages;
@@ -53,8 +55,8 @@ namespace EzUI {
 		void LoadFile(const EString& fileName);
 		Control* GetNodeByName(const EString& nodeName = "");
 		Control* GetNode(size_t pos = 0);
-		void Free(Control**ctl);
-		void Free(Image**img);
+		void Free(Control** ctl);
+		void Free(Image** img);
 	};
 
 	//Ñ¡ÔñÆ÷

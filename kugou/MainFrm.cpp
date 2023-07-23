@@ -77,6 +77,9 @@ void MainFrm::InitForm() {
 	$(this->FindControl("btns")->GetControls()).CssHover("color:#ffffff;");
 	main2->Style.BackgroundColor = Color(100, 0, 0, 0);
 	singer->Style.BackgroundImage = headImg;
+
+	//localList->Style.BackgroundColor = Color(100,200,0,20);
+	int pos = 0;
 	//加载左侧播放过的音乐
 	for (auto&& _it : cfg->GetSections()) {
 		EString name = cfg->ReadString("name", "", _it);
@@ -87,6 +90,8 @@ void MainFrm::InitForm() {
 		it->SetAttribute("SingerName", singer);
 		it->SetTips(name);
 		localList->AddControl(it);
+		pos++;
+		//if (pos > 10)break;
 	}
 	//滚动条滚动事件 滚动条滚动到底部加载剩余音乐
 	searchList->GetScrollBar()->Rolling = [=](int a, int b)->void {
@@ -312,7 +317,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 
 				this->SetText(json["fileName"].asString());
 				((Label*)FindControl("songName"))->SetText(json["fileName"].asString());
-				ntfi.ShowBalloonTip(L"游戏模式", L"将自动禁用WIN键", 2000);
+				ntfi.ShowBalloonTip(L"播放音乐", EString(json["fileName"].asString()), 2000);
 				player.OpenUrl(playUrl);
 				player.SetDuration(dur);
 				player.Play();

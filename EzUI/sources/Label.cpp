@@ -14,7 +14,6 @@ namespace EzUI {
 			if (fontBox != oldSize) {
 				SetFixedSize({ fontBox.Width,fontBox.Height });
 				if (Parent) {
-					Parent->TryPendLayout();
 					Parent->Invalidate();
 					return;
 				}
