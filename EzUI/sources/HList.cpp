@@ -5,6 +5,7 @@ namespace EzUI {
 	{
 		hScrollBar.SetWidth(Width());//滚动条宽度
 		hScrollBar.Parent = this;
+		hScrollBar.OWner = this;
 	}
 	HList::HList()
 	{
@@ -17,18 +18,12 @@ namespace EzUI {
 	HList::~HList()
 	{
 	}
-
-	int HList::ContentLenght() {
-		return _maxRight;
-	}
-
 	void HList::OnLayout() {
-		__super::OnLayout();
-		_maxRight = 0;
-		_maxRight = MoveScroll(0);
-		RefreshScroll(_maxRight);
-		if (AutoWidth && this->Width() != _maxRight) {
-			this->SetFixedWidth(_maxRight);
+		_contentWidth = 0;
+		_contentWidth = MoveScroll(0);
+		RefreshScroll(_contentWidth);
+		if (AutoWidth && this->Width() != _contentWidth) {
+			this->SetFixedWidth(_contentWidth);
 			if (Parent) {
 				Parent->Invalidate();
 			}
@@ -44,21 +39,22 @@ namespace EzUI {
 		__super::SetAttribute(attrName, attrValue);
 	}
 
-	void HList::RefreshScroll(const int& _maxRight) {
+	void HList::RefreshScroll(const int& _contentWidth) {
 		if (AutoWidth) {
 			hScrollBar.SetVisible(false);
 		}
 		else if (hScrollBar.IsVisible() == true) {
 			hScrollBar.SetVisible(true);
 		}
-		hScrollBar.SetMaxRight(_maxRight);
+		hScrollBar.SetMaxRight(_contentWidth);
 	}
 	ScrollBar* HList::GetScrollBar()
 	{
 		return &hScrollBar;
 	}
 	int HList::MoveScroll(int offset) {
-		int _maxRight = offset;
+		_contentHeight = 0;
+		int _contentWidth = offset;
 		for (auto& it : GetControls()) {
 			if (it->IsVisible() == false) continue;
 			//处理y坐标和margin
@@ -74,12 +70,17 @@ namespace EzUI {
 				if (y == 0 && height < this->Height()) {
 					y = int((this->Height() * 1.0 - height) / 2 + 0.5);
 				}
-				it->SetRect(Rect(_maxRight, y, it->Width(), height));
+				it->SetRect(Rect(_contentWidth, y, it->Width(), height));
 			}
-			_maxRight += it->Width();
-			_maxRight += it->Margin.GetHSpace();
+			_contentWidth += it->Width();
+			_contentWidth += it->Margin.GetHSpace();
+			//计算最大高度
+			int _height = it->Y() + it->Height();
+			if (_height > _contentHeight) {
+				_contentHeight = _height;
+			}
 		}
-		return _maxRight;
+		return _contentWidth;
 	}
 	bool HList::IsAutoWidth()
 	{

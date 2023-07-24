@@ -274,11 +274,21 @@ namespace EzUI {
 			if (key == "cursor") {
 				if (value == "pointer") {
 					style->Cursor = LoadCursor(EzUI::Cursor::HAND);
-					break;
 				}
 				else if (value == "help") {
 					style->Cursor = LoadCursor(EzUI::Cursor::HELP);
-					break;
+				}
+				else if (value == "n-resize") {
+					//南北箭头 纵向
+					style->Cursor = LoadCursor(EzUI::Cursor::SIZENS);
+				}
+				else if (value == "e-resize") {
+					//东西箭头 水平
+					style->Cursor = LoadCursor(EzUI::Cursor::SIZEWE);
+				}
+				else if (value == "move") {
+					//四个方向的箭头都有
+					style->Cursor = LoadCursor(EzUI::Cursor::SIZEALL);
 				}
 				break;
 			}

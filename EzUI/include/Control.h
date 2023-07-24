@@ -7,7 +7,6 @@ namespace EzUI {
 		//ControlStyle _nowStyle;//临时组成的样式
 		bool _stateRepaint = false;//状态发生改变的时候绘制
 		bool _mouseIn = false;//鼠标是否在控件内
-		bool _load = false;//是否load
 		bool _visible = true;//控件是否可见 此标志为true的时候 可能实际中并不会可见 
 		Controls _controls;//子控件
 		//布局状态AddControl丶RemoveControl丶OnSize时候此标志为挂起 调用ResumeLayout标志为布局中 当调用OnLayout()之后此标志为None
@@ -27,6 +26,9 @@ namespace EzUI {
 		Size _fixedSize{ 0,0 };//绝对Size
 		Rect _rect;//控件矩形区域(基于父控件)
 		DockStyle _dock = DockStyle::None;//dock样式
+	protected:
+		int _contentWidth = 0;//上下文宽度
+		int _contentHeight = 0;//上下文高度
 	public:
 		EzUI::Margin Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数
 		WindowData* PublicData = NULL;//窗口上的公共数据
@@ -69,7 +71,7 @@ namespace EzUI {
 		virtual void OnKeyBoardEvent(const KeyboardEventArgs& _args);//键盘事件消息
 		virtual void OnMouseMove(const Point& point);//鼠标在控件上移动
 		virtual void OnMouseLeave();//鼠标离开控件
-		virtual void OnMouseWheel(short zDelta, const Point& point);//鼠标滚轮
+		virtual void OnMouseWheel(int _rollCount, short zDelta, const Point& point);//鼠标滚轮
 		virtual void OnMouseDown(MouseButton mbtn, const Point& point);//鼠标按下
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point);//鼠标弹起
 		virtual void OnMouseClick(MouseButton mbtn, const Point& point);//鼠标单击
@@ -96,6 +98,8 @@ namespace EzUI {
 		void SetFixedHeight(const int& fixedHeight);//设置绝对高度
 		const int& GetFixedWidth();//获取绝对宽度
 		const int& GetFixedHeight();//获取绝对高度
+		virtual int ContentWidth();//上下文宽度
+		virtual int ContentHeight();//上下文高度
 		virtual const Rect& GetRect();//获取相对与父控件矩形 布局计算后
 		Rect GetClientRect();//获取基于客户端的矩形
 		const DockStyle& GetDockStyle();//获取dock标志
@@ -118,7 +122,7 @@ namespace EzUI {
 		Control();
 		Control(Control* parent);
 		virtual ~Control();
-		void DestroySpacers();
+		void DestroySpacers();//销毁控件内所有弹簧
 		//普通样式
 		int GetRadius(ControlState _state = ControlState::None);
 		int GetBorderLeft(ControlState _state = ControlState::None);
@@ -191,6 +195,9 @@ namespace EzUI {
 		//滚动条不允许再出现子控件
 		void AddControl(Control* ctl) {};
 		ControlIterator RemoveControl() {};
+	public:
+		//所属者 当所属者被移除或者被释放掉 请注意将此值清除
+		Control* OWner = NULL;
 	public:
 		virtual void Move(double pos) = 0;
 		virtual Rect GetSliderRect() = 0;//

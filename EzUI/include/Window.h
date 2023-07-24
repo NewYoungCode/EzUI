@@ -12,17 +12,20 @@ namespace EzUI {
 		Rect _downRect;
 		Size _miniSize;
 		Size _maxSize;
-		bool _mouseIn = false;
+		bool _mouseIn = false;//鼠标是否在里面
 		bool _mouseDown = false;//鼠标是否已经按下
 		std::chrono::system_clock::time_point _lastDownTime = std::chrono::system_clock::from_time_t(0);
 		Size _lastSize;//上一次客户端大小的信息
 		Point _lastPoint;//上一次移动的坐标
 		MouseButton _lastBtn = MouseButton::None;
-		int _closeCode = 0;
-		HWND _OwnerHwnd = NULL;
-		HWND _hWnd = NULL;
+		int _closeCode = 0;//当窗口关闭的时候退出代码
+		HWND _OwnerHwnd = NULL;//所属窗口句柄
+		HWND _hWnd = NULL;//windows原生句柄
 		Rect _rect;//基于桌面的坐标
 		Rect _rectClient;//客户绘图区域
+		int _rollCount = 0;//滚动条 剩余滚动次数
+		int _rollSpeed = 0;//滚动条 滚动速度
+		Windows::Timer* __rollTimer = NULL;//用于滚动条动画
 		void InitData(const DWORD& ExStyle);
 	public:
 		WindowData PublicData;//存储公共数据
@@ -35,7 +38,8 @@ namespace EzUI {
 		void MoveWindow();//鼠标按下移动窗口
 		virtual void OnMouseMove(const Point& point);//鼠标移动时发生
 		virtual void OnMouseLeave();//鼠标离开时发生
-		virtual void OnMouseWheel(short zDelta, const Point& point);//鼠标滚动时发生
+		virtual void OnMouseWheelSlower(short zDelta, const Point& point);//鼠标滚动论进行缓慢滚动
+		virtual void OnMouseWheel(int rollCount, short zDelta, const Point& point);//鼠标滚动发生
 		virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point);//鼠标双击是发生
 		virtual void OnMouseDown(MouseButton mbtn, const Point& point);//鼠标按下时发生
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point);//鼠标弹起时发生

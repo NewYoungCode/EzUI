@@ -371,8 +371,8 @@ namespace EzUI {
 			Invalidate();
 		}
 	}
-	void TextBox::OnMouseWheel(short zDelta, const Point& point) {
-		__super::OnMouseWheel(zDelta, point);
+	void TextBox::OnMouseWheel(int _rollCount, short zDelta, const Point& point) {
+		__super::OnMouseWheel(_rollCount, zDelta, point);
 		double offset = 20;
 		offset = (zDelta > 0 ? offset : -offset);
 		Move(offset);

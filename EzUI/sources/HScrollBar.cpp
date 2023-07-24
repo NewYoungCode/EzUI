@@ -54,19 +54,12 @@ namespace EzUI {
 		e.Graphics.FillRectangle(Rect{ 0,0,Width(),Height() });
 	}
 
-	void HScrollBar::OwnerSize(const Size& parentSize) {
-		this->SetRect({ 0,parentSize.Height - this->Height(),parentSize.Width,Height() });
+	void HScrollBar::OwnerSize(const Size& OWnerSize) {
+		if (this->Parent == this->OWner) {
+			this->SetRect({ 0,OWnerSize.Height - this->Height(),OWnerSize.Width,Height() });
+		}
 	}
-
-	void HScrollBar::OnSize(const Size& size)
-	{
-		//此处需要屏蔽
-	}
-	const Rect& HScrollBar::GetRect()
-	{
-		//此处需要屏蔽
-		return __super::GetRect();
-	}
+	
 	void HScrollBar::OnForePaint(PaintEventArgs& args)
 	{
 		//滑块rect
@@ -117,10 +110,10 @@ namespace EzUI {
 	}
 
 	void HScrollBar::Move(double posY) {
-		if (Parent == NULL) {
+		if (OWner == NULL) {
 			return;
 		}
-		Parent->ResumeLayout();
+		OWner->ResumeLayout();
 		sliderX = posY;
 
 		if (sliderX <= 0) { //滑块在顶部
@@ -130,22 +123,21 @@ namespace EzUI {
 			sliderX = GetRect().Width - _sliderWidth;
 		}
 		int  distanceTotal = Width() - _sliderWidth;//当前滑块可用滑道的总距离
-		double rate = distanceTotal * 1.0 / (_maxRight - Parent->Width());//滑块可用总高度 / list item高度总和 * 当前滑块坐标的坐标
+		double rate = distanceTotal * 1.0 / (_maxRight - OWner->Width());//滑块可用总高度 / list item高度总和 * 当前滑块坐标的坐标
 		double offsetX = sliderX / rate;
 		if (distanceTotal > 0) {
 			int x = offsetX + 0.5;
 			x = -x;
-			Parent->MoveScroll(x);
-			Parent->Invalidate();
-			//Parent->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
+			OWner->MoveScroll(x);
+			OWner->Invalidate();
+			//OWner->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
 			if (Rolling) {
 				Rolling(RollingCurrent(), RollingTotal());
 			}
 		}
 	}
-	void HScrollBar::OnMouseWheel(short zDelta, const Point& point) {
-		//double offset = (Width() - GetSliderWidth())*0.01 + 0.9;
-		double offset = 5;
+	void HScrollBar::OnMouseWheel(int rollCount, short zDelta, const Point& point) {
+		float offset = rollCount;
 		sliderX += (zDelta > 0 ? -offset : offset);
 		Move(sliderX);
 	}

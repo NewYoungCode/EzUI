@@ -1,7 +1,7 @@
 #pragma once
 #include "VLayout.h"
 namespace EzUI {
-	class IFrame :public VLayout {
+	class UI_EXPORT IFrame :public VLayout {
 	public:
 		IFrame();
 		IFrame(Control*);

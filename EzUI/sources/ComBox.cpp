@@ -27,7 +27,7 @@ namespace EzUI {
 			int height = OwnerRect.bottom - OwnerRect.top;
 			//::MoveWindow(poupWnd->Hwnd(), clientPos.x, clientPos.y, rect.Width, rect.Height, FALSE);
 			//根据内容自动高度
-			::MoveWindow(poupWnd->Hwnd(), clientPos.x, clientPos.y, rect.Width, vlist.ContentLenght(), FALSE);
+			::MoveWindow(poupWnd->Hwnd(), clientPos.x, clientPos.y, rect.Width, vlist.ContentHeight(), FALSE);
 			poupWnd->Show(SW_SHOW);
 		};
 	}

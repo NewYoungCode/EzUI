@@ -87,9 +87,9 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
 	//Label labelBottom;
 	//labelBottom.SetText(L"这是一个简单的窗口示例!");
-	HList list(&mainLayout);
-	list.SetAutoWidth(true);
-	for (size_t i = 0; i < 10; i++)
+	TileList list(&mainLayout);
+	list.SetAutoWidth(false);
+	for (size_t i = 0; i < 999; i++)
 	{
 		Label* lb = new Label;// (&list);
 		//lb->Dock = DockStyle::Horizontal;

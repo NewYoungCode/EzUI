@@ -2,20 +2,9 @@
 namespace EzUI {
 
 	VScrollBar::VScrollBar() {
-		_timer.Interval = 5;
-		_timer.Tick = [this](Windows::Timer* tm)->void {
-			sliderY += _speed;
-			Move(sliderY);
-			_rollCount--;
-			if (_rollCount <= 0) {
-				tm->Stop();
-			}
-		};
 	}
 	VScrollBar::~VScrollBar() {
-		_timer.Stop();
 	}
-
 	void VScrollBar::SetMaxBottom(int maxBottom)
 	{
 		this->_maxBottom = maxBottom;
@@ -62,17 +51,9 @@ namespace EzUI {
 	}
 
 	void VScrollBar::OwnerSize(const Size& size) {
-		this->SetRect({ size.Width - this->Width() ,0,this->Width(),size.Height });
-	}
-
-	void VScrollBar::OnSize(const Size& size)
-	{
-		//此处需要屏蔽
-	}
-	const Rect& VScrollBar::GetRect()
-	{
-		//此处需要屏蔽
-		return __super::GetRect();
+		if (this->Parent == this->OWner) {
+			this->SetRect({ size.Width - this->Width() ,0,this->Width(),size.Height });
+		}
 	}
 
 	void VScrollBar::OnForePaint(PaintEventArgs& args)
@@ -133,10 +114,10 @@ namespace EzUI {
 	}
 
 	void VScrollBar::Move(double posY) {
-		if (Parent == NULL) {
+		if (OWner == NULL) {
 			return;
 		}
-		Parent->ResumeLayout();
+		OWner->ResumeLayout();
 		sliderY = posY;
 		if (sliderY <= 0) { //滑块在顶部
 			sliderY = 0;
@@ -153,33 +134,23 @@ namespace EzUI {
 			sliderY = Height() - _sliderHeight;
 		}
 		int distanceTotal = Height() - _sliderHeight;//当前滑块可用滑道的总距离
-		double rate = distanceTotal * 1.0 / (_maxBottom - Parent->Height());//滑块可用总高度 / list item高度总和 * 当前滑块坐标的坐标
+		double rate = distanceTotal * 1.0 / (_maxBottom - OWner->Height());//滑块可用总高度 / list item高度总和 * 当前滑块坐标的坐标
 		double offsetY = sliderY / rate;
 		if (distanceTotal > 0) {
 			int y = offsetY + 0.5;
 			y = -y;
-			Parent->MoveScroll(y);
-			Parent->Invalidate();
-			//Parent->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
+			OWner->MoveScroll(y);
+			OWner->Invalidate();
+			//OWner->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
 			if (Rolling) {
 				Rolling(RollingCurrent(), RollingTotal());
 			}
 		}
-
 	}
 
-	void VScrollBar::OnMouseWheel(short zDelta, const Point& point) {
-		/*	double offset = 5;
-			sliderY += (zDelta > 0 ? -offset : offset);
-			Move(sliderY);*/
-		int fx = (zDelta > 0 ? -5 : 5);//滚动方向
-		if (fx != _speed) {//如果滚动方向与上次不同 即可停止
-			_rollCount = 1;//滚动一次
-		}
-		else {
-			_rollCount += 3;//将滚动五次
-		}
-		_speed = fx;//控制方向与速度
-		_timer.Start();
+	void VScrollBar::OnMouseWheel(int rollCount, short zDelta, const Point& point) {
+		float offset = rollCount;
+		sliderY += (zDelta > 0 ? -offset : offset);
+		Move(sliderY);
 	}
 };

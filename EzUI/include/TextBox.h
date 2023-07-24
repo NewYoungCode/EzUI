@@ -55,7 +55,7 @@ namespace EzUI {
 		virtual void OnMouseMove(const Point& point) override;
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point)override;
 		virtual void OnKillFocus(Control* ctl) override;
-		virtual void OnMouseWheel(short zDelta, const Point& point)override;
+		virtual void OnMouseWheel(int _rollCount,short zDelta, const Point& point)override;
 		void Move(double moveY);
 		virtual void OnLayout();
 	public:

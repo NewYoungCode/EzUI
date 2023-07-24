@@ -11,6 +11,7 @@ namespace EzUI {
 	{
 		vScrollBar.SetHeight(Height());
 		vScrollBar.Parent = this;
+		vScrollBar.OWner = this;
 	}
 
 	TileList::TileList()
@@ -29,25 +30,25 @@ namespace EzUI {
 		return &vScrollBar;
 	}
 
-	void TileList::RefreshScroll(const int& _maxBottom) {
+	void TileList::RefreshScroll(const int& _contentHeight) {
 		if (AutoHeight) {
-			this->SetFixedHeight(_maxBottom);
+			this->SetFixedHeight(_contentHeight);
 			vScrollBar.SetVisible(false);
 		}
 		else if (vScrollBar.IsVisible() == true) {
 			vScrollBar.SetVisible(true);
 		}
-		vScrollBar.SetMaxBottom(_maxBottom);
+		vScrollBar.SetMaxBottom(_contentHeight);
 	}
 	void TileList::OnLayout()
 	{
-		__super::OnLayout();
-		_MaxBottom = 0;
-		_MaxBottom = MoveScroll(0);
-		RefreshScroll(_MaxBottom);
+		_contentHeight = 0;
+		_contentHeight = MoveScroll(0);
+		RefreshScroll(_contentHeight);
 	}
 	int TileList::MoveScroll(int offset) {
-		int _MaxBottom = 0;
+		_contentWidth = 0;
+		int _contentHeight = 0;
 		const int& maxWith = this->Width();
 		int maxHeight = 0;//每行最高的那个
 		int x = 0;
@@ -73,8 +74,13 @@ namespace EzUI {
 				maxHeight = itemSpace;
 			}
 			x += it.Margin.Right + it.Width();//右边距
-			_MaxBottom = y + maxHeight;
+			_contentHeight = y + maxHeight;
+			//计算最大宽度
+			int _width = it.X() + it.Width();
+			if (_width > _contentWidth) {
+				_contentWidth = _width;
+			}
 		}
-		return _MaxBottom;
+		return _contentHeight;
 	}
 };

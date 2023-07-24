@@ -7,7 +7,6 @@ namespace EzUI {
 		public Control
 	{
 	private:
-		int _MaxBottom = 0;
 		VScrollBar vScrollBar;
 		bool AutoHeight = false;//根据内容的高度自动变化
 		void Init();

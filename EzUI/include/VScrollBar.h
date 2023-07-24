@@ -7,25 +7,20 @@ namespace EzUI {
 		public ScrollBar
 	{
 	private:
-		int _rollCount = 0;
-		int _speed = 0;
-		Windows::Timer _timer;
 		int _maxBottom = 0;
 		double sliderY = 0;
 		int  pointY = 0;
 		int _sliderHeight = 0;
 		bool mouseDown = false;
 	protected:
-		virtual	void OnSize(const Size& size)override;
 		virtual void OnForePaint(PaintEventArgs& args) override;
 		virtual void OnMouseDown(MouseButton mBtn, const Point& point)override;
 		virtual void OnMouseEnter(const Point& pt)override;
 		virtual void OnMouseUp(MouseButton mBtn, const Point& point)override;
 		virtual void OnMouseLeave()override;
 		virtual void OnMouseMove(const Point& point)override;
-		virtual void OnMouseWheel(short zDelta, const Point& point)override;
+		virtual void OnMouseWheel(int rollCount, short zDelta, const Point& point)override;
 		virtual void OnBackgroundPaint(PaintEventArgs& e)override;
-		virtual const Rect& GetRect()override;
 	public:
 		VScrollBar();
 		virtual ~VScrollBar();

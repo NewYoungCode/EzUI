@@ -403,6 +403,14 @@ Event(this , ##__VA_ARGS__); \
 	{
 		return _fixedSize.Height;
 	}
+	int Control::ContentWidth()
+	{
+		return 0;
+	}
+	int Control::ContentHeight()
+	{
+		return 0;
+	}
 	bool Control::CheckEventPassThrough(const Event& eventType)
 	{
 		if ((MousePassThrough & eventType) == eventType) {
@@ -523,12 +531,26 @@ Event(this , ##__VA_ARGS__); \
 			return;
 		}
 		this->_layoutState = LayoutState::Layouting;//布局中
+		if (GetScrollBar()) {//如果存在滚动条就设置滚动条的矩形位置
+			GetScrollBar()->OwnerSize({ _rect.Width,_rect.Height });
+		}
 		this->OnLayout();
 		this->_layoutState = LayoutState::None;//布局完成需要将布局标志重置
 	}
 	void Control::OnLayout() {
-		if (GetScrollBar()) {//如果存在滚动条就设置滚动条的矩形位置
-			GetScrollBar()->OwnerSize({ _rect.Width,_rect.Height });
+		_contentWidth = 0;
+		_contentHeight = 0;
+		int _width;
+		int _height;
+		for (auto& it : GetControls()) {
+			_width = it->X() + it->Width();
+			if (_width > _contentWidth) {
+				_contentWidth = _width;
+			}
+			_height = it->Y() + it->Height();
+			if (_height > _contentHeight) {
+				_contentHeight = _height;
+			}
 		}
 	}
 
@@ -598,7 +620,7 @@ Event(this , ##__VA_ARGS__); \
 		switch (args.EventType)
 		{
 		case Event::OnMouseWheel: {
-			OnMouseWheel(args.Delta, args.Location);
+			OnMouseWheel(args.RollCount, args.Delta, args.Location);
 			break;
 		}
 		case Event::OnMouseClick: {
@@ -795,7 +817,6 @@ Event(this , ##__VA_ARGS__); \
 			PublicData->RemoveControl(this);
 			PublicData = NULL;
 		}
-		_load = false;
 	}
 	Control* Control::FindControl(const EString& objectName)
 	{
@@ -949,9 +970,9 @@ Event(this , ##__VA_ARGS__); \
 	{
 		UI_TRIGGER(MouseMove, point);
 	}
-	void Control::OnMouseWheel(short zDelta, const Point& point)
+	void Control::OnMouseWheel(int _rollCount, short zDelta, const Point& point)
 	{
-		UI_TRIGGER(MouseWheel, zDelta, point);
+		UI_TRIGGER(MouseWheel, _rollCount, zDelta, point);
 	}
 	void Control::OnMouseClick(MouseButton mbtn, const Point& point)
 	{

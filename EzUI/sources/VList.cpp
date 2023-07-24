@@ -4,6 +4,7 @@ namespace EzUI {
 	{
 		vScrollBar.SetHeight(Height());//滚动条宽度
 		vScrollBar.Parent = this;
+		vScrollBar.OWner = this;
 	}
 	VList::VList()
 	{
@@ -16,16 +17,12 @@ namespace EzUI {
 	VList::~VList()
 	{
 	}
-	int VList::ContentLenght() {
-		return _maxBottom;
-	}
 	void VList::OnLayout() {
-		__super::OnLayout();
-		_maxBottom = 0;
-		_maxBottom = MoveScroll(_maxBottom);
-		RefreshScroll(_maxBottom);
-		if (AutoHeight && this->Height() != _maxBottom) {
-			this->SetFixedHeight(_maxBottom);
+		_contentWidth = 0;
+		_contentWidth = MoveScroll(0);
+		RefreshScroll(_contentWidth);
+		if (AutoHeight && this->Height() != _contentWidth) {
+			this->SetFixedHeight(_contentWidth);
 			if (Parent) {
 				Parent->Invalidate();
 			}
@@ -58,6 +55,7 @@ namespace EzUI {
 
 	int VList::MoveScroll(int offset)
 	{
+		_contentWidth = 0;
 		int	_maxBottom = offset;
 		for (auto& it : GetControls()) {
 			if (it->IsVisible() == false)continue;
@@ -78,6 +76,11 @@ namespace EzUI {
 			}
 			_maxBottom += it->Height();
 			_maxBottom += it->Margin.GetVSpace();
+			//计算最大宽度
+			int _width = it->X() + it->Width();
+			if (_width > _contentWidth) {
+				_contentWidth = _width;
+			}
 		}
 		return _maxBottom;
 	}

@@ -160,9 +160,9 @@ namespace EzUI {
 	extern size_t __count_onsize;
 
 	enum class LayoutState :byte {
-		None=1, //无状态 (无需布局)
-		Pend=2,//挂起中
-		Layouting=4//布局中
+		None = 1, //无状态 (无需布局)
+		Pend = 2,//挂起中
+		Layouting = 4//布局中
 	};
 	enum Event :int {
 		OnMouseWheel = 1,
@@ -270,16 +270,18 @@ namespace EzUI {
 	class MouseEventArgs :public EventArgs {
 	public:
 		MouseButton Button;
+		int RollCount = 0;
 		short Delta;
 		Point Location;
 	public:
 		MouseEventArgs() {}
 		virtual ~MouseEventArgs() {}
-		MouseEventArgs(const Event& eventType, const Point& location = Point(0, 0), const MouseButton& mouseButton = MouseButton::None, const short& delta = 0) {
+		MouseEventArgs(const Event& eventType, const Point& location = Point(0, 0), const MouseButton& mouseButton = MouseButton::None, const short& delta = 0,int rollCount=0) {
 			this->EventType = eventType;
 			this->Button = mouseButton;
 			this->Delta = delta;
 			this->Location = location;
+			this->RollCount = rollCount;
 		}
 	};
 	// 摘要: 
@@ -343,7 +345,7 @@ namespace EzUI {
 	typedef std::list<Control*>::iterator ControlIterator;//
 	typedef std::function<void(Control*, const Point&)> EventMouseMove;  //移动事件
 	typedef std::function<void(Control*, const Point&)> EventMouseEnter;//移入事件
-	typedef std::function<void(Control*, short, const Point&)> EventMouseWheel;//滚轮事件
+	typedef std::function<void(Control*,int, short, const Point&)> EventMouseWheel;//滚轮事件
 	typedef std::function<void(Control*)> EventMouseLeave;//鼠标离开事件
 	typedef std::function<void(Control*, MouseButton, const Point&)> EventMouseDown; //鼠标按下事件
 	typedef std::function<void(Control*, MouseButton, const Point&)> EventMouseUp;//鼠标抬起
@@ -393,7 +395,7 @@ namespace EzUI {
 	public:
 		virtual void OnMouseMove(const Point& point) = 0;
 		virtual void OnMouseLeave() = 0;
-		virtual void OnMouseWheel(short zDelta, const Point& point) = 0;
+		virtual void OnMouseWheel(int rollCount, short zDelta, const Point& point) = 0;
 		virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point) = 0;
 		virtual void OnMouseDown(MouseButton mbtn, const Point& point) = 0;
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point) = 0;
