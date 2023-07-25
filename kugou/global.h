@@ -132,8 +132,8 @@ public:
 
 		//SetTips(s.SongName);
 		SetFixedHeight(35);
-		Style.BorderBottom = 1;
-		Style.BorderColor = Color(245, 245, 245);
+		Style.Border.Bottom = 1;
+		Style.Border.Color = Color(245, 245, 245);
 		HoverStyle.BackgroundColor = Color(245, 245, 245);
 
 		songName.EllipsisText = L"...";

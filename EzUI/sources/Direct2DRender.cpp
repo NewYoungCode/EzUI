@@ -336,6 +336,78 @@ namespace EzUI {
 			SafeRelease(&bitMap);
 		}
 	}
+	Geometry::Geometry(int x, int y, int width, int height) {
+		D2D_RECT_F rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) };
+		D2D::g_Direct2dFactory->CreateRectangleGeometry(rectF, (ID2D1RectangleGeometry**)&rgn);
+	}
+	Geometry::Geometry(int x, int y, int width, int height, int _radius) {
+		float radius = GetMaxRadius(width, height, (float)_radius);
+		D2D1_ROUNDED_RECT rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) ,radius ,radius };
+		D2D::g_Direct2dFactory->CreateRoundedRectangleGeometry(rectF, (ID2D1RoundedRectangleGeometry**)&rgn);
+	}
+	Geometry::Geometry(const Rect& _rect, int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
+	{
+		ID2D1PathGeometry* pPathGeometry = NULL;
+		D2D1_RECT_F rect = __To_D2D_RectF(_rect);
+		D2D::g_Direct2dFactory->CreatePathGeometry(&pPathGeometry);
+		topLeftRadius = GetMaxRadius(_rect.Width, _rect.Height, topLeftRadius);
+		topRightRadius = GetMaxRadius(_rect.Width, _rect.Height, topRightRadius);
+		bottomRightRadius = GetMaxRadius(_rect.Width, _rect.Height, bottomRightRadius);
+		bottomLeftRadius = GetMaxRadius(_rect.Width, _rect.Height, bottomLeftRadius);
+		// 打开路径几何图形的几何接口
+		ID2D1GeometrySink* pSink;
+		pPathGeometry->Open(&pSink);
+		// 开始绘制路径
+		pSink->BeginFigure(D2D1::Point2F(rect.left, rect.top + topLeftRadius), D2D1_FIGURE_BEGIN_FILLED);
+		// 添加弧线段到左上角
+		pSink->AddArc(
+			D2D1::ArcSegment(
+				D2D1::Point2F(rect.left + topLeftRadius, rect.top),
+				D2D1::SizeF(topLeftRadius, topLeftRadius),
+				0.0f,
+				D2D1_SWEEP_DIRECTION_CLOCKWISE,
+				D2D1_ARC_SIZE_SMALL
+			)
+		);
+		// 添加弧线段到右上角
+		pSink->AddLine(D2D1::Point2F(rect.right - topRightRadius, rect.top));
+		pSink->AddArc(
+			D2D1::ArcSegment(
+				D2D1::Point2F(rect.right, rect.top + topRightRadius),
+				D2D1::SizeF(topRightRadius, topRightRadius),
+				0.0f,
+				D2D1_SWEEP_DIRECTION_CLOCKWISE,
+				D2D1_ARC_SIZE_SMALL
+			)
+		);
+		// 添加弧线段到右下角
+		pSink->AddLine(D2D1::Point2F(rect.right, rect.bottom - bottomRightRadius));
+		pSink->AddArc(
+			D2D1::ArcSegment(
+				D2D1::Point2F(rect.right - bottomRightRadius, rect.bottom),
+				D2D1::SizeF(bottomRightRadius, bottomRightRadius),
+				0.0f,
+				D2D1_SWEEP_DIRECTION_CLOCKWISE,
+				D2D1_ARC_SIZE_SMALL
+			)
+		);
+		// 添加弧线段到左下角
+		pSink->AddLine(D2D1::Point2F(rect.left + bottomLeftRadius, rect.bottom));
+		pSink->AddArc(
+			D2D1::ArcSegment(
+				D2D1::Point2F(rect.left, rect.bottom - bottomLeftRadius),
+				D2D1::SizeF(bottomLeftRadius, bottomLeftRadius),
+				0.0f,
+				D2D1_SWEEP_DIRECTION_CLOCKWISE,
+				D2D1_ARC_SIZE_SMALL
+			)
+		);
+		// 结束路径
+		pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
+		pSink->Close();
+		pSink->Release();
+		this->rgn = pPathGeometry;
+	}
 };
 
 namespace EzUI {
@@ -596,7 +668,7 @@ namespace EzUI {
 	void DXRender::PushLayer(const Geometry& dxGeometry) {
 		ID2D1Layer* layer = NULL;
 		render->CreateLayer(&layer);
-		render->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.rgn), layer);//放入layer
+		render->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.Get()), layer);//放入layer
 		layer->Release();
 		layers.push_back(false);
 	}
@@ -648,38 +720,21 @@ namespace EzUI {
 		render->FillEllipse(ellipse, GetBrush());
 	}
 	void DXRender::DrawArc(const Rect& rect, int startAngle, int sweepAngle, int width) {
-		//
-		//// 创建几何图形
-		//ID2D1PathGeometry* pGeometry;
-		//if (SUCCEEDED( D2D::g_Direct2dFactory->CreatePathGeometry(&pGeometry))) {
-		//	// 利用几何图形创建几何图形笔
-		//	ID2D1GeometrySink* pSink;
-		//	if (SUCCEEDED(pGeometry->Open(&pSink))) {
-		//		pSink->BeginFigure(startPoint, D2D1_FIGURE_BEGIN_HOLLOW);
-		//		// 添加弧线路径
-		//		pSink->AddArc(D2D1::ArcSegment(D2D1::Point2F(startPoint.x + radiusX * cos(startAngle * M_PI / 180),
-		//			startPoint.y - radiusY * sin(startAngle * M_PI / 180)),
-		//			D2D1::SizeF(radiusX, radiusY), 0, sweepAngle > 0 ? D2D1_SWEEP_DIRECTION_CLOCKWISE : D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE,
-		//			D2D1_ARC_SIZE_SMALL));
-		//		pSink->EndFigure(D2D1_FIGURE_END_OPEN);
-
-		//		// 释放几何图形笔
-		//		pSink->Release();
-		//	}
-		//	// 创建几何图形笔
-		//	ID2D1StrokeStyle* strokeStyle;
-		//	if (SUCCEEDED(pRenderTarget->CreateStrokeStyle(D2D1::StrokeStyleProperties(strokeWidth), nullptr, 0, &strokeStyle))) {
-		//		render->DrawGeometry(pGeometry, pBrush, strokeWidth, strokeStyle);
-		//		// 释放几何图形笔
-		//		strokeStyle->Release();
-		//	}
-		//	// 释放几何图形
-		//	pGeometry->Release();
+		
 	}
 	void DXRender::DrawArc(const Point& point1, const Point& point2, const Point& point3, int width)
 	{
 
 	}
+	void DXRender::DrawGeometry(ID2D1Geometry* geometry, int width)
+	{
+		render->DrawGeometry(geometry, GetBrush(), (FLOAT)width, this->GetStrokeStyle());
+	}
+	void DXRender::FillGeometry(ID2D1Geometry* geometry, int width)
+	{
+		render->FillGeometry(geometry, GetBrush());
+	}
+
 	void DXRender::DrawPath(const DXPath& path, int width)
 	{
 		render->DrawGeometry(path.Get(), GetBrush(), (FLOAT)width, this->GetStrokeStyle());

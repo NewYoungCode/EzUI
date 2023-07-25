@@ -7,8 +7,9 @@
 #include "NotifyIcon.h"
 #include "BorderlessWindow.h"
 #include "LayeredWindow.h"
+#include "UIManager.h"
 class MainFrm :
-	public BorderlessWindow
+	public Window
 {
 private:
 	//no new

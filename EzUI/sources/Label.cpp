@@ -6,8 +6,8 @@ namespace EzUI {
 	void Label::Rending(PaintEventArgs& args) {
 		if (AutoWidth && AutoHeight) {
 			Size oldSize(Width(), Height());
-			std::wstring fontFamily = GetFontFamily().utf16();
-			int fontSize = GetFontSize();
+			std::wstring fontFamily =args.Style.FontFamily .utf16();
+			const int fontSize = args.Style.FontSize;
 			Font font(fontFamily, fontSize);
 			TextLayout textLayout(_wstr, font);
 			Size fontBox = textLayout.GetFontBox();
@@ -26,11 +26,11 @@ namespace EzUI {
 		__super::OnForePaint(args);
 		if (!_wstr.empty()) {
 			std::wstring drawText(_wstr);
-			std::wstring fontFamily = GetFontFamily().utf16();
-			int fontSize = GetFontSize();
+			std::wstring fontFamily = args.Style.FontFamily.utf16();
+			const int fontSize = args.Style.FontSize;
 			Font font(fontFamily, fontSize);
 			args.Graphics.SetFont(font);
-			args.Graphics.SetColor(GetForeColor());
+			args.Graphics.SetColor(args.Style.ForeColor);
 			std::wstring wEllipsisText = EllipsisText.utf16();
 			if (!wEllipsisText.empty()) { //水平文本溢出的显示方案
 				Size ellipsisTextSize;

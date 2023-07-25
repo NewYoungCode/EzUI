@@ -485,7 +485,47 @@ namespace EzUI {
 		//     图像大小按其原有的大小比例被增加或减小。
 		Zoom = 4
 	};
-
+	/// <summary>
+	/// 描述边框的一些信息
+	/// </summary>
+	class  Border {
+	public:
+		int Left = 0;//左边边框大小
+		int Top = 0;//顶部边框大小
+		int Right = 0;//右边边框大小
+		int Bottom = 0;//底部边框大小
+		int TopLeftRadius = 0;
+		int TopRightRadius = 0;
+		int BottomRightRadius = 0;
+		int BottomLeftRadius = 0;
+		Color Color;
+	public:
+		class Radius {
+			Border& Border;
+		public:
+			Radius(EzUI::Border& bd) :Border(bd) {}
+			//对四个角度同时设置半径大小
+			Radius& operator=(int radius) {
+				Border.TopLeftRadius = radius;
+				Border.TopRightRadius = radius;
+				Border.BottomRightRadius = radius;
+				Border.BottomLeftRadius = radius;
+				return *this;
+			}
+		};
+	public:
+		Border::Radius Radius = (*this);
+	public:
+		Border() {}
+		//对四个边设置大小
+		Border& operator=(int borderWidth) {
+			Left = borderWidth;
+			Top = borderWidth;
+			Right = borderWidth;
+			Bottom = borderWidth;
+			return *this;
+		}
+	};
 #if 1
 #define Align_Top  1
 #define Align_Bottom  2
@@ -511,46 +551,46 @@ namespace EzUI {
 		Center = Align_Center
 	};
 	enum class __Align :int {
-		   //
-		   // 摘要: 
-		   //     不做处理
-		   Normal = 0,
-		   //
-		   // 摘要: 
-		   //     内容在垂直方向上顶部对齐，在水平方向上左边对齐。
-		   TopLeft = Align_Top | Align_Left,
-		   //
-		   // 摘要: 
-		   //     内容在垂直方向上顶部对齐，在水平方向上居中对齐。
-		   TopCenter = Align_Top | Align_Center,
-		   //
-		   // 摘要: 
-		   //     内容在垂直方向上顶部对齐，在水平方向上右边对齐。
-		   TopRight = Align_Top | Align_Right,
-		   //
-		   // 摘要: 
-		   //     内容在垂直方向上中间对齐，在水平方向上左边对齐。
-		   MiddleLeft = Align_Mid | Align_Left,
-		   //
-		   // 摘要: 
-		   //     内容在垂直方向上中间对齐，在水平方向上居中对齐。
-		   MiddleCenter = Align_Mid | Align_Center,
-		   //
-		   // 摘要: 
-		   //     内容在垂直方向上中间对齐，在水平方向上右边对齐。
-		   MiddleRight = Align_Mid | Align_Right,
-		   //
-		   // 摘要: 
-		   //     内容在垂直方向上底边对齐，在水平方向上左边对齐。
-		   BottomLeft = Align_Bottom | Align_Left,
-		   //
-		   // 摘要: 
-		   //     内容在垂直方向上底边对齐，在水平方向上居中对齐。
-		   BottomCenter = Align_Bottom | Align_Center,
-		   //
-		   // 摘要: 
-		   //     内容在垂直方向上底边对齐，在水平方向上右边对齐。
-		   BottomRight = Align_Bottom | Align_Right
+		//
+		// 摘要: 
+		//     不做处理
+		Normal = 0,
+		//
+		// 摘要: 
+		//     内容在垂直方向上顶部对齐，在水平方向上左边对齐。
+		TopLeft = Align_Top | Align_Left,
+		//
+		// 摘要: 
+		//     内容在垂直方向上顶部对齐，在水平方向上居中对齐。
+		TopCenter = Align_Top | Align_Center,
+		//
+		// 摘要: 
+		//     内容在垂直方向上顶部对齐，在水平方向上右边对齐。
+		TopRight = Align_Top | Align_Right,
+		//
+		// 摘要: 
+		//     内容在垂直方向上中间对齐，在水平方向上左边对齐。
+		MiddleLeft = Align_Mid | Align_Left,
+		//
+		// 摘要: 
+		//     内容在垂直方向上中间对齐，在水平方向上居中对齐。
+		MiddleCenter = Align_Mid | Align_Center,
+		//
+		// 摘要: 
+		//     内容在垂直方向上中间对齐，在水平方向上右边对齐。
+		MiddleRight = Align_Mid | Align_Right,
+		//
+		// 摘要: 
+		//     内容在垂直方向上底边对齐，在水平方向上左边对齐。
+		BottomLeft = Align_Bottom | Align_Left,
+		//
+		// 摘要: 
+		//     内容在垂直方向上底边对齐，在水平方向上居中对齐。
+		BottomCenter = Align_Bottom | Align_Center,
+		//
+		// 摘要: 
+		//     内容在垂直方向上底边对齐，在水平方向上右边对齐。
+		BottomRight = Align_Bottom | Align_Right
 	};
 
 	typedef __Align TextAlign;

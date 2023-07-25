@@ -28,12 +28,33 @@ return  defaultStyle.##_filed;\
 	return this->Style.##_filed;\
 }\
 
-	UI_BINDFUNC(int, Radius);
-	UI_BINDFUNC(int, BorderLeft);
-	UI_BINDFUNC(int, BorderTop);
-	UI_BINDFUNC(int, BorderRight);
-	UI_BINDFUNC(int, BorderBottom);
-	UI_BINDFUNC(Color, BorderColor);
+
+#define UI_BORDER_BINDFUNC(_type,_filed1,_filed)  _type Control:: ##Get ##_filed1 ##_filed(ControlState _state)  { \
+/*先根据对应的状态来获取样式 */ \
+ControlStyle& stateStyle = this->GetStyle(this->State);\
+if(__IsValid(stateStyle .##_filed1. ##_filed)){\
+	return stateStyle .##_filed1.##_filed; \
+}\
+/*获取不同的控件中默认样式 */ \
+	ControlStyle& defaultStyle = this->GetDefaultStyle(); \
+if(__IsValid(defaultStyle .##_filed1.##_filed)){\
+return  defaultStyle .##_filed1.##_filed;\
+\
+}\
+/*以上两种样式都未获取成功的情况下才采用此样式*/ \
+	return this->Style .##_filed1.##_filed;\
+}\
+
+	UI_BORDER_BINDFUNC(int, Border, TopLeftRadius);
+	UI_BORDER_BINDFUNC(int, Border, TopRightRadius);
+	UI_BORDER_BINDFUNC(int, Border, BottomRightRadius);
+	UI_BORDER_BINDFUNC(int, Border, BottomLeftRadius);
+	UI_BORDER_BINDFUNC(int, Border, Left);
+	UI_BORDER_BINDFUNC(int, Border, Top);
+	UI_BORDER_BINDFUNC(int, Border, Right);
+	UI_BORDER_BINDFUNC(int, Border, Bottom);
+	UI_BORDER_BINDFUNC(Color, Border, Color);
+
 	UI_BINDFUNC(Color, BackgroundColor);
 	UI_BINDFUNC(Image*, ForeImage);
 	UI_BINDFUNC(Image*, BackgroundImage);
@@ -74,52 +95,58 @@ Event(this , ##__VA_ARGS__); \
 
 	void Control::OnBackgroundPaint(PaintEventArgs& e)
 	{
-		Color backgroundColor = GetBackgroundColor();
-		Image* backgroundImage = GetBackgroundImage();
+		const Color& backgroundColor = e.Style.BackgroundColor;
+
 		if (backgroundColor.GetValue() != 0) {
 			e.Graphics.SetColor(backgroundColor);
 			e.Graphics.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height });
 		}
-		if (backgroundImage != NULL) {
-			e.Graphics.DrawImage(backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage->SizeMode, backgroundImage->Padding);
+		if (e.Style.BackgroundImage != NULL) {
+			e.Graphics.DrawImage(e.Style.BackgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, e.Style.BackgroundImage->SizeMode, e.Style.BackgroundImage->Padding);
 		}
 	}
 	void Control::OnForePaint(PaintEventArgs& e) {
-		Image* foreImage = GetForeImage();
-		if (foreImage) {
-			e.Graphics.DrawImage(foreImage, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage->SizeMode, foreImage->Padding);
+		if (e.Style.ForeImage) {
+			e.Graphics.DrawImage(e.Style.ForeImage, Rect{ 0,0,_rect.Width,_rect.Height }, e.Style.ForeImage->SizeMode, e.Style.ForeImage->Padding);
 		}
 	}
 	void Control::OnBorderPaint(PaintEventArgs& e)
 	{
-		Color borderColor = GetBorderColor();
+		const Color& borderColor = e.Style.Border.Color;
 		if (borderColor.GetValue() == 0) return;//边框无效颜色不绘制
-		auto radius = GetRadius();
-		auto borderLeft = GetBorderLeft();
-		auto borderTop = GetBorderTop();
-		auto borderRight = GetBorderRight();
-		auto borderBottom = GetBorderBottom();
-
-		bool hasBorder = borderLeft || borderTop || borderRight || borderBottom;
-		if (!hasBorder) return;//边框为0不绘制
-
-		e.Graphics.SetColor(borderColor);
-
-		if (radius > 0 && hasBorder) {
-			e.Graphics.DrawRectangle(Rect{ 0,0,_rect.Width,_rect.Height }, radius, borderLeft);
-			return;
+		const int& borderLeft = e.Style.Border.Left;
+		const int& borderTop = e.Style.Border.Top;
+		const int& borderRight = e.Style.Border.Right;
+		const int& borderBottom = e.Style.Border.Bottom;
+		const int& topLeftRadius = e.Style.Border.TopLeftRadius;
+		const int& topRightRadius = e.Style.Border.TopRightRadius;
+		const int& bottomRightRadius = e.Style.Border.BottomRightRadius;
+		const int& bottomLeftRadius = e.Style.Border.BottomLeftRadius;
+		//规则的矩形
+		if (topLeftRadius == 0 || topRightRadius == 0 && bottomLeftRadius == 0 && bottomRightRadius == 0) {
+			bool hasBorder = borderLeft || borderTop || borderRight || borderBottom;
+			if (!hasBorder) return;//边框为0不绘制
+			e.Graphics.SetColor(borderColor);
+			if (borderLeft > 0) {
+				e.Graphics.DrawLine(Point{ 0,0 }, Point{ 0,_rect.Height }, borderLeft);
+			}
+			if (borderTop > 0) {
+				e.Graphics.DrawLine(Point{ 0,0 }, Point{ _rect.Width,0 }, borderTop);
+			}
+			if (borderRight > 0) {
+				e.Graphics.DrawLine(Point{ _rect.Width,0 }, Point{ _rect.Width,_rect.Height }, borderRight);
+			}
+			if (borderBottom > 0) {
+				e.Graphics.DrawLine(Point{ 0,_rect.Height }, Point{ _rect.Width,_rect.Height }, borderBottom);
+			}
 		}
-		if (borderLeft > 0) {
-			e.Graphics.DrawLine(Point{ 0,0 }, Point{ 0,_rect.Height }, borderLeft);
-		}
-		if (borderTop > 0) {
-			e.Graphics.DrawLine(Point{ 0,0 }, Point{ _rect.Width,0 }, borderTop);
-		}
-		if (borderRight > 0) {
-			e.Graphics.DrawLine(Point{ _rect.Width,0 }, Point{ _rect.Width,_rect.Height }, borderRight);
-		}
-		if (borderBottom > 0) {
-			e.Graphics.DrawLine(Point{ 0,_rect.Height }, Point{ _rect.Width,_rect.Height }, borderBottom);
+		else {
+			int value1 = borderLeft > borderTop ? borderLeft : borderTop;
+			int value2 = borderRight > borderBottom ? borderRight : borderBottom;
+			int maxBorder = value1 > value2 ? value1 : value2;
+			e.Graphics.SetColor(borderColor);
+			Geometry rr(Rect(0, 0, Width(), Height()), topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
+			e.Graphics.DrawGeometry(rr.Get(), maxBorder);
 		}
 	}
 
@@ -690,20 +717,38 @@ Event(this , ##__VA_ARGS__); \
 		this->_lastDrawRect = _ClipRect;//记录最后一次绘制的区域
 		_rePaintMtx.unlock();
 
-
 		//设置绘制偏移
 		pt.SetTransform(clientRect.X, clientRect.Y);
 
 		args.OffSetPoint.push_back(Point(clientRect.X, clientRect.Y));
 
-		int r = GetRadius();
-		//bool isScrollBar = dynamic_cast<EzUI::ScrollBar*>(this);
-		//r = isScrollBar ? 0 : r;//因为滚动条是不需要有圆角的
-
+		//对样式进行预获取
+		args.Style.BackgroundColor = GetBackgroundColor();
+		args.Style.BackgroundImage = GetBackgroundImage();
+		args.Style.ForeColor = GetForeColor();
+		args.Style.ForeImage = GetForeImage();
+		args.Style.FontFamily = GetFontFamily();
+		args.Style.FontSize = GetFontSize();
+		args.Style.Border.Left = GetBorderLeft();
+		args.Style.Border.Top = GetBorderTop();
+		args.Style.Border.Right = GetBorderRight();
+		args.Style.Border.Bottom = GetBorderBottom();
+		args.Style.Border.TopLeftRadius = GetBorderTopLeftRadius();
+		args.Style.Border.TopRightRadius = GetBorderTopRightRadius();
+		args.Style.Border.BottomRightRadius = GetBorderBottomRightRadius();
+		args.Style.Border.BottomLeftRadius = GetBorderBottomLeftRadius();
+		args.Style.Border.Color = GetBorderColor();
+		//缓存border信息 因为子控件会覆盖掉此信息
+		Border cacheBorder = args.Style.Border;
+		const int& topLeft = args.Style.Border.TopLeftRadius;
+		const int& topRight = args.Style.Border.TopRightRadius;
+		const int& bottomRight = args.Style.Border.BottomRightRadius;
+		const int& bottomLeft = args.Style.Border.BottomLeftRadius;
+		bool hasRadius = topLeft || topRight || bottomRight || bottomLeft;
 #if USED_Direct2D
-		if (r > 0) {
+		if (hasRadius) {
 			//处理圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分) 带抗锯齿
-			Geometry roundRect(0, 0, clientRect.Width, clientRect.Height, r);
+			Geometry roundRect(Rect(0, 0, clientRect.Width, clientRect.Height), topLeft, topRight, bottomRight, bottomLeft);
 			Geometry _clientRect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height);
 			Geometry outClipRect;
 			Geometry::Intersect(outClipRect, roundRect, _clientRect);
@@ -722,8 +767,8 @@ Event(this , ##__VA_ARGS__); \
 		if (!isIntercept) {
 			this->OnPaint(args);//绘制基本上下文
 		}
-
-		this->OnChildPaint(args);//绘制子控件
+		//绘制子控件
+		this->OnChildPaint(args);
 		//绘制滚动条
 		EzUI::ScrollBar* scrollbar = NULL;
 		if (scrollbar = this->GetScrollBar()) {
@@ -735,6 +780,8 @@ Event(this , ##__VA_ARGS__); \
 		}
 		//设置偏移
 		pt.SetTransform(clientRect.X, clientRect.Y);
+		//复制边框信息 因为此时边框信息已经被子控件覆盖
+		::memcpy(&args.Style.Border, &cacheBorder, sizeof(cacheBorder));
 		//绘制边框
 		this->OnBorderPaint(args);//绘制边框
 		args.OffSetPoint.pop_back();

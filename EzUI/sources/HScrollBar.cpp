@@ -50,7 +50,7 @@ namespace EzUI {
 		if (_sliderWidth >= Width()) {
 			return;
 		}
-		e.Graphics.SetColor(GetBackgroundColor());
+		e.Graphics.SetColor(e.Style.BackgroundColor);
 		e.Graphics.FillRectangle(Rect{ 0,0,Width(),Height() });
 	}
 
@@ -73,8 +73,8 @@ namespace EzUI {
 			sliderRect.Width = 1;
 		}
 		//»æÖÆ»¬¿é
-		args.Graphics.SetColor(GetForeColor(this->State));
-		args.Graphics.FillRectangle(sliderRect, GetRadius());
+		args.Graphics.SetColor(args.Style.ForeColor);
+		args.Graphics.FillRectangle(sliderRect, args.Style.Border.TopLeftRadius);
 	}
 
 	void HScrollBar::OnMouseDown(MouseButton mBtn, const Point& point) {

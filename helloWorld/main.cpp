@@ -107,13 +107,12 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
 	TextBox text(&mainLayout);
 	//text.SetFixedSize({ 100,50 });
-	text.Style.SetBorder(Color::Gray, 1);
+	text.Style.Border.Color = Color::Gray;
+	text.Style.Border = 1;
 	text.SetMultiLine(true);
 	text.Margin.Left = 20;
 	text.Margin.Right = 20;
-	text.Style.Radius = 261;
-
-
+	text.Style.Border.Radius = 261;
 
 	text.SetText(L"啊撒旦艰苦换个房间看电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方式但是几乎都是复活节过段时间韩国");
 	//text.HoverStyle.FontSize = 50;

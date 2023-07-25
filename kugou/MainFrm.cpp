@@ -1,13 +1,14 @@
 #include "MainFrm.h"
 #define refreshImage WM_UIMESSAGE+1
 #include "ComBox.h"
-MainFrm::MainFrm() :BorderlessWindow(1020, 690)
+MainFrm::MainFrm() :Window(1020, 690)
 {
 	InitForm();
 	ntfi.SetText(L"GameTool");
 
 	TextBox* textArea = new TextBox;
-	textArea->Style.SetBorder(Color::White, 1);
+	textArea->Style.Border=1;
+	textArea->Style.Border.Color = Color::White;
 	textArea->Style.FontSize = 20;
 	textArea->Style.BackgroundColor = Color::White;
 	textArea->SetLocation({ 100, 0 });
@@ -63,13 +64,13 @@ void MainFrm::InitForm() {
 	//美化左侧本地列表的滚动条
 	localList->GetScrollBar()->Name = "testBar";
 	localList->GetScrollBar()->SetWidth(9);
-	localList->GetScrollBar()->Style.Radius = 9;
+	localList->GetScrollBar()->Style.Border.Radius = 9;
 	localList->GetScrollBar()->Style.BackgroundColor = Color(50, 200, 200, 200);
 	localList->GetScrollBar()->Style.ForeColor = Color(217, 217, 217);
 	localList->GetScrollBar()->ActiveStyle.ForeColor = Color(191, 191, 191);
 	//美化搜索列表的滚动条
 	searchList->GetScrollBar()->SetWidth(9);
-	searchList->GetScrollBar()->Style.Radius = 9;
+	searchList->GetScrollBar()->Style.Border.Radius = 9;
 	searchList->GetScrollBar()->Style.BackgroundColor = Color(50, 200, 200, 200);
 	searchList->GetScrollBar()->Style.ForeColor = Color(250, 200, 200, 200);
 	searchList->GetScrollBar()->ActiveStyle.ForeColor = Color(250, 200, 200, 200);
@@ -502,8 +503,8 @@ void MainFrm::NextPage(int a, int b) {
 }
 void  MainFrm::SongView() {
 	centerLeft->Style.BackgroundColor = Color(0, 0, 0, 0);
-	tools->Style.BorderBottom = 1;
-	tools->Style.BorderColor = Color(238, 238, 238);
+	tools->Style.Border.Bottom = 1;
+	tools->Style.Border.Color = Color(238, 238, 238);
 	main->Style.BackgroundImage = NULL;
 	localList->GetScrollBar()->Style.BackgroundColor = Color(50, 200, 200, 200);
 	localList->GetScrollBar()->Style.ForeColor = Color(217, 217, 217);
@@ -514,8 +515,8 @@ void  MainFrm::SongView() {
 }
 void  MainFrm::LrcView() {
 	centerLeft->Style.BackgroundColor = Color(100, 200, 200, 200);
-	tools->Style.BorderBottom = 1;
-	tools->Style.BorderColor = Color(238, 238, 238);
+	tools->Style.Border.Bottom = 1;
+	tools->Style.Border.Color = Color(238, 238, 238);
 	localList->GetScrollBar()->Style.BackgroundColor = Color(50, 200, 200, 200);
 	localList->GetScrollBar()->Style.ForeColor = Color(100, 255, 255, 255);
 	localList->GetScrollBar()->ActiveStyle.ForeColor = Color(150, 255, 255, 255);

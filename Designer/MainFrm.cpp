@@ -13,8 +13,8 @@ MainFrm::MainFrm(int width, int height) :Window(width, height)
 	umg->SetupUI(ui);
 
 	left.SetFixedWidth(150);
-	left.Style.BorderRight = 1;
-	left.Style.BorderColor = Color::Gray;
+	left.Style.Border.Right = 1;
+	left.Style.Border.Color = Color::Gray;
 	//left.Style.BackgroundColor = Color::Pink;
 
 	std::list<EString> controlList;
@@ -40,8 +40,8 @@ MainFrm::MainFrm(int width, int height) :Window(width, height)
 
 
 	right.SetFixedWidth(200);
-	right.Style.BorderLeft = 1;
-	right.Style.BorderColor = Color::Gray;
+	right.Style.Border.Left = 1;
+	right.Style.Border.Color = Color::Gray;
 
 	mainLayout.AddControl(&left);
 	mainLayout.AddControl(new Spacer);

@@ -95,7 +95,7 @@ namespace EzUI {
 	};
 	class UI_EXPORT Geometry
 	{
-	public:
+	protected:
 		bool Ref = false;
 		ID2D1Geometry* rgn = NULL;
 	protected:
@@ -112,14 +112,11 @@ namespace EzUI {
 			Copy(_right);
 			return *this;
 		}
-		Geometry(int x, int y, int width, int height) {
-			D2D_RECT_F rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) };
-			D2D::g_Direct2dFactory->CreateRectangleGeometry(rectF, (ID2D1RectangleGeometry**)&rgn);
-		}
-		Geometry(int x, int y, int width, int height, int _radius) {
-			float radius = GetMaxRadius(width, height, (float)_radius);
-			D2D1_ROUNDED_RECT rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) ,radius ,radius };
-			D2D::g_Direct2dFactory->CreateRoundedRectangleGeometry(rectF, (ID2D1RoundedRectangleGeometry**)&rgn);
+		Geometry(int x, int y, int width, int height);
+		Geometry(int x, int y, int width, int height, int _radius);
+		Geometry(const Rect& _rect, int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius);
+		ID2D1Geometry* Get() const {
+			return rgn;
 		}
 		virtual ~Geometry() {
 			if (rgn && !Ref) {
@@ -286,7 +283,10 @@ namespace EzUI {
 		void FillEllipse(const Point& point, int radiusX, int radiusY);
 		void DrawPoint(const Point& pt);
 		void DrawArc(const Rect& rect, int startAngle, int sweepAngle, int width = 1);//未实现
-		void DrawArc(const Point& point1, const  Point& point2, const Point& point3, int width = 1);//绘制弧线 未实现
+		void DrawArc(const Point& point1, const  Point& point2, const Point& point3, int width = 1);
+		void DrawGeometry(ID2D1Geometry* path, int width);
+		void FillGeometry(ID2D1Geometry* path, int width);
+		//绘制弧线 未实现
 		void DrawPath(const DXPath& path, int width = 1);//绘制path 未实现
 		void FillPath(const DXPath& path);//填充Path 未实现
 		ID2D1DCRenderTarget* Get();//获取原生DX对象

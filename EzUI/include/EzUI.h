@@ -8,6 +8,7 @@
 namespace EzUI {
 	struct MonitorInfo;
 	class EventArgs;
+	class ControlStyle;
 	class Control;
 	class Spacer;
 	class ScrollBar;
@@ -276,7 +277,7 @@ namespace EzUI {
 	public:
 		MouseEventArgs() {}
 		virtual ~MouseEventArgs() {}
-		MouseEventArgs(const Event& eventType, const Point& location = Point(0, 0), const MouseButton& mouseButton = MouseButton::None, const short& delta = 0,int rollCount=0) {
+		MouseEventArgs(const Event& eventType, const Point& location = Point(0, 0), const MouseButton& mouseButton = MouseButton::None, const short& delta = 0, int rollCount = 0) {
 			this->EventType = eventType;
 			this->Button = mouseButton;
 			this->Delta = delta;
@@ -323,10 +324,32 @@ namespace EzUI {
 			this->EventType = Event::OnRect;
 		}
 	};
+
+	class UI_EXPORT ControlStyle {
+	public:
+		EzUI::Border Border;//边框信息
+		//UI_Float Opacity;//整体不透明度
+		Color BackgroundColor = 0;//背景颜色
+		Image* BackgroundImage = NULL;//背景图片 如果指定的图片被删除 请必须将此置零
+		Image* ForeImage = NULL;//前景图片 如果指定的图片被删除 请必须将此置零
+		EString FontFamily;//字体名称 具有继承性
+		int FontSize = 0;//字体大小 具有继承性
+		Color ForeColor;//前景颜色  具有继承性
+		HCURSOR Cursor = NULL;//鼠标样式
+	private:
+		void operator=(const ControlStyle& right) {} //禁止直接赋值 因为这样会导致 Color执行拷贝使得Color变得不合法的有效
+		ControlStyle(const ControlStyle& right) {} //禁止拷贝 
+	public:
+		ControlStyle() {}
+		virtual ~ControlStyle() {}
+		void SetStyleSheet(const EString& styleStr, const std::function<void(Image*)>& callback = NULL);
+		void SetStyle(const EString& key, const EString& value, const std::function<void(Image*)>& callback = NULL);
+	};
 	// 摘要: 
 	// 为 OnPaint 事件提供数据。
 	class PaintEventArgs :public EventArgs {
 	public:
+		ControlStyle Style;//预提取的样式
 		std::list<Point> OffSetPoint;//用于记录每次绘制控件的偏移位置
 		PaintEventArgs(const PaintEventArgs&) = delete;
 		PaintEventArgs& operator=(const PaintEventArgs&) = delete;
@@ -345,7 +368,7 @@ namespace EzUI {
 	typedef std::list<Control*>::iterator ControlIterator;//
 	typedef std::function<void(Control*, const Point&)> EventMouseMove;  //移动事件
 	typedef std::function<void(Control*, const Point&)> EventMouseEnter;//移入事件
-	typedef std::function<void(Control*,int, short, const Point&)> EventMouseWheel;//滚轮事件
+	typedef std::function<void(Control*, int, short, const Point&)> EventMouseWheel;//滚轮事件
 	typedef std::function<void(Control*)> EventMouseLeave;//鼠标离开事件
 	typedef std::function<void(Control*, MouseButton, const Point&)> EventMouseDown; //鼠标按下事件
 	typedef std::function<void(Control*, MouseButton, const Point&)> EventMouseUp;//鼠标抬起
@@ -358,32 +381,6 @@ namespace EzUI {
 	typedef std::function<void(PaintEventArgs&)> EventPaint;//绘制
 	typedef std::function<void(EString)> EventTextChange;//文字变更事件
 
-	class UI_EXPORT ControlStyle {
-	public:
-		//UI_Float Opacity;//整体不透明度
-		int Radius = 0;//圆角系数
-		int BorderLeft = 0;//左边边框
-		int BorderTop = 0;//顶部边框
-		int BorderRight = 0;//右边边框
-		int BorderBottom = 0;//底部边框
-		Color BorderColor = 0;//边框颜色
-		Color BackgroundColor = 0;//背景颜色
-		Image* BackgroundImage = NULL;//背景图片 如果指定的图片被删除 请必须将此置零
-		Image* ForeImage = NULL;//前景图片 如果指定的图片被删除 请必须将此置零
-		EString FontFamily;//字体名称 具有继承性
-		int FontSize = 0;//字体大小 具有继承性
-		Color ForeColor;//前景颜色  具有继承性
-		HCURSOR Cursor = NULL;//鼠标样式
-	private:
-		void operator=(const ControlStyle& right) {} //禁止直接赋值 因为这样会导致 Color执行拷贝使得Color变得不合法的有效
-		ControlStyle(const ControlStyle& right) {} //禁止拷贝 
-	public:
-		ControlStyle() {}
-		virtual ~ControlStyle() {}
-		void SetBorder(const Color& color, int width);
-		void SetStyleSheet(const EString& styleStr, const std::function<void(Image*)>& callback = NULL);
-		void SetStyle(const EString& key, const EString& value, const std::function<void(Image*)>& callback = NULL);
-	};
 	class UI_EXPORT IControl {
 	private:
 		Attributes _attrs;
@@ -411,15 +408,17 @@ namespace EzUI {
 	};
 	namespace Debug {
 		template<typename ...T>
-		inline void Log(const EString& formatStr, T ...args) {
-#ifdef DEBUGLOG
+		inline EString Log(const EString& formatStr, T ...args) {
+			//#ifdef DEBUGLOG
 			char buf[1025]{ 0 };
 			auto count = sprintf_s((buf), 1024, formatStr.c_str(), std::forward<T>(args)...);
 			buf[count] = '\n';
 			buf[count + 1] = 0;
 			auto wstr = EString(buf).utf16();
 			OutputDebugStringW(wstr.c_str());
-#endif
+			return buf;
+			//#endif
+			return "";
 		}
 	};
 };

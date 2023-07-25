@@ -16,7 +16,7 @@ namespace EzUI {
 		Size _lastSize;//上一次大小
 		Rect _lastDrawRect;//最后一次显示的位置
 		int _eventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnKeyChar | Event::OnKeyDown | Event::OnKeyUp;//默认添加到主窗口通知函数中可拦截
-		std::mutex _rePaintMtx;
+		std::mutex _rePaintMtx;//避免多线程中调用Invalidate()的问题
 		Control(const Control&) = delete;
 		Control& operator=(const Control&) = delete;
 		bool IsRePaint();//是否需要重绘
@@ -118,25 +118,29 @@ namespace EzUI {
 		void RemoveEventNotify(int eventType);//移除一个主窗口的Ontify消息
 		virtual ScrollBar* GetScrollBar();//获取控件的滚动条
 		virtual int MoveScroll(int offset);//操作滚动条进行偏移滚动
-	public:
-		Control();
-		Control(Control* parent);
-		virtual ~Control();
-		void DestroySpacers();//销毁控件内所有弹簧
+	private:
 		//普通样式
-		int GetRadius(ControlState _state = ControlState::None);
+		int GetBorderTopLeftRadius(ControlState _state = ControlState::None);
+		int GetBorderTopRightRadius(ControlState _state = ControlState::None);
+		int GetBorderBottomRightRadius(ControlState _state = ControlState::None);
+		int GetBorderBottomLeftRadius(ControlState _state = ControlState::None);
 		int GetBorderLeft(ControlState _state = ControlState::None);
 		int GetBorderTop(ControlState _state = ControlState::None);
 		int GetBorderRight(ControlState _state = ControlState::None);
 		int GetBorderBottom(ControlState _state = ControlState::None);
+		Color GetBorderColor(ControlState _state = ControlState::None);
 		Image* GetForeImage(ControlState _state = ControlState::None);
 		Image* GetBackgroundImage(ControlState _state = ControlState::None);
-		Color GetBorderColor(ControlState _state = ControlState::None);
 		Color GetBackgroundColor(ControlState _state = ControlState::None);
 		//具有继承性样式
 		Color GetForeColor(ControlState _state = ControlState::None);//获取默认控件状态下前景色
 		EString GetFontFamily(ControlState _state = ControlState::None);//获取默认控件状态下字体Family
 		int GetFontSize(ControlState _state = ControlState::None);//获取默认控件状态下字体大小样式
+	public:
+		Control();
+		Control(Control* parent);
+		virtual ~Control();
+		void DestroySpacers();//销毁控件内所有弹簧
 		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::Static);//
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性
 		Controls& GetControls();//获取当前所有子控件
@@ -196,7 +200,7 @@ namespace EzUI {
 		void AddControl(Control* ctl) {};
 		ControlIterator RemoveControl() {};
 	public:
-		//所属者 当所属者被移除或者被释放掉 请注意将此值清除
+		//所属者 当所属者被移除或者被释放掉 请注意将此指针置零
 		Control* OWner = NULL;
 	public:
 		virtual void Move(double pos) = 0;

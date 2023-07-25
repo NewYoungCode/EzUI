@@ -2,12 +2,13 @@
 namespace EzUI {
 	void ComBox::Init()
 	{
-		Style.BorderColor = Color(239, 239, 239);
+		Style.Border.Color = Color(239, 239, 239);
 		Style.BackgroundColor = Color::White;
-		Style.SetBorder(Color(239, 239, 239), 1);
-		Style.Radius = 2;
+		Style.Border = 1;
+		Style.Border.Color = Color(239, 239, 239);
+		Style.Border.Radius = 2;
 		vlist.Style.BackgroundColor = Color::White;
-		vlist.GetScrollBar()->Style.Radius = 5;
+		vlist.GetScrollBar()->Style.Border.Radius = 5;
 		vlist.GetScrollBar()->SetFixedWidth(5);
 
 		this->AddControl(&edit);

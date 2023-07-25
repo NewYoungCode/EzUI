@@ -247,13 +247,6 @@ namespace EzUI {
 			::DeleteBitmap(_bitmap);
 		}
 	}
-	void ControlStyle::SetBorder(const Color& color, int width) { //¶ÔËùÓÐborderÓÐÐ§
-		BorderColor = color;
-		BorderLeft = width;//×ó±ß±ß¿ò
-		BorderTop = width;//¶¥²¿±ß¿ò
-		BorderRight = width;//ÓÒ±ß±ß¿ò
-		BorderBottom = width;//µ×²¿±ß¿ò
-	}
 	void ControlStyle::SetStyleSheet(const EString& styleStr, const std::function<void(Image*)>& callback)
 	{
 		auto attrs = styleStr.Split(";");
@@ -313,15 +306,31 @@ namespace EzUI {
 				break;
 			}
 			if (key == "border-color") {
-				style->BorderColor = Convert::StringToColor(value);
+				style->Border.Color = Convert::StringToColor(value);
 				break;
 			}
 			if (key == "color" || key == "fore-color") {
 				style->ForeColor = Convert::StringToColor(value);
 				break;
 			}
-			if (key == "radius" || key == "border-radius") {
-				style->Radius = std::stoi(value);
+			if (key == "border-radius") {
+				style->Border.Radius = std::stoi(value);
+				break;
+			}
+			if (key == "border-top-left-radius") {
+				style->Border.TopLeftRadius = std::stoi(value);
+				break;
+			}
+			if (key == "border-top-right-radius") {
+				style->Border.TopRightRadius = std::stoi(value);
+				break;
+			}
+			if (key == "border-bottom-right-radius") {
+				style->Border.BottomRightRadius = std::stoi(value);
+				break;
+			}
+			if (key == "border-bottom-left-radius") {
+				style->Border.BottomLeftRadius = std::stoi(value);
 				break;
 			}
 			if (key == "font-size") {
@@ -335,26 +344,26 @@ namespace EzUI {
 			}
 			if (key == "border") {
 				auto width = std::stoi(value);
-				style->BorderLeft = width;
-				style->BorderTop = width;
-				style->BorderRight = width;
-				style->BorderBottom = width;
+				style->Border.Left = width;
+				style->Border.Top = width;
+				style->Border.Right = width;
+				style->Border.Bottom = width;
 				break;
 			}
 			if (key == "border-left") {
-				style->BorderLeft = std::stoi(value);
+				style->Border.Left = std::stoi(value);
 				break;
 			}
 			if (key == "border-top") {
-				style->BorderTop = std::stoi(value);
+				style->Border.Top = std::stoi(value);
 				break;
 			}
 			if (key == "border-right") {
-				style->BorderRight = std::stoi(value);
+				style->Border.Right = std::stoi(value);
 				break;
 			}
 			if (key == "border-bottom") {
-				style->BorderBottom = std::stoi(value);
+				style->Border.Bottom = std::stoi(value);
 				break;
 			}
 		} while (false);

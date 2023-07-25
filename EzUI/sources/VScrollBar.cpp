@@ -43,7 +43,7 @@ namespace EzUI {
 		if (_sliderHeight >= Height()) {
 			return;
 		}
-		Color color = GetBackgroundColor();
+		const Color& color = e.Style.BackgroundColor;
 		if (color.GetValue() != 0) {
 			e.Graphics.SetColor(color);
 			e.Graphics.FillRectangle(Rect{ 0,0,Width(),Height() });
@@ -69,10 +69,10 @@ namespace EzUI {
 			sliderRect.Height = 1;
 		}
 		//»æÖÆ»¬¿é
-		Color color = GetForeColor();
+		const Color& color = args.Style.ForeColor;
 		if (color.GetValue() != 0) {
 			args.Graphics.SetColor(color);
-			args.Graphics.FillRectangle(sliderRect, GetRadius());
+			args.Graphics.FillRectangle(sliderRect, args.Style.Border.TopLeftRadius);
 		}
 	}
 
