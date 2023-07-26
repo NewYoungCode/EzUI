@@ -9,9 +9,12 @@ namespace EzUI {
 
 	void TileList::Init()
 	{
-		vScrollBar.SetHeight(Height());
-		vScrollBar.Parent = this;
-		vScrollBar.OWner = this;
+		this->GetScrollBar()->SetHeight(Height());
+		this->GetScrollBar()->Parent = this;
+		this->GetScrollBar()->OWner = this;
+		this->GetScrollBar()->OffsetCallback = [this](int offsetValue)->void {
+			this->Offset(offsetValue);
+		};
 	}
 
 	TileList::TileList()
@@ -29,24 +32,21 @@ namespace EzUI {
 	{
 		return &vScrollBar;
 	}
-
-	void TileList::RefreshScroll(const int& _contentHeight) {
-		if (AutoHeight) {
-			this->SetFixedHeight(_contentHeight);
-			vScrollBar.SetVisible(false);
-		}
-		else if (vScrollBar.IsVisible() == true) {
-			vScrollBar.SetVisible(true);
-		}
-		vScrollBar.SetMaxBottom(_contentHeight);
-	}
+	
 	void TileList::OnLayout()
 	{
 		_contentHeight = 0;
-		_contentHeight = MoveScroll(0);
-		RefreshScroll(_contentHeight);
+		_contentHeight = Offset(0);
+		if (AutoHeight) {
+			this->SetFixedHeight(_contentHeight);
+			this->GetScrollBar()->SetVisible(false);
+		}
+		else if (this->GetScrollBar()->IsVisible() == true) {
+			this->GetScrollBar()->SetVisible(true);
+		}
+		this->GetScrollBar()->RefreshContent(_contentHeight);
 	}
-	int TileList::MoveScroll(int offset) {
+	int TileList::Offset(int offset) {
 		_contentWidth = 0;
 		int _contentHeight = 0;
 		const int& maxWith = this->Width();

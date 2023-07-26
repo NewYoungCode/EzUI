@@ -10,14 +10,13 @@ namespace EzUI {
 		VScrollBar vScrollBar;
 		bool AutoHeight = false;//根据内容的高度自动变化
 		void Init();
+		 int Offset(int offset);
 	public:
 		TileList();
 		TileList(Control*parent);
 		virtual ~TileList();
 		virtual void Clear(bool freeList = false)override;
 		virtual void OnLayout()override;
-		virtual int MoveScroll(int offset)override;
-		virtual void RefreshScroll(const int& _maxBottom);
 		virtual ScrollBar* GetScrollBar()override;
 	};
 };

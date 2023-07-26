@@ -1,72 +1,45 @@
 #include "HScrollBar.h"
-
 namespace EzUI {
-
 	HScrollBar::HScrollBar() {}
 	HScrollBar::~HScrollBar() {}
-
-	void HScrollBar::SetMaxRight(int maxRight)
+	void HScrollBar::RefreshContent(int maxRight)
 	{
-
-		this->_maxRight = maxRight;
-		//计算滚动条相关
-		auto& rect = GetRect();
-		if (rect.Width >= _maxRight) {
-			_sliderWidth = rect.Width;
-		}
-		else {
-			//滑块高度
-			_sliderWidth = (int)(rect.Width * 1.0 * rect.Width / _maxRight);
-		}
-		Move(sliderX);
+		this->_contentLength = maxRight;
+		Move(_sliderPos);
 	}
 	bool HScrollBar::IsDraw()
 	{
-		if (_sliderWidth >= Width()) {
+		if (_sliderLength >= Width()) {
 			return false;
 		}
 		return this->IsVisible();
 	}
-	int HScrollBar::RollingTotal()
-	{
-		auto sliderRect = GetSliderRect();
-		return Width() - _sliderWidth;
-	}
-
-	int HScrollBar::RollingCurrent()
-	{
-		return (int)sliderX;
-	}
-
 	Rect HScrollBar::GetSliderRect() {
 		Rect sliderRect(0, 0, Width(), Height());
-		sliderRect.X = (INT)sliderX;
+		sliderRect.X = (INT)_sliderPos;
 		sliderRect.Y = 0;
-		sliderRect.Width = _sliderWidth;
+		sliderRect.Width = _sliderLength;
 		return sliderRect;
 	}
-
 	void HScrollBar::OnBackgroundPaint(PaintEventArgs& e) {
-		if (_sliderWidth >= Width()) {
+		if (_sliderLength >= Width()) {
 			return;
 		}
 		e.Graphics.SetColor(e.Style.BackgroundColor);
 		e.Graphics.FillRectangle(Rect{ 0,0,Width(),Height() });
 	}
-
 	void HScrollBar::OwnerSize(const Size& OWnerSize) {
 		if (this->Parent == this->OWner) {
 			this->SetRect({ 0,OWnerSize.Height - this->Height(),OWnerSize.Width,Height() });
 		}
 	}
-	
 	void HScrollBar::OnForePaint(PaintEventArgs& args)
 	{
 		//滑块rect
 		Rect sliderRect(0, 0, Width(), Height());
-		sliderRect.X = (INT)sliderX;
-		sliderRect.Width = _sliderWidth;
-		if (_sliderWidth >= Width()) {
+		sliderRect.X = (INT)_sliderPos;
+		sliderRect.Width = _sliderLength;
+		if (_sliderLength >= Width()) {
 			return;
 		}
 		if (sliderRect.Width <= 0) {
@@ -76,69 +49,67 @@ namespace EzUI {
 		args.Graphics.SetColor(args.Style.ForeColor);
 		args.Graphics.FillRectangle(sliderRect, args.Style.Border.TopLeftRadius);
 	}
-
 	void HScrollBar::OnMouseDown(MouseButton mBtn, const Point& point) {
 		__super::OnMouseDown(mBtn, point);
-		Rect sliderRect((INT)sliderX, 0, _sliderWidth, Width());
-		if (_sliderWidth == Width()) { return; }
+		Rect sliderRect((INT)_sliderPos, 0, _sliderLength, Width());
+		if (_sliderLength == Width()) { return; }
 		if (mBtn == MouseButton::Left && sliderRect.Contains({ point.X,point.Y })) {
-			mouseDown = true;
-			this->pointX = point.X;
+			_mouseDown = true;
+			this->_lastPoint = point.X;
 		}
 	}
-	void HScrollBar::OnMouseUp(MouseButton mBtn, const Point& point)
-	{
-		__super::OnMouseUp(mBtn, point);
-		mouseDown = false;
-	}
-
-	void HScrollBar::OnMouseLeave()
-	{
-		__super::OnMouseLeave();
-		mouseDown = false;
-	}
-
 	void HScrollBar::OnMouseMove(const Point& point)
 	{
 		__super::OnMouseMove(point);
-		if (mouseDown) {
-			int offsetX = point.X - this->pointX;
-			sliderX += offsetX;
-			pointX = point.X;
-			Move(sliderX);
+		if (_mouseDown) {
+			int offsetX = point.X - this->_lastPoint;
+			_sliderPos += offsetX;
+			_lastPoint = point.X;
+			Move(_sliderPos);
 		}
 	}
-
 	void HScrollBar::Move(double posY) {
-		if (OWner == NULL) {
+		if (OWner == NULL || _contentLength <= 0) {
+			_sliderLength = Width();
 			return;
 		}
 		OWner->ResumeLayout();
-		sliderX = posY;
-
-		if (sliderX <= 0) { //滑块在顶部
-			sliderX = 0;
+		//计算滚动条滑块相关
+		auto& rect = GetRect();
+		if (rect.Width >= _contentLength) {
+			_sliderLength = rect.Width;
 		}
-		if (sliderX + _sliderWidth >= GetRect().Width) { //滑块在最底部
-			sliderX = GetRect().Width - _sliderWidth;
+		else {
+			//滑块高度
+			_sliderLength = (int)(rect.Width * 1.0 * rect.Width / _contentLength);
 		}
-		int  distanceTotal = Width() - _sliderWidth;//当前滑块可用滑道的总距离
-		double rate = distanceTotal * 1.0 / (_maxRight - OWner->Width());//滑块可用总高度 / list item高度总和 * 当前滑块坐标的坐标
-		double offsetX = sliderX / rate;
+		//滚动条滑块pos
+		_sliderPos = posY;
+		if (_sliderPos <= 0) { //滑块在顶部
+			_sliderPos = 0;
+		}
+		if (_sliderPos + _sliderLength >= GetRect().Width) { //滑块在最底部
+			_sliderPos = GetRect().Width - _sliderLength;
+		}
+		int  distanceTotal = Width() - _sliderLength;//当前滑块可用滑道的总距离
+		double rate = distanceTotal * 1.0 / (_contentLength - OWner->Width());//滑块可用总高度 / list item高度总和 * 当前滑块坐标的坐标
+		double offsetX = _sliderPos / rate;
 		if (distanceTotal > 0) {
 			int x = offsetX + 0.5;
 			x = -x;
-			OWner->MoveScroll(x);
+			if (OffsetCallback) {
+				OffsetCallback(x);
+			}
 			OWner->Invalidate();
 			//OWner->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
 			if (Rolling) {
-				Rolling(RollingCurrent(), RollingTotal());
+				Rolling(_sliderPos, Width() - _sliderLength);
 			}
 		}
 	}
 	void HScrollBar::OnMouseWheel(int rollCount, short zDelta, const Point& point) {
 		float offset = rollCount;
-		sliderX += (zDelta > 0 ? -offset : offset);
-		Move(sliderX);
+		_sliderPos += (zDelta > 0 ? -offset : offset);
+		Move(_sliderPos);
 	}
 };

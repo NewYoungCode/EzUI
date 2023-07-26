@@ -3,9 +3,12 @@
 namespace EzUI {
 	void HList::Init()
 	{
-		hScrollBar.SetWidth(Width());//滚动条宽度
-		hScrollBar.Parent = this;
-		hScrollBar.OWner = this;
+		this->GetScrollBar()->SetWidth(Width());//滚动条宽度
+		this->GetScrollBar()->Parent = this;
+		this->GetScrollBar()->OWner = this;
+		this->GetScrollBar()->OffsetCallback = [this](int offsetValue)->void {
+			this->Offset(offsetValue);
+		};
 	}
 	HList::HList()
 	{
@@ -20,8 +23,14 @@ namespace EzUI {
 	}
 	void HList::OnLayout() {
 		_contentWidth = 0;
-		_contentWidth = MoveScroll(0);
-		RefreshScroll(_contentWidth);
+		_contentWidth = Offset(0);
+		if (AutoWidth) {
+			this->GetScrollBar()->SetVisible(false);
+		}
+		else if (this->GetScrollBar()->IsVisible() == true) {
+			this->GetScrollBar()->SetVisible(true);
+		}
+		this->GetScrollBar()->RefreshContent(_contentWidth);
 		if (AutoWidth && this->Width() != _contentWidth) {
 			this->SetFixedWidth(_contentWidth);
 			if (Parent) {
@@ -39,20 +48,12 @@ namespace EzUI {
 		__super::SetAttribute(attrName, attrValue);
 	}
 
-	void HList::RefreshScroll(const int& _contentWidth) {
-		if (AutoWidth) {
-			hScrollBar.SetVisible(false);
-		}
-		else if (hScrollBar.IsVisible() == true) {
-			hScrollBar.SetVisible(true);
-		}
-		hScrollBar.SetMaxRight(_contentWidth);
-	}
+
 	ScrollBar* HList::GetScrollBar()
 	{
 		return &hScrollBar;
 	}
-	int HList::MoveScroll(int offset) {
+	int HList::Offset(int offset) {
 		_contentHeight = 0;
 		int _contentWidth = offset;
 		for (auto& it : GetControls()) {

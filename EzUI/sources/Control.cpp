@@ -430,13 +430,13 @@ Event(this , ##__VA_ARGS__); \
 	{
 		return _fixedSize.Height;
 	}
-	int Control::ContentWidth()
+	int Control::GetContentWidth()
 	{
-		return 0;
+		return _contentWidth;
 	}
-	int Control::ContentHeight()
+	int Control::GetContentHeight()
 	{
-		return 0;
+		return _contentHeight;
 	}
 	bool Control::CheckEventPassThrough(const Event& eventType)
 	{
@@ -1047,10 +1047,6 @@ Event(this , ##__VA_ARGS__); \
 	ScrollBar* Control::GetScrollBar()
 	{
 		return NULL;
-	}
-	int Control::MoveScroll(int offset)
-	{
-		return 0;
 	}
 	bool Control::IsRePaint() {
 		/* //缓存方式,此方式可能会造成样式残留

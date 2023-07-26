@@ -1,7 +1,7 @@
 #include "MainFrm.h"
 #define refreshImage WM_UIMESSAGE+1
 #include "ComBox.h"
-MainFrm::MainFrm() :Window(1020, 690)
+MainFrm::MainFrm() :BorderlessWindow(1020, 690)
 {
 	InitForm();
 	ntfi.SetText(L"GameTool");
@@ -308,7 +308,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 					it->SetAttribute("SingerName", SingerName);
 					localList->AddControl(it);
 					localList->ResumeLayout();
-					localList->GetScrollBar()->Move(localList->GetScrollBar()->RollingTotal());
+					localList->GetScrollBar()->Move(localList->GetContentHeight());
 					localList->Invalidate();
 
 					cfg->WriteValue("name", tag->SongName, hash);

@@ -98,8 +98,8 @@ namespace EzUI {
 		void SetFixedHeight(const int& fixedHeight);//设置绝对高度
 		const int& GetFixedWidth();//获取绝对宽度
 		const int& GetFixedHeight();//获取绝对高度
-		virtual int ContentWidth();//上下文宽度
-		virtual int ContentHeight();//上下文高度
+		virtual int GetContentWidth();//上下文宽度
+		virtual int GetContentHeight();//上下文高度
 		virtual const Rect& GetRect();//获取相对与父控件矩形 布局计算后
 		Rect GetClientRect();//获取基于客户端的矩形
 		const DockStyle& GetDockStyle();//获取dock标志
@@ -117,7 +117,6 @@ namespace EzUI {
 		void AddEventNotify(int eventType);//添加到主窗口Ontify函数中可拦截
 		void RemoveEventNotify(int eventType);//移除一个主窗口的Ontify消息
 		virtual ScrollBar* GetScrollBar();//获取控件的滚动条
-		virtual int MoveScroll(int offset);//操作滚动条进行偏移滚动
 	private:
 		//普通样式
 		int GetBorderTopLeftRadius(ControlState _state = ControlState::None);
@@ -199,14 +198,37 @@ namespace EzUI {
 		//滚动条不允许再出现子控件
 		void AddControl(Control* ctl) {};
 		ControlIterator RemoveControl() {};
+	protected:
+		//鼠标是否已经按下
+		bool _mouseDown = false;
+		//上一次鼠标命中的坐标
+		int  _lastPoint = 0;
+		//滚动内容的长度
+		int _contentLength = 0;
+		// 滚动条当前的坐标
+		double _sliderPos = 0;
+		// 滚动条的长度
+		int _sliderLength = 0;
 	public:
 		//所属者 当所属者被移除或者被释放掉 请注意将此指针置零
 		Control* OWner = NULL;
+		//滚动条计算出偏移之后的回调函数
+		std::function<void(int)> OffsetCallback = NULL;
+	protected:
+		virtual void OnMouseUp(MouseButton mBtn, const Point& point)override
+		{
+			__super::OnMouseUp(mBtn, point);
+			_mouseDown = false;
+		}
+		virtual void OnMouseLeave() override
+		{
+			__super::OnMouseLeave();
+			_mouseDown = false;
+		}
 	public:
+		virtual void RefreshContent(int maxContent) = 0;
 		virtual void Move(double pos) = 0;
 		virtual Rect GetSliderRect() = 0;//
-		virtual int RollingCurrent() = 0;
-		virtual int RollingTotal() = 0;//
 		virtual void OwnerSize(const Size& parentSize) = 0;
 		virtual bool IsDraw() = 0;//滚动条是否已经绘制且显示
 		EventScrollRolling Rolling = NULL;//滚动事件

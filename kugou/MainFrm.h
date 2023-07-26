@@ -9,7 +9,7 @@
 #include "LayeredWindow.h"
 #include "UIManager.h"
 class MainFrm :
-	public Window
+	public BorderlessWindow
 {
 private:
 	//no new

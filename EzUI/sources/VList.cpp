@@ -2,9 +2,12 @@
 namespace EzUI {
 	void VList::Init()
 	{
-		vScrollBar.SetHeight(Height());//滚动条宽度
-		vScrollBar.Parent = this;
-		vScrollBar.OWner = this;
+		this->GetScrollBar()->SetHeight(Height());//滚动条宽度
+		this->GetScrollBar()->Parent = this;
+		this->GetScrollBar()->OWner = this;
+		this->GetScrollBar()->OffsetCallback = [this](int offsetValue)->void {
+			this->Offset(offsetValue);
+		};
 	}
 	VList::VList()
 	{
@@ -18,11 +21,17 @@ namespace EzUI {
 	{
 	}
 	void VList::OnLayout() {
-		_contentWidth = 0;
-		_contentWidth = MoveScroll(0);
-		RefreshScroll(_contentWidth);
-		if (AutoHeight && this->Height() != _contentWidth) {
-			this->SetFixedHeight(_contentWidth);
+		_contentHeight = 0;
+		_contentHeight = Offset(0);
+		if (AutoHeight) {
+			this->GetScrollBar()->SetVisible(false);
+		}
+		else if (this->GetScrollBar()->IsVisible() == true) {
+			this->GetScrollBar()->SetVisible(true);
+		}
+		this->GetScrollBar()->RefreshContent(_contentHeight);
+		if (AutoHeight && this->Height() != _contentHeight) {
+			this->SetFixedHeight(_contentHeight);
 			if (Parent) {
 				Parent->Invalidate();
 			}
@@ -38,22 +47,12 @@ namespace EzUI {
 		__super::SetAttribute(attrName, attrValue);
 	}
 
-	void VList::RefreshScroll(const int& _maxBottom) {
-		if (AutoHeight) {
-			vScrollBar.SetVisible(false);
-		}
-		else if (vScrollBar.IsVisible() == true) {
-			vScrollBar.SetVisible(true);
-		}
-		vScrollBar.SetMaxBottom(_maxBottom);
-	}
-
 	ScrollBar* VList::GetScrollBar()
 	{
 		return &vScrollBar;
 	}
 
-	int VList::MoveScroll(int offset)
+	int VList::Offset(int offset)
 	{
 		_contentWidth = 0;
 		int	_maxBottom = offset;
