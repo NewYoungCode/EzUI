@@ -57,13 +57,13 @@ void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
 			if (LrcNow == &lrc)
 			{
 				arg.Graphics.SetColor(Color(211, 174, 87));
-				arg.Graphics.SetFont(arg.Style.FontFamily.utf16(), arg.Style.FontSize+3);
+				arg.Graphics.SetFont(GetFontFamily().utf16(),GetFontSize()+3);
 				arg.Graphics.DrawString( lrc.text.utf16(), rectangle, TextAlign::MiddleCenter);
 			}
 			else
 			{
-				arg.Graphics.SetColor(arg.Style.ForeColor);
-				arg.Graphics.SetFont(arg.Style.FontFamily.utf16(), arg.Style.FontSize);
+				arg.Graphics.SetColor(GetForeColor());
+				arg.Graphics.SetFont(GetFontFamily().utf16(), GetFontSize());
 				arg.Graphics.DrawString(lrc.text.utf16(), rectangle, TextAlign::MiddleCenter);
 			}
 		}

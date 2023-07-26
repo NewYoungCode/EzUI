@@ -154,11 +154,11 @@ namespace EzUI {
 		time_t ElapsedMilliseconds() {
 			auto end_t = std::chrono::system_clock::now();    //
 			std::chrono::duration<double> diff = end_t - beg_t;//
+			beg_t = end_t;
 			return std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//
 		}
 	};
 
-	extern size_t __count_onsize;
 
 	enum class LayoutState :byte {
 		None = 1, //无状态 (无需布局)
@@ -349,7 +349,6 @@ namespace EzUI {
 	// 为 OnPaint 事件提供数据。
 	class PaintEventArgs :public EventArgs {
 	public:
-		ControlStyle Style;//预提取的样式
 		std::list<Point> OffSetPoint;//用于记录每次绘制控件的偏移位置
 		PaintEventArgs(const PaintEventArgs&) = delete;
 		PaintEventArgs& operator=(const PaintEventArgs&) = delete;

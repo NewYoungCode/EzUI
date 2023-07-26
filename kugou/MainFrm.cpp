@@ -99,6 +99,8 @@ void MainFrm::InitForm() {
 		NextPage(a, b);
 	};
 
+	//localList->SetAutoHeight(true);
+
 	//忽略一些事件 可穿透父控件
 	playerBar2->MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseClick;
 	//创建启动一个实时获取歌曲进度以及状态

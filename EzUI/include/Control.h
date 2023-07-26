@@ -63,7 +63,7 @@ namespace EzUI {
 		virtual void OnChildPaint(PaintEventArgs& args);//子控件绘制 可以重载此函数优化鼠标操作性能
 		virtual void OnBackgroundPaint(PaintEventArgs& painter);//背景绘制
 		virtual void OnForePaint(PaintEventArgs& e);//前景绘制
-		virtual void OnBorderPaint(PaintEventArgs& painter);//边框绘制
+		virtual void OnBorderPaint(PaintEventArgs& painter,const Border&border);//边框绘制
 		virtual void OnLocation(const Point& pt);//坐标发生改变
 		virtual void OnSize(const Size& size) override;//大小发生改变
 		virtual void OnRect(const Rect& rect) override;
@@ -117,7 +117,7 @@ namespace EzUI {
 		void AddEventNotify(int eventType);//添加到主窗口Ontify函数中可拦截
 		void RemoveEventNotify(int eventType);//移除一个主窗口的Ontify消息
 		virtual ScrollBar* GetScrollBar();//获取控件的滚动条
-	private:
+	protected:
 		//普通样式
 		int GetBorderTopLeftRadius(ControlState _state = ControlState::None);
 		int GetBorderTopRightRadius(ControlState _state = ControlState::None);
@@ -233,7 +233,7 @@ namespace EzUI {
 		virtual bool IsDraw() = 0;//滚动条是否已经绘制且显示
 		EventScrollRolling Rolling = NULL;//滚动事件
 		ScrollBar() {
-			Style.ForeColor = Color(205, 205, 205);//the bar backgroundcolor
+			Style.ForeColor = Color(205, 205, 205);//the bar default backgroundcolor
 			SetSize({ 10,10 });
 		}
 		virtual ~ScrollBar() {}

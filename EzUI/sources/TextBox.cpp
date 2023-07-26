@@ -552,8 +552,8 @@ namespace EzUI {
 	}
 
 	void TextBox::OnForePaint(PaintEventArgs& e) {
-		std::wstring fontFamily = e.Style.FontFamily.utf16();
-		const int& fontSize = e.Style.FontSize;
+		std::wstring fontFamily =GetFontFamily().utf16();
+		const int& fontSize =GetFontSize();
 
 		if (font == NULL || ((font != NULL) && (font->GetFontFamily() != fontFamily || font->GetFontSize() != fontSize))) {
 			if (font != NULL) {
@@ -562,7 +562,7 @@ namespace EzUI {
 			font = new Font(fontFamily, fontSize);
 			Analysis();
 		}
-		const Color& fontColor = e.Style.ForeColor;
+		const Color& fontColor = GetForeColor();
 		e.Graphics.SetFont(fontFamily, fontSize);
 		if (text.empty()) {
 			byte r = fontColor.GetR() - 20;

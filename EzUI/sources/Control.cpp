@@ -95,33 +95,35 @@ Event(this , ##__VA_ARGS__); \
 
 	void Control::OnBackgroundPaint(PaintEventArgs& e)
 	{
-		const Color& backgroundColor = e.Style.BackgroundColor;
+		const Color& backgroundColor = this->GetBackgroundColor();
+		Image* backgroundImage = this->GetBackgroundImage();
 
 		if (backgroundColor.GetValue() != 0) {
 			e.Graphics.SetColor(backgroundColor);
 			e.Graphics.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height });
 		}
-		if (e.Style.BackgroundImage != NULL) {
-			e.Graphics.DrawImage(e.Style.BackgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, e.Style.BackgroundImage->SizeMode, e.Style.BackgroundImage->Padding);
+		if (backgroundImage != NULL) {
+			e.Graphics.DrawImage(backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage->SizeMode, backgroundImage->Padding);
 		}
 	}
 	void Control::OnForePaint(PaintEventArgs& e) {
-		if (e.Style.ForeImage) {
-			e.Graphics.DrawImage(e.Style.ForeImage, Rect{ 0,0,_rect.Width,_rect.Height }, e.Style.ForeImage->SizeMode, e.Style.ForeImage->Padding);
+		Image* foreImage = this->GetForeImage();
+		if (foreImage) {
+			e.Graphics.DrawImage(foreImage, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage->SizeMode, foreImage->Padding);
 		}
 	}
-	void Control::OnBorderPaint(PaintEventArgs& e)
+	void Control::OnBorderPaint(PaintEventArgs& e, const Border& border)
 	{
-		const Color& borderColor = e.Style.Border.Color;
+		const Color& borderColor = border.Color;
 		if (borderColor.GetValue() == 0) return;//边框无效颜色不绘制
-		const int& borderLeft = e.Style.Border.Left;
-		const int& borderTop = e.Style.Border.Top;
-		const int& borderRight = e.Style.Border.Right;
-		const int& borderBottom = e.Style.Border.Bottom;
-		const int& topLeftRadius = e.Style.Border.TopLeftRadius;
-		const int& topRightRadius = e.Style.Border.TopRightRadius;
-		const int& bottomRightRadius = e.Style.Border.BottomRightRadius;
-		const int& bottomLeftRadius = e.Style.Border.BottomLeftRadius;
+		const int& borderLeft = border.Left;
+		const int& borderTop = border.Top;
+		const int& borderRight = border.Right;
+		const int& borderBottom = border.Bottom;
+		const int& topLeftRadius = border.TopLeftRadius;
+		const int& topRightRadius = border.TopRightRadius;
+		const int& bottomRightRadius = border.BottomRightRadius;
+		const int& bottomLeftRadius = border.BottomLeftRadius;
 		//规则的矩形
 		if (topLeftRadius == 0 || topRightRadius == 0 && bottomLeftRadius == 0 && bottomRightRadius == 0) {
 			bool hasBorder = borderLeft || borderTop || borderRight || borderBottom;
@@ -554,7 +556,7 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::ResumeLayout()
 	{
-		if (this->_layoutState == LayoutState::Layouting) {
+		if (this->_layoutState == LayoutState::Layouting || this->_layoutState == LayoutState::None) {
 			return;
 		}
 		this->_layoutState = LayoutState::Layouting;//布局中
@@ -722,33 +724,21 @@ Event(this , ##__VA_ARGS__); \
 
 		args.OffSetPoint.push_back(Point(clientRect.X, clientRect.Y));
 
-		//对样式进行预获取
-		args.Style.BackgroundColor = GetBackgroundColor();
-		args.Style.BackgroundImage = GetBackgroundImage();
-		args.Style.ForeColor = GetForeColor();
-		args.Style.ForeImage = GetForeImage();
-		args.Style.FontFamily = GetFontFamily();
-		args.Style.FontSize = GetFontSize();
-		args.Style.Border.Left = GetBorderLeft();
-		args.Style.Border.Top = GetBorderTop();
-		args.Style.Border.Right = GetBorderRight();
-		args.Style.Border.Bottom = GetBorderBottom();
-		args.Style.Border.TopLeftRadius = GetBorderTopLeftRadius();
-		args.Style.Border.TopRightRadius = GetBorderTopRightRadius();
-		args.Style.Border.BottomRightRadius = GetBorderBottomRightRadius();
-		args.Style.Border.BottomLeftRadius = GetBorderBottomLeftRadius();
-		args.Style.Border.Color = GetBorderColor();
-		//缓存border信息 因为子控件会覆盖掉此信息
-		Border cacheBorder = args.Style.Border;
-		const int& topLeft = args.Style.Border.TopLeftRadius;
-		const int& topRight = args.Style.Border.TopRightRadius;
-		const int& bottomRight = args.Style.Border.BottomRightRadius;
-		const int& bottomLeft = args.Style.Border.BottomLeftRadius;
-		bool hasRadius = topLeft || topRight || bottomRight || bottomLeft;
+		//border信息
+		Border border;
+		border.Left = GetBorderLeft();
+		border.Top = GetBorderTop();
+		border.Right = GetBorderRight();
+		border.Bottom = GetBorderBottom();
+		border.TopLeftRadius = GetBorderTopLeftRadius();
+		border.TopRightRadius = GetBorderTopRightRadius();
+		border.BottomRightRadius = GetBorderBottomRightRadius();
+		border.BottomLeftRadius = GetBorderBottomLeftRadius();
+		bool hasRadius = border.TopLeftRadius || border.TopRightRadius || border.BottomRightRadius || border.BottomLeftRadius;
 #if USED_Direct2D
 		if (hasRadius) {
 			//处理圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分) 带抗锯齿
-			Geometry roundRect(Rect(0, 0, clientRect.Width, clientRect.Height), topLeft, topRight, bottomRight, bottomLeft);
+			Geometry roundRect(Rect(0, 0, clientRect.Width, clientRect.Height), border.TopLeftRadius, border.TopRightRadius, border.BottomRightRadius, border.BottomLeftRadius);
 			Geometry _clientRect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height);
 			Geometry outClipRect;
 			Geometry::Intersect(outClipRect, roundRect, _clientRect);
@@ -780,10 +770,9 @@ Event(this , ##__VA_ARGS__); \
 		}
 		//设置偏移
 		pt.SetTransform(clientRect.X, clientRect.Y);
-		//复制边框信息 因为此时边框信息已经被子控件覆盖
-		::memcpy(&args.Style.Border, &cacheBorder, sizeof(cacheBorder));
 		//绘制边框
-		this->OnBorderPaint(args);//绘制边框
+		border.Color = GetBorderColor();
+		this->OnBorderPaint(args, border);//绘制边框
 		args.OffSetPoint.pop_back();
 		pt.PopLayer();//弹出
 #ifdef DEBUGPAINT
@@ -1116,7 +1105,6 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::OnSize(const Size& size)
 	{
-		__count_onsize++;
 		this->TryPendLayout();//将自己挂起
 		if (Parent) {
 			Parent->TryPendLayout();//将父控件挂起
@@ -1124,9 +1112,7 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::OnRect(const Rect& rect)
 	{
-		if (Parent) {
-			Parent->TryPendLayout();
-		}
+
 	}
 	void Control::OnKillFocus(Control* control)
 	{

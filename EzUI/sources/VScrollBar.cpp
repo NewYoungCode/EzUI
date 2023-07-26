@@ -25,7 +25,7 @@ namespace EzUI {
 		if (_sliderLength >= Height()) {
 			return;
 		}
-		const Color& color = e.Style.BackgroundColor;
+		const Color& color = GetBackgroundColor();
 		if (color.GetValue() != 0) {
 			e.Graphics.SetColor(color);
 			e.Graphics.FillRectangle(Rect{ 0,0,Width(),Height() });
@@ -49,10 +49,10 @@ namespace EzUI {
 			sliderRect.Height = 1;
 		}
 		//绘制滑块
-		const Color& color = args.Style.ForeColor;
+		const Color& color = GetForeColor();
 		if (color.GetValue() != 0) {
 			args.Graphics.SetColor(color);
-			args.Graphics.FillRectangle(sliderRect, args.Style.Border.TopLeftRadius);
+			args.Graphics.FillRectangle(sliderRect,GetBorderTopLeftRadius());
 		}
 	}
 	void VScrollBar::OnMouseDown(MouseButton mBtn, const Point& point) {
@@ -79,7 +79,9 @@ namespace EzUI {
 			_sliderLength =Height();
 			return;
 		}
-		OWner->ResumeLayout();
+		if (OWner->IsPendLayout()) {
+			OWner->ResumeLayout();
+		}
 		//计算滚动条滑块相关
 		if (Height() >= _contentLength) {
 			_sliderLength = Height();

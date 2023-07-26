@@ -137,7 +137,6 @@ namespace EzUI {
 	{
 		::DestroyCursor(hCursor);
 	}
-	size_t __count_onsize = 0;
 
 	EBitmap::EBitmap(WORD width, WORD height, PixelFormat piexlFormat) {//默认24位不透明位图
 		biteCount = (byte)piexlFormat;

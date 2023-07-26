@@ -474,7 +474,7 @@ namespace EzUI {
 			auto zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
 			auto xPos = GET_X_LPARAM(lParam);
 			auto yPos = GET_Y_LPARAM(lParam);
-			//OnMouseWheel(zDelta, { xPos,yPos });
+			//OnMouseWheel(5, zDelta, { xPos,yPos });
 			OnMouseWheelSlower(zDelta, { xPos,yPos });
 			break;
 		}
@@ -504,6 +504,7 @@ namespace EzUI {
 		sprintf(buf, "OnPaint Count(%d) (%d,%d,%d,%d) %dms \n", args.PublicData->PaintCount, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, (int)sw.ElapsedMilliseconds());
 		OutputDebugStringA(buf);
 #endif // COUNT_ONPAINT
+
 #ifdef DEBUGPAINT
 		if (PublicData.Debug) {
 			graphics.SetColor(Color::Red);
@@ -820,15 +821,10 @@ namespace EzUI {
 		if (!MainLayout) {
 			return;
 		}
-#ifdef COUNT_ONSIZE
-		StopWatch sw;
-#endif
-		__count_onsize = 0;
+
 		MainLayout->SetRect(this->GetClientRect());
 		MainLayout->Invalidate();
-#ifdef COUNT_ONSIZE
-		Debug::Log("OnSize Count(%d) (%d,%d) %dms\n", __count_onsize, sz.Width, sz.Height, sw.ElapsedMilliseconds());
-#endif
+
 
 	}
 
