@@ -32,7 +32,6 @@ namespace EzUI {
 	private:
 		Window(const Window&) {};
 		bool IsInWindow(Control& pControl, Control& it);
-		bool FindControl(Control* nodeCtl, Control* findControl);
 	protected:
 		LRESULT ZoomWindow(const LPARAM& lParam);//缩放窗口
 		void MoveWindow();//鼠标按下移动窗口

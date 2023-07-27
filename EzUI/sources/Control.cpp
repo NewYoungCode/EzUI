@@ -70,10 +70,9 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::OnChildPaint(PaintEventArgs& args)
 	{
-		VisibleControls.clear();
+		VisibleControls = GetControls();
 		//绘制子控件
-		for (auto& it : GetControls()) {
-			VisibleControls.push_back(it);
+		for (auto& it : VisibleControls) {
 			it->Rending(args);
 		}
 		//子控件绘制完毕
@@ -808,9 +807,6 @@ Event(this , ##__VA_ARGS__); \
 		if (Parent) {
 			Parent->RemoveControl(this);
 		}
-		if (this->GetScrollBar()) {
-			delete this->GetScrollBar();
-		}
 		DestroySpacers();
 		Parent = NULL;
 	}
@@ -985,13 +981,13 @@ Event(this , ##__VA_ARGS__); \
 	}
 	bool Control::Contains(Control* ctl) {
 		ASSERT(ctl);
-		if (ctl == this || ctl->GetScrollBar() == this) {
-			return true;
-		}
-		for (auto& it : this->GetControls()) {
-			if (it->Contains(ctl)) {
+		Control* pControl = ctl;
+		while (pControl)
+		{
+			if (pControl == this || pControl== this->GetScrollBar()) {
 				return true;
 			}
+			pControl = pControl->Parent;
 		}
 		return false;
 	}

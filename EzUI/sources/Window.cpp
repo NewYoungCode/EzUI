@@ -553,7 +553,11 @@ namespace EzUI {
 			}
 		};
 		PublicData.Contains = [=](Control* control)->bool {
-			return this->FindControl(MainLayout, control);
+			ASSERT(MainLayout);
+			if (PublicData.FocusControl == NULL && PublicData.InputControl==NULL) {
+				return false;
+			}
+			return MainLayout->Contains(control);
 		};
 		PublicData.Notify = [=](Control* sender, EventArgs& args)->bool {
 			return OnNotify(sender, args);
@@ -575,18 +579,6 @@ namespace EzUI {
 			return false;
 		}
 		return true;
-	}
-
-	bool Window::FindControl(Control* nodeCtl, Control* findControl) {
-		if ((nodeCtl && nodeCtl == findControl) || (nodeCtl->GetScrollBar() == findControl)) {
-			return true;
-		}
-		for (auto& it : nodeCtl->GetControls()) {
-			if (FindControl(it, findControl)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	Control* Window::FindControl(const Point clientPoint, Point* outPoint) {
@@ -713,7 +705,7 @@ namespace EzUI {
 		Control* pControl = _focusControl;
 		while (scrollBar == NULL && pControl)
 		{
-			if (pControl->GetScrollBar() && pControl->GetScrollBar()->CanRoll() ) {
+			if (pControl->GetScrollBar() && pControl->GetScrollBar()->CanRoll()) {
 				scrollBar = dynamic_cast<ScrollBar*>(pControl->GetScrollBar());
 				break;
 			}
