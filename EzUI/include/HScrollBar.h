@@ -19,5 +19,6 @@ namespace EzUI {
 		virtual void Move(double posX)override;
 		virtual bool IsDraw()override;
 		virtual void RefreshContent(int maxContent);
+		virtual bool CanRoll()override;
 	};
 };

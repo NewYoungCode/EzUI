@@ -94,7 +94,7 @@ inline HCURSOR LoadCursor(HINSTANCE hInstance, LPCTSTR lpCursorName) {
 #define DEBUGLOG //
 #endif
 
-//#define COUNT_ONPAINT//统计绘制耗时
+#define COUNT_ONPAINT//统计绘制耗时
 
 //下面的渲染方式只能选一个
 #define USED_Direct2D 1  //DX绘制 性能好 内存占用高

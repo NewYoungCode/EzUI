@@ -20,6 +20,7 @@ namespace EzUI {
 		virtual void RefreshContent(int _contentLength)override;
 		virtual Rect GetSliderRect();
 		virtual bool IsDraw() override;
+		virtual bool CanRoll()override;
 	};
 
 };

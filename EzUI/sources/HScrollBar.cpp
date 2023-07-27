@@ -7,9 +7,16 @@ namespace EzUI {
 		this->_contentLength = maxRight;
 		Move(_sliderPos);
 	}
-	bool HScrollBar::IsDraw()
+	bool HScrollBar::CanRoll()
 	{
 		if (_sliderLength >= Width()) {
+			return false;
+		}
+		return true;
+	}
+	bool HScrollBar::IsDraw()
+	{
+		if (!CanRoll()) {
 			return false;
 		}
 		return this->IsVisible();
@@ -47,7 +54,7 @@ namespace EzUI {
 		}
 		//»æÖÆ»¬¿é
 		args.Graphics.SetColor(GetForeColor());
-		args.Graphics.FillRectangle(sliderRect,GetBorderTopLeftRadius());
+		args.Graphics.FillRectangle(sliderRect, GetBorderTopLeftRadius());
 	}
 	void HScrollBar::OnMouseDown(MouseButton mBtn, const Point& point) {
 		__super::OnMouseDown(mBtn, point);

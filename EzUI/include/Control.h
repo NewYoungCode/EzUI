@@ -63,7 +63,7 @@ namespace EzUI {
 		virtual void OnChildPaint(PaintEventArgs& args);//子控件绘制 可以重载此函数优化鼠标操作性能
 		virtual void OnBackgroundPaint(PaintEventArgs& painter);//背景绘制
 		virtual void OnForePaint(PaintEventArgs& e);//前景绘制
-		virtual void OnBorderPaint(PaintEventArgs& painter,const Border&border);//边框绘制
+		virtual void OnBorderPaint(PaintEventArgs& painter, const Border& border);//边框绘制
 		virtual void OnLocation(const Point& pt);//坐标发生改变
 		virtual void OnSize(const Size& size) override;//大小发生改变
 		virtual void OnRect(const Rect& rect) override;
@@ -231,6 +231,7 @@ namespace EzUI {
 		virtual Rect GetSliderRect() = 0;//
 		virtual void OwnerSize(const Size& parentSize) = 0;
 		virtual bool IsDraw() = 0;//滚动条是否已经绘制且显示
+		virtual bool CanRoll() = 0;//滚动条是否能够滚动
 		EventScrollRolling Rolling = NULL;//滚动事件
 		ScrollBar() {
 			Style.ForeColor = Color(205, 205, 205);//the bar default backgroundcolor

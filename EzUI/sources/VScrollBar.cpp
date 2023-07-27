@@ -16,10 +16,17 @@ namespace EzUI {
 	}
 	bool VScrollBar::IsDraw()
 	{
-		if (_sliderLength >= Height()) {
+		if (!CanRoll()) {
 			return false;
 		}
 		return this->IsVisible();
+	}
+	bool VScrollBar::CanRoll()
+	{
+		if (_sliderLength >= Height()) {
+			return false;
+		}
+		return true;
 	}
 	void VScrollBar::OnBackgroundPaint(PaintEventArgs& e) {
 		if (_sliderLength >= Height()) {

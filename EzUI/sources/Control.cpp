@@ -200,6 +200,22 @@ Event(this , ##__VA_ARGS__); \
 				this->SetRect(Convert::StringToRect(attrValue));
 				break;
 			}
+			if (attrName == "margin-left") {
+				this->Margin.Left = std::stoi(attrValue);
+				break;
+			}
+			if (attrName == "margin-top") {
+				this->Margin.Top = std::stoi(attrValue);
+				break;
+			}
+			if (attrName == "margin-right") {
+				this->Margin.Right = std::stoi(attrValue);
+				break;
+			}
+			if (attrName == "margin-bottom") {
+				this->Margin.Bottom = std::stoi(attrValue);
+				break;
+			}
 			if (attrName == "margin") {//遵循web前端的规则
 				auto strs = attrValue.Split(",");
 				if (strs.size() == 1) {

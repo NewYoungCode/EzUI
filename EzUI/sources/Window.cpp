@@ -707,13 +707,13 @@ namespace EzUI {
 			_focusControl->Trigger(args);
 		}
 		ScrollBar* scrollBar = NULL;
-		if (_focusControl->GetScrollBar()) {
+		if (_focusControl->GetScrollBar() && _focusControl->GetScrollBar()->CanRoll()) {
 			scrollBar = dynamic_cast<ScrollBar*>(_focusControl->GetScrollBar());
 		}
 		Control* pControl = _focusControl;
 		while (scrollBar == NULL && pControl)
 		{
-			if (pControl->GetScrollBar()) {
+			if (pControl->GetScrollBar() && pControl->GetScrollBar()->CanRoll() ) {
 				scrollBar = dynamic_cast<ScrollBar*>(pControl->GetScrollBar());
 				break;
 			}
