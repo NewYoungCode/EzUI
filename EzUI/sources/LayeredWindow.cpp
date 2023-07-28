@@ -26,6 +26,10 @@ namespace EzUI {
 			}
 			});
 	}
+	ShadowWindow* LayeredWindow::GetShadowWindow()
+	{
+		return _boxShadow;
+	}
 	void LayeredWindow::SetShadow(int width)
 	{
 		_shadowWidth = width;

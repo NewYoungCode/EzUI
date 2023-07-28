@@ -407,17 +407,15 @@ namespace EzUI {
 	};
 	namespace Debug {
 		template<typename ...T>
-		inline EString Log(const EString& formatStr, T ...args) {
-			//#ifdef DEBUGLOG
+		inline void Info(const EString& formatStr, T ...args) {
+#ifdef DEBUGLOG
 			char buf[1025]{ 0 };
 			auto count = sprintf_s((buf), 1024, formatStr.c_str(), std::forward<T>(args)...);
 			buf[count] = '\n';
 			buf[count + 1] = 0;
 			auto wstr = EString(buf).utf16();
 			OutputDebugStringW(wstr.c_str());
-			return buf;
-			//#endif
-			return "";
+#endif
 		}
 	};
 };

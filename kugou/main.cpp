@@ -46,6 +46,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
 	Curl_Global_Init();
 
+	EString aaa = L"你好呀";
+
+	if (aaa == L"你好呀") {
+		int a = 0;
+	}
+
+
 	//{
 	// 	由此鉴定 vlc就是存在bug
 	//	VlcPlayer vlc;

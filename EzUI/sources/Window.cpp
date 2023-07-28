@@ -554,7 +554,7 @@ namespace EzUI {
 		};
 		PublicData.Contains = [=](Control* control)->bool {
 			ASSERT(MainLayout);
-			if (PublicData.FocusControl == NULL && PublicData.InputControl==NULL) {
+			if (PublicData.FocusControl == NULL && PublicData.InputControl == NULL) {
 				return false;
 			}
 			return MainLayout->Contains(control);
@@ -601,7 +601,7 @@ namespace EzUI {
 			pTemp = &outCtl->VisibleControls;
 		}
 		else {
-			pTemp = &(outCtl->GetControls());
+			pTemp = (Controls*)(&(outCtl->GetControls()));
 		}
 
 		for (auto i = pTemp->rbegin(); i != pTemp->rend(); i++) {

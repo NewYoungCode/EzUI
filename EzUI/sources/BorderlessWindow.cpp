@@ -8,6 +8,10 @@ namespace EzUI {
 	BorderlessWindow::~BorderlessWindow() {
 		CloseShadow();
 	}
+	ShadowWindow* BorderlessWindow::GetShadowWindow()
+	{
+		return _boxShadow;
+	}
 	void BorderlessWindow::SetShadow(int width)
 	{
 		_shadowWidth = width;

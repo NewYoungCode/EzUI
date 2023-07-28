@@ -9,6 +9,13 @@ namespace EzUI {
 	}
 	void TextBox::Init()
 	{
+		GetScrollBar()->SetWidth(5);
+		GetScrollBar()->Parent = this;
+		GetScrollBar()->OWner = this;
+		GetScrollBar()->OffsetCallback = [=](int offset) {
+			this->Offset(offset);
+		};
+
 		Style.Cursor = LoadCursor(Cursor::IBEAM);
 		timer.Interval = 500;
 		timer.Tick = [&](Windows::Timer*) {
@@ -101,9 +108,9 @@ namespace EzUI {
 				point1 = textLayout->HitTestTextPosition(B_TextPos, B_isTrailingHit);
 			}
 			if (point1.Y != point2.Y) {//多行
-				Rect rect1(point1.X, point1.Y, textLayout->GetFontBox().Width - point1.X, textLayout->GetFontHeight());
+				Rect rect1(point1.X, point1.Y, _fontBox.Width - point1.X, textLayout->GetFontHeight());
 				Rect rect2(0, point2.Y, point2.X, textLayout->GetFontHeight());
-				Rect rect3(0, rect1.GetBottom(), textLayout->GetFontBox().Width, rect2.GetTop() - rect1.GetBottom());
+				Rect rect3(0, rect1.GetBottom(), _fontBox.Width, rect2.GetTop() - rect1.GetBottom());
 				selectRects.push_back(rect1);
 				selectRects.push_back(rect3);
 				selectRects.push_back(rect2);
@@ -120,7 +127,7 @@ namespace EzUI {
 			A_isTrailingHit = FALSE;
 			A_TextPos = 0;
 
-			B = Point{ textLayout->GetFontBox().Width ,0 };
+			B = Point{ _fontBox.Width ,0 };
 			B_isTrailingHit = TRUE;
 			B_TextPos = text.size() - 1;
 
@@ -300,17 +307,22 @@ namespace EzUI {
 		if (!multiLine) {//单行编辑框
 			font->Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
 			textLayout = new TextLayout(text, *font, Size{ __MAXFLOAT,Height() }, TextAlign::MiddleLeft);
-			if (textLayout->GetFontBox().Width < this->Width()) {
+			_fontBox = textLayout->GetFontBox();
+			if (_fontBox.Width < this->Width()) {
 				scrollX = 0;
 			}
-			if (textLayout->GetFontBox().Width > this->Width() && scrollX + textLayout->GetFontBox().Width < this->Width()) {
-				scrollX = this->Width() - textLayout->GetFontBox().Width;
+			if (_fontBox.Width > this->Width() && scrollX + _fontBox.Width < this->Width()) {
+				scrollX = this->Width() - _fontBox.Width;
 			}
 		}
 		else {//多行编辑框
 			font->Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);
 			textLayout = new TextLayout(text, *font, Size{ Width(),__MAXFLOAT }, TextAlign::TopLeft);
+			_fontBox = textLayout->GetFontBox();
+			GetScrollBar()->RefreshContent(_fontBox.Height);
 		}
+		_contentWidth = _fontBox.Width;
+		_contentHeight = _fontBox.Height;
 		BuildCare();
 	}
 
@@ -371,44 +383,14 @@ namespace EzUI {
 			Invalidate();
 		}
 	}
-	void TextBox::OnMouseWheel(int _rollCount, short zDelta, const Point& point) {
-		__super::OnMouseWheel(_rollCount, zDelta, point);
-		double offset = 20;
-		offset = (zDelta > 0 ? offset : -offset);
-		Move(offset);
-	}
-	void TextBox::Move(double _sliderY) {
-		int _maxBottom = textLayout->GetFontBox().Height;
-		int offset = _maxBottom - Height();
-		if (offset <= 0) {
-			scrollY = 0;
-			return;
-		}
-		scrollY += _sliderY;
-		if (scrollY > 0) {
-			scrollY = 0;
-		}
-		if (-scrollY > offset) {
-			scrollY = -offset;
-		}
-		//int _sliderHeight = 0;
-		////计算滚动条相关
-		//if (Height() >= _maxBottom) {
-		//	_sliderHeight = Height();
-		//}
-		//else if (_maxBottom != 0) {
-		//	//滑块高度
-		//	_sliderHeight = (int)(Height() * 1.0 * Height() / _maxBottom);
-		//}
-		//if (sliderY + _sliderHeight >= GetRect().Height) { //滑块在最底部
-		//	sliderY = GetRect().Height - _sliderHeight;
-		//}
-		//int distanceTotal = Height() - _sliderHeight;//当前滑块可用滑道的总距离
-		//double rate = distanceTotal * 1.0 / (_maxBottom - Parent->Height());//滑块可用总高度 / list item高度总和 * 当前滑块坐标的坐标
-		//double offsetY = sliderY / rate;
 
-		//int pause = 0;
-		//scrollY = offsetY;
+	ScrollBar* TextBox::GetScrollBar()
+	{
+		return &_vsb;
+	}
+	void TextBox::Offset(int _sliderY) {
+		scrollY = _sliderY;
+
 		Invalidate();
 	}
 
@@ -423,6 +405,15 @@ namespace EzUI {
 			lastWidth = Width();
 			Analysis();
 		}
+		_contentWidth = _fontBox.Width;
+		_contentHeight = _fontBox.Height;
+		if (multiLine) {
+			GetScrollBar()->RefreshContent(_fontBox.Height);
+		}
+		else {
+			GetScrollBar()->RefreshContent(0);
+		}
+		this->EndLayout();
 	}
 
 	Point TextBox::ConvertPoint(const Point& pt) {
@@ -445,7 +436,7 @@ namespace EzUI {
 
 				if (!multiLine) {//单行
 					//当鼠标往左侧移动
-					int textWidth = textLayout->GetFontBox().Width;
+					int textWidth = _fontBox.Width;
 					if (lastX > point.X) {
 						lastX = point.X;
 						if (textWidth > Width() && scrollX < 0 && point.X < 0) {
@@ -552,8 +543,8 @@ namespace EzUI {
 	}
 
 	void TextBox::OnForePaint(PaintEventArgs& e) {
-		std::wstring fontFamily =GetFontFamily().utf16();
-		const int& fontSize =GetFontSize();
+		std::wstring fontFamily = GetFontFamily().utf16();
+		const int& fontSize = GetFontSize();
 
 		if (font == NULL || ((font != NULL) && (font->GetFontFamily() != fontFamily || font->GetFontSize() != fontSize))) {
 			if (font != NULL) {
@@ -565,16 +556,16 @@ namespace EzUI {
 		const Color& fontColor = GetForeColor();
 		e.Graphics.SetFont(fontFamily, fontSize);
 		if (text.empty()) {
-			byte r = fontColor.GetR() - 20;
-			byte g = fontColor.GetG() - 20;
-			byte b = fontColor.GetB() - 20;
-			e.Graphics.SetColor(Color(r, g, b));
+			byte a = fontColor.GetA();
+			byte r = fontColor.GetR();
+			byte g = fontColor.GetG();
+			byte b = fontColor.GetB();
+			e.Graphics.SetColor(Color(a * 0.5, r, g, b));
 			e.Graphics.DrawString(Placeholder.utf16(), Rect(0, 0, Width(), Height()), multiLine ? TextAlign::TopLeft : TextAlign::MiddleLeft);
 		}
 
 		e.Graphics.SetColor(fontColor);
 		if (textLayout) {
-			Size fontBox = textLayout->GetFontBox();
 			e.Graphics.DrawString(*textLayout, { scrollX, scrollY });
 		}
 

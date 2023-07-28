@@ -447,11 +447,11 @@ Event(this , ##__VA_ARGS__); \
 	{
 		return _fixedSize.Height;
 	}
-	int Control::GetContentWidth()
+	const int& Control::GetContentWidth()
 	{
 		return _contentWidth;
 	}
-	int Control::GetContentHeight()
+	const int& Control::GetContentHeight()
 	{
 		return _contentHeight;
 	}
@@ -823,7 +823,7 @@ Event(this , ##__VA_ARGS__); \
 
 	size_t Control::Index()
 	{
-		Controls& pControls = Parent->GetControls();
+		const Controls& pControls = Parent->GetControls();
 		size_t pos(0);
 		for (auto i = pControls.begin(); i != pControls.end(); i++)
 		{
@@ -964,7 +964,7 @@ Event(this , ##__VA_ARGS__); \
 			ClipRectRef = this->GetClientRect();
 		}
 	}
-	Controls& Control::GetControls()
+	const Controls& Control::GetControls()
 	{
 		return _controls;
 	}

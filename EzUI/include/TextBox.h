@@ -1,15 +1,18 @@
 #pragma once
 #include "Control.h"
 #include "Timer.h"
+#include "VScrollBar.h"
 namespace EzUI {
 	class UI_EXPORT TextBox :
 		public Control
 	{
 	private:
+		VScrollBar _vsb;
 		int lastWidth = 0;
-		int lastHeight= 0;
+		int lastHeight = 0;
 		bool multiLine = false;
 		std::wstring text;//文字
+		Size _fontBox;
 		bool _down = false;//是否具有焦点中
 		bool _focus = false;//是否具有焦点中
 		Point point_Start;//开始选中的位置
@@ -55,13 +58,13 @@ namespace EzUI {
 		virtual void OnMouseMove(const Point& point) override;
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point)override;
 		virtual void OnKillFocus(Control* ctl) override;
-		virtual void OnMouseWheel(int _rollCount,short zDelta, const Point& point)override;
-		void Move(double moveY);
 		virtual void OnLayout();
+		void Offset(int moveY);
 	public:
 		EString Placeholder;//placeholder懂得都懂 (在没有文字的情况下显示的文字)
 		Color SelectedColor = Color(100, 255, 0, 0);//选中颜色
 		bool ReadOnly = false;//是否只读
+		EventTextChange TextChange = NULL;
 	public:
 		TextBox();
 		TextBox(Control* parent);
@@ -69,7 +72,7 @@ namespace EzUI {
 		virtual void SetAttribute(const EString& key, const EString& value)override;
 		virtual Rect GetCareRect()override;
 		const EString GetText();
-		EventTextChange TextChange = NULL;
+		virtual ScrollBar* GetScrollBar()override;
 		void SetText(const EString& text);
 		bool IsMultiLine();
 		void SetMultiLine(bool multiLine);

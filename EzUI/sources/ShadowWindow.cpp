@@ -127,6 +127,10 @@ namespace EzUI {
 		blend.SourceConstantAlpha = 255;
 		::UpdateLayeredWindow(_hWnd, NULL, NULL, &size, _bufBitmap->GetDC(), &point, 0, &blend, ULW_ALPHA);//。。。。。。更新分层窗口
 	}
+	const HWND& ShadowWindow::Hwnd()
+	{
+		return _hWnd;
+	}
 	ShadowWindow::~ShadowWindow()
 	{
 		::SendMessage(_hWnd, WM_DESTROY, 0, 0);

@@ -5,7 +5,8 @@
 namespace EzUI {
 	class  UI_EXPORT EString :public std::string {
 	public:
-		size_t length() const;//the utf8 length
+		//the utf8 length
+		size_t length() const;
 		EString();
 		EString(const std::string& str)noexcept;
 		EString(const char* szbuf)noexcept;
@@ -18,6 +19,8 @@ namespace EzUI {
 		EString Replace(const EString& oldText, const EString& newText)const;
 		EString Tolower()const;
 		EString Toupper()const;
+		bool operator==(const wchar_t* szbuf)const;
+		bool operator==(const std::wstring& wStr)const;
 	public:
 		//base convert
 		static void AnyToUnicode(const std::string& src_str, UINT codePage, std::wstring* out_wstr);

@@ -1,7 +1,7 @@
 #include "MainFrm.h"
 #define refreshImage WM_UIMESSAGE+1
 #include "ComBox.h"
-MainFrm::MainFrm() :BorderlessWindow(1020, 690)
+MainFrm::MainFrm() :Window(1020, 690)
 {
 	InitForm();
 	ntfi.SetText(L"GameTool");
@@ -22,12 +22,12 @@ MainFrm::MainFrm() :BorderlessWindow(1020, 690)
 	//MainLayout->AddControl(textArea);
 	//textArea->SetText(L"hello");
 	//MainLayout->Style.Radius =100;
-
 	this->SetMiniSize({ 800,450 });
 	//this->SetMaxSize({ 1800,1012 });
 	//auto lg= FindControl("login");
 	//lg->Enable = false;
 	//this->CloseShadow();
+	//this->SetShadow(50);
 }
 void MainFrm::InitForm() {
 	this->Zoom = true;
@@ -368,8 +368,8 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			//localList->RemoveControl(songItem);
 			delete songItem;
 
-			Debug::Log("del 666 %p", data->InputControl);
-			Debug::Log("del 777 %p", data->FocusControl);
+			Debug::Info("del 666 %p", data->InputControl);
+			Debug::Info("del 777 %p", data->FocusControl);
 
 			return false;
 		}

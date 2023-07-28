@@ -89,7 +89,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	//labelBottom.SetText(L"这是一个简单的窗口示例!");
 	VList list(&mainLayout);
 	list.SetAutoHeight(true);
-	for (size_t i = 0; i < 50; i++)
+	for (size_t i = 0; i < 10; i++)
 	{
 		Label* lb = new Label;// (&list);
 		//lb->Dock = DockStyle::Horizontal;
@@ -112,7 +112,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	text.SetMultiLine(true);
 	text.Margin.Left = 20;
 	text.Margin.Right = 20;
-	text.Style.Border.Radius = 261;
+	text.Style.Border.Radius = 20;
 
 	text.SetText(L"啊撒旦艰苦换个房间看电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方式但是几乎都是复活节过段时间韩国");
 	//text.HoverStyle.FontSize = 50;

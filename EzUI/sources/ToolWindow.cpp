@@ -8,7 +8,7 @@ namespace EzUI {
 	{
 		if (uMsg == WM_KILLFOCUS) {
 			HWND wnd = (HWND)wParam;
-			if (wnd != this->_boxShadow->_hWnd) {
+			if (this->GetShadowWindow() && wnd != this->GetShadowWindow()->Hwnd()) {
 				this->OnKillFocus(wnd);
 			}
 		}

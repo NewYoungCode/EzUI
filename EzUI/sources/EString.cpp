@@ -12,16 +12,8 @@ namespace EzUI {
 		return count;
 	}
 	EString::EString() {}
-	EString::EString(const std::string& str)noexcept {
-		this->resize(str.size());
-		::memcpy((void*)c_str(), str.c_str(), str.size());
-	}
-	EString::EString(const char* szbuf)noexcept {
-		if (szbuf == NULL)return;
-		size_t len = ::strlen(szbuf);
-		this->resize(len);
-		::memcpy((void*)c_str(), szbuf, len);
-	}
+	EString::EString(const std::string& str)noexcept :std::string(str) {}
+	EString::EString(const char* szbuf)noexcept :std::string(szbuf) {}
 	EString::EString(const wchar_t* szbuf)noexcept {
 		if (szbuf == NULL)return;
 		EString::UnicodeToUTF8(szbuf, this);
@@ -58,6 +50,18 @@ namespace EzUI {
 		EString str(*this);
 		EString::Toupper(&str);
 		return str;
+	}
+	bool EString::operator==(const wchar_t* szbuf)const
+	{
+		std::string u8str;
+		EString::UnicodeToUTF8(szbuf, &u8str);
+		return (*this == u8str);
+	}
+	bool EString::operator==(const std::wstring& wStr)const
+	{
+		std::string u8str;
+		EString::UnicodeToUTF8(wStr, &u8str);
+		return (*this == u8str);
 	}
 	std::wstring EString::utf16() const {
 		std::wstring wstr;

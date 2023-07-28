@@ -98,8 +98,8 @@ namespace EzUI {
 		void SetFixedHeight(const int& fixedHeight);//设置绝对高度
 		const int& GetFixedWidth();//获取绝对宽度
 		const int& GetFixedHeight();//获取绝对高度
-		virtual int GetContentWidth();//上下文宽度
-		virtual int GetContentHeight();//上下文高度
+		virtual const int& GetContentWidth();//上下文宽度
+		virtual const int& GetContentHeight();//上下文高度
 		virtual const Rect& GetRect();//获取相对与父控件矩形 布局计算后
 		Rect GetClientRect();//获取基于客户端的矩形
 		const DockStyle& GetDockStyle();//获取dock标志
@@ -117,7 +117,7 @@ namespace EzUI {
 		void AddEventNotify(int eventType);//添加到主窗口Ontify函数中可拦截
 		void RemoveEventNotify(int eventType);//移除一个主窗口的Ontify消息
 		virtual ScrollBar* GetScrollBar();//获取控件的滚动条
-	protected:
+	public:
 		//普通样式
 		int GetBorderTopLeftRadius(ControlState _state = ControlState::None);
 		int GetBorderTopRightRadius(ControlState _state = ControlState::None);
@@ -142,7 +142,7 @@ namespace EzUI {
 		void DestroySpacers();//销毁控件内所有弹簧
 		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::Static);//
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性
-		Controls& GetControls();//获取当前所有子控件
+		const Controls& GetControls();//获取当前所有子控件
 		Control* GetControl(size_t pos);//使用下标获取控件
 		bool Contains(Control* ctl);//会递归循全部包含的控件是否存在
 		Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等

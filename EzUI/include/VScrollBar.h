@@ -1,6 +1,5 @@
 #pragma once
 #include "Control.h"
-#include "Timer.h"
 namespace EzUI {
 
 	class UI_EXPORT VScrollBar :
@@ -18,7 +17,7 @@ namespace EzUI {
 		virtual void Move(double posY);
 		virtual void OwnerSize(const Size& ownerSize)override;
 		virtual void RefreshContent(int _contentLength)override;
-		virtual Rect GetSliderRect();
+		virtual Rect GetSliderRect()override;
 		virtual bool IsDraw() override;
 		virtual bool CanRoll()override;
 	};

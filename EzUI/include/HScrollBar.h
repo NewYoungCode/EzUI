@@ -15,10 +15,10 @@ namespace EzUI {
 		HScrollBar();
 		virtual ~HScrollBar();
 		virtual void OwnerSize(const Size& parentSize)override;
-		virtual Rect GetSliderRect();
+		virtual Rect GetSliderRect()override;
 		virtual void Move(double posX)override;
 		virtual bool IsDraw()override;
-		virtual void RefreshContent(int maxContent);
+		virtual void RefreshContent(int maxContent)override;
 		virtual bool CanRoll()override;
 	};
 };
