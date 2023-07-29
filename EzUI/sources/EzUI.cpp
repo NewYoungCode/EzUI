@@ -285,14 +285,14 @@ namespace EzUI {
 				break;
 			}
 			if (key == "background-color") {
-				style->BackgroundColor = Convert::StringToColor(value);
+				style->BackColor = Convert::StringToColor(value);
 				break;
 			}
 			if (key == "background-image") {
 				value = value.Erase('"');//É¾³ýË«ÒýºÅ;
-				style->BackgroundImage = new Image(value);
+				style->BackImage = new Image(value);
 				if (callback) {
-					callback(style->BackgroundImage);
+					callback(style->BackImage);
 				}
 				break;
 			}

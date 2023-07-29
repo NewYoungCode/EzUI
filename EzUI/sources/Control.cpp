@@ -55,9 +55,9 @@ return  defaultStyle .##_filed1.##_filed;\
 	UI_BORDER_BINDFUNC(int, Border, Bottom);
 	UI_BORDER_BINDFUNC(Color, Border, Color);
 
-	UI_BINDFUNC(Color, BackgroundColor);
+	UI_BINDFUNC(Color, BackColor);
 	UI_BINDFUNC(Image*, ForeImage);
-	UI_BINDFUNC(Image*, BackgroundImage);
+	UI_BINDFUNC(Image*, BackImage);
 
 	//触发事件宏
 #define UI_TRIGGER(Event,...)  if( ##Event){ \
@@ -73,7 +73,7 @@ Event(this , ##__VA_ARGS__); \
 		VisibleControls = GetControls();
 		//绘制子控件
 		for (auto& it : VisibleControls) {
-			it->Rending(args);
+			it->DispatchEvent(args);
 		}
 		//子控件绘制完毕
 		//设置偏移 用于置顶绘制
@@ -94,8 +94,8 @@ Event(this , ##__VA_ARGS__); \
 
 	void Control::OnBackgroundPaint(PaintEventArgs& e)
 	{
-		const Color& backgroundColor = this->GetBackgroundColor();
-		Image* backgroundImage = this->GetBackgroundImage();
+		const Color& backgroundColor = this->GetBackColor();
+		Image* backgroundImage = this->GetBackImage();
 
 		if (backgroundColor.GetValue() != 0) {
 			e.Graphics.SetColor(backgroundColor);
@@ -447,14 +447,6 @@ Event(this , ##__VA_ARGS__); \
 	{
 		return _fixedSize.Height;
 	}
-	const int& Control::GetContentWidth()
-	{
-		return _contentWidth;
-	}
-	const int& Control::GetContentHeight()
-	{
-		return _contentHeight;
-	}
 	bool Control::CheckEventPassThrough(const Event& eventType)
 	{
 		if ((MousePassThrough & eventType) == eventType) {
@@ -576,137 +568,149 @@ Event(this , ##__VA_ARGS__); \
 		}
 		this->_layoutState = LayoutState::Layouting;//布局中
 		if (GetScrollBar()) {//如果存在滚动条就设置滚动条的矩形位置
-			GetScrollBar()->OwnerSize({ _rect.Width,_rect.Height });
+			GetScrollBar()->OWnerSize({ _rect.Width,_rect.Height });
 		}
 		this->OnLayout();
 		this->_layoutState = LayoutState::None;//布局完成需要将布局标志重置
 	}
 	void Control::OnLayout() {
-		_contentWidth = 0;
-		_contentHeight = 0;
-		int _width;
-		int _height;
-		for (auto& it : GetControls()) {
-			_width = it->X() + it->Width();
-			if (_width > _contentWidth) {
-				_contentWidth = _width;
-			}
-			_height = it->Y() + it->Height();
-			if (_height > _contentHeight) {
-				_contentHeight = _height;
-			}
-		}
+		this->EndLayout();
 	}
 
 	//专门处理键盘消息的
-	void Control::OnKeyBoardEvent(const KeyboardEventArgs& args) {
-		if (Enable == false) return;
-		if (PublicData == NULL) return;
-		WindowData* winData = PublicData;
-
-		bool b1 = this->CheckEventNotify(args.EventType);//先检查是否标记通知到主窗口
-		if (!b1) {
-			return;
-		}
-		bool b2 = winData->Notify(this, (KeyboardEventArgs&)args);//看主窗口那边怎么说
-		if (b2) {
-			return;
-		}
-		bool b3 = (winData->Contains(this));//检查是否删除了控件
-		if (!b3) {
-			return;
-		}
-		switch (args.EventType)
+	bool Control::OnKeyBoardEvent(const KeyboardEventArgs& _args) {
+		bool isRemove = false;
+		this->_isRemove = &isRemove;
+		do
 		{
-		case Event::OnKeyChar: {
-			OnKeyChar(args.wParam, args.lParam);
-			break;
+			if (Enable == false) break;
+			if (PublicData == NULL) break;
+			WindowData* winData = PublicData;
+			KeyboardEventArgs& args = (KeyboardEventArgs&)_args;
+			if (CheckEventPassThrough(args.EventType) && this->Parent) {//检查鼠标穿透
+				KeyboardEventArgs copy_args = args;
+				this->Parent->OnKeyBoardEvent(copy_args);//如果设置了穿透就直接发送给上一层控件
+			}
+			//先检查是否标记通知到主窗口
+			bool b1 = this->CheckEventNotify(args.EventType);
+			bool b2 = false;
+			if (b1) {
+				//通知到所属窗口的OnNotify函数 进行处理
+				b2 = winData->Notify(this, args);
+			}
+			//检查是否删除了控件
+			if (b2 || isRemove) {
+				break;
+			}
+			switch (args.EventType)
+			{
+			case Event::OnKeyChar: {
+				OnKeyChar(args.wParam, args.lParam);
+				break;
+			}
+			case Event::OnKeyDown: {
+				OnKeyDown(args.wParam, args.lParam);
+				break;
+			}
+			case Event::OnKeyUp: {
+				OnKeyUp(args.wParam, args.lParam);
+				break;
+			}
+			default:
+				break;
+			}
+		} while (false);
+		if (!isRemove) {
+			this->_isRemove = NULL;
+			return true;
 		}
-		case Event::OnKeyDown: {
-			OnKeyDown(args.wParam, args.lParam);
-			break;
-		}
-		case Event::OnKeyUp: {
-			OnKeyUp(args.wParam, args.lParam);
-			break;
-		}
-		default:
-			break;
-		}
+		return false;
 	}
 
 	//专门处理鼠标消息的
-	void Control::OnMouseEvent(const MouseEventArgs& _args) {
-		if (Enable == false) return;
-		if (PublicData == NULL) return;
-		WindowData* winData = PublicData;
-		MouseEventArgs& args = (MouseEventArgs&)_args;
-
-		if ((winData->Contains(this)) && CheckEventPassThrough(args.EventType)) {//检查鼠标穿透
-			MouseEventArgs copy_args = args;
-			copy_args.Location.X += this->X();
-			copy_args.Location.Y += this->Y();
-			this->Parent->OnMouseEvent(copy_args);//如果设置了穿透就直接发送给上一层控件
-		}
-		bool b1 = this->CheckEventNotify(args.EventType);//先检查是否标记通知到主窗口
-		if (!b1) {
-			return;
-		}
-		bool b2 = winData->Notify(this, args);//看主窗口那边怎么说
-		if (b2) {
-			return;
-		}
-		bool b3 = (winData->Contains(this));//检查是否删除了控件
-		if (!b3) {
-			return;
-		}
-
-		switch (args.EventType)
+	bool Control::OnMouseEvent(const MouseEventArgs& _args) {
+		bool isRemove = false;
+		this->_isRemove = &isRemove;
+		do
 		{
-		case Event::OnMouseWheel: {
-			OnMouseWheel(args.RollCount, args.Delta, args.Location);
-			break;
-		}
-		case Event::OnMouseClick: {
-			OnMouseClick(args.Button, args.Location);
-			break;
-		}
-		case Event::OnMouseEnter: {
-			OnMouseEnter(args.Location);
-			break;
-		}
-		case Event::OnMouseMove: {
-			if (!_mouseIn) {
-				_mouseIn = true;
+			if (Enable == false) break;
+			if (PublicData == NULL) break;
+			WindowData* winData = PublicData;
+			MouseEventArgs& args = (MouseEventArgs&)_args;
+
+			if (CheckEventPassThrough(args.EventType) && this->Parent) {//检查鼠标穿透
 				MouseEventArgs copy_args = args;
-				copy_args.EventType = Event::OnMouseEnter;
-				OnMouseEvent(copy_args);
+				copy_args.Location.X += this->X();
+				copy_args.Location.Y += this->Y();
+				this->Parent->OnMouseEvent(copy_args);//如果设置了穿透就直接发送给上一层控件
 			}
-			if ((winData->Contains(this))) {
+			//先检查是否标记通知到主窗口
+			bool b1 = this->CheckEventNotify(args.EventType);
+			bool b2 = false;
+			if (b1) {
+				//通知到所属窗口的OnNotify函数 进行处理
+				b2 = winData->Notify(this, args);
+			}
+			//检查是否删除了控件
+			if (b2 || isRemove) {
+				break;
+			}
+
+			switch (args.EventType)
+			{
+			case Event::OnMouseWheel: {
+				OnMouseWheel(args.RollCount, args.Delta, args.Location);
+				break;
+			}
+			case Event::OnMouseClick: {
+				OnMouseClick(args.Button, args.Location);
+				break;
+			}
+			case Event::OnMouseEnter: {
+				OnMouseEnter(args.Location);
+				break;
+			}
+			case Event::OnMouseMove: {
+				bool ok = true;
+				if (!_mouseIn) {
+					_mouseIn = true;
+					MouseEventArgs copy_args = args;
+					copy_args.EventType = Event::OnMouseEnter;
+					ok = OnMouseEvent(copy_args);
+				}
+				if (!ok) {
+					return false;
+				}
 				OnMouseMove(args.Location);
+				break;
 			}
-			break;
+			case Event::OnMouseDoubleClick: {
+				OnMouseDoubleClick(args.Button, args.Location);
+				break;
+			}
+			case Event::OnMouseDown: {
+				OnMouseDown(args.Button, args.Location);
+				break;
+			}
+			case Event::OnMouseUp: {
+				OnMouseUp(args.Button, args.Location);
+				break;
+			}
+			case Event::OnMouseLeave: {
+				_mouseIn = false;
+				OnMouseLeave();
+				break;
+			}
+			default:
+				break;
+			}
+
+		} while (false);
+		if (!isRemove) {
+			this->_isRemove = NULL;
+			return true;
 		}
-		case Event::OnMouseDoubleClick: {
-			OnMouseDoubleClick(args.Button, args.Location);
-			break;
-		}
-		case Event::OnMouseDown: {
-			OnMouseDown(args.Button, args.Location);
-			break;
-		}
-		case Event::OnMouseUp: {
-			OnMouseUp(args.Button, args.Location);
-			break;
-		}
-		case Event::OnMouseLeave: {
-			_mouseIn = false;
-			OnMouseLeave();
-			break;
-		}
-		default:
-			break;
-		}
+		return false;
 	}
 	void Control::Rending(PaintEventArgs& args) {
 		this->PublicData = args.PublicData;
@@ -781,7 +785,7 @@ Event(this , ##__VA_ARGS__); \
 			Rect barRect = scrollbar->GetClientRect();
 			//设置偏移
 			pt.SetTransform(barRect.X, barRect.Y);
-			scrollbar->Rending(args);
+			scrollbar->DispatchEvent(args);
 		}
 		//设置偏移
 		pt.SetTransform(clientRect.X, clientRect.Y);
@@ -858,6 +862,9 @@ Event(this , ##__VA_ARGS__); \
 	}
 	void Control::OnRemove()
 	{
+		if (_isRemove) {
+			*_isRemove = true;
+		}
 		for (auto& it : _controls) {
 			it->OnRemove();
 		}
@@ -953,6 +960,25 @@ Event(this , ##__VA_ARGS__); \
 	void Control::SetAutoHeight(bool flag)
 	{
 	}
+	bool Control::DispatchEvent(const EventArgs& arg)
+	{
+		if (arg.EventType == Event::OnPaint) {
+			this->Rending((PaintEventArgs&)arg);
+			return true;
+		}
+		if ((arg.EventType & Event::OnMouseEvent) == arg.EventType) {
+			return OnMouseEvent((MouseEventArgs&)arg);
+		}
+		if ((arg.EventType & Event::OnKeyBoardEvent) == arg.EventType) {
+			return OnKeyBoardEvent((KeyboardEventArgs&)arg);
+		}
+		if (arg.EventType == Event::OnKillFocus) {
+			this->OnKillFocus(((KillFocusEventArgs&)arg).Control);
+			return true;
+		}
+
+		return false;
+	}
 	void Control::ComputeClipRect()
 	{
 		if (Parent) {
@@ -984,7 +1010,7 @@ Event(this , ##__VA_ARGS__); \
 		Control* pControl = ctl;
 		while (pControl)
 		{
-			if (pControl == this || pControl== this->GetScrollBar()) {
+			if (pControl == this || pControl == this->GetScrollBar()) {
 				return true;
 			}
 			pControl = pControl->Parent;
@@ -1030,15 +1056,6 @@ Event(this , ##__VA_ARGS__); \
 	{
 		UI_TRIGGER(MouseDoubleClick, mbtn, point);
 	}
-	void Control::Trigger(const MouseEventArgs& args)
-	{
-		OnMouseEvent(args);
-	}
-	void Control::Trigger(const KeyboardEventArgs& args)
-	{
-		OnKeyBoardEvent(args);
-	}
-
 	void Control::AddEventNotify(int eventType) {
 		_eventNotify = _eventNotify | eventType;
 	}

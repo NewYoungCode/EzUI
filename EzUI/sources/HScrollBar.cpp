@@ -2,12 +2,7 @@
 namespace EzUI {
 	HScrollBar::HScrollBar() {}
 	HScrollBar::~HScrollBar() {}
-	void HScrollBar::RefreshContent(int maxRight)
-	{
-		this->_contentLength = maxRight;
-		Move(_sliderPos);
-	}
-	bool HScrollBar::CanRoll()
+	bool HScrollBar::Scrollable()
 	{
 		if (_sliderLength >= Width()) {
 			return false;
@@ -16,7 +11,7 @@ namespace EzUI {
 	}
 	bool HScrollBar::IsDraw()
 	{
-		if (!CanRoll()) {
+		if (!Scrollable()) {
 			return false;
 		}
 		return this->IsVisible();
@@ -32,10 +27,10 @@ namespace EzUI {
 		if (_sliderLength >= Width()) {
 			return;
 		}
-		e.Graphics.SetColor(GetBackgroundColor());
+		e.Graphics.SetColor(GetBackColor());
 		e.Graphics.FillRectangle(Rect{ 0,0,Width(),Height() });
 	}
-	void HScrollBar::OwnerSize(const Size& OWnerSize) {
+	void HScrollBar::OWnerSize(const Size& OWnerSize) {
 		if (this->Parent == this->OWner) {
 			this->SetRect({ 0,OWnerSize.Height - this->Height(),OWnerSize.Width,Height() });
 		}
@@ -76,7 +71,9 @@ namespace EzUI {
 		}
 	}
 	void HScrollBar::Move(double posY) {
-		if (OWner == NULL || _contentLength <= 0) {
+		if (OWner == NULL) return;
+		int _contentLength = OWner->GetContentWidth();
+		if (_contentLength <= 0) {
 			_sliderLength = Width();
 			return;
 		}

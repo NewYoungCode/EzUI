@@ -61,7 +61,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	MainFrm frm(800, 600);//无边框窗口
 	VLayout mainLayout;//窗口中的main布局
 
-	mainLayout.Style.BackgroundColor = Color::White;//主布局背景颜色
+	mainLayout.Style.BackColor = Color::White;//主布局背景颜色
 	//HLayout title(&mainLayout);//标题
 	//title.SetFixedHeight(45);//设置固定高度
 	//title.Style.BackgroundColor = Color::Pink;//控件背景颜色
@@ -95,8 +95,8 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 		//lb->Dock = DockStyle::Horizontal;
 		lb->SetText(std::to_string(i));
 		lb->SetFixedSize({ 100,30 });
-		lb->Style.BackgroundColor = Color::Pink;
-		lb->HoverStyle.BackgroundColor = Color::Gray;
+		lb->Style.BackColor = Color::Pink;
+		lb->HoverStyle.BackColor = Color::Gray;
 		lb->Margin = 1;
 		lb->MouseClick = [&list](Control* sd, MouseButton, const Point&)->void {
 			list.RemoveControl(sd);

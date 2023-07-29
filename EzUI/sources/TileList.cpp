@@ -21,7 +21,7 @@ namespace EzUI {
 	{
 		Init();
 	}
-	TileList::TileList(Control* parent) :Control(parent)
+	TileList::TileList(Control* parent) :ScrollableControl(parent)
 	{
 		Init();
 	}
@@ -44,7 +44,7 @@ namespace EzUI {
 		else if (this->GetScrollBar()->IsVisible() == true) {
 			this->GetScrollBar()->SetVisible(true);
 		}
-		this->GetScrollBar()->RefreshContent(_contentHeight);
+		this->GetScrollBar()->RefreshScroll();
 	}
 	int TileList::Offset(int offset) {
 		_contentWidth = 0;

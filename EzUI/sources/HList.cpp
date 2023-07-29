@@ -14,7 +14,7 @@ namespace EzUI {
 	{
 		Init();
 	}
-	HList::HList(Control* parent) :Control(parent)
+	HList::HList(Control* parent) :ScrollableControl(parent)
 	{
 		Init();
 	}
@@ -30,13 +30,14 @@ namespace EzUI {
 		else if (this->GetScrollBar()->IsVisible() == true) {
 			this->GetScrollBar()->SetVisible(true);
 		}
-		this->GetScrollBar()->RefreshContent(_contentWidth);
 		if (AutoWidth && this->Width() != _contentWidth) {
 			this->SetFixedWidth(_contentWidth);
 			if (Parent) {
 				Parent->Invalidate();
 			}
 		}
+		this->GetScrollBar()->RefreshScroll();
+
 	}
 
 	void HList::SetAttribute(const EString& attrName, const EString& attrValue)
@@ -103,7 +104,7 @@ namespace EzUI {
 			auto& it = **i;
 			if (rect.IntersectsWith(it.GetRect())) {
 				VisibleControls.push_back(*i);
-				it.Rending(args);
+				it.DispatchEvent(args);
 			}
 			if (it.Y() >= Height()) { //纵向列表控件超出则不再绘制后面的控件 优化
 				break;

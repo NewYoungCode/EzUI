@@ -4,7 +4,7 @@
 MainFrm::MainFrm(int width, int height) :Window(width, height)
 {
 	SetLayout(&mainLayout);
-	mainLayout.Style.BackgroundColor = Color::White;
+	mainLayout.Style.BackColor = Color::White;
 
 	ui = new UIWindow(750, 500);
 
@@ -29,8 +29,8 @@ MainFrm::MainFrm(int width, int height) :Window(width, height)
 		Label* ctl = new Label;
 		ctl->SetFixedHeight(30);
 		ctl->SetDockStyle(DockStyle::Horizontal);
-		ctl->HoverStyle.BackgroundColor = Color(20, 10, 10, 10);
-		ctl->ActiveStyle.BackgroundColor = Color(20, 10, 10, 10);
+		ctl->HoverStyle.BackColor = Color(20, 10, 10, 10);
+		ctl->ActiveStyle.BackColor = Color(20, 10, 10, 10);
 		ctl->ActiveStyle.FontSize = 11;
 		ctl->SetAttribute("ctlName", it);
 		ctl->Name = "ctl";

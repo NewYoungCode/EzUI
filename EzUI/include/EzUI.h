@@ -138,7 +138,6 @@ namespace EzUI {
 		std::function<void()> UpdateWindow = NULL;//立即更新全部无效区域
 		std::function<bool(Control*, EventArgs&)> Notify = NULL;//
 		std::function<void(Control*)> RemoveControl = NULL;//清空控件标记等等...
-		std::function<bool(Control*)> Contains = NULL;
 	};
 	class StopWatch {
 	private:
@@ -184,7 +183,9 @@ namespace EzUI {
 		OnRect = 32768,
 		OnTextChange = 65536,
 		OnActive = OnMouseDown | OnMouseUp,
-		OnHover = OnMouseEnter | OnMouseLeave
+		OnHover = OnMouseEnter | OnMouseLeave,
+		OnMouseEvent = OnMouseWheel | OnMouseEnter | OnMouseMove | OnMouseLeave | OnMouseClick | OnMouseDoubleClick | OnMouseDown | OnMouseUp,
+		OnKeyBoardEvent = OnKeyDown | OnKeyUp | OnKeyChar
 	};
 	enum class ControlAction {
 		None,
@@ -264,6 +265,10 @@ namespace EzUI {
 	class EventArgs {
 	public:
 		Event EventType;
+		EventArgs() {}
+		EventArgs(const Event& eventType) {
+			this->EventType = eventType;
+		}
 		virtual ~EventArgs() {};
 	};
 	// 摘要: 
@@ -299,6 +304,17 @@ namespace EzUI {
 			this->wParam = wParam;
 			this->lParam = lParam;
 		}
+		virtual ~KeyboardEventArgs() {}
+	};
+	//失去焦点
+	class KillFocusEventArgs :public EventArgs {
+	public:
+		Control* Control;
+		KillFocusEventArgs(EzUI::Control* ctl) {
+			this->EventType = Event::OnKillFocus;
+			this->Control = ctl;
+		}
+		virtual ~KillFocusEventArgs() {}
 	};
 	//坐标发生改变
 	class LocationEventArgs :public EventArgs {
@@ -307,6 +323,7 @@ namespace EzUI {
 		LocationEventArgs(const EzUI::Point& location) : Location(location) {
 			this->EventType = Event::OnLocation;
 		}
+		virtual ~LocationEventArgs() {}
 	};
 	//大小发生改变
 	class SizeEventArgs :public EventArgs {
@@ -315,6 +332,7 @@ namespace EzUI {
 		SizeEventArgs(const EzUI::Size& size) :Size(size) {
 			this->EventType = Event::OnSize;
 		}
+		virtual ~SizeEventArgs() {}
 	};
 	//矩形发生改变
 	class RectEventArgs :public EventArgs {
@@ -323,14 +341,15 @@ namespace EzUI {
 		RectEventArgs(const EzUI::Rect& rect) : Rect(rect) {
 			this->EventType = Event::OnRect;
 		}
+		virtual ~RectEventArgs() {}
 	};
 
 	class UI_EXPORT ControlStyle {
 	public:
 		EzUI::Border Border;//边框信息
 		//UI_Float Opacity;//整体不透明度
-		Color BackgroundColor = 0;//背景颜色
-		Image* BackgroundImage = NULL;//背景图片 如果指定的图片被删除 请必须将此置零
+		Color BackColor = 0;//背景颜色
+		Image* BackImage = NULL;//背景图片 如果指定的图片被删除 请必须将此置零
 		Image* ForeImage = NULL;//前景图片 如果指定的图片被删除 请必须将此置零
 		EString FontFamily;//字体名称 具有继承性
 		int FontSize = 0;//字体大小 具有继承性
@@ -359,6 +378,7 @@ namespace EzUI {
 		PaintEventArgs(EzUI::DXRender& _painter) :Graphics(_painter) {
 			EventType = Event::OnPaint;
 		}
+		virtual ~PaintEventArgs() {}
 	};
 
 	typedef std::map<EString, EString> Attributes;//属性集合

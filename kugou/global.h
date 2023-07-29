@@ -53,7 +53,6 @@ public:
 
 	SongItem(const EString& _songName, const EString& _songTime = "03:56") {
 
-
 		Style.FontSize = 12;
 
 		//this->ShadowWidth = 5;
@@ -78,14 +77,13 @@ public:
 		time.TextAlign = TextAlign::MiddleRight;
 
 		//time.Style.Radius = 33;
-		//time.Style.BackgroundColor = Color(100,255, 255, 0);
+		//time.Style.BackColor = Color(100,255, 255, 0);
 
 		this->SetFixedHeight(33);
-		HoverStyle.BackgroundColor = Color(100, 230, 230, 230);
+		HoverStyle.BackColor = Color(100, 230, 230, 230);
+		ActiveStyle.BackColor = Color(100, 255, 230, 230);
 
-		ActiveStyle.BackgroundColor = Color(100, 255, 230, 230);
-
-		//Style.BackgroundColor = Color(100, 255, 20, 0);
+		//Style.BackColor = Color(100, 255, 20, 0);
 		//Style.Radius = 33;
 
 		AddControl(new HSpacer(15));
@@ -118,8 +116,8 @@ public:
 		if (mv.Style.ForeImage) {
 			delete mv.Style.ForeImage;
 		}
-		if (del.Style.BackgroundImage) {
-			delete del.Style.BackgroundImage;
+		if (del.Style.BackImage) {
+			delete del.Style.BackImage;
 		}
 	}
 
@@ -134,7 +132,7 @@ public:
 		SetFixedHeight(35);
 		Style.Border.Bottom = 1;
 		Style.Border.Color = Color(245, 245, 245);
-		HoverStyle.BackgroundColor = Color(245, 245, 245);
+		HoverStyle.BackColor = Color(245, 245, 245);
 
 		songName.EllipsisText = L"...";
 		songName.SetText(s.SongName);
@@ -172,7 +170,7 @@ public:
 		EString fileName = "imgs/" + std::to_string(s.QualityLevel) + ".png";
 		Image* img = new Image(fileName.utf16());
 		img->Padding = 8;
-		del.Style.BackgroundImage = img;
+		del.Style.BackImage = img;
 
 		AddControl(new HSpacer(15));
 		AddControl(&songName);

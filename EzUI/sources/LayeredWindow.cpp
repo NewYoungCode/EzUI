@@ -94,7 +94,7 @@ namespace EzUI {
 	}
 	void LayeredWindow::OnPaint(PaintEventArgs& args) {
 		if (MainLayout) {
-			MainLayout->Rending(args);//
+			MainLayout->DispatchEvent(args);//
 		}
 	}
 

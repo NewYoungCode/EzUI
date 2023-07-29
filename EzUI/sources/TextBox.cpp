@@ -1,7 +1,7 @@
 #include "TextBox.h"
 namespace EzUI {
 	TextBox::TextBox() { Init(); }
-	TextBox::TextBox(Control* parent) :Control(parent) { Init(); }
+	TextBox::TextBox(Control* parent) :ScrollableControl(parent) { Init(); }
 	TextBox::~TextBox() {
 		timer.Stop();
 		if (textLayout) { delete textLayout; }
@@ -9,10 +9,10 @@ namespace EzUI {
 	}
 	void TextBox::Init()
 	{
-		GetScrollBar()->SetWidth(5);
-		GetScrollBar()->Parent = this;
-		GetScrollBar()->OWner = this;
-		GetScrollBar()->OffsetCallback = [=](int offset) {
+		this->GetScrollBar()->SetWidth(5);
+		this->GetScrollBar()->Parent = this;
+		this->GetScrollBar()->OWner = this;
+		this->GetScrollBar()->OffsetCallback = [=](int offset) {
 			this->Offset(offset);
 		};
 
@@ -319,10 +319,12 @@ namespace EzUI {
 			font->Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);
 			textLayout = new TextLayout(text, *font, Size{ Width(),__MAXFLOAT }, TextAlign::TopLeft);
 			_fontBox = textLayout->GetFontBox();
-			GetScrollBar()->RefreshContent(_fontBox.Height);
 		}
 		_contentWidth = _fontBox.Width;
 		_contentHeight = _fontBox.Height;
+		if (multiLine) {
+			this->GetScrollBar()->RefreshScroll();
+		}
 		BuildCare();
 	}
 
@@ -407,12 +409,7 @@ namespace EzUI {
 		}
 		_contentWidth = _fontBox.Width;
 		_contentHeight = _fontBox.Height;
-		if (multiLine) {
-			GetScrollBar()->RefreshContent(_fontBox.Height);
-		}
-		else {
-			GetScrollBar()->RefreshContent(0);
-		}
+		this->GetScrollBar()->RefreshScroll();
 		this->EndLayout();
 	}
 

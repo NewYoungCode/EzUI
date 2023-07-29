@@ -15,11 +15,10 @@ namespace EzUI {
 		VScrollBar();
 		virtual ~VScrollBar();
 		virtual void Move(double posY);
-		virtual void OwnerSize(const Size& ownerSize)override;
-		virtual void RefreshContent(int _contentLength)override;
+		virtual void OWnerSize(const Size& ownerSize)override;
 		virtual Rect GetSliderRect()override;
 		virtual bool IsDraw() override;
-		virtual bool CanRoll()override;
+		virtual bool Scrollable()override;
 	};
 
 };

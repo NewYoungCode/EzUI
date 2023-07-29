@@ -3,11 +3,11 @@ namespace EzUI {
 	void ComBox::Init()
 	{
 		Style.Border.Color = Color(239, 239, 239);
-		Style.BackgroundColor = Color::White;
+		Style.BackColor = Color::White;
 		Style.Border = 1;
 		Style.Border.Color = Color(239, 239, 239);
 		Style.Border.Radius = 2;
-		vlist.Style.BackgroundColor = Color::White;
+		vlist.Style.BackColor = Color::White;
 		vlist.GetScrollBar()->Style.Border.Radius = 5;
 		vlist.GetScrollBar()->SetFixedWidth(5);
 
@@ -69,7 +69,7 @@ namespace EzUI {
 		};
 		lb->SetText(text);
 		//lb->TextAlign = TextAlign::MiddleLeft;
-		lb->HoverStyle.BackgroundColor = Color(208, 208, 208);
+		lb->HoverStyle.BackColor = Color(208, 208, 208);
 		lb->HoverStyle.ForeColor = Color::White;
 		//lb->Margin.Left = 30;
 		lb->SetFixedHeight(30);

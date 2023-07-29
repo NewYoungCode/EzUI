@@ -7,10 +7,10 @@ MainFrm::MainFrm() :Window(1020, 690)
 	ntfi.SetText(L"GameTool");
 
 	TextBox* textArea = new TextBox;
-	textArea->Style.Border=1;
+	textArea->Style.Border = 1;
 	textArea->Style.Border.Color = Color::White;
 	textArea->Style.FontSize = 20;
-	textArea->Style.BackgroundColor = Color::White;
+	textArea->Style.BackColor = Color::White;
 	textArea->SetLocation({ 100, 0 });
 	textArea->SetFixedHeight({ 300 });
 	textArea->SetMultiLine(true);
@@ -65,21 +65,21 @@ void MainFrm::InitForm() {
 	localList->GetScrollBar()->Name = "testBar";
 	localList->GetScrollBar()->SetWidth(9);
 	localList->GetScrollBar()->Style.Border.Radius = 9;
-	localList->GetScrollBar()->Style.BackgroundColor = Color(50, 200, 200, 200);
+	localList->GetScrollBar()->Style.BackColor = Color(50, 200, 200, 200);
 	localList->GetScrollBar()->Style.ForeColor = Color(217, 217, 217);
 	localList->GetScrollBar()->ActiveStyle.ForeColor = Color(191, 191, 191);
 	//美化搜索列表的滚动条
 	searchList->GetScrollBar()->SetWidth(9);
 	searchList->GetScrollBar()->Style.Border.Radius = 9;
-	searchList->GetScrollBar()->Style.BackgroundColor = Color(50, 200, 200, 200);
+	searchList->GetScrollBar()->Style.BackColor = Color(50, 200, 200, 200);
 	searchList->GetScrollBar()->Style.ForeColor = Color(250, 200, 200, 200);
 	searchList->GetScrollBar()->ActiveStyle.ForeColor = Color(250, 200, 200, 200);
 	//集体设置右上角的最大化 最小化 关闭按钮 的悬浮效果
 	$(this->FindControl("btns")->GetControls()).CssHover("color:#ffffff;");
-	main2->Style.BackgroundColor = Color(100, 0, 0, 0);
-	singer->Style.BackgroundImage = headImg;
+	main2->Style.BackColor = Color(100, 0, 0, 0);
+	singer->Style.BackImage = headImg;
 
-	//localList->Style.BackgroundColor = Color(100,200,0,20);
+	//localList->Style.BackColor = Color(100,200,0,20);
 	int pos = 0;
 	//加载左侧播放过的音乐
 	for (auto&& _it : cfg->GetSections()) {
@@ -172,7 +172,7 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 			headImg = new Image(L"imgs/headImg.jpg");
 		}
 		headImg->SizeMode = ImageSizeMode::CenterImage;
-		singer->Style.BackgroundImage = headImg;
+		singer->Style.BackImage = headImg;
 	}
 	//下载歌手写真
 	{
@@ -205,7 +205,7 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 			bkImage = new Image(singerBkImg.utf16());
 		}
 		else {
-			bkImage = new Image(L"imgs/defaultBackground.jpg");
+			bkImage = new Image(L"imgs/defaultBack.jpg");
 		}
 		bkImage->SizeMode = ImageSizeMode::CenterImage;
 	}
@@ -216,7 +216,7 @@ void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 	if (wparam == 13) {
 		global::page = 1;
 		global::nextPage = true;
-		FindControl("songView")->Trigger(Event::OnMouseClick);
+		FindControl("songView")->DispatchEvent(MouseEventArgs(Event::OnMouseClick));
 		EString keyword = searchEdit->GetText();
 		std::vector<Song> songs = global::SearchSongs(keyword);
 		searchList->Clear(true);
@@ -286,16 +286,16 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				}
 
 				if (headImg) {
-					singer->Style.BackgroundImage = NULL;
+					singer->Style.BackImage = NULL;
 					delete headImg;
 					headImg = NULL;
 				}
 				if (bkImage) {
-					main->Style.BackgroundImage = NULL;
+					main->Style.BackImage = NULL;
 					delete bkImage;
 					bkImage = NULL;
 				}
-				FindControl("lrcView")->Trigger(Event::OnMouseClick);
+				FindControl("lrcView")->DispatchEvent(MouseEventArgs(Event::OnMouseClick));
 
 				//this->DownLoadImage(SingerName, json["imgUrl"].asString());
 				downloadTask = new std::future<void>(std::async([&](EString singname, EString imgUrl)->void {
@@ -333,8 +333,9 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			lrcCtl.LoadLrc(lrcData);
 			timer->Start();
 		}
-
 	}
+
+
 	if (args.EventType == Event::OnMouseClick) {
 
 		if (sender->Name == "play") {
@@ -370,7 +371,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 
 			Debug::Info("del 666 %p", data->InputControl);
 			Debug::Info("del 777 %p", data->FocusControl);
-
+			localList->Invalidate();
 			return false;
 		}
 		if (sender->GetAttribute("tablayout") == "rightView") {
@@ -401,7 +402,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 					urls.push_back(url);
 				}
 			}
-			FindControl("mvView")->Trigger(Event::OnMouseClick);
+			FindControl("mvView")->DispatchEvent(MouseEventArgs(Event::OnMouseClick));
 			player.OpenUrl(urls[urls.size() - 1]);
 			player.Play();
 			this->SetText(json["songname"].asString());
@@ -496,7 +497,7 @@ void MainFrm::NextPage(int a, int b) {
 		if (!global::nextPage) {
 			Label* end = new Label;
 			end->SetFixedHeight(35);
-			end->Style.BackgroundColor = Color(254, 249, 229);
+			end->Style.BackColor = Color(254, 249, 229);
 			end->SetText(L"已经没有更多数据");
 			searchList->AddControl(end);
 		}
@@ -504,26 +505,26 @@ void MainFrm::NextPage(int a, int b) {
 	}
 }
 void  MainFrm::SongView() {
-	centerLeft->Style.BackgroundColor = Color(0, 0, 0, 0);
+	centerLeft->Style.BackColor = Color(0, 0, 0, 0);
 	tools->Style.Border.Bottom = 1;
 	tools->Style.Border.Color = Color(238, 238, 238);
-	main->Style.BackgroundImage = NULL;
-	localList->GetScrollBar()->Style.BackgroundColor = Color(50, 200, 200, 200);
+	main->Style.BackImage = NULL;
+	localList->GetScrollBar()->Style.BackColor = Color(50, 200, 200, 200);
 	localList->GetScrollBar()->Style.ForeColor = Color(217, 217, 217);
 	localList->GetScrollBar()->ActiveStyle.ForeColor = Color(191, 191, 191);
-	center->Style.BackgroundColor = Color::White;
+	center->Style.BackColor = Color::White;
 	center->Style.ForeColor = Color::Black;
 	Invalidate();
 }
 void  MainFrm::LrcView() {
-	centerLeft->Style.BackgroundColor = Color(100, 200, 200, 200);
+	centerLeft->Style.BackColor = Color(100, 200, 200, 200);
 	tools->Style.Border.Bottom = 1;
 	tools->Style.Border.Color = Color(238, 238, 238);
-	localList->GetScrollBar()->Style.BackgroundColor = Color(50, 200, 200, 200);
+	localList->GetScrollBar()->Style.BackColor = Color(50, 200, 200, 200);
 	localList->GetScrollBar()->Style.ForeColor = Color(100, 255, 255, 255);
 	localList->GetScrollBar()->ActiveStyle.ForeColor = Color(150, 255, 255, 255);
-	main->Style.BackgroundImage = bkImage;
-	center->Style.BackgroundColor = Color(0, 0, 0, 0);
+	main->Style.BackImage = bkImage;
+	center->Style.BackColor = Color(0, 0, 0, 0);
 	center->Style.ForeColor = Color::White;
 	Invalidate();
 }
@@ -535,7 +536,7 @@ LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
 
 			singer->Invalidate();
 		}
-		FindControl("lrcView")->Trigger(Event::OnMouseClick);
+		FindControl("lrcView")->DispatchEvent(MouseEventArgs(Event::OnMouseClick));
 		return 0;
 	}
 	return __super::WndProc(msg, W, L);

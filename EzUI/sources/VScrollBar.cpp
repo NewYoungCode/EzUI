@@ -2,11 +2,6 @@
 namespace EzUI {
 	VScrollBar::VScrollBar() { }
 	VScrollBar::~VScrollBar() { }
-	void VScrollBar::RefreshContent(int _contentLength)
-	{
-		this->_contentLength = _contentLength;
-		Move(_sliderPos);
-	}
 	Rect VScrollBar::GetSliderRect() {
 		Rect sliderRect(0, 0, Width(), Height());
 		sliderRect.X = X();
@@ -16,12 +11,12 @@ namespace EzUI {
 	}
 	bool VScrollBar::IsDraw()
 	{
-		if (!CanRoll()) {
+		if (!Scrollable()) {
 			return false;
 		}
 		return this->IsVisible();
 	}
-	bool VScrollBar::CanRoll()
+	bool VScrollBar::Scrollable()
 	{
 		if (_sliderLength >= Height()) {
 			return false;
@@ -32,13 +27,13 @@ namespace EzUI {
 		if (_sliderLength >= Height()) {
 			return;
 		}
-		const Color& color = GetBackgroundColor();
+		const Color& color = GetBackColor();
 		if (color.GetValue() != 0) {
 			e.Graphics.SetColor(color);
 			e.Graphics.FillRectangle(Rect{ 0,0,Width(),Height() });
 		}
 	}
-	void VScrollBar::OwnerSize(const Size& size) {
+	void VScrollBar::OWnerSize(const Size& size) {
 		if (this->Parent == this->OWner) {
 			this->SetRect({ size.Width - this->Width() ,0,this->Width(),size.Height });
 		}
@@ -59,7 +54,7 @@ namespace EzUI {
 		const Color& color = GetForeColor();
 		if (color.GetValue() != 0) {
 			args.Graphics.SetColor(color);
-			args.Graphics.FillRectangle(sliderRect,GetBorderTopLeftRadius());
+			args.Graphics.FillRectangle(sliderRect, GetBorderTopLeftRadius());
 		}
 	}
 	void VScrollBar::OnMouseDown(MouseButton mBtn, const Point& point) {
@@ -82,8 +77,10 @@ namespace EzUI {
 		}
 	}
 	void VScrollBar::Move(double posY) {
-		if (OWner == NULL || _contentLength <= 0) {
-			_sliderLength =Height();
+		if (OWner == NULL) return;
+		int _contentLength = OWner->GetContentHeight();
+		if (_contentLength <= 0) {
+			_sliderLength = Height();
 			return;
 		}
 		if (OWner->IsPendLayout()) {

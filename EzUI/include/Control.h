@@ -5,6 +5,7 @@ namespace EzUI {
 	{
 	private:
 		//ControlStyle _nowStyle;//临时组成的样式
+		bool* _isRemove = NULL;
 		bool _stateRepaint = false;//状态发生改变的时候绘制
 		bool _mouseIn = false;//鼠标是否在控件内
 		bool _visible = true;//控件是否可见 此标志为true的时候 可能实际中并不会可见 
@@ -26,9 +27,6 @@ namespace EzUI {
 		Size _fixedSize{ 0,0 };//绝对Size
 		Rect _rect;//控件矩形区域(基于父控件)
 		DockStyle _dock = DockStyle::None;//dock样式
-	protected:
-		int _contentWidth = 0;//上下文宽度
-		int _contentHeight = 0;//上下文高度
 	public:
 		EzUI::Margin Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数
 		WindowData* PublicData = NULL;//窗口上的公共数据
@@ -68,7 +66,7 @@ namespace EzUI {
 		virtual void OnSize(const Size& size) override;//大小发生改变
 		virtual void OnRect(const Rect& rect) override;
 		virtual void OnLayout();//布局代码在此 布局完成之后PendLayout设置成false
-		virtual void OnKeyBoardEvent(const KeyboardEventArgs& _args);//键盘事件消息
+		virtual bool OnKeyBoardEvent(const KeyboardEventArgs& _args);//键盘事件消息
 		virtual void OnMouseMove(const Point& point);//鼠标在控件上移动
 		virtual void OnMouseLeave();//鼠标离开控件
 		virtual void OnMouseWheel(int _rollCount, short zDelta, const Point& point);//鼠标滚轮
@@ -77,10 +75,12 @@ namespace EzUI {
 		virtual void OnMouseClick(MouseButton mbtn, const Point& point);//鼠标单击
 		virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point);//鼠标双击
 		virtual void OnMouseEnter(const Point& point);//鼠标移入
-		virtual void OnMouseEvent(const MouseEventArgs& args);//鼠标事件消息
+		virtual bool OnMouseEvent(const MouseEventArgs& args);//鼠标事件消息
 		virtual void OnKeyChar(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);//键盘弹起
+		virtual void OnKillFocus(Control* control);//失去焦点的时候发生
+		virtual void Rending(PaintEventArgs& args);//绘制函数
 	public:
 		//以下函数请保证在父控件布局已完成的情况下使用 使用ResumeLayout()执行布局
 		const int& X();
@@ -98,8 +98,6 @@ namespace EzUI {
 		void SetFixedHeight(const int& fixedHeight);//设置绝对高度
 		const int& GetFixedWidth();//获取绝对宽度
 		const int& GetFixedHeight();//获取绝对高度
-		virtual const int& GetContentWidth();//上下文宽度
-		virtual const int& GetContentHeight();//上下文高度
 		virtual const Rect& GetRect();//获取相对与父控件矩形 布局计算后
 		Rect GetClientRect();//获取基于客户端的矩形
 		const DockStyle& GetDockStyle();//获取dock标志
@@ -110,10 +108,8 @@ namespace EzUI {
 		const Rect& SetRect(const Rect& rect);//设置相对父控件矩形 返回实际的rect
 		virtual void ResumeLayout();//直接进行布局
 		virtual void SetTips(const EString& text);//设置tips
-		virtual void OnKillFocus(Control* control);//失去焦点的时候发生
 		virtual void OnRemove();//被移除该做的事情
-		void Trigger(const MouseEventArgs& args);//触发鼠标相关消息
-		void Trigger(const KeyboardEventArgs& args);//触发键盘相关消息
+		virtual bool DispatchEvent(const EventArgs& arg);//用于消息事件的函数
 		void AddEventNotify(int eventType);//添加到主窗口Ontify函数中可拦截
 		void RemoveEventNotify(int eventType);//移除一个主窗口的Ontify消息
 		virtual ScrollBar* GetScrollBar();//获取控件的滚动条
@@ -129,8 +125,8 @@ namespace EzUI {
 		int GetBorderBottom(ControlState _state = ControlState::None);
 		Color GetBorderColor(ControlState _state = ControlState::None);
 		Image* GetForeImage(ControlState _state = ControlState::None);
-		Image* GetBackgroundImage(ControlState _state = ControlState::None);
-		Color GetBackgroundColor(ControlState _state = ControlState::None);
+		Image* GetBackImage(ControlState _state = ControlState::None);
+		Color GetBackColor(ControlState _state = ControlState::None);
 		//具有继承性样式
 		Color GetForeColor(ControlState _state = ControlState::None);//获取默认控件状态下前景色
 		EString GetFontFamily(ControlState _state = ControlState::None);//获取默认控件状态下字体Family
@@ -151,7 +147,7 @@ namespace EzUI {
 		virtual void AddControl(Control* ctl);//添加控件
 		virtual void RemoveControl(Control* ctl);//删除控件 返回下一个迭代器
 		virtual void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件
-		virtual void Rending(PaintEventArgs& args);//绘制函数
+		
 		virtual void SetVisible(bool flag);//设置Visible标志
 		bool IsVisible();//获取Visible标志
 		virtual bool IsInWindow();//当前是否显示在窗口内 代表实际情况是否显示
@@ -193,6 +189,22 @@ namespace EzUI {
 			SetFixedWidth(fixedWidth);
 		}
 	};
+	//
+	// 摘要:
+	// 为支持自动滚动行为的控件定义一个基类。
+	class ScrollableControl :public Control {
+	protected:
+		//上下文宽度
+		int _contentWidth = 0;
+		//上下文高度
+		int _contentHeight = 0;
+	public:
+		ScrollableControl() {};
+		ScrollableControl(Control* parent) :Control(parent) {};
+		const int& GetContentWidth() { return _contentWidth; };
+		const int& GetContentHeight() { return _contentHeight; };
+		virtual ~ScrollableControl() {};
+	};
 	class ScrollBar :public Control {
 	private:
 		//滚动条不允许再出现子控件
@@ -203,17 +215,16 @@ namespace EzUI {
 		bool _mouseDown = false;
 		//上一次鼠标命中的坐标
 		int  _lastPoint = 0;
-		//滚动内容的长度
-		int _contentLength = 0;
 		// 滚动条当前的坐标
 		double _sliderPos = 0;
 		// 滚动条的长度
 		int _sliderLength = 0;
 	public:
-		//所属者 当所属者被移除或者被释放掉 请注意将此指针置零
-		Control* OWner = NULL;
+		//滚动条所属者 当所属者被移除或者被释放掉 请注意将此指针置零
+		ScrollableControl* OWner = NULL;
 		//滚动条计算出偏移之后的回调函数
 		std::function<void(int)> OffsetCallback = NULL;
+		EventScrollRolling Rolling = NULL;//滚动事件
 	protected:
 		virtual void OnMouseUp(MouseButton mBtn, const Point& point)override
 		{
@@ -226,13 +237,17 @@ namespace EzUI {
 			_mouseDown = false;
 		}
 	public:
-		virtual void RefreshContent(int maxContent) = 0;
 		virtual void Move(double pos) = 0;
 		virtual Rect GetSliderRect() = 0;//
-		virtual void OwnerSize(const Size& parentSize) = 0;
-		virtual bool IsDraw() = 0;//滚动条是否已经绘制且显示
-		virtual bool CanRoll() = 0;//滚动条是否能够滚动
-		EventScrollRolling Rolling = NULL;//滚动事件
+		virtual void OWnerSize(const Size& parentSize) = 0;
+		//滚动条是否已经绘制且显示
+		virtual bool IsDraw() = 0;
+		//滚动条是否能够滚动
+		virtual bool Scrollable() = 0;
+		//当OWner发生内容发生改变 请调用刷新滚动条
+		void RefreshScroll() {
+			Move(_sliderPos);
+		};
 		ScrollBar() {
 			Style.ForeColor = Color(205, 205, 205);//the bar default backgroundcolor
 			SetSize({ 10,10 });

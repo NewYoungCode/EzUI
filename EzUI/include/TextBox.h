@@ -4,7 +4,7 @@
 #include "VScrollBar.h"
 namespace EzUI {
 	class UI_EXPORT TextBox :
-		public Control
+		public ScrollableControl
 	{
 	private:
 		VScrollBar _vsb;
