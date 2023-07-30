@@ -237,8 +237,9 @@ namespace EzUI {
 		return Height;
 	}
 	void DXImage::CreateFormStream(IStream* istram) {
+		HRESULT ret = S_OK;
 		if (D2D::g_ImageFactory) {
-			D2D::g_ImageFactory->CreateDecoderFromStream(istram, NULL, WICDecodeMetadataCacheOnDemand, &bitmapdecoder);//
+			ret = D2D::g_ImageFactory->CreateDecoderFromStream(istram, NULL, WICDecodeMetadataCacheOnDemand, &bitmapdecoder);//
 		}
 		if (bitmapdecoder) {
 			D2D::g_ImageFactory->CreateFormatConverter(&fmtcovter);
@@ -293,6 +294,13 @@ namespace EzUI {
 		_framePos++;
 		return 60;
 	}
+	DXImage* DXImage::Clone()
+	{
+		UINT width, height;
+		fmtcovter->GetSize(&width, &height); // 获取位图源的宽度和高度
+		//暂时不做clone函数
+		return NULL;
+	}
 	DXImage::DXImage(HBITMAP hBitmap) {
 		if (D2D::g_ImageFactory) {
 			D2D::g_ImageFactory->CreateBitmapFromHBITMAP(hBitmap, NULL, WICBitmapUsePremultipliedAlpha, &bitMap);
@@ -305,7 +313,15 @@ namespace EzUI {
 	}
 	DXImage::DXImage(UINT width, UINT height)
 	{
-		HRESULT hr = D2D::g_ImageFactory->CreateBitmap(width, height, GUID_WICPixelFormat32bppBGRA, WICBitmapCreateCacheOption::WICBitmapCacheOnDemand, &bitMap);
+		HRESULT hr = D2D::g_ImageFactory->CreateBitmap(width, height, GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnDemand, &bitMap);
+	}
+	DXImage::DXImage(const void* data, size_t count)
+	{
+		IStream* stream = SHCreateMemStream((BYTE*)data, count);
+		if (stream) {
+			this->CreateFormStream(stream);
+			stream->Release();
+		}
 	}
 	ID2D1Bitmap* DXImage::Get()
 	{
@@ -689,7 +705,7 @@ namespace EzUI {
 	}
 	void DXRender::DrawImage(DXImage* image, const Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Padding& padding) {
 		_NOREND_IMAGE_
-			if (image == NULL) return;
+			if (image == NULL || image->Visible == false) return;
 		//计算坐标
 		Rect rect = _rect;
 		rect.X += padding.Left;
@@ -720,7 +736,7 @@ namespace EzUI {
 		render->FillEllipse(ellipse, GetBrush());
 	}
 	void DXRender::DrawArc(const Rect& rect, int startAngle, int sweepAngle, int width) {
-		
+
 	}
 	void DXRender::DrawArc(const Point& point1, const Point& point2, const Point& point3, int width)
 	{

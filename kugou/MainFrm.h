@@ -9,39 +9,38 @@
 #include "LayeredWindow.h"
 #include "UIManager.h"
 class MainFrm :
-	public Window
+	public BorderlessWindow
 {
 private:
-	//no new
+	LayeredWindow* deskTopWnd;
+	//no new 不需要释放
 	NotifyIcon ntfi;
 	UIManager umg;
 	VlcPlayer player;
-	VList* localList = NULL, * searchList=NULL;
+	VList* localList = NULL, * searchList = NULL;
 	TextBox* searchEdit;
 	LrcControl lrcCtl;
+	LrcControl *deskTopLrc;
 	EString lastFen;
 	Label* time, * singer;
 	TabLayout* tabCtrl, * control;
-	Control* main, * main2, * center, * centerLeft, * tools, * playerBar, * playerBar2;
-	//need new 
+	Control* main, * center, * centerLeft, * tools, * playerBar, * playerBar2;
+	//need new 需要释放
 	Thread::Timer* timer = NULL;
 	ConfigIni* cfg = NULL;
-	Image* playingImage = NULL, * pauseImage = NULL;
-	Image* bkImage = NULL, * headImg = NULL;
+	Image* bkImg = NULL, * headImg = NULL;
 	std::future<void>* downloadTask = NULL;
 	int lastWidth = -1;
-	//TextArea textArea;
 protected:
 	virtual void OnKeyDown(WPARAM wparam, LPARAM lParam)override;
 	bool OnNotify(Control* sender, EventArgs& args)override;
 	LRESULT WndProc(UINT msg, WPARAM W, LPARAM L) override;
 	void NextPage(int a, int b);
-	void SongView();
+	void OpenSongView();
 	void Task();
-	void LrcView();
+	void OpenLrcView();
 	void InitForm();
 	void DownLoadImage(EString SingerName, EString headImageUrl);
-	void OnPaint(PaintEventArgs& arg);
 public:
 	MainFrm();
 	virtual ~MainFrm();

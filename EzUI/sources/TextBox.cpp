@@ -553,11 +553,9 @@ namespace EzUI {
 		const Color& fontColor = GetForeColor();
 		e.Graphics.SetFont(fontFamily, fontSize);
 		if (text.empty()) {
-			byte a = fontColor.GetA();
-			byte r = fontColor.GetR();
-			byte g = fontColor.GetG();
-			byte b = fontColor.GetB();
-			e.Graphics.SetColor(Color(a * 0.5, r, g, b));
+			Color placeholderColor = fontColor;
+			placeholderColor.SetA(fontColor.GetA() * 0.5);
+			e.Graphics.SetColor(placeholderColor);
 			e.Graphics.DrawString(Placeholder.utf16(), Rect(0, 0, Width(), Height()), multiLine ? TextAlign::TopLeft : TextAlign::MiddleLeft);
 		}
 

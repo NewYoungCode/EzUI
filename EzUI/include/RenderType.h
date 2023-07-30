@@ -3,12 +3,6 @@
 namespace EzUI {
 
 	namespace RenderType {
-		typedef DWORD ARGB;
-		typedef float REAL;
-#define REAL_MAX            FLT_MAX
-#define REAL_MIN            FLT_MIN
-#define REAL_TOLERANCE     (FLT_MIN * 100)
-#define REAL_EPSILON        1.192092896e-07F        /* FLT_EPSILON */
 
 		template<typename T>
 		class __Size
@@ -228,9 +222,6 @@ namespace EzUI {
 			{
 				return Intersect(*this, *this, __Rect);
 			}
-			__Rect WinRECT() const {
-				return __Rect{ X,Y,GetRight(),GetBottom() };
-			}
 
 			static bool Intersect(__Rect& c,
 				const __Rect& a,
@@ -275,8 +266,8 @@ namespace EzUI {
 			{
 				Offset(point.X, point.Y);
 			}
-			void Offset(T dx,
-				T dy)
+			void Offset(const T& dx,
+				const T& dy)
 			{
 				X += dx;
 				Y += dy;
@@ -285,137 +276,87 @@ namespace EzUI {
 		class Color
 		{
 		protected:
-			ARGB Argb;
+			DWORD Argb = 0;
 		public:
-
-			Color()
-			{
-				Argb = 0;
-			}
-
-			// Construct an opaque Color object with
-			// the specified Red, Green, Blue values.
-			//
-			// Color values are not premultiplied.
-
-			Color(BYTE r,
-				BYTE g,
-				BYTE b)
+			Color() {}
+			Color(const BYTE& r,
+				const BYTE& g,
+				const BYTE& b)
 			{
 				Argb = MakeARGB(255, r, g, b);
 			}
-
-			Color(BYTE a,
-				BYTE r,
-				BYTE g,
-				BYTE b)
+			Color(const BYTE& a,
+				const BYTE& r,
+				const BYTE& g,
+				const BYTE& b)
 			{
 				Argb = MakeARGB(a, r, g, b);
 			}
-
-			Color(ARGB argb)
+			Color(const DWORD& argb)
 			{
 				Argb = argb;
 			}
-
-			BYTE GetAlpha() const
+			const BYTE& GetA() const
 			{
-				return (BYTE)(Argb >> AlphaShift);
+				return ((BYTE*)&Argb)[0];
 			}
-
-			BYTE GetA() const
+			const BYTE& GetR() const
 			{
-				return GetAlpha();
+				return ((BYTE*)&Argb)[1];
 			}
-
-			BYTE GetRed() const
+			const BYTE& GetG() const
 			{
-				return (BYTE)(Argb >> RedShift);
+				return ((BYTE*)&Argb)[2];
 			}
-
-			BYTE GetR() const
+			const BYTE& GetB() const
 			{
-				return GetRed();
+				return ((BYTE*)&Argb)[3];
 			}
-
-			BYTE GetGreen() const
-			{
-				return (BYTE)(Argb >> GreenShift);
-			}
-
-			BYTE GetG() const
-			{
-				return GetGreen();
-			}
-
-			BYTE GetBlue() const
-			{
-				return (BYTE)(Argb >> BlueShift);
-			}
-
-			BYTE GetB() const
-			{
-				return GetBlue();
-			}
-
-			ARGB GetValue() const
+			const DWORD& GetValue() const
 			{
 				return Argb;
 			}
-
-			void SetValue(ARGB argb)
+			void SetValue(DWORD argb)
 			{
 				Argb = argb;
 			}
-		public:
-
-			// Common color constants
-
-			enum
-			{
-				Red = 0xFFFF0000,
-				Green = 0xFF008000,
-				Blue = 0xFF0000FF,
-				Black = 0xFF000000,
-				Gray = 0xFF808080,
-				Orange = 0xFFFFA500,
-				Pink = 0xFFFFC0CB,
-				White = 0xFFFFFFFF,
-				Yellow = 0xFFFFFF00
-			};
-
-			// Shift count and bit mask for A, R, G, B components
-
-			enum
-			{
-				AlphaShift = 24,
-				RedShift = 16,
-				GreenShift = 8,
-				BlueShift = 0
-			};
-
-			enum
-			{
-				AlphaMask = 0xff000000,
-				RedMask = 0x00ff0000,
-				GreenMask = 0x0000ff00,
-				BlueMask = 0x000000ff
-			};
-
-			// Assemble A, R, G, B values into a 32-bit integer
-
-			static ARGB MakeARGB(BYTE a,
-				BYTE r,
-				BYTE g,
-				BYTE b)
-			{
-				return (((ARGB)(b) << BlueShift) |
-					((ARGB)(g) << GreenShift) |
-					((ARGB)(r) << RedShift) |
-					((ARGB)(a) << AlphaShift));
+			void SetA(const BYTE& value) {
+				((BYTE*)&Argb)[0] = value;
 			}
-
-
+			void SetR(const BYTE& value) {
+				((BYTE*)&Argb)[1] = value;
+			}
+			void SetG(const BYTE& value) {
+				((BYTE*)&Argb)[2] = value;
+			}
+			void SetB(const BYTE& value) {
+				((BYTE*)&Argb)[3] = value;
+			}
+		public:
+			// Common color constants
+			enum :DWORD
+			{
+				Transparent = 0,
+				Red = 65535,
+				Green = 16711935,
+				Blue = 4278190335,
+				Black = 255,
+				White = 4294967295,
+				Gray = 2155905279
+			};
+		private:
+			static DWORD MakeARGB(const BYTE& a,
+				const BYTE& r,
+				const BYTE& g,
+				const BYTE& b)
+			{
+				DWORD argb = 0;
+				((BYTE*)&argb)[0] = a;
+				((BYTE*)&argb)[1] = r;
+				((BYTE*)&argb)[2] = g;
+				((BYTE*)&argb)[3] = b;
+				return argb;
+			}
 		};
 
 		template<typename T>
@@ -505,7 +446,7 @@ namespace EzUI {
 		public:
 			Radius(EzUI::Border& bd) :Border(bd) {}
 			//对四个角度同时设置半径大小
-			Radius& operator=(int radius) {
+			Radius& operator=(const int& radius) {
 				Border.TopLeftRadius = radius;
 				Border.TopRightRadius = radius;
 				Border.BottomRightRadius = radius;
@@ -518,7 +459,7 @@ namespace EzUI {
 	public:
 		Border() {}
 		//对四个边设置大小
-		Border& operator=(int borderWidth) {
+		Border& operator=(const int& borderWidth) {
 			Left = borderWidth;
 			Top = borderWidth;
 			Right = borderWidth;

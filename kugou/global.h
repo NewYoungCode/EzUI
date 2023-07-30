@@ -9,6 +9,11 @@
 #include "VList.h"
 #include "HLayout.h"
 #include "VLayout.h"
+#include "Button.h"
+
+#include "timer.h"
+#include "resource.h"
+
 #include "WebClient.h"
 #include "JsonCpp.h"
 #include "HttpUtility.h"
@@ -21,6 +26,7 @@
 #pragma comment(lib,"CommonD.lib")
 #endif
 
+#define refreshImage WM_UIMESSAGE+1
 using namespace EzUI;
 struct Song {
 	EString hash;
@@ -28,9 +34,9 @@ struct Song {
 	EString SingerName;
 	EString MvHash;
 	int Duration;
-	EString AlbumID;//???ID
-	EString AlbumName;//???
-	int QualityLevel;//???
+	EString AlbumID;//
+	EString AlbumName;//
+	int QualityLevel;//热度
 };
 
 class SongItem :public HBox {
@@ -43,7 +49,6 @@ public:
 			delete del.Style.ForeImage;
 		}
 	}
-
 	virtual void OnChildPaint(PaintEventArgs& args)override {
 		__super::OnChildPaint(args);
 		//置顶 绘制删除线
@@ -56,7 +61,7 @@ public:
 		Style.FontSize = 12;
 
 		//this->ShadowWidth = 5;
-		del.Style.ForeImage = new Image(L"imgs/del.png");
+		del.Style.ForeImage = Image::FromFile(L"imgs/del.png");
 		del.SetFixedSize({ 20,20 });
 		del.Style.Cursor = LoadCursor(Cursor::HAND);
 		del.Name = "dellocal";
@@ -68,23 +73,13 @@ public:
 		songName.MousePassThrough = time.MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseDoubleClick;
 		songName.HoverStyle.FontSize = 15;
 
-		//自动宽高的支持
-		//songName.AutoWidth = songName.AutoHeight = true;
-		//time.AutoWidth = time.AutoHeight = true;
-
 		time.SetFixedWidth(50);
 		time.SetText(_songTime);
 		time.TextAlign = TextAlign::MiddleRight;
 
-		//time.Style.Radius = 33;
-		//time.Style.BackColor = Color(100,255, 255, 0);
-
 		this->SetFixedHeight(33);
 		HoverStyle.BackColor = Color(100, 230, 230, 230);
 		ActiveStyle.BackColor = Color(100, 255, 230, 230);
-
-		//Style.BackColor = Color(100, 255, 20, 0);
-		//Style.Radius = 33;
 
 		AddControl(new HSpacer(15));
 		AddControl(&songName);
@@ -138,7 +133,7 @@ public:
 		songName.SetText(s.SongName);
 		songName.TextAlign = TextAlign::MiddleLeft;
 		songName.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
-		songName.HoverStyle.ForeColor = Color::Orange;
+		songName.HoverStyle.ForeColor = Color(200, 100, 1);
 
 		AlbumName.SetFixedWidth(180);
 		AlbumName.SetText(s.AlbumName);
@@ -151,7 +146,7 @@ public:
 		mv.MousePassThrough = Event::OnHover;
 		if (!s.MvHash.empty()) {
 			mv.SetAttribute("mvhash", s.MvHash);
-			mv.Style.ForeImage = new Image(L"imgs/mvicon.png");;
+			mv.Style.ForeImage = Image::FromFile(L"imgs/mvicon.png");;
 			mv.Style.ForeImage->Padding = 8;
 			mv.Style.Cursor = LoadCursor(Cursor::HAND);
 		}
@@ -168,7 +163,7 @@ public:
 		del.SetFixedWidth(33);
 
 		EString fileName = "imgs/" + std::to_string(s.QualityLevel) + ".png";
-		Image* img = new Image(fileName.utf16());
+		Image* img = Image::FromFile(fileName.utf16());
 		img->Padding = 8;
 		del.Style.BackImage = img;
 
@@ -202,12 +197,11 @@ namespace global {
 		WebClient wc;
 		wc.AddHeader("Accept", " */*");
 		wc.AddHeader("Accept-Language", " en-US,en;q=0.8,zh-Hans-CN;q=0.5,zh-Hans;q=0.2");
-		//wc.AddHeader("Accept-Encoding", " gzip, deflate");//???? ?????????????gzip
 		wc.AddHeader("User-Agent", " Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko");
 		wc.AddHeader("Host", host);
 		wc.AddHeader("Connection", " Keep-Alive");
 		wc.AddHeader("Cache-Control", " no-cache");
-		EString userid = "1581500898";//???????ID ????????????????????????
+		EString userid = "1581500898";//
 		newUrl += "&userid=" + userid;
 		return wc.HttpGet(newUrl, resp);
 	}
@@ -263,4 +257,24 @@ namespace global {
 		auto gbkLrc = Text::UTF8ToANSI(base64Text);
 		return base64Text;
 	}
+
+	extern HWND _workerw ;
+	inline BOOL CALLBACK EnumWindowsProc(_In_ HWND tophandle, _In_ LPARAM topparamhandle)
+	{
+		HWND defview = FindWindowEx(tophandle, 0, L"SHELLDLL_DefView", nullptr);
+		if (defview != nullptr)
+		{
+			_workerw = FindWindowEx(0, tophandle, L"WorkerW", 0);
+		}
+		return true;
+	}
+	inline HWND GetWorkerW() {
+		int result;
+		HWND windowHandle = FindWindow(L"Progman", nullptr);
+		SendMessageTimeout(windowHandle, 0x052c, 0, 0, SMTO_NORMAL, 0x3e8, (PDWORD_PTR)&result);
+		EnumWindows(EnumWindowsProc, (LPARAM)nullptr);
+		ShowWindow(_workerw, SW_HIDE);
+		return windowHandle;
+	}
+
 };

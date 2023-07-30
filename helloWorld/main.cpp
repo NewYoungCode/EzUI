@@ -95,7 +95,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 		//lb->Dock = DockStyle::Horizontal;
 		lb->SetText(std::to_string(i));
 		lb->SetFixedSize({ 100,30 });
-		lb->Style.BackColor = Color::Pink;
+		lb->Style.BackColor = Color::Green;
 		lb->HoverStyle.BackColor = Color::Gray;
 		lb->Margin = 1;
 		lb->MouseClick = [&list](Control* sd, MouseButton, const Point&)->void {

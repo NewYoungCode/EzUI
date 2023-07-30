@@ -1,50 +1,20 @@
 #include "MainFrm.h"
-#define refreshImage WM_UIMESSAGE+1
 #include "ComBox.h"
-MainFrm::MainFrm() :Window(1020, 690)
+MainFrm::MainFrm() :BorderlessWindow(1020, 690)
 {
 	InitForm();
-	ntfi.SetText(L"GameTool");
-
-	TextBox* textArea = new TextBox;
-	textArea->Style.Border = 1;
-	textArea->Style.Border.Color = Color::White;
-	textArea->Style.FontSize = 20;
-	textArea->Style.BackColor = Color::White;
-	textArea->SetLocation({ 100, 0 });
-	textArea->SetFixedHeight({ 300 });
-	textArea->SetMultiLine(true);
-
-	WebClient wc;
-	std::string resp;
-	wc.HttpGet("www.baidu.com", resp);
-	textArea->SetText(resp);
-	//MainLayout->AddControl(textArea);
-	//textArea->SetText(L"hello");
-	//MainLayout->Style.Radius =100;
-	this->SetMiniSize({ 800,450 });
-	//this->SetMaxSize({ 1800,1012 });
-	//auto lg= FindControl("login");
-	//lg->Enable = false;
-	//this->CloseShadow();
-	//this->SetShadow(50);
+	//托盘
+	ntfi.SetText(L"酷狗音乐");
+	ntfi.SetIcon(nullptr);//托盘图标
+	this->SetMiniSize({ 800,600 });
 }
 void MainFrm::InitForm() {
 	this->Zoom = true;
 	umg.LoadFile("xml/main.htm");
 	umg.SetupUI(this);
-	//create object
-	playingImage = new Image(L"imgs/play.png");
-	pauseImage = new Image(L"imgs/pause.png");
-	bkImage = new Image(L"imgs/defaultBackground.jpg");
-	bkImage->SizeMode = ImageSizeMode::CenterImage;
-	headImg = new Image(L"imgs/headImg.jpg");
-	headImg->SizeMode = ImageSizeMode::CenterImage;
-
 	cfg = new ConfigIni(Path::StartPath() + "\\list.ini");
 	//findControl
 	main = FindControl("main");
-	main2 = FindControl("main2");
 	tools = FindControl("tools");
 	center = FindControl("center");
 	centerLeft = FindControl("centerLeft");
@@ -61,25 +31,29 @@ void MainFrm::InitForm() {
 	this->FindControl("vlcDock")->AddControl(&player);
 	this->FindControl("lrcView2")->AddControl(&lrcCtl);//添加歌词控件
 
-	//美化左侧本地列表的滚动条
-	localList->GetScrollBar()->Name = "testBar";
+	std::list<MonitorInfo> monitorInfo;
+	GetMonitors(&monitorInfo);
+	const MonitorInfo& def = *monitorInfo.begin();
+	deskTopWnd = new LayeredWindow(def.WorkRect.Width, def.WorkRect.Height);
+	deskTopLrc = new LrcControl();
+	deskTopLrc->Style.FontSize = 20;
+	deskTopLrc->Style.ForeColor = Color::White;
+	deskTopLrc->Style.BackColor = Color(20, 255, 255, 255);
+	deskTopWnd->SetLayout(deskTopLrc);
+	::SetParent(deskTopWnd->Hwnd(), global::GetWorkerW());
+	//deskTopWnd->Show();
+
+	//给默认背景图片设置缩放属性
+	main->Style.BackImage->SizeMode = ImageSizeMode::CenterImage;
+	////美化左侧本地列表的滚动条
 	localList->GetScrollBar()->SetWidth(9);
 	localList->GetScrollBar()->Style.Border.Radius = 9;
-	localList->GetScrollBar()->Style.BackColor = Color(50, 200, 200, 200);
-	localList->GetScrollBar()->Style.ForeColor = Color(217, 217, 217);
-	localList->GetScrollBar()->ActiveStyle.ForeColor = Color(191, 191, 191);
 	//美化搜索列表的滚动条
 	searchList->GetScrollBar()->SetWidth(9);
 	searchList->GetScrollBar()->Style.Border.Radius = 9;
 	searchList->GetScrollBar()->Style.BackColor = Color(50, 200, 200, 200);
-	searchList->GetScrollBar()->Style.ForeColor = Color(250, 200, 200, 200);
-	searchList->GetScrollBar()->ActiveStyle.ForeColor = Color(250, 200, 200, 200);
 	//集体设置右上角的最大化 最小化 关闭按钮 的悬浮效果
 	$(this->FindControl("btns")->GetControls()).CssHover("color:#ffffff;");
-	main2->Style.BackColor = Color(100, 0, 0, 0);
-	singer->Style.BackImage = headImg;
-
-	//localList->Style.BackColor = Color(100,200,0,20);
 	int pos = 0;
 	//加载左侧播放过的音乐
 	for (auto&& _it : cfg->GetSections()) {
@@ -92,15 +66,11 @@ void MainFrm::InitForm() {
 		it->SetTips(name);
 		localList->AddControl(it);
 		pos++;
-		//if (pos > 10)break;
 	}
 	//滚动条滚动事件 滚动条滚动到底部加载剩余音乐
 	searchList->GetScrollBar()->Rolling = [=](int a, int b)->void {
 		NextPage(a, b);
 	};
-
-	//localList->SetAutoHeight(true);
-
 	//忽略一些事件 可穿透父控件
 	playerBar2->MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseClick;
 	//创建启动一个实时获取歌曲进度以及状态
@@ -113,7 +83,7 @@ void MainFrm::InitForm() {
 	player.Tag = (UINT_PTR)main;
 	player.AddEventNotify(Event::OnPaint);
 	main->AddEventNotify(Event::OnPaint);
-	SongView();//
+	OpenSongView();//
 }
 MainFrm::~MainFrm()
 {
@@ -128,17 +98,11 @@ MainFrm::~MainFrm()
 	if (cfg) {
 		delete cfg;
 	}
-	if (bkImage) {
-		delete bkImage;
-	}
 	if (headImg) {
 		delete headImg;
 	}
-	if (playingImage) {
-		delete playingImage;
-	}
-	if (pauseImage) {
-		delete pauseImage;
+	if (bkImg) {
+		delete bkImg;
 	}
 	if (searchList) {
 		searchList->Clear(true);
@@ -146,36 +110,36 @@ MainFrm::~MainFrm()
 	if (localList) {
 		localList->Clear(true);
 	}
+	if (deskTopLrc) {
+		delete deskTopLrc;
+	}
+	if (deskTopWnd) {
+		deskTopWnd->Close();
+		delete deskTopWnd;
+	}
 }
 void MainFrm::OnClose(bool& cal) {
+	//关闭窗口时 退出消息循环 程序结束
 	Application::exit(0);
 }
 
 void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 {
 	auto  SingerName = _SingerName.Split(",")[0];
-
-	WCHAR temp[256]{ 0 };
-	::GetTempPathW(256, temp);
-	EString cache = EString(temp) + "KuGou_Cache";
-	::CreateDirectoryW(cache.utf16().c_str(), NULL);
-	//下载歌手头像
+	std::string headFileData;
+	//下载歌手头像 酷狗的接口
 	{
-		EString singerBkImg = cache + "\\" + SingerName + "_headImg.jpg";
+		headImg = NULL;
 		WebClient wc2;
-		auto code = wc2.DownloadFile(headImageUrl.Replace("{size}", "400"), singerBkImg.ansi(), NULL, 5);
+		auto code = wc2.HttpGet(headImageUrl.Replace("{size}", "400"), headFileData, 5);
 		if (code == 200) {
-			headImg = new Image(singerBkImg.utf16());
+			headImg = new Image(headFileData.c_str(), headFileData.size());
+			headImg->SizeMode = ImageSizeMode::CenterImage;
 		}
-		else
-		{
-			headImg = new Image(L"imgs/headImg.jpg");
-		}
-		headImg->SizeMode = ImageSizeMode::CenterImage;
-		singer->Style.BackImage = headImg;
 	}
-	//下载歌手写真
+	//下载歌手写真 酷我的接口
 	{
+		bkImg = NULL;
 		auto rect = GetClientRect();
 		EString imageUrl = "https://artistpicserver.kuwo.cn/pic.web?type=big_artist_pic&pictype=url&content=list&&id=0&name=" + HttpUtility::UrlEncode(SingerName) + "&from=pc&json=1&version=1&width=" + std::to_string(1920) + "&height=" + std::to_string(1080);
 		EString resp;
@@ -183,7 +147,7 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 		wc.HttpGet(imageUrl, resp, 5);
 		JObject json(resp);
 		EString bkurl;
-
+		//使用最清晰的图片
 		if (bkurl.empty()) {
 			for (auto&& it : json["array"]) {
 				if (!it["bkurl"].isNull()) {
@@ -199,15 +163,19 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 			}
 		}
 		if (!bkurl.empty()) {
-			EString singerBkImg = cache + "\\" + SingerName + ".jpg";
+			std::string fileData;
 			WebClient wc2;
-			wc2.DownloadFile(bkurl, singerBkImg.ansi(), NULL, 5);
-			bkImage = new Image(singerBkImg.utf16());
+			auto code = wc2.HttpGet(bkurl, fileData, 5);
+			if (code == 200) {
+				bkImg = new Image(fileData.c_str(), fileData.size());
+				bkImg->SizeMode = ImageSizeMode::CenterImage;
+			}
 		}
 		else {
-			bkImage = new Image(L"imgs/defaultBack.jpg");
+			//如果没下载到歌手写真就使用头像
+			//bkImg = new Image(headFileData.c_str(), headFileData.size());
+			//bkImg->SizeMode = ImageSizeMode::CenterImage;
 		}
-		bkImage->SizeMode = ImageSizeMode::CenterImage;
 	}
 	::PostMessage(Hwnd(), refreshImage, NULL, NULL);
 }
@@ -231,8 +199,6 @@ void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 
 	if (args.EventType == Event::OnPaint) {
-
-
 		if (sender == &player) {
 			if (tabCtrl->GetPageIndex() == 2) {
 				return false;
@@ -252,13 +218,6 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 	}
 
 	if (args.EventType == Event::OnMouseDoubleClick) {
-
-		if (sender->Name == "gif") {
-			sender->Parent->RemoveControl(sender);
-			delete sender;
-			return false;
-		}
-
 		if (!sender->GetAttribute("FileHash").empty()) {
 			EString hash = sender->GetAttribute("FileHash");
 			EString url = "http://m.kugou.com/app/i/getSongInfo.php?hash={hash}&cmd=playInfo";
@@ -286,22 +245,22 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				}
 
 				if (headImg) {
-					singer->Style.BackImage = NULL;
 					delete headImg;
+					singer->Style.ForeImage = NULL;
 					headImg = NULL;
+					singer->Invalidate();
 				}
-				if (bkImage) {
-					main->Style.BackImage = NULL;
-					delete bkImage;
-					bkImage = NULL;
+				if (bkImg) {
+					delete bkImg;
+					main->Style.ForeImage = NULL;
+					bkImg = NULL;
+					main->Invalidate();
 				}
-				FindControl("lrcView")->DispatchEvent(MouseEventArgs(Event::OnMouseClick));
 
-				//this->DownLoadImage(SingerName, json["imgUrl"].asString());
+				FindControl("lrcView")->DispatchEvent(Event::OnMouseClick);
 				downloadTask = new std::future<void>(std::async([&](EString singname, EString imgUrl)->void {
 					this->DownLoadImage(singname, imgUrl);
 					}, SingerName, json["imgUrl"].asString()));
-
 
 				if (dynamic_cast<SongItem2*>(sender)) {
 					Song* tag = (Song*)sender->Tag;
@@ -331,58 +290,49 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			}
 			EString lrcData = global::GetSongLrc(hash);
 			lrcCtl.LoadLrc(lrcData);
+			deskTopLrc->LoadLrc(lrcData);
 			timer->Start();
 		}
 	}
 
-
 	if (args.EventType == Event::OnMouseClick) {
-
+		if (sender->Name == "deskLrc") {
+			if (deskTopWnd->IsVisible()) {
+				deskTopWnd->SetVisible(false);
+			}
+			else {
+				deskTopWnd->SetVisible(true);
+				deskTopWnd->Invalidate();
+			}
+		}
 		if (sender->Name == "play") {
 			player.Play();
 			control->SetPageIndex(1);
-			control->ResumeLayout();
 			control->Invalidate();
 			return false;
 		}
 		if (sender->Name == "pause") {
 			player.Pause();
 			control->SetPageIndex(0);
-			control->ResumeLayout();
 			control->Invalidate();
 			return false;
 		}
-		if (sender->Name == "del") {
-			searchList->RemoveControl(sender->Parent);
-			delete sender->Parent;
-			return false;
-		}
 		if (sender->Name == "dellocal") {//删除本地
-			auto songItem = sender->Parent;
+			SongItem* songItem = (SongItem*)sender->Parent;
 			EString hash = songItem->GetAttribute("FileHash");
 			if (!hash.empty()) {
 				cfg->DeleteSection(hash);
 			}
-			this;
-			localList;
-			auto data = songItem->PublicData;
-			//localList->RemoveControl(songItem);
 			delete songItem;
-
-			Debug::Info("del 666 %p", data->InputControl);
-			Debug::Info("del 777 %p", data->FocusControl);
 			localList->Invalidate();
 			return false;
 		}
 		if (sender->GetAttribute("tablayout") == "rightView") {
-			$(sender->Parent->GetControls()).Not(sender).Css("border-bottom:0").Refresh();
-			$(sender).Css("border-bottom:3;border-color:rgb(55,174,254)").Refresh();
-
 			if (sender->Index() == 0) {
-				SongView();
+				OpenSongView();
 			}
 			else if (sender->Index() == 1) {
-				LrcView();
+				OpenLrcView();
 			}
 			else {
 				Invalidate();
@@ -402,7 +352,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 					urls.push_back(url);
 				}
 			}
-			FindControl("mvView")->DispatchEvent(MouseEventArgs(Event::OnMouseClick));
+			FindControl("mvView")->DispatchEvent(Event::OnMouseClick);
 			player.OpenUrl(urls[urls.size() - 1]);
 			player.Play();
 			this->SetText(json["songname"].asString());
@@ -414,6 +364,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			EString filehash = sender->Parent->GetAttribute("FileHash");
 			EString lrcData = global::GetSongLrc(filehash);
 			lrcCtl.LoadLrc(lrcData);
+			deskTopLrc->LoadLrc(lrcData);
 			timer->Start();
 		}
 		if (sender == playerBar) {
@@ -426,13 +377,12 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 	return __super::OnNotify(sender, args);
 }
 void MainFrm::Task() {
-
-
 	if (player.GetState() == libvlc_state_t::libvlc_Playing) {
 		long long position = player.Position();
 		double rate = position / (player.Duration() * 1000.0);
 		int w = playerBar->Width() * rate;
 		lrcCtl.ChangePostion(position);
+		deskTopLrc->ChangePostion(position);
 		EString f1 = toTimeStr(position / 1000);
 		EString f2 = toTimeStr(player.Duration());
 		EString fen = f1 + "/" + f2;
@@ -453,7 +403,6 @@ void MainFrm::Task() {
 		}
 	}
 	else {
-
 		if (control->GetPageIndex() != 0) {
 			control->SetPageIndex(0);
 			control->Invalidate();
@@ -461,31 +410,8 @@ void MainFrm::Task() {
 	}
 }
 
-void MainFrm::OnPaint(PaintEventArgs& arg)
-{
-	__super::OnPaint(arg);
-	//arg.Graphics.SetColor(Color::Red);
-	//arg.Graphics.DrawEllipse({ 200,70 }, 50, 50);
-	//arg.Graphics.DrawPoint({ 200,70 });
-	/*DXImage img(200, 30);
-	{
-		DXRender pt(&img);
-		pt.SetColor(Color(200, 10, 20, 200));
-		pt.FillRectangle({ 0,0,200,30 });
-	}
-	arg.Graphics.DrawImage(&img, { 10,10,200,30 });*/
-
-	//arg.Graphics.SetFont(L"宋体", 50);
-	//arg.Graphics.SetColor(Color::Black);
-	//arg.Graphics.SetTransform(GetClientRect().Width/2, GetClientRect().Height/2, 90);
-	//arg.Graphics.DrawString(L"我TM反啦...", GetClientRect() ,TextAlign::MiddleCenter);
-	//arg.Graphics.SetTransform(0,0,0);
-
-}
-
-
 void MainFrm::NextPage(int a, int b) {
-	//Debug::Log("%d %d", a, b);
+	Debug::Info(L"滚动条当前位置:%d 可滚动距离:%d", a, b);
 	if (a != 0 && a >= b && global::nextPage) {
 		global::page++;
 		EString keyword = searchEdit->GetText();
@@ -504,11 +430,10 @@ void MainFrm::NextPage(int a, int b) {
 		searchList->Invalidate();
 	}
 }
-void  MainFrm::SongView() {
-	centerLeft->Style.BackColor = Color(0, 0, 0, 0);
+void  MainFrm::OpenSongView() {
+	centerLeft->Style.BackColor = Color::Transparent;
 	tools->Style.Border.Bottom = 1;
 	tools->Style.Border.Color = Color(238, 238, 238);
-	main->Style.BackImage = NULL;
 	localList->GetScrollBar()->Style.BackColor = Color(50, 200, 200, 200);
 	localList->GetScrollBar()->Style.ForeColor = Color(217, 217, 217);
 	localList->GetScrollBar()->ActiveStyle.ForeColor = Color(191, 191, 191);
@@ -516,15 +441,14 @@ void  MainFrm::SongView() {
 	center->Style.ForeColor = Color::Black;
 	Invalidate();
 }
-void  MainFrm::LrcView() {
+void  MainFrm::OpenLrcView() {
 	centerLeft->Style.BackColor = Color(100, 200, 200, 200);
 	tools->Style.Border.Bottom = 1;
 	tools->Style.Border.Color = Color(238, 238, 238);
 	localList->GetScrollBar()->Style.BackColor = Color(50, 200, 200, 200);
 	localList->GetScrollBar()->Style.ForeColor = Color(100, 255, 255, 255);
 	localList->GetScrollBar()->ActiveStyle.ForeColor = Color(150, 255, 255, 255);
-	main->Style.BackImage = bkImage;
-	center->Style.BackColor = Color(0, 0, 0, 0);
+	center->Style.BackColor = Color::Transparent;
 	center->Style.ForeColor = Color::White;
 	Invalidate();
 }
@@ -533,10 +457,21 @@ LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
 {
 	if (refreshImage == msg) {
 		if (headImg) {
-
-			singer->Invalidate();
+			singer->Style.ForeImage = headImg;
+			singer->Style.BackImage->Visible = false;
 		}
-		FindControl("lrcView")->DispatchEvent(MouseEventArgs(Event::OnMouseClick));
+		else {
+			singer->Style.BackImage->Visible = true;
+		}
+		if (bkImg) {
+			main->Style.ForeImage = bkImg;
+			main->Style.BackImage->Visible = false;
+		}
+		else {
+			main->Style.BackImage->Visible = true;
+		}
+		singer->Invalidate();
+		main->Invalidate();
 		return 0;
 	}
 	return __super::WndProc(msg, W, L);

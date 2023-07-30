@@ -41,7 +41,6 @@ namespace EzUI {
 		Control* BuildControl(void* node);
 		void LoadStyle(Control* ctl, const EString& selectorName);
 		void AnalysisStyle(const EString& styleStr);
-		void LoadFromRaw(const char* xmlRaw);
 	protected:
 		virtual Control* OnBuildControl(const EString& nodeName);
 		virtual void OnSetAttribute(Control* ctl, const EString& attrName, const EString& attrValue);
@@ -52,6 +51,7 @@ namespace EzUI {
 		void SetupUI(Control* parentCtl);
 		std::function<Control* (const EString& nodeName)> EventBuilControl;//用于自定义控件
 		std::function<void(Control* ctl, const EString& attrName, const EString& attrValue)> EventSetAttribute;//用于自定义控件
+		void LoadFromRaw(const char* utf8str);
 		void LoadFile(const EString& fileName);
 		Control* GetNodeByName(const EString& nodeName = "");
 		Control* GetNode(size_t pos = 0);

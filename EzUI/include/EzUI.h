@@ -62,12 +62,14 @@ namespace EzUI {
 				EString rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
 				auto rgbList = rgbStr.Split(",");
 				unsigned char r, g, b;
-				float a = rgbList.size() == 3 ? 1 : std::stof(rgbList.at(3));//透明百分比 0~1
 				r = std::stoi(rgbList.at(0));
 				g = std::stoi(rgbList.at(1));
 				b = std::stoi(rgbList.at(2));
-				//Argb = MakeARGB((byte)(255 * (a > 1 ? 1 : a)), r, g, b);
-				return Color((byte)(255 * (a > 1 ? 1 : a)), r, g, b);
+				unsigned char a = 255;
+				if (colorStr.find("rgba") == 0) {
+					a = std::stoi(rgbList.at(3));
+				}
+				return Color(a,r,g,b);
 			}
 			return Color();
 		}
@@ -105,15 +107,13 @@ namespace EzUI {
 		virtual ~Image() {}
 		Image(HBITMAP hBitmap) :DXImage(hBitmap) {}
 		Image(IStream* iStream) :DXImage(iStream) {}
-		Image(const EString& fileOrRes) {
+		Image(const void* data, size_t dataCount) :DXImage(data, dataCount) {}
+	public:
+		static Image* FromFile(const EString& fileOrRes) {
 			//从资源中获取
 			std::string data;
 			GetResource(fileOrRes, &data);
-			IStream* stream = SHCreateMemStream((BYTE*)data.c_str(), data.size());
-			if (stream) {
-				this->CreateFormStream(stream);
-				stream->Release();
-			}
+			return new Image(data.c_str(), data.size());
 		}
 	};
 #endif
@@ -165,23 +165,24 @@ namespace EzUI {
 		Layouting = 4//布局中
 	};
 	enum Event :int {
-		OnMouseWheel = 1,
-		OnMouseEnter = 2,
-		OnMouseMove = 4,
-		OnMouseLeave = 8,
-		OnMouseClick = 16,
-		OnMouseDoubleClick = 32,
-		OnMouseDown = 64,
-		OnMouseUp = 128,
-		OnKeyDown = 256,
-		OnKeyUp = 512,
-		OnPaint = 1024,
-		OnKillFocus = 2048,
-		OnKeyChar = 4096,
-		OnLocation = 8192,
-		OnSize = 16384,
-		OnRect = 32768,
-		OnTextChange = 65536,
+		None = 1,
+		OnMouseWheel = 2,
+		OnMouseEnter = 4,
+		OnMouseMove = 8,
+		OnMouseLeave = 16,
+		OnMouseClick = 32,
+		OnMouseDoubleClick = 64,
+		OnMouseDown = 128,
+		OnMouseUp = 256,
+		OnKeyDown = 512,
+		OnKeyUp = 1024,
+		OnPaint = 2048,
+		OnKillFocus = 4096,
+		OnKeyChar = 8192,
+		OnLocation = 16384,
+		OnSize = 32768,
+		OnRect = 65536,
+		OnTextChange = 131072,
 		OnActive = OnMouseDown | OnMouseUp,
 		OnHover = OnMouseEnter | OnMouseLeave,
 		OnMouseEvent = OnMouseWheel | OnMouseEnter | OnMouseMove | OnMouseLeave | OnMouseClick | OnMouseDoubleClick | OnMouseDown | OnMouseUp,
@@ -264,26 +265,22 @@ namespace EzUI {
 	//基础事件
 	class EventArgs {
 	public:
-		Event EventType;
-		EventArgs() {}
+		Event EventType = Event::None;
 		EventArgs(const Event& eventType) {
 			this->EventType = eventType;
 		}
 		virtual ~EventArgs() {};
 	};
-	// 摘要: 
 	//为鼠标事件提供基础数据
 	class MouseEventArgs :public EventArgs {
 	public:
-		MouseButton Button;
+		MouseButton Button = MouseButton::None;
 		int RollCount = 0;
-		short Delta;
+		short Delta = 0;
 		Point Location;
 	public:
-		MouseEventArgs() {}
 		virtual ~MouseEventArgs() {}
-		MouseEventArgs(const Event& eventType, const Point& location = Point(0, 0), const MouseButton& mouseButton = MouseButton::None, const short& delta = 0, int rollCount = 0) {
-			this->EventType = eventType;
+		MouseEventArgs(const Event& eventType, const Point& location = Point(0, 0), const MouseButton& mouseButton = MouseButton::None, const short& delta = 0, int rollCount = 0) :EventArgs(eventType) {
 			this->Button = mouseButton;
 			this->Delta = delta;
 			this->Location = location;
@@ -299,8 +296,7 @@ namespace EzUI {
 		/// </summary>
 		WPARAM wParam;
 		LPARAM lParam;
-		KeyboardEventArgs(const Event& eventType, WPARAM wParam, LPARAM lParam) {
-			this->EventType = eventType;
+		KeyboardEventArgs(const Event& eventType, WPARAM wParam, LPARAM lParam) :EventArgs(eventType) {
 			this->wParam = wParam;
 			this->lParam = lParam;
 		}
@@ -310,8 +306,7 @@ namespace EzUI {
 	class KillFocusEventArgs :public EventArgs {
 	public:
 		Control* Control;
-		KillFocusEventArgs(EzUI::Control* ctl) {
-			this->EventType = Event::OnKillFocus;
+		KillFocusEventArgs(EzUI::Control* ctl) :EventArgs(Event::OnKillFocus) {
 			this->Control = ctl;
 		}
 		virtual ~KillFocusEventArgs() {}
@@ -320,30 +315,37 @@ namespace EzUI {
 	class LocationEventArgs :public EventArgs {
 	public:
 		const EzUI::Point& Location;
-		LocationEventArgs(const EzUI::Point& location) : Location(location) {
-			this->EventType = Event::OnLocation;
-		}
+		LocationEventArgs(const EzUI::Point& location) :EventArgs(Event::OnLocation), Location(location) {}
 		virtual ~LocationEventArgs() {}
 	};
 	//大小发生改变
 	class SizeEventArgs :public EventArgs {
 	public:
 		const EzUI::Size& Size;
-		SizeEventArgs(const EzUI::Size& size) :Size(size) {
-			this->EventType = Event::OnSize;
-		}
+		SizeEventArgs(const EzUI::Size& size) :EventArgs(Event::OnSize), Size(size) {}
 		virtual ~SizeEventArgs() {}
 	};
 	//矩形发生改变
 	class RectEventArgs :public EventArgs {
 	public:
 		const EzUI::Rect& Rect;
-		RectEventArgs(const EzUI::Rect& rect) : Rect(rect) {
-			this->EventType = Event::OnRect;
-		}
+		RectEventArgs(const EzUI::Rect& rect) :EventArgs(Event::OnRect), Rect(rect) {}
 		virtual ~RectEventArgs() {}
 	};
-
+	// 为 OnPaint 事件提供数据。
+	class PaintEventArgs :public EventArgs {
+	public:
+		std::list<Point> OffSetPoint;//用于记录每次绘制控件的偏移位置
+		PaintEventArgs(const PaintEventArgs&) = delete;
+		PaintEventArgs& operator=(const PaintEventArgs&) = delete;
+		WindowData* PublicData = NULL;
+		HDC DC = NULL;
+		EzUI::DXRender& Graphics;//画家
+		Rect InvalidRectangle;//WM_PAINT里面的无效区域
+		PaintEventArgs(EzUI::DXRender& _painter) : EventArgs(Event::OnPaint), Graphics(_painter) {}
+		virtual ~PaintEventArgs() {}
+	};
+	// 为控件样式提供数据。
 	class UI_EXPORT ControlStyle {
 	public:
 		EzUI::Border Border;//边框信息
@@ -364,22 +366,7 @@ namespace EzUI {
 		void SetStyleSheet(const EString& styleStr, const std::function<void(Image*)>& callback = NULL);
 		void SetStyle(const EString& key, const EString& value, const std::function<void(Image*)>& callback = NULL);
 	};
-	// 摘要: 
-	// 为 OnPaint 事件提供数据。
-	class PaintEventArgs :public EventArgs {
-	public:
-		std::list<Point> OffSetPoint;//用于记录每次绘制控件的偏移位置
-		PaintEventArgs(const PaintEventArgs&) = delete;
-		PaintEventArgs& operator=(const PaintEventArgs&) = delete;
-		WindowData* PublicData = NULL;
-		HDC DC = NULL;
-		EzUI::DXRender& Graphics;//画家
-		Rect InvalidRectangle;//WM_PAINT里面的无效区域
-		PaintEventArgs(EzUI::DXRender& _painter) :Graphics(_painter) {
-			EventType = Event::OnPaint;
-		}
-		virtual ~PaintEventArgs() {}
-	};
+
 
 	typedef std::map<EString, EString> Attributes;//属性集合
 	typedef std::map<EString, EString>::iterator AttributeIterator;

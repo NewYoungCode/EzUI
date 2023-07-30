@@ -46,6 +46,7 @@ namespace EzUI {
 	LayeredWindow::~LayeredWindow() {
 		if (bRunTask) {
 			bRunTask = false;
+			//存在隐患 导致程序无法正常退出
 			task->join();
 			delete task;
 			task = NULL;

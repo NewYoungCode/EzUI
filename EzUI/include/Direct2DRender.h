@@ -214,21 +214,24 @@ namespace EzUI {
 		UINT Width = 0;
 		UINT Height = 0;
 		ID2D1Bitmap* d2dBitmap = NULL;
-	public:
+	private:
 		void CreateFormStream(IStream* istram);
 		void CreateFromFile(const std::wstring& file);
 		void Init();
 	public:
+		bool Visible = true;
 		void DecodeOfRender(ID2D1RenderTarget* render);
 		DXImage(HBITMAP hBitmap);
 		DXImage(IStream* istram);
 		DXImage(const std::wstring& file);
 		DXImage(UINT width, UINT height);
+		DXImage(const void* data, size_t count);
 		ID2D1Bitmap* Get();
 		IWICBitmap* GetIWICBitmap();
 		UINT GetWidth();
 		UINT GetHeight();
 		virtual size_t NextFrame()override;
+		DXImage* Clone();
 		DXImage() {}
 		virtual ~DXImage();
 	};

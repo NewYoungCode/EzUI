@@ -62,7 +62,7 @@ namespace EzUI {
 	void PictureBox::SetAttribute(const EString& key, const EString& value) {
 		__super::SetAttribute(key, value);
 		if (key == "src" || key == "img") {
-			Image* img = new Image(value);
+			Image* img = Image::FromFile(value);
 			SetImage(img);
 		}
 	}

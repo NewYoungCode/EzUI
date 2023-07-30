@@ -290,7 +290,7 @@ namespace EzUI {
 			}
 			if (key == "background-image") {
 				value = value.Erase('"');//É¾³ýË«ÒýºÅ;
-				style->BackImage = new Image(value);
+				style->BackImage = Image::FromFile(value);
 				if (callback) {
 					callback(style->BackImage);
 				}
@@ -298,7 +298,7 @@ namespace EzUI {
 			}
 			if (key == "fore-image") {
 				value = value.Erase('"');//É¾³ýË«ÒýºÅ;
-				style->ForeImage = new Image(value);
+				style->ForeImage = Image::FromFile(value);
 				if (callback) {
 					callback(style->ForeImage);
 				}

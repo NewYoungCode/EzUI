@@ -542,14 +542,13 @@ namespace EzUI {
 		}
 
 		PublicData.RemoveControl = [=](Control* delControl)->void {
-			//Debug::Log("remove delControl %p", delControl);
 			if (_focusControl == delControl) {
 				_focusControl = NULL;
-				//Debug::Log("remove _focusControl %p", delControl);
+				Debug::Info("remove _focusControl %p", delControl);
 			}
 			if (_inputControl == delControl) {
 				_inputControl = NULL;
-				//Debug::Log("remove _inputControl %p", delControl);
+				Debug::Info("remove _inputControl %p", delControl);
 			}
 		};
 		PublicData.Notify = [=](Control* sender, EventArgs& args)->bool {
@@ -577,7 +576,7 @@ namespace EzUI {
 	Control* Window::FindControl(const Point clientPoint, Point* outPoint) {
 		*outPoint = clientPoint;
 		Control* outCtl = MainLayout;
-	UI_Loop:
+	Find_Loop:
 		ScrollBar* scrollBar = outCtl->GetScrollBar();
 		if (scrollBar && scrollBar->GetClientRect().Contains(clientPoint)) {
 			if (scrollBar->IsDraw()) {
@@ -610,7 +609,7 @@ namespace EzUI {
 				auto ctlRect = it.GetClientRect();
 				(*outPoint).X = clientPoint.X - ctlRect.X;
 				(*outPoint).Y = clientPoint.Y - ctlRect.Y;
-				goto UI_Loop;
+				goto Find_Loop;
 			}
 		}
 		/*Spacer* isSpacer = dynamic_cast<Spacer*>(outCtl);
@@ -634,7 +633,7 @@ namespace EzUI {
 
 		Point relativePoint;
 		Control* outCtl = this->FindControl(point, &relativePoint);//找到当前控件的位置
-		MouseEventArgs args;
+		MouseEventArgs args(Event::None);
 		args.Location = relativePoint;
 
 		bool ok = true;
@@ -691,10 +690,9 @@ namespace EzUI {
 	{
 		if (_focusControl == NULL) return;
 		if (_focusControl) {
-			MouseEventArgs args;
+			MouseEventArgs args(Event::OnMouseWheel);
 			args.Delta = zDelta;
 			args.Location = point;
-			args.EventType = Event::OnMouseWheel;
 			args.RollCount = rollCount;
 			_focusControl->DispatchEvent(args);
 		}
@@ -712,10 +710,9 @@ namespace EzUI {
 			pControl = pControl->Parent;
 		}
 		if (scrollBar) {
-			MouseEventArgs args;
+			MouseEventArgs args(Event::OnMouseWheel);
 			args.Delta = zDelta;
 			args.Location = point;
-			args.EventType = Event::OnMouseWheel;
 			args.RollCount = rollCount;
 			scrollBar->DispatchEvent(args);
 
@@ -731,10 +728,9 @@ namespace EzUI {
 		Point relativePoint;
 		Control* outCtl = this->FindControl(point, &relativePoint);
 		if (outCtl) {
-			MouseEventArgs args;
+			MouseEventArgs args(Event::OnMouseDoubleClick);
 			args.Button = mbtn;
 			args.Location = relativePoint;
-			args.EventType = Event::OnMouseDoubleClick;
 			outCtl->DispatchEvent(args);
 		}
 	}
@@ -742,15 +738,10 @@ namespace EzUI {
 	void Window::OnMouseDown(MouseButton mbtn, const Point& point)
 	{
 		::SetCapture(_hWnd);
-		//::SetFocus(_hWnd);
 		_mouseDown = true;
-
 		//寻早控件
 		Point relativePoint;
 		Control* outCtl = this->FindControl(point, &relativePoint);
-		MouseEventArgs args;
-		args.Button = mbtn;
-		args.Location = relativePoint;
 		//如果单机的不是上一个 那么上一个触发失去焦点事件
 		if (_inputControl != outCtl) {
 			if (_inputControl) {
@@ -761,10 +752,11 @@ namespace EzUI {
 		}
 		//给命中的控件触发鼠标按下事件
 		if (_inputControl) {
-			args.EventType = Event::OnMouseDown;
+			MouseEventArgs args(Event::OnMouseDown);
+			args.Button = mbtn;
+			args.Location = relativePoint;
 			_inputControl->DispatchEvent(args);
 		}
-
 		//做双击消息处理
 		auto _time = std::chrono::system_clock::now();
 		auto diff = _time - _lastDownTime;
@@ -786,10 +778,9 @@ namespace EzUI {
 
 		if (_inputControl) {
 			auto ctlRect = _inputControl->GetClientRect();
-			MouseEventArgs args;
+			MouseEventArgs args(Event::OnMouseUp);
 			args.Button = mbtn;
 			args.Location = { point.X - ctlRect.X,point.Y - ctlRect.Y };
-			args.EventType = Event::OnMouseUp;
 			_inputControl->DispatchEvent(args);//触发鼠标抬起事件
 
 			if (_inputControl && ctlRect.Contains(point) && mbtn == _lastBtn) {//如果焦点还在并且鼠标未移出控件内 触发click事件
@@ -914,8 +905,7 @@ namespace EzUI {
 				return false;
 			}
 			if (sender->Action == ControlAction::Close) {
-				MouseEventArgs args;
-				args.EventType = Event::OnMouseLeave;
+				MouseEventArgs args(Event::OnMouseLeave);
 				sender->DispatchEvent(args);
 				this->Close();
 				return false;
