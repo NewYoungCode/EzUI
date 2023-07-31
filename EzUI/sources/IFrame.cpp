@@ -3,9 +3,6 @@ namespace EzUI {
 	IFrame::IFrame()
 	{
 	}
-	IFrame::IFrame(Control*)
-	{
-	}
 	void IFrame::SetAttribute(const EString& attrName, const EString& attrValue)
 	{
 		/*if (attrName == "src") {

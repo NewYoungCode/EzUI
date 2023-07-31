@@ -12,7 +12,6 @@ namespace EzUI {
 		int Offset(int offset);
 	public:
 		HList();
-		HList(Control* parent);
 		virtual ~HList();
 		virtual void OnLayout()override;
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue)override;

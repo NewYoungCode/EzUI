@@ -14,7 +14,7 @@ namespace EzUI {
 		LRESULT  WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
 		void UpdateShadow();
 	public:
-		void SetShadow(int width);
+		void SetShadow(int padding);
 		BorderlessWindow(int width, int height, HWND owner = NULL);
 		virtual ~BorderlessWindow();
 		ShadowWindow* GetShadowWindow();

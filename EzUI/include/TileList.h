@@ -13,7 +13,6 @@ namespace EzUI {
 		 int Offset(int offset);
 	public:
 		TileList();
-		TileList(Control*parent);
 		virtual ~TileList();
 		virtual void Clear(bool freeList = false)override;
 		virtual void OnLayout()override;

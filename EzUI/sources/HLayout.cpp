@@ -55,9 +55,6 @@ namespace EzUI {
 	HLayout::HLayout()
 	{
 	}
-	HLayout::HLayout(Control* parent) :Control(parent)
-	{
-	}
 	HLayout::~HLayout()
 	{
 	}

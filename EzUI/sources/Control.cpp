@@ -65,9 +65,7 @@ Event(this , ##__VA_ARGS__); \
 }
 
 	Control::Control() {}
-	Control::Control(Control* parent) {
-		parent->AddControl(this);
-	}
+	
 	void Control::OnChildPaint(PaintEventArgs& args)
 	{
 		VisibleControls = GetControls();
@@ -295,7 +293,7 @@ Event(this , ##__VA_ARGS__); \
 
 		} while (false);
 	}
-	EString Control::GetFontFamily(ControlState _state)
+	std::wstring Control::GetFontFamily(ControlState _state)
 	{
 		/*if (_state == ControlState::None && !_nowStyle.FontFamily.empty()) {
 			return _nowStyle.FontFamily;
@@ -303,7 +301,7 @@ Event(this , ##__VA_ARGS__); \
 		if (_state == ControlState::None) {
 			_state = this->State;
 		}
-		EString _FontFamily;
+		std::wstring _FontFamily;
 	loop:
 		_FontFamily = this->GetStyle(_state).FontFamily; //先看看对应状态的是否有 有效字段
 		if (__IsValid(_FontFamily)) {
@@ -875,10 +873,13 @@ Event(this , ##__VA_ARGS__); \
 	}
 	Control* Control::FindControl(const EString& objectName)
 	{
+		if (objectName.empty()) {
+			return NULL;
+		}
 		if (this->Name == objectName) {
 			return this;
 		}
-		for (auto& it : (this->GetControls()))
+		for (auto& it : (this->_controls))
 		{
 			if (it->Name == objectName) {
 				return it;
@@ -888,20 +889,47 @@ Event(this , ##__VA_ARGS__); \
 		}
 		return NULL;
 	}
-	Controls Control::FindControl(const EString& attr, const EString& attrValue)
+	std::list<Control*> Control::FindControl(const EString& attr, const EString& attrValue)
 	{
-		Controls ctls;
-		for (auto& it : (this->GetControls()))
+		std::list<Control*> ctls;
+		if (attr.empty() || attrValue.empty()) {
+			return ctls;
+		}
+		for (auto& it : (this->_controls))
 		{
 			if (it->GetAttribute(attr) == attrValue) {
 				ctls.push_back(it);
 			}
-			Controls _ctls = it->FindControl(attr, attrValue);
+			auto _ctls = it->FindControl(attr, attrValue);
 			for (auto& it2 : _ctls) {
 				ctls.push_back(it2);
 			}
 		}
 		return ctls;
+	}
+	bool Control::Swap(Control* ct1, Control* ct2)
+	{
+		int swapCount = 0;
+		for (auto& it : this->_controls) {
+			if (swapCount == 2) {
+				break;
+			}
+			if (it == ct1) {
+				it = ct2;
+				swapCount++;
+				continue;
+			}
+			if (it == ct2) {
+				it = ct1;
+				swapCount++;
+				continue;
+			}
+		}
+		if (swapCount == 2) {
+			this->TryPendLayout();
+			return true;
+		}
+		return false;
 	}
 	void Control::SetVisible(bool flag) {
 		if (flag != this->_visible && this->Parent) {
@@ -994,7 +1022,7 @@ Event(this , ##__VA_ARGS__); \
 	{
 		return _controls;
 	}
-	Control* Control::GetControl(size_t pos)
+	Control* Control::FindControl(size_t pos)
 	{
 		size_t _pos = 0;
 		for (auto& it : _controls) {

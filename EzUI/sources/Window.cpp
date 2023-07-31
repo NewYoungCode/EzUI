@@ -125,7 +125,7 @@ namespace EzUI {
 		ASSERT(layout);
 		MainLayout = layout;
 		if (MainLayout->Style.FontFamily.empty()) {
-			MainLayout->Style.FontFamily = "Microsoft YaHei";
+			MainLayout->Style.FontFamily = L"Microsoft YaHei";
 		}
 		if (MainLayout->Style.FontSize == 0) {
 			MainLayout->Style.FontSize = 12;
@@ -142,8 +142,11 @@ namespace EzUI {
 	}
 	void Window::Show(int cmdShow)
 	{
-		//ASSERT(MainLayout);
+		ASSERT(MainLayout);
 		::ShowWindow(Hwnd(), cmdShow);
+		if (IsVisible()) {
+			::UpdateWindow(Hwnd());
+		}
 	}
 	void Window::ShowNormal()
 	{
@@ -487,7 +490,8 @@ namespace EzUI {
 	}
 
 	void Window::Rending(HDC winHDC, const Rect& rePaintRect) {
-#ifdef COUNT_ONPAINT
+#define COUNT_ONPAINT 0
+#if COUNT_ONPAINT
 		StopWatch sw;
 #endif // COUNT_ONPAINT
 #if USED_Direct2D
@@ -499,7 +503,7 @@ namespace EzUI {
 		args.InvalidRectangle = rePaintRect;
 		OnPaint(args);
 #endif
-#ifdef COUNT_ONPAINT
+#if COUNT_ONPAINT
 		char buf[256]{ 0 };
 		sprintf(buf, "OnPaint Count(%d) (%d,%d,%d,%d) %dms \n", args.PublicData->PaintCount, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, (int)sw.ElapsedMilliseconds());
 		OutputDebugStringA(buf);
@@ -807,9 +811,7 @@ namespace EzUI {
 		}
 
 		MainLayout->SetRect(this->GetClientRect());
-		MainLayout->Invalidate();
-
-
+		//MainLayout->Invalidate();
 	}
 
 	void Window::OnRect(const Rect& rect)
@@ -877,11 +879,13 @@ namespace EzUI {
 	bool Window::OnNotify(Control* sender, EventArgs& args) {
 		if (args.EventType == Event::OnMouseDoubleClick) {
 			if (sender->Action == ControlAction::MoveWindow || sender == MainLayout) {
-				if (::IsZoomed(Hwnd())) {
-					this->ShowNormal();
-				}
-				else {
-					this->ShowMaximized();
+				if (this->Zoom) {
+					if (::IsZoomed(Hwnd())) {
+						this->ShowNormal();
+					}
+					else {
+						this->ShowMaximized();
+					}
 				}
 			}
 			return false;

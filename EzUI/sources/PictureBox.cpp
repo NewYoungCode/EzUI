@@ -1,7 +1,6 @@
 #include "PictureBox.h"
 namespace EzUI {
 	PictureBox::PictureBox(){}
-	PictureBox::PictureBox(Control* parent) :Control(parent){}
 	PictureBox::~PictureBox() {
 		if (_gifTask) {
 			_exit = true;

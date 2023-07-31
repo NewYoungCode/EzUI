@@ -746,7 +746,7 @@ namespace EzUI {
 	{
 		render->DrawGeometry(geometry, GetBrush(), (FLOAT)width, this->GetStrokeStyle());
 	}
-	void DXRender::FillGeometry(ID2D1Geometry* geometry, int width)
+	void DXRender::FillGeometry(ID2D1Geometry* geometry)
 	{
 		render->FillGeometry(geometry, GetBrush());
 	}

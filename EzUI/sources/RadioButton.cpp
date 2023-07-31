@@ -3,9 +3,6 @@ namespace EzUI {
 	RadioButton::RadioButton()
 	{
 	}
-	RadioButton::RadioButton(Control* parent) :CheckBox(parent)
-	{
-	}
 	void RadioButton::OnMouseClick(MouseButton btn, const Point& pt)
 	{
 		__super::OnMouseClick(btn, pt);

@@ -129,20 +129,21 @@ namespace EzUI {
 		Color GetBackColor(ControlState _state = ControlState::None);
 		//具有继承性样式
 		Color GetForeColor(ControlState _state = ControlState::None);//获取默认控件状态下前景色
-		EString GetFontFamily(ControlState _state = ControlState::None);//获取默认控件状态下字体Family
+		std::wstring GetFontFamily(ControlState _state = ControlState::None);//获取默认控件状态下字体Family
 		int GetFontSize(ControlState _state = ControlState::None);//获取默认控件状态下字体大小样式
 	public:
 		Control();
-		Control(Control* parent);
 		virtual ~Control();
 		void DestroySpacers();//销毁控件内所有弹簧
 		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::Static);//
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性
 		const Controls& GetControls();//获取当前所有子控件
-		Control* GetControl(size_t pos);//使用下标获取控件
 		bool Contains(Control* ctl);//会递归循全部包含的控件是否存在
+		Control* FindControl(size_t pos);//使用下标获取控件
 		Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
 		Controls FindControl(const EString& attr, const EString& attrValue);//使用属性查找
+		bool Swap(Control* ct1, Control* ct2);//对子控件的两个控件进行位置交换
+
 		size_t Index();//获取当前控件在父容器下的索引
 		virtual void AddControl(Control* ctl);//添加控件
 		virtual void RemoveControl(Control* ctl);//删除控件 返回下一个迭代器
@@ -200,7 +201,6 @@ namespace EzUI {
 		int _contentHeight = 0;
 	public:
 		ScrollableControl() {};
-		ScrollableControl(Control* parent) :Control(parent) {};
 		const int& GetContentWidth() { return _contentWidth; };
 		const int& GetContentHeight() { return _contentHeight; };
 		virtual ~ScrollableControl() {};

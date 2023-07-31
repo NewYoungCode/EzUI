@@ -35,10 +35,7 @@ namespace EzUI {
 	ComBox::ComBox() {
 		Init();
 	}
-	ComBox::ComBox(Control* parent) :HLayout(parent)
-	{
-		Init();
-	}
+
 	ComBox::~ComBox() {
 		if (poupWnd) {
 			poupWnd->Close();

@@ -1,12 +1,11 @@
 #include "Label.h"
 namespace EzUI {
 	Label::Label() {}
-	Label::Label(Control* parent) :Control(parent) {}
 	Label::~Label() {}
 	void Label::Rending(PaintEventArgs& args) {
 		if (AutoWidth && AutoHeight) {
 			Size oldSize(Width(), Height());
-			std::wstring fontFamily = GetFontFamily().utf16();
+			std::wstring fontFamily = GetFontFamily();
 			const int& fontSize = GetFontSize();
 			Font font(fontFamily, fontSize);
 			TextLayout textLayout(_wstr, font);
@@ -26,8 +25,8 @@ namespace EzUI {
 		__super::OnForePaint(args);
 		if (!_wstr.empty()) {
 			std::wstring drawText(_wstr);
-			std::wstring fontFamily = GetFontFamily().utf16();
-			const int fontSize = GetFontSize();
+			std::wstring fontFamily = GetFontFamily();
+			int fontSize = GetFontSize();
 			Font font(fontFamily, fontSize);
 			args.Graphics.SetFont(font);
 			args.Graphics.SetColor(GetForeColor());

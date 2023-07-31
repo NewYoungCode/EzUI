@@ -17,7 +17,6 @@ namespace EzUI {
 		bool AutoWidth = false;
 		bool AutoHeight = false;
 		Label();
-		Label(Control* parent);
 		virtual ~Label();
 		virtual void SetAttribute(const EString& key, const EString& value)override;
 		virtual void Rending(PaintEventArgs& args)override;

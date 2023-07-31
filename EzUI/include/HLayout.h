@@ -7,7 +7,6 @@ namespace EzUI {
 	{
 	public:
 		HLayout();
-		HLayout(Control*parent);
 		virtual ~HLayout();
 		void OnLayout()override;
 	};

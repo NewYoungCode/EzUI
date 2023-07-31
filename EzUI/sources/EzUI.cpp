@@ -338,7 +338,7 @@ namespace EzUI {
 			}
 			if (key == "font-family") {
 				value = value.Erase('"');//É¾³ýË«ÒýºÅ;
-				style->FontFamily = value;
+				style->FontFamily = value.utf16();
 				break;
 			}
 			if (key == "border") {

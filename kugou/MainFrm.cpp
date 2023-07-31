@@ -15,6 +15,9 @@ void MainFrm::InitForm() {
 	cfg = new ConfigIni(Path::StartPath() + "\\list.ini");
 	//findControl
 	main = FindControl("main");
+	//第一次不显示背景图 测试无图绘制的性能
+	main->Style.BackImage->Visible = false;
+
 	tools = FindControl("tools");
 	center = FindControl("center");
 	centerLeft = FindControl("centerLeft");
@@ -84,6 +87,10 @@ void MainFrm::InitForm() {
 	player.AddEventNotify(Event::OnPaint);
 	main->AddEventNotify(Event::OnPaint);
 	OpenSongView();//
+	//设置阴影
+	//this->SetShadow(50);
+	//关闭窗口阴影
+	//this->CloseShadow();
 }
 MainFrm::~MainFrm()
 {

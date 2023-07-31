@@ -4,9 +4,6 @@ namespace EzUI {
 	CheckBox::CheckBox()
 	{
 	}
-	CheckBox::CheckBox(Control* parent) :Label(parent)
-	{
-	}
 	CheckBox::~CheckBox()
 	{
 	}

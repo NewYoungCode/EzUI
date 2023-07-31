@@ -14,10 +14,6 @@ namespace EzUI {
 	{
 		Init();
 	}
-	HList::HList(Control* parent) :ScrollableControl(parent)
-	{
-		Init();
-	}
 	HList::~HList()
 	{
 	}

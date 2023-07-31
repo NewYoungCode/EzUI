@@ -12,9 +12,9 @@ namespace EzUI {
 	{
 		return _boxShadow;
 	}
-	void BorderlessWindow::SetShadow(int width)
+	void BorderlessWindow::SetShadow(int padding)
 	{
-		_shadowWidth = width;
+		_shadowWidth = padding;
 		UpdateShadow();
 	}
 	void BorderlessWindow::OnRect(const Rect& rect) {

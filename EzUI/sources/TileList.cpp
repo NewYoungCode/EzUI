@@ -21,10 +21,6 @@ namespace EzUI {
 	{
 		Init();
 	}
-	TileList::TileList(Control* parent) :ScrollableControl(parent)
-	{
-		Init();
-	}
 	TileList::~TileList()
 	{
 	}

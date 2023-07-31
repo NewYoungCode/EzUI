@@ -1,7 +1,6 @@
 #include "TextBox.h"
 namespace EzUI {
 	TextBox::TextBox() { Init(); }
-	TextBox::TextBox(Control* parent) :ScrollableControl(parent) { Init(); }
 	TextBox::~TextBox() {
 		timer.Stop();
 		if (textLayout) { delete textLayout; }
@@ -304,9 +303,22 @@ namespace EzUI {
 		if (font == NULL) return;
 		if (textLayout) delete textLayout;
 
+		std::wstring *drawText=&this->text;
+		if (!PasswordChar.empty()) {
+			drawText = new std::wstring;
+			int count = PasswordChar.size() * text.size();
+			for (size_t i = 0; i < text.size(); i++)
+			{
+				*drawText += PasswordChar;
+			}
+		}
+		else {
+			*drawText = text;
+		}
+
 		if (!multiLine) {//单行编辑框
 			font->Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
-			textLayout = new TextLayout(text, *font, Size{ __MAXFLOAT,Height() }, TextAlign::MiddleLeft);
+			textLayout = new TextLayout(*drawText, *font, Size{ __MAXFLOAT,Height() }, TextAlign::MiddleLeft);
 			_fontBox = textLayout->GetFontBox();
 			if (_fontBox.Width < this->Width()) {
 				scrollX = 0;
@@ -317,8 +329,11 @@ namespace EzUI {
 		}
 		else {//多行编辑框
 			font->Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);
-			textLayout = new TextLayout(text, *font, Size{ Width(),__MAXFLOAT }, TextAlign::TopLeft);
+			textLayout = new TextLayout(*drawText, *font, Size{ Width(),__MAXFLOAT }, TextAlign::TopLeft);
 			_fontBox = textLayout->GetFontBox();
+		}
+		if (drawText != &this->text) {
+			delete drawText;
 		}
 		_contentWidth = _fontBox.Width;
 		_contentHeight = _fontBox.Height;
@@ -508,6 +523,10 @@ namespace EzUI {
 		__super::SetAttribute(key, value);
 		do
 		{
+			if (key == "passwordchar") {
+				PasswordChar = value.utf16();
+				break;
+			}
 			if (key == "placeholder") {
 				this->Placeholder = value;
 				break;
@@ -540,7 +559,7 @@ namespace EzUI {
 	}
 
 	void TextBox::OnForePaint(PaintEventArgs& e) {
-		std::wstring fontFamily = GetFontFamily().utf16();
+		std::wstring fontFamily = GetFontFamily();
 		const int& fontSize = GetFontSize();
 
 		if (font == NULL || ((font != NULL) && (font->GetFontFamily() != fontFamily || font->GetFontSize() != fontSize))) {

@@ -21,6 +21,7 @@ namespace EzUI {
 		//设计窗口
 		::HINSTANCE hInstance = GetModuleHandleW(NULL);
 		::WNDCLASSW    wc{ 0 };
+		wc.style = CS_HREDRAW | CS_VREDRAW;
 		wc.lpfnWndProc = EzUI_WndProc;//窗口过程
 		wc.hInstance = hInstance;//
 		wc.hCursor = LoadCursorW(NULL, IDC_ARROW);//光标
@@ -56,9 +57,9 @@ namespace EzUI {
 #ifdef _DEBUG
 		if (HZipResource == NULL) {
 			::MessageBoxW(NULL, fileName.utf16().c_str(), L"Failed to open zip", MB_ICONWARNING);
-		}
-#endif
 	}
+#endif
+}
 	Application::Application() {
 		Init();
 	}

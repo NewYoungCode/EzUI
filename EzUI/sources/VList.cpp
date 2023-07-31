@@ -13,10 +13,6 @@ namespace EzUI {
 	{
 		Init();
 	}
-	VList::VList(Control* parent) :ScrollableControl(parent)
-	{
-		Init();
-	}
 	VList::~VList()
 	{
 	}

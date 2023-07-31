@@ -353,7 +353,7 @@ namespace EzUI {
 		Color BackColor = 0;//背景颜色
 		Image* BackImage = NULL;//背景图片 如果指定的图片被删除 请必须将此置零
 		Image* ForeImage = NULL;//前景图片 如果指定的图片被删除 请必须将此置零
-		EString FontFamily;//字体名称 具有继承性
+		std::wstring FontFamily;//字体名称 具有继承性
 		int FontSize = 0;//字体大小 具有继承性
 		Color ForeColor;//前景颜色  具有继承性
 		HCURSOR Cursor = NULL;//鼠标样式

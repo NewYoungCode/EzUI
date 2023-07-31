@@ -11,7 +11,6 @@ namespace EzUI {
 		virtual void OnRemove()override;
 	public:
 		PictureBox();
-		PictureBox(Control* parent);
 		virtual ~PictureBox();
 		void SetImage(Image* image);
 		virtual void OnForePaint(PaintEventArgs& arg)override;

@@ -62,12 +62,12 @@ namespace EzUI {
 		void Offset(int moveY);
 	public:
 		EString Placeholder;//placeholder懂得都懂 (在没有文字的情况下显示的文字)
+		std::wstring PasswordChar;
 		Color SelectedColor = Color(100, 255, 0, 0);//选中颜色
 		bool ReadOnly = false;//是否只读
 		EventTextChange TextChange = NULL;
 	public:
 		TextBox();
-		TextBox(Control* parent);
 		virtual ~TextBox();
 		virtual void SetAttribute(const EString& key, const EString& value)override;
 		virtual Rect GetCareRect()override;

@@ -16,7 +16,6 @@ namespace EzUI {
 		virtual void OnMouseClick(MouseButton btn, const Point& pt)override;
 	public:
 		CheckBox();
-		CheckBox(Control* parent);
 		void SetAttribute(const EString& key, const EString& value)override;
 		virtual void SetCheck(bool checked);
 		virtual bool GetCheck();
