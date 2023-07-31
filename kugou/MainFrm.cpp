@@ -41,7 +41,6 @@ void MainFrm::InitForm() {
 	deskTopLrc = new LrcControl();
 	deskTopLrc->Style.FontSize = 20;
 	deskTopLrc->Style.ForeColor = Color::White;
-	deskTopLrc->Style.BackColor = Color(20, 255, 255, 255);
 	deskTopWnd->SetLayout(deskTopLrc);
 	::SetParent(deskTopWnd->Hwnd(), global::GetWorkerW());
 	//deskTopWnd->Show();
@@ -260,6 +259,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				if (bkImg) {
 					delete bkImg;
 					main->Style.ForeImage = NULL;
+					deskTopWnd->MainLayout->Style.BackImage = NULL;
 					bkImg = NULL;
 					main->Invalidate();
 				}
@@ -311,6 +311,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				deskTopWnd->SetVisible(true);
 				deskTopWnd->Invalidate();
 			}
+			//sender->Invalidate();
 		}
 		if (sender->Name == "play") {
 			player.Play();
@@ -388,8 +389,13 @@ void MainFrm::Task() {
 		long long position = player.Position();
 		double rate = position / (player.Duration() * 1000.0);
 		int w = playerBar->Width() * rate;
-		lrcCtl.ChangePostion(position);
-		deskTopLrc->ChangePostion(position);
+
+		if (deskTopWnd->IsVisible()) {
+			deskTopLrc->ChangePostion(position);
+		}
+		else {
+			lrcCtl.ChangePostion(position);
+		}
 		EString f1 = toTimeStr(position / 1000);
 		EString f2 = toTimeStr(player.Duration());
 		EString fen = f1 + "/" + f2;
@@ -473,6 +479,7 @@ LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
 		if (bkImg) {
 			main->Style.ForeImage = bkImg;
 			main->Style.BackImage->Visible = false;
+			deskTopWnd->MainLayout->Style.BackImage = bkImg;
 		}
 		else {
 			main->Style.BackImage->Visible = true;

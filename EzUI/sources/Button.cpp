@@ -10,6 +10,5 @@ namespace EzUI {
 	}
 	Button::~Button()
 	{
-
 	}
 };

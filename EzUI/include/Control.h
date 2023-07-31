@@ -4,23 +4,20 @@ namespace EzUI {
 	class UI_EXPORT Control :public IControl
 	{
 	private:
-		//ControlStyle _nowStyle;//临时组成的样式
-		bool* _isRemove = NULL;
-		bool _stateRepaint = false;//状态发生改变的时候绘制
+		bool* _isRemove = NULL;//控件是否已经被移除或释放
 		bool _mouseIn = false;//鼠标是否在控件内
 		bool _visible = true;//控件是否可见 此标志为true的时候 可能实际中并不会可见 
 		Controls _controls;//子控件
-		//布局状态AddControl丶RemoveControl丶OnSize时候此标志为挂起 调用ResumeLayout标志为布局中 当调用OnLayout()之后此标志为None
+		//布局状态AddControl丶InsertControl丶RemoveControl丶OnSize时候此标志为挂起 调用ResumeLayout标志为布局中 当调用OnLayout()之后此标志为None
 		EzUI::LayoutState _layoutState = EzUI::LayoutState::None;
 		std::wstring _tipsText;//鼠标悬浮的提示文字
-		Point _lastLocation;//上一次大小
+		Point _lastLocation;//上一次位置
 		Size _lastSize;//上一次大小
 		Rect _lastDrawRect;//最后一次显示的位置
 		int _eventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnKeyChar | Event::OnKeyDown | Event::OnKeyUp;//默认添加到主窗口通知函数中可拦截
 		std::mutex _rePaintMtx;//避免多线程中调用Invalidate()的问题
 		Control(const Control&) = delete;
 		Control& operator=(const Control&) = delete;
-		bool IsRePaint();//是否需要重绘
 		bool CheckEventPassThrough(const Event& eventType);//检查事件是否已经过滤
 		bool CheckEventNotify(const Event& eventType);//检查事件是否通知到主窗口中
 		void ComputeClipRect();//计算基于父控件的裁剪区域
@@ -137,18 +134,17 @@ namespace EzUI {
 		void DestroySpacers();//销毁控件内所有弹簧
 		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::Static);//
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性
-		const Controls& GetControls();//获取当前所有子控件
+		const Controls& GetControls();//获取当前所有子控件 const修饰是因为不建议直接修改子控件内容
 		bool Contains(Control* ctl);//会递归循全部包含的控件是否存在
 		Control* FindControl(size_t pos);//使用下标获取控件
 		Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
 		Controls FindControl(const EString& attr, const EString& attrValue);//使用属性查找
 		bool Swap(Control* ct1, Control* ct2);//对子控件的两个控件进行位置交换
-
 		size_t Index();//获取当前控件在父容器下的索引
-		virtual void AddControl(Control* ctl);//添加控件
+		virtual void InsertControl(size_t pos, Control* ctl);//选择性插入控件
+		virtual void AddControl(Control* ctl);//添加控件到末尾
 		virtual void RemoveControl(Control* ctl);//删除控件 返回下一个迭代器
 		virtual void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件
-		
 		virtual void SetVisible(bool flag);//设置Visible标志
 		bool IsVisible();//获取Visible标志
 		virtual bool IsInWindow();//当前是否显示在窗口内 代表实际情况是否显示

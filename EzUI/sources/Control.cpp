@@ -65,7 +65,7 @@ Event(this , ##__VA_ARGS__); \
 }
 
 	Control::Control() {}
-	
+
 	void Control::OnChildPaint(PaintEventArgs& args)
 	{
 		VisibleControls = GetControls();
@@ -845,6 +845,22 @@ Event(this , ##__VA_ARGS__); \
 		ctl->Parent = this;
 		this->TryPendLayout();//添加控件需要将布局重新挂起
 	}
+	void Control::InsertControl(size_t pos, Control* ctl)
+	{
+		size_t i = 0;
+		ControlIterator itor;
+		for (auto it = _controls.begin(); it != _controls.end(); it++) {
+			if (i == pos) {
+				itor = it;
+				break;
+			}
+			i++;
+		}
+		_controls.insert(itor, ctl);
+		ctl->PublicData = this->PublicData;
+		ctl->Parent = this;
+		this->TryPendLayout();//添加控件需要将布局重新挂起
+	}
 	void Control::RemoveControl(Control* ctl)
 	{
 		ControlIterator it1 = ::std::find(_controls.begin(), _controls.end(), ctl);
@@ -889,7 +905,7 @@ Event(this , ##__VA_ARGS__); \
 		}
 		return NULL;
 	}
-	std::list<Control*> Control::FindControl(const EString& attr, const EString& attrValue)
+	Controls Control::FindControl(const EString& attr, const EString& attrValue)
 	{
 		std::list<Control*> ctls;
 		if (attr.empty() || attrValue.empty()) {
@@ -1094,36 +1110,11 @@ Event(this , ##__VA_ARGS__); \
 	{
 		return NULL;
 	}
-	bool Control::IsRePaint() {
-		/* //缓存方式,此方式可能会造成样式残留
-		_nowStyle.BackgroundColor = GetBackgroundColor();
-		_nowStyle.BackgroundImage = GetBackgroundImage();
-		_nowStyle.BorderBottom = GetBorderBottom();
-		_nowStyle.BorderColor = GetBorderColor();
-		_nowStyle.BorderLeft = GetBorderLeft();
-		_nowStyle.BorderRight = GetBorderRight();
-		_nowStyle.BorderTop = GetBorderTop();
-		_nowStyle.FontFamily = GetFontFamily(this->State);
-		_nowStyle.FontSize = GetFontSize(this->State);
-		_nowStyle.ForeColor = GetForeColor(this->State);
-		_nowStyle.ForeImage = GetForeImage();
-		_nowStyle.Radius = GetRadius();
-		return _nowStyle.IsValid();*/
-		return  true;//  
-	}
 
 	void Control::OnMouseEnter(const Point& point)
 	{
 		this->State = ControlState::Hover;
-		if (IsRePaint()) {
-			_stateRepaint = true;
-			Invalidate();
-		}
-		if (PublicData) {
-			if (!_tipsText.empty()) {//设置提示文字
-				//PublicData->SetTips(this, _tipsText);
-			}
-		}
+		Invalidate();
 		UI_TRIGGER(MouseEnter, point);
 	}
 	void Control::OnMouseDown(MouseButton mbtn, const Point& point)
@@ -1132,27 +1123,19 @@ Event(this , ##__VA_ARGS__); \
 		if (ActiveStyle.Cursor) {
 			::SetCursor(ActiveStyle.Cursor);
 		}
-		if (IsRePaint()) {
-			_stateRepaint = true;
-			Invalidate();
-		}
+		Invalidate();
 		UI_TRIGGER(MouseDown, mbtn, point);
 	}
 	void Control::OnMouseUp(MouseButton mbtn, const Point& point)
 	{
 		this->State = ControlState::Hover;
-		if (_stateRepaint) {
-			Invalidate();
-		}
+		Invalidate();
 		UI_TRIGGER(MouseUp, mbtn, point);
 	}
 	void Control::OnMouseLeave()
 	{
 		this->State = ControlState::Static;
-		if (_stateRepaint) {
-			_stateRepaint = false;
-			Invalidate();
-		}
+		Invalidate();
 		UI_TRIGGER(MouseLeave);
 	}
 

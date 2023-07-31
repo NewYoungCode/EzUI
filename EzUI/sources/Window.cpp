@@ -782,14 +782,16 @@ namespace EzUI {
 
 		if (_inputControl) {
 			auto ctlRect = _inputControl->GetClientRect();
-			MouseEventArgs args(Event::OnMouseUp);
+			MouseEventArgs args(Event::None);
 			args.Button = mbtn;
 			args.Location = { point.X - ctlRect.X,point.Y - ctlRect.Y };
-			_inputControl->DispatchEvent(args);//触发鼠标抬起事件
-
 			if (_inputControl && ctlRect.Contains(point) && mbtn == _lastBtn) {//如果焦点还在并且鼠标未移出控件内 触发click事件
 				args.EventType = Event::OnMouseClick;
 				_inputControl->DispatchEvent(args);
+			}
+			if (_inputControl) {
+				args.EventType = Event::OnMouseUp;
+				_inputControl->DispatchEvent(args);//触发鼠标抬起事件
 			}
 			if (_inputControl && !ctlRect.Contains(point))//如果焦点还在 但是鼠标已经不在控件矩形内 触发鼠标移出事件
 			{
