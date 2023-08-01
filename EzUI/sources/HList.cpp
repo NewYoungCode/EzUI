@@ -100,7 +100,7 @@ namespace EzUI {
 			auto& it = **i;
 			if (rect.IntersectsWith(it.GetRect())) {
 				VisibleControls.push_back(*i);
-				it.DispatchEvent(args);
+				it.DoPaint(args);
 			}
 			if (it.Y() >= Height()) { //纵向列表控件超出则不再绘制后面的控件 优化
 				break;

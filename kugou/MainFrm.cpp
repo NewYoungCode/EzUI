@@ -1,6 +1,6 @@
 #include "MainFrm.h"
 #include "ComBox.h"
-MainFrm::MainFrm() :BorderlessWindow(1020, 690)
+MainFrm::MainFrm() :LayeredWindow(1020, 690)
 {
 	InitForm();
 	//托盘
@@ -16,7 +16,7 @@ void MainFrm::InitForm() {
 	//findControl
 	main = FindControl("main");
 	//第一次不显示背景图 测试无图绘制的性能
-	main->Style.BackImage->Visible = false;
+	main->Style.BackImage->Visible = true;
 
 	tools = FindControl("tools");
 	center = FindControl("center");
@@ -38,9 +38,11 @@ void MainFrm::InitForm() {
 	GetMonitors(&monitorInfo);
 	const MonitorInfo& def = *monitorInfo.begin();
 	deskTopWnd = new LayeredWindow(def.WorkRect.Width, def.WorkRect.Height);
+	deskTopWnd->CloseShadow();
 	deskTopLrc = new LrcControl();
 	deskTopLrc->Style.FontSize = 20;
 	deskTopLrc->Style.ForeColor = Color::White;
+	//deskTopLrc->Style.BackColor = Color::Black;
 	deskTopWnd->SetLayout(deskTopLrc);
 	::SetParent(deskTopWnd->Hwnd(), global::GetWorkerW());
 	//deskTopWnd->Show();
@@ -83,8 +85,28 @@ void MainFrm::InitForm() {
 	};
 	//添加一些事件到窗口中的OnNotify函数进行拦截
 	player.Tag = (UINT_PTR)main;
-	player.AddEventNotify(Event::OnPaint);
-	main->AddEventNotify(Event::OnPaint);
+
+	main->EventHandler= player.EventHandler = [=](Control* sender, const EventArgs& args)->bool {
+		if (args.EventType == Event::OnPaint) {
+			if (sender == &player) {
+				if (tabCtrl->GetPageIndex() == 2) {
+					return false;
+				}
+				return true;
+			}
+			if (sender == main && player.BuffBitmap) {
+				if (tabCtrl->GetPageIndex() == 1) {
+					PaintEventArgs& arg = (PaintEventArgs&)args;
+					Image img(player.BuffBitmap->_bitmap);
+					arg.Graphics.DrawImage(&img, main->GetRect(), ImageSizeMode::CenterImage);
+					return true;
+				}
+				return false;
+			}
+			return false;
+		}
+	};
+
 	OpenSongView();//
 	//设置阴影
 	//this->SetShadow(50);
@@ -128,7 +150,9 @@ void MainFrm::OnClose(bool& cal) {
 	//关闭窗口时 退出消息循环 程序结束
 	Application::exit(0);
 }
-
+void MainFrm::OnPaint(PaintEventArgs& _arg) {
+	__super::OnPaint(_arg);
+}
 void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 {
 	auto  SingerName = _SingerName.Split(",")[0];
@@ -203,26 +227,6 @@ void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 	__super::OnKeyDown(wparam, lParam);
 }
 bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
-
-	if (args.EventType == Event::OnPaint) {
-		if (sender == &player) {
-			if (tabCtrl->GetPageIndex() == 2) {
-				return false;
-			}
-			return true;
-		}
-		if (sender == main && player.BuffBitmap) {
-			if (tabCtrl->GetPageIndex() == 1) {
-				PaintEventArgs& arg = (PaintEventArgs&)args;
-				Image img(player.BuffBitmap->_bitmap);
-				arg.Graphics.DrawImage(&img, main->GetRect(), ImageSizeMode::CenterImage);
-				return true;
-			}
-			return false;
-		}
-		return false;
-	}
-
 	if (args.EventType == Event::OnMouseDoubleClick) {
 		if (!sender->GetAttribute("FileHash").empty()) {
 			EString hash = sender->GetAttribute("FileHash");

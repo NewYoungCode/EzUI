@@ -15,22 +15,22 @@ namespace EzUI {
 		this->AddControl(&label);
 
 		label.SetText(L"_");
-		label.MouseClick = [&](Control* sender, const MouseButton, const Point&)->void {
+		//label.MouseClick = [&](Control* sender, const MouseButton, const Point&)->void {
 
-			Rect _rect = GetClientRect();
-			HWND Owner = ::GetWindowOwner(poupWnd->Hwnd());
-			RECT OwnerRect;
-			::GetWindowRect(Owner, &OwnerRect);
-			auto rect = poupWnd->GetWindowRect();
-			POINT mousePos{ _rect.X,_rect.GetBottom() };
-			POINT clientPos = mousePos;
-			ClientToScreen(Owner, &clientPos);
-			int height = OwnerRect.bottom - OwnerRect.top;
-			//::MoveWindow(poupWnd->Hwnd(), clientPos.x, clientPos.y, rect.Width, rect.Height, FALSE);
-			//根据内容自动高度
-			::MoveWindow(poupWnd->Hwnd(), clientPos.x, clientPos.y, rect.Width, vlist.GetContentHeight(), FALSE);
-			poupWnd->Show(SW_SHOW);
-		};
+		//	Rect _rect = GetClientRect();
+		//	HWND Owner = ::GetWindowOwner(poupWnd->Hwnd());
+		//	RECT OwnerRect;
+		//	::GetWindowRect(Owner, &OwnerRect);
+		//	auto rect = poupWnd->GetWindowRect();
+		//	POINT mousePos{ _rect.X,_rect.GetBottom() };
+		//	POINT clientPos = mousePos;
+		//	ClientToScreen(Owner, &clientPos);
+		//	int height = OwnerRect.bottom - OwnerRect.top;
+		//	//::MoveWindow(poupWnd->Hwnd(), clientPos.x, clientPos.y, rect.Width, rect.Height, FALSE);
+		//	//根据内容自动高度
+		//	::MoveWindow(poupWnd->Hwnd(), clientPos.x, clientPos.y, rect.Width, vlist.GetContentHeight(), FALSE);
+		//	poupWnd->Show(SW_SHOW);
+		//};
 	}
 	ComBox::ComBox() {
 		Init();
@@ -59,11 +59,11 @@ namespace EzUI {
 
 	size_t ComBox::AddItem(const EString& text) {
 		Label* lb = new Label;
-		lb->MouseClick = [&](Control* sender, const MouseButton, const Point&)->void {
+	/*	lb->MouseClick = [&](Control* sender, const MouseButton, const Point&)->void {
 			poupWnd->Hide();
 			edit.SetText(((Label*)sender)->GetText());
 			Invalidate();
-		};
+		};*/
 		lb->SetText(text);
 		//lb->TextAlign = TextAlign::MiddleLeft;
 		lb->HoverStyle.BackColor = Color(208, 208, 208);

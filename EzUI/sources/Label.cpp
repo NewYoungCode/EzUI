@@ -2,7 +2,7 @@
 namespace EzUI {
 	Label::Label() {}
 	Label::~Label() {}
-	void Label::Rending(PaintEventArgs& args) {
+	void Label::DoPaint(PaintEventArgs& args) {
 		if (AutoWidth && AutoHeight) {
 			Size oldSize(Width(), Height());
 			std::wstring fontFamily = GetFontFamily();
@@ -18,7 +18,7 @@ namespace EzUI {
 				}
 			}
 		}
-		__super::Rending(args);
+		__super::DoPaint(args);
 	}
 	void Label::OnForePaint(PaintEventArgs& args)
 	{

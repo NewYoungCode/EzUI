@@ -19,7 +19,7 @@ namespace EzUI {
 		Label();
 		virtual ~Label();
 		virtual void SetAttribute(const EString& key, const EString& value)override;
-		virtual void Rending(PaintEventArgs& args)override;
+		virtual void DoPaint(PaintEventArgs& args)override;
 		void SetText(const EString& text);
 		void SetUnderline(bool enable = true);
 		EString GetText()const;

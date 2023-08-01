@@ -95,11 +95,11 @@ namespace EzUI {
 	}
 	void LayeredWindow::OnPaint(PaintEventArgs& args) {
 		if (MainLayout) {
-			MainLayout->DispatchEvent(args);//
+			MainLayout->DoPaint(args);//
 		}
 	}
 
-	void LayeredWindow::Rending(HDC winHDC, const Rect& rePaintRect) {
+	void LayeredWindow::DoPaint(HDC winHDC, const Rect& rePaintRect) {
 		const Rect& clientRect = GetClientRect();//
 		DXRender pt(winHDC, clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height);//
 		PaintEventArgs args(pt);
@@ -116,12 +116,11 @@ namespace EzUI {
 			if (_winBitmap) {
 				_winBitmap->Earse(_InvalidateRect);//清除背景
 				HDC winHDC = _winBitmap->GetDC();
-				Rending(winHDC, _InvalidateRect);
+				DoPaint(winHDC, _InvalidateRect);
 				PushDC(winHDC);//updatelaredwindow 更新窗口
 				_InvalidateRect = { 0,0,0,0 };//重置区域
-				return 0;
 			}
-			return ::DefWindowProc(Hwnd(), uMsg, wParam, lParam);
+			return 0;
 		}
 		if (uMsg == WM_NCHITTEST) {
 			if (!::IsZoomed(Hwnd()) && Zoom) {

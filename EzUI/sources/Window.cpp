@@ -321,7 +321,7 @@ namespace EzUI {
 			HDC winHDC = ::BeginPaint(Hwnd(), &pst);
 			RECT& r = pst.rcPaint;
 			Rect rePaintRect{ r.left,r.top,r.right - r.left, r.bottom - r.top };
-			this->Rending(winHDC, rePaintRect);
+			this->DoPaint(winHDC, rePaintRect);
 			::EndPaint(Hwnd(), &pst);
 			return 0;
 		}
@@ -489,7 +489,7 @@ namespace EzUI {
 		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
 	}
 
-	void Window::Rending(HDC winHDC, const Rect& rePaintRect) {
+	void Window::DoPaint(HDC winHDC, const Rect& rePaintRect) {
 #define COUNT_ONPAINT 0
 #if COUNT_ONPAINT
 		StopWatch sw;
@@ -520,7 +520,7 @@ namespace EzUI {
 	void Window::OnPaint(PaintEventArgs& arg)
 	{
 		if (MainLayout) {
-			MainLayout->DispatchEvent(arg);//
+			MainLayout->DoPaint(arg);//
 		}
 	}
 
@@ -531,14 +531,12 @@ namespace EzUI {
 
 		if ((ExStyle & WS_EX_LAYERED) != WS_EX_LAYERED) {
 			PublicData.InvalidateRect = [=](void* _rect)->void {
-				//Debug::Log("threadId %d",EzUI::GetThreadId());
 				RECT r;
 				r.left = ((Rect*)_rect)->GetLeft();
 				r.top = ((Rect*)_rect)->GetTop();
 				r.right = ((Rect*)_rect)->GetRight();
 				r.bottom = ((Rect*)_rect)->GetBottom();
-				::InvalidateRect(Hwnd(), &r, FALSE);
-				//::SendMessage(_hWnd, UI_PAINT, (WPARAM)_rect, NULL);
+				::InvalidateRect(Hwnd(), &r, TRUE);
 			};
 			PublicData.UpdateWindow = [=]()->void {
 				::UpdateWindow(Hwnd());
@@ -636,19 +634,20 @@ namespace EzUI {
 		}
 
 		Point relativePoint;
-		Control* outCtl = this->FindControl(point, &relativePoint);//找到当前控件的位置
+		Control* newCtl = this->FindControl(point, &relativePoint);//找到当前控件的位置
 		MouseEventArgs args(Event::None);
 		args.Location = relativePoint;
 
 		bool ok = true;
 		//触发上一个
-		if (_focusControl != outCtl) {
+		if (_focusControl != newCtl) {
 			if (_focusControl) {
 				args.EventType = Event::OnMouseLeave;
 				ok = _focusControl->DispatchEvent(args);
+				ok = newCtl->DispatchEvent(Event::OnMouseEnter);
 			}
 			if (ok) {
-				_focusControl = outCtl;
+				_focusControl = newCtl;
 			}
 		}
 		//触发命中的
@@ -785,19 +784,29 @@ namespace EzUI {
 			MouseEventArgs args(Event::None);
 			args.Button = mbtn;
 			args.Location = { point.X - ctlRect.X,point.Y - ctlRect.Y };
-			if (_inputControl && ctlRect.Contains(point) && mbtn == _lastBtn) {//如果焦点还在并且鼠标未移出控件内 触发click事件
+			//可能还是需要修改
+			if (true || _inputControl) {
+				POINT p1{ 0 };
+				::GetCursorPos(&p1);
+				::ScreenToClient(Hwnd(), &p1);
+				args.EventType = Event::OnMouseUp;
+				ctlRect = _inputControl->GetClientRect();
+				if (ctlRect.Contains(p1.x, p1.y) && ::GetForegroundWindow() == Hwnd()) {
+					_inputControl->State = ControlState::Hover;
+				}
+				else {
+					args.EventType = Event::OnMouseLeave;
+				}
+				_inputControl->DispatchEvent(args);//触发鼠标抬起事件
+			}
+			if (_inputControl && mbtn == _lastBtn) {//如果焦点还在并且鼠标未移出控件内 触发click事件
+			/*	POINT p1{ 0 };
+				::GetCursorPos(&p1);
+				::ScreenToClient(Hwnd(), &p1);*/
 				args.EventType = Event::OnMouseClick;
 				_inputControl->DispatchEvent(args);
 			}
-			if (_inputControl) {
-				args.EventType = Event::OnMouseUp;
-				_inputControl->DispatchEvent(args);//触发鼠标抬起事件
-			}
-			if (_inputControl && !ctlRect.Contains(point))//如果焦点还在 但是鼠标已经不在控件矩形内 触发鼠标移出事件
-			{
-				args.EventType = Event::OnMouseLeave;
-				_inputControl->DispatchEvent(args);
-			}
+
 		}
 		//OnMouseMove(point);
 	}

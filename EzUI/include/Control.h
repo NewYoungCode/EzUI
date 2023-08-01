@@ -5,7 +5,6 @@ namespace EzUI {
 	{
 	private:
 		bool* _isRemove = NULL;//控件是否已经被移除或释放
-		bool _mouseIn = false;//鼠标是否在控件内
 		bool _visible = true;//控件是否可见 此标志为true的时候 可能实际中并不会可见 
 		Controls _controls;//子控件
 		//布局状态AddControl丶InsertControl丶RemoveControl丶OnSize时候此标志为挂起 调用ResumeLayout标志为布局中 当调用OnLayout()之后此标志为None
@@ -14,12 +13,10 @@ namespace EzUI {
 		Point _lastLocation;//上一次位置
 		Size _lastSize;//上一次大小
 		Rect _lastDrawRect;//最后一次显示的位置
-		int _eventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnKeyChar | Event::OnKeyDown | Event::OnKeyUp;//默认添加到主窗口通知函数中可拦截
-		std::mutex _rePaintMtx;//避免多线程中调用Invalidate()的问题
+		std::mutex _paintMtx;//避免多线程中调用Invalidate()的问题
 		Control(const Control&) = delete;
 		Control& operator=(const Control&) = delete;
 		bool CheckEventPassThrough(const Event& eventType);//检查事件是否已经过滤
-		bool CheckEventNotify(const Event& eventType);//检查事件是否通知到主窗口中
 		void ComputeClipRect();//计算基于父控件的裁剪区域
 		Size _fixedSize{ 0,0 };//绝对Size
 		Rect _rect;//控件矩形区域(基于父控件)
@@ -39,18 +36,7 @@ namespace EzUI {
 		Controls VisibleControls;//基于控件中的可见控件
 		const Rect ClipRect;//控件在窗口中的可见区域
 	public:
-		EventMouseMove MouseMove;//移动事件
-		EventMouseEnter MouseEnter;//移入事件
-		EventMouseWheel MouseWheel;//滚轮事件
-		EventMouseLeave MouseLeave;//鼠标离开事件
-		EventMouseDown MouseDown;//鼠标按下事件
-		EventMouseUp MouseUp;//鼠标抬起
-		EventMouseClick MouseClick;//鼠标单击
-		EventMouseDoubleClick MouseDoubleClick;//鼠标双击
-		EventKeyChar KeyChar;//WM_CHAR消息
-		EventKeyDown KeyDown;//键盘按下
-		EventKeyUp KeyUp;//键盘弹起
-		EventPaint Painting;//绘制事件
+		std::function<bool(Control*, const EventArgs&)> EventHandler = NULL;
 	protected:
 		virtual ControlStyle& GetStyle(const ControlState& _state);//获取当前控件状态下的样式信息
 		virtual ControlStyle& GetDefaultStyle();//用于获取不同控件当前默认的
@@ -77,7 +63,6 @@ namespace EzUI {
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam) override;//WM_CAHR消息
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);//键盘弹起
 		virtual void OnKillFocus(Control* control);//失去焦点的时候发生
-		virtual void Rending(PaintEventArgs& args);//绘制函数
 	public:
 		//以下函数请保证在父控件布局已完成的情况下使用 使用ResumeLayout()执行布局
 		const int& X();
@@ -106,10 +91,10 @@ namespace EzUI {
 		virtual void ResumeLayout();//直接进行布局
 		virtual void SetTips(const EString& text);//设置tips
 		virtual void OnRemove();//被移除该做的事情
-		virtual bool DispatchEvent(const EventArgs& arg);//用于消息事件的函数
-		void AddEventNotify(int eventType);//添加到主窗口Ontify函数中可拦截
-		void RemoveEventNotify(int eventType);//移除一个主窗口的Ontify消息
 		virtual ScrollBar* GetScrollBar();//获取控件的滚动条
+		bool DispatchEvent(const MouseEventArgs& arg);//派发鼠标事件
+		bool DispatchEvent(const KeyboardEventArgs& arg);//派发键盘事件
+		bool DispatchEvent(const KillFocusEventArgs& arg);//派发失去焦点事件
 	public:
 		//普通样式
 		int GetBorderTopLeftRadius(ControlState _state = ControlState::None);
@@ -139,11 +124,13 @@ namespace EzUI {
 		Control* FindControl(size_t pos);//使用下标获取控件
 		Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
 		Controls FindControl(const EString& attr, const EString& attrValue);//使用属性查找
-		bool Swap(Control* ct1, Control* ct2);//对子控件的两个控件进行位置交换
+		bool SwapControl(Control* childCtl, Control* childCt2);//对子控件的两个控件进行位置交换
 		size_t Index();//获取当前控件在父容器下的索引
-		virtual void InsertControl(size_t pos, Control* ctl);//选择性插入控件
-		virtual void AddControl(Control* ctl);//添加控件到末尾
-		virtual void RemoveControl(Control* ctl);//删除控件 返回下一个迭代器
+		virtual void DoPaint(PaintEventArgs& args);//绘制函数
+		virtual void InsertControl(size_t pos, Control* childCtl);//选择性插入控件
+		virtual void AddControl(Control* childCtl);//添加控件到末尾
+		virtual void RemoveControl(Control* childCtl);//删除控件 返回下一个迭代器
+		virtual void SetParent(Control* parentCtl);//设置父控件
 		virtual void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件
 		virtual void SetVisible(bool flag);//设置Visible标志
 		bool IsVisible();//获取Visible标志

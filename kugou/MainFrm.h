@@ -9,7 +9,7 @@
 #include "LayeredWindow.h"
 #include "UIManager.h"
 class MainFrm :
-	public BorderlessWindow
+	public LayeredWindow
 {
 private:
 	LayeredWindow* deskTopWnd;
@@ -20,7 +20,7 @@ private:
 	VList* localList = NULL, * searchList = NULL;
 	TextBox* searchEdit;
 	LrcControl lrcCtl;
-	LrcControl *deskTopLrc;
+	LrcControl* deskTopLrc;
 	EString lastFen;
 	Label* time, * singer;
 	TabLayout* tabCtrl, * control;
@@ -45,5 +45,6 @@ public:
 	MainFrm();
 	virtual ~MainFrm();
 	void OnClose(bool& b) override;
+	void OnPaint(PaintEventArgs& arg)override;
 };
 

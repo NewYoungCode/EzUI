@@ -18,7 +18,7 @@ namespace EzUI {
 	protected:
 		LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
 		virtual void OnSize(const Size& sz)override;
-		virtual void Rending(HDC winHDC, const Rect& rePaintRect)override;
+		virtual void DoPaint(HDC winHDC, const Rect& rePaintRect)override;
 		virtual void OnPaint(PaintEventArgs& args) override;
 		virtual void OnRect(const Rect& rect)override;
 		void UpdateShadow();

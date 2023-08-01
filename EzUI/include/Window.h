@@ -1,6 +1,6 @@
 #pragma once
 #include "Control.h"
-#include "TextBox.h"
+#include "Timer.h"
 
 namespace EzUI {
 	/// <summary>
@@ -43,7 +43,7 @@ namespace EzUI {
 		virtual void OnMouseDown(MouseButton mbtn, const Point& point);//鼠标按下时发生
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point);//鼠标弹起时发生
 		virtual void OnMouseClick(MouseButton mbtn, const Point& point);//鼠标单击并弹起时发生
-		virtual void Rending(HDC winDC, const Rect& rePaint);//渲染函数 渲染前进行
+		virtual void DoPaint(HDC winDC, const Rect& rePaint);//渲染函数 渲染前进行
 		virtual void OnPaint(PaintEventArgs& arg);//渲染中
 		virtual void OnLocation(const Point& point);//位置发生改变时发生
 		virtual void OnSize(const Size& sz);//大小发生改变时发生

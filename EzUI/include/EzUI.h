@@ -69,7 +69,7 @@ namespace EzUI {
 				if (colorStr.find("rgba") == 0) {
 					a = std::stoi(rgbList.at(3));
 				}
-				return Color(a,r,g,b);
+				return Color(a, r, g, b);
 			}
 			return Color();
 		}
@@ -367,24 +367,12 @@ namespace EzUI {
 		void SetStyle(const EString& key, const EString& value, const std::function<void(Image*)>& callback = NULL);
 	};
 
-
 	typedef std::map<EString, EString> Attributes;//属性集合
 	typedef std::map<EString, EString>::iterator AttributeIterator;
 	typedef std::list<Control*> Controls;//控件集合
 	typedef std::list<Control*>::iterator ControlIterator;//
-	typedef std::function<void(Control*, const Point&)> EventMouseMove;  //移动事件
-	typedef std::function<void(Control*, const Point&)> EventMouseEnter;//移入事件
-	typedef std::function<void(Control*, int, short, const Point&)> EventMouseWheel;//滚轮事件
-	typedef std::function<void(Control*)> EventMouseLeave;//鼠标离开事件
-	typedef std::function<void(Control*, MouseButton, const Point&)> EventMouseDown; //鼠标按下事件
-	typedef std::function<void(Control*, MouseButton, const Point&)> EventMouseUp;//鼠标抬起
-	typedef std::function<void(Control*, MouseButton, const Point&)> EventMouseClick;//鼠标单击
-	typedef std::function<void(Control*, MouseButton, const Point&)> EventMouseDoubleClick;//鼠标双击
-	typedef std::function<void(Control*, WPARAM, LPARAM)> EventKeyChar;//输入事件(WM_CHAR)
-	typedef std::function<void(Control*, WPARAM, LPARAM)> EventKeyDown;//键盘按下事件
-	typedef std::function<void(Control*, WPARAM, LPARAM)> EventKeyUp;//键盘弹起事件
+
 	typedef std::function<void(int, int)> EventScrollRolling;//滚动条滚动事件
-	typedef std::function<void(PaintEventArgs&)> EventPaint;//绘制
 	typedef std::function<void(EString)> EventTextChange;//文字变更事件
 
 	class UI_EXPORT IControl {
