@@ -7,10 +7,10 @@ namespace EzUI {
 	{
 	protected:
 		virtual void OnForePaint(PaintEventArgs& args) override;
-		virtual void OnMouseDown(MouseButton mBtn, const Point& point)override;
-		virtual void OnMouseMove(const Point& point)override;
-		virtual void OnMouseWheel(int rollCount, short zDelta, const Point& point)override;
-		virtual void OnBackgroundPaint(PaintEventArgs& e)override;
+		virtual void OnMouseDown(const MouseEventArgs& arg)override;
+		virtual void OnMouseMove(const MouseEventArgs& arg)override;
+		virtual void OnMouseWheel(const MouseEventArgs& arg)override;
+		virtual void OnBackgroundPaint(PaintEventArgs& arg)override;
 	public:
 		VScrollBar();
 		virtual ~VScrollBar();

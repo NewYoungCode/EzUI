@@ -19,7 +19,12 @@ namespace EzUI {
 		task = new std::thread([=]() {
 			while (bRunTask)
 			{
-				if (!_InvalidateRect.IsEmptyArea() && this->IsVisible()) {
+				bool isEmpty = false;
+				_mtx.lock();
+				isEmpty = _InvalidateRect.IsEmptyArea();
+				_mtx.unlock();
+
+				if (!isEmpty && this->IsVisible()) {
 					::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
 				}
 				Sleep(1);//检测无效区域的延时
@@ -66,6 +71,7 @@ namespace EzUI {
 		}
 	}
 	void LayeredWindow::InvalidateRect(const Rect& _rect) {
+		_mtx.lock();
 		int Width = GetClientRect().Width;
 		int Height = GetClientRect().Height;
 		Rect rect = _rect;
@@ -83,7 +89,14 @@ namespace EzUI {
 		if (rect.GetRight() > Width) {
 			rect.Width = Width - rect.X;
 		} //这段代码是保证重绘区域一定是在窗口内
-		Rect::Union(_InvalidateRect, _InvalidateRect, rect);
+
+		if (!_InvalidateRect.IsEmptyArea()) {
+			Rect::Union(_InvalidateRect, _InvalidateRect, rect);
+		}
+		else {
+			_InvalidateRect = _rect;
+		}
+		_mtx.unlock();
 	}
 	void LayeredWindow::OnSize(const Size& sz) {
 		if (_winBitmap) {
@@ -95,7 +108,7 @@ namespace EzUI {
 	}
 	void LayeredWindow::OnPaint(PaintEventArgs& args) {
 		if (MainLayout) {
-			MainLayout->DoPaint(args);//
+			MainLayout->DispatchEvent(args);//
 		}
 	}
 
@@ -103,7 +116,7 @@ namespace EzUI {
 		const Rect& clientRect = GetClientRect();//
 		DXRender pt(winHDC, clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height);//
 		PaintEventArgs args(pt);
-		args.InvalidRectangle = _InvalidateRect;//
+		args.InvalidRectangle = rePaintRect;//
 		args.PublicData = &PublicData;
 		args.DC = winHDC;
 		OnPaint(args);//开始重绘
@@ -114,6 +127,7 @@ namespace EzUI {
 		if (uMsg == WM_PAINT) //layeredWindow
 		{
 			if (_winBitmap) {
+				//Debug::Info("%d %d %d %d", _InvalidateRect.X, _InvalidateRect.Y, _InvalidateRect.Width, _InvalidateRect.Height);
 				_winBitmap->Earse(_InvalidateRect);//清除背景
 				HDC winHDC = _winBitmap->GetDC();
 				DoPaint(winHDC, _InvalidateRect);

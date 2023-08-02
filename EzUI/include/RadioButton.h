@@ -5,7 +5,7 @@ namespace EzUI {
 		public CheckBox
 	{
 	protected:
-		virtual void OnMouseClick(MouseButton btn, const Point& pt)override;
+		virtual void OnMouseClick(const MouseEventArgs& arg)override;
 	public:
 		RadioButton();
 		virtual~RadioButton();

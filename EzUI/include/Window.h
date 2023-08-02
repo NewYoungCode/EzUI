@@ -54,7 +54,7 @@ namespace EzUI {
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam);//键盘按下
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);//键盘抬起
 		virtual void OnKillFocus(HWND hWnd);//失去焦点时发生
-		//鼠标 键盘 重绘 会进入此函数,返回true将不再派发给sender控件处理 注意:尽量不要在此函数内部删除自身控件(鼠标和键盘事件内可以删除)
+		//鼠标 键盘 重绘 会进入此函数,返回true将不再派发给sender控件处理 注意:尽量不要在此函数内部删除自身控件(鼠标和键盘事件内可以删除) 相当于QT的eventFilter
 		virtual bool OnNotify(Control* sender, EventArgs& args);
 	public:
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);//处理消息队列的

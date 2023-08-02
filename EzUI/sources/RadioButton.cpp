@@ -3,9 +3,9 @@ namespace EzUI {
 	RadioButton::RadioButton()
 	{
 	}
-	void RadioButton::OnMouseClick(MouseButton btn, const Point& pt)
+	void RadioButton::OnMouseClick(const MouseEventArgs& arg)
 	{
-		__super::OnMouseClick(btn, pt);
+		__super::OnMouseClick(arg);
 		SetCheck(true);
 		if (GetCheck() == true) {
 			for (auto& it : Parent->GetControls()) {
@@ -20,5 +20,4 @@ namespace EzUI {
 	RadioButton::~RadioButton()
 	{
 	}
-
 };

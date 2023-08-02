@@ -76,13 +76,16 @@ namespace EzUI {
 		TextLayout(const TextLayout& _copy) = delete;
 		TextLayout& operator=(const TextLayout& _copy) = delete;
 		IDWriteTextLayout* value = NULL;
-		DWRITE_TEXT_METRICS textMetrics;
 		void SetTextAlign(TextAlign textAlign);
+		std::wstring fontFamily;
+		int fontSize;
 	public:
 		TextLayout(const std::wstring& text, const Font& font, Size maxSize = Size{ __MAXFLOAT,__MAXFLOAT }, TextAlign textAlgin = TextAlign::TopLeft);
 		Point HitTestPoint(const Point& pt, int* outTextPos, BOOL* outIsTrailingHit, int* fontHeight);
 		void HitTestPoint(const Point& pt, HitTestMetrics* hitTestMetrics);//根据坐标执行命中测试
 		Point HitTestTextPosition(int textPos, BOOL isTrailingHit);//根据文字下标执行命中测试
+		const std::wstring& GetFontFamily();
+		const int& GetFontSize();
 		int Width();
 		int Height();
 		Size GetFontBox();//获取文字绘制的时候占用多少行
@@ -278,7 +281,7 @@ namespace EzUI {
 		void PushLayer(const Rect& rectBounds);//速度较快
 		void PushLayer(const Geometry& dxGeometry);//比较耗性能,但是可以异形抗锯齿裁剪
 		void PopLayer();//弹出最后一个裁剪
-		void DrawImage(DXImage* _image, const  Rect& _rect, const ImageSizeMode& imageSizeMode = ImageSizeMode::StretchImage, const EzUI::Padding& padding = 0);//绘制图像
+		void DrawImage(DXImage* _image, const  Rect& _rect, const ImageSizeMode& imageSizeMode = ImageSizeMode::StretchImage, const EzUI::Padding& padding = 0, float opacity = 1.0f);//绘制图像
 		void SetTransform(int xOffset, int yOffset, int angle = 0);//对画布进行旋转和偏移
 		void DrawBezier(const Point& startPoint, const Bezier& points, int width = 1);//贝塞尔线
 		void DrawBezier(const Point& startPoint, std::list<Bezier>& points, int width = 1);//贝塞尔线

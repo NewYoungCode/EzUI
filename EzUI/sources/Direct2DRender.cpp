@@ -68,10 +68,17 @@ namespace EzUI {
 	}
 	//TextLayout
 	TextLayout::TextLayout(const std::wstring& text, const Font& font, Size maxSize, TextAlign textAlign) {
+		if (((int)textAlign & (int)Align::Mid) == (int)Align::Mid) {
+			font.Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+		}
+		else {
+			font.Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);
+		}
+		this->fontSize= font.GetFontSize();
+		this->fontFamily = font.GetFontFamily();
 		D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), font.Get(), (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &value);
 		if (value == NULL)return;
 		SetTextAlign(textAlign);
-		value->GetMetrics(&textMetrics);
 	}
 	IDWriteTextLayout* TextLayout::Get() const {
 		return value;
@@ -130,25 +137,42 @@ namespace EzUI {
 		value->HitTestTextPosition(textPos, isTrailingHit, &X, &Y, &hitTestMetrics);
 		return Point((int)(X + 0.5), (int)(Y + 0.5));
 	}
+	const std::wstring& TextLayout::GetFontFamily()
+	{
+		return this->fontFamily;
+	}
 	Size TextLayout::GetFontBox() {
+		DWRITE_TEXT_METRICS textMetrics;
+		value->GetMetrics(&textMetrics);
 		FLOAT width = textMetrics.widthIncludingTrailingWhitespace;
 		FLOAT height = textMetrics.height;
-		return  Size{ (int)(width + 0.5) ,(int)(height + 0.5) };
+		return  Size{ (int)(width + 1) ,(int)(height + 1) };
+	}
+	const int& TextLayout::GetFontSize()
+	{
+		return this->fontSize;
 	}
 	int TextLayout::Width() {
+		DWRITE_TEXT_METRICS textMetrics;
+		value->GetMetrics(&textMetrics);
 		FLOAT width = textMetrics.widthIncludingTrailingWhitespace;
-		return (int)(width + 0.5);
+		return (int)(width + 1);
 	}
 	int TextLayout::Height() {
+		DWRITE_TEXT_METRICS textMetrics;
+		value->GetMetrics(&textMetrics);
 		FLOAT width = textMetrics.height;
-		return (int)(width + 0.5);
+		return (int)(width + 1);
 	}
-
 	int TextLayout::GetFontHeight() {
+		DWRITE_TEXT_METRICS textMetrics;
+		value->GetMetrics(&textMetrics);
 		FLOAT height = textMetrics.height;
 		return  (int)((height / textMetrics.lineCount) + 0.5);
 	}
 	int TextLayout::GetLineCount() {
+		DWRITE_TEXT_METRICS textMetrics;
+		value->GetMetrics(&textMetrics);
 		return textMetrics.lineCount;
 	}
 
@@ -703,7 +727,7 @@ namespace EzUI {
 			layers.pop_back();
 		}
 	}
-	void DXRender::DrawImage(DXImage* image, const Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Padding& padding) {
+	void DXRender::DrawImage(DXImage* image, const Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Padding& padding, float opacity) {
 		_NOREND_IMAGE_
 			if (image == NULL || image->Visible == false) return;
 		//计算坐标
@@ -719,7 +743,7 @@ namespace EzUI {
 		Rect drawRect = EzUI::Transformation(imageSizeMode, rect, imgSize);
 		//开始绘制
 		if (image->Get() == NULL) return;
-		render->DrawBitmap(image->Get(), __To_D2D_RectF(drawRect));
+		render->DrawBitmap(image->Get(), __To_D2D_RectF(drawRect), opacity);
 	}
 	void DXRender::DrawEllipse(const Point& point, int radiusX, int radiusY, int width)
 	{

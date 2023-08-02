@@ -46,18 +46,17 @@ namespace EzUI {
 		bool SelectedAll();//全选
 		void OnBackspace();//退格键要做的事
 		void BuildCare();//构建光标
+		void BuildSelectedRect();
 		Point ConvertPoint(const Point& pt);//坐标转换
 	protected:
 		virtual void OnRemove()override;
 		virtual void OnForePaint(PaintEventArgs& e) override;
-		virtual void OnKeyChar(WPARAM wParam, LPARAM lParam) override;
-		virtual void BuildSelectedRect();
-		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam)override;
-		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam)override;
-		virtual void OnMouseDown(MouseButton mbtn, const Point& point)override;
-		virtual void OnMouseMove(const Point& point) override;
-		virtual void OnMouseUp(MouseButton mbtn, const Point& point)override;
-		virtual void OnKillFocus(Control* ctl) override;
+		virtual void OnKeyChar(const KeyboardEventArgs&arg) override;
+		virtual void OnKeyDown(const KeyboardEventArgs& arg)override;
+		virtual void OnMouseDown(const MouseEventArgs&arg)override;
+		virtual void OnMouseMove(const MouseEventArgs& arg) override;
+		virtual void OnMouseUp(const MouseEventArgs& arg)override;
+		virtual void OnKillFocus(const KillFocusEventArgs&arg) override;
 		virtual void OnLayout();
 		void Offset(int moveY);
 	public:

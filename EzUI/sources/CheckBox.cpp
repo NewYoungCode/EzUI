@@ -45,8 +45,8 @@ namespace EzUI {
 		return __super::GetStyle(_state);
 	}
 
-	void CheckBox::OnMouseClick(MouseButton btn, const Point& pt) {
-		__super::OnMouseClick(btn, pt);
+	void CheckBox::OnMouseClick(const MouseEventArgs& arg) {
+		__super::OnMouseClick(arg);
 		SetCheck(!GetCheck());
 	}
 };

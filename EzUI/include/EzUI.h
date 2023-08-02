@@ -384,19 +384,6 @@ namespace EzUI {
 		IControl();
 		virtual ~IControl();
 	public:
-		virtual void OnMouseMove(const Point& point) = 0;
-		virtual void OnMouseLeave() = 0;
-		virtual void OnMouseWheel(int rollCount, short zDelta, const Point& point) = 0;
-		virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point) = 0;
-		virtual void OnMouseDown(MouseButton mbtn, const Point& point) = 0;
-		virtual void OnMouseUp(MouseButton mbtn, const Point& point) = 0;
-		virtual void OnLocation(const Point& pt) = 0;
-		virtual void OnSize(const Size& size) = 0;
-		virtual void OnRect(const Rect& rect) = 0;
-		virtual void OnKeyChar(WPARAM wParam, LPARAM lParam) = 0;
-		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam) = 0;
-		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam) = 0;
-	public:
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//设置属性
 		virtual EString GetAttribute(const EString& attrName);//获取属性
 	};

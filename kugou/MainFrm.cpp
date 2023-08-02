@@ -1,6 +1,6 @@
 #include "MainFrm.h"
 #include "ComBox.h"
-MainFrm::MainFrm() :LayeredWindow(1020, 690)
+MainFrm::MainFrm() :BorderlessWindow(1020, 690)
 {
 	InitForm();
 	//托盘
@@ -86,26 +86,9 @@ void MainFrm::InitForm() {
 	//添加一些事件到窗口中的OnNotify函数进行拦截
 	player.Tag = (UINT_PTR)main;
 
-	main->EventHandler= player.EventHandler = [=](Control* sender, const EventArgs& args)->bool {
-		if (args.EventType == Event::OnPaint) {
-			if (sender == &player) {
-				if (tabCtrl->GetPageIndex() == 2) {
-					return false;
-				}
-				return true;
-			}
-			if (sender == main && player.BuffBitmap) {
-				if (tabCtrl->GetPageIndex() == 1) {
-					PaintEventArgs& arg = (PaintEventArgs&)args;
-					Image img(player.BuffBitmap->_bitmap);
-					arg.Graphics.DrawImage(&img, main->GetRect(), ImageSizeMode::CenterImage);
-					return true;
-				}
-				return false;
-			}
-			return false;
-		}
-	};
+	player.AddEventNotify(Event::OnPaint);
+	main->AddEventNotify(Event::OnPaint);
+	
 
 	OpenSongView();//
 	//设置阴影
@@ -152,6 +135,18 @@ void MainFrm::OnClose(bool& cal) {
 }
 void MainFrm::OnPaint(PaintEventArgs& _arg) {
 	__super::OnPaint(_arg);
+
+	Font font(L"宋体", 20);
+	TextLayout text(L"你好hello word!", font);
+	Size box=text.GetFontBox();
+	_arg.Graphics.SetFont(font);
+	_arg.Graphics.SetColor(Color::Black);
+	_arg.Graphics.DrawString(text, {500,200 });
+
+	TextLayout text2(L"你好hello word!", font,box);
+	_arg.Graphics.DrawString(text2, { 500,300 });
+
+
 }
 void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 {
@@ -227,6 +222,24 @@ void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 	__super::OnKeyDown(wparam, lParam);
 }
 bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
+	if (args.EventType == Event::OnPaint) {
+		if (sender == &player) {
+			if (tabCtrl->GetPageIndex() == 2) {
+				return false;
+			}
+			return true;
+		}
+		if (sender == main && player.BuffBitmap) {
+			if (tabCtrl->GetPageIndex() == 1) {
+				PaintEventArgs& arg = (PaintEventArgs&)args;
+				Image img(player.BuffBitmap->_bitmap);
+				arg.Graphics.DrawImage(&img, main->GetRect(), ImageSizeMode::CenterImage);
+				return true;
+			}
+			return false;
+		}
+		return false;
+	}
 	if (args.EventType == Event::OnMouseDoubleClick) {
 		if (!sender->GetAttribute("FileHash").empty()) {
 			EString hash = sender->GetAttribute("FileHash");

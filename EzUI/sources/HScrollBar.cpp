@@ -51,18 +51,20 @@ namespace EzUI {
 		args.Graphics.SetColor(GetForeColor());
 		args.Graphics.FillRectangle(sliderRect, GetBorderTopLeftRadius());
 	}
-	void HScrollBar::OnMouseDown(MouseButton mBtn, const Point& point) {
-		__super::OnMouseDown(mBtn, point);
+	void HScrollBar::OnMouseDown(const MouseEventArgs& arg) {
+		__super::OnMouseDown(arg);
 		Rect sliderRect((INT)_sliderPos, 0, _sliderLength, Width());
 		if (_sliderLength == Width()) { return; }
-		if (mBtn == MouseButton::Left && sliderRect.Contains({ point.X,point.Y })) {
+		auto point = arg.Location;
+		if (arg.Button == MouseButton::Left && sliderRect.Contains({ point.X,point.Y })) {
 			_mouseDown = true;
 			this->_lastPoint = point.X;
 		}
 	}
-	void HScrollBar::OnMouseMove(const Point& point)
+	void HScrollBar::OnMouseMove(const MouseEventArgs& arg)
 	{
-		__super::OnMouseMove(point);
+		__super::OnMouseMove(arg);
+		auto point = arg.Location;
 		if (_mouseDown) {
 			int offsetX = point.X - this->_lastPoint;
 			_sliderPos += offsetX;
@@ -113,9 +115,10 @@ namespace EzUI {
 			}
 		}
 	}
-	void HScrollBar::OnMouseWheel(int rollCount, short zDelta, const Point& point) {
-		float offset = rollCount;
-		_sliderPos += (zDelta > 0 ? -offset : offset);
+	void HScrollBar::OnMouseWheel(const MouseEventArgs& arg) {
+		__super::OnMouseWheel(arg);
+		auto offset = arg.RollCount;
+		_sliderPos += (arg.Delta > 0 ? -offset : offset);
 		Move(_sliderPos);
 	}
 };

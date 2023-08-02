@@ -520,7 +520,7 @@ namespace EzUI {
 	void Window::OnPaint(PaintEventArgs& arg)
 	{
 		if (MainLayout) {
-			MainLayout->DoPaint(arg);//
+			MainLayout->DispatchEvent(arg);//
 		}
 	}
 
@@ -780,35 +780,33 @@ namespace EzUI {
 		_mouseDown = false;
 
 		if (_inputControl) {
-			auto ctlRect = _inputControl->GetClientRect();
+			Rect ctlRect = _inputControl->GetClientRect();
 			MouseEventArgs args(Event::None);
 			args.Button = mbtn;
 			args.Location = { point.X - ctlRect.X,point.Y - ctlRect.Y };
-			//可能还是需要修改
-			if (true || _inputControl) {
+			if (_inputControl && mbtn == _lastBtn) {//如果焦点还在并且鼠标未移出控件内 触发click事件
+				args.EventType = Event::OnMouseClick;
+				_inputControl->DispatchEvent(args);
+			}
+			if (_inputControl) {
 				POINT p1{ 0 };
 				::GetCursorPos(&p1);
 				::ScreenToClient(Hwnd(), &p1);
 				args.EventType = Event::OnMouseUp;
 				ctlRect = _inputControl->GetClientRect();
+				bool inRect = false;
 				if (ctlRect.Contains(p1.x, p1.y) && ::GetForegroundWindow() == Hwnd()) {
 					_inputControl->State = ControlState::Hover;
-				}
-				else {
-					args.EventType = Event::OnMouseLeave;
+					inRect = true;
 				}
 				_inputControl->DispatchEvent(args);//触发鼠标抬起事件
+				if (!inRect && _inputControl)
+				{
+					args.EventType = Event::OnMouseLeave;
+					_inputControl->DispatchEvent(args);//触发离开事件
+				}
 			}
-			if (_inputControl && mbtn == _lastBtn) {//如果焦点还在并且鼠标未移出控件内 触发click事件
-			/*	POINT p1{ 0 };
-				::GetCursorPos(&p1);
-				::ScreenToClient(Hwnd(), &p1);*/
-				args.EventType = Event::OnMouseClick;
-				_inputControl->DispatchEvent(args);
-			}
-
 		}
-		//OnMouseMove(point);
 	}
 
 	void Window::OnMouseClick(MouseButton mbtn, const Point& point) {

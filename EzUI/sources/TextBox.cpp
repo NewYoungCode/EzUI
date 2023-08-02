@@ -29,12 +29,15 @@ namespace EzUI {
 		};
 	}
 	void TextBox::OnRemove() {
-		timer.Stop();
 		__super::OnRemove();
+		timer.Stop();
 	}
 
-	void TextBox::OnKeyChar(WPARAM wParam, LPARAM lParam)
+	void TextBox::OnKeyChar(const KeyboardEventArgs& arg)
 	{
+		__super::OnKeyChar(arg);
+		WPARAM wParam = arg.wParam;
+		LPARAM lParam = arg.lParam;
 		//Debug::Log(utf8("按下了%d"), wParam);
 		do
 		{
@@ -261,9 +264,11 @@ namespace EzUI {
 			}
 		}
 	}
-	void TextBox::OnKeyDown(WPARAM wParam, LPARAM lParam)
+	void TextBox::OnKeyDown(const KeyboardEventArgs& arg)
 	{
-		__super::OnKeyDown(wParam, lParam);
+		__super::OnKeyDown(arg);
+		WPARAM wParam = arg.wParam;
+		LPARAM lParam = arg.lParam;
 		/*	if (wParam == 16) {
 				_down = true;
 			}*/
@@ -285,9 +290,7 @@ namespace EzUI {
 		}
 		//Debug::Log(utf8("按下了%d"), wParam);
 	}
-	void TextBox::OnKeyUp(WPARAM wParam, LPARAM lParam) {
-		__super::OnKeyUp(wParam, lParam);
-	}
+
 	void TextBox::Analysis()
 	{
 		scrollX = 0;
@@ -303,7 +306,7 @@ namespace EzUI {
 		if (font == NULL) return;
 		if (textLayout) delete textLayout;
 
-		std::wstring *drawText=&this->text;
+		std::wstring* drawText = &this->text;
 		if (!PasswordChar.empty()) {
 			drawText = new std::wstring;
 			int count = PasswordChar.size() * text.size();
@@ -317,7 +320,6 @@ namespace EzUI {
 		}
 
 		if (!multiLine) {//单行编辑框
-			font->Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
 			textLayout = new TextLayout(*drawText, *font, Size{ __MAXFLOAT,Height() }, TextAlign::MiddleLeft);
 			_fontBox = textLayout->GetFontBox();
 			if (_fontBox.Width < this->Width()) {
@@ -328,7 +330,6 @@ namespace EzUI {
 			}
 		}
 		else {//多行编辑框
-			font->Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);
 			textLayout = new TextLayout(*drawText, *font, Size{ Width(),__MAXFLOAT }, TextAlign::TopLeft);
 			_fontBox = textLayout->GetFontBox();
 		}
@@ -372,13 +373,16 @@ namespace EzUI {
 		}
 
 	}
-	void TextBox::OnMouseDown(MouseButton mbtn, const Point& point) {
-		__super::OnMouseDown(mbtn, point);
+	void TextBox::OnMouseDown(const MouseEventArgs& arg) {
+		__super::OnMouseDown(arg);
 		_focus = true;
 		lastX = 0;
 		lastY = 0;
 		_careShow = true;
 		timer.Start();
+
+		auto mbtn = arg.Button;
+		auto point = arg.Location;
 
 		if (mbtn == MouseButton::Left) {
 			_down = true;
@@ -434,9 +438,10 @@ namespace EzUI {
 		return Point{ pt.X + _x,pt.Y + _y };
 	}
 
-	void TextBox::OnMouseMove(const Point& point)
+	void TextBox::OnMouseMove(const MouseEventArgs& arg)
 	{
-		__super::OnMouseMove(point);
+		__super::OnMouseMove(arg);
+		auto point = arg.Location;
 		if (_down) {
 			point_End = ConvertPoint(point);
 			if (textLayout) {
@@ -474,18 +479,18 @@ namespace EzUI {
 			}
 		}
 	}
-	void TextBox::OnMouseUp(MouseButton mbtn, const Point& point)
+	void TextBox::OnMouseUp(const MouseEventArgs& arg)
 	{
-		__super::OnMouseUp(mbtn, point);
+		__super::OnMouseUp(arg);
 		_down = false;
 		lastX = 0;
 		lastY = 0;
 		Invalidate();
 		this;
 	}
-	void TextBox::OnKillFocus(Control* ctl)
+	void TextBox::OnKillFocus(const KillFocusEventArgs& arg)
 	{
-		__super::OnKillFocus(ctl);
+		__super::OnKillFocus(arg);
 		_down = false;
 		_focus = false;
 		_careShow = false;

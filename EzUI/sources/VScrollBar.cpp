@@ -57,19 +57,21 @@ namespace EzUI {
 			args.Graphics.FillRectangle(sliderRect, GetBorderTopLeftRadius());
 		}
 	}
-	void VScrollBar::OnMouseDown(MouseButton mBtn, const Point& point) {
-		__super::OnMouseDown(mBtn, point);
+	void VScrollBar::OnMouseDown(const MouseEventArgs& arg) {
+		__super::OnMouseDown(arg);
 		Rect sliderRect(0, (INT)_sliderPos, Width(), _sliderLength);
 		if (_sliderLength == Height()) { return; }
-		if (mBtn == MouseButton::Left && sliderRect.Contains({ point.X,point.Y })) {
+		auto point = arg.Location;
+		if (arg.Button == MouseButton::Left && sliderRect.Contains({ point.X,point.Y })) {
 			_mouseDown = true;
 			this->_lastPoint = point.Y;
 		}
 	}
-	void VScrollBar::OnMouseMove(const Point& point)
+	void VScrollBar::OnMouseMove(const MouseEventArgs& arg)
 	{
-		__super::OnMouseMove(point);
+		__super::OnMouseMove(arg);
 		if (_mouseDown) {
+			auto point = arg.Location;
 			int offsetY = point.Y - this->_lastPoint;
 			_sliderPos += offsetY;
 			_lastPoint = point.Y;
@@ -118,9 +120,10 @@ namespace EzUI {
 			}
 		}
 	}
-	void VScrollBar::OnMouseWheel(int rollCount, short zDelta, const Point& point) {
-		float offset = rollCount;
-		_sliderPos += (zDelta > 0 ? -offset : offset);
+	void VScrollBar::OnMouseWheel(const MouseEventArgs& arg) {
+		__super::OnMouseWheel(arg);
+		auto offset = arg.RollCount;
+		_sliderPos += (arg.Delta > 0 ? -offset : offset);
 		Move(_sliderPos);
 	}
 };

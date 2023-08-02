@@ -69,7 +69,7 @@ return  defaultStyle .##_filed1.##_filed;\
 		VisibleControls = GetControls();
 		//绘制子控件
 		for (auto& it : VisibleControls) {
-			it->DoPaint(args);
+			it->DispatchEvent(args);
 		}
 		//子控件绘制完毕
 		//设置偏移 用于置顶绘制
@@ -81,11 +81,6 @@ return  defaultStyle .##_filed1.##_filed;\
 
 	void Control::OnPaint(PaintEventArgs& args)
 	{
-		if (this->EventHandler) {
-			if (this->EventHandler(this, args)) {
-				return;
-			}
-		}
 		OnBackgroundPaint(args);//先绘制背景
 		OnForePaint(args);//再绘制前景
 	}
@@ -493,12 +488,7 @@ return  defaultStyle .##_filed1.##_filed;\
 	const Rect& Control::SetRect(const Rect& rect)
 	{
 		this->_rect = rect;
-		if (GetFixedWidth() > 0) {
-			_rect.Width = GetFixedWidth();
-		}
-		if (GetFixedHeight() > 0) {
-			_rect.Height = GetFixedHeight();
-		}
+
 		while (_dock != DockStyle::None && this->Parent)
 		{
 			const Rect& pRect = Parent->GetRect();
@@ -517,26 +507,30 @@ return  defaultStyle .##_filed1.##_filed;\
 			break;
 		}
 
+		if (GetFixedWidth() > 0) {
+			_rect.Width = GetFixedWidth();
+		}
+		if (GetFixedHeight() > 0) {
+			_rect.Height = GetFixedHeight();
+		}
+
+
 		Point newLocation = _rect.GetLocation();
 		Size newSize = _rect.GetSize();
 
 		bool onRect = false;
 		if (!_lastLocation.Equals(newLocation)) {
-			OnLocation(newLocation);
+			this->DispatchEvent(LocationEventArgs(newLocation));
 			_lastLocation = newLocation;
 			onRect = true;
 		}
 		if (!newSize.Equals(_lastSize)) {
-			this->TryPendLayout();//将自己挂起
-			if (Parent) {
-				Parent->TryPendLayout();//将父控件挂起
-			}
-			OnSize(newSize);
+			this->DispatchEvent(SizeEventArgs(newSize));
 			_lastSize = newSize;
 			onRect = true;
 		}
 		if (onRect) {
-			OnRect(GetRect());
+			this->DispatchEvent(RectEventArgs(_rect));
 		}
 		return this->_rect;
 	}
@@ -546,7 +540,7 @@ return  defaultStyle .##_filed1.##_filed;\
 	}
 	void Control::ResumeLayout()
 	{
-		if (this->_layoutState == LayoutState::Layouting || this->_layoutState == LayoutState::None) {
+		if (this->_layoutState == LayoutState::Layouting) {
 			return;
 		}
 		this->_layoutState = LayoutState::Layouting;//布局中
@@ -559,124 +553,153 @@ return  defaultStyle .##_filed1.##_filed;\
 	void Control::OnLayout() {
 		this->EndLayout();
 	}
-
-	//专门处理键盘消息的
-	bool Control::OnKeyBoardEvent(const KeyboardEventArgs& _args) {
+	bool Control::DispatchEvent(const EventArgs& arg)
+	{
+		return this->OnEvent(arg);
+	}
+	bool Control::OnEvent(const EventArgs& arg)
+	{
 		bool isRemove = false;
 		this->_isRemove = &isRemove;
-		KeyboardEventArgs& args = (KeyboardEventArgs&)_args;
+		do
+		{
+			if (arg.EventType == Event::OnPaint && !IsVisible()) {
+				break;
+			}
+			if ((_eventNotify & arg.EventType) == arg.EventType) {
+				if (PublicData && PublicData->Notify(this, (EventArgs&)arg)) {
+					if (arg.EventType == Event::OnPaint) {
+						//如果处理了OnPaint那么只是不绘制自己 但是子控件还是需要继续绘制的
+						this->DoPaint((PaintEventArgs&)arg, false);
+					}
+					break;
+				}
+			}
+			if (isRemove) {
+				break;
+			}
+			if (arg.EventType == Event::OnPaint) {
+				this->DoPaint((PaintEventArgs&)arg, true);
+				break;
+			}
+			if (arg.EventType == Event::OnLocation) {
+				this->OnLocation((LocationEventArgs&)arg);
+				break;
+			}
+			if (arg.EventType == Event::OnSize) {
+				this->OnSize((SizeEventArgs&)arg);
+				break;
+			}
+			if (arg.EventType == Event::OnRect) {
+				this->OnRect((RectEventArgs&)arg);
+				break;
+			}
+			if ((arg.EventType & Event::OnMouseEvent) == arg.EventType) {
+				this->OnMouseEvent((MouseEventArgs&)arg);
+				break;
+			}
+			if ((arg.EventType & Event::OnKeyBoardEvent) == arg.EventType) {
+				this->OnKeyBoardEvent((KeyboardEventArgs&)arg);
+				break;
+			}
+			if (arg.EventType == Event::OnKillFocus) {
+				this->OnKillFocus((KillFocusEventArgs&)arg);
+				break;
+			}
+		} while (false);
+		if (!isRemove) {
+			if (this->EventNotify) {
+				this->EventNotify(this, arg);
+			}
+			if (!isRemove) {
+				this->_isRemove = NULL;
+				return true;
+			};
+		}
+		return false;
+	}
+
+	void Control::AddEventNotify(int eventType) {
+		_eventNotify = _eventNotify | eventType;
+	}
+	void Control::RemoveEventNotify(int eventType) {
+		_eventNotify = _eventNotify & ~eventType;
+	}
+	//专门处理键盘消息的
+	void Control::OnKeyBoardEvent(const KeyboardEventArgs& _args) {
 		do
 		{
 			if (Enable == false) break;
-			if (PublicData == NULL) break;
-			WindowData* winData = PublicData;
+			KeyboardEventArgs& args = (KeyboardEventArgs&)_args;
 			if (CheckEventPassThrough(args.EventType) && this->Parent) {//检查鼠标穿透
 				KeyboardEventArgs copy_args = args;
-				this->Parent->OnKeyBoardEvent(copy_args);//如果设置了穿透就直接发送给上一层控件
-			}
-			//先检查是否标记通知到主窗口
-			//通知到所属窗口的OnNotify函数 进行处理
-			bool b2 = winData->Notify(this, args);
-			//检查是否删除了控件
-			if (b2 || isRemove) {
-				break;
+				this->Parent->DispatchEvent(copy_args);//如果设置了穿透就直接发送给上一层控件
 			}
 			switch (args.EventType)
 			{
 			case Event::OnKeyChar: {
-				OnKeyChar(args.wParam, args.lParam);
+				OnKeyChar(args);
 				break;
 			}
 			case Event::OnKeyDown: {
-				OnKeyDown(args.wParam, args.lParam);
+				OnKeyDown(args);
 				break;
 			}
 			case Event::OnKeyUp: {
-				OnKeyUp(args.wParam, args.lParam);
+				OnKeyUp(args);
 				break;
 			}
 			default:
 				break;
 			}
 		} while (false);
-		if (!isRemove) {
-			if (this->EventHandler) {
-				this->EventHandler(this, args);
-			}
-			if (!isRemove) {
-				this->_isRemove = NULL;
-				return true;
-			};
-		}
-		return false;
 	}
 
+
 	//专门处理鼠标消息的
-	bool Control::OnMouseEvent(const MouseEventArgs& _args) {
-		bool isRemove = false;
-		this->_isRemove = &isRemove;
-		MouseEventArgs& args = (MouseEventArgs&)_args;
+	void Control::OnMouseEvent(const MouseEventArgs& _args) {
 		do
 		{
 			if (Enable == false) break;
-			if (PublicData == NULL) break;
-			WindowData* winData = PublicData;
+			MouseEventArgs& args = (MouseEventArgs&)_args;
 			if (CheckEventPassThrough(args.EventType) && this->Parent) {//检查鼠标穿透
 				MouseEventArgs copy_args = args;
 				copy_args.Location.X += this->X();
 				copy_args.Location.Y += this->Y();
-				this->Parent->OnMouseEvent(copy_args);//如果设置了穿透就直接发送给上一层控件
+				this->Parent->DispatchEvent(copy_args);//如果设置了穿透就直接发送给上一层控件
 			}
-			//通知到所属窗口的OnNotify函数 进行处理
-			bool b2 = winData->Notify(this, args);;
-			//检查是否删除了控件
-			if (b2 || isRemove) {
-				break;
-			}
-
 			switch (args.EventType)
 			{
 			case Event::OnMouseWheel: {
-				OnMouseWheel(args.RollCount, args.Delta, args.Location);
+				OnMouseWheel(args);
 				break;
 			}
 			case Event::OnMouseClick: {
-				OnMouseClick(args.Button, args.Location);
+				OnMouseClick(args);
 				break;
 			}
 			case Event::OnMouseEnter: {
-				OnMouseEnter(args.Location);
-				this->State = ControlState::Hover;
-				Invalidate();
+				OnMouseEnter(args);
 				break;
 			}
 			case Event::OnMouseMove: {
-				OnMouseMove(args.Location);
+				OnMouseMove(args);
 				break;
 			}
 			case Event::OnMouseDoubleClick: {
-				OnMouseDoubleClick(args.Button, args.Location);
+				OnMouseDoubleClick(args);
 				break;
 			}
 			case Event::OnMouseDown: {
-
-				OnMouseDown(args.Button, args.Location);
-				this->State = ControlState::Active;
-				if (ActiveStyle.Cursor) {
-					::SetCursor(ActiveStyle.Cursor);
-				}
-				Invalidate();
+				OnMouseDown(args);
 				break;
 			}
 			case Event::OnMouseUp: {
-				OnMouseUp(args.Button, args.Location);
-				Invalidate();
+				OnMouseUp(args);
 				break;
 			}
 			case Event::OnMouseLeave: {
-				OnMouseLeave();
-				this->State = ControlState::Static;
-				Invalidate();
+				OnMouseLeave(args);
 				break;
 			}
 			default:
@@ -684,26 +707,12 @@ return  defaultStyle .##_filed1.##_filed;\
 			}
 
 		} while (false);
-		if (!isRemove) {
-			if (this->EventHandler) {
-				this->EventHandler(this, args);
-			}
-			if (!isRemove) {
-				this->_isRemove = NULL;
-				return true;
-			};
-		}
-		return false;
 	}
-	void Control::DoPaint(PaintEventArgs& args) {
+	void Control::DoPaint(PaintEventArgs& args, bool paintSelf) {
 		this->PublicData = args.PublicData;
-
-		if (!_visible) { return; }//如果控件设置为不可见直接不绘制
-
 		if (this->IsPendLayout()) {//绘制的时候会检查时候有挂起的布局 如果有 立即让布局生效并重置布局标志
 			this->ResumeLayout();
 		}
-
 		auto clientRect = this->GetClientRect();//获取基于窗口的位置
 		if (clientRect.IsEmptyArea()) { return; }
 		auto& invalidRect = args.InvalidRectangle;
@@ -751,8 +760,10 @@ return  defaultStyle .##_filed1.##_filed;\
 			pt.PushLayer(Rect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height));
 		}
 #endif 
-		//开始绘制
-		this->OnPaint(args);//绘制基本上下文
+		//绘制基本上下文
+		if (paintSelf) {
+			this->OnPaint(args);
+		}
 		//绘制子控件
 		this->OnChildPaint(args);
 		//绘制滚动条
@@ -762,7 +773,7 @@ return  defaultStyle .##_filed1.##_filed;\
 			Rect barRect = scrollbar->GetClientRect();
 			//设置偏移
 			pt.SetTransform(barRect.X, barRect.Y);
-			scrollbar->DoPaint(args);
+			scrollbar->DispatchEvent(args);
 		}
 		//设置偏移
 		pt.SetTransform(clientRect.X, clientRect.Y);
@@ -774,9 +785,9 @@ return  defaultStyle .##_filed1.##_filed;\
 #ifdef DEBUGPAINT
 		if (PublicData->Debug) {
 			pt.DrawRectangle(Rect(0, 0, clientRect.Width, clientRect.Height));
-	}
+		}
 #endif
-}
+	}
 
 	Control::~Control()
 	{
@@ -827,15 +838,19 @@ return  defaultStyle .##_filed1.##_filed;\
 	void Control::InsertControl(size_t pos, Control* ctl)
 	{
 		size_t i = 0;
-		ControlIterator itor;
-		for (auto it = _controls.begin(); it != _controls.end(); it++) {
+		ControlIterator it;
+		for (it = _controls.begin(); it != _controls.end(); it++) {
 			if (i == pos) {
-				itor = it;
 				break;
 			}
 			i++;
 		}
-		_controls.insert(itor, ctl);
+		if (it == _controls.end()) {
+			_controls.push_back(ctl);
+		}
+		else {
+			_controls.insert(it, ctl);
+		}
 		ctl->PublicData = this->PublicData;
 		ctl->Parent = this;
 		this->TryPendLayout();//添加控件需要将布局重新挂起
@@ -1039,63 +1054,67 @@ return  defaultStyle .##_filed1.##_filed;\
 		_controls.clear();//清空子控件集合
 		DestroySpacers();//清空弹簧并删除弹簧
 	}
-	void Control::OnKeyChar(WPARAM wParam, LPARAM lParam) {
-	}
-	void Control::OnKeyDown(WPARAM wParam, LPARAM lParam) {
-	}
-	void Control::OnKeyUp(WPARAM wParam, LPARAM lParam) {
-	}
-	void Control::OnMouseMove(const Point& point)
+
+	void Control::OnMouseMove(const MouseEventArgs& args)
 	{
 	}
-	void Control::OnMouseWheel(int _rollCount, short zDelta, const Point& point)
+	void Control::OnMouseWheel(const MouseEventArgs& args)
 	{
 	}
-	void Control::OnMouseClick(MouseButton mbtn, const Point& point)
+	void Control::OnMouseClick(const MouseEventArgs& args)
 	{
 	}
-	void Control::OnMouseDoubleClick(MouseButton mbtn, const Point& point)
+	void Control::OnMouseDoubleClick(const MouseEventArgs& args)
 	{
 	}
-	void Control::OnMouseEnter(const Point& point)
+	void Control::OnMouseEnter(const MouseEventArgs& args)
+	{
+		this->State = ControlState::Hover;
+		Invalidate();
+	}
+	void Control::OnMouseDown(const MouseEventArgs& args)
+	{
+		this->State = ControlState::Active;
+		if (ActiveStyle.Cursor) {
+			::SetCursor(ActiveStyle.Cursor);
+		}
+		Invalidate();
+	}
+	void Control::OnMouseUp(const MouseEventArgs& args)
+	{
+		Invalidate();
+	}
+	void Control::OnMouseLeave(const MouseEventArgs& args)
+	{
+		this->State = ControlState::Static;
+		Invalidate();
+	}
+	void Control::OnKeyChar(const KeyboardEventArgs& args) {
+	}
+	void Control::OnKeyDown(const KeyboardEventArgs& args) {
+	}
+	void Control::OnKeyUp(const KeyboardEventArgs& args) {
+	}
+	void Control::OnKillFocus(const KillFocusEventArgs& arg)
 	{
 	}
-	void Control::OnMouseDown(MouseButton mbtn, const Point& point)
+	void Control::OnLocation(const LocationEventArgs& arg)
 	{
 	}
-	void Control::OnMouseUp(MouseButton mbtn, const Point& point)
+	void Control::OnSize(const SizeEventArgs& arg)
+	{
+		this->TryPendLayout();//将自己挂起
+		if (Parent) {
+			Parent->TryPendLayout();//将父控件挂起
+		}
+	}
+	void Control::OnRect(const RectEventArgs& arg)
 	{
 	}
-	void Control::OnMouseLeave()
-	{
-	}
-	void Control::OnLocation(const Point& pt)
-	{
-	}
-	void Control::OnSize(const Size& size)
-	{
-	}
-	void Control::OnRect(const Rect& rect)
-	{
-	}
-	void Control::OnKillFocus(Control* control)
-	{
-	}
+
 	ScrollBar* Control::GetScrollBar()
 	{
 		return NULL;
 	}
-	bool Control::DispatchEvent(const MouseEventArgs& arg)
-	{
-		return this->OnMouseEvent(arg);
-	}
-	bool Control::DispatchEvent(const KeyboardEventArgs& arg)
-	{
-		return this->OnKeyBoardEvent(arg);
-	}
-	bool Control::DispatchEvent(const KillFocusEventArgs& arg)
-	{
-		this->OnKillFocus(arg.Control);
-		return false;
-	}
+
 };

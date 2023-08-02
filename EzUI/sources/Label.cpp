@@ -1,29 +1,53 @@
 #include "Label.h"
 namespace EzUI {
 	Label::Label() {}
-	Label::~Label() {}
-	void Label::DoPaint(PaintEventArgs& args) {
-		if (AutoWidth && AutoHeight) {
-			Size oldSize(Width(), Height());
+	Label::~Label() {
+		if (_textLayout) {
+			delete _textLayout;
+		}
+	}
+	void Label::DoPaint(PaintEventArgs& args, bool paintSelf = true) {
+		if (AutoWidth || AutoHeight) {
+			int fontSize = GetFontSize();
 			std::wstring fontFamily = GetFontFamily();
-			const int& fontSize = GetFontSize();
 			Font font(fontFamily, fontSize);
-			TextLayout textLayout(_wstr, font);
-			Size fontBox = textLayout.GetFontBox();
-			if (fontBox != oldSize) {
-				SetFixedSize({ fontBox.Width,fontBox.Height });
+			args.Graphics.SetFont(font);
+			args.Graphics.SetColor(GetForeColor());
+			if (_textLayout == NULL) {
+				_textLayout = new TextLayout(_wstr, font, { Width(),Height() }, this->TextAlign);
+			}
+			if (_textLayout->GetFontSize() != fontSize || _textLayout->GetFontFamily() != fontFamily) {
+				delete _textLayout;
+				_textLayout = new TextLayout(_wstr, font, { Width(),Height() }, this->TextAlign);
+			}
+			if (AutoWidth && _textLayout->Width() != Width()) {
+				this->SetFixedWidth(_textLayout->Width());
+				delete _textLayout;
+				_textLayout = NULL;
 				if (Parent) {
 					Parent->Invalidate();
-					return;
 				}
+				return;
+			}
+			if (AutoHeight && _textLayout->Height() != Height()) {
+				this->SetFixedHeight(_textLayout->Height());
+				delete _textLayout;
+				_textLayout = NULL;
+				if (Parent) {
+					Parent->Invalidate();
+				}
+				return;
 			}
 		}
-		__super::DoPaint(args);
+		__super::DoPaint(args, paintSelf);
 	}
 	void Label::OnForePaint(PaintEventArgs& args)
 	{
 		__super::OnForePaint(args);
-		if (!_wstr.empty()) {
+		if (_textLayout) {
+			args.Graphics.DrawString(*_textLayout);
+		}
+		else if (!_wstr.empty()) {
 			std::wstring drawText(_wstr);
 			std::wstring fontFamily = GetFontFamily();
 			int fontSize = GetFontSize();

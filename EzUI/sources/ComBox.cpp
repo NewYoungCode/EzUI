@@ -75,12 +75,12 @@ namespace EzUI {
 	}
 	void ComBox::RemoveItem(size_t pos) {}
 
-	void ComBox::OnMouseClick(MouseButton btn, const Point& pt) {
-		__super::OnMouseClick(btn, pt);
-		/*if (btn == MouseButton::Left) {
-			poupWnd->Show(SW_SHOW);
-		}*/
-	}
+	//void ComBox::OnMouseClick(MouseButton btn, const Point& pt) {
+	//	__super::OnMouseClick(btn, pt);
+	//	/*if (btn == MouseButton::Left) {
+	//		poupWnd->Show(SW_SHOW);
+	//	}*/
+	//}
 };
 
 
