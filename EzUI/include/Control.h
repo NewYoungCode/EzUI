@@ -16,8 +16,6 @@ namespace EzUI {
 		bool _autoWidth = false;//是否根据内容自动宽度
 		bool _autoHeight = false;//根据内容的高度自动变化
 		Size _contentSize;
-		std::mutex _paintMtx;//避免多线程中调用Invalidate()的问题
-
 		Size _fixedSize{ 0,0 };//绝对Size
 		Rect _rect;//控件矩形区域(基于父控件)
 		DockStyle _dock = DockStyle::None;//dock样式

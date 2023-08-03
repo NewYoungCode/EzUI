@@ -760,18 +760,12 @@ return  defaultStyle .##_filed1.##_filed;\
 		if (!Rect::Intersect(_ClipRect, this->ClipRect, invalidRect)) {//和重绘区域进行裁剪
 			return;
 		}
-
 		//绘制数量+1
 		args.PublicData->PaintCount++;
-
-		_paintMtx.lock();
 		this->_lastDrawRect = _ClipRect;//记录最后一次绘制的区域
-		_paintMtx.unlock();
 		//设置绘制偏移
 		pt.SetTransform(clientRect.X, clientRect.Y);
-
 		args.OffSetPoint.push_back(Point(clientRect.X, clientRect.Y));
-
 		//border信息
 		Border border;
 		border.Left = GetBorderLeft();
@@ -1004,7 +998,6 @@ return  defaultStyle .##_filed1.##_filed;\
 	}
 
 	bool Control::Invalidate() {
-		std::unique_lock<std::mutex> autoLock(_paintMtx);
 		if (PublicData) {
 			WindowData* winData = PublicData;
 			if (winData) {
