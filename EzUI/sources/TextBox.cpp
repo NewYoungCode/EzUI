@@ -32,7 +32,14 @@ namespace EzUI {
 		__super::OnRemove();
 		timer.Stop();
 	}
-
+	void TextBox::SetAutoWidth(bool flag)
+	{
+		//需要屏蔽
+	}
+	void TextBox::SetAutoHeight(bool flag)
+	{
+		//需要屏蔽
+	}
 	void TextBox::OnKeyChar(const KeyboardEventArgs& arg)
 	{
 		__super::OnKeyChar(arg);
@@ -336,8 +343,7 @@ namespace EzUI {
 		if (drawText != &this->text) {
 			delete drawText;
 		}
-		_contentWidth = _fontBox.Width;
-		_contentHeight = _fontBox.Height;
+		this->SetContentSize({ _fontBox.Width , _fontBox.Height });
 		if (multiLine) {
 			this->GetScrollBar()->RefreshScroll();
 		}
@@ -411,13 +417,14 @@ namespace EzUI {
 	}
 	void TextBox::Offset(int _sliderY) {
 		scrollY = _sliderY;
-
 		Invalidate();
 	}
 
 	void TextBox::OnLayout()
 	{
 		__super::OnLayout();
+		scrollX = 0;
+		scrollY = 0;
 		if (!multiLine && Height() != lastHeight) {
 			lastHeight = Height();
 			Analysis();
@@ -426,8 +433,7 @@ namespace EzUI {
 			lastWidth = Width();
 			Analysis();
 		}
-		_contentWidth = _fontBox.Width;
-		_contentHeight = _fontBox.Height;
+		this->SetContentSize({ _fontBox.Width ,_fontBox.Height});
 		this->GetScrollBar()->RefreshScroll();
 		this->EndLayout();
 	}

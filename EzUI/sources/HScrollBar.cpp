@@ -74,13 +74,13 @@ namespace EzUI {
 	}
 	void HScrollBar::Move(double posY) {
 		if (OWner == NULL) return;
-		int _contentLength = OWner->GetContentWidth();
-		if (_contentLength <= 0) {
-			_sliderLength = Width();
-			return;
-		}
 		if (OWner->IsPendLayout()) {
 			OWner->ResumeLayout();
+		}
+		int _contentLength = OWner->GetContentSize().Width;
+		if (_contentLength <= 0 || _contentLength <= OWner->Width()) {
+			_sliderLength = Width();
+			return;
 		}
 		//计算滚动条滑块相关
 		auto& rect = GetRect();

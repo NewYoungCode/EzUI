@@ -13,15 +13,20 @@ namespace EzUI {
 		Point _lastLocation;//上一次位置
 		Size _lastSize;//上一次大小
 		Rect _lastDrawRect;//最后一次显示的位置
+		bool _autoWidth = false;//是否根据内容自动宽度
+		bool _autoHeight = false;//根据内容的高度自动变化
+		Size _contentSize;
 		std::mutex _paintMtx;//避免多线程中调用Invalidate()的问题
-		Control(const Control&) = delete;
-		Control& operator=(const Control&) = delete;
-		bool CheckEventPassThrough(const Event& eventType);//检查事件是否已经过滤
-		void ComputeClipRect();//计算基于父控件的裁剪区域
+
 		Size _fixedSize{ 0,0 };//绝对Size
 		Rect _rect;//控件矩形区域(基于父控件)
 		DockStyle _dock = DockStyle::None;//dock样式
 		int _eventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnKeyChar | Event::OnKeyDown | Event::OnKeyUp;//默认添加到主窗口通知函数中可拦截
+	private:
+		Control(const Control&) = delete;
+		Control& operator=(const Control&) = delete;
+		bool CheckEventPassThrough(const Event& eventType);//检查事件是否已经过滤
+		void ComputeClipRect();//计算基于父控件的裁剪区域
 	public:
 		EzUI::Margin Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数
 		WindowData* PublicData = NULL;//窗口上的公共数据
@@ -36,12 +41,8 @@ namespace EzUI {
 		Control* Parent = NULL;//父控件
 		Controls VisibleControls;//基于控件中的可见控件
 		const Rect ClipRect;//控件在窗口中的可见区域
-	public:
-		//事件通知函数
 		std::function<void(Control*, const EventArgs&)> EventNotify = NULL;
 	protected:
-		virtual ControlStyle& GetStyle(const ControlState& _state);//获取当前控件状态下的样式信息
-		virtual ControlStyle& GetDefaultStyle();//用于获取不同控件当前默认的
 		virtual bool OnEvent(const EventArgs& arg);//所有事件先进这里
 		virtual void DoPaint(PaintEventArgs& args, bool paintSelf = true);//绘制函数
 		virtual void OnPaint(PaintEventArgs& args);//绘制 
@@ -52,7 +53,8 @@ namespace EzUI {
 		virtual void OnLocation(const LocationEventArgs& arg);//坐标发生改变
 		virtual void OnSize(const SizeEventArgs& arg);//大小发生改变
 		virtual void OnRect(const RectEventArgs& arg);
-		virtual void OnLayout();//布局代码在此 布局完成之后PendLayout设置成false
+		//布局代码在此 需要重写布局请重写此函数
+		virtual void OnLayout();
 		//鼠标事件
 		virtual void OnMouseMove(const MouseEventArgs& arg);//鼠标在控件上移动
 		virtual void OnMouseLeave(const MouseEventArgs& args);//鼠标离开控件
@@ -70,39 +72,10 @@ namespace EzUI {
 		virtual void OnKeyUp(const KeyboardEventArgs& _args);//键盘弹起
 		//失去焦点
 		virtual void OnKillFocus(const KillFocusEventArgs& _args);//失去焦点的时候发生
-	public:
-		//以下函数请保证在父控件布局已完成的情况下使用 使用ResumeLayout()执行布局
-		const int& X();
-		const int& Y();
-		const int& Width();
-		const int& Height();
-		void SetX(const int& X);
-		void SetY(const int& Y);
-		void SetLocation(const Point& pt);//移动相对与父控件的位置
-		void SetSize(const Size& size); //当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
-		void SetFixedSize(const Size& size); //设置绝对宽高
-		void SetWidth(const int& width);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
-		void SetHeight(const int& height);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
-		void SetFixedWidth(const int& fixedWidth);//设置绝对宽度
-		void SetFixedHeight(const int& fixedHeight);//设置绝对高度
-		const int& GetFixedWidth();//获取绝对宽度
-		const int& GetFixedHeight();//获取绝对高度
-		virtual const Rect& GetRect();//获取相对与父控件矩形 布局计算后
-		Rect GetClientRect();//获取基于客户端的矩形
-		const DockStyle& GetDockStyle();//获取dock标志
-		void SetDockStyle(const DockStyle& dockStyle);
-		bool IsPendLayout();//是否含有挂起的布局
-		const LayoutState& TryPendLayout();//尝试挂起布局 返回当前布局状态
-		void EndLayout();//结束布局
-		const Rect& SetRect(const Rect& rect);//设置相对父控件矩形 返回实际的rect
-		virtual void ResumeLayout();//直接进行布局
-		virtual void SetTips(const EString& text);//设置tips
 		virtual void OnRemove();//被移除该做的事情
-		virtual ScrollBar* GetScrollBar();//获取控件的滚动条
-		bool DispatchEvent(const EventArgs& arg);//派发失去焦点事件
-		void AddEventNotify(int eventType);//添加到主窗口Ontify函数中可拦截
-		void RemoveEventNotify(int eventType);//移除一个主窗口的Ontify消息
 	public:
+		virtual ControlStyle& GetStyle(const ControlState& _state);//获取当前控件状态下的样式信息
+		virtual ControlStyle& GetDefaultStyle();//用于获取不同控件当前默认的
 		//普通样式
 		int GetBorderTopLeftRadius(ControlState _state = ControlState::None);
 		int GetBorderTopRightRadius(ControlState _state = ControlState::None);
@@ -124,6 +97,47 @@ namespace EzUI {
 		Control();
 		virtual ~Control();
 		void DestroySpacers();//销毁控件内所有弹簧
+		//以下函数请保证在父控件布局已完成的情况下使用 使用ResumeLayout()执行布局
+		const int& X();
+		const int& Y();
+		const int& Width();
+		const int& Height();
+		void SetX(const int& X);
+		void SetY(const int& Y);
+		void SetLocation(const Point& pt);//移动相对与父控件的位置
+		void SetSize(const Size& size); //当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
+		void SetFixedSize(const Size& size); //设置绝对宽高
+		void SetWidth(const int& width);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
+		void SetHeight(const int& height);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
+		void SetFixedWidth(const int& fixedWidth);//设置绝对宽度
+		void SetFixedHeight(const int& fixedHeight);//设置绝对高度
+		const int& GetFixedWidth();//获取绝对宽度
+		const int& GetFixedHeight();//获取绝对高度
+		virtual Rect GetCareRect();//获取光标位置
+		virtual bool IsAutoWidth();//是否自动高度
+		virtual bool IsAutoHeight();//是否自动高度
+		virtual void SetAutoWidth(bool flag);//设置自动宽度
+		virtual void SetAutoHeight(bool flag);//设置自动高度
+		void SetContentWidth(const int& width);//
+		void SetContentHeight(const int& height);//
+		void SetContentSize(const Size& size);//
+		virtual const Size& GetContentSize();
+		Size GetSize();
+		Point GetLocation();
+		virtual const Rect& GetRect();//获取相对与父控件矩形 布局计算后
+		Rect GetClientRect();//获取基于客户端的矩形
+		const DockStyle& GetDockStyle();//获取dock标志
+		void SetDockStyle(const DockStyle& dockStyle);
+		bool IsPendLayout();//是否含有挂起的布局
+		const LayoutState& TryPendLayout();//尝试挂起布局 返回当前布局状态
+		void EndLayout();//结束布局
+		const Rect& SetRect(const Rect& rect);//设置相对父控件矩形 返回实际的rect
+		virtual void ResumeLayout();//直接进行布局
+		virtual void SetTips(const EString& text);//设置tips
+		virtual ScrollBar* GetScrollBar();//获取控件的滚动条
+		bool DispatchEvent(const EventArgs& arg);//派发失去焦点事件
+		void AddEventNotify(int eventType);//添加到主窗口Ontify函数中可拦截
+		void RemoveEventNotify(int eventType);//移除一个主窗口的Ontify消息
 		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::Static);//
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性
 		const Controls& GetControls();//获取当前所有子控件 const修饰是因为不建议直接修改子控件内容
@@ -143,11 +157,6 @@ namespace EzUI {
 		virtual bool IsInWindow();//当前是否显示在窗口内 代表实际情况是否显示
 		virtual bool Invalidate();// 使当前控件的区域为无效区域
 		virtual void Refresh();// 使当前控件区域为无效区域并且立即更新全部的无效区域
-		virtual Rect GetCareRect();//获取光标位置
-		virtual bool IsAutoWidth();//是否自动高度
-		virtual bool IsAutoHeight();//是否自动高度
-		virtual void SetAutoWidth(bool flag);//设置自动宽度
-		virtual void SetAutoHeight(bool flag);//设置自动高度
 	};
 
 	//添加弹簧无需用户手动释放,
@@ -183,15 +192,8 @@ namespace EzUI {
 	// 摘要:
 	// 为支持自动滚动行为的控件定义一个基类。
 	class ScrollableControl :public Control {
-	protected:
-		//上下文宽度
-		int _contentWidth = 0;
-		//上下文高度
-		int _contentHeight = 0;
 	public:
 		ScrollableControl() {};
-		const int& GetContentWidth() { return _contentWidth; };
-		const int& GetContentHeight() { return _contentHeight; };
 		virtual ~ScrollableControl() {};
 	};
 	class ScrollBar :public Control {

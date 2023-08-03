@@ -7,7 +7,7 @@ namespace EzUI {
 		}
 	}
 	void Label::DoPaint(PaintEventArgs& args, bool paintSelf = true) {
-		if (AutoWidth || AutoHeight) {
+		if (IsAutoWidth() || IsAutoHeight()) {
 			int fontSize = GetFontSize();
 			std::wstring fontFamily = GetFontFamily();
 			Font font(fontFamily, fontSize);
@@ -20,7 +20,7 @@ namespace EzUI {
 				delete _textLayout;
 				_textLayout = new TextLayout(_wstr, font, { Width(),Height() }, this->TextAlign);
 			}
-			if (AutoWidth && _textLayout->Width() != Width()) {
+			if (IsAutoWidth() && _textLayout->Width() != Width()) {
 				this->SetFixedWidth(_textLayout->Width());
 				delete _textLayout;
 				_textLayout = NULL;
@@ -29,7 +29,7 @@ namespace EzUI {
 				}
 				return;
 			}
-			if (AutoHeight && _textLayout->Height() != Height()) {
+			if (IsAutoHeight() && _textLayout->Height() != Height()) {
 				this->SetFixedHeight(_textLayout->Height());
 				delete _textLayout;
 				_textLayout = NULL;
@@ -81,7 +81,7 @@ namespace EzUI {
 				}
 			}
 			std::wstring viewStr = !drawText.empty() ? drawText : EllipsisText.utf16();
-			TextLayout textLayout(viewStr, font, Size(Width(), Height()), (AutoWidth && AutoHeight) ? TextAlign::TopLeft : this->TextAlign);
+			TextLayout textLayout(viewStr, font, Size(Width(), Height()), (IsAutoWidth() && IsAutoHeight()) ? TextAlign::TopLeft : this->TextAlign);
 			if (this->_underline) {//下划线
 				textLayout.SetUnderline(0, viewStr.size());
 			}
@@ -93,29 +93,29 @@ namespace EzUI {
 		do
 		{
 			if (key == "valign") {
-				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)Align::Top);
-				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)Align::Mid);
-				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)Align::Bottom);
-				Align v = Align::Mid;
+				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)VAlign::Top);
+				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)VAlign::Mid);
+				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)VAlign::Bottom);
+				VAlign v = VAlign::Mid;
 				if (value == "top") {
-					v = Align::Top;
+					v = VAlign::Top;
 				}
 				else if (value == "bottom") {
-					v = Align::Bottom;
+					v = VAlign::Bottom;
 				}
 				this->TextAlign = EzUI::TextAlign((int)this->TextAlign | (int)v);
 				break;
 			}
 			if (key == "halign") {
-				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)Align::Left);
-				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)Align::Center);
-				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)Align::Right);
-				Align h = Align::Center;
+				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)HAlign::Left);
+				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)HAlign::Center);
+				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)HAlign::Right);
+				HAlign h = HAlign::Center;
 				if (value == "left") {
-					h = Align::Left;
+					h = HAlign::Left;
 				}
 				else if (value == "right") {
-					h = Align::Right;
+					h = HAlign::Right;
 				}
 				this->TextAlign = EzUI::TextAlign((int)this->TextAlign | (int)h);
 				break;
@@ -125,20 +125,25 @@ namespace EzUI {
 				break;
 			}
 			if (key == "autosize" && value == "true") {
-				this->AutoWidth = true;
-				this->AutoHeight = true;
+				this->SetAutoWidth(true);
+				this->SetAutoHeight(true);
 				return;
 			}
 			if (key == "width" && value == "auto") {
-				this->AutoWidth = true;
+				this->SetAutoWidth(true);
 				return;
 			}
 			if (key == "height" && value == "auto") {
-				this->AutoHeight = true;
+				this->SetAutoHeight(true);
 				return;
 			}
 		} while (false);
 		__super::SetAttribute(key, value);
+	}
+	void Label::ResumeLayout()
+	{
+		//比较特殊需要屏蔽
+		this->OnLayout();
 	}
 	void Label::SetText(const EString& text) {
 		_wstr = text.utf16();

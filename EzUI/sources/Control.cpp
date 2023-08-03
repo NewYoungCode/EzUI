@@ -116,8 +116,9 @@ return  defaultStyle .##_filed1.##_filed;\
 		const int& topRightRadius = border.TopRightRadius;
 		const int& bottomRightRadius = border.BottomRightRadius;
 		const int& bottomLeftRadius = border.BottomLeftRadius;
+
 		//规则的矩形
-		if (topLeftRadius == 0 || topRightRadius == 0 && bottomLeftRadius == 0 && bottomRightRadius == 0) {
+		if (topLeftRadius == 0 && topRightRadius == 0 && bottomLeftRadius == 0 && bottomRightRadius == 0) {
 			bool hasBorder = borderLeft || borderTop || borderRight || borderBottom;
 			if (!hasBorder) return;//边框为0不绘制
 			e.Graphics.SetColor(borderColor);
@@ -411,6 +412,14 @@ return  defaultStyle .##_filed1.##_filed;\
 	{
 		SetRect({ _rect.X,_rect.Y,size.Width,size.Height });
 	}
+	Point Control::GetLocation()
+	{
+		return _rect.GetLocation();
+	}
+	Size Control::GetSize()
+	{
+		return _rect.GetSize();
+	}
 	const Rect& Control::GetRect()
 	{
 		return _rect;
@@ -514,7 +523,6 @@ return  defaultStyle .##_filed1.##_filed;\
 			_rect.Height = GetFixedHeight();
 		}
 
-
 		Point newLocation = _rect.GetLocation();
 		Size newSize = _rect.GetSize();
 
@@ -547,10 +555,40 @@ return  defaultStyle .##_filed1.##_filed;\
 		if (GetScrollBar()) {//如果存在滚动条就设置滚动条的矩形位置
 			GetScrollBar()->OWnerSize({ _rect.Width,_rect.Height });
 		}
+		_contentSize.Width = 0;
+		_contentSize.Height = 0;
 		this->OnLayout();
-		this->_layoutState = LayoutState::None;//布局完成需要将布局标志重置
+		if (IsAutoHeight() && Height() != _contentSize.Height) {
+			this->SetFixedHeight(_contentSize.Height);
+			this->EndLayout();
+			this->ResumeLayout();
+			if (Parent)Parent->Invalidate();
+			return;
+		}
+		if (IsAutoWidth() && Width() != _contentSize.Width) {
+			this->SetFixedWidth(_contentSize.Width);
+			this->EndLayout();
+			this->ResumeLayout();
+			if (Parent)Parent->Invalidate();
+			return;
+		}
+		this->EndLayout();
 	}
 	void Control::OnLayout() {
+		_contentSize.Width = 0;
+		_contentSize.Height = 0;
+		int _width;
+		int _height;
+		for (auto& it : GetControls()) {
+			_width = it->X() + it->Width();
+			if (_width > _contentSize.Width) {
+				_contentSize.Width = _width;
+			}
+			_height = it->Y() + it->Height();
+			if (_height > _contentSize.Height) {
+				_contentSize.Height = _height;
+			}
+		}
 		this->EndLayout();
 	}
 	bool Control::DispatchEvent(const EventArgs& arg)
@@ -729,7 +767,6 @@ return  defaultStyle .##_filed1.##_filed;\
 		_paintMtx.lock();
 		this->_lastDrawRect = _ClipRect;//记录最后一次绘制的区域
 		_paintMtx.unlock();
-
 		//设置绘制偏移
 		pt.SetTransform(clientRect.X, clientRect.Y);
 
@@ -988,19 +1025,43 @@ return  defaultStyle .##_filed1.##_filed;\
 	{
 		return Rect();
 	}
+	const Size& Control::GetContentSize()
+	{
+		return _contentSize;
+	}
 	bool Control::IsAutoWidth()
 	{
-		return false;
-	}
-	bool Control::IsAutoHeight()
-	{
-		return false;
+		return this->_autoWidth;
 	}
 	void Control::SetAutoWidth(bool flag)
 	{
+		if (flag != this->_autoWidth && Parent) {
+			Parent->TryPendLayout();
+		}
+		this->_autoWidth = flag;
+	}
+	bool Control::IsAutoHeight()
+	{
+		return this->_autoHeight;
 	}
 	void Control::SetAutoHeight(bool flag)
 	{
+		if (flag != this->_autoHeight && Parent) {
+			Parent->TryPendLayout();
+		}
+		this->_autoHeight = flag;
+	}
+	void Control::SetContentWidth(const int& width)
+	{
+		this->_contentSize.Width = width;
+	}
+	void Control::SetContentHeight(const int& height)
+	{
+		this->_contentSize.Height = height;
+	}
+	void Control::SetContentSize(const Size& size)
+	{
+		this->_contentSize = size;
 	}
 	void Control::ComputeClipRect()
 	{

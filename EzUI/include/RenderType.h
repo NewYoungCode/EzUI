@@ -482,61 +482,65 @@ namespace EzUI {
 #define Align_Mid   DT_VCENTER
 #define Align_Center   DT_CENTER
 #endif
-	enum class Align :int
+	/// <summary>
+	/// 水平状态下的对其方式
+	/// </summary>
+	enum class HAlign :int
+	{
+		Left = Align_Left,
+		Center = Align_Center,
+		Right = Align_Right
+	};
+	/// <summary>
+	/// 垂直状态下的对其方式
+	/// </summary>
+	enum class VAlign :int
 	{
 		Top = Align_Top,
-		Bottom = Align_Bottom,
-		Left = Align_Left,
-		Right = Align_Right,
 		Mid = Align_Mid,
-		Center = Align_Center
+		Bottom = Align_Bottom
 	};
+
 	enum class __Align :int {
 		//
 		// 摘要: 
-		//     不做处理
-		Normal = 0,
-		//
-		// 摘要: 
 		//     内容在垂直方向上顶部对齐，在水平方向上左边对齐。
-		TopLeft = Align_Top | Align_Left,
+		TopLeft = (int)VAlign::Top | (int)HAlign::Left,
 		//
 		// 摘要: 
 		//     内容在垂直方向上顶部对齐，在水平方向上居中对齐。
-		TopCenter = Align_Top | Align_Center,
+		TopCenter = (int)VAlign::Top | (int)HAlign::Center,
 		//
 		// 摘要: 
 		//     内容在垂直方向上顶部对齐，在水平方向上右边对齐。
-		TopRight = Align_Top | Align_Right,
+		TopRight = (int)VAlign::Top | (int)HAlign::Right,
 		//
 		// 摘要: 
 		//     内容在垂直方向上中间对齐，在水平方向上左边对齐。
-		MiddleLeft = Align_Mid | Align_Left,
+		MiddleLeft = (int)VAlign::Mid | (int)HAlign::Left,
 		//
 		// 摘要: 
 		//     内容在垂直方向上中间对齐，在水平方向上居中对齐。
-		MiddleCenter = Align_Mid | Align_Center,
+		MiddleCenter = (int)VAlign::Mid | (int)HAlign::Center,
 		//
 		// 摘要: 
 		//     内容在垂直方向上中间对齐，在水平方向上右边对齐。
-		MiddleRight = Align_Mid | Align_Right,
+		MiddleRight = (int)VAlign::Mid | (int)HAlign::Right,
 		//
 		// 摘要: 
 		//     内容在垂直方向上底边对齐，在水平方向上左边对齐。
-		BottomLeft = Align_Bottom | Align_Left,
+		BottomLeft = (int)VAlign::Bottom | (int)HAlign::Left,
 		//
 		// 摘要: 
 		//     内容在垂直方向上底边对齐，在水平方向上居中对齐。
-		BottomCenter = Align_Bottom | Align_Center,
+		BottomCenter = (int)VAlign::Bottom | (int)HAlign::Center,
 		//
 		// 摘要: 
 		//     内容在垂直方向上底边对齐，在水平方向上右边对齐。
-		BottomRight = Align_Bottom | Align_Right
+		BottomRight =(int)VAlign::Bottom | (int)HAlign::Right
 	};
 
 	typedef __Align TextAlign;
-	typedef __Align ControlAlign;
-
 
 	enum class FontStyle :int {
 		NORMAL = 0

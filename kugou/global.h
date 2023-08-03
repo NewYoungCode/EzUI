@@ -73,11 +73,11 @@ public:
 		songName.MousePassThrough = time.MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseDoubleClick;
 		songName.HoverStyle.FontSize = 15;
 
-		songName.AutoWidth = true;
-		//songName.AutoHeight = true;
+		//songName.AutoWidth = true;
+		////songName.AutoHeight = true;
 
-		time.AutoWidth = true;
-		time.AutoHeight = true;
+		//time.AutoWidth = true;
+		//time.AutoHeight = true;
 
 
 		time.SetFixedWidth(50);

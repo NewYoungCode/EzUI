@@ -18,28 +18,20 @@ namespace EzUI {
 	{
 	}
 	void HList::OnLayout() {
-		_contentWidth = 0;
-		_contentWidth = Offset(0);
-		if (AutoWidth) {
+		this->SetContentWidth(this->Offset(0));
+		if (IsAutoWidth()) {
 			this->GetScrollBar()->SetVisible(false);
 		}
 		else if (this->GetScrollBar()->IsVisible() == true) {
 			this->GetScrollBar()->SetVisible(true);
 		}
-		if (AutoWidth && this->Width() != _contentWidth) {
-			this->SetFixedWidth(_contentWidth);
-			if (Parent) {
-				Parent->Invalidate();
-			}
-		}
 		this->GetScrollBar()->RefreshScroll();
-
 	}
 
 	void HList::SetAttribute(const EString& attrName, const EString& attrValue)
 	{
 		if (attrName == "width" && attrValue == "auto") {
-			this->AutoWidth = true;
+			this->SetAutoWidth(true);
 			return;
 		}
 		__super::SetAttribute(attrName, attrValue);
@@ -51,7 +43,7 @@ namespace EzUI {
 		return &hScrollBar;
 	}
 	int HList::Offset(int offset) {
-		_contentHeight = 0;
+		int contentHeight = 0;
 		int _contentWidth = offset;
 		for (auto& it : GetControls()) {
 			if (it->IsVisible() == false) continue;
@@ -73,24 +65,15 @@ namespace EzUI {
 			_contentWidth += it->Width();
 			_contentWidth += it->Margin.GetHSpace();
 			//计算最大高度
-			int _height = it->Y() + it->Height();
-			if (_height > _contentHeight) {
-				_contentHeight = _height;
+			int _height = it->Y() + it->Height() + it->Margin.Bottom;
+			if (_height > contentHeight) {
+				contentHeight = _height;
 			}
 		}
+		this->SetContentHeight(contentHeight);
 		return _contentWidth;
 	}
-	bool HList::IsAutoWidth()
-	{
-		return this->AutoWidth;
-	}
-	void HList::SetAutoWidth(bool flag)
-	{
-		if (flag != this->AutoWidth && Parent) {
-			Parent->TryPendLayout();
-		}
-		this->AutoWidth = flag;
-	}
+
 	void HList::OnChildPaint(PaintEventArgs& args) {
 		VisibleControls.clear();
 		auto rect = Rect(0, 0, Width(), Height());

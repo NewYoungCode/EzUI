@@ -66,9 +66,15 @@ namespace EzUI {
 		}
 		return false;
 	}
+	void TextLayout::GetMetrics()
+	{
+		if (value) {
+			value->GetMetrics(&textMetrics);
+		}
+	}
 	//TextLayout
 	TextLayout::TextLayout(const std::wstring& text, const Font& font, Size maxSize, TextAlign textAlign) {
-		if (((int)textAlign & (int)Align::Mid) == (int)Align::Mid) {
+		if (((int)textAlign & (int)VAlign::Mid) == (int)VAlign::Mid) {
 			font.Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
 		}
 		else {
@@ -142,8 +148,7 @@ namespace EzUI {
 		return this->fontFamily;
 	}
 	Size TextLayout::GetFontBox() {
-		DWRITE_TEXT_METRICS textMetrics;
-		value->GetMetrics(&textMetrics);
+		this->GetMetrics();
 		FLOAT width = textMetrics.widthIncludingTrailingWhitespace;
 		FLOAT height = textMetrics.height;
 		return  Size{ (int)(width + 1) ,(int)(height + 1) };
@@ -153,26 +158,22 @@ namespace EzUI {
 		return this->fontSize;
 	}
 	int TextLayout::Width() {
-		DWRITE_TEXT_METRICS textMetrics;
-		value->GetMetrics(&textMetrics);
+		this->GetMetrics();
 		FLOAT width = textMetrics.widthIncludingTrailingWhitespace;
 		return (int)(width + 1);
 	}
 	int TextLayout::Height() {
-		DWRITE_TEXT_METRICS textMetrics;
-		value->GetMetrics(&textMetrics);
+		this->GetMetrics();
 		FLOAT width = textMetrics.height;
 		return (int)(width + 1);
 	}
 	int TextLayout::GetFontHeight() {
-		DWRITE_TEXT_METRICS textMetrics;
-		value->GetMetrics(&textMetrics);
+		this->GetMetrics();
 		FLOAT height = textMetrics.height;
 		return  (int)((height / textMetrics.lineCount) + 0.5);
 	}
 	int TextLayout::GetLineCount() {
-		DWRITE_TEXT_METRICS textMetrics;
-		value->GetMetrics(&textMetrics);
+		this->GetMetrics();
 		return textMetrics.lineCount;
 	}
 
@@ -202,23 +203,23 @@ namespace EzUI {
 #define __Center DWRITE_TEXT_ALIGNMENT_CENTER
 		if (value == NULL)return;
 		//垂直对其方式
-		if (((int)textAlign & (int)Align::Top) == (int)Align::Top) {
+		if (((int)textAlign & (int)VAlign::Top) == (int)VAlign::Top) {
 			value->SetParagraphAlignment(__Top);
 		}
-		if (((int)textAlign & (int)Align::Mid) == (int)Align::Mid) {
+		if (((int)textAlign & (int)VAlign::Mid) == (int)VAlign::Mid) {
 			value->SetParagraphAlignment(__Middle);
 		}
-		if (((int)textAlign & (int)Align::Bottom) == (int)Align::Bottom) {
+		if (((int)textAlign & (int)VAlign::Bottom) == (int)VAlign::Bottom) {
 			value->SetParagraphAlignment(__Bottom);
 		}
 		//水平对其方式
-		if (((int)textAlign & (int)Align::Left) == (int)Align::Left) {
+		if (((int)textAlign & (int)HAlign::Left) == (int)HAlign::Left) {
 			value->SetTextAlignment(__Left);
 		}
-		if (((int)textAlign & (int)Align::Center) == (int)Align::Center) {
+		if (((int)textAlign & (int)HAlign::Center) == (int)HAlign::Center) {
 			value->SetTextAlignment(__Center);
 		}
-		if (((int)textAlign & (int)Align::Right) == (int)Align::Right) {
+		if (((int)textAlign & (int)HAlign::Right) == (int)HAlign::Right) {
 			value->SetTextAlignment(__Right);
 		}
 #undef __Top 

@@ -78,8 +78,10 @@ namespace EzUI {
 		IDWriteTextLayout* value = NULL;
 		void SetTextAlign(TextAlign textAlign);
 		std::wstring fontFamily;
+		DWRITE_TEXT_METRICS textMetrics{ 0 };
 		int fontSize;
 	public:
+		void GetMetrics();
 		TextLayout(const std::wstring& text, const Font& font, Size maxSize = Size{ __MAXFLOAT,__MAXFLOAT }, TextAlign textAlgin = TextAlign::TopLeft);
 		Point HitTestPoint(const Point& pt, int* outTextPos, BOOL* outIsTrailingHit, int* fontHeight);
 		void HitTestPoint(const Point& pt, HitTestMetrics* hitTestMetrics);//根据坐标执行命中测试

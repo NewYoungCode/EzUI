@@ -7,7 +7,6 @@ namespace EzUI {
 	{
 	private:
 		HScrollBar hScrollBar;
-		bool AutoWidth = false;//是否根据内容自动宽度
 		void Init();
 		int Offset(int offset);
 	public:
@@ -17,7 +16,6 @@ namespace EzUI {
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue)override;
 		virtual void OnChildPaint(PaintEventArgs& args)override;
 		virtual ScrollBar* GetScrollBar()override;
-		virtual bool IsAutoWidth();//是否自动高度
-		virtual void SetAutoWidth(bool flag);//设置自动高度
+		
 	};
 };

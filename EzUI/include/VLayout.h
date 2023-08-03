@@ -5,6 +5,8 @@ namespace EzUI {
 		public Control
 	{
 	public:
+		HAlign ContentAlign = HAlign::Center;
+	public:
 		VLayout();
 		virtual ~VLayout();
 	public:

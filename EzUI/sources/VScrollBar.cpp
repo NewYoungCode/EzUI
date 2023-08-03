@@ -80,13 +80,13 @@ namespace EzUI {
 	}
 	void VScrollBar::Move(double posY) {
 		if (OWner == NULL) return;
-		int _contentLength = OWner->GetContentHeight();
-		if (_contentLength <= 0) {
-			_sliderLength = Height();
-			return;
-		}
 		if (OWner->IsPendLayout()) {
 			OWner->ResumeLayout();
+		}
+		int _contentLength = OWner->GetContentSize().Height;
+		if (_contentLength <= 0 || _contentLength <= OWner->Height()) {
+			_sliderLength = Height();
+			return;
 		}
 		//计算滚动条滑块相关
 		if (Height() >= _contentLength) {

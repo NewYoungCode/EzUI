@@ -28,13 +28,12 @@ namespace EzUI {
 	{
 		return &vScrollBar;
 	}
-	
+
 	void TileList::OnLayout()
 	{
-		_contentHeight = 0;
-		_contentHeight = Offset(0);
+		this->SetContentHeight(this->Offset(0));
 		if (AutoHeight) {
-			this->SetFixedHeight(_contentHeight);
+			this->SetFixedHeight(this->GetContentSize().Height);
 			this->GetScrollBar()->SetVisible(false);
 		}
 		else if (this->GetScrollBar()->IsVisible() == true) {
@@ -43,7 +42,7 @@ namespace EzUI {
 		this->GetScrollBar()->RefreshScroll();
 	}
 	int TileList::Offset(int offset) {
-		_contentWidth = 0;
+		int contentWidth = 0;
 		int _contentHeight = 0;
 		const int& maxWith = this->Width();
 		int maxHeight = 0;//每行最高的那个
@@ -73,10 +72,11 @@ namespace EzUI {
 			_contentHeight = y + maxHeight;
 			//计算最大宽度
 			int _width = it.X() + it.Width();
-			if (_width > _contentWidth) {
-				_contentWidth = _width;
+			if (_width > contentWidth) {
+				contentWidth = _width;
 			}
 		}
+		this->SetContentWidth(contentWidth);
 		return _contentHeight;
 	}
 };

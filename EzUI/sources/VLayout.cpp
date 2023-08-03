@@ -9,6 +9,7 @@ namespace EzUI {
 
 	void VLayout::OnLayout()
 	{
+		int contentWidth = 0;
 
 		int fixedHeight = 0;
 		int fixedTotal = 0;
@@ -39,14 +40,19 @@ namespace EzUI {
 			if (width == 0) {
 				width = this->Width() - it->Margin.GetHSpace();
 			}
+
 			int x = it->X();
-			if (x == 0) {
+
+			if (ContentAlign == HAlign::Left) {
 				x = it->Margin.Left;
 			}
-			//首次布局中当位置未被指定的时候进行一次居中
-			//if (x == 0 && width < this->Width()) {
-			x = int((this->Width() * 1.0 - width) / 2 + 0.5);
-			//}
+			else  if (ContentAlign == HAlign::Center) {
+				x = int((this->Width() * 1.0 - width) / 2 + 0.5);
+			}
+			else if (ContentAlign == HAlign::Right) {
+				x = this->Width() - it->Margin.Right - width;
+			}
+
 			if (it->GetFixedHeight() > 0 || it->IsAutoHeight()) {
 				it->SetRect({ x, (int)maxBottom,width, it->GetFixedHeight() });
 				maxBottom += it->Height();
@@ -56,6 +62,12 @@ namespace EzUI {
 				maxBottom += it->Height();
 			}
 			maxBottom += it->Margin.Bottom;
+			//统计上下文宽高
+			int maxRight = it->GetRect().GetRight() + it->Margin.Right;
+			if (maxRight > contentWidth) {
+				contentWidth = maxRight;
+			}
+			this->SetContentSize({ contentWidth ,(int)(maxBottom + 0.5) });
 		}
 	}
 };

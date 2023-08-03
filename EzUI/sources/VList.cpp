@@ -17,27 +17,21 @@ namespace EzUI {
 	{
 	}
 	void VList::OnLayout() {
-		_contentHeight = 0;
-		_contentHeight = Offset(0);
-		if (AutoHeight) {
+		this->SetContentHeight(this->Offset(0));
+		if (IsAutoHeight()) {
 			this->GetScrollBar()->SetVisible(false);
 		}
 		else if (this->GetScrollBar()->IsVisible() == true) {
 			this->GetScrollBar()->SetVisible(true);
 		}
-		if (AutoHeight && this->Height() != _contentHeight) {
-			this->SetFixedHeight(_contentHeight);
-			if (Parent) {
-				Parent->Invalidate();
-			}
-		}
 		this->GetScrollBar()->RefreshScroll();
+		this->EndLayout();
 	}
 
 	void VList::SetAttribute(const EString& attrName, const EString& attrValue)
 	{
 		if (attrName == "height" && attrValue == "auto") {
-			this->AutoHeight = true;
+			this->SetAutoHeight(true);
 			return;
 		}
 		__super::SetAttribute(attrName, attrValue);
@@ -50,7 +44,7 @@ namespace EzUI {
 
 	int VList::Offset(int offset)
 	{
-		_contentWidth = 0;
+		int contentWidth = 0;
 		int	_maxBottom = offset;
 		for (auto& it : GetControls()) {
 			if (it->IsVisible() == false)continue;
@@ -72,26 +66,16 @@ namespace EzUI {
 			_maxBottom += it->Height();
 			_maxBottom += it->Margin.GetVSpace();
 			//计算最大宽度
-			int _width = it->X() + it->Width();
-			if (_width > _contentWidth) {
-				_contentWidth = _width;
+			int _width = it->X() + it->Width() + it->Margin.Right;
+			if (_width > contentWidth) {
+				contentWidth = _width;
 			}
 		}
+		this->SetContentWidth(contentWidth);
 		return _maxBottom;
 	}
 
-	bool VList::IsAutoHeight()
-	{
-		return this->AutoHeight;
-	}
 
-	void VList::SetAutoHeight(bool flag)
-	{
-		if (flag != this->AutoHeight && Parent) {
-			Parent->TryPendLayout();
-		}
-		this->AutoHeight = flag;
-	}
 
 	void VList::OnChildPaint(PaintEventArgs& args) {
 		VisibleControls.clear();

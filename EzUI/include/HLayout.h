@@ -6,6 +6,8 @@ namespace EzUI {
 		public Control
 	{
 	public:
+		VAlign ContentAlign = VAlign::Mid;
+	public:
 		HLayout();
 		virtual ~HLayout();
 		void OnLayout()override;

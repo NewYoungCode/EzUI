@@ -293,7 +293,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 					it->SetAttribute("SingerName", SingerName);
 					localList->AddControl(it);
 					localList->ResumeLayout();
-					localList->GetScrollBar()->Move(localList->GetContentHeight());
+					localList->GetScrollBar()->Move(localList->GetContentSize().Height);
 					localList->Invalidate();
 
 					cfg->WriteValue("name", tag->SongName, hash);

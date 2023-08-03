@@ -644,8 +644,8 @@ namespace EzUI {
 			if (_focusControl) {
 				args.EventType = Event::OnMouseLeave;
 				ok = _focusControl->DispatchEvent(args);
-				ok = newCtl->DispatchEvent(Event::OnMouseEnter);
 			}
+			ok = newCtl->DispatchEvent(Event::OnMouseEnter);
 			if (ok) {
 				_focusControl = newCtl;
 			}

@@ -2,6 +2,8 @@
 namespace EzUI {
 	void HLayout::OnLayout()
 	{
+		int contentHeight = 0;
+
 		int fixedWidth = 0;
 		int fixedTotal = 0;
 		int count = 0;//可见控件总数
@@ -33,13 +35,17 @@ namespace EzUI {
 			}
 
 			int y = it->Y();
-			if (y == 0) {
+
+			if (ContentAlign == VAlign::Top) {
 				y = it->Margin.Top;
 			}
-			//首次布局中当位置未被指定的时候进行一次居中
-			//if (y == 0 && height <this->Height() ) {
-			y = int((this->Height() * 1.0 - height) / 2 + 0.5);
-			//}
+			else  if (ContentAlign == VAlign::Mid) {
+				y = int((this->Height() * 1.0 - height) / 2 + 0.5);
+			}
+			else  if (ContentAlign == VAlign::Bottom) {
+				y = this->Height() - it->Margin.Bottom - height;
+			}
+
 			if (it->GetFixedWidth() > 0 || it->IsAutoWidth()) {
 				it->SetRect({ (int)maxRight ,y,it->GetFixedWidth() ,height });
 				maxRight += it->Width();
@@ -48,8 +54,13 @@ namespace EzUI {
 				it->SetRect({ (int)maxRight ,y,(int)autoWidth,height });
 				maxRight += it->Width();
 			}
-
 			maxRight += it->Margin.Right;
+			//统计上下文宽高
+			int maxBottom = it->GetRect().GetBottom() + it->Margin.Bottom;
+			if (maxBottom > contentHeight) {
+				contentHeight = maxBottom;
+			}
+			this->SetContentSize({ (int)(maxRight + 0.5) ,contentHeight });
 		}
 	}
 	HLayout::HLayout()

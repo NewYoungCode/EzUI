@@ -13,6 +13,7 @@
 #include "HLayout.h"
 #include "VLayout.h"
 #include "Application.h"
+#include <TextBox.h>
 
 using namespace EzUI;
 
@@ -87,45 +88,54 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
 	//Label labelBottom;
 	//labelBottom.SetText(L"这是一个简单的窗口示例!");
-	VList list(&mainLayout);
+	TileList list;
+	list.SetParent(&mainLayout);
 	list.SetAutoHeight(true);
 	for (size_t i = 0; i < 10; i++)
 	{
 		Label* lb = new Label;// (&list);
 		//lb->Dock = DockStyle::Horizontal;
 		lb->SetText(std::to_string(i));
+		lb->Name = std::to_string(i);
 		lb->SetFixedSize({ 100,30 });
 		lb->Style.BackColor = Color::Green;
 		lb->HoverStyle.BackColor = Color::Gray;
 		lb->Margin = 1;
-		lb->MouseClick = [&list](Control* sd, MouseButton, const Point&)->void {
-			list.RemoveControl(sd);
-			list.Invalidate();
+		lb->EventNotify = [&list](Control* sd, const EventArgs&arg)->void {
+			if (arg.EventType == Event::OnMouseClick) {
+				list.RemoveControl(sd);
+				list.Invalidate();
+			}
 		};
 		list.AddControl(lb);
 	}
 
-	TextBox text(&mainLayout);
+	TextBox text;
+	text.SetParent(&mainLayout);
 	//text.SetFixedSize({ 100,50 });
 	text.Style.Border.Color = Color::Gray;
 	text.Style.Border = 1;
 	text.SetMultiLine(true);
 	text.Margin.Left = 20;
 	text.Margin.Right = 20;
-	text.Style.Border.Radius = 20;
+	//text.Style.Border.Radius = 20;
 
 	text.SetText(L"啊撒旦艰苦换个房间看电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方式但是几乎都是复活节过段时间韩国");
 	//text.HoverStyle.FontSize = 50;
 	//text.ActiveStyle.FontSize = 50;
+	text.GetScrollBar()->SetFixedWidth(20);
 
-	Button btn(&mainLayout);
+
+	Button btn;
+	btn.SetParent(&mainLayout);
 	btn.SetText(L"单行/多行切换");
 	btn.SetFixedSize({ 150,40 });
-	btn.MouseClick = [&text](Control*, MouseButton, const Point&)->void {
-		text.SetMultiLine(!text.IsMultiLine());
-		text.Invalidate();
+	btn.EventNotify = [&text](Control* sd, const EventArgs& arg)->void {
+		if (arg.EventType == Event::OnMouseClick) {
+			text.SetMultiLine(!text.IsMultiLine());
+			text.Invalidate();
+		}
 	};
-
 
 
 	/*for (size_t i = 0; i < 99999; i++)

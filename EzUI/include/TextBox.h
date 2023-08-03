@@ -50,6 +50,8 @@ namespace EzUI {
 		Point ConvertPoint(const Point& pt);//×ø±ê×ª»»
 	protected:
 		virtual void OnRemove()override;
+		virtual void SetAutoWidth(bool flag)override;
+		virtual void SetAutoHeight(bool flag)override;
 		virtual void OnForePaint(PaintEventArgs& e) override;
 		virtual void OnKeyChar(const KeyboardEventArgs&arg) override;
 		virtual void OnKeyDown(const KeyboardEventArgs& arg)override;
