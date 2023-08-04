@@ -28,16 +28,6 @@ namespace EzUI {
 		this->GetScrollBar()->RefreshScroll();
 	}
 
-	void HList::SetAttribute(const EString& attrName, const EString& attrValue)
-	{
-		if (attrName == "width" && attrValue == "auto") {
-			this->SetAutoWidth(true);
-			return;
-		}
-		__super::SetAttribute(attrName, attrValue);
-	}
-
-
 	ScrollBar* HList::GetScrollBar()
 	{
 		return &hScrollBar;

@@ -124,19 +124,7 @@ namespace EzUI {
 				this->SetText(value);
 				break;
 			}
-			if (key == "autosize" && value == "true") {
-				this->SetAutoWidth(true);
-				this->SetAutoHeight(true);
-				return;
-			}
-			if (key == "width" && value == "auto") {
-				this->SetAutoWidth(true);
-				return;
-			}
-			if (key == "height" && value == "auto") {
-				this->SetAutoHeight(true);
-				return;
-			}
+			
 		} while (false);
 		__super::SetAttribute(key, value);
 	}

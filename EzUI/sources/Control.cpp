@@ -286,6 +286,19 @@ return  defaultStyle .##_filed1.##_filed;\
 					break;
 				}
 			}
+			if (attrName == "autosize" && attrValue == "true") {
+				this->SetAutoWidth(true);
+				this->SetAutoHeight(true);
+				break;
+			}
+			if (attrName == "width" && attrValue == "auto") {
+				this->SetAutoWidth(true);
+				break;
+			}
+			if (attrName == "height" && attrValue == "auto") {
+				this->SetAutoHeight(true);
+				break;
+			}
 
 		} while (false);
 	}

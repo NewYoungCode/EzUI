@@ -13,7 +13,6 @@ namespace EzUI {
 		HList();
 		virtual ~HList();
 		virtual void OnLayout()override;
-		virtual void SetAttribute(const EString& attrName, const EString& attrValue)override;
 		virtual void OnChildPaint(PaintEventArgs& args)override;
 		virtual ScrollBar* GetScrollBar()override;
 		

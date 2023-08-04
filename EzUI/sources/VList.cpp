@@ -28,15 +28,6 @@ namespace EzUI {
 		this->EndLayout();
 	}
 
-	void VList::SetAttribute(const EString& attrName, const EString& attrValue)
-	{
-		if (attrName == "height" && attrValue == "auto") {
-			this->SetAutoHeight(true);
-			return;
-		}
-		__super::SetAttribute(attrName, attrValue);
-	}
-
 	ScrollBar* VList::GetScrollBar()
 	{
 		return &vScrollBar;
