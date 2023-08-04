@@ -35,7 +35,7 @@ namespace EzUI {
 	}
 	Font::~Font() {
 		if (value && !Ref) {
-			value->Release();
+			SafeRelease(&value);
 		}
 	}
 	const int& Font::GetFontSize()const {
@@ -231,7 +231,7 @@ namespace EzUI {
 	}
 	TextLayout::~TextLayout() {
 		if (value) {
-			value->Release();
+			SafeRelease(&value);
 		}
 	}
 	//DXImage
@@ -297,13 +297,11 @@ namespace EzUI {
 			_framePos = 0;
 		}
 		if (pframe) {
-			pframe->Release();
-			pframe = NULL;
+			SafeRelease(&pframe);
 		}
 
 		if (fmtcovter) {
-			fmtcovter->Release();
-			fmtcovter = NULL;
+			SafeRelease(&fmtcovter);
 		}
 
 		D2D::g_ImageFactory->CreateFormatConverter(&fmtcovter);
@@ -339,7 +337,7 @@ namespace EzUI {
 		IStream* stream = SHCreateMemStream((BYTE*)data, count);
 		if (stream) {
 			this->CreateFormStream(stream);
-			stream->Release();
+			SafeRelease(&stream);
 		}
 	}
 	ID2D1Bitmap* DXImage::Get()
@@ -376,7 +374,7 @@ namespace EzUI {
 		D2D::g_Direct2dFactory->CreateRectangleGeometry(rectF, (ID2D1RectangleGeometry**)&rgn);
 	}
 	Geometry::Geometry(int x, int y, int width, int height, int _radius) {
-		float radius = GetMaxRadius(width, height, (float)_radius);
+		float radius = GetMaxRadius(width, height, _radius);
 		D2D1_ROUNDED_RECT rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) ,radius ,radius };
 		D2D::g_Direct2dFactory->CreateRoundedRectangleGeometry(rectF, (ID2D1RoundedRectangleGeometry**)&rgn);
 	}
@@ -440,7 +438,7 @@ namespace EzUI {
 		// 结束路径
 		pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 		pSink->Close();
-		pSink->Release();
+		SafeRelease(&pSink);
 		this->rgn = pPathGeometry;
 	}
 };
@@ -510,7 +508,7 @@ namespace EzUI {
 			SafeRelease(&D2D::g_ImageFactory);
 		}
 	}
-	float GetMaxRadius(int width, int height, float _radius)
+	float GetMaxRadius(int width, int height, int _radius)
 	{
 		float radius = (float)_radius;//半径
 		float diameter = radius * 2;//直径
@@ -704,7 +702,7 @@ namespace EzUI {
 		ID2D1Layer* layer = NULL;
 		render->CreateLayer(&layer);
 		render->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.Get()), layer);//放入layer
-		layer->Release();
+		SafeRelease(&layer);
 		layers.push_back(false);
 	}
 	void DXRender::PushLayer(const Rect& rectBounds) {

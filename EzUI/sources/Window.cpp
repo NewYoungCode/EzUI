@@ -546,11 +546,9 @@ namespace EzUI {
 		PublicData.RemoveControl = [=](Control* delControl)->void {
 			if (_focusControl == delControl) {
 				_focusControl = NULL;
-				Debug::Info("remove _focusControl %p", delControl);
 			}
 			if (_inputControl == delControl) {
 				_inputControl = NULL;
-				Debug::Info("remove _inputControl %p", delControl);
 			}
 		};
 		PublicData.Notify = [=](Control* sender, EventArgs& args)->bool {

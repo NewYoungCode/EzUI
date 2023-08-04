@@ -15,8 +15,8 @@ namespace EzUI {
 		Rect _lastDrawRect;//最后一次显示的位置
 		bool _autoWidth = false;//是否根据内容自动宽度
 		bool _autoHeight = false;//根据内容的高度自动变化
-		Size _contentSize;
-		Size _fixedSize{ 0,0 };//绝对Size
+		Size _contentSize;//控件内容宽高
+		Size _fixedSize;//绝对Size
 		Rect _rect;//控件矩形区域(基于父控件)
 		DockStyle _dock = DockStyle::None;//dock样式
 		int _eventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnKeyChar | Event::OnKeyDown | Event::OnKeyUp;//默认添加到主窗口通知函数中可拦截
@@ -41,8 +41,12 @@ namespace EzUI {
 		const Rect ClipRect;//控件在窗口中的可见区域
 		std::function<void(Control*, const EventArgs&)> EventNotify = NULL;
 	protected:
-		virtual bool OnEvent(const EventArgs& arg);//所有事件先进这里
+		//仅限子类使用
+		virtual void SetContentWidth(const int& width);//
+		virtual void SetContentHeight(const int& height);//
+		virtual void SetContentSize(const Size& size);//
 		virtual void DoPaint(PaintEventArgs& args, bool paintSelf = true);//绘制函数
+		virtual bool OnEvent(const EventArgs& arg);//所有事件先进这里
 		virtual void OnPaint(PaintEventArgs& args);//绘制 
 		virtual void OnChildPaint(PaintEventArgs& args);//子控件绘制 可以重载此函数优化鼠标操作性能
 		virtual void OnBackgroundPaint(PaintEventArgs& painter);//背景绘制
@@ -117,9 +121,6 @@ namespace EzUI {
 		virtual void SetAutoWidth(bool flag);//设置自动宽度
 		virtual void SetAutoHeight(bool flag);//设置自动高度
 		virtual void SetAutoSize(bool flag);
-		void SetContentWidth(const int& width);//
-		void SetContentHeight(const int& height);//
-		void SetContentSize(const Size& size);//
 		virtual const Size& GetContentSize();
 		Size GetSize();
 		Point GetLocation();
@@ -142,11 +143,11 @@ namespace EzUI {
 		const Controls& GetControls();//获取当前所有子控件 const修饰是因为不建议直接修改子控件内容
 		bool Contains(Control* ctl);//会递归循全部包含的控件是否存在
 		Control* FindControl(size_t pos);//使用下标获取控件
+		size_t   FindControl(Control* childCtl);//获取子控件的索引
 		Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
 		Controls FindControl(const EString& attr, const EString& attrValue);//使用属性查找
 		Control* FindSingleControl(const EString& attr, const EString& attrValue);//使用属性查找出第一个
 		bool SwapControl(Control* childCtl, Control* childCt2);//对子控件的两个控件进行位置交换
-		size_t Index();//获取当前控件在父容器下的索引
 		virtual void InsertControl(size_t pos, Control* childCtl);//选择性插入控件
 		virtual void AddControl(Control* childCtl);//添加控件到末尾
 		virtual void RemoveControl(Control* childCtl);//删除控件 返回下一个迭代器
@@ -154,7 +155,6 @@ namespace EzUI {
 		virtual void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件
 		virtual void SetVisible(bool flag);//设置Visible标志
 		bool IsVisible();//获取Visible标志
-		virtual bool IsInWindow();//当前是否显示在窗口内 代表实际情况是否显示
 		virtual bool Invalidate();// 使当前控件的区域为无效区域
 		virtual void Refresh();// 使当前控件区域为无效区域并且立即更新全部的无效区域
 	};
@@ -188,14 +188,7 @@ namespace EzUI {
 			SetFixedWidth(fixedWidth);
 		}
 	};
-	//
-	// 摘要:
-	// 为支持自动滚动行为的控件定义一个基类。
-	class ScrollableControl :public Control {
-	public:
-		ScrollableControl() {};
-		virtual ~ScrollableControl() {};
-	};
+
 	class ScrollBar :public Control {
 	private:
 		//滚动条不允许再出现子控件
@@ -212,10 +205,10 @@ namespace EzUI {
 		int _sliderLength = 0;
 	public:
 		//滚动条所属者 当所属者被移除或者被释放掉 请注意将此指针置零
-		ScrollableControl* OWner = NULL;
+		Control* OWner = NULL;
 		//滚动条计算出偏移之后的回调函数
 		std::function<void(int)> OffsetCallback = NULL;
-		EventScrollRolling Rolling = NULL;//滚动事件
+		std::function<void(int, int)> Rolling = NULL;//滚动事件
 	protected:
 		virtual void OnMouseUp(const MouseEventArgs& arg)override
 		{

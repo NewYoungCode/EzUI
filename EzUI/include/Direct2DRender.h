@@ -29,7 +29,7 @@ namespace EzUI {
 	}
 	UI_EXPORT void RenderInitialize();//全局初始化direct2d
 	UI_EXPORT void RenderUnInitialize();//释放direct2d
-	UI_EXPORT float GetMaxRadius(int width, int height, float _radius);//获取最大半径 用于自动适应border-radius属性
+	UI_EXPORT float  GetMaxRadius(int width, int height, int _radius);//获取最大半径 用于自动适应border-radius属性
 	class UI_EXPORT Font {
 	private:
 		Font() = delete;

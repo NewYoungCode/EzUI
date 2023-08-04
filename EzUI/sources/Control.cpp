@@ -862,16 +862,16 @@ return  defaultStyle .##_filed1.##_filed;\
 		}
 	}
 
-	size_t Control::Index()
+	size_t Control::FindControl(Control* childCtl)
 	{
-		const Controls& pControls = Parent->GetControls();
-		size_t pos(0);
+		const Controls& pControls = this->GetControls();
+		size_t pos = 0;
 		for (auto i = pControls.begin(); i != pControls.end(); i++)
 		{
 			if (dynamic_cast<Spacer*>(*i)) {
 				continue;
 			}
-			if (*i == this) {
+			if (*i == childCtl) {
 				return pos;
 			}
 			pos++;
@@ -1011,17 +1011,6 @@ return  defaultStyle .##_filed1.##_filed;\
 	}
 	bool Control::IsVisible() {
 		return this->_visible;
-	}
-
-	bool Control::IsInWindow() {
-		bool visible = this->IsVisible();
-		Control* pCtl = this->Parent;
-		while (pCtl && visible)
-		{
-			visible = pCtl->IsVisible();
-			pCtl = pCtl->Parent;
-		}
-		return visible;
 	}
 
 	bool Control::Invalidate() {

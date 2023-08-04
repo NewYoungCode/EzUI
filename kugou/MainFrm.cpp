@@ -88,7 +88,7 @@ void MainFrm::InitForm() {
 
 	player.AddEventNotify(Event::OnPaint);
 	main->AddEventNotify(Event::OnPaint);
-	
+
 
 	OpenSongView();//
 	//设置阴影
@@ -138,12 +138,12 @@ void MainFrm::OnPaint(PaintEventArgs& _arg) {
 
 	Font font(L"宋体", 20);
 	TextLayout text(L"你好hello word!", font);
-	Size box=text.GetFontBox();
+	Size box = text.GetFontBox();
 	_arg.Graphics.SetFont(font);
 	_arg.Graphics.SetColor(Color::Black);
-	_arg.Graphics.DrawString(text, {500,200 });
+	_arg.Graphics.DrawString(text, { 500,200 });
 
-	TextLayout text2(L"你好hello word!", font,box);
+	TextLayout text2(L"你好hello word!", font, box);
 	_arg.Graphics.DrawString(text2, { 500,300 });
 
 
@@ -353,10 +353,11 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			return false;
 		}
 		if (sender->GetAttribute("tablayout") == "rightView") {
-			if (sender->Index() == 0) {
+			size_t pos = sender->Parent->FindControl(sender);
+			if (pos == 0) {
 				OpenSongView();
 			}
-			else if (sender->Index() == 1) {
+			else if (pos == 1) {
 				OpenLrcView();
 			}
 			else {
@@ -441,7 +442,7 @@ void MainFrm::Task() {
 }
 
 void MainFrm::NextPage(int a, int b) {
-	Debug::Info(L"滚动条当前位置:%d 可滚动距离:%d", a, b);
+	//Debug::Info(L"滚动条当前位置:%d 可滚动距离:%d", a, b);
 	if (a != 0 && a >= b && global::nextPage) {
 		global::page++;
 		EString keyword = searchEdit->GetText();

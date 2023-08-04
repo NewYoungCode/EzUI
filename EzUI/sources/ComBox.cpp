@@ -71,7 +71,8 @@ namespace EzUI {
 		//lb->Margin.Left = 30;
 		lb->SetFixedHeight(30);
 		vlist.AddControl(lb);
-		return lb->Index();
+		//return lb->Index();
+		return 0;
 	}
 	void ComBox::RemoveItem(size_t pos) {}
 

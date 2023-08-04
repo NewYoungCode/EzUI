@@ -433,7 +433,7 @@ namespace EzUI {
 			lastWidth = Width();
 			Analysis();
 		}
-		this->SetContentSize({ _fontBox.Width ,_fontBox.Height});
+		this->SetContentSize({ _fontBox.Width ,_fontBox.Height });
 		this->GetScrollBar()->RefreshScroll();
 		this->EndLayout();
 	}
@@ -589,13 +589,10 @@ namespace EzUI {
 			e.Graphics.DrawString(Placeholder.utf16(), Rect(0, 0, Width(), Height()), multiLine ? TextAlign::TopLeft : TextAlign::MiddleLeft);
 		}
 
-		e.Graphics.SetColor(fontColor);
-		if (textLayout) {
-			e.Graphics.DrawString(*textLayout, { scrollX, scrollY });
-		}
-
 		if (selectRects.size() > 0) {
-			e.Graphics.SetColor(SelectedColor);
+			Color selectedColor = fontColor;
+			selectedColor.SetA(fontColor.GetA() * 0.35);
+			e.Graphics.SetColor(selectedColor);
 			for (auto& it : selectRects) {
 				if (!it.IsEmptyArea()) {
 					Rect rect(it);
@@ -604,6 +601,11 @@ namespace EzUI {
 					e.Graphics.FillRectangle(rect);
 				}
 			}
+		}
+
+		if (textLayout) {
+			e.Graphics.SetColor(fontColor);
+			e.Graphics.DrawString(*textLayout, { scrollX, scrollY });
 		}
 
 		if (!careRect.IsEmptyArea() && _focus) {

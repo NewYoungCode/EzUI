@@ -3,7 +3,7 @@
 #include "HScrollBar.h"
 namespace EzUI {
 	class UI_EXPORT  HList :
-		public ScrollableControl
+		public Control
 	{
 	private:
 		HScrollBar hScrollBar;

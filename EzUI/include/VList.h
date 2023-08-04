@@ -3,7 +3,7 @@
 #include "VScrollBar.h"
 namespace EzUI {
 	class UI_EXPORT VList :
-		public ScrollableControl
+		public Control
 	{
 	private:
 		VScrollBar vScrollBar;

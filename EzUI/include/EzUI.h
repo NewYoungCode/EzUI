@@ -372,9 +372,6 @@ namespace EzUI {
 	typedef std::list<Control*> Controls;//控件集合
 	typedef std::list<Control*>::iterator ControlIterator;//
 
-	typedef std::function<void(int, int)> EventScrollRolling;//滚动条滚动事件
-	typedef std::function<void(EString)> EventTextChange;//文字变更事件
-
 	class UI_EXPORT IControl {
 	private:
 		Attributes _attrs;
@@ -387,17 +384,5 @@ namespace EzUI {
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//设置属性
 		virtual EString GetAttribute(const EString& attrName);//获取属性
 	};
-	namespace Debug {
-		template<typename ...T>
-		inline void Info(const EString& formatStr, T ...args) {
-#ifdef DEBUGLOG
-			char buf[1024*3]{ 0 };
-			auto count = sprintf_s((buf), sizeof(buf), formatStr.c_str(), std::forward<T>(args)...);
-			buf[count] = '\n';
-			buf[count + 1] = 0;
-			auto wstr = EString(buf).utf16();
-			OutputDebugStringW(wstr.c_str());
-#endif
-		}
-	};
+
 };

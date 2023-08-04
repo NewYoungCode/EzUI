@@ -4,7 +4,7 @@
 namespace EzUI {
 
 	class UI_EXPORT  TileList :
-		public ScrollableControl
+		public Control
 	{
 	private:
 		VScrollBar vScrollBar;

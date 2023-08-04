@@ -34,7 +34,7 @@ namespace EzUI {
 #ifdef _DEBUG
 		ASSERT(ctl->Parent == this);
 #endif // _DEBUG
-		this->_index = ctl->Index();
+		this->_index = this->FindControl(ctl);
 		this->TryPendLayout();
 	}
 

@@ -4,7 +4,7 @@
 #include "VScrollBar.h"
 namespace EzUI {
 	class UI_EXPORT TextBox :
-		public ScrollableControl
+		public Control
 	{
 	private:
 		VScrollBar _vsb;
@@ -53,20 +53,19 @@ namespace EzUI {
 		virtual void SetAutoWidth(bool flag)override;
 		virtual void SetAutoHeight(bool flag)override;
 		virtual void OnForePaint(PaintEventArgs& e) override;
-		virtual void OnKeyChar(const KeyboardEventArgs&arg) override;
+		virtual void OnKeyChar(const KeyboardEventArgs& arg) override;
 		virtual void OnKeyDown(const KeyboardEventArgs& arg)override;
-		virtual void OnMouseDown(const MouseEventArgs&arg)override;
+		virtual void OnMouseDown(const MouseEventArgs& arg)override;
 		virtual void OnMouseMove(const MouseEventArgs& arg) override;
 		virtual void OnMouseUp(const MouseEventArgs& arg)override;
-		virtual void OnKillFocus(const KillFocusEventArgs&arg) override;
+		virtual void OnKillFocus(const KillFocusEventArgs& arg) override;
 		virtual void OnLayout();
 		void Offset(int moveY);
 	public:
 		EString Placeholder;//placeholder懂得都懂 (在没有文字的情况下显示的文字)
 		std::wstring PasswordChar;
-		Color SelectedColor = Color(100, 255, 0, 0);//选中颜色
 		bool ReadOnly = false;//是否只读
-		EventTextChange TextChange = NULL;
+		std::function<void(EString)> TextChange = NULL;
 	public:
 		TextBox();
 		virtual ~TextBox();
