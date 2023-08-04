@@ -12,6 +12,7 @@ namespace EzUI {
 		TabLayout();
 		virtual ~TabLayout();
 		void SetPageIndex(int index);
+		void SetPage(Control* ctl);
 		int GetPageIndex();
 		virtual void OnLayout();
 	};

@@ -74,12 +74,6 @@ namespace EzUI {
 	}
 	//TextLayout
 	TextLayout::TextLayout(const std::wstring& text, const Font& font, Size maxSize, TextAlign textAlign) {
-		if (((int)textAlign & (int)VAlign::Mid) == (int)VAlign::Mid) {
-			font.Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
-		}
-		else {
-			font.Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);
-		}
 		this->fontSize= font.GetFontSize();
 		this->fontFamily = font.GetFontFamily();
 		D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), font.Get(), (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &value);

@@ -391,8 +391,8 @@ namespace EzUI {
 		template<typename ...T>
 		inline void Info(const EString& formatStr, T ...args) {
 #ifdef DEBUGLOG
-			char buf[1025]{ 0 };
-			auto count = sprintf_s((buf), 1024, formatStr.c_str(), std::forward<T>(args)...);
+			char buf[1024*3]{ 0 };
+			auto count = sprintf_s((buf), sizeof(buf), formatStr.c_str(), std::forward<T>(args)...);
 			buf[count] = '\n';
 			buf[count + 1] = 0;
 			auto wstr = EString(buf).utf16();

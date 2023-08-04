@@ -237,12 +237,29 @@ return  defaultStyle .##_filed1.##_filed;\
 				this->SetLocation({ this->GetRect().X, std::stoi(attrValue) });
 				break;
 			}
-			if (attrName == "width") {//如果单独设置了宽高那就是绝对宽高了
-				this->SetFixedWidth(std::stoi(attrValue));
+			if (attrName == "autosize" && attrValue == "true") {
+				this->SetAutoWidth(true);
+				this->SetAutoHeight(true);
 				break;
 			}
-			if (attrName == "height") {//如果单独设置了宽高那就是绝对宽高了
-				this->SetFixedHeight(std::stoi(attrValue));
+			if (attrName == "width") {
+				if (attrValue == "auto") {
+					this->SetAutoWidth(true);
+				}
+				else {
+					//如果单独设置了宽高那就是绝对宽高了
+					this->SetFixedWidth(std::stoi(attrValue));
+				}
+				break;
+			}
+			if (attrName == "height") {
+				if (attrValue == "auto") {
+					this->SetAutoHeight(true);
+				}
+				else {
+					//如果单独设置了宽高那就是绝对宽高了
+					this->SetFixedHeight(std::stoi(attrValue));
+				}
 				break;
 			}
 			if (attrName == "visible" || attrName == "display") {
@@ -286,19 +303,7 @@ return  defaultStyle .##_filed1.##_filed;\
 					break;
 				}
 			}
-			if (attrName == "autosize" && attrValue == "true") {
-				this->SetAutoWidth(true);
-				this->SetAutoHeight(true);
-				break;
-			}
-			if (attrName == "width" && attrValue == "auto") {
-				this->SetAutoWidth(true);
-				break;
-			}
-			if (attrName == "height" && attrValue == "auto") {
-				this->SetAutoHeight(true);
-				break;
-			}
+
 
 		} while (false);
 	}
@@ -877,6 +882,7 @@ return  defaultStyle .##_filed1.##_filed;\
 		_controls.push_back(ctl);
 		ctl->PublicData = this->PublicData;
 		ctl->Parent = this;
+		ctl->TryPendLayout();
 		this->TryPendLayout();//添加控件需要将布局重新挂起
 	}
 	void Control::InsertControl(size_t pos, Control* ctl)
@@ -897,6 +903,7 @@ return  defaultStyle .##_filed1.##_filed;\
 		}
 		ctl->PublicData = this->PublicData;
 		ctl->Parent = this;
+		ctl->TryPendLayout();
 		this->TryPendLayout();//添加控件需要将布局重新挂起
 	}
 	void Control::SetParent(Control* parentCtl)
@@ -964,6 +971,13 @@ return  defaultStyle .##_filed1.##_filed;\
 			}
 		}
 		return ctls;
+	}
+	Control* Control::FindSingleControl(const EString& attr, const EString& attrValue) {
+		auto list = this->FindControl(attr, attrValue);
+		if (list.size() > 0) {
+			return *list.begin();
+		}
+		return NULL;
 	}
 	bool Control::SwapControl(Control* ct1, Control* ct2)
 	{
@@ -1038,6 +1052,11 @@ return  defaultStyle .##_filed1.##_filed;\
 	bool Control::IsAutoWidth()
 	{
 		return this->_autoWidth;
+	}
+	void Control::SetAutoSize(bool flag)
+	{
+		this->SetAutoWidth(flag);
+		this->SetAutoHeight(flag);
 	}
 	void Control::SetAutoWidth(bool flag)
 	{

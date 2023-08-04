@@ -29,6 +29,15 @@ namespace EzUI {
 		this->TryPendLayout();
 	}
 
+	void TabLayout::SetPage(Control* ctl)
+	{
+#ifdef _DEBUG
+		ASSERT(ctl->Parent == this);
+#endif // _DEBUG
+		this->_index = ctl->Index();
+		this->TryPendLayout();
+	}
+
 	int TabLayout::GetPageIndex()
 	{
 		return _index;

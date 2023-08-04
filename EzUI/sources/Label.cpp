@@ -25,6 +25,7 @@ namespace EzUI {
 				delete _textLayout;
 				_textLayout = NULL;
 				if (Parent) {
+					Parent->ResumeLayout();
 					Parent->Invalidate();
 				}
 				return;
@@ -34,6 +35,7 @@ namespace EzUI {
 				delete _textLayout;
 				_textLayout = NULL;
 				if (Parent) {
+					Parent->ResumeLayout();
 					Parent->Invalidate();
 				}
 				return;
@@ -124,7 +126,7 @@ namespace EzUI {
 				this->SetText(value);
 				break;
 			}
-			
+
 		} while (false);
 		__super::SetAttribute(key, value);
 	}
@@ -132,6 +134,21 @@ namespace EzUI {
 	{
 		//比较特殊需要屏蔽
 		this->OnLayout();
+	}
+	void Label::OnLayout() {
+		__super::OnLayout();
+		if (IsAutoWidth() || IsAutoHeight()) {
+			Font font(GetFontFamily(), GetFontSize());
+			TextLayout text(this->_wstr, font);
+			Size box = text.GetFontBox();
+			this->SetContentSize(box);
+			if (IsAutoWidth()) {
+				this->SetFixedWidth(box.Width);
+			}
+			if (IsAutoHeight()) {
+				this->SetFixedHeight(box.Height);
+			}
+		}
 	}
 	void Label::SetText(const EString& text) {
 		_wstr = text.utf16();

@@ -116,6 +116,7 @@ namespace EzUI {
 		virtual bool IsAutoHeight();//是否自动高度
 		virtual void SetAutoWidth(bool flag);//设置自动宽度
 		virtual void SetAutoHeight(bool flag);//设置自动高度
+		virtual void SetAutoSize(bool flag);
 		void SetContentWidth(const int& width);//
 		void SetContentHeight(const int& height);//
 		void SetContentSize(const Size& size);//
@@ -143,6 +144,7 @@ namespace EzUI {
 		Control* FindControl(size_t pos);//使用下标获取控件
 		Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
 		Controls FindControl(const EString& attr, const EString& attrValue);//使用属性查找
+		Control* FindSingleControl(const EString& attr, const EString& attrValue);//使用属性查找出第一个
 		bool SwapControl(Control* childCtl, Control* childCt2);//对子控件的两个控件进行位置交换
 		size_t Index();//获取当前控件在父容器下的索引
 		virtual void InsertControl(size_t pos, Control* childCtl);//选择性插入控件

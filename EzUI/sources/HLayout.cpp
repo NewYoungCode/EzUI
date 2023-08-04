@@ -8,6 +8,9 @@ namespace EzUI {
 		int fixedTotal = 0;
 		int count = 0;//可见控件总数
 		for (auto& it : GetControls()) {
+			if ((it->IsAutoWidth() || it->IsAutoHeight()) && it->IsPendLayout()) {
+				it->ResumeLayout();
+			}
 			if (it->IsVisible() == false || (it->IsAutoWidth() && it->GetFixedWidth() <= 0)) continue;
 			count++;
 			auto width = it->GetFixedWidth();
