@@ -509,12 +509,6 @@ namespace EzUI {
 		OutputDebugStringA(buf);
 #endif // COUNT_ONPAINT
 
-#ifdef DEBUGPAINT
-		if (PublicData.Debug) {
-			graphics.SetColor(Color::Red);
-			graphics.DrawRectangle(rePaintRect);
-		}
-#endif
 	}
 
 	void Window::OnPaint(PaintEventArgs& arg)

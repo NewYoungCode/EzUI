@@ -17,6 +17,8 @@ void MainFrm::InitForm() {
 	main = FindControl("main");
 	//第一次不显示背景图 测试无图绘制的性能
 	main->Style.BackImage->Visible = true;
+	main->Style.Border = 1;
+	main->Style.Border.Color = Color(100, 100, 100, 100);
 
 	tools = FindControl("tools");
 	center = FindControl("center");
@@ -89,12 +91,13 @@ void MainFrm::InitForm() {
 	player.AddEventNotify(Event::OnPaint);
 	main->AddEventNotify(Event::OnPaint);
 
-
 	OpenSongView();//
 	//设置阴影
-	//this->SetShadow(50);
+	//this->SetShadow(20);
 	//关闭窗口阴影
 	//this->CloseShadow();
+
+	//WM_TIMER
 }
 MainFrm::~MainFrm()
 {
@@ -136,16 +139,14 @@ void MainFrm::OnClose(bool& cal) {
 void MainFrm::OnPaint(PaintEventArgs& _arg) {
 	__super::OnPaint(_arg);
 
-	Font font(L"宋体", 20);
-	TextLayout text(L"你好hello word!", font);
-	Size box = text.GetFontBox();
-	_arg.Graphics.SetFont(font);
-	_arg.Graphics.SetColor(Color::Black);
-	_arg.Graphics.DrawString(text, { 500,200 });
-
-	TextLayout text2(L"你好hello word!", font, box);
-	_arg.Graphics.DrawString(text2, { 500,300 });
-
+	//Font font(L"宋体", 20);
+	//TextLayout text(L"你好hello word!", font);
+	//Size box = text.GetFontBox();
+	//_arg.Graphics.SetFont(font);
+	//_arg.Graphics.SetColor(Color::Black);
+	//_arg.Graphics.DrawString(text, { 500,200 });
+	//TextLayout text2(L"你好hello word!", font, box);
+	//_arg.Graphics.DrawString(text2, { 500,300 });
 
 }
 void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)

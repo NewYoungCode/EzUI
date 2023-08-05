@@ -11,7 +11,7 @@ namespace EzUI {
 
 	bool ShadowWindow::SetShadow(int m_Width, int m_Height, size_t iSize) {
 		int width = m_Width < m_Height ? m_Width : m_Height;
-		int radius = 3;//°ë¾¶
+		float radius = iSize / 2.0f;//°ë¾¶
 		int max_size = width / 2 - radius;
 		if (max_size <= 0) {
 			radius = 0;

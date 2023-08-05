@@ -837,7 +837,7 @@ return  defaultStyle .##_filed1.##_filed;\
 		this->OnBorderPaint(args, border);//»æÖÆ±ß¿ò
 		args.OffSetPoint.pop_back();
 		pt.PopLayer();//µ¯³ö
-#ifdef DEBUGPAINT
+#ifdef _DEBUG
 		if (PublicData->Debug) {
 			pt.DrawRectangle(Rect(0, 0, clientRect.Width, clientRect.Height));
 		}
