@@ -65,11 +65,11 @@ namespace EzUI {
 	private:
 		Control* ctl = NULL;
 		Control* notCtl = NULL;
-		Controls ctls;
+		std::list<Control*> ctls;
 		_Selector& NextName(const EString& key) { return *this; };
 		_Selector& NextId(const EString& key) { return *this; };
 	public:
-		_Selector(const Controls& Controls);
+		_Selector(const std::list<Control*>& Controls);
 		_Selector(Control* control);
 		_Selector& Css(const EString& styleStr);
 		_Selector& CssHover(const EString& styleStr);

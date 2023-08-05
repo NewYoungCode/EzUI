@@ -537,7 +537,7 @@ namespace EzUI {
 		//
 		// 摘要: 
 		//     内容在垂直方向上底边对齐，在水平方向上右边对齐。
-		BottomRight =(int)VAlign::Bottom | (int)HAlign::Right
+		BottomRight = (int)VAlign::Bottom | (int)HAlign::Right
 	};
 
 	typedef __Align TextAlign;
@@ -593,12 +593,12 @@ namespace EzUI {
 			if (clientRate < imgRate) {
 				float zoomHeight = clientWidth / imgWidth * imgHeight + 0.5f;
 				float y = (clientHeight - zoomHeight) / 2 + rect.Y;
-				return Rect(rect.X, (INT)y, (INT)clientWidth, (INT)zoomHeight);
+				return Rect(rect.X, y, clientWidth, zoomHeight);
 			}
 			else {
 				float zoomWidth = clientHeight / imgHeight * imgWidth + 0.5f;
 				float x = (clientWidth - zoomWidth) / 2 + rect.X;
-				return Rect((INT)x, rect.Y, (INT)zoomWidth, (INT)clientHeight);
+				return Rect(x, rect.Y, zoomWidth, clientHeight);
 			}
 		}
 		if (imageSizeMode == ImageSizeMode::CenterImage) {
@@ -608,7 +608,7 @@ namespace EzUI {
 				//2233 670     缩放后的图片大小 
 				float zoomWidth = clientHeight / imgHeight * imgWidth + 0.5f;//图片应该这么宽才对
 				float x = (zoomWidth - clientWidth) / 2 + 0.5f;
-				return Rect((INT)(rect.X - x), rect.Y, (INT)zoomWidth, (INT)clientHeight);
+				return Rect((rect.X - x), rect.Y, zoomWidth, clientHeight);
 			}
 			else {
 				//1000 600 客户端
@@ -616,7 +616,7 @@ namespace EzUI {
 				//1000 1500     缩放后的图片大小 
 				float zoomHeight = clientWidth / imgWidth * imgHeight + 0.5f;//图片应该这么高才对
 				float y = (zoomHeight - clientHeight) / 2 + 0.5f;
-				return Rect(rect.X, (INT)(rect.Y - y), (INT)clientWidth, (INT)zoomHeight);
+				return Rect(rect.X, (rect.Y - y), clientWidth, zoomHeight);
 			}
 		}
 		return rect;

@@ -2,9 +2,9 @@
 namespace EzUI {
 	TextBox::TextBox() { Init(); }
 	TextBox::~TextBox() {
-		timer.Stop();
-		if (textLayout) { delete textLayout; }
-		if (font) { delete font; }
+		_timer.Stop();
+		if (_textLayout) { delete _textLayout; }
+		if (_font) { delete _font; }
 	}
 	void TextBox::Init()
 	{
@@ -16,13 +16,13 @@ namespace EzUI {
 		};
 
 		Style.Cursor = LoadCursor(Cursor::IBEAM);
-		timer.Interval = 500;
-		timer.Tick = [&](Windows::Timer*) {
+		_timer.Interval = 500;
+		_timer.Tick = [&](Windows::Timer*) {
 			if (this->Enable == false || this->ReadOnly == true) {
 				_careShow = false;
 				return;
 			}
-			if (!careRect.IsEmptyArea() && _focus) {
+			if (!_careRect.IsEmptyArea() && _focus) {
 				_careShow = !_careShow;
 				this->Invalidate();
 			}
@@ -30,7 +30,7 @@ namespace EzUI {
 	}
 	void TextBox::OnRemove() {
 		__super::OnRemove();
-		timer.Stop();
+		_timer.Stop();
 	}
 	void TextBox::SetAutoWidth(bool flag)
 	{
@@ -105,40 +105,40 @@ namespace EzUI {
 	}
 
 	void TextBox::BuildSelectedRect() {
-		selectRects.clear();
-		if (textLayout) {
+		_selectRects.clear();
+		if (_textLayout) {
 			Point point1, point2;
-			if ((A_TextPos + A_isTrailingHit) < (B_TextPos + B_isTrailingHit)) {
-				point1 = textLayout->HitTestTextPosition(A_TextPos, A_isTrailingHit);
-				point2 = textLayout->HitTestTextPosition(B_TextPos, B_isTrailingHit);
+			if ((_A_TextPos + _A_isTrailingHit) < (_B_TextPos + _B_isTrailingHit)) {
+				point1 = _textLayout->HitTestTextPosition(_A_TextPos, _A_isTrailingHit);
+				point2 = _textLayout->HitTestTextPosition(_B_TextPos, _B_isTrailingHit);
 			}
 			else {
-				point2 = textLayout->HitTestTextPosition(A_TextPos, A_isTrailingHit);
-				point1 = textLayout->HitTestTextPosition(B_TextPos, B_isTrailingHit);
+				point2 = _textLayout->HitTestTextPosition(_A_TextPos, _A_isTrailingHit);
+				point1 = _textLayout->HitTestTextPosition(_B_TextPos, _B_isTrailingHit);
 			}
 			if (point1.Y != point2.Y) {//多行
-				Rect rect1(point1.X, point1.Y, _fontBox.Width - point1.X, textLayout->GetFontHeight());
-				Rect rect2(0, point2.Y, point2.X, textLayout->GetFontHeight());
+				Rect rect1(point1.X, point1.Y, _fontBox.Width - point1.X, _textLayout->GetFontHeight());
+				Rect rect2(0, point2.Y, point2.X, _textLayout->GetFontHeight());
 				Rect rect3(0, rect1.GetBottom(), _fontBox.Width, rect2.GetTop() - rect1.GetBottom());
-				selectRects.push_back(rect1);
-				selectRects.push_back(rect3);
-				selectRects.push_back(rect2);
+				_selectRects.push_back(rect1);
+				_selectRects.push_back(rect3);
+				_selectRects.push_back(rect2);
 			}
 			else {
-				selectRects.push_back(Rect(point1.X, point1.Y, point2.X - point1.X, textLayout->GetFontHeight()));
+				_selectRects.push_back(Rect(point1.X, point1.Y, point2.X - point1.X, _textLayout->GetFontHeight()));
 			}
 		}
 	}
 
 	bool TextBox::SelectedAll() {
-		if (textLayout && !text.empty()) {
-			A = Point{ 0,0 };
-			A_isTrailingHit = FALSE;
-			A_TextPos = 0;
+		if (_textLayout && !_text.empty()) {
+			_A = Point{ 0,0 };
+			_A_isTrailingHit = FALSE;
+			_A_TextPos = 0;
 
-			B = Point{ _fontBox.Width ,0 };
-			B_isTrailingHit = TRUE;
-			B_TextPos = text.size() - 1;
+			_B = Point{ _fontBox.Width ,0 };
+			_B_isTrailingHit = TRUE;
+			_B_TextPos = _text.size() - 1;
 
 			BuildSelectedRect();
 			return true;
@@ -146,27 +146,27 @@ namespace EzUI {
 		return false;
 	}
 	bool TextBox::GetSelectedRange(int* outPos, int* outCount) {
-		if (selectRects.size() > 0) {
+		if (_selectRects.size() > 0) {
 			int pos, count;
-			if ((A_TextPos + A_isTrailingHit) < (B_TextPos + B_isTrailingHit)) {
-				int pos1 = A_TextPos;
-				if (A_isTrailingHit == 1) {
+			if ((_A_TextPos + _A_isTrailingHit) < (_B_TextPos + _B_isTrailingHit)) {
+				int pos1 = _A_TextPos;
+				if (_A_isTrailingHit == 1) {
 					pos1 += 1;
 				}
-				int pos2 = B_TextPos;
-				if (B_isTrailingHit == 0) {
+				int pos2 = _B_TextPos;
+				if (_B_isTrailingHit == 0) {
 					pos2 -= 1;
 				}
 				pos = pos1;
 				count = std::abs(pos2 - pos1) + 1;
 			}
 			else {
-				int pos1 = A_TextPos;
-				if (A_isTrailingHit == 0) {
+				int pos1 = _A_TextPos;
+				if (_A_isTrailingHit == 0) {
 					pos1 -= 1;
 				}
-				int pos2 = B_TextPos;
-				if (B_isTrailingHit == 1) {
+				int pos2 = _B_TextPos;
+				if (_B_isTrailingHit == 1) {
 					pos2 += 1;
 				}
 				pos = pos2;
@@ -181,25 +181,25 @@ namespace EzUI {
 		return false;
 	}
 	void TextBox::Insert(const std::wstring& str) {
-		if (TextPos < 0)TextPos = 0;
-		if (TextPos > (int)text.size()) {
-			TextPos = text.size();
+		if (_textPos < 0)_textPos = 0;
+		if (_textPos > (int)_text.size()) {
+			_textPos = _text.size();
 		}
-		text.insert(TextPos, str);
-		TextPos += str.size();
+		_text.insert(_textPos, str);
+		_textPos += str.size();
 		if (TextChange) {
-			TextChange(EString(text));
+			TextChange(EString(_text));
 		}
 	}
 	bool TextBox::DeleteRange() {
 		int pos, count;
 		if (GetSelectedRange(&pos, &count)) {//删除选中的
 			//isTrailingHit = FALSE;
-			TextPos = pos;
-			text.erase(pos, count);
+			_textPos = pos;
+			_text.erase(pos, count);
 
 			if (TextChange) {
-				TextChange(EString(text));
+				TextChange(EString(_text));
 			}
 			return true;
 		}
@@ -210,7 +210,7 @@ namespace EzUI {
 		{
 			int pos, count;
 			if (!GetSelectedRange(&pos, &count))break;
-			std::wstring wBuf(text.substr(pos, count));
+			std::wstring wBuf(_text.substr(pos, count));
 			std::string str;
 			EString::UnicodeToANSI(wBuf, &str);
 
@@ -239,7 +239,7 @@ namespace EzUI {
 			//获取剪贴板数据
 			HANDLE hClipboard = GetClipboardData(CF_TEXT);
 			EString buf((CHAR*)GlobalLock(hClipboard));
-			if (!multiLine) {
+			if (!_multiLine) {
 				EString::Replace(&buf, "\r", "");//行编辑框不允许有换行符
 				EString::Replace(&buf, "\n", "");//行编辑框不允许有换行符
 			}
@@ -258,15 +258,15 @@ namespace EzUI {
 		return false;
 	}
 	void TextBox::OnBackspace() {
-		if (text.size() <= 0)return;
+		if (_text.size() <= 0)return;
 
 		if (!DeleteRange()) {//先看看有没有有选中的需要删除
 			//否则删除单个字符
-			TextPos--;
-			if (TextPos > -1) {
-				text.erase(TextPos, 1);
+			_textPos--;
+			if (_textPos > -1) {
+				_text.erase(_textPos, 1);
 				if (TextChange) {
-					TextChange(EString(text));
+					TextChange(EString(_text));
 				}
 			}
 		}
@@ -280,17 +280,17 @@ namespace EzUI {
 				_down = true;
 			}*/
 		if (wParam == VK_LEFT) {
-			TextPos--;
+			_textPos--;
 			_careShow = true;
-			selectRects.clear();
+			_selectRects.clear();
 			BuildCare();
 			Invalidate();
 			return;
 		}
 		if (wParam == VK_RIGHT) {
-			TextPos++;
+			_textPos++;
 			_careShow = true;
-			selectRects.clear();
+			_selectRects.clear();
 			BuildCare();
 			Invalidate();
 			return;
@@ -300,81 +300,81 @@ namespace EzUI {
 
 	void TextBox::Analysis()
 	{
-		scrollX = 0;
-		scrollY = 0;
-		A = Point();
-		A_isTrailingHit = 0;
-		A_TextPos = 0;
-		B = Point();
-		B_isTrailingHit = 0;
-		B_TextPos = 0;
-		careRect = Rect();
-		selectRects.clear();
-		if (font == NULL) return;
-		if (textLayout) delete textLayout;
+		_scrollX = 0;
+		_scrollY = 0;
+		_A = Point();
+		_A_isTrailingHit = 0;
+		_A_TextPos = 0;
+		_B = Point();
+		_B_isTrailingHit = 0;
+		_B_TextPos = 0;
+		_careRect = Rect();
+		_selectRects.clear();
+		if (_font == NULL) return;
+		if (_textLayout) delete _textLayout;
 
-		std::wstring* drawText = &this->text;
+		std::wstring* drawText = &this->_text;
 		if (!PasswordChar.empty()) {
 			drawText = new std::wstring;
-			int count = PasswordChar.size() * text.size();
-			for (size_t i = 0; i < text.size(); i++)
+			int count = PasswordChar.size() * _text.size();
+			for (size_t i = 0; i < _text.size(); i++)
 			{
 				*drawText += PasswordChar;
 			}
 		}
 		else {
-			*drawText = text;
+			*drawText = _text;
 		}
 
-		if (!multiLine) {//单行编辑框
-			textLayout = new TextLayout(*drawText, *font, Size{ __MAXFLOAT,Height() }, TextAlign::MiddleLeft);
-			_fontBox = textLayout->GetFontBox();
+		if (!_multiLine) {//单行编辑框
+			_textLayout = new TextLayout(*drawText, *_font, Size{ __MAXFLOAT,Height() }, TextAlign::MiddleLeft);
+			_fontBox = _textLayout->GetFontBox();
 			if (_fontBox.Width < this->Width()) {
-				scrollX = 0;
+				_scrollX = 0;
 			}
-			if (_fontBox.Width > this->Width() && scrollX + _fontBox.Width < this->Width()) {
-				scrollX = this->Width() - _fontBox.Width;
+			if (_fontBox.Width > this->Width() && _scrollX + _fontBox.Width < this->Width()) {
+				_scrollX = this->Width() - _fontBox.Width;
 			}
 		}
 		else {//多行编辑框
-			textLayout = new TextLayout(*drawText, *font, Size{ Width(),__MAXFLOAT }, TextAlign::TopLeft);
-			_fontBox = textLayout->GetFontBox();
+			_textLayout = new TextLayout(*drawText, *_font, Size{ Width(),__MAXFLOAT }, TextAlign::TopLeft);
+			_fontBox = _textLayout->GetFontBox();
 		}
-		if (drawText != &this->text) {
+		if (drawText != &this->_text) {
 			delete drawText;
 		}
 		this->SetContentSize({ _fontBox.Width , _fontBox.Height });
-		if (multiLine) {
+		if (_multiLine) {
 			this->GetScrollBar()->RefreshScroll();
 		}
 		BuildCare();
 	}
 
 	void TextBox::BuildCare() {
-		if (!textLayout) return;
+		if (!_textLayout) return;
 
-		if (TextPos < 0) {
-			TextPos = 0;
+		if (_textPos < 0) {
+			_textPos = 0;
 		}
-		if (TextPos > (int)text.size()) {
-			TextPos = text.size();
+		if (_textPos > (int)_text.size()) {
+			_textPos = _text.size();
 		}
 
-		Point pt = textLayout->HitTestTextPosition(TextPos, FALSE);
-		careRect.X = pt.X;
-		careRect.Y = pt.Y;
-		careRect.Height = textLayout->GetFontHeight();
-		careRect.Width = 1;
+		Point pt = _textLayout->HitTestTextPosition(_textPos, FALSE);
+		_careRect.X = pt.X;
+		_careRect.Y = pt.Y;
+		_careRect.Height = _textLayout->GetFontHeight();
+		_careRect.Width = 1;
 
-		if (!multiLine) {
+		if (!_multiLine) {
 			//使光标一直在输入框内
-			int drawX = careRect.X + scrollX;
+			int drawX = _careRect.X + _scrollX;
 			if (drawX < 0) {//光标在最左侧
-				scrollX -= drawX;
+				_scrollX -= drawX;
 			}
 			if (drawX > Width()) {//光标在最右侧
 				int ofssetX = (Width() - drawX);
-				scrollX += ofssetX;
+				_scrollX += ofssetX;
 			}
 		}
 
@@ -382,55 +382,78 @@ namespace EzUI {
 	void TextBox::OnMouseDown(const MouseEventArgs& arg) {
 		__super::OnMouseDown(arg);
 		_focus = true;
-		lastX = 0;
-		lastY = 0;
+		_lastX = 0;
+		_lastY = 0;
 		_careShow = true;
-		timer.Start();
+		_timer.Start();
 
 		auto mbtn = arg.Button;
 		auto point = arg.Location;
 
 		if (mbtn == MouseButton::Left) {
 			_down = true;
-			point_Start = ConvertPoint(point);
-			if (textLayout) {
+			_point_Start = ConvertPoint(point);
+			if (_textLayout) {
 				int fontHeight;
-				selectRects.clear();
-				A = textLayout->HitTestPoint(point_Start, &A_TextPos, &A_isTrailingHit, &fontHeight);
-				careRect.X = A.X;
-				careRect.Y = A.Y;
-				careRect.Width = 1;
-				careRect.Height = fontHeight;
+				_selectRects.clear();
+				_A = _textLayout->HitTestPoint(_point_Start, &_A_TextPos, &_A_isTrailingHit, &fontHeight);
+				_careRect.X = _A.X;
+				_careRect.Y = _A.Y;
+				_careRect.Width = 1;
+				_careRect.Height = fontHeight;
 
-				TextPos = A_TextPos;
-				if (A_isTrailingHit) {
-					TextPos++;
+				_textPos = _A_TextPos;
+				if (_A_isTrailingHit) {
+					_textPos++;
 				}
 			}
 			Invalidate();
 		}
 	}
 
+	void TextBox::OnMouseWheel(const MouseEventArgs& arg)
+	{
+		__super::OnMouseWheel(arg);
+		if (!_multiLine) {//单行
+			int textWidth = _fontBox.Width;
+			if (arg.Delta > 0 && textWidth > Width()) {
+				_scrollX += arg.RollCount;
+				if (_scrollX > 0) {
+					_scrollX = 0;
+				}
+				Invalidate();
+			}
+			else if (arg.Delta<0 && textWidth>Width()) {
+				_scrollX -= arg.RollCount;
+				if (-_scrollX + Width() > textWidth) {
+					_scrollX = -(textWidth - Width());
+				}
+				Invalidate();
+			}
+		}
+	}
+
 	ScrollBar* TextBox::GetScrollBar()
 	{
-		return &_vsb;
+		return &_vScrollbar;
 	}
 	void TextBox::Offset(int _sliderY) {
-		scrollY = _sliderY;
+		this->_scrollY = _sliderY;
 		Invalidate();
 	}
 
 	void TextBox::OnLayout()
 	{
 		__super::OnLayout();
-		scrollX = 0;
-		scrollY = 0;
-		if (!multiLine && Height() != lastHeight) {
-			lastHeight = Height();
+		_scrollX = 0;
+		_scrollY = 0;
+		_selectRects.clear();
+		if (!_multiLine && Height() != _lastHeight) {
+			_lastHeight = Height();
 			Analysis();
 		}
-		if (multiLine && Width() != lastWidth) {
-			lastWidth = Width();
+		if (_multiLine && Width() != _lastWidth) {
+			_lastWidth = Width();
 			Analysis();
 		}
 		this->SetContentSize({ _fontBox.Width ,_fontBox.Height });
@@ -439,8 +462,8 @@ namespace EzUI {
 	}
 
 	Point TextBox::ConvertPoint(const Point& pt) {
-		int _x = -scrollX;
-		int _y = -scrollY;
+		int _x = -_scrollX;
+		int _y = -_scrollY;
 		return Point{ pt.X + _x,pt.Y + _y };
 	}
 
@@ -449,32 +472,32 @@ namespace EzUI {
 		__super::OnMouseMove(arg);
 		auto point = arg.Location;
 		if (_down) {
-			point_End = ConvertPoint(point);
-			if (textLayout) {
+			_point_End = ConvertPoint(point);
+			if (_textLayout) {
 				int fontHeight;
-				selectRects.clear();//
-				B = textLayout->HitTestPoint(point_End, &B_TextPos, &B_isTrailingHit, &fontHeight);
+				_selectRects.clear();//
+				_B = _textLayout->HitTestPoint(_point_End, &_B_TextPos, &_B_isTrailingHit, &fontHeight);
 
 				BuildSelectedRect();
 
-				if (!multiLine) {//单行
+				if (!_multiLine) {//单行
 					//当鼠标往左侧移动
 					int textWidth = _fontBox.Width;
-					if (lastX > point.X) {
-						lastX = point.X;
-						if (textWidth > Width() && scrollX < 0 && point.X < 0) {
-							scrollX += 3;
+					if (_lastX > point.X) {
+						_lastX = point.X;
+						if (textWidth > Width() && _scrollX < 0 && point.X < 0) {
+							_scrollX += 3;
 							Invalidate();
 							return;
 						}
 					}
 					//当鼠标往右侧移动
-					if (lastX < point.X) {
-						lastX = point.X;
+					if (_lastX < point.X) {
+						_lastX = point.X;
 						if (textWidth > Width() && point.X > Width()) {
-							scrollX -= 3;
-							if (-scrollX + Width() > textWidth) {
-								scrollX = -(textWidth - Width());
+							_scrollX -= 3;
+							if (-_scrollX + Width() > textWidth) {
+								_scrollX = -(textWidth - Width());
 							}
 							Invalidate();
 							return;
@@ -489,10 +512,9 @@ namespace EzUI {
 	{
 		__super::OnMouseUp(arg);
 		_down = false;
-		lastX = 0;
-		lastY = 0;
+		_lastX = 0;
+		_lastY = 0;
 		Invalidate();
-		this;
 	}
 	void TextBox::OnKillFocus(const KillFocusEventArgs& arg)
 	{
@@ -500,34 +522,34 @@ namespace EzUI {
 		_down = false;
 		_focus = false;
 		_careShow = false;
-		timer.Stop();
+		_timer.Stop();
 		this->Invalidate();
 	}
 	const EString TextBox::GetText()
 	{
-		return EString(text);
+		return EString(this->_text);
 	}
-	void TextBox::SetText(const EString& _text)
+	void TextBox::SetText(const EString& text)
 	{
-		text = _text.utf16();
+		this->_text = text.utf16();
 		Analysis();
 	}
 	bool TextBox::IsMultiLine()
 	{
-		return multiLine;
+		return _multiLine;
 	}
-	void TextBox::SetMultiLine(bool _multiLine)
+	void TextBox::SetMultiLine(bool multiLine)
 	{
-		if (multiLine != _multiLine) {
-			multiLine = _multiLine;
+		if (this->_multiLine != multiLine) {
+			this->_multiLine = multiLine;
 			Analysis();
 		}
 	}
 	Rect TextBox::GetCareRect()
 	{
-		Rect rect(careRect);
-		rect.X += scrollX;//偏移
-		rect.Y += scrollY;
+		Rect rect(_careRect);
+		rect.X += _scrollX;//偏移
+		rect.Y += _scrollY;
 		return rect;
 	}
 	void TextBox::SetAttribute(const EString& key, const EString& value) {
@@ -558,11 +580,11 @@ namespace EzUI {
 			}
 			if (key == "multiline") {
 				if (value == "true") {
-					this->multiLine = true;
+					this->_multiLine = true;
 					break;
 				}
 				if (value == "false") {
-					this->multiLine = false;
+					this->_multiLine = false;
 					break;
 				}
 			}
@@ -573,46 +595,46 @@ namespace EzUI {
 		std::wstring fontFamily = GetFontFamily();
 		const int& fontSize = GetFontSize();
 
-		if (font == NULL || ((font != NULL) && (font->GetFontFamily() != fontFamily || font->GetFontSize() != fontSize))) {
-			if (font != NULL) {
-				delete font;
+		if (_font == NULL || ((_font != NULL) && (_font->GetFontFamily() != fontFamily || _font->GetFontSize() != fontSize))) {
+			if (_font != NULL) {
+				delete _font;
 			}
-			font = new Font(fontFamily, fontSize);
+			_font = new Font(fontFamily, fontSize);
 			Analysis();
 		}
 		const Color& fontColor = GetForeColor();
 		e.Graphics.SetFont(fontFamily, fontSize);
-		if (text.empty()) {
+		if (_text.empty()) {
 			Color placeholderColor = fontColor;
-			placeholderColor.SetA(fontColor.GetA() * 0.5);
+			placeholderColor.SetA(fontColor.GetA() * 0.6);
 			e.Graphics.SetColor(placeholderColor);
-			e.Graphics.DrawString(Placeholder.utf16(), Rect(0, 0, Width(), Height()), multiLine ? TextAlign::TopLeft : TextAlign::MiddleLeft);
+			e.Graphics.DrawString(Placeholder.utf16(), Rect(0, 0, Width(), Height()), _multiLine ? TextAlign::TopLeft : TextAlign::MiddleLeft);
 		}
 
-		if (selectRects.size() > 0) {
+		if (_selectRects.size() > 0) {
 			Color selectedColor = fontColor;
 			selectedColor.SetA(fontColor.GetA() * 0.35);
 			e.Graphics.SetColor(selectedColor);
-			for (auto& it : selectRects) {
+			for (auto& it : _selectRects) {
 				if (!it.IsEmptyArea()) {
 					Rect rect(it);
-					rect.X += scrollX;//偏移
-					rect.Y += scrollY;
+					rect.X += _scrollX;//偏移
+					rect.Y += _scrollY;
 					e.Graphics.FillRectangle(rect);
 				}
 			}
 		}
 
-		if (textLayout) {
+		if (_textLayout) {
 			e.Graphics.SetColor(fontColor);
-			e.Graphics.DrawString(*textLayout, { scrollX, scrollY });
+			e.Graphics.DrawString(*_textLayout, { _scrollX, _scrollY });
 		}
 
-		if (!careRect.IsEmptyArea() && _focus) {
+		if (!_careRect.IsEmptyArea() && _focus) {
 			if (_careShow) {
-				Rect rect(careRect);
-				rect.X += scrollX;//偏移
-				rect.Y += scrollY;
+				Rect rect(_careRect);
+				rect.X += _scrollX;//偏移
+				rect.Y += _scrollY;
 				if (rect.X == this->Width()) {//如果刚好处于边界
 					rect.X = this->Width() - 1;
 				}

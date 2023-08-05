@@ -3,7 +3,7 @@
 namespace EzUI {
 
 	LRESULT CALLBACK EzUI_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
-		WindowData* wndData = (WindowData*)UI_GetUserData(hwnd);
+		WindowData* wndData = (WindowData*)UI_GET_USERDATA(hwnd);
 		if (wndData) {
 			return  ((Window*)wndData->Window)->WndProc(message, wParam, lParam);
 		}
@@ -11,6 +11,7 @@ namespace EzUI {
 	}
 
 	void Application::Init() {
+		::SetCurrentDirectoryW(Application::StartPath().c_str());
 		//初始化公共控件库
 		INITCOMMONCONTROLSEX icex;
 		icex.dwSize = sizeof(icex);
@@ -33,7 +34,6 @@ namespace EzUI {
 				wc.lpszClassName, MB_ICONERROR);
 			return;
 		}
-		::SetCurrentDirectoryW(Application::StartPath().c_str());
 		::CoInitialize(NULL);//初始化com
 		RenderInitialize();
 	}

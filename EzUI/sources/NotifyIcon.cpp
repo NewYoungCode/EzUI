@@ -60,7 +60,7 @@ namespace EzUI {
 		_hInstance = hInstance;
 		_hwnd = ::CreateWindowW(L"Class_EzUI_NotifyIcon", L"EzUI_NotifyIcon", WS_OVERLAPPEDWINDOW,
 			0, 0, 10, 10, NULL, NULL, _hInstance, NULL);
-		UI_SetUserData(_hwnd, this);
+		UI_SET_USERDATA(_hwnd, this);
 		_nid.cbSize = sizeof(_nid);//结构体长度
 		_nid.hWnd = _hwnd;//窗口句柄
 		_nid.uCallbackMessage = UI_NOTIFYICON;//消息处理，这里很重要，处理鼠标点击

@@ -3,10 +3,6 @@ namespace EzUI {
 	WCHAR WindowClassName[]{ L"EzUI_Window" };
 	HZIP HZipResource = NULL;
 	HGLOBAL HVSResource = NULL;
-	size_t GetThreadId() {
-		std::thread::id threadId = std::this_thread::get_id();
-		return *(size_t*)&threadId;
-	}
 
 	std::mutex _resourceMtx;
 	bool FindZipResource(const EString& fileName, int* index, size_t* fileSize) {
@@ -369,12 +365,10 @@ namespace EzUI {
 	}
 
 	IControl::IControl() {}
-	IControl::~IControl() {
-
-	}
+	IControl::~IControl() {}
 
 	void IControl::SetAttribute(const EString& attrName, const EString& attrValue) {
-		AttributeIterator itor = _attrs.find(attrName);
+		auto itor = _attrs.find(attrName);
 		if (itor != _attrs.end()) {
 			(*itor).second = attrValue;
 		}
@@ -382,8 +376,9 @@ namespace EzUI {
 			_attrs.insert(std::pair<EString, EString>(attrName, attrValue));
 		}
 	}
+
 	EString IControl::GetAttribute(const EString& attrName) {
-		AttributeIterator itor = _attrs.find(attrName);
+		auto itor = _attrs.find(attrName);
 		if (itor != _attrs.end()) {
 			return (*itor).second;
 		}

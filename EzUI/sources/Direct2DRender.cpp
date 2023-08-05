@@ -1,5 +1,5 @@
 #include "Direct2DRender.h"
-#if USED_Direct2D
+#if USED_DIRECT2D
 #define _NOREND_IMAGE_ 
 //#define _NOREND_IMAGE_ return;
 #pragma comment(lib,"dwrite.lib")

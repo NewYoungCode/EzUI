@@ -795,7 +795,7 @@ return  defaultStyle .##_filed1.##_filed;\
 		border.BottomRightRadius = GetBorderBottomRightRadius();
 		border.BottomLeftRadius = GetBorderBottomLeftRadius();
 		bool hasRadius = border.TopLeftRadius || border.TopRightRadius || border.BottomRightRadius || border.BottomLeftRadius;
-#if USED_Direct2D
+#if USED_DIRECT2D
 		if (hasRadius) {
 			//处理圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分) 带抗锯齿
 			Geometry roundRect(Rect(0, 0, clientRect.Width, clientRect.Height), border.TopLeftRadius, border.TopRightRadius, border.BottomRightRadius, border.BottomLeftRadius);
@@ -853,7 +853,7 @@ return  defaultStyle .##_filed1.##_filed;\
 	}
 	void Control::DestroySpacers() {
 		//控件释放的时候自动释放弹簧
-		Controls temp = _controls;
+		auto temp = _controls;
 		for (auto& it : temp) {
 			if (dynamic_cast<Spacer*>(it)) {
 				this->RemoveControl(it);
@@ -864,7 +864,7 @@ return  defaultStyle .##_filed1.##_filed;\
 
 	size_t Control::FindControl(Control* childCtl)
 	{
-		const Controls& pControls = this->GetControls();
+		const auto& pControls = this->GetControls();
 		size_t pos = 0;
 		for (auto i = pControls.begin(); i != pControls.end(); i++)
 		{
@@ -888,8 +888,8 @@ return  defaultStyle .##_filed1.##_filed;\
 	void Control::InsertControl(size_t pos, Control* ctl)
 	{
 		size_t i = 0;
-		ControlIterator it;
-		for (it = _controls.begin(); it != _controls.end(); it++) {
+		std::list<Control*>::iterator it = _controls.begin();
+		for (; it != _controls.end(); it++) {
 			if (i == pos) {
 				break;
 			}
@@ -912,12 +912,12 @@ return  defaultStyle .##_filed1.##_filed;\
 	}
 	void Control::RemoveControl(Control* ctl)
 	{
-		ControlIterator it1 = ::std::find(_controls.begin(), _controls.end(), ctl);
+		auto it1 = ::std::find(_controls.begin(), _controls.end(), ctl);
 		if (it1 != _controls.end()) {
 			ctl->OnRemove();
 			this->TryPendLayout();//移除控件需要将布局重新挂起
 			_controls.erase(it1);
-			ControlIterator it2 = ::std::find(VisibleControls.begin(), VisibleControls.end(), ctl);
+			auto it2 = ::std::find(VisibleControls.begin(), VisibleControls.end(), ctl);
 			if (it2 != VisibleControls.end()) {
 				VisibleControls.erase(it2);
 			}
@@ -954,7 +954,7 @@ return  defaultStyle .##_filed1.##_filed;\
 		}
 		return NULL;
 	}
-	Controls Control::FindControl(const EString& attr, const EString& attrValue)
+	std::list<Control*> Control::FindControl(const EString& attr, const EString& attrValue)
 	{
 		std::list<Control*> ctls;
 		if (attr.empty() || attrValue.empty()) {
@@ -1088,7 +1088,7 @@ return  defaultStyle .##_filed1.##_filed;\
 			ClipRectRef = this->GetClientRect();
 		}
 	}
-	const Controls& Control::GetControls()
+	const std::list<Control*>& Control::GetControls()
 	{
 		return _controls;
 	}
@@ -1117,7 +1117,7 @@ return  defaultStyle .##_filed1.##_filed;\
 	}
 	void Control::Clear(bool freeControls)
 	{
-		Controls temp = _controls;
+		std::list<Control*> temp = _controls;
 		for (auto i = temp.begin(); i != temp.end(); i++)
 		{
 			(*i)->OnRemove();

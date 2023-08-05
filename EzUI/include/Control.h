@@ -6,7 +6,7 @@ namespace EzUI {
 	private:
 		bool* _isRemove = NULL;//控件是否已经被移除或释放
 		bool _visible = true;//控件是否可见 此标志为true的时候 可能实际中并不会可见 
-		Controls _controls;//子控件
+		std::list<Control*> _controls;//子控件
 		//布局状态AddControl丶InsertControl丶RemoveControl丶OnSize时候此标志为挂起 调用ResumeLayout标志为布局中 当调用OnLayout()之后此标志为None
 		EzUI::LayoutState _layoutState = EzUI::LayoutState::None;
 		std::wstring _tipsText;//鼠标悬浮的提示文字
@@ -37,7 +37,7 @@ namespace EzUI {
 		ControlStyle HoverStyle;//鼠标悬浮样式
 		ControlStyle ActiveStyle;//鼠标按下样式
 		Control* Parent = NULL;//父控件
-		Controls VisibleControls;//基于控件中的可见控件
+		std::list<Control*> VisibleControls;//基于控件中的可见控件
 		const Rect ClipRect;//控件在窗口中的可见区域
 		std::function<void(Control*, const EventArgs&)> EventNotify = NULL;
 	protected:
@@ -140,12 +140,12 @@ namespace EzUI {
 		void RemoveEventNotify(int eventType);//移除一个主窗口的Ontify消息
 		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::Static);//
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性
-		const Controls& GetControls();//获取当前所有子控件 const修饰是因为不建议直接修改子控件内容
+		const std::list<Control*>& GetControls();//获取当前所有子控件 const修饰是因为不建议直接修改子控件内容
 		bool Contains(Control* ctl);//会递归循全部包含的控件是否存在
 		Control* FindControl(size_t pos);//使用下标获取控件
 		size_t   FindControl(Control* childCtl);//获取子控件的索引
 		Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
-		Controls FindControl(const EString& attr, const EString& attrValue);//使用属性查找
+		std::list<Control*> FindControl(const EString& attr, const EString& attrValue);//使用属性查找
 		Control* FindSingleControl(const EString& attr, const EString& attrValue);//使用属性查找出第一个
 		bool SwapControl(Control* childCtl, Control* childCt2);//对子控件的两个控件进行位置交换
 		virtual void InsertControl(size_t pos, Control* childCtl);//选择性插入控件
@@ -161,10 +161,6 @@ namespace EzUI {
 
 	//添加弹簧无需用户手动释放,
 	class Spacer :public Control {
-	private:
-		//弹簧不允许再出现子控件
-		void AddControl(Control* ctl) {};
-		ControlIterator RemoveControl() {};
 	public:
 		virtual ~Spacer() {};
 	};
@@ -190,10 +186,6 @@ namespace EzUI {
 	};
 
 	class ScrollBar :public Control {
-	private:
-		//滚动条不允许再出现子控件
-		void AddControl(Control* ctl) {};
-		ControlIterator RemoveControl() {};
 	protected:
 		//鼠标是否已经按下
 		bool _mouseDown = false;

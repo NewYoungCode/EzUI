@@ -437,7 +437,7 @@ namespace EzUI {
 		return NULL;
 	}
 
-	_Selector::_Selector(const Controls& Controls)
+	_Selector::_Selector(const std::list<Control*>& Controls)
 	{
 		this->ctls = Controls;
 	}

@@ -494,7 +494,7 @@ namespace EzUI {
 #if COUNT_ONPAINT
 		StopWatch sw;
 #endif // COUNT_ONPAINT
-#if USED_Direct2D
+#if USED_DIRECT2D
 		DXRender graphics(winHDC, 0, 0, GetClientRect().Width, GetClientRect().Height);
 		PaintEventArgs args(graphics);
 		args.DC = winHDC;
@@ -554,7 +554,7 @@ namespace EzUI {
 		PublicData.Notify = [=](Control* sender, EventArgs& args)->bool {
 			return OnNotify(sender, args);
 		};
-		UI_SetUserData(_hWnd, &PublicData);
+		UI_SET_USERDATA(_hWnd, &PublicData);
 	}
 
 	bool Window::IsInWindow(Control& pControl, Control& it) {
@@ -588,12 +588,12 @@ namespace EzUI {
 			}
 		}
 
-		Controls* pTemp;
+		std::list<Control*>* pTemp;
 		if (outCtl->VisibleControls.size() > 0) {
 			pTemp = &outCtl->VisibleControls;
 		}
 		else {
-			pTemp = (Controls*)(&(outCtl->GetControls()));
+			pTemp = (std::list<Control*>*)(&(outCtl->GetControls()));
 		}
 
 		for (auto i = pTemp->rbegin(); i != pTemp->rend(); i++) {
@@ -927,7 +927,7 @@ namespace EzUI {
 			//if (args.EventType == Event::OnMouseClick && ((MouseEventArgs&)(args)).Button == MouseButton::Left) {
 			EString  ctlName = sender->GetAttribute("tablayout");
 			if (!ctlName.empty()) {
-				Controls ctls = sender->Parent->FindControl("tablayout", ctlName);
+				auto ctls = sender->Parent->FindControl("tablayout", ctlName);
 				TabLayout* tabLayout = dynamic_cast<TabLayout*>(FindControl(ctlName));
 				if (tabLayout && sender->Parent) {
 					size_t pos = 0;

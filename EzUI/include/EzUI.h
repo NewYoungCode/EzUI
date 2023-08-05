@@ -18,8 +18,6 @@ namespace EzUI {
 	//全局资源句柄
 	extern UI_EXPORT HZIP HZipResource;//zip文件中的全局资源句柄
 	extern UI_EXPORT HGLOBAL HVSResource;//vs中的资源文件句柄
-	//获取当前线程ID
-	extern UI_EXPORT size_t GetThreadId();
 	//解压文件
 	extern UI_EXPORT void UnZip(const EString& zipFileName, const EString& outPath, const EString& password = "", std::function<void(int index, int fileCount)> callback = NULL);
 	//从获取文件资源
@@ -101,7 +99,7 @@ namespace EzUI {
 		virtual ~EBitmap();
 	};
 
-#if USED_Direct2D
+#if USED_DIRECT2D
 	class Image :public DXImage {
 	public:
 		virtual ~Image() {}
@@ -120,7 +118,7 @@ namespace EzUI {
 	// 定义用于保存显示器信息的结构体
 	struct MonitorInfo {
 		//显示器的位置 多显示器下Y轴可能出现负数或者大于0的时候代表显示器在设置里面显示器是错位的(多显示器没有平行);
-		EzUI::Rect Rect;
+		EzUI::Rect Rect;//逻辑宽高
 		EzUI::Rect WorkRect;//工作区域
 		Size Physical;//显示器物理宽高
 		float Scale = 1.0f;//显示器缩放比例
@@ -367,14 +365,9 @@ namespace EzUI {
 		void SetStyle(const EString& key, const EString& value, const std::function<void(Image*)>& callback = NULL);
 	};
 
-	typedef std::map<EString, EString> Attributes;//属性集合
-	typedef std::map<EString, EString>::iterator AttributeIterator;
-	typedef std::list<Control*> Controls;//控件集合
-	typedef std::list<Control*>::iterator ControlIterator;//
-
 	class UI_EXPORT IControl {
 	private:
-		Attributes _attrs;
+		std::map<EString, EString> _attrs;
 	public:
 		UINT_PTR Tag = NULL;
 	public:
