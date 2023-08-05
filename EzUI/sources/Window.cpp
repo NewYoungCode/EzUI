@@ -686,7 +686,7 @@ namespace EzUI {
 		if (_focusControl == NULL) return;
 		if (_focusControl) {
 			MouseEventArgs args(Event::OnMouseWheel);
-			args.Delta = zDelta;
+			args.ZDelta = zDelta;
 			args.Location = point;
 			args.RollCount = rollCount;
 			_focusControl->DispatchEvent(args);
@@ -706,7 +706,7 @@ namespace EzUI {
 		}
 		if (scrollBar) {
 			MouseEventArgs args(Event::OnMouseWheel);
-			args.Delta = zDelta;
+			args.ZDelta = zDelta;
 			args.Location = point;
 			args.RollCount = rollCount;
 			scrollBar->DispatchEvent(args);

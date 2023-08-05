@@ -274,13 +274,13 @@ namespace EzUI {
 	public:
 		MouseButton Button = MouseButton::None;
 		int RollCount = 0;
-		short Delta = 0;
+		short ZDelta = 0;
 		Point Location;
 	public:
 		virtual ~MouseEventArgs() {}
-		MouseEventArgs(const Event& eventType, const Point& location = Point(0, 0), const MouseButton& mouseButton = MouseButton::None, const short& delta = 0, int rollCount = 0) :EventArgs(eventType) {
+		MouseEventArgs(const Event& eventType, const Point& location = Point(0, 0), const MouseButton& mouseButton = MouseButton::None, const short& zdelta = 0, int rollCount = 0) :EventArgs(eventType) {
 			this->Button = mouseButton;
-			this->Delta = delta;
+			this->ZDelta = zdelta;
 			this->Location = location;
 			this->RollCount = rollCount;
 		}

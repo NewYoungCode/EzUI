@@ -416,14 +416,14 @@ namespace EzUI {
 		__super::OnMouseWheel(arg);
 		if (!_multiLine) {//µ¥ÐÐ
 			int textWidth = _fontBox.Width;
-			if (arg.Delta > 0 && textWidth > Width()) {
+			if (arg.ZDelta > 0 && textWidth > Width()) {
 				_scrollX += arg.RollCount;
 				if (_scrollX > 0) {
 					_scrollX = 0;
 				}
 				Invalidate();
 			}
-			else if (arg.Delta<0 && textWidth>Width()) {
+			else if (arg.ZDelta<0 && textWidth>Width()) {
 				_scrollX -= arg.RollCount;
 				if (-_scrollX + Width() > textWidth) {
 					_scrollX = -(textWidth - Width());
