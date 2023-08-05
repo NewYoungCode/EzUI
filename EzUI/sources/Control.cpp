@@ -303,7 +303,13 @@ return  defaultStyle .##_filed1.##_filed;\
 					break;
 				}
 			}
-
+			if (attrName == "scrollbar") {
+				ScrollBar* sb = this->GetScrollBar();
+				if (sb) {
+					sb->SetAttribute("name", attrValue);
+				}
+				break;
+			}
 
 		} while (false);
 	}

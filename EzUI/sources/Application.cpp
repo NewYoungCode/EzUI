@@ -57,9 +57,9 @@ namespace EzUI {
 #ifdef _DEBUG
 		if (HZipResource == NULL) {
 			::MessageBoxW(NULL, fileName.utf16().c_str(), L"Failed to open zip", MB_ICONWARNING);
-	}
+		}
 #endif
-}
+	}
 	Application::Application() {
 		Init();
 	}

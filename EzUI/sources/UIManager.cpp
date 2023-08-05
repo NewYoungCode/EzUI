@@ -182,11 +182,20 @@ namespace EzUI {
 				LoadStyle(ctl, "." + className + ":hover");
 			}
 		}
+
 		if (!(ctl->Name.empty())) {//加载样式 使用ID选择器 
 			LoadStyle(ctl, "#" + ctl->Name);
 			LoadStyle(ctl, "#" + ctl->Name + ":checked");
 			LoadStyle(ctl, "#" + ctl->Name + ":active");
 			LoadStyle(ctl, "#" + ctl->Name + ":hover");
+		}
+
+		//为滚动条设置样式 xml控件中设置 scrollbar属性即可单独为滚动条设置样式
+		ScrollBar* sb = ctl->GetScrollBar();
+		if (sb && !sb->Name.empty()) {
+			LoadStyle(ctl, "#" + sb->Name);
+			LoadStyle(ctl, "#" + sb->Name + ":active");
+			LoadStyle(ctl, "#" + sb->Name + ":hover");
 		}
 
 		{//内联样式
