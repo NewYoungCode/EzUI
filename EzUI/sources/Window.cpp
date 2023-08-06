@@ -7,22 +7,13 @@ namespace EzUI {
 
 	Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 	{
-		//获取显示器 达到鼠标在哪个显示器 窗口就在哪个显示器中显示
-		std::list<MonitorInfo> outMonitorInfo;
-		GetMonitors(&outMonitorInfo);
-		POINT cursorPos;
-		::GetCursorPos(&cursorPos);
-		MonitorInfo* monitorInfo = NULL;
-		for (auto& it : outMonitorInfo) {
-			if (it.Rect.Contains(cursorPos.x, cursorPos.y)) {
-				monitorInfo = &it;
-				break;
-			}
-		}
-		int x = monitorInfo->WorkRect.X;
-		int y = monitorInfo->WorkRect.Y;
-		int sw = monitorInfo->WorkRect.Width;//当前工作区域的宽
-		int sh = monitorInfo->WorkRect.Height;//当前工作区域的高
+		MonitorInfo monitorInfo;
+		EzUI::GetMontior(&monitorInfo);
+		int x = monitorInfo.WorkRect.X;
+		int y = monitorInfo.WorkRect.Y;
+		int sw = monitorInfo.WorkRect.Width;//当前工作区域的宽
+		int sh = monitorInfo.WorkRect.Height;//当前工作区域的高
+
 		_rect.X = x + (sw - width) / 2;//保证左右居中
 		_rect.Y = y + (sh - height) / 2;//保证上下居中
 		_rect.Width = width;
@@ -218,6 +209,18 @@ namespace EzUI {
 		}
 		switch (uMsg)
 		{
+		case WM_MOVE: {
+			int xPos = (int)(short)LOWORD(lParam);   // horizontal position 
+			int yPos = (int)(short)HIWORD(lParam);   // vertical position 
+			int p = 0;
+			break;
+		}
+		case WM_SIZE: {
+			UINT width = LOWORD(lParam);
+			UINT height = HIWORD(lParam);
+			int p = 0;
+			break;
+		}
 		case WM_GETMINMAXINFO:
 		{
 			MINMAXINFO* pMMInfo = (MINMAXINFO*)lParam;
@@ -302,19 +305,29 @@ namespace EzUI {
 		}
 		case WM_DPICHANGED:
 		{
-			//int dpi = HIWORD(wParam);
+			int dpi = HIWORD(wParam);
+			//新的缩放比
+			FLOAT newScale = (float)dpi / USER_DEFAULT_SCREEN_DPI;
 			RECT* const prcNewWindow = (RECT*)lParam;
 			const Rect& oldRect = this->GetWindowRect();
 			int newX = prcNewWindow->left;
 			int newY = prcNewWindow->top;
 			int newWidth = prcNewWindow->right - prcNewWindow->left;
 			int newHeight = prcNewWindow->bottom - prcNewWindow->top;
-			EzUI::Scale = (float)newWidth / this->_lastSize.Width;
+			//不同屏幕拖拽时缩放 (不同屏幕拖拽会先触发WM_DPICHANGED)可以使用上次的宽度进行计算比例
+			int lastWidth = this->_lastSize.Width;
+			if (newWidth != lastWidth) {
+				EzUI::Scale = newScale = (float)newWidth / lastWidth;
+			}
+			else {
+				//同屏缩放会先触发WM_SIZE所以这里不能这么做 逻辑还不对!!!
+				EzUI::Scale = newScale / EzUI::Scale;
+			}
 			DpiChangeEventArgs arg(EzUI::Scale);
 			MainLayout->DispatchEvent(arg);
 			SetWindowPos(Hwnd(), NULL, newX, newY, newWidth, newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
 			this->OnSize({ newWidth,newHeight });
-			break;
+			return 0;
 		}
 		case WM_PAINT:
 		{
@@ -943,4 +956,4 @@ namespace EzUI {
 		return false;
 	}
 
-	};
+};

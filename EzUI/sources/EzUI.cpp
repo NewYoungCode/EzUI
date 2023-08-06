@@ -121,6 +121,21 @@ namespace EzUI {
 		return outMonitorInfo->size();
 	}
 
+	bool GetMontior(MonitorInfo* monitorInfo)
+	{
+		std::list<MonitorInfo> outMonitorInfo;
+		GetMonitors(&outMonitorInfo);
+		POINT cursorPos;
+		::GetCursorPos(&cursorPos);
+		for (auto& it : outMonitorInfo) {
+			if (it.Rect.Contains(cursorPos.x, cursorPos.y)) {
+				*monitorInfo = it;
+				return true;
+			}
+		}
+		return false;
+	}
+
 	HCURSOR LoadCursor(Cursor cursorType)
 	{
 		return ::LoadCursorW(NULL, (LPTSTR)cursorType);

@@ -8,10 +8,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ int       nCmdShow)
 {
 
-	//SetProcessDPIAware();
-	//SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_UNAWARE);
-
-
 	Curl_Global_Init();
 
 	//EzUI::Application app;//不指定资源
@@ -19,7 +15,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//EzUI::Application app(ID_FILE,"zip","");//指定vs中资源文件
 	MainFrm frm;
 	frm.Show();
-
 
 	return app.exec();
 }

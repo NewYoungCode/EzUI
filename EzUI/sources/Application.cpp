@@ -10,16 +10,27 @@ namespace EzUI {
 		return ::DefWindowProcW(hwnd, message, wParam, lParam);
 	}
 
+	//#include <shellscalingapi.h>
+	//#pragma comment(lib,"Shcore.lib")
 	void Application::Init() {
-		::SetCurrentDirectoryW(Application::StartPath().c_str());
-		//初始化公共控件库
-		INITCOMMONCONTROLSEX icex;
-		icex.dwSize = sizeof(icex);
-		icex.dwICC = ICC_WIN95_CLASSES;  // 或者使用其他需要的控件类别
-		InitCommonControlsEx(&icex);
-		//DPI感知 
-		//SetProcessDPIAware();
-		//SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_UNAWARE);
+		MonitorInfo monitorInfo;
+		EzUI::GetMontior(&monitorInfo);
+		EzUI::Scale = monitorInfo.Scale;
+		//DPI感知相关
+		//SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
+		//bool b= SetProcessDPIAware();
+		//SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
+		/*typedef void (WINAPI* DisableAutoDpi)(DWORD);
+		HMODULE hModNtdll = NULL;
+		if (hModNtdll = ::LoadLibraryW(L"User32.dll")) {
+			DisableAutoDpi pfRtlGetNtVersionNumbers;
+			pfRtlGetNtVersionNumbers = (DisableAutoDpi)::GetProcAddress(hModNtdll, "SetProcessDpiAwarenessContext");
+			if (pfRtlGetNtVersionNumbers)
+			{
+				pfRtlGetNtVersionNumbers(-1);
+			}
+			::FreeLibrary(hModNtdll);
+		}*/
 		//设计窗口
 		::HINSTANCE hInstance = GetModuleHandleW(NULL);
 		::WNDCLASSW    wc{ 0 };
@@ -35,6 +46,12 @@ namespace EzUI {
 				wc.lpszClassName, MB_ICONERROR);
 			return;
 		}
+		//初始化公共控件库
+		INITCOMMONCONTROLSEX icex;
+		icex.dwSize = sizeof(icex);
+		icex.dwICC = ICC_WIN95_CLASSES;  // 或者使用其他需要的控件类别
+		::InitCommonControlsEx(&icex);
+		::SetCurrentDirectoryW(Application::StartPath().c_str());
 		::CoInitialize(NULL);//初始化com
 		RenderInitialize();
 	}

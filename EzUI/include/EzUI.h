@@ -24,7 +24,8 @@ namespace EzUI {
 	extern UI_EXPORT bool GetResource(const EString& fileName, std::string* outData);
 	//获取当前所有监视器的信息
 	extern size_t GetMonitors(std::list<MonitorInfo>* outMonitorInfo);
-
+	//获取用户当前正在操作的的显示器
+	extern bool GetMontior(MonitorInfo* outInfo);
 	extern HCURSOR LoadCursor(Cursor cursorType);
 	extern HCURSOR LoadCursor(const EString& fileName);//需要释放
 	extern void FreeCursor(HCURSOR hCursor);

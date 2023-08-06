@@ -852,10 +852,18 @@ return  defaultStyle .##_filed1.##_filed;\
 	{
 		const float& scale = arg.Scale;
 
-		double fw = this->GetFixedWidth() * scale + 0.5;
-		double fh = this->GetFixedHeight() * scale + 0.5;
+		int fw = this->GetFixedWidth() * scale + 0.5;
+		int fh = this->GetFixedHeight() * scale + 0.5;
 
-		this->SetFixedSize(Size(fw, fh));
+		if (fw && fh) {
+			this->SetFixedSize(Size(fw, fh));
+		}
+		else if (fw) {
+			this->SetFixedWidth(fw);
+		}
+		else if (fh) {
+			this->SetFixedHeight(fh);
+		}
 
 		Rect newRect = GetRect();
 		this->SetRect(newRect.Scale(scale));
@@ -864,10 +872,14 @@ return  defaultStyle .##_filed1.##_filed;\
 		this->Style.Scale(scale);
 		this->ActiveStyle.Scale(scale);
 		this->HoverStyle.Scale(scale);
-
+		
 		for (auto& it : GetControls()) {
 			it->DispatchEvent(arg);
 		}
+		if (this->GetScrollBar()) {
+			this->GetScrollBar()->DispatchEvent(arg);
+		}
+		
 	}
 
 	Control::~Control()
