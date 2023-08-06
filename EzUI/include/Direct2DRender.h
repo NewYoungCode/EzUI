@@ -22,6 +22,7 @@
 #include "RenderType.h"
 namespace EzUI {
 #define __MAXFLOAT 16777216
+	extern float Scale;
 	namespace D2D {
 		extern ID2D1Factory* g_Direct2dFactory;
 		extern IDWriteFactory* g_WriteFactory;

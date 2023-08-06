@@ -242,6 +242,17 @@ namespace EzUI {
 			::DeleteBitmap(_bitmap);
 		}
 	}
+	void ControlStyle::Scale(const float& scale)
+	{
+		this->FontSize = this->FontSize * scale + 0.5;
+		this->Border.Scale(scale);
+		if (BackImage) {
+			BackImage->Padding.Scale(scale);
+		}
+		if (ForeImage) {
+			ForeImage->Padding.Scale(scale);
+		}
+	}
 	void ControlStyle::SetStyleSheet(const EString& styleStr, const std::function<void(Image*)>& callback)
 	{
 		auto attrs = styleStr.Split(";");

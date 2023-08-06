@@ -55,6 +55,7 @@ namespace EzUI {
 		virtual void OnLocation(const LocationEventArgs& arg);//坐标发生改变
 		virtual void OnSize(const SizeEventArgs& arg);//大小发生改变
 		virtual void OnRect(const RectEventArgs& arg);
+		virtual void OnDpiChange(const DpiChangeEventArgs& arg);
 		//布局代码在此 需要重写布局请重写此函数
 		virtual void OnLayout();
 		//鼠标事件

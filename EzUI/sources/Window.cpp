@@ -302,17 +302,18 @@ namespace EzUI {
 		}
 		case WM_DPICHANGED:
 		{
-			/*g_dpi = HIWORD(wParam);
-			UpdateDpiDependentFontsAndResources();
-
+			//int dpi = HIWORD(wParam);
 			RECT* const prcNewWindow = (RECT*)lParam;
-			SetWindowPos(hWnd,
-				NULL,
-				prcNewWindow->left,
-				prcNewWindow->top,
-				prcNewWindow->right - prcNewWindow->left,
-				prcNewWindow->bottom - prcNewWindow->top,
-				SWP_NOZORDER | SWP_NOACTIVATE);*/
+			const Rect& oldRect = this->GetWindowRect();
+			int newX = prcNewWindow->left;
+			int newY = prcNewWindow->top;
+			int newWidth = prcNewWindow->right - prcNewWindow->left;
+			int newHeight = prcNewWindow->bottom - prcNewWindow->top;
+			EzUI::Scale = (float)newWidth / this->_lastSize.Width;
+			DpiChangeEventArgs arg(EzUI::Scale);
+			MainLayout->DispatchEvent(arg);
+			SetWindowPos(Hwnd(), NULL, newX, newY, newWidth, newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
+			this->OnSize({ newWidth,newHeight });
 			break;
 		}
 		case WM_PAINT:
@@ -942,4 +943,4 @@ namespace EzUI {
 		return false;
 	}
 
-};
+	};

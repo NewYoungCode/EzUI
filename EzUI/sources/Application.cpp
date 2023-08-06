@@ -17,8 +17,9 @@ namespace EzUI {
 		icex.dwSize = sizeof(icex);
 		icex.dwICC = ICC_WIN95_CLASSES;  // 或者使用其他需要的控件类别
 		InitCommonControlsEx(&icex);
-		//禁用DPI感知 避免应用程序自动放大
+		//DPI感知 
 		//SetProcessDPIAware();
+		//SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_UNAWARE);
 		//设计窗口
 		::HINSTANCE hInstance = GetModuleHandleW(NULL);
 		::WNDCLASSW    wc{ 0 };

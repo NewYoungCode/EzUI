@@ -656,6 +656,10 @@ return  defaultStyle .##_filed1.##_filed;\
 				this->OnRect((RectEventArgs&)arg);
 				break;
 			}
+			if (arg.EventType == Event::OnDpiChange) {
+				this->OnDpiChange((DpiChangeEventArgs&)arg);
+				break;
+			}
 			if ((arg.EventType & Event::OnMouseEvent) == arg.EventType) {
 				this->OnMouseEvent((MouseEventArgs&)arg);
 				break;
@@ -842,6 +846,28 @@ return  defaultStyle .##_filed1.##_filed;\
 			pt.DrawRectangle(Rect(0, 0, clientRect.Width, clientRect.Height));
 		}
 #endif
+	}
+
+	void Control::OnDpiChange(const DpiChangeEventArgs& arg)
+	{
+		const float& scale = arg.Scale;
+
+		double fw = this->GetFixedWidth() * scale + 0.5;
+		double fh = this->GetFixedHeight() * scale + 0.5;
+
+		this->SetFixedSize(Size(fw, fh));
+
+		Rect newRect = GetRect();
+		this->SetRect(newRect.Scale(scale));
+
+		this->Margin.Scale(scale);
+		this->Style.Scale(scale);
+		this->ActiveStyle.Scale(scale);
+		this->HoverStyle.Scale(scale);
+
+		for (auto& it : GetControls()) {
+			it->DispatchEvent(arg);
+		}
 	}
 
 	Control::~Control()

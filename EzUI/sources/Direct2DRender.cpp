@@ -6,6 +6,7 @@
 #pragma comment(lib,"d2d1.lib")
 #pragma comment(lib,"Windowscodecs.lib")
 namespace EzUI {
+	float Scale = 1.0f;
 	namespace D2D {
 		ID2D1Factory* g_Direct2dFactory = NULL;
 		IDWriteFactory* g_WriteFactory = NULL;
@@ -74,7 +75,7 @@ namespace EzUI {
 	}
 	//TextLayout
 	TextLayout::TextLayout(const std::wstring& text, const Font& font, Size maxSize, TextAlign textAlign) {
-		this->fontSize= font.GetFontSize();
+		this->fontSize = font.GetFontSize();
 		this->fontFamily = font.GetFontFamily();
 		D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), font.Get(), (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &value);
 		if (value == NULL)return;

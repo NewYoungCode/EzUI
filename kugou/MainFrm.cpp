@@ -1,6 +1,6 @@
 #include "MainFrm.h"
 #include "ComBox.h"
-MainFrm::MainFrm() :LayeredWindow(1020, 690)
+MainFrm::MainFrm() :BorderlessWindow(1020, 690)
 {
 	InitForm();
 	//мпел
@@ -507,5 +507,6 @@ LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
 		main->Invalidate();
 		return 0;
 	}
+	
 	return __super::WndProc(msg, W, L);
 }

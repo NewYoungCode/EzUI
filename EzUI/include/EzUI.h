@@ -181,6 +181,7 @@ namespace EzUI {
 		OnSize = 32768,
 		OnRect = 65536,
 		OnTextChange = 131072,
+		OnDpiChange = 262144,
 		OnActive = OnMouseDown | OnMouseUp,
 		OnHover = OnMouseEnter | OnMouseLeave,
 		OnMouseEvent = OnMouseWheel | OnMouseEnter | OnMouseMove | OnMouseLeave | OnMouseClick | OnMouseDoubleClick | OnMouseDown | OnMouseUp,
@@ -330,6 +331,12 @@ namespace EzUI {
 		RectEventArgs(const EzUI::Rect& rect) :EventArgs(Event::OnRect), Rect(rect) {}
 		virtual ~RectEventArgs() {}
 	};
+	class DpiChangeEventArgs :public EventArgs {
+	public:
+		float Scale = 1.0;
+		DpiChangeEventArgs(const double& scale) :EventArgs(Event::OnDpiChange), Scale(scale) {}
+
+	};
 	// 为 OnPaint 事件提供数据。
 	class PaintEventArgs :public EventArgs {
 	public:
@@ -361,6 +368,7 @@ namespace EzUI {
 	public:
 		ControlStyle() {}
 		virtual ~ControlStyle() {}
+		void Scale(const float& scale);
 		void SetStyleSheet(const EString& styleStr, const std::function<void(Image*)>& callback = NULL);
 		void SetStyle(const EString& key, const EString& value, const std::function<void(Image*)>& callback = NULL);
 	};

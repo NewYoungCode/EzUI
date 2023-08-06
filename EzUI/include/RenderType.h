@@ -173,6 +173,14 @@ namespace EzUI {
 				return (Width <= 0) || (Height <= 0);
 			}
 
+			const __Rect& Scale(const float& scale) {
+				X = (X * scale) + 0.5;
+				Y = (Y * scale) + 0.5;
+				Width = (Width * scale) + 0.5;
+				Height = (Height * scale) + 0.5;
+				return *this;
+			}
+
 			bool Equals(const __Rect& __Rect) const
 			{
 				return X == __Rect.X &&
@@ -401,6 +409,12 @@ namespace EzUI {
 			Left = Top = Right = Bottom = distanceAll;
 			return *this;
 		}
+		void Scale(const float& scale) {
+			Top = Top * scale + 0.5;
+			Bottom = Bottom * scale + 0.5;
+			Left = Left * scale + 0.5;
+			Right = Right * scale + 0.5;
+		}
 		//获取垂直所占空间
 		size_t GetVSpace() {
 			return Top + Bottom;
@@ -465,6 +479,16 @@ namespace EzUI {
 			Right = borderWidth;
 			Bottom = borderWidth;
 			return *this;
+		}
+		void Scale(const float& scale) {
+			Left = Left * scale + 0.5;
+			Top = Top * scale + 0.5;
+			Right = Right * scale + 0.5;
+			Bottom = Bottom * scale + 0.5;
+			TopLeftRadius = TopLeftRadius * scale + 0.5;
+			TopRightRadius = TopRightRadius * scale + 0.5;
+			BottomRightRadius = BottomRightRadius * scale + 0.5;
+			BottomLeftRadius = BottomLeftRadius * scale + 0.5;
 		}
 	};
 #if 1
