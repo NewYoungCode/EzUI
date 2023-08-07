@@ -201,7 +201,7 @@ namespace EzUI {
 		Control* OWner = NULL;
 		//滚动条计算出偏移之后的回调函数
 		std::function<void(int)> OffsetCallback = NULL;
-		std::function<void(int, int)> Rolling = NULL;//滚动事件
+		std::function<void(ScrollBar*, const ScrollRollEventArgs&)> Rolling = NULL;//滚动事件
 	protected:
 		virtual void OnMouseUp(const MouseEventArgs& arg)override
 		{
@@ -214,16 +214,16 @@ namespace EzUI {
 			_mouseDown = false;
 		}
 	public:
-		virtual void Move(double pos) = 0;
+		virtual void Move(double pos, const ScrollRollEventArgs& args = Event::None) = 0;
 		virtual Rect GetSliderRect() = 0;//
-		virtual void OWnerSize(const Size& parentSize) = 0;
+		virtual void OWnerSize(const Size& ownerSize) = 0;
 		//滚动条是否已经绘制且显示
 		virtual bool IsDraw() = 0;
 		//滚动条是否能够滚动
 		virtual bool Scrollable() = 0;
 		//当OWner发生内容发生改变 请调用刷新滚动条
 		void RefreshScroll() {
-			Move(_sliderPos);
+			Move(_sliderPos, Event::None);
 		};
 		ScrollBar() {
 			Style.ForeColor = Color(205, 205, 205);//the bar default backgroundcolor

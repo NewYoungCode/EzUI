@@ -69,10 +69,13 @@ namespace EzUI {
 			int offsetX = point.X - this->_lastPoint;
 			_sliderPos += offsetX;
 			_lastPoint = point.X;
-			Move(_sliderPos);
+			ScrollRollEventArgs sbArg;
+			sbArg.RollType = Event::OnMouseDrag;
+			sbArg.ZDelta = -offsetX;
+			Move(_sliderPos, sbArg);
 		}
 	}
-	void HScrollBar::Move(double posY) {
+	void HScrollBar::Move(double posY, const  ScrollRollEventArgs& args) {
 		if (OWner == NULL) return;
 		if (OWner->IsPendLayout()) {
 			OWner->ResumeLayout();
@@ -111,7 +114,9 @@ namespace EzUI {
 			OWner->Invalidate();
 			//OWner->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
 			if (Rolling) {
-				Rolling(_sliderPos, Width() - _sliderLength);
+				((ScrollRollEventArgs&)args).Pos = _sliderPos;
+				((ScrollRollEventArgs&)args).Total = Width() - _sliderLength;
+				Rolling(this, args);
 			}
 		}
 	}
@@ -119,6 +124,10 @@ namespace EzUI {
 		__super::OnMouseWheel(arg);
 		auto offset = arg.RollCount;
 		_sliderPos += (arg.ZDelta > 0 ? -offset : offset);
-		Move(_sliderPos);
+		ScrollRollEventArgs args;
+		args.RollType = Event::OnMouseWheel;
+		args.ZDelta = arg.ZDelta;
+		args.Speed = arg.RollCount;
+		Move(_sliderPos, args);
 	}
 };

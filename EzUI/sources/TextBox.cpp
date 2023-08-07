@@ -327,6 +327,7 @@ namespace EzUI {
 		}
 
 		if (!_multiLine) {//单行编辑框
+			_font->Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
 			_textLayout = new TextLayout(*drawText, *_font, Size{ __MAXFLOAT,Height() }, TextAlign::MiddleLeft);
 			_fontBox = _textLayout->GetFontBox();
 			if (_fontBox.Width < this->Width()) {
@@ -337,6 +338,7 @@ namespace EzUI {
 			}
 		}
 		else {//多行编辑框
+			_font->Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);
 			_textLayout = new TextLayout(*drawText, *_font, Size{ Width(),__MAXFLOAT }, TextAlign::TopLeft);
 			_fontBox = _textLayout->GetFontBox();
 		}

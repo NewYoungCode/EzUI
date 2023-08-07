@@ -1,6 +1,6 @@
 #include "MainFrm.h"
 #include "ComBox.h"
-MainFrm::MainFrm() :BorderlessWindow(1020, 690)
+MainFrm::MainFrm() :LayeredWindow(1020, 690)
 {
 	InitForm();
 	//托盘
@@ -74,8 +74,10 @@ void MainFrm::InitForm() {
 		pos++;
 	}
 	//滚动条滚动事件 滚动条滚动到底部加载剩余音乐
-	searchList->GetScrollBar()->Rolling = [=](int a, int b)->void {
-		NextPage(a, b);
+	searchList->GetScrollBar()->Rolling = [=](ScrollBar* sb, const ScrollRollEventArgs& args)->void {
+		if (args.RollType == Event::OnMouseWheel) {
+			NextPage(args.Pos, args.Total);
+		}
 	};
 	//忽略一些事件 可穿透父控件
 	playerBar2->MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseClick;
@@ -507,6 +509,6 @@ LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
 		main->Invalidate();
 		return 0;
 	}
-	
+
 	return __super::WndProc(msg, W, L);
 }

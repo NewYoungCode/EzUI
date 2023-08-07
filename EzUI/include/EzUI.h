@@ -183,7 +183,9 @@ namespace EzUI {
 		OnRect = 65536,
 		OnTextChange = 131072,
 		OnDpiChange = 262144,
+		OnScrollRoll = 524288,
 		OnActive = OnMouseDown | OnMouseUp,
+		OnMouseDrag = OnMouseDown | OnMouseMove,
 		OnHover = OnMouseEnter | OnMouseLeave,
 		OnMouseEvent = OnMouseWheel | OnMouseEnter | OnMouseMove | OnMouseLeave | OnMouseClick | OnMouseDoubleClick | OnMouseDown | OnMouseUp,
 		OnKeyBoardEvent = OnKeyDown | OnKeyUp | OnKeyChar
@@ -286,6 +288,20 @@ namespace EzUI {
 			this->Location = location;
 			this->RollCount = rollCount;
 		}
+	};
+	//滚动条滚动事件
+	class ScrollRollEventArgs :public EventArgs {
+	public:
+		int Pos = 0;
+		int Total = 0;
+		int Speed = 0;
+		short ZDelta = 0;
+		//滚动类型 一般分为三种 Event::OnMouseDrag Event::OnMouseWheel 其他
+		Event RollType = Event::None;
+	public:
+		ScrollRollEventArgs(Event rollType = Event::None) :EventArgs(Event::OnScrollRoll), RollType(rollType) {
+		}
+		virtual ~ScrollRollEventArgs() {}
 	};
 	// 摘要: 
 	//为键盘事件提供基础数据

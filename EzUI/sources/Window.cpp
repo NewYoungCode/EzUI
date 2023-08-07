@@ -14,12 +14,16 @@ namespace EzUI {
 		int sw = monitorInfo.WorkRect.Width;//当前工作区域的宽
 		int sh = monitorInfo.WorkRect.Height;//当前工作区域的高
 
+		this->_scale = EzUI::Scale;
+		width = width * this->_scale + 0.5;
+		height = height * this->_scale + 0.5;
+
 		_rect.X = x + (sw - width) / 2;//保证左右居中
 		_rect.Y = y + (sh - height) / 2;//保证上下居中
 		_rect.Width = width;
 		_rect.Height = height;
 
-		_hWnd = ::CreateWindowExW(ExStyle | WS_EX_ACCEPTFILES, WindowClassName, WindowClassName, dStyle,
+		_hWnd = ::CreateWindowExW(ExStyle | WS_EX_ACCEPTFILES, WindowClassName, WindowClassName, WS_CLIPCHILDREN | dStyle,
 			_rect.X, _rect.Y, width, height, owner, NULL, GetModuleHandle(NULL), NULL);
 		InitData(ExStyle);//设置基本数据
 	}
@@ -298,35 +302,24 @@ namespace EzUI {
 		case WM_DISPLAYCHANGE: {
 			auto width = LOWORD(lParam);
 			auto height = HIWORD(lParam);;
-			//	EzUI::Scale = GetScale();
-				//SetWindowPos(_hWnd, HWND_TOP, _rect.X * Scale, _rect.Y * Scale, _rect.Width * Scale, _rect.Height * Scale, SWP_NOZORDER | SWP_NOACTIVATE);
-				//MainLayout->Invalidate();
 			break;
 		}
 		case WM_DPICHANGED:
 		{
 			int dpi = HIWORD(wParam);
 			//新的缩放比
-			FLOAT newScale = (float)dpi / USER_DEFAULT_SCREEN_DPI;
+			FLOAT systemScale = (float)dpi / USER_DEFAULT_SCREEN_DPI;
 			RECT* const prcNewWindow = (RECT*)lParam;
 			const Rect& oldRect = this->GetWindowRect();
 			int newX = prcNewWindow->left;
 			int newY = prcNewWindow->top;
 			int newWidth = prcNewWindow->right - prcNewWindow->left;
 			int newHeight = prcNewWindow->bottom - prcNewWindow->top;
-			//不同屏幕拖拽时缩放 (不同屏幕拖拽会先触发WM_DPICHANGED)可以使用上次的宽度进行计算比例
-			int lastWidth = this->_lastSize.Width;
-			if (newWidth != lastWidth) {
-				EzUI::Scale = newScale = (float)newWidth / lastWidth;
-			}
-			else {
-				//同屏缩放会先触发WM_SIZE所以这里不能这么做 逻辑还不对!!!
-				EzUI::Scale = newScale / EzUI::Scale;
-			}
-			DpiChangeEventArgs arg(EzUI::Scale);
+			float newScale = systemScale / this->_scale;
+			this->_scale = systemScale;
+			DpiChangeEventArgs arg(newScale);
 			MainLayout->DispatchEvent(arg);
 			SetWindowPos(Hwnd(), NULL, newX, newY, newWidth, newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
-			this->OnSize({ newWidth,newHeight });
 			return 0;
 		}
 		case WM_PAINT:
@@ -680,8 +673,14 @@ namespace EzUI {
 		}
 		__rollTimer->Tick = [this, zDelta, point](Windows::Timer* tm)->void {
 			_rollCount--;
+			StopWatch sw;
 			this->OnMouseWheel(_rollCount, zDelta, point);
+			time_t t = sw.ElapsedMilliseconds();
+			if (tm->Interval > 0) {
+				_rollCount -= t / tm->Interval;
+			}
 			if (_rollCount <= 0) {
+				_rollCount = 0;
 				tm->Stop();
 			}
 		};
@@ -824,9 +823,15 @@ namespace EzUI {
 		if (!MainLayout) {
 			return;
 		}
-
+		if (_first && MainLayout) {
+			if (this->_scale != 1.0f) {
+				MainLayout->Refresh();
+				MainLayout->DispatchEvent(DpiChangeEventArgs(this->_scale));
+			}
+			_first = false;
+		}
 		MainLayout->SetRect(this->GetClientRect());
-		//MainLayout->Invalidate();
+		MainLayout->Invalidate();
 	}
 
 	void Window::OnRect(const Rect& rect)

@@ -14,7 +14,7 @@ namespace EzUI {
 	public:
 		VScrollBar();
 		virtual ~VScrollBar();
-		virtual void Move(double posY);
+		virtual void Move(double pos, const ScrollRollEventArgs& rollType)override;
 		virtual void OWnerSize(const Size& ownerSize)override;
 		virtual Rect GetSliderRect()override;
 		virtual bool IsDraw() override;

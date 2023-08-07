@@ -10,36 +10,14 @@ namespace EzUI {
 		return ::DefWindowProcW(hwnd, message, wParam, lParam);
 	}
 
-	//#include <shellscalingapi.h>
-	//#pragma comment(lib,"Shcore.lib")
 	void Application::Init() {
-		MonitorInfo monitorInfo;
-		EzUI::GetMontior(&monitorInfo);
-		EzUI::Scale = monitorInfo.Scale;
-		//DPI感知相关
-		//SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE);
-		//bool b= SetProcessDPIAware();
-		//SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
-		/*typedef void (WINAPI* DisableAutoDpi)(DWORD);
-		HMODULE hModNtdll = NULL;
-		if (hModNtdll = ::LoadLibraryW(L"User32.dll")) {
-			DisableAutoDpi pfRtlGetNtVersionNumbers;
-			pfRtlGetNtVersionNumbers = (DisableAutoDpi)::GetProcAddress(hModNtdll, "SetProcessDpiAwarenessContext");
-			if (pfRtlGetNtVersionNumbers)
-			{
-				pfRtlGetNtVersionNumbers(-1);
-			}
-			::FreeLibrary(hModNtdll);
-		}*/
 		//设计窗口
 		::HINSTANCE hInstance = GetModuleHandleW(NULL);
 		::WNDCLASSW    wc{ 0 };
-		wc.style = CS_HREDRAW | CS_VREDRAW;
 		wc.lpfnWndProc = EzUI_WndProc;//窗口过程
 		wc.hInstance = hInstance;//
 		wc.hCursor = LoadCursorW(NULL, IDC_ARROW);//光标
 		wc.lpszClassName = WindowClassName;//类名
-
 		if (!RegisterClassW(&wc)) //注册窗口
 		{
 			::MessageBoxW(NULL, L"This program requires Windows NT !",
@@ -54,6 +32,31 @@ namespace EzUI {
 		::SetCurrentDirectoryW(Application::StartPath().c_str());
 		::CoInitialize(NULL);//初始化com
 		RenderInitialize();
+	}
+	void Application::EnableHighDpi() {
+		MonitorInfo monitorInfo;
+		EzUI::GetMontior(&monitorInfo);
+		EzUI::Scale = monitorInfo.Scale;
+		//DPI感知相关
+	//不跟随系统放大无法接收WM_DISPLAYCHANGED消息
+	//bool b = SetProcessDPIAware();
+	//SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+	//会进入WM_DPICHANGED消息可进行自行控制缩放
+		typedef void (WINAPI* DisableAutoDpi)(DWORD);
+		HMODULE hModNtdll = NULL;
+		if (hModNtdll = ::LoadLibraryW(L"User32.dll")) {
+			DisableAutoDpi pfRtlGetNtVersionNumbers;
+			pfRtlGetNtVersionNumbers = (DisableAutoDpi)::GetProcAddress(hModNtdll, "SetProcessDpiAwarenessContext");
+			if (pfRtlGetNtVersionNumbers)
+			{
+				//SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+				pfRtlGetNtVersionNumbers(-4);
+			}
+			else {
+				::SetProcessDPIAware();
+			}
+			::FreeLibrary(hModNtdll);
+		}
 	}
 	Application::Application(int resID, const EString& custResType, const EString& password) {
 		Init();

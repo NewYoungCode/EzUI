@@ -8,7 +8,8 @@ namespace EzUI {
 		_boxShadow = new ShadowWindow(width, height, Hwnd());
 		UpdateShadow();
 		PublicData.InvalidateRect = [=](void* _rect) ->void {
-			this->InvalidateRect(*(Rect*)_rect);
+			Rect& rect = *(Rect*)_rect;
+			this->InvalidateRect(rect);
 		};
 		PublicData.UpdateWindow = [=]()->void {
 			if (!_InvalidateRect.IsEmptyArea()) {
@@ -103,13 +104,7 @@ namespace EzUI {
 			delete _winBitmap;
 		}
 		_winBitmap = new EBitmap(sz.Width, sz.Height, EBitmap::PixelFormat::PixelFormatARGB);
-		MainLayout->SetRect(this->GetClientRect());
-		MainLayout->Invalidate();
-	}
-	void LayeredWindow::OnPaint(PaintEventArgs& args) {
-		if (MainLayout) {
-			MainLayout->DispatchEvent(args);//
-		}
+		__super::OnSize(sz);
 	}
 
 	void LayeredWindow::DoPaint(HDC winHDC, const Rect& rePaintRect) {
