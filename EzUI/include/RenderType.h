@@ -259,6 +259,16 @@ namespace EzUI {
 				const __Rect& a,
 				const __Rect& b)
 			{
+
+				if (a.IsEmptyArea()) {
+					c = b;
+					return !c.IsEmptyArea();
+				}
+				if (b.IsEmptyArea()) {
+					c = a;
+					return !c.IsEmptyArea();
+				}
+
 				T right = max(a.GetRight(), b.GetRight());
 				T bottom = max(a.GetBottom(), b.GetBottom());
 				T left = min(a.GetLeft(), b.GetLeft());
@@ -645,4 +655,4 @@ namespace EzUI {
 		}
 		return rect;
 	}
-};
+		};

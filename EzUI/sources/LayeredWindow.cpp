@@ -90,13 +90,7 @@ namespace EzUI {
 		if (rect.GetRight() > Width) {
 			rect.Width = Width - rect.X;
 		} //这段代码是保证重绘区域一定是在窗口内
-
-		if (!_InvalidateRect.IsEmptyArea()) {
-			Rect::Union(_InvalidateRect, _InvalidateRect, rect);
-		}
-		else {
-			_InvalidateRect = _rect;
-		}
+		Rect::Union(_InvalidateRect, _InvalidateRect, rect);
 		_mtx.unlock();
 	}
 	void LayeredWindow::OnSize(const Size& sz) {
