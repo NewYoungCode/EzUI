@@ -9,8 +9,6 @@ namespace EzUI {
 	class UI_EXPORT Window :public IControl
 	{
 	private:
-		float _scale = 1.0f;
-		bool _first = true;
 		Rect _downRect;
 		Size _miniSize;
 		Size _maxSize;

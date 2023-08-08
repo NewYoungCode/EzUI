@@ -7,16 +7,28 @@ namespace EzUI {
 
 	Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 	{
+
+		float scanle = 1.0f;
+		POINT cursorPos;
+		::GetCursorPos(&cursorPos);
+		for (auto& it : EzUI::MonitorInfos) {
+			if (it.Rect.Contains(cursorPos.x, cursorPos.y)) {
+				scanle = it.Scale;
+				break;
+			}
+		}
+
 		MonitorInfo monitorInfo;
 		EzUI::GetMontior(&monitorInfo);
+
 		int x = monitorInfo.WorkRect.X;
 		int y = monitorInfo.WorkRect.Y;
 		int sw = monitorInfo.WorkRect.Width;//当前工作区域的宽
 		int sh = monitorInfo.WorkRect.Height;//当前工作区域的高
 
-		this->_scale = EzUI::Scale;
-		width = width * this->_scale + 0.5;
-		height = height * this->_scale + 0.5;
+		this->PublicData.Scale = scanle;
+		width = width * this->PublicData.Scale + 0.5;
+		height = height * this->PublicData.Scale + 0.5;
 
 		_rect.X = x + (sw - width) / 2;//保证左右居中
 		_rect.Y = y + (sh - height) / 2;//保证上下居中
@@ -90,15 +102,19 @@ namespace EzUI {
 	}
 	void Window::SetSize(const Size& size) {
 		const Rect& rect = GetWindowRect();
-		::MoveWindow(Hwnd(), rect.X, rect.Y, size.Width, size.Height, FALSE);
+		this->SetRect(Rect(rect.X, rect.Y, size.Width, size.Height));
 	}
 	void Window::SetLocation(const Point& pt) {
 		const Rect& rect = GetWindowRect();
-		::MoveWindow(Hwnd(), pt.X, pt.Y, rect.Width, rect.Height, FALSE);
+		this->SetRect(Rect(pt.X, pt.Y, rect.Width, rect.Height));
 	}
 	void Window::SetRect(const Rect& rect)
 	{
-		::MoveWindow(Hwnd(), rect.X, rect.Y, rect.Width, rect.Height, FALSE);
+		int newX = PublicData.Scale * rect.X + 0.5;
+		int newY = PublicData.Scale * rect.Y + 0.5;
+		int newWidth = PublicData.Scale * rect.Width + 0.5;
+		int newHeight = PublicData.Scale * rect.Height + 0.5;
+		::SetWindowPos(Hwnd(), NULL, newX, newY, newWidth, newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
 	}
 	void Window::SetMiniSize(const Size& size)
 	{
@@ -315,9 +331,9 @@ namespace EzUI {
 			int newY = prcNewWindow->top;
 			int newWidth = prcNewWindow->right - prcNewWindow->left;
 			int newHeight = prcNewWindow->bottom - prcNewWindow->top;
-			float newScale = systemScale / this->_scale;
-			this->_scale = systemScale;
-			DpiChangeEventArgs arg(newScale);
+			float newScale = systemScale / PublicData.Scale;
+			this->PublicData.Scale = systemScale;
+			DpiChangeEventArgs arg(systemScale);
 			MainLayout->DispatchEvent(arg);
 			SetWindowPos(Hwnd(), NULL, newX, newY, newWidth, newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
 			return 0;
@@ -823,12 +839,8 @@ namespace EzUI {
 		if (!MainLayout) {
 			return;
 		}
-		if (_first && MainLayout) {
-			if (this->_scale != 1.0f) {
-				MainLayout->Refresh();
-				MainLayout->DispatchEvent(DpiChangeEventArgs(this->_scale));
-			}
-			_first = false;
+		if (MainLayout->GetScale() != PublicData.Scale) {
+			MainLayout->DispatchEvent(DpiChangeEventArgs(PublicData.Scale));
 		}
 		MainLayout->SetRect(this->GetClientRect());
 		MainLayout->Invalidate();

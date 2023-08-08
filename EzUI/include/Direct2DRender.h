@@ -22,7 +22,6 @@
 #include "RenderType.h"
 namespace EzUI {
 #define __MAXFLOAT 16777216
-	extern float Scale;
 	namespace D2D {
 		extern ID2D1Factory* g_Direct2dFactory;
 		extern IDWriteFactory* g_WriteFactory;
@@ -295,6 +294,7 @@ namespace EzUI {
 		void DrawArc(const Point& point1, const  Point& point2, const Point& point3, int width = 1);
 		void DrawGeometry(ID2D1Geometry* path, int width);
 		void FillGeometry(ID2D1Geometry* path);
+		void Flush();
 		//绘制弧线 未实现
 		void DrawPath(const DXPath& path, int width = 1);//绘制path 未实现
 		void FillPath(const DXPath& path);//填充Path 未实现

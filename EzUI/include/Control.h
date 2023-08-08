@@ -6,6 +6,7 @@ namespace EzUI {
 	private:
 		bool* _isRemove = NULL;//控件是否已经被移除或释放
 		bool _visible = true;//控件是否可见 此标志为true的时候 可能实际中并不会可见 
+		float _scale = 1.0f;
 		std::list<Control*> _controls;//子控件
 		//布局状态AddControl丶InsertControl丶RemoveControl丶OnSize时候此标志为挂起 调用ResumeLayout标志为布局中 当调用OnLayout()之后此标志为None
 		EzUI::LayoutState _layoutState = EzUI::LayoutState::None;
@@ -45,8 +46,8 @@ namespace EzUI {
 		virtual void SetContentWidth(const int& width);//
 		virtual void SetContentHeight(const int& height);//
 		virtual void SetContentSize(const Size& size);//
-		virtual void DoPaint(PaintEventArgs& args, bool paintSelf = true);//绘制函数
 		virtual bool OnEvent(const EventArgs& arg);//所有事件先进这里
+		virtual void OnPaintBefore(PaintEventArgs& args, bool paintSelf = true);//绘制之前
 		virtual void OnPaint(PaintEventArgs& args);//绘制 
 		virtual void OnChildPaint(PaintEventArgs& args);//子控件绘制 可以重载此函数优化鼠标操作性能
 		virtual void OnBackgroundPaint(PaintEventArgs& painter);//背景绘制
@@ -56,7 +57,7 @@ namespace EzUI {
 		virtual void OnSize(const SizeEventArgs& arg);//大小发生改变
 		virtual void OnRect(const RectEventArgs& arg);
 		virtual void OnDpiChange(const DpiChangeEventArgs& arg);
-		//布局代码在此 需要重写布局请重写此函数
+		//布局代码在此 需要重写布局请重写此函数 
 		virtual void OnLayout();
 		//鼠标事件
 		virtual void OnMouseMove(const MouseEventArgs& arg);//鼠标在控件上移动
@@ -129,6 +130,7 @@ namespace EzUI {
 		Rect GetClientRect();//获取基于客户端的矩形
 		const DockStyle& GetDockStyle();//获取dock标志
 		void SetDockStyle(const DockStyle& dockStyle);
+		const float& GetScale();
 		bool IsPendLayout();//是否含有挂起的布局
 		const LayoutState& TryPendLayout();//尝试挂起布局 返回当前布局状态
 		void EndLayout();//结束布局

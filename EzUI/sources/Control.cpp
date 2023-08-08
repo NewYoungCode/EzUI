@@ -371,6 +371,11 @@ return  defaultStyle .##_filed1.##_filed;\
 		}
 		return _FontSize;
 	}
+
+	const float& Control::GetScale()
+	{
+		return this->_scale;
+	}
 	Color  Control::GetForeColor(ControlState _state)
 	{
 		/*if (_state == ControlState::None && _nowStyle.ForeColor.valid) {
@@ -521,7 +526,6 @@ return  defaultStyle .##_filed1.##_filed;\
 	const Rect& Control::SetRect(const Rect& rect)
 	{
 		this->_rect = rect;
-
 		while (_dock != DockStyle::None && this->Parent)
 		{
 			const Rect& pRect = Parent->GetRect();
@@ -585,15 +589,19 @@ return  defaultStyle .##_filed1.##_filed;\
 		if (IsAutoHeight() && Height() != _contentSize.Height) {
 			this->SetFixedHeight(_contentSize.Height);
 			this->EndLayout();
-			this->ResumeLayout();
-			if (Parent)Parent->Invalidate();
+			if (Parent) {
+				Parent->ResumeLayout();
+				Parent->Invalidate();
+			}
 			return;
 		}
 		if (IsAutoWidth() && Width() != _contentSize.Width) {
 			this->SetFixedWidth(_contentSize.Width);
 			this->EndLayout();
-			this->ResumeLayout();
-			if (Parent)Parent->Invalidate();
+			if (Parent) {
+				Parent->ResumeLayout();
+				Parent->Invalidate();
+			}
 			return;
 		}
 		this->EndLayout();
@@ -604,6 +612,11 @@ return  defaultStyle .##_filed1.##_filed;\
 		int _width;
 		int _height;
 		for (auto& it : GetControls()) {
+
+			if (it->GetScale() != this->GetScale()) {
+				it->DispatchEvent(DpiChangeEventArgs(this->GetScale()));
+			}
+
 			_width = it->X() + it->Width();
 			if (_width > _contentSize.Width) {
 				_contentSize.Width = _width;
@@ -632,7 +645,7 @@ return  defaultStyle .##_filed1.##_filed;\
 				if (PublicData && PublicData->Notify(this, (EventArgs&)arg)) {
 					if (arg.EventType == Event::OnPaint) {
 						//如果处理了OnPaint那么只是不绘制自己 但是子控件还是需要继续绘制的
-						this->DoPaint((PaintEventArgs&)arg, false);
+						this->OnPaintBefore((PaintEventArgs&)arg, false);
 					}
 					break;
 				}
@@ -641,7 +654,7 @@ return  defaultStyle .##_filed1.##_filed;\
 				break;
 			}
 			if (arg.EventType == Event::OnPaint) {
-				this->DoPaint((PaintEventArgs&)arg, true);
+				this->OnPaintBefore((PaintEventArgs&)arg, true);
 				break;
 			}
 			if (arg.EventType == Event::OnLocation) {
@@ -774,7 +787,7 @@ return  defaultStyle .##_filed1.##_filed;\
 
 		} while (false);
 	}
-	void Control::DoPaint(PaintEventArgs& args, bool paintSelf) {
+	void Control::OnPaintBefore(PaintEventArgs& args, bool paintSelf) {
 		this->PublicData = args.PublicData;
 		if (this->IsPendLayout()) {//绘制的时候会检查时候有挂起的布局 如果有 立即让布局生效并重置布局标志
 			this->ResumeLayout();
@@ -850,36 +863,42 @@ return  defaultStyle .##_filed1.##_filed;\
 
 	void Control::OnDpiChange(const DpiChangeEventArgs& arg)
 	{
-		const float& scale = arg.Scale;
+		float scale = arg.Scale / this->_scale;
+		this->_scale = arg.Scale;
 
-		int fw = this->GetFixedWidth() * scale + 0.5;
-		int fh = this->GetFixedHeight() * scale + 0.5;
+		bool needScale = false;
+		if (scale != 1.0f) {
+			needScale = true;
+			int fw = this->GetFixedWidth() * scale + 0.5;
+			int fh = this->GetFixedHeight() * scale + 0.5;
 
-		if (fw && fh) {
-			this->SetFixedSize(Size(fw, fh));
+			if (fw && fh) {
+				this->SetFixedSize(Size(fw, fh));
+			}
+			else if (fw) {
+				this->SetFixedWidth(fw);
+			}
+			else if (fh) {
+				this->SetFixedHeight(fh);
+			}
+
+			Rect newRect = GetRect();
+			this->SetRect(newRect.Scale(scale));
+
+			this->Margin.Scale(scale);
+			this->Style.Scale(scale);
+			this->ActiveStyle.Scale(scale);
+			this->HoverStyle.Scale(scale);
 		}
-		else if (fw) {
-			this->SetFixedWidth(fw);
-		}
-		else if (fh) {
-			this->SetFixedHeight(fh);
-		}
 
-		Rect newRect = GetRect();
-		this->SetRect(newRect.Scale(scale));
-
-		this->Margin.Scale(scale);
-		this->Style.Scale(scale);
-		this->ActiveStyle.Scale(scale);
-		this->HoverStyle.Scale(scale);
-		
 		for (auto& it : GetControls()) {
 			it->DispatchEvent(arg);
 		}
-		if (this->GetScrollBar()) {
+
+		if (needScale && this->GetScrollBar()) {
 			this->GetScrollBar()->DispatchEvent(arg);
 		}
-		
+
 	}
 
 	Control::~Control()
@@ -926,6 +945,11 @@ return  defaultStyle .##_filed1.##_filed;\
 		_controls.push_back(ctl);
 		ctl->PublicData = this->PublicData;
 		ctl->Parent = this;
+
+		if (ctl->GetScale() != this->GetScale()) {
+			ctl->DispatchEvent(DpiChangeEventArgs(this->GetScale()));
+		}
+
 		ctl->TryPendLayout();
 		this->TryPendLayout();//添加控件需要将布局重新挂起
 	}
@@ -947,6 +971,9 @@ return  defaultStyle .##_filed1.##_filed;\
 		}
 		ctl->PublicData = this->PublicData;
 		ctl->Parent = this;
+		if (ctl->GetScale() != this->GetScale()) {
+			ctl->DispatchEvent(DpiChangeEventArgs(this->GetScale()));
+		}
 		ctl->TryPendLayout();
 		this->TryPendLayout();//添加控件需要将布局重新挂起
 	}

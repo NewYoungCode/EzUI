@@ -3,6 +3,7 @@ namespace EzUI {
 	WCHAR WindowClassName[]{ L"EzUI_Window" };
 	HZIP HZipResource = NULL;
 	HGLOBAL HVSResource = NULL;
+	const std::list<EzUI::MonitorInfo> MonitorInfos;
 
 	std::mutex _resourceMtx;
 	bool FindZipResource(const EString& fileName, int* index, size_t* fileSize) {

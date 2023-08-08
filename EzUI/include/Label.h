@@ -8,10 +8,8 @@ namespace EzUI {
 	protected:
 		std::wstring _wstr;
 		bool _underline = false;
-		TextLayout* _textLayout = NULL;
 	protected:
 		virtual void OnForePaint(PaintEventArgs& args) override;
-		virtual void DoPaint(PaintEventArgs& args, bool paintSelf)override;
 	public:
 		EString EllipsisText;//文字溢出将显示的文字
 	public:

@@ -1,55 +1,11 @@
 #include "Label.h"
 namespace EzUI {
 	Label::Label() {}
-	Label::~Label() {
-		if (_textLayout) {
-			delete _textLayout;
-		}
-	}
-	void Label::DoPaint(PaintEventArgs& args, bool paintSelf = true) {
-		if (IsAutoWidth() || IsAutoHeight()) {
-			int fontSize = GetFontSize();
-			std::wstring fontFamily = GetFontFamily();
-			Font font(fontFamily, fontSize);
-			args.Graphics.SetFont(font);
-			args.Graphics.SetColor(GetForeColor());
-			if (_textLayout == NULL) {
-				_textLayout = new TextLayout(_wstr, font, { Width(),Height() }, this->TextAlign);
-			}
-			if (_textLayout->GetFontSize() != fontSize || _textLayout->GetFontFamily() != fontFamily) {
-				delete _textLayout;
-				_textLayout = new TextLayout(_wstr, font, { Width(),Height() }, this->TextAlign);
-			}
-			if (IsAutoWidth() && _textLayout->Width() != Width()) {
-				this->SetFixedWidth(_textLayout->Width());
-				delete _textLayout;
-				_textLayout = NULL;
-				if (Parent) {
-					Parent->ResumeLayout();
-					Parent->Invalidate();
-				}
-				return;
-			}
-			if (IsAutoHeight() && _textLayout->Height() != Height()) {
-				this->SetFixedHeight(_textLayout->Height());
-				delete _textLayout;
-				_textLayout = NULL;
-				if (Parent) {
-					Parent->ResumeLayout();
-					Parent->Invalidate();
-				}
-				return;
-			}
-		}
-		__super::DoPaint(args, paintSelf);
-	}
+	Label::~Label() {}
 	void Label::OnForePaint(PaintEventArgs& args)
 	{
 		__super::OnForePaint(args);
-		if (_textLayout) {
-			args.Graphics.DrawString(*_textLayout);
-		}
-		else if (!_wstr.empty()) {
+		if (!_wstr.empty()) {
 			std::wstring drawText(_wstr);
 			std::wstring fontFamily = GetFontFamily();
 			int fontSize = GetFontSize();
@@ -152,6 +108,7 @@ namespace EzUI {
 	}
 	void Label::SetText(const EString& text) {
 		_wstr = text.utf16();
+		this->TryPendLayout();
 	}
 	void Label::SetUnderline(bool enable)
 	{

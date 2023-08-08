@@ -6,7 +6,6 @@
 #pragma comment(lib,"d2d1.lib")
 #pragma comment(lib,"Windowscodecs.lib")
 namespace EzUI {
-	float Scale = 1.0f;
 	namespace D2D {
 		ID2D1Factory* g_Direct2dFactory = NULL;
 		IDWriteFactory* g_WriteFactory = NULL;
@@ -331,6 +330,8 @@ namespace EzUI {
 	}
 	DXImage::DXImage(UINT width, UINT height)
 	{
+		this->Width = width;
+		this->Height = height;
 		HRESULT hr = D2D::g_ImageFactory->CreateBitmap(width, height, GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnDemand, &bitMap);
 	}
 	DXImage::DXImage(const void* data, size_t count)
@@ -545,9 +546,7 @@ namespace EzUI {
 	DXRender::DXRender(DXImage* dxImage) {
 		D2D1_RENDER_TARGET_PROPERTIES defaultOption = D2D1::RenderTargetProperties(
 			D2D1_RENDER_TARGET_TYPE_DEFAULT,
-			D2D1::PixelFormat(
-				DXGI_FORMAT_B8G8R8A8_UNORM,
-				D2D1_ALPHA_MODE_IGNORE),
+			D2D1::PixelFormat(),
 			0,
 			0,
 			D2D1_RENDER_TARGET_USAGE_NONE,
@@ -768,7 +767,10 @@ namespace EzUI {
 	{
 		render->FillGeometry(geometry, GetBrush());
 	}
-
+	void DXRender::Flush()
+	{
+		render->Flush();
+	}
 	void DXRender::DrawPath(const DXPath& path, int width)
 	{
 		render->DrawGeometry(path.Get(), GetBrush(), (FLOAT)width, this->GetStrokeStyle());

@@ -34,14 +34,12 @@ namespace EzUI {
 		RenderInitialize();
 	}
 	void Application::EnableHighDpi() {
-		MonitorInfo monitorInfo;
-		EzUI::GetMontior(&monitorInfo);
-		EzUI::Scale = monitorInfo.Scale;
+		EzUI::GetMonitors((std::list<MonitorInfo>*)&EzUI::MonitorInfos);
 		//DPI感知相关
-	//不跟随系统放大无法接收WM_DISPLAYCHANGED消息
-	//bool b = SetProcessDPIAware();
-	//SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
-	//会进入WM_DPICHANGED消息可进行自行控制缩放
+		//不跟随系统放大无法接收WM_DISPLAYCHANGED消息
+		//bool b = SetProcessDPIAware();
+		//SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+		//会进入WM_DPICHANGED消息可进行自行控制缩放
 		typedef void (WINAPI* DisableAutoDpi)(DWORD);
 		HMODULE hModNtdll = NULL;
 		if (hModNtdll = ::LoadLibraryW(L"User32.dll")) {

@@ -79,6 +79,10 @@ public:
 		//time.AutoWidth = true;
 		//time.AutoHeight = true;
 
+		songName.SetAutoSize(true);
+		time.SetAutoSize(true);
+
+		songName.Name = "autosz";
 
 		time.SetFixedWidth(50);
 		time.SetText(_songTime);

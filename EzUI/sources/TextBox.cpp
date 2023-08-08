@@ -458,7 +458,7 @@ namespace EzUI {
 			_lastWidth = Width();
 			Analysis();
 		}
-		this->SetContentSize({ _fontBox.Width ,_fontBox.Height });
+		this->SetContentSize({ _fontBox.Width ,_multiLine ? _fontBox.Height : Height() });
 		this->GetScrollBar()->RefreshScroll();
 		this->EndLayout();
 	}

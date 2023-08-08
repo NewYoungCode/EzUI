@@ -18,6 +18,8 @@ namespace EzUI {
 	//全局资源句柄
 	extern UI_EXPORT HZIP HZipResource;//zip文件中的全局资源句柄
 	extern UI_EXPORT HGLOBAL HVSResource;//vs中的资源文件句柄
+	//
+	extern const std::list<EzUI::MonitorInfo> MonitorInfos;
 	//解压文件
 	extern UI_EXPORT void UnZip(const EString& zipFileName, const EString& outPath, const EString& password = "", std::function<void(int index, int fileCount)> callback = NULL);
 	//从获取文件资源
@@ -104,6 +106,7 @@ namespace EzUI {
 	class Image :public DXImage {
 	public:
 		virtual ~Image() {}
+		Image(UINT width, UINT height) :DXImage(width, height) {}
 		Image(HBITMAP hBitmap) :DXImage(hBitmap) {}
 		Image(IStream* iStream) :DXImage(iStream) {}
 		Image(const void* data, size_t dataCount) :DXImage(data, dataCount) {}
@@ -128,6 +131,7 @@ namespace EzUI {
 	};
 	struct WindowData {
 		void* Window = NULL;//窗口类实例
+		float Scale = 1.0f;//缩放率
 		Control* FocusControl = NULL;//具有焦点的控件
 		Control* InputControl = NULL;//输入框
 		size_t PaintCount = 0;
@@ -351,7 +355,7 @@ namespace EzUI {
 	class DpiChangeEventArgs :public EventArgs {
 	public:
 		float Scale = 1.0;
-		DpiChangeEventArgs(const double& scale) :EventArgs(Event::OnDpiChange), Scale(scale) {}
+		DpiChangeEventArgs(const float& scale) :EventArgs(Event::OnDpiChange), Scale(scale) {}
 
 	};
 	// 为 OnPaint 事件提供数据。

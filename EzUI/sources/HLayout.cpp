@@ -3,7 +3,6 @@ namespace EzUI {
 	void HLayout::OnLayout()
 	{
 		int contentHeight = 0;
-
 		int fixedWidth = 0;
 		int fixedTotal = 0;
 		int count = 0;//可见控件总数
