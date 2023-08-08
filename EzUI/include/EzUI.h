@@ -18,10 +18,25 @@ namespace EzUI {
 	//全局资源句柄
 	extern UI_EXPORT HZIP HZipResource;//zip文件中的全局资源句柄
 	extern UI_EXPORT HGLOBAL HVSResource;//vs中的资源文件句柄
+	class UI_EXPORT Ziper {
+		HZIP _hZip = NULL;
+		size_t _count = 0;
+		int _numitems = 0;
+		ZIPENTRY _ze{ 0 };
+	public:
+		Ziper(const EString& fileName, const EString& password = "");
+		Ziper(void* pData, size_t len, const EString& password = "");
+		size_t GetCount();
+		bool Find(const EString& fileName, ZIPENTRY* outZe);
+		void UnZip(const ZIPENTRY& ze, void** pData);
+		void UnZip(std::function<bool(int index, const EString& fileName, void* pData, size_t len, DWORD fileAttribute)> callback);
+		void UnZip(const EString& outPath, std::function<void(int index, size_t fileCount)> callback = NULL);
+		virtual ~Ziper();
+	};
 	//
 	extern const std::list<EzUI::MonitorInfo> MonitorInfos;
 	//解压文件
-	extern UI_EXPORT void UnZip(const EString& zipFileName, const EString& outPath, const EString& password = "", std::function<void(int index, int fileCount)> callback = NULL);
+	//extern UI_EXPORT void UnZip(const EString& zipFileName, const EString& outPath, const EString& password = "", std::function<void(int index, int fileCount)> callback = NULL);
 	//从获取文件资源
 	extern UI_EXPORT bool GetResource(const EString& fileName, std::string* outData);
 	//获取当前所有监视器的信息

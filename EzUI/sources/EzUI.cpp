@@ -28,41 +28,80 @@ namespace EzUI {
 		}
 		return false;
 	}
-
-	void UnZip(const EString& zipFileName, const EString& outPath, const EString& password, std::function<void(int index, int fileCount)> callback) {
-		auto hz = OpenZip(zipFileName.utf16().c_str(), password.empty() ? NULL : password.c_str());
-		size_t count = 0;
+	///--------------------------
+	Ziper::Ziper(const EString& fileName, const EString& password) {
+		_hZip = OpenZip(fileName.utf16().c_str(), password.empty() ? NULL : password.c_str());
+		ASSERT(_hZip);
+		GetZipItem(_hZip, -1, &_ze);
+		_numitems = _ze.index;
+	}
+	Ziper::Ziper(void* pData, size_t len, const EString& password) {
+		_hZip = OpenZip(pData, len, password.empty() ? NULL : password.c_str());
+		ASSERT(_hZip);
+		GetZipItem(_hZip, -1, &_ze);
+		_numitems = _ze.index;
+	}
+	size_t Ziper::GetCount() {
+		return _numitems;
+	}
+	bool Ziper::Find(const EString& fileName, ZIPENTRY* outZe) {
+		int index = 0;
+		ZRESULT ret = FindZipItem(this->_hZip, fileName.c_str(), false, &index, outZe);
+		if (ret == 0 && outZe->unc_size != 0) {
+			return true;
+		}
+		return false;
+	}
+	void Ziper::UnZip(const ZIPENTRY& ze, void** pData) {
+		*pData = new char[ze.unc_size]{ 0 };
+		UnzipItem(HZipResource, ze.index, *pData, ze.unc_size);
+	}
+	void Ziper::UnZip(std::function<bool(int index, const EString& fileName, void* pData, size_t len, DWORD fileAttribute)> callback) {
 		ZIPENTRY ze;
-		GetZipItem(hz, -1, &ze);
-		int numitems = ze.index;
-		for (int i = 0; i < numitems; i++)
+		for (int i = 0; i < _numitems; i++)
 		{
-			GetZipItem(hz, i, &ze);
-			EString outFile = outPath + "\\" + EString(ze.name);
-			do
-			{
-				::DeleteFileW(outFile.utf16().c_str());
-				if ((ze.attr & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY) {
-					::CreateDirectoryW(outFile.utf16().c_str(), NULL);
-					break;
-				}
-				size_t fileSize = ze.unc_size;
-				if (fileSize == 0)break;
-				char* buf = new char[fileSize] {0};
-				UnzipItem(hz, ze.index, (void*)buf, fileSize);
-				std::ofstream ofs(outFile.utf16(), std::ios::binary);
-				ofs.write(buf, fileSize);
-				ofs.flush();
-				ofs.close();
+			GetZipItem(_hZip, i, &ze);
+			size_t fileSize = ze.unc_size;
+			char* buf = NULL;
+			if (fileSize != 0) {
+				buf = new char[fileSize] {0};
+				UnzipItem(_hZip, ze.index, (void*)buf, fileSize);
+			}
+			bool continue_ = callback(i, ze.name, buf, fileSize, ze.attr);
+			if (buf) {
 				delete[] buf;
-			} while (false);
-			count++;
-			if (callback) {
-				callback(i, numitems);
+			}
+			if (!continue_) {
+				break;
 			}
 		}
-		CloseZipU(hz);
 	}
+	void Ziper::UnZip(const EString& outPath, std::function<void(int index, size_t fileCount)> callback) {
+		this->UnZip([=](int index, const EString& fileName, void* pData, size_t len, DWORD fileAttribute)->bool {
+			EString outFile = outPath + "/" + fileName;
+			::DeleteFileW(outFile.utf16().c_str());
+			if ((fileAttribute & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY) {
+				//无法创建多级目录 后期需要修改
+				::CreateDirectoryW(outFile.utf16().c_str(), NULL);
+			}
+			else {
+				std::ofstream ofs(outFile.utf16(), std::ios::binary);
+				ofs.write((const char*)pData, len);
+				ofs.flush();
+				ofs.close();
+			}
+			if (callback) {
+				callback(index, GetCount());
+			}
+			return true;
+			});
+	}
+	Ziper::~Ziper() {
+		if (_hZip) {
+			CloseZipU(_hZip);
+		}
+	}
+	///--------------------------
 
 	bool GetResource(const EString& filename, std::string* outFileData) {
 		FILE* file(0);

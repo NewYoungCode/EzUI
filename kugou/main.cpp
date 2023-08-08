@@ -10,6 +10,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	Curl_Global_Init();
 
+	//Ziper zp("d:/test/xxx.zip");
+	//zp.UnZip("d:/test");
+
 	//EzUI::Application app;//不指定资源
 	EzUI::Application app("res.zip");//指定资源文件
 	//EzUI::Application app(ID_FILE,"zip","");//指定vs中资源文件
