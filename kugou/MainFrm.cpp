@@ -46,7 +46,11 @@ void MainFrm::InitForm() {
 	deskTopLrc->Style.ForeColor = Color::White;
 	//deskTopLrc->Style.BackColor = Color::Black;
 	deskTopWnd->SetLayout(deskTopLrc);
-	::SetParent(deskTopWnd->Hwnd(), global::GetWorkerW());
+
+	HWND pWnd = (HWND)0x00130D3A;// ::FindWindow(L"CvChartWindow", L"");
+	//pWnd = global::GetWorkerW();
+
+	::SetParent(deskTopWnd->Hwnd(), pWnd);
 	//deskTopWnd->Show();
 
 	//¸øÄ¬ÈÏ±³¾°Í¼Æ¬ÉèÖÃËõ·ÅÊôĞÔ
@@ -236,7 +240,8 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			if (tabCtrl->GetPageIndex() == 1) {
 				PaintEventArgs& arg = (PaintEventArgs&)args;
 				Image img(player.BuffBitmap->_bitmap);
-				arg.Graphics.DrawImage(&img, main->GetRect(), ImageSizeMode::CenterImage);
+				img.SizeMode = ImageSizeMode::CenterImage;
+				arg.Graphics.DrawImage(&img, main->GetRect());
 				return true;
 			}
 			return false;

@@ -27,7 +27,7 @@ namespace EzUI {
 		bool CheckEventPassThrough(const Event& eventType);//检查事件是否已经过滤
 		void ComputeClipRect();//计算基于父控件的裁剪区域
 	public:
-		EzUI::Margin Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数
+		Distance Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数
 		WindowData* PublicData = NULL;//窗口上的公共数据
 		int MousePassThrough = 0;//忽略的鼠标消息
 		bool Enable = true;//控件被启用 禁止状态下鼠标键盘消息将不可用

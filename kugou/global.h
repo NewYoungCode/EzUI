@@ -68,13 +68,14 @@ public:
 		del.MousePassThrough = Event::OnHover;
 
 		songName.SetText(_songName);
-	    songName.EllipsisText = "...";//文本超出容器之外采用省略号
+		songName.EllipsisText = "...";//文本超出容器之外采用省略号
 		songName.TextAlign = TextAlign::MiddleLeft;
 		songName.MousePassThrough = time.MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseDoubleClick;
 		songName.HoverStyle.FontSize = 15;
 
-	/*	songName.SetAutoSize(true);
-		time.SetAutoSize(true);*/
+	/*	songName.Padding.Left = 10;
+		songName.SetAutoHeight(true);
+		songName.SetUnderline(0,5);*/
 
 		songName.Name = "autosz";
 
@@ -263,7 +264,7 @@ namespace global {
 		return base64Text;
 	}
 
-	extern HWND _workerw ;
+	extern HWND _workerw;
 	inline BOOL CALLBACK EnumWindowsProc(_In_ HWND tophandle, _In_ LPARAM topparamhandle)
 	{
 		HWND defview = FindWindowEx(tophandle, 0, L"SHELLDLL_DefView", nullptr);

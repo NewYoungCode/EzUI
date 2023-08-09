@@ -406,7 +406,7 @@ namespace EzUI {
 	typedef  RenderType::__Rect<FLOAT> RectF;
 	typedef  RenderType::Color Color;
 
-	typedef struct Distance {
+	struct Distance {
 	public:
 		size_t Left, Top, Right, Bottom;
 		Distance() {
@@ -433,7 +433,7 @@ namespace EzUI {
 		size_t GetHSpace() {
 			return Left + Right;
 		}
-	} Margin, Padding;
+	};
 
 	enum class ImageSizeMode {
 		//
@@ -586,12 +586,13 @@ namespace EzUI {
 		字体样式 ：斜体。*/
 	};
 
-	class  IImage {
+	class IImage {
 	protected:
 		size_t _frameCount = 0;//总帧数
 		size_t _framePos = 0;//当前帧率索引
 	public:
-		EzUI::Padding Padding;// 控件与图片的距离 该数值越大 图片将越小 参考web前端
+		Distance Padding;// 控件与图片的距离 该数值越大 图片将越小 参考web前端
+		Rect Offset;//取出图像部分区域进行绘制
 		ImageSizeMode SizeMode = ImageSizeMode::Zoom;// 图像显示模式
 	public:
 		virtual ~IImage() {}
@@ -655,4 +656,4 @@ namespace EzUI {
 		}
 		return rect;
 	}
-		};
+};

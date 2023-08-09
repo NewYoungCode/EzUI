@@ -276,14 +276,14 @@ namespace EzUI {
 		void SetColor(const Color& color);//会之前必须调用
 		void SetStrokeStyle(StrokeStyle strokeStyle = StrokeStyle::Solid, int dashWidth = 3);//设置样式 虚线/实线
 		void DrawString(const TextLayout& textLayout, Point = { 0,0 });//根据已有的布局绘制文字
-		void DrawString(const std::wstring& text, const   Rect& _rect, EzUI::TextAlign textAlign);//绘制文字
+		void DrawString(const std::wstring& text, const Rect& _rect, EzUI::TextAlign textAlign);//绘制文字
 		void DrawLine(const Point& _A, const  Point& _B, int width = 1);//绘制一条线
 		void DrawRectangle(const Rect& _rect, int _radius = 0, int width = 1);//绘制矩形
 		void FillRectangle(const Rect& _rect, int _radius = 0);//填充矩形
 		void PushLayer(const Rect& rectBounds);//速度较快
 		void PushLayer(const Geometry& dxGeometry);//比较耗性能,但是可以异形抗锯齿裁剪
 		void PopLayer();//弹出最后一个裁剪
-		void DrawImage(DXImage* _image, const  Rect& _rect, const ImageSizeMode& imageSizeMode = ImageSizeMode::StretchImage, const EzUI::Padding& padding = 0, float opacity = 1.0f);//绘制图像
+		void DrawImage(DXImage* _image, const  Rect& tagRect, float opacity = 1.0f);//绘制图像
 		void SetTransform(int xOffset, int yOffset, int angle = 0);//对画布进行旋转和偏移
 		void DrawBezier(const Point& startPoint, const Bezier& points, int width = 1);//贝塞尔线
 		void DrawBezier(const Point& startPoint, std::list<Bezier>& points, int width = 1);//贝塞尔线

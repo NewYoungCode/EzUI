@@ -95,13 +95,13 @@ return  defaultStyle .##_filed1.##_filed;\
 			e.Graphics.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height });
 		}
 		if (backgroundImage != NULL) {
-			e.Graphics.DrawImage(backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height }, backgroundImage->SizeMode, backgroundImage->Padding);
+			e.Graphics.DrawImage(backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height });
 		}
 	}
 	void Control::OnForePaint(PaintEventArgs& e) {
 		Image* foreImage = this->GetForeImage();
 		if (foreImage) {
-			e.Graphics.DrawImage(foreImage, Rect{ 0,0,_rect.Width,_rect.Height }, foreImage->SizeMode, foreImage->Padding);
+			e.Graphics.DrawImage(foreImage, Rect{ 0,0,_rect.Width,_rect.Height });
 		}
 	}
 	void Control::OnBorderPaint(PaintEventArgs& e, const Border& border)

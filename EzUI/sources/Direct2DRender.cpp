@@ -720,11 +720,14 @@ namespace EzUI {
 			layers.pop_back();
 		}
 	}
-	void DXRender::DrawImage(DXImage* image, const Rect& _rect, const ImageSizeMode& imageSizeMode, const EzUI::Padding& padding, float opacity) {
+	void DXRender::DrawImage(DXImage* image, const  Rect& tagRect, float opacity) {
 		_NOREND_IMAGE_
-			if (image == NULL || image->Visible == false) return;
+			if (image->Visible == false) return;
+		const ImageSizeMode& imageSizeMode = image->SizeMode;
+		const Rect& sourceRect = image->Offset;
+		const EzUI::Distance& padding = image->Padding;
 		//计算坐标
-		Rect rect = _rect;
+		Rect rect = tagRect;
 		rect.X += padding.Left;
 		rect.Y += padding.Top;
 		rect.Width -= padding.Right * 2;
@@ -733,10 +736,22 @@ namespace EzUI {
 		image->DecodeOfRender(render);
 		//转换坐标,缩放
 		Size imgSize(image->GetWidth(), image->GetHeight());
+		if (!sourceRect.IsEmptyArea()) {
+			imgSize.Width = sourceRect.Width;
+			imgSize.Height = sourceRect.Height;
+		}
 		Rect drawRect = EzUI::Transformation(imageSizeMode, rect, imgSize);
 		//开始绘制
-		if (image->Get() == NULL) return;
-		render->DrawBitmap(image->Get(), __To_D2D_RectF(drawRect), opacity);
+		ID2D1Bitmap* bitmap = image->Get();
+		ASSERT(bitmap);
+		D2D_RECT_F drawRectF = __To_D2D_RectF(drawRect);
+		if (!sourceRect.IsEmptyArea()) {
+			D2D_RECT_F sourceRectF = __To_D2D_RectF(sourceRect);
+			render->DrawBitmap(bitmap, drawRectF, opacity, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, sourceRectF);
+		}
+		else {
+			render->DrawBitmap(bitmap, drawRectF, opacity);
+		}
 	}
 	void DXRender::DrawEllipse(const Point& point, int radiusX, int radiusY, int width)
 	{

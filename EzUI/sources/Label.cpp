@@ -2,10 +2,19 @@
 namespace EzUI {
 	Label::Label() {}
 	Label::~Label() {}
+	void Label::OnDpiChange(const DpiChangeEventArgs& args) {
+		if (args.Scale != this->GetScale()) {
+			this->Padding.Scale(args.Scale / this->GetScale());
+		}
+		__super::OnDpiChange(args);
+	}
+
 	void Label::OnForePaint(PaintEventArgs& args)
 	{
 		__super::OnForePaint(args);
 		if (!_wstr.empty()) {
+			int maxWidth = Width() - this->Padding.GetHSpace();
+			int maxHeight = Height() - this->Padding.GetVSpace();
 			std::wstring drawText(_wstr);
 			std::wstring fontFamily = GetFontFamily();
 			int fontSize = GetFontSize();
@@ -20,18 +29,19 @@ namespace EzUI {
 					ellipsisTextSize = textLayout.GetFontBox();
 				}
 				TextLayout textLayout(_wstr, font);
-				if (textLayout.GetFontBox().Width > Width()) {//当文字显示超出的时候 宽度
+
+				if (textLayout.GetFontBox().Width > maxWidth) {//当文字显示超出的时候 宽度
 					int pos = 0;
 					BOOL isTrailingHit;
 					int fontHeight;
-					textLayout.HitTestPoint({ Width(),0 }, &pos, &isTrailingHit, &fontHeight);//对文字进行命中测试
+					textLayout.HitTestPoint({ maxWidth,0 }, &pos, &isTrailingHit, &fontHeight);//对文字进行命中测试
 					drawText.erase(pos);
 					while (drawText.size() > 0)
 					{
 						//从最后往前删除文字 直到可以显示正常为止
 						drawText.erase(drawText.size() - 1, 1);
 						TextLayout textLayout(drawText, font);
-						if (textLayout.GetFontBox().Width + ellipsisTextSize.Width < Width()) {
+						if (textLayout.GetFontBox().Width + ellipsisTextSize.Width < maxWidth) {
 							drawText.append(wEllipsisText);
 							break;
 						}
@@ -39,11 +49,11 @@ namespace EzUI {
 				}
 			}
 			std::wstring viewStr = !drawText.empty() ? drawText : EllipsisText.utf16();
-			TextLayout textLayout(viewStr, font, Size(Width(), Height()), (IsAutoWidth() && IsAutoHeight()) ? TextAlign::TopLeft : this->TextAlign);
-			if (this->_underline) {//下划线
-				textLayout.SetUnderline(0, viewStr.size());
+			TextLayout textLayout(viewStr, font, Size(maxWidth, maxHeight), (IsAutoWidth() && IsAutoHeight()) ? TextAlign::TopLeft : this->TextAlign);
+			if (this->_underlineCount != 0) {//下划线
+				textLayout.SetUnderline(_underlinePos, _underlineCount);
 			}
-			args.Graphics.DrawString(textLayout);
+			args.Graphics.DrawString(textLayout, { (int)this->Padding.Left,(int)this->Padding.Top });
 		}
 	}
 
@@ -82,6 +92,12 @@ namespace EzUI {
 				this->SetText(value);
 				break;
 			}
+			if (key == "underline") {
+				size_t pos = value.find(",");
+				this->_underlinePos = std::atoi(value.substr(0, pos+1).c_str());
+				this->_underlineCount = std::atoi(value.substr(pos + 1, pos).c_str());
+				break;
+			}
 
 		} while (false);
 		__super::SetAttribute(key, value);
@@ -95,7 +111,17 @@ namespace EzUI {
 		__super::OnLayout();
 		if (IsAutoWidth() || IsAutoHeight()) {
 			Font font(GetFontFamily(), GetFontSize());
-			TextLayout text(this->_wstr, font);
+			int maxW = 0;
+			int maxH = 0;
+			if (IsAutoHeight()) {
+				maxW = Width() - this->Padding.GetHSpace();
+			}
+			if (IsAutoWidth()) {
+				maxH = Height() - this->Padding.GetVSpace();
+			}
+			maxW = maxW > 0 ? maxW : __MAXFLOAT;
+			maxH = maxH > 0 ? maxH : __MAXFLOAT;
+			TextLayout text(this->_wstr, font, Size(maxW, maxH));
 			Size box = text.GetFontBox();
 			this->SetContentSize(box);
 			if (IsAutoWidth()) {
@@ -110,9 +136,10 @@ namespace EzUI {
 		_wstr = text.utf16();
 		this->TryPendLayout();
 	}
-	void Label::SetUnderline(bool enable)
+	void Label::SetUnderline(size_t pos, size_t count)
 	{
-		_underline = enable;
+		this->_underlinePos = pos;
+		this->_underlineCount = count;
 	}
 	EString Label::GetText()const
 	{

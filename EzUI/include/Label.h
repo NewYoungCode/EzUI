@@ -5,13 +5,16 @@ namespace EzUI {
 	class UI_EXPORT  Label :
 		public Control
 	{
-	protected:
+	private:
 		std::wstring _wstr;
-		bool _underline = false;
+		size_t _underlinePos = size_t(-1);
+		size_t _underlineCount = 0;
 	protected:
 		virtual void OnForePaint(PaintEventArgs& args) override;
+		virtual void OnDpiChange(const DpiChangeEventArgs& args)override;
 	public:
 		EString EllipsisText;//文字溢出将显示的文字
+		EzUI::Distance Padding;//基于控件的文字的边距
 	public:
 		TextAlign TextAlign = TextAlign::MiddleCenter;
 		Label();
@@ -20,7 +23,7 @@ namespace EzUI {
 		virtual void ResumeLayout() override;
 		virtual void OnLayout()override;
 		void SetText(const EString& text);
-		void SetUnderline(bool enable = true);
+		void SetUnderline(size_t pos,size_t count);
 		EString GetText()const;
 	};
 };
