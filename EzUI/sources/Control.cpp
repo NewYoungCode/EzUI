@@ -589,8 +589,8 @@ return  defaultStyle .##_filed1.##_filed;\
 		if (IsAutoHeight() && Height() != _contentSize.Height) {
 			this->SetFixedHeight(_contentSize.Height);
 			this->EndLayout();
+			this->ResumeLayout();
 			if (Parent) {
-				Parent->ResumeLayout();
 				Parent->Invalidate();
 			}
 			return;
@@ -598,8 +598,8 @@ return  defaultStyle .##_filed1.##_filed;\
 		if (IsAutoWidth() && Width() != _contentSize.Width) {
 			this->SetFixedWidth(_contentSize.Width);
 			this->EndLayout();
+			this->ResumeLayout();
 			if (Parent) {
-				Parent->ResumeLayout();
 				Parent->Invalidate();
 			}
 			return;
@@ -649,9 +649,9 @@ return  defaultStyle .##_filed1.##_filed;\
 					}
 					break;
 				}
-			}
-			if (isRemove) {
-				break;
+				if (isRemove) {
+					break;
+				}
 			}
 			if (arg.EventType == Event::OnPaint) {
 				this->OnPaintBefore((PaintEventArgs&)arg, true);

@@ -91,6 +91,8 @@ namespace EzUI {
 			rect.Width = Width - rect.X;
 		} //这段代码是保证重绘区域一定是在窗口内
 		Rect::Union(_InvalidateRect, _InvalidateRect, rect);
+		//闪烁问题找到了 如果永远重绘整个客户端将不会闪烁
+		_InvalidateRect = GetClientRect();
 		_mtx.unlock();
 	}
 	void LayeredWindow::OnSize(const Size& sz) {

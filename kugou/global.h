@@ -68,7 +68,7 @@ public:
 		del.MousePassThrough = Event::OnHover;
 
 		songName.SetText(_songName);
-		songName.EllipsisText = "...";//文本超出容器之外采用省略号
+		songName.Ellipsis = "...";//文本超出容器之外采用省略号
 		songName.TextAlign = TextAlign::MiddleLeft;
 		songName.MousePassThrough = time.MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseDoubleClick;
 		songName.HoverStyle.FontSize = 15;
@@ -135,7 +135,7 @@ public:
 		Style.Border.Color = Color(245, 245, 245);
 		HoverStyle.BackColor = Color(245, 245, 245);
 
-		songName.EllipsisText = L"...";
+		songName.Ellipsis = L"...";
 		songName.SetText(s.SongName);
 		songName.TextAlign = TextAlign::MiddleLeft;
 		songName.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
@@ -153,7 +153,7 @@ public:
 		if (!s.MvHash.empty()) {
 			mv.SetAttribute("mvhash", s.MvHash);
 			mv.Style.ForeImage = Image::FromFile(L"imgs/mvicon.png");;
-			mv.Style.ForeImage->Padding = 8;
+			mv.Style.ForeImage->Margin = 8;
 			mv.Style.Cursor = LoadCursor(Cursor::HAND);
 		}
 		else {
@@ -170,7 +170,7 @@ public:
 
 		EString fileName = "imgs/" + std::to_string(s.QualityLevel) + ".png";
 		Image* img = Image::FromFile(fileName.utf16());
-		img->Padding = 8;
+		img->Margin = 8;
 		del.Style.BackImage = img;
 
 		AddControl(new HSpacer(15));

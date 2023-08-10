@@ -20,5 +20,5 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	MainFrm frm;
 	frm.Show();
 
-	return app.exec();
+	return app.Exec();
 }

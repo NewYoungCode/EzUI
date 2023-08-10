@@ -19,7 +19,10 @@ namespace EzUI {
 	}
 	void BorderlessWindow::OnRect(const Rect& rect) {
 		__super::OnRect(rect);
-		UpdateShadow();
+		if (!_firstPaint) {
+			//避免先显示阴影再显示窗口的问题
+			UpdateShadow();
+		}
 	}
 	void BorderlessWindow::Hide() {
 		__super::Hide();
@@ -53,6 +56,11 @@ namespace EzUI {
 		default:
 			break;
 		}
-		return __super::WndProc(uMsg, wParam, lParam);
+		LRESULT ret = __super::WndProc(uMsg, wParam, lParam);
+		if (_firstPaint && uMsg == WM_PAINT) {
+			_firstPaint = false;
+			UpdateShadow();
+		}
+		return ret;
 	}
 }

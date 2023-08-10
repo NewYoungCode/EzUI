@@ -7,10 +7,11 @@ namespace EzUI {
 	{
 	public:
 		VAlign ContentAlign = VAlign::Mid;
+	protected:
+		virtual void OnLayout()override;
 	public:
 		HLayout();
 		virtual ~HLayout();
-		void OnLayout()override;
 	};
 	using HBox = HLayout;
 };

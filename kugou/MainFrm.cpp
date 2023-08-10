@@ -1,6 +1,6 @@
 #include "MainFrm.h"
 #include "ComBox.h"
-MainFrm::MainFrm() :BorderlessWindow(1020, 690)
+MainFrm::MainFrm() :LayeredWindow(1020, 690)
 {
 	InitForm();
 	//托盘
@@ -16,9 +16,7 @@ void MainFrm::InitForm() {
 	//findControl
 	main = FindControl("main");
 	//第一次不显示背景图 测试无图绘制的性能
-	main->Style.BackImage->Visible = true;
-	main->Style.Border = 1;
-	main->Style.Border.Color = Color(100, 100, 100, 100);
+
 
 	tools = FindControl("tools");
 	center = FindControl("center");
@@ -100,9 +98,12 @@ void MainFrm::InitForm() {
 	OpenSongView();//
 	//设置阴影
 	//this->SetShadow(20);
+   // main->Style.Border.Radius = 40;
+	main->Style.BackImage->Visible = true;
+	main->Style.Border = 1;
+	main->Style.Border.Color = Color(100, 100, 100, 100);
 	//关闭窗口阴影
 	//this->CloseShadow();
-
 	//WM_TIMER
 }
 MainFrm::~MainFrm()
@@ -140,7 +141,7 @@ MainFrm::~MainFrm()
 }
 void MainFrm::OnClose(bool& cal) {
 	//关闭窗口时 退出消息循环 程序结束
-	Application::exit(0);
+	Application::Exit(0);
 }
 void MainFrm::OnPaint(PaintEventArgs& _arg) {
 	__super::OnPaint(_arg);
@@ -416,12 +417,11 @@ void MainFrm::Task() {
 		double rate = position / (player.Duration() * 1000.0);
 		int w = playerBar->Width() * rate;
 
+		lrcCtl.ChangePostion(position);
 		if (deskTopWnd->IsVisible()) {
 			deskTopLrc->ChangePostion(position);
 		}
-		else {
-			lrcCtl.ChangePostion(position);
-		}
+		
 		EString f1 = toTimeStr(position / 1000);
 		EString f2 = toTimeStr(player.Duration());
 		EString fen = f1 + "/" + f2;

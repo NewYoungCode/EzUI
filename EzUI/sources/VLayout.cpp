@@ -46,14 +46,16 @@ namespace EzUI {
 
 			int x = it->X();
 
-			if (ContentAlign == HAlign::Left) {
-				x = it->Margin.Left;
-			}
-			else  if (ContentAlign == HAlign::Center) {
-				x = int((this->Width() * 1.0 - width) / 2 + 0.5);
-			}
-			else if (ContentAlign == HAlign::Right) {
-				x = this->Width() - it->Margin.Right - width;
+			if (!IsAutoWidth()) {
+				if (ContentAlign == HAlign::Left) {
+					x = it->Margin.Left;
+				}
+				else  if (ContentAlign == HAlign::Center) {
+					x = int((this->Width() * 1.0 - width) / 2 + 0.5);
+				}
+				else if (ContentAlign == HAlign::Right) {
+					x = this->Width() - it->Margin.Right - width;
+				}
 			}
 
 			if (it->GetFixedHeight() > 0 || it->IsAutoHeight()) {

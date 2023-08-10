@@ -8,15 +8,8 @@ namespace EzUI {
 	{
 		void Init();
 	public:
-		static void exit(int exitCode = 0) {
-			PostQuitMessage(exitCode);
-		}
-		static std::wstring StartPath() {
-			WCHAR exeFullPath[512]{ 0 };
-			::GetModuleFileNameW(NULL, exeFullPath, 512);
-			std::wstring exeFullPathw(exeFullPath);
-			size_t pos = exeFullPathw.rfind(L"\\");
-			return exeFullPathw.substr(0, pos);
+		static void Exit(int exitCode = 0) {
+			::PostQuitMessage(exitCode);
 		}
 	public:
 		Application();
@@ -27,6 +20,6 @@ namespace EzUI {
 		//∆Ù”√∏ﬂDPI  ≈‰
 		void EnableHighDpi();
 		virtual ~Application();
-		int exec();
+		int Exec();
 	};
 };

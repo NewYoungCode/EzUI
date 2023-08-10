@@ -29,12 +29,22 @@ namespace EzUI {
 		icex.dwSize = sizeof(icex);
 		icex.dwICC = ICC_WIN95_CLASSES;  // 或者使用其他需要的控件类别
 		::InitCommonControlsEx(&icex);
-		::SetCurrentDirectoryW(Application::StartPath().c_str());
+		//设置路径
+		wchar_t wPath[MAX_PATH]{ 0 };
+		size_t count = ::GetModuleFileNameW(NULL, wPath, MAX_PATH);
+		for (int i = count - 1; i > -1; i--)
+		{
+			if (wPath[i] == L'\\') {
+				wPath[i] = 0;
+				break;
+			}
+		}
+		::SetCurrentDirectoryW(wPath);
 		::CoInitialize(NULL);//初始化com
 		RenderInitialize();
 	}
 	void Application::EnableHighDpi() {
-		EzUI::GetMonitors((std::list<MonitorInfo>*)&EzUI::MonitorInfos);
+		EzUI::GetMonitors((std::list<MonitorInfo>*) & EzUI::MonitorInfos);
 		//DPI感知相关
 		//不跟随系统放大无法接收WM_DISPLAYCHANGED消息
 		//bool b = SetProcessDPIAware();
@@ -68,7 +78,7 @@ namespace EzUI {
 		DWORD len = SizeofResource(hInst, hRsrc);
 		HVSResource = LoadResource(hInst, hRsrc);
 		HZipResource = OpenZip((void*)HVSResource, len, password.empty() ? NULL : password.c_str());
-	}
+}
 	//使用本地文件名称加载资源包
 	Application::Application(const EString& fileName, const EString& password) {
 		Init();
@@ -94,7 +104,7 @@ namespace EzUI {
 		UnregisterClassW(WindowClassName, GetModuleHandle(NULL));
 	}
 
-	int Application::exec()
+	int Application::Exec()
 	{
 		::MSG msg{ 0 };
 		while (GetMessageW(&msg, NULL, 0, 0) != 0)

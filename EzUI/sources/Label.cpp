@@ -4,7 +4,7 @@ namespace EzUI {
 	Label::~Label() {}
 	void Label::OnDpiChange(const DpiChangeEventArgs& args) {
 		if (args.Scale != this->GetScale()) {
-			this->Padding.Scale(args.Scale / this->GetScale());
+			this->TextMargin.Scale(args.Scale / this->GetScale());
 		}
 		__super::OnDpiChange(args);
 	}
@@ -13,15 +13,15 @@ namespace EzUI {
 	{
 		__super::OnForePaint(args);
 		if (!_wstr.empty()) {
-			int maxWidth = Width() - this->Padding.GetHSpace();
-			int maxHeight = Height() - this->Padding.GetVSpace();
+			int maxWidth = Width() - this->TextMargin.GetHSpace();
+			int maxHeight = Height() - this->TextMargin.GetVSpace();
 			std::wstring drawText(_wstr);
 			std::wstring fontFamily = GetFontFamily();
 			int fontSize = GetFontSize();
 			Font font(fontFamily, fontSize);
 			args.Graphics.SetFont(font);
 			args.Graphics.SetColor(GetForeColor());
-			std::wstring wEllipsisText = EllipsisText.utf16();
+			std::wstring wEllipsisText = Ellipsis.utf16();
 			if (!wEllipsisText.empty()) { //水平文本溢出的显示方案
 				Size ellipsisTextSize;
 				{
@@ -48,12 +48,12 @@ namespace EzUI {
 					}
 				}
 			}
-			std::wstring viewStr = !drawText.empty() ? drawText : EllipsisText.utf16();
+			std::wstring viewStr = !drawText.empty() ? drawText : Ellipsis.utf16();
 			TextLayout textLayout(viewStr, font, Size(maxWidth, maxHeight), (IsAutoWidth() && IsAutoHeight()) ? TextAlign::TopLeft : this->TextAlign);
 			if (this->_underlineCount != 0) {//下划线
 				textLayout.SetUnderline(_underlinePos, _underlineCount);
 			}
-			args.Graphics.DrawString(textLayout, { (int)this->Padding.Left,(int)this->Padding.Top });
+			args.Graphics.DrawString(textLayout, { (int)this->TextMargin.Left,(int)this->TextMargin.Top });
 		}
 	}
 
@@ -94,7 +94,7 @@ namespace EzUI {
 			}
 			if (key == "underline") {
 				size_t pos = value.find(",");
-				this->_underlinePos = std::atoi(value.substr(0, pos+1).c_str());
+				this->_underlinePos = std::atoi(value.substr(0, pos + 1).c_str());
 				this->_underlineCount = std::atoi(value.substr(pos + 1, pos).c_str());
 				break;
 			}
@@ -114,10 +114,10 @@ namespace EzUI {
 			int maxW = 0;
 			int maxH = 0;
 			if (IsAutoHeight()) {
-				maxW = Width() - this->Padding.GetHSpace();
+				maxW = Width() - this->TextMargin.GetHSpace();
 			}
 			if (IsAutoWidth()) {
-				maxH = Height() - this->Padding.GetVSpace();
+				maxH = Height() - this->TextMargin.GetVSpace();
 			}
 			maxW = maxW > 0 ? maxW : __MAXFLOAT;
 			maxH = maxH > 0 ? maxH : __MAXFLOAT;
@@ -125,10 +125,10 @@ namespace EzUI {
 			Size box = text.GetFontBox();
 			this->SetContentSize(box);
 			if (IsAutoWidth()) {
-				this->SetFixedWidth(box.Width);
+				this->SetFixedWidth(box.Width + this->TextMargin.GetHSpace());
 			}
 			if (IsAutoHeight()) {
-				this->SetFixedHeight(box.Height);
+				this->SetFixedHeight(box.Height + this->TextMargin.GetVSpace());
 			}
 		}
 	}

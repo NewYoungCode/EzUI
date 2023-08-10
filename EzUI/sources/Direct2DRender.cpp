@@ -725,7 +725,7 @@ namespace EzUI {
 			if (image->Visible == false) return;
 		const ImageSizeMode& imageSizeMode = image->SizeMode;
 		const Rect& sourceRect = image->Offset;
-		const EzUI::Distance& padding = image->Padding;
+		const EzUI::Distance& padding = image->Margin;
 		//¼ÆËã×ø±ê
 		Rect rect = tagRect;
 		rect.X += padding.Left;

@@ -38,16 +38,17 @@ namespace EzUI {
 
 			int y = it->Y();
 
-			if (ContentAlign == VAlign::Top) {
-				y = it->Margin.Top;
+			if (!IsAutoHeight()) {
+				if (ContentAlign == VAlign::Top) {
+					y = it->Margin.Top;
+				}
+				else  if (ContentAlign == VAlign::Mid) {
+					y = int((this->Height() * 1.0 - height) / 2 + 0.5);
+				}
+				else  if (ContentAlign == VAlign::Bottom) {
+					y = this->Height() - it->Margin.Bottom - height;
+				}
 			}
-			else  if (ContentAlign == VAlign::Mid) {
-				y = int((this->Height() * 1.0 - height) / 2 + 0.5);
-			}
-			else  if (ContentAlign == VAlign::Bottom) {
-				y = this->Height() - it->Margin.Bottom - height;
-			}
-
 			if (it->GetFixedWidth() > 0 || it->IsAutoWidth()) {
 				it->SetRect({ (int)maxRight ,y,it->GetFixedWidth() ,height });
 				maxRight += it->Width();

@@ -13,10 +13,10 @@ namespace EzUI {
 	protected:
 		virtual ControlStyle& GetStyle(const ControlState& _state)override;
 		virtual ControlStyle& GetDefaultStyle()override;
-		virtual void OnMouseClick(const MouseEventArgs&arg)override;
+		virtual void OnMouseClick(const MouseEventArgs& arg)override;
 	public:
 		CheckBox();
-		void SetAttribute(const EString& key, const EString& value)override;
+		virtual void SetAttribute(const EString& key, const EString& value)override;
 		virtual void SetCheck(bool checked);
 		virtual bool GetCheck();
 		virtual~CheckBox();

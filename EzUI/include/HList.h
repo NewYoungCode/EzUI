@@ -9,12 +9,12 @@ namespace EzUI {
 		HScrollBar hScrollBar;
 		void Init();
 		int Offset(int offset);
+	protected:
+		virtual void OnLayout()override;
+		virtual void OnChildPaint(PaintEventArgs& args)override;
 	public:
 		HList();
 		virtual ~HList();
-		virtual void OnLayout()override;
-		virtual void OnChildPaint(PaintEventArgs& args)override;
 		virtual ScrollBar* GetScrollBar()override;
-		
 	};
 };

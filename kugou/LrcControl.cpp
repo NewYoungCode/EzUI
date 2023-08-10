@@ -29,16 +29,24 @@ void LrcControl::Task()
 	{
 		return;
 	}
-	for (auto&& item : LrcList)
+
+	auto v = std::abs(offsetY);
+	int v2 = v * 0.05;
+	if (v2 == 0) {
+		v2 = 1;
+	};
+
+	for (auto& item : LrcList)
 	{
 		Lrc* lrc = item;
+
 		if (offsetY < 0)
 		{
-			lrc->point.Y += 1;
+			lrc->point.Y += v2;
 		}
-		else
+		else if (offsetY > 0)
 		{
-			lrc->point.Y -= 1;
+			lrc->point.Y -= v2;
 		}
 	}
 	Invalidate();
@@ -50,15 +58,15 @@ void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
 	{
 		Lrc& lrc = *item;
 		Rect rectangle(lrc.point.X, lrc.point.Y, Width(), (int)FontHeight);
+		auto w = EString(lrc.text).utf16();
 		Rect drawRec(GetRect());
-		//arg.Painter.DrawRectangle(Color::Gray, drawRec);
-		if (GetRect().Contains(rectangle))
-		{ 
+		if (drawRec.Contains(rectangle))
+		{
 			if (LrcNow == &lrc)
 			{
 				arg.Graphics.SetColor(Color(211, 174, 87));
-				arg.Graphics.SetFont(GetFontFamily(),GetFontSize()+3);
-				arg.Graphics.DrawString( lrc.text.utf16(), rectangle, TextAlign::MiddleCenter);
+				arg.Graphics.SetFont(GetFontFamily(), GetFontSize() + 3);
+				arg.Graphics.DrawString(lrc.text.utf16(), rectangle, TextAlign::MiddleCenter);
 			}
 			else
 			{

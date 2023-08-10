@@ -12,7 +12,10 @@ namespace EzUI {
 		POINT cursorPos;
 		::GetCursorPos(&cursorPos);
 		for (auto& it : EzUI::MonitorInfos) {
-			if (it.Rect.Contains(cursorPos.x, cursorPos.y)) {
+			Rect rect = it.Rect;
+			rect.Width = it.Physical.Width;
+			rect.Height = it.Physical.Height;
+			if (rect.Contains(cursorPos.x, cursorPos.y)) {
 				scanle = it.Scale;
 				break;
 			}

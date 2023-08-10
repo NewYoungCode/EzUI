@@ -302,10 +302,10 @@ namespace EzUI {
 		this->FontSize = this->FontSize * scale + 0.5;
 		this->Border.Scale(scale);
 		if (BackImage) {
-			BackImage->Padding.Scale(scale);
+			BackImage->Margin.Scale(scale);
 		}
 		if (ForeImage) {
-			ForeImage->Padding.Scale(scale);
+			ForeImage->Margin.Scale(scale);
 		}
 	}
 	void ControlStyle::SetStyleSheet(const EString& styleStr, const std::function<void(Image*)>& callback)

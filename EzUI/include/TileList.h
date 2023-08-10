@@ -11,11 +11,12 @@ namespace EzUI {
 		bool AutoHeight = false;//根据内容的高度自动变化
 		void Init();
 		 int Offset(int offset);
+	protected:
+		virtual void OnLayout()override;
 	public:
 		TileList();
 		virtual ~TileList();
 		virtual void Clear(bool freeList = false)override;
-		virtual void OnLayout()override;
 		virtual ScrollBar* GetScrollBar()override;
 	};
 };

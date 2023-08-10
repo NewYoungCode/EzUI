@@ -6,11 +6,12 @@ namespace EzUI {
 	{
 	public:
 		HAlign ContentAlign = HAlign::Center;
+	protected:
+		virtual void OnLayout() override;
 	public:
 		VLayout();
 		virtual ~VLayout();
-	public:
-		void OnLayout()override;
+
 	};
 	using VBox = VLayout;
 };

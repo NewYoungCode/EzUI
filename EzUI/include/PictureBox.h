@@ -9,11 +9,11 @@ namespace EzUI {
 		std::thread* _gifTask = NULL;
 	protected:
 		virtual void OnRemove()override;
+		virtual void OnForePaint(PaintEventArgs& arg)override;
 	public:
 		PictureBox();
 		virtual ~PictureBox();
 		void SetImage(Image* image);
-		virtual void OnForePaint(PaintEventArgs& arg)override;
 		virtual void SetAttribute(const EString& key, const EString& value)override;
 	};
 };
