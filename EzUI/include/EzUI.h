@@ -30,7 +30,6 @@ namespace EzUI {
 		bool Find(const EString& fileName, ZIPENTRY* outZe);
 		void UnZip(const ZIPENTRY& ze, void** pData);
 		void UnZip(std::function<bool(int index, const EString& fileName, void* pData, size_t len, DWORD fileAttribute)> callback);
-		void UnZip(const EString& outPath, std::function<void(int index, size_t fileCount)> callback = NULL);
 		virtual ~Ziper();
 	};
 	//

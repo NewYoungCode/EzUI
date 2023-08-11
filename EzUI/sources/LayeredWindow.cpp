@@ -3,7 +3,7 @@
 namespace EzUI {
 
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
-	LayeredWindow::LayeredWindow(int width, int height, HWND owner) :Window(width, height, owner, WS_POPUP | WS_MINIMIZEBOX, WS_EX_LAYERED)
+	LayeredWindow::LayeredWindow(int width, int height, HWND owner) :Window(width, height, owner,/* WS_THICKFRAME | WS_MAXIMIZEBOX |*/ WS_MINIMIZEBOX | WS_POPUP, WS_EX_LAYERED)
 	{
 		_boxShadow = new ShadowWindow(width, height, Hwnd());
 		UpdateShadow();
@@ -20,12 +20,7 @@ namespace EzUI {
 		task = new std::thread([=]() {
 			while (bRunTask)
 			{
-				bool isEmpty = false;
-				_mtx.lock();
-				isEmpty = _InvalidateRect.IsEmptyArea();
-				_mtx.unlock();
-
-				if (!isEmpty && this->IsVisible()) {
+				if (!_InvalidateRect.IsEmptyArea() && this->IsVisible()) {
 					::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
 				}
 				Sleep(1);//检测无效区域的延时
@@ -72,7 +67,6 @@ namespace EzUI {
 		}
 	}
 	void LayeredWindow::InvalidateRect(const Rect& _rect) {
-		_mtx.lock();
 		int Width = GetClientRect().Width;
 		int Height = GetClientRect().Height;
 		Rect rect = _rect;
@@ -93,7 +87,6 @@ namespace EzUI {
 		Rect::Union(_InvalidateRect, _InvalidateRect, rect);
 		//闪烁问题找到了 如果永远重绘整个客户端将不会闪烁
 		_InvalidateRect = GetClientRect();
-		_mtx.unlock();
 	}
 	void LayeredWindow::OnSize(const Size& sz) {
 		if (_winBitmap) {
@@ -115,9 +108,17 @@ namespace EzUI {
 
 	LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
+		if (uMsg == WM_NCCALCSIZE)
+		{
+			return 0;
+		}
+		if (uMsg == WM_NCACTIVATE)
+		{
+			return 0;
+		}
 		if (uMsg == WM_PAINT) //layeredWindow
 		{
-			if (_winBitmap) {
+			if (_winBitmap && !_InvalidateRect.IsEmptyArea()) {
 				//Debug::Info("%d %d %d %d", _InvalidateRect.X, _InvalidateRect.Y, _InvalidateRect.Width, _InvalidateRect.Height);
 				_winBitmap->Earse(_InvalidateRect);//清除背景
 				HDC winHDC = _winBitmap->GetDC();

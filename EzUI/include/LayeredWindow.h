@@ -8,8 +8,7 @@ namespace EzUI {
 	class  UI_EXPORT LayeredWindow :public Window
 	{
 	private:
-		std::mutex _mtx;
-		int _shadowWidth = 12;
+		int _shadowWidth = 15;
 		void PushDC(HDC hdc);
 		Rect _InvalidateRect;
 		bool bRunTask = true;

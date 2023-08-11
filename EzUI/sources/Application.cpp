@@ -2,12 +2,23 @@
 
 namespace EzUI {
 
-	LRESULT CALLBACK EzUI_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
-		WindowData* wndData = (WindowData*)UI_GET_USERDATA(hwnd);
+	LRESULT CALLBACK EzUI_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+		WindowData* wndData = (WindowData*)UI_GET_USERDATA(hWnd);
+		//if (message == WM_CREATE)
+		//{
+		//	RECT rcClient;
+		//	GetWindowRect(hWnd, &rcClient);
+		//	// Inform the application of the frame change.
+		//	SetWindowPos(hWnd,
+		//		NULL,
+		//		rcClient.left, rcClient.top,
+		//		rcClient.right - rcClient.left, rcClient.bottom - rcClient.top,
+		//		SWP_FRAMECHANGED);
+		//}
 		if (wndData) {
 			return  ((Window*)wndData->Window)->WndProc(message, wParam, lParam);
 		}
-		return ::DefWindowProcW(hwnd, message, wParam, lParam);
+		return ::DefWindowProcW(hWnd, message, wParam, lParam);
 	}
 
 	void Application::Init() {
@@ -78,7 +89,7 @@ namespace EzUI {
 		DWORD len = SizeofResource(hInst, hRsrc);
 		HVSResource = LoadResource(hInst, hRsrc);
 		HZipResource = OpenZip((void*)HVSResource, len, password.empty() ? NULL : password.c_str());
-}
+	}
 	//使用本地文件名称加载资源包
 	Application::Application(const EString& fileName, const EString& password) {
 		Init();

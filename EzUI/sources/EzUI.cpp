@@ -76,26 +76,6 @@ namespace EzUI {
 			}
 		}
 	}
-	void Ziper::UnZip(const EString& outPath, std::function<void(int index, size_t fileCount)> callback) {
-		this->UnZip([=](int index, const EString& fileName, void* pData, size_t len, DWORD fileAttribute)->bool {
-			EString outFile = outPath + "/" + fileName;
-			::DeleteFileW(outFile.utf16().c_str());
-			if ((fileAttribute & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY) {
-				//无法创建多级目录 后期需要修改
-				::CreateDirectoryW(outFile.utf16().c_str(), NULL);
-			}
-			else {
-				std::ofstream ofs(outFile.utf16(), std::ios::binary);
-				ofs.write((const char*)pData, len);
-				ofs.flush();
-				ofs.close();
-			}
-			if (callback) {
-				callback(index, GetCount());
-			}
-			return true;
-			});
-	}
 	Ziper::~Ziper() {
 		if (_hZip) {
 			CloseZipU(_hZip);

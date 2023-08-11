@@ -1,6 +1,6 @@
 #include "MainFrm.h"
 #include "ComBox.h"
-MainFrm::MainFrm() :LayeredWindow(1020, 690)
+MainFrm::MainFrm() :BorderlessWindow(1020, 690)
 {
 	InitForm();
 	//мпел
