@@ -108,14 +108,14 @@ namespace EzUI {
 
 	LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		if (uMsg == WM_NCCALCSIZE)
+		/*if (uMsg == WM_NCCALCSIZE)
 		{
 			return 0;
 		}
 		if (uMsg == WM_NCACTIVATE)
 		{
 			return 0;
-		}
+		}*/
 		if (uMsg == WM_PAINT) //layeredWindow
 		{
 			if (_winBitmap && !_InvalidateRect.IsEmptyArea()) {

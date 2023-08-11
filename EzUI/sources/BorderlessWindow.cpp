@@ -1,6 +1,6 @@
 #include "BorderlessWindow.h"
 namespace EzUI {
-	BorderlessWindow::BorderlessWindow(int width, int height, HWND owner) : Window(width, height, owner,  WS_THICKFRAME | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP, NULL)
+	BorderlessWindow::BorderlessWindow(int width, int height, HWND owner) : Window(width, height, owner, /* WS_THICKFRAME |*/ WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP, NULL)
 	{
 		_boxShadow = new ShadowWindow(width, height, Hwnd());
 		UpdateShadow();
@@ -47,14 +47,14 @@ namespace EzUI {
 				{
 					return 0;
 				}*/
-		case WM_NCCALCSIZE:
-		{
-			return 0;
-		}
-		case WM_NCACTIVATE:
-		{
-			return 0;
-		}
+		//case WM_NCCALCSIZE:
+		//{
+		//	return 0;
+		//}
+		//case WM_NCACTIVATE:
+		//{
+		//	return 0;
+		//}
 		case WM_NCHITTEST: {
 			if (!::IsZoomed(Hwnd()) && Zoom) {
 				return ZoomWindow(lParam);
