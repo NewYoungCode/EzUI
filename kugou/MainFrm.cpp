@@ -52,7 +52,9 @@ void MainFrm::InitForm() {
 	//deskTopWnd->Show();
 
 	//给默认背景图片设置缩放属性
-	main->Style.BackImage->SizeMode = ImageSizeMode::CenterImage;
+	if (main->Style.BackImage) {
+		main->Style.BackImage->SizeMode = ImageSizeMode::CenterImage;
+	}
 	////美化左侧本地列表的滚动条
 	localList->GetScrollBar()->SetWidth(9);
 	localList->GetScrollBar()->Style.Border.Radius = 9;
@@ -99,7 +101,7 @@ void MainFrm::InitForm() {
 	//设置阴影
 	//this->SetShadow(20);
    // main->Style.Border.Radius = 40;
-	main->Style.BackImage->Visible = true;
+	main->Style.BackImage->Visible = false;
 	main->Style.Border = 1;
 	main->Style.Border.Color = Color(100, 100, 100, 100);
 	//关闭窗口阴影
@@ -329,6 +331,13 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 	}
 
 	if (args.EventType == Event::OnMouseClick) {
+
+		if (sender->Name == "singer") {
+			MainFrm* m = new MainFrm();
+			m->SetSize({ 800,600 });
+			m->Show();
+		}
+
 		if (sender->Name == "deskLrc") {
 			if (deskTopWnd->IsVisible()) {
 				deskTopWnd->SetVisible(false);

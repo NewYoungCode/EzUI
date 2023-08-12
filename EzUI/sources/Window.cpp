@@ -38,7 +38,7 @@ namespace EzUI {
 		_rect.Width = width;
 		_rect.Height = height;
 
-		_hWnd = ::CreateWindowExW(ExStyle | WS_EX_ACCEPTFILES, WindowClassName, WindowClassName, WS_CLIPCHILDREN | dStyle,
+		_hWnd = ::CreateWindowExW(ExStyle | WS_EX_ACCEPTFILES, WindowClassName, WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
 			_rect.X, _rect.Y, width, height, owner, NULL, GetModuleHandle(NULL), NULL);
 		InitData(ExStyle);//设置基本数据
 	}

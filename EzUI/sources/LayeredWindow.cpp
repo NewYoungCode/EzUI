@@ -3,13 +3,14 @@
 namespace EzUI {
 
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
-	LayeredWindow::LayeredWindow(int width, int height, HWND owner) :Window(width, height, owner,/* WS_THICKFRAME | WS_MAXIMIZEBOX |*/ WS_MINIMIZEBOX | WS_POPUP, WS_EX_LAYERED)
+	LayeredWindow::LayeredWindow(int width, int height, HWND owner) :Window(width, height, owner, /*WS_THICKFRAME |*/ WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP, WS_EX_LAYERED)
 	{
 		_boxShadow = new ShadowWindow(width, height, Hwnd());
 		UpdateShadow();
 		PublicData.InvalidateRect = [=](void* _rect) ->void {
 			Rect& rect = *(Rect*)_rect;
 			this->InvalidateRect(rect);
+			//::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
 		};
 		PublicData.UpdateWindow = [=]()->void {
 			if (!_InvalidateRect.IsEmptyArea()) {
@@ -86,7 +87,7 @@ namespace EzUI {
 		} //这段代码是保证重绘区域一定是在窗口内
 		Rect::Union(_InvalidateRect, _InvalidateRect, rect);
 		//闪烁问题找到了 如果永远重绘整个客户端将不会闪烁
-		_InvalidateRect = GetClientRect();
+		//_InvalidateRect = GetClientRect();
 	}
 	void LayeredWindow::OnSize(const Size& sz) {
 		if (_winBitmap) {
@@ -108,16 +109,9 @@ namespace EzUI {
 
 	LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		/*if (uMsg == WM_NCCALCSIZE)
+		switch (uMsg)
 		{
-			return 0;
-		}
-		if (uMsg == WM_NCACTIVATE)
-		{
-			return 0;
-		}*/
-		if (uMsg == WM_PAINT) //layeredWindow
-		{
+		case WM_PAINT: {
 			if (_winBitmap && !_InvalidateRect.IsEmptyArea()) {
 				//Debug::Info("%d %d %d %d", _InvalidateRect.X, _InvalidateRect.Y, _InvalidateRect.Width, _InvalidateRect.Height);
 				_winBitmap->Earse(_InvalidateRect);//清除背景
@@ -128,10 +122,27 @@ namespace EzUI {
 			}
 			return 0;
 		}
-		if (uMsg == WM_NCHITTEST) {
+		//case WM_NCPAINT:
+		//{
+		//	return 0;
+		//}
+		//case WM_NCCALCSIZE:
+		//{
+		//	return 0;
+		//}
+		//case WM_NCACTIVATE:
+		//{
+		//	if (::IsIconic(Hwnd())) break;
+		//	return (wParam == 0) ? TRUE : FALSE;
+		//}
+		case WM_NCHITTEST: {
 			if (!::IsZoomed(Hwnd()) && Zoom) {
 				return ZoomWindow(lParam);
 			}
+			break;
+		}
+		default:
+			break;
 		}
 		return __super::WndProc(uMsg, wParam, lParam);
 	}
