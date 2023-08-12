@@ -23,6 +23,10 @@ namespace EzUI {
 		sliderRect.Width = _sliderLength;
 		return sliderRect;
 	}
+	void HScrollBar::RollTo(Control* ctl)
+	{
+
+	}
 	void HScrollBar::OnBackgroundPaint(PaintEventArgs& e) {
 		if (_sliderLength >= Width()) {
 			return;
@@ -72,10 +76,10 @@ namespace EzUI {
 			ScrollRollEventArgs sbArg;
 			sbArg.RollType = Event::OnMouseDrag;
 			sbArg.ZDelta = -offsetX;
-			Move(_sliderPos, sbArg);
+			RollTo(_sliderPos, sbArg);
 		}
 	}
-	void HScrollBar::Move(double posY, const  ScrollRollEventArgs& args) {
+	void HScrollBar::RollTo(double posY, const  ScrollRollEventArgs& args) {
 		if (OWner == NULL) return;
 		if (OWner->IsPendLayout()) {
 			OWner->ResumeLayout();
@@ -128,6 +132,6 @@ namespace EzUI {
 		args.RollType = Event::OnMouseWheel;
 		args.ZDelta = arg.ZDelta;
 		args.Speed = arg.RollCount;
-		Move(_sliderPos, args);
+		RollTo(_sliderPos, args);
 	}
 };

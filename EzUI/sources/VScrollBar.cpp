@@ -2,6 +2,26 @@
 namespace EzUI {
 	VScrollBar::VScrollBar() { }
 	VScrollBar::~VScrollBar() { }
+	void VScrollBar::RollTo(Control* ctl)
+	{
+		if (OWner->Parent && ctl->Parent == OWner) {
+			if (OWner->IsPendLayout()) {
+				OWner->ResumeLayout();
+			}
+			//控件的矩形位置
+			const Rect& ctlRect = ctl->GetRect();
+			//滚动条可滚动的长度
+			int rollLen = Height() - _sliderLength;
+			//容器内上下文总高度
+			int contentHeight = OWner->GetContentSize().Height;
+			float rollPos = static_cast<float>(ctlRect.Y) / (contentHeight - Height()) * rollLen;
+			//滚动到控件可见的位置
+			this->RollTo(rollPos,ScrollRollEventArgs(Event::None));
+			if (2) {
+				int a = 0;
+			}
+		}
+	}
 	Rect VScrollBar::GetSliderRect() {
 		Rect sliderRect(0, 0, Width(), Height());
 		sliderRect.X = X();
@@ -78,10 +98,10 @@ namespace EzUI {
 			ScrollRollEventArgs sbArg;
 			sbArg.RollType = Event::OnMouseDrag;
 			sbArg.ZDelta = -offsetY;
-			Move(_sliderPos, sbArg);
+			RollTo(_sliderPos, sbArg);
 		}
 	}
-	void VScrollBar::Move(double posY, const  ScrollRollEventArgs& args) {
+	void VScrollBar::RollTo(double posY, const  ScrollRollEventArgs& args) {
 		if (OWner == NULL) return;
 		if (OWner->IsPendLayout()) {
 			OWner->ResumeLayout();
@@ -133,6 +153,6 @@ namespace EzUI {
 		args.RollType = Event::OnMouseWheel;
 		args.ZDelta = arg.ZDelta;
 		args.Speed = arg.RollCount;
-		Move(_sliderPos, args);
+		RollTo(_sliderPos, args);
 	}
 };

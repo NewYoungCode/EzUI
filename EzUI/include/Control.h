@@ -216,7 +216,8 @@ namespace EzUI {
 			_mouseDown = false;
 		}
 	public:
-		virtual void Move(double pos, const ScrollRollEventArgs& args = Event::None) = 0;
+		virtual void RollTo(Control* ctl) = 0;
+		virtual void RollTo(double pos, const ScrollRollEventArgs& args = Event::None) = 0;
 		virtual Rect GetSliderRect() = 0;//
 		virtual void OWnerSize(const Size& ownerSize) = 0;
 		//滚动条是否已经绘制且显示
@@ -225,7 +226,7 @@ namespace EzUI {
 		virtual bool Scrollable() = 0;
 		//当OWner发生内容发生改变 请调用刷新滚动条
 		void RefreshScroll() {
-			Move(_sliderPos, Event::None);
+			RollTo(_sliderPos, Event::None);
 		};
 		ScrollBar() {
 			Style.ForeColor = Color(205, 205, 205);//the bar default backgroundcolor

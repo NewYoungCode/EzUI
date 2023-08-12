@@ -45,8 +45,8 @@ void MainFrm::InitForm() {
 	//deskTopLrc->Style.BackColor = Color::Black;
 	deskTopWnd->SetLayout(deskTopLrc);
 
-	HWND pWnd = (HWND)0x00130D3A;// ::FindWindow(L"CvChartWindow", L"");
-	//pWnd = global::GetWorkerW();
+	//HWND pWnd = ::FindWindow(L"CvChartWindow", L"");
+	HWND pWnd = global::GetWorkerW();
 
 	::SetParent(deskTopWnd->Hwnd(), pWnd);
 	//deskTopWnd->Show();
@@ -102,7 +102,7 @@ void MainFrm::InitForm() {
 	//this->SetShadow(20);
    // main->Style.Border.Radius = 40;
 	main->Style.BackImage->Visible = false;
-	main->Style.Border = 1;
+	//main->Style.Border = 1;
 	main->Style.Border.Color = Color(100, 100, 100, 100);
 	//¹Ø±Õ´°¿ÚÒõÓ°
 	//this->CloseShadow();
@@ -304,7 +304,9 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 					it->SetAttribute("SingerName", SingerName);
 					localList->AddControl(it);
 					localList->ResumeLayout();
-					localList->GetScrollBar()->Move(localList->GetContentSize().Height);
+
+					localList->GetScrollBar()->RollTo(it);
+					//localList->GetScrollBar()->Move(localList->GetContentSize().Height);
 					localList->Invalidate();
 
 					cfg->WriteValue("name", tag->SongName, hash);
@@ -333,9 +335,11 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 	if (args.EventType == Event::OnMouseClick) {
 
 		if (sender->Name == "singer") {
-			MainFrm* m = new MainFrm();
+			/*MainFrm* m = new MainFrm();
 			m->SetSize({ 800,600 });
-			m->Show();
+			m->Show();*/
+			player.OpenPath("C:\\Users\\ly\\Videos\\TubeGet\\[4K60FPS] Girls' Generation - The Boys.webm");
+			player.Play();
 		}
 
 		if (sender->Name == "deskLrc") {
@@ -430,7 +434,7 @@ void MainFrm::Task() {
 		if (deskTopWnd->IsVisible()) {
 			deskTopLrc->ChangePostion(position);
 		}
-		
+
 		EString f1 = toTimeStr(position / 1000);
 		EString f2 = toTimeStr(player.Duration());
 		EString fen = f1 + "/" + f2;

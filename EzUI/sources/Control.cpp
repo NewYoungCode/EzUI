@@ -123,16 +123,20 @@ return  defaultStyle .##_filed1.##_filed;\
 			if (!hasBorder) return;//±ß¿òÎª0²»»æÖÆ
 			e.Graphics.SetColor(borderColor);
 			if (borderLeft > 0) {
-				e.Graphics.DrawLine(Point{ 0,0 }, Point{ 0,_rect.Height }, borderLeft);
+				Rect rect(0, 0, borderLeft, Height());
+				e.Graphics.FillRectangle(rect);
 			}
 			if (borderTop > 0) {
-				e.Graphics.DrawLine(Point{ 0,0 }, Point{ _rect.Width,0 }, borderTop);
+				Rect rect(0, 0, Width(), borderTop);
+				e.Graphics.FillRectangle(rect);
 			}
 			if (borderRight > 0) {
-				e.Graphics.DrawLine(Point{ _rect.Width,0 }, Point{ _rect.Width,_rect.Height }, borderRight);
+				Rect rect(_rect.Width - borderRight, 0, borderRight, Height());
+				e.Graphics.FillRectangle(rect);
 			}
 			if (borderBottom > 0) {
-				e.Graphics.DrawLine(Point{ 0,_rect.Height }, Point{ _rect.Width,_rect.Height }, borderBottom);
+				Rect rect(0, _rect.Height - borderBottom, Width(), borderBottom);
+				e.Graphics.FillRectangle(rect);
 			}
 		}
 		else {
