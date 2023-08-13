@@ -67,6 +67,7 @@ void MainFrm::InitForm() {
 	int pos = 0;
 	//加载左侧播放过的音乐
 	for (auto&& _it : cfg->GetSections()) {
+
 		EString name = cfg->ReadString("name", "", _it);
 		int  dur = cfg->ReadInt("dur", 0, _it);
 		EString  singer = cfg->ReadString("singer", "", _it);
@@ -74,6 +75,14 @@ void MainFrm::InitForm() {
 		it->SetAttribute("FileHash", _it);
 		it->SetAttribute("SingerName", singer);
 		it->SetTips(name);
+
+		Song s;
+		s.SongName = cfg->ReadString("name", "", _it);
+		s.hash = _it;
+		s.Duration = cfg->ReadInt("dur", 0, _it);
+		s.SingerName = cfg->ReadString("singer", "", _it);
+		songs.push_back(s);
+
 		localList->AddControl(it);
 		pos++;
 	}
@@ -157,6 +166,16 @@ void MainFrm::OnPaint(PaintEventArgs& _arg) {
 	//TextLayout text2(L"你好hello word!", font, box);
 	//_arg.Graphics.DrawString(text2, { 500,300 });
 
+}
+size_t MainFrm::FindLocalSong(const EString& hash)
+{
+	for (size_t i = 0; i < songs.size(); i++)
+	{
+		if (songs[i].hash == hash) {
+			return i;
+		}
+	}
+	return size_t(-1);
 }
 void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 {
@@ -270,6 +289,9 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 
 			int dur = json["timeLength"].asInt();
 			EString playUrl = json["url"].asCString();
+
+
+
 			if (!playUrl.empty()) {
 				EString SingerName = sender->GetAttribute("SingerName");
 
@@ -299,20 +321,28 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 
 				if (dynamic_cast<SongItem2*>(sender)) {
 					Song* tag = (Song*)sender->Tag;
-					SongItem* it = new SongItem(tag->SongName, toTimeStr(dur));
-					it->SetAttribute("FileHash", hash);
-					it->SetAttribute("SingerName", SingerName);
-					localList->AddControl(it);
-					localList->ResumeLayout();
+					if (this->FindLocalSong(tag->hash) == size_t(-1)) {
+						songs.push_back(*tag);
+						SongItem* it = new SongItem(tag->SongName, toTimeStr(dur));
+						it->SetAttribute("FileHash", hash);
+						it->SetAttribute("SingerName", SingerName);
+						localList->AddControl(it);
+						localList->ResumeLayout();
 
-					localList->GetScrollBar()->RollTo(it);
-					//localList->GetScrollBar()->Move(localList->GetContentSize().Height);
-					localList->Invalidate();
+						localList->GetScrollBar()->RollTo(it);
+						//localList->GetScrollBar()->Move(localList->GetContentSize().Height);
+						localList->Invalidate();
 
-					cfg->WriteValue("name", tag->SongName, hash);
-					cfg->WriteValue("singer", tag->SingerName, hash);
-					cfg->WriteValue("dur", std::to_string(dur), hash);
+						cfg->WriteValue("name", tag->SongName, hash);
+						cfg->WriteValue("singer", tag->SingerName, hash);
+						cfg->WriteValue("dur", std::to_string(dur), hash);
+					}
 				}
+
+				this->nowSong = hash;
+				auto it = localList->FindSingleControl("FileHash", hash);
+				$(localList->GetControls()).Css("background-color:rgba(0,0,0,0)").Not(it);
+				$(it).Css("background-color:rgba(255,255,255,100)");
 
 				this->SetText(json["fileName"].asString());
 				((Label*)FindControl("songName"))->SetText(json["fileName"].asString());
@@ -341,7 +371,34 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			player.OpenPath("C:\\Users\\ly\\Videos\\TubeGet\\[4K60FPS] Girls' Generation - The Boys.webm");
 			player.Play();
 		}
-
+		if (sender->Name == "next") {
+			int pos = this->FindLocalSong(this->nowSong);
+			pos++;
+			EString hash;
+			if (pos >= songs.size()) {
+				hash = songs[0].hash;
+			}
+			else {
+				hash = songs[pos].hash;
+			}
+			auto it = localList->FindSingleControl("FileHash", hash);
+			localList->GetScrollBar()->RollTo(it);
+			it->DispatchEvent(MouseEventArgs(Event::OnMouseDoubleClick));
+		}
+		if (sender->Name == "up") {
+			int pos = this->FindLocalSong(this->nowSong);
+			pos--;
+			EString hash;
+			if (pos < 0) {
+				hash = songs[songs.size() - 1].hash;
+			}
+			else {
+				hash = songs[pos].hash;
+			}
+			auto it = localList->FindSingleControl("FileHash", hash);
+			localList->GetScrollBar()->RollTo(it);
+			it->DispatchEvent(MouseEventArgs(Event::OnMouseDoubleClick));
+		}
 		if (sender->Name == "deskLrc") {
 			if (deskTopWnd->IsVisible()) {
 				deskTopWnd->SetVisible(false);

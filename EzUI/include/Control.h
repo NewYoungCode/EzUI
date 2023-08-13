@@ -198,6 +198,8 @@ namespace EzUI {
 		double _sliderPos = 0;
 		// 滚动条的长度
 		int _sliderLength = 0;
+		//父容器的绘制偏移
+		int _offset = 0;
 	public:
 		//滚动条所属者 当所属者被移除或者被释放掉 请注意将此指针置零
 		Control* OWner = NULL;

@@ -10,16 +10,19 @@ namespace EzUI {
 			}
 			//控件的矩形位置
 			const Rect& ctlRect = ctl->GetRect();
+			if (ctlRect.Y >= 0 && ctlRect.GetBottom() <= Height()) {
+				return;
+			}
 			//滚动条可滚动的长度
 			int rollLen = Height() - _sliderLength;
 			//容器内上下文总高度
-			int contentHeight = OWner->GetContentSize().Height;
-			float rollPos = static_cast<float>(ctlRect.Y) / (contentHeight - Height()) * rollLen;
+			int contentLen = OWner->GetContentSize().Height;
+			//计算出控件应该虚拟位置
+			int ctlMaxPos = -this->_offset + ctlRect.GetBottom() - OWner->Height() / 2.0f;
+			//计算出滚动条应该滚动到的位置
+			float rollPos = float(ctlMaxPos) / (contentLen - Height()) * rollLen;
 			//滚动到控件可见的位置
-			this->RollTo(rollPos,ScrollRollEventArgs(Event::None));
-			if (2) {
-				int a = 0;
-			}
+			this->RollTo(rollPos, ScrollRollEventArgs(Event::None));
 		}
 	}
 	Rect VScrollBar::GetSliderRect() {
@@ -133,6 +136,7 @@ namespace EzUI {
 		if (distanceTotal > 0) {
 			int y = offsetY + 0.5;
 			y = -y;
+			this->_offset = y;
 			if (OffsetCallback) {
 				OffsetCallback(y);
 			}

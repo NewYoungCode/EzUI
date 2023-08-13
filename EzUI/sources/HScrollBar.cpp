@@ -25,7 +25,26 @@ namespace EzUI {
 	}
 	void HScrollBar::RollTo(Control* ctl)
 	{
-
+		if (OWner->Parent && ctl->Parent == OWner) {
+			if (OWner->IsPendLayout()) {
+				OWner->ResumeLayout();
+			}
+			//控件的矩形位置
+			const Rect& ctlRect = ctl->GetRect();
+			if (ctlRect.X >= 0 && ctlRect.GetRight() <= Width()) {
+				return;
+			}
+			//滚动条可滚动的长度
+			int rollLen = Width() - _sliderLength;
+			//容器内上下文总高度
+			int contentLen = OWner->GetContentSize().Width;
+			//计算出控件应该虚拟位置
+			int ctlMaxPos = -this->_offset + ctlRect.GetRight() - OWner->Width() / 2.0f;
+			//计算出滚动条应该滚动到的位置
+			float rollPos = float(ctlMaxPos) / (contentLen - Width()) * rollLen;
+			//滚动到控件可见的位置
+			this->RollTo(rollPos, ScrollRollEventArgs(Event::None));
+		}
 	}
 	void HScrollBar::OnBackgroundPaint(PaintEventArgs& e) {
 		if (_sliderLength >= Width()) {
@@ -112,6 +131,7 @@ namespace EzUI {
 		if (distanceTotal > 0) {
 			int x = offsetX + 0.5;
 			x = -x;
+			this->_offset = x;
 			if (OffsetCallback) {
 				OffsetCallback(x);
 			}

@@ -12,6 +12,7 @@ class MainFrm :
 	public BorderlessWindow
 {
 private:
+	std::vector<Song> songs;
 	LayeredWindow* deskTopWnd;
 	//no new 不需要释放
 	NotifyIcon ntfi;
@@ -31,6 +32,7 @@ private:
 	Image* bkImg = NULL, * headImg = NULL;
 	std::future<void>* downloadTask = NULL;
 	int lastWidth = -1;
+	EString nowSong;
 protected:
 	virtual void OnKeyDown(WPARAM wparam, LPARAM lParam)override;
 	bool OnNotify(Control* sender, EventArgs& args)override;
@@ -46,5 +48,6 @@ public:
 	virtual ~MainFrm();
 	void OnClose(bool& b) override;
 	void OnPaint(PaintEventArgs& arg)override;
+	size_t FindLocalSong(const EString& hash);
 };
 
