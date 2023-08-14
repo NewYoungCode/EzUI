@@ -36,7 +36,10 @@ namespace EzUI {
 		int contentHeight = 0;
 		int _contentWidth = offset;
 		for (auto& it : GetControls()) {
-			if (it->IsVisible() == false) continue;
+			if (it->IsVisible() == false) {
+				it->SetX(0);
+				continue;
+			}
 			//处理y坐标和margin
 			{
 				int height = it->GetFixedHeight();

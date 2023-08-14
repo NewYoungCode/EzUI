@@ -38,7 +38,10 @@ namespace EzUI {
 		int contentWidth = 0;
 		int	_maxBottom = offset;
 		for (auto& it : GetControls()) {
-			if (it->IsVisible() == false)continue;
+			if (it->IsVisible() == false) {
+				it->SetY(0);
+				continue;
+			}
 			{
 				//处理margin和x坐标
 				int	width = it->GetFixedWidth();
@@ -65,8 +68,6 @@ namespace EzUI {
 		this->SetContentWidth(contentWidth);
 		return _maxBottom;
 	}
-
-
 
 	void VList::OnChildPaint(PaintEventArgs& args) {
 		VisibleControls.clear();

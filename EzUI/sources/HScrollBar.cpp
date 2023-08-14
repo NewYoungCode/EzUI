@@ -104,6 +104,7 @@ namespace EzUI {
 			OWner->ResumeLayout();
 		}
 		int _contentLength = OWner->GetContentSize().Width;
+		//int overflowLen = _contentLength - OWner->Width();
 		if (_contentLength <= 0 || _contentLength <= OWner->Width()) {
 			_sliderLength = Width();
 			return;

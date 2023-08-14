@@ -49,7 +49,10 @@ namespace EzUI {
 		int x = 0;
 		int y = offset;
 		for (auto& _it : GetControls()) {
-			if (_it->IsVisible() == false)continue;
+			if (_it->IsVisible() == false) {
+				_it->SetLocation(Point{ 0,0 });
+				continue;
+			}
 			Control& it = *_it;
 			int _x = it.Margin.Left + it.Width();
 
