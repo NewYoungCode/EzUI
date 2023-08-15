@@ -94,6 +94,7 @@ namespace EzUI {
 		Image* GetBackImage(ControlState _state = ControlState::None);
 		Color GetBackColor(ControlState _state = ControlState::None);
 		//具有继承性样式
+		virtual HCURSOR GetHCursor();
 		Color GetForeColor(ControlState _state = ControlState::None);//获取默认控件状态下前景色
 		std::wstring GetFontFamily(ControlState _state = ControlState::None);//获取默认控件状态下字体Family
 		int GetFontSize(ControlState _state = ControlState::None);//获取默认控件状态下字体大小样式

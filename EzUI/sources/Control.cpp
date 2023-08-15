@@ -380,6 +380,17 @@ return  defaultStyle .##_filed1.##_filed;\
 	{
 		return this->_scale;
 	}
+
+	HCURSOR Control::GetHCursor() {
+		if (this->HoverStyle.Cursor != NULL) {
+			return this->HoverStyle.Cursor;
+		}
+		else if (this->Style.Cursor != NULL) {
+			return this->Style.Cursor;
+		}
+		return NULL;
+	}
+
 	Color  Control::GetForeColor(ControlState _state)
 	{
 		/*if (_state == ControlState::None && _nowStyle.ForeColor.valid) {

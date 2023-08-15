@@ -446,13 +446,24 @@ namespace EzUI {
 				Point relativePoint;
 				Control* outCtl = this->FindControl(point, &relativePoint);//找到当前控件的位置
 				if (outCtl && outCtl->Enable) {
-					if (outCtl->HoverStyle.Cursor != NULL) {
-						::SetCursor(outCtl->HoverStyle.Cursor);
-						return TRUE;
+					Control* pCtl = outCtl;
+					if ((pCtl->MousePassThrough & Event::OnHover)) {
+						while (pCtl)
+						{
+							auto cursor = pCtl->GetHCursor();
+							if (cursor) {
+								::SetCursor(cursor);
+								return TRUE;
+							}
+							pCtl = pCtl->Parent;
+						}
 					}
-					else if (outCtl->Style.Cursor != NULL) {
-						::SetCursor(outCtl->Style.Cursor);
-						return TRUE;
+					else {
+						auto cursor = pCtl->GetHCursor();
+						if (cursor) {
+							::SetCursor(cursor);
+							return TRUE;
+						}
 					}
 				}
 			}

@@ -4,7 +4,7 @@ namespace EzUI {
 	VScrollBar::~VScrollBar() { }
 	void VScrollBar::RollTo(Control* ctl)
 	{
-		if (OWner->Parent && ctl->Parent == OWner) {
+		if (ctl && OWner->Parent && ctl->Parent == OWner) {
 			if (OWner->IsPendLayout()) {
 				OWner->ResumeLayout();
 			}

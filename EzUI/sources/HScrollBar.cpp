@@ -25,7 +25,7 @@ namespace EzUI {
 	}
 	void HScrollBar::RollTo(Control* ctl)
 	{
-		if (OWner->Parent && ctl->Parent == OWner) {
+		if (ctl && OWner->Parent && ctl->Parent == OWner) {
 			if (OWner->IsPendLayout()) {
 				OWner->ResumeLayout();
 			}

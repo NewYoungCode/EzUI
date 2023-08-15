@@ -8,7 +8,7 @@ namespace EzUI {
 	class  UI_EXPORT LayeredWindow :public Window
 	{
 	private:
-		int _shadowWidth = 15;
+		int _shadowWidth = 12;
 		void PushDC(HDC hdc);
 		Rect _InvalidateRect;
 		bool bRunTask = true;
