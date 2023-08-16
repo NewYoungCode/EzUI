@@ -248,6 +248,7 @@ namespace EzUI {
 		if (bitMap) {
 			hr = render->CreateBitmapFromWicBitmap(bitMap, &d2dBitmap);
 		}
+		ASSERT(d2dBitmap);
 	}
 	UINT DXImage::GetWidth() {
 		return Width;
@@ -324,15 +325,18 @@ namespace EzUI {
 			bitMap->GetSize(&Width, &Height);
 			Init();
 		}
+		ASSERT(bitMap);
 	}
 	DXImage::DXImage(const std::wstring& file) {
 		CreateFromFile(file);
+		ASSERT(bitmapdecoder);
 	}
 	DXImage::DXImage(UINT width, UINT height)
 	{
 		this->Width = width;
 		this->Height = height;
 		HRESULT hr = D2D::g_ImageFactory->CreateBitmap(width, height, GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnDemand, &bitMap);
+		ASSERT(bitMap);
 	}
 	DXImage::DXImage(const void* data, size_t count)
 	{
@@ -352,6 +356,7 @@ namespace EzUI {
 	}
 	DXImage::DXImage(IStream* istram) {
 		CreateFormStream(istram);
+		ASSERT(bitmapdecoder);
 	}
 	DXImage::~DXImage()
 	{

@@ -923,9 +923,9 @@ return  defaultStyle .##_filed1.##_filed;\
 			PublicData = NULL;
 		}
 		//销毁控件前请先将控件从父容器中移除
-		if (Parent) {
+	/*	if (Parent) {
 			Parent->RemoveControl(this);
-		}
+		}*/
 		DestroySpacers();
 		Parent = NULL;
 	}

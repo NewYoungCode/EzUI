@@ -412,7 +412,7 @@ namespace EzUI {
 	private:
 		std::map<EString, EString> _attrs;
 	public:
-		UINT_PTR Tag = NULL;
+		void* Tag = NULL;
 	public:
 		IControl();
 		virtual ~IControl();
