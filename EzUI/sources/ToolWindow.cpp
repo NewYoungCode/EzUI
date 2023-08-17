@@ -39,9 +39,9 @@ namespace EzUI {
 		if ((cursorPos.x + width) > monitorInfo->Rect.Width) {
 			x -= width;
 		}
+		::SetWindowPos(Hwnd(), HWND_TOPMOST, x, y, width, height, NULL);
 		__super::Show(cmdShow);
 		::SetForegroundWindow(Hwnd());
-		::SetWindowPos(Hwnd(), HWND_TOPMOST, x, y, width, height, NULL);
 	}
 	void MenuWindow::OnKillFocus(HWND hWnd)
 	{

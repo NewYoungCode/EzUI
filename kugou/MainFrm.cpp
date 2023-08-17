@@ -101,7 +101,7 @@ void MainFrm::InitForm() {
 		Task();
 	};
 	//添加一些事件到窗口中的OnNotify函数进行拦截
-	player.Tag = (UINT_PTR)main;
+	player.Tag = main;
 
 	player.AddEventNotify(Event::OnPaint);
 	main->AddEventNotify(Event::OnPaint);

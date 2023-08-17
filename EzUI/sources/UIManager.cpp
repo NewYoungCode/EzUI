@@ -120,7 +120,10 @@ namespace EzUI {
 			}
 		} while (false);
 
-		freeControls.push_front(ctl);
+		//弹簧需要交给控件自行处理
+		if (dynamic_cast<Spacer*>(ctl) == NULL) {
+			freeControls.push_front(ctl);
+		}
 
 		//内联样式
 		EString inlineStyle;
@@ -421,6 +424,9 @@ namespace EzUI {
 			delete it;
 		}
 		for (auto& it : freeControls) {
+			if (it->Parent) {
+				it->Parent->RemoveControl(it);
+			}
 			delete it;
 		}
 		for (auto& it : freeImages) {

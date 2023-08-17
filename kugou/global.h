@@ -125,7 +125,7 @@ public:
 	SongItem2(const Song& s) {
 
 		song = s;
-		this->Tag = (UINT_PTR)&song;
+		this->Tag = &song;
 		SetAttribute("FileHash", s.hash);
 		SetAttribute("SingerName", s.SingerName);
 
