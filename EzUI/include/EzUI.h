@@ -129,6 +129,9 @@ namespace EzUI {
 			//从资源中获取
 			std::string data;
 			GetResource(fileOrRes, &data);
+			if (data.empty()) {
+				return NULL;
+			}
 			return new Image(data.c_str(), data.size());
 		}
 	};

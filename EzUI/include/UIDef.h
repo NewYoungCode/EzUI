@@ -42,7 +42,11 @@
 #pragma comment(lib,"imm32.lib")
 #pragma comment(lib, "Msimg32.lib")
 #ifndef ASSERT
+#ifdef _DEBUG
 #define ASSERT(expr)  _ASSERTE(expr)
+#else
+#define ASSERT(expr)  ((void)0)
+#endif
 #endif
 
 #undef LoadCursor

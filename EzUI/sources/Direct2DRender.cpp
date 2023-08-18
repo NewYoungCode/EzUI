@@ -338,9 +338,10 @@ namespace EzUI {
 		HRESULT hr = D2D::g_ImageFactory->CreateBitmap(width, height, GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnDemand, &bitMap);
 		ASSERT(bitMap);
 	}
-	DXImage::DXImage(const void* data, size_t count)
+	DXImage::DXImage(const void* data, size_t imgSize)
 	{
-		IStream* stream = SHCreateMemStream((BYTE*)data, count);
+		ASSERT(imgSize);
+		IStream* stream = SHCreateMemStream((BYTE*)data, imgSize);
 		if (stream) {
 			this->CreateFormStream(stream);
 			SafeRelease(&stream);
