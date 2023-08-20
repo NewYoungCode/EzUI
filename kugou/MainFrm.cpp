@@ -423,6 +423,8 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 		}
 		if (sender->Name == "dellocal") {//É¾³ý±¾µØ
 			SongItem* songItem = (SongItem*)sender->Parent;
+			localList->RemoveControl(songItem);
+
 			EString hash = songItem->GetAttribute("FileHash");
 			if (!hash.empty()) {
 				cfg->DeleteSection(hash);
