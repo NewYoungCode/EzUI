@@ -248,7 +248,6 @@ namespace EzUI {
 		if (bitMap) {
 			hr = render->CreateBitmapFromWicBitmap(bitMap, &d2dBitmap);
 		}
-		ASSERT(d2dBitmap);
 	}
 	UINT DXImage::GetWidth() {
 		return Width;
@@ -616,7 +615,7 @@ namespace EzUI {
 			SafeRelease(&pStrokeStyle);
 		}
 		if (strokeStyle == StrokeStyle::Dash) {
-			float* dashes = new float[2]{ (FLOAT)dashWidth, (FLOAT)dashWidth };
+			float* dashes = new float[2] { (FLOAT)dashWidth, (FLOAT)dashWidth };
 			const int count = 2;
 			D2D::g_Direct2dFactory->CreateStrokeStyle(D2D1::StrokeStyleProperties(
 				D2D1_CAP_STYLE_FLAT, D2D1_CAP_STYLE_FLAT, D2D1_CAP_STYLE_ROUND,
@@ -729,6 +728,12 @@ namespace EzUI {
 	void DXRender::DrawImage(DXImage* image, const  Rect& tagRect, float opacity) {
 		_NOREND_IMAGE_
 			if (image->Visible == false) return;
+		//解码
+		image->DecodeOfRender(render);
+		ID2D1Bitmap* bitmap = image->Get();
+		if (!bitmap) {
+			return;
+		}
 		const ImageSizeMode& imageSizeMode = image->SizeMode;
 		const Rect& sourceRect = image->Offset;
 		const EzUI::Distance& padding = image->Margin;
@@ -738,8 +743,6 @@ namespace EzUI {
 		rect.Y += padding.Top;
 		rect.Width -= padding.Right * 2;
 		rect.Height -= padding.Bottom * 2;
-		//解码
-		image->DecodeOfRender(render);
 		//转换坐标,缩放
 		Size imgSize(image->GetWidth(), image->GetHeight());
 		if (!sourceRect.IsEmptyArea()) {
@@ -748,7 +751,6 @@ namespace EzUI {
 		}
 		Rect drawRect = EzUI::Transformation(imageSizeMode, rect, imgSize);
 		//开始绘制
-		ID2D1Bitmap* bitmap = image->Get();
 		ASSERT(bitmap);
 		D2D_RECT_F drawRectF = __To_D2D_RectF(drawRect);
 		if (!sourceRect.IsEmptyArea()) {
