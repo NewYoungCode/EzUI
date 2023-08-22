@@ -2,59 +2,28 @@
 namespace EzUI {
 	PictureBox::PictureBox() {}
 	PictureBox::~PictureBox() {
-		if (_gifTask) {
-			_exit = true;
-			_gifTask->join();
-			delete _gifTask;
-		}
+		_timer.Stop();
 	}
 	void PictureBox::OnRemove() {
 		__super::OnRemove();
-		if (_gifTask) {
-			_exit = true;
-			_gifTask->join();
-			delete _gifTask;
-			_gifTask = NULL;
-		}
+		_timer.Stop();
 	}
 	void PictureBox::SetImage(Image* image) {
-		std::unique_lock<std::mutex> autoLock(_mtx);
 		_img = image;
-		if (image->FrameCount() > 1) {
-			if (_gifTask == NULL) {
-				_gifTask = new std::thread([=]() -> void {
-					for (; !_exit;) {
-						size_t pause = 0;
-						{
-							std::unique_lock<std::mutex> autoLock(_mtx);
-							if (_img) {
-								pause = _img->NextFrame();
-							}
-							bool rePaint = true;
-							if (!IsVisible()) {
-								rePaint = false;
-							}
-							if (Parent && rePaint) {
-								Rect parentRect = Rect(0, 0, Parent->Width(), Parent->Height());
-								if (!parentRect.IntersectsWith(this->GetRect())) {
-									rePaint = false;
-								}
-							}
-							if (rePaint) {
-								this->Invalidate();
-							}
-						}
-						Sleep(pause);
-					}
-					});
-			}
-		}
 	}
 	void PictureBox::OnForePaint(PaintEventArgs& arg) {
-		{
-			std::unique_lock<std::mutex> autoLock(_mtx);
-			if (_img) {
-				arg.Graphics.DrawImage(_img, Rect(0, 0, Width(), Height()));
+		if (_img) {
+			arg.Graphics.DrawImage(_img, Rect(0, 0, Width(), Height()));
+			if (_img->FrameCount() > 1) {
+				_timer.Interval = _img->NextFrame();
+				_timer.Tick = [=](Windows::Timer* timer) {
+					this->Invalidate();
+					timer->Stop();
+					};
+				_timer.Start();
+			}
+			else {
+				_timer.Stop();
 			}
 		}
 		__super::OnForePaint(arg);
