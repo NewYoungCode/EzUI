@@ -2,34 +2,27 @@
 #include "Timer.h"
 namespace EzUI {
 	namespace Thread {
-		void Timer::taskFunc() {
-			while (brun)
-			{
-				if (Tick) {
-					Tick(this);
-				}
-				Sleep(Interval);
-			}
-		}
+		Timer::Timer() {}
 		void Timer::Start() {
-			if (task) {
-				brun = true;
+			if (timer != NULL) {
 				return;
 			}
-			if (Tick) {
-				brun = true;
-				task = new std::thread(&Timer::taskFunc, this);
-			}
+			timer = ::timeSetEvent(this->Interval, 0, [](UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2) {
+				Timer* t = (Timer*)dwUser;
+				if (t->Tick) {
+					t->Tick(t);
+				}
+				}, (DWORD_PTR)this, TIME_PERIODIC);
+			ASSERT(timer);
 		}
 		void Timer::Stop() {
-			if (task) {
-				brun = false;
-				task->join();
-				delete task;
-				task = NULL;
+			if (timer) {
+				MMRESULT ret = ::timeKillEvent(timer);
+				ASSERT(!ret);
+				timer = NULL;
 			}
 		}
-		Timer::~Timer() {
+		Timer:: ~Timer() {
 			Stop();
 		}
 	}
@@ -61,16 +54,17 @@ namespace EzUI {
 			}
 		}
 		void Timer::Start() {
-			if (TimerId!=NULL) {
+			if (TimerId != NULL) {
 				return;
 			}
+			if (Interval < USER_TIMER_MINIMUM)Interval = USER_TIMER_MINIMUM;
+			if (Interval > USER_TIMER_MAXIMUM)Interval = USER_TIMER_MAXIMUM;
 			TimerId = ::SetTimer(NULL, TimerId, Interval, Windows::__TimeProc);
+			ASSERT(TimerId);
 			__InsertTimer(TimerId, (UINT_PTR)this);
 		}
 		Timer::~Timer() {
 			Stop();
 		}
 	}
-
-
 };

@@ -1,6 +1,6 @@
 #include "PictureBox.h"
 namespace EzUI {
-	PictureBox::PictureBox(){}
+	PictureBox::PictureBox() {}
 	PictureBox::~PictureBox() {
 		if (_gifTask) {
 			_exit = true;
@@ -18,32 +18,31 @@ namespace EzUI {
 		}
 	}
 	void PictureBox::SetImage(Image* image) {
-		_mtx.lock();
+		std::unique_lock<std::mutex> autoLock(_mtx);
 		_img = image;
-		_mtx.unlock();
 		if (image->FrameCount() > 1) {
 			if (_gifTask == NULL) {
 				_gifTask = new std::thread([=]() -> void {
 					for (; !_exit;) {
-						_mtx.lock();
 						size_t pause = 0;
-						if (_img) {
-							pause = _img->NextFrame();
-						}
-						_mtx.unlock();
-						bool rePaint = true;
-
-						if (!IsVisible()) {
-							rePaint = false;
-						}
-						if (Parent && rePaint) {
-							Rect parentRect = Rect(0, 0, Parent->Width(), Parent->Height());
-							if (!parentRect.IntersectsWith(this->GetRect())) {
+						{
+							std::unique_lock<std::mutex> autoLock(_mtx);
+							if (_img) {
+								pause = _img->NextFrame();
+							}
+							bool rePaint = true;
+							if (!IsVisible()) {
 								rePaint = false;
 							}
-						}
-						if (rePaint) {
-							this->Invalidate();
+							if (Parent && rePaint) {
+								Rect parentRect = Rect(0, 0, Parent->Width(), Parent->Height());
+								if (!parentRect.IntersectsWith(this->GetRect())) {
+									rePaint = false;
+								}
+							}
+							if (rePaint) {
+								this->Invalidate();
+							}
 						}
 						Sleep(pause);
 					}
@@ -52,9 +51,11 @@ namespace EzUI {
 		}
 	}
 	void PictureBox::OnForePaint(PaintEventArgs& arg) {
-		if (_img) {
+		{
 			std::unique_lock<std::mutex> autoLock(_mtx);
-			arg.Graphics.DrawImage( _img, Rect(0, 0, Width(), Height()));
+			if (_img) {
+				arg.Graphics.DrawImage(_img, Rect(0, 0, Width(), Height()));
+			}
 		}
 		__super::OnForePaint(arg);
 	}

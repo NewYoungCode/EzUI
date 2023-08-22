@@ -1,14 +1,22 @@
 #include "global.h"
 #include "MainFrm.h"
 
-
+#pragma comment(lib,"Winmm.lib")
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPWSTR    lpCmdLine,
 	_In_ int       nCmdShow)
 {
 
+#ifdef _DEBUG
+	AllocConsole();
+	FILE* fp = NULL;
+	freopen_s(&fp, "CONOUT$", "w+t", stdout);
+#endif
+
 	Curl_Global_Init();
+
+	
 
 	//Ziper zp("d:/test/xxx.zip");
 	//zp.UnZip("d:/test");

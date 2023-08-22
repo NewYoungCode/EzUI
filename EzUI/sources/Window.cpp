@@ -699,7 +699,7 @@ namespace EzUI {
 	void Window::OnMouseWheelSlower(short zDelta, const Point& point) {
 		if (__rollTimer == NULL) {
 			__rollTimer = new Windows::Timer;
-			__rollTimer->Interval = 5;
+			__rollTimer->Interval = 10;
 		}
 		__rollTimer->Tick = [this, zDelta, point](Windows::Timer* tm)->void {
 			_rollCount--;
