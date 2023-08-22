@@ -1,5 +1,6 @@
 #pragma once
 #include "Timer.h"
+#pragma comment(lib,"Winmm.lib")
 namespace EzUI {
 	namespace Thread {
 		Timer::Timer() {}
