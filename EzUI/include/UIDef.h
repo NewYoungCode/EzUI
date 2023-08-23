@@ -32,15 +32,10 @@
 #include <WinUser.h>
 #include <objbase.h>
 #include <shlwapi.h>
-#pragma comment(lib,"Shlwapi.lib")
 #include <objidl.h>
-#pragma comment(lib,"Uuid.lib")
 #include <commctrl.h>
-#pragma comment(lib, "comctl32.lib")
-//#pragma comment(lib,"odbc32.lib")
-//#pragma comment(lib,"odbccp32.lib")
-#pragma comment(lib,"imm32.lib")
-#pragma comment(lib, "Msimg32.lib")
+//#include <shellscalingapi.h>
+
 #ifndef ASSERT
 #ifdef _DEBUG
 #define ASSERT(expr)  _ASSERTE(expr)

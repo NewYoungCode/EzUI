@@ -1,5 +1,6 @@
 #pragma once
 #include "EzUI.h"
+#include <TimeAPI.h>
 namespace EzUI {
 	namespace Thread {
 		class UI_EXPORT Timer {

@@ -1,4 +1,12 @@
 #include "EzUI.h"
+#pragma comment(lib,"Shlwapi.lib")
+#pragma comment(lib,"Uuid.lib")
+#pragma comment(lib, "comctl32.lib")
+//#pragma comment(lib,"odbc32.lib")
+//#pragma comment(lib,"odbccp32.lib")
+#pragma comment(lib,"imm32.lib")
+#pragma comment(lib, "Msimg32.lib")
+//#pragma comment(lib,"Shcore.lib")
 namespace EzUI {
 	WCHAR WindowClassName[]{ L"EzUI_Window" };
 	HZIP HZipResource = NULL;

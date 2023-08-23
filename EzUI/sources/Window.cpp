@@ -567,11 +567,11 @@ namespace EzUI {
 				r.top = ((Rect*)_rect)->GetTop();
 				r.right = ((Rect*)_rect)->GetRight();
 				r.bottom = ((Rect*)_rect)->GetBottom();
-				::InvalidateRect(Hwnd(), &r, TRUE);
-			};
+				::InvalidateRect(Hwnd(), &r, FALSE);
+				};
 			PublicData.UpdateWindow = [=]()->void {
 				::UpdateWindow(Hwnd());
-			};
+				};
 		}
 
 		PublicData.RemoveControl = [=](Control* delControl)->void {
@@ -581,10 +581,10 @@ namespace EzUI {
 			if (_inputControl == delControl) {
 				_inputControl = NULL;
 			}
-		};
+			};
 		PublicData.Notify = [=](Control* sender, EventArgs& args)->bool {
 			return OnNotify(sender, args);
-		};
+			};
 		UI_SET_USERDATA(_hWnd, &PublicData);
 	}
 
@@ -713,7 +713,7 @@ namespace EzUI {
 				_rollCount = 0;
 				tm->Stop();
 			}
-		};
+			};
 		int fx = (zDelta > 0 ? -5 : 5);//滚动方向
 		if (fx != _rollSpeed) {//如果滚动方向与上次不同 即可停止
 			_rollCount = 1;//滚动一次
@@ -819,7 +819,13 @@ namespace EzUI {
 			MouseEventArgs args(Event::None);
 			args.Button = mbtn;
 			args.Location = { point.X - ctlRect.X,point.Y - ctlRect.Y };
-			if (_inputControl && mbtn == _lastBtn) {//如果焦点还在并且鼠标未移出控件内 触发click事件
+			//触发抬起事件
+			{
+				args.EventType = Event::OnMouseUp;
+				_inputControl->DispatchEvent(args);
+			}
+			//触发单击事件 如果焦点还在并且鼠标未移出控件内 
+			if (_inputControl && mbtn == _lastBtn && ctlRect.Contains(point)) {
 				args.EventType = Event::OnMouseClick;
 				_inputControl->DispatchEvent(args);
 			}
@@ -827,19 +833,13 @@ namespace EzUI {
 				POINT p1{ 0 };
 				::GetCursorPos(&p1);
 				::ScreenToClient(Hwnd(), &p1);
-				args.EventType = Event::OnMouseUp;
-				ctlRect = _inputControl->GetClientRect();
-				bool inRect = false;
 				if (ctlRect.Contains(p1.x, p1.y) && ::GetForegroundWindow() == Hwnd()) {
-					_inputControl->State = ControlState::Hover;
-					inRect = true;
+					args.EventType = Event::OnMouseEnter;//触发鼠标悬浮事件
 				}
-				_inputControl->DispatchEvent(args);//触发鼠标抬起事件
-				if (!inRect && _inputControl)
-				{
-					args.EventType = Event::OnMouseLeave;
-					_inputControl->DispatchEvent(args);//触发离开事件
+				else {
+					args.EventType = Event::OnMouseLeave;//触发鼠标离开事件
 				}
+				_inputControl->DispatchEvent(args);
 			}
 		}
 	}

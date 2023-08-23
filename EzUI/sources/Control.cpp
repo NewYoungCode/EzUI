@@ -15,16 +15,49 @@ namespace EzUI {
 	bool __IsValid(const std::wstring& value) {
 		return !value.empty();
 	}
-#define UI_BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed(ControlState _state)  { \
+
+#define UI_EXSTYLE_BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed(ControlState _state)  { \
+	if (_state == ControlState::None) {\
+		_state = this->State;\
+	}\
+	##_type _##_filed;\
+loop:\
+	Control* pControl = this;\
+	while (pControl)/*如果没有则从父控件里面查找对应的样式*/{\
+		_##_filed = pControl->GetStyle(_state). ##_filed;\
+		if (__IsValid(_##_filed)) {\
+			return _##_filed; /*如果从父控件里面查找到就返回*/\
+		}\
+		pControl = pControl->Parent;\
+	}\
+	/*如果没有active样式 则采用hover样式*/\
+	if (!__IsValid(_##_filed) && _state == ControlState::Active) {\
+		_state = ControlState::Hover;\
+		goto loop;\
+	}\
+	if (!__IsValid(_##_filed) && _state != ControlState::Static) {\
+		_state = ControlState::Static;/*如果从父样式中仍然未找到,则找静态样式*/ \
+		goto loop;\
+	}\
+	return _##_filed;\
+	}\
+
+#define UI_STYLE_BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed(ControlState _state)  { \
 /*先根据对应的状态来获取样式 */ \
 ControlStyle& stateStyle = this->GetStyle(this->State);\
 if(__IsValid(stateStyle.##_filed)){\
 	return stateStyle.##_filed; \
 }\
+/*如果没有active样式 则采用hover样式*/\
+if(this->State==ControlState::Active){\
+	if(__IsValid(this->GetStyle(ControlState::Hover).##_filed)){\
+	return this->GetStyle(ControlState::Hover).##_filed; \
+	}\
+}\
 /*获取不同的控件中默认样式 */ \
-	ControlStyle& defaultStyle = this->GetDefaultStyle(); \
+ControlStyle& defaultStyle = this->GetDefaultStyle(); \
 if(__IsValid(defaultStyle.##_filed)){\
-return  defaultStyle.##_filed;\
+	return  defaultStyle.##_filed;\
 \
 }\
 /*以上两种样式都未获取成功的情况下才采用此样式*/ \
@@ -38,8 +71,14 @@ ControlStyle& stateStyle = this->GetStyle(this->State);\
 if(__IsValid(stateStyle .##_filed1. ##_filed)){\
 	return stateStyle .##_filed1.##_filed; \
 }\
+/*如果没有active样式 则采用hover样式*/\
+if(this->State==ControlState::Active){\
+	if(__IsValid(this->GetStyle(ControlState::Hover) .##_filed1.##_filed)){\
+	return this->GetStyle(ControlState::Hover) .##_filed1.##_filed; \
+	}\
+}\
 /*获取不同的控件中默认样式 */ \
-	ControlStyle& defaultStyle = this->GetDefaultStyle(); \
+ControlStyle& defaultStyle = this->GetDefaultStyle(); \
 if(__IsValid(defaultStyle .##_filed1.##_filed)){\
 return  defaultStyle .##_filed1.##_filed;\
 \
@@ -58,9 +97,13 @@ return  defaultStyle .##_filed1.##_filed;\
 	UI_BORDER_BINDFUNC(int, Border, Bottom);
 	UI_BORDER_BINDFUNC(Color, Border, Color);
 
-	UI_BINDFUNC(Color, BackColor);
-	UI_BINDFUNC(Image*, ForeImage);
-	UI_BINDFUNC(Image*, BackImage);
+	UI_STYLE_BINDFUNC(Color, BackColor);
+	UI_STYLE_BINDFUNC(Image*, ForeImage);
+	UI_STYLE_BINDFUNC(Image*, BackImage);
+
+	UI_EXSTYLE_BINDFUNC(int, FontSize);
+	UI_EXSTYLE_BINDFUNC(Color, ForeColor);
+	UI_EXSTYLE_BINDFUNC(std::wstring, FontFamily);
 
 	Control::Control() {}
 
@@ -317,64 +360,7 @@ return  defaultStyle .##_filed1.##_filed;\
 
 		} while (false);
 	}
-	std::wstring Control::GetFontFamily(ControlState _state)
-	{
-		/*if (_state == ControlState::None && !_nowStyle.FontFamily.empty()) {
-			return _nowStyle.FontFamily;
-		}*/
-		if (_state == ControlState::None) {
-			_state = this->State;
-		}
-		std::wstring _FontFamily;
-	loop:
-		_FontFamily = this->GetStyle(_state).FontFamily; //先看看对应状态的是否有 有效字段
-		if (__IsValid(_FontFamily)) {
-			return _FontFamily;//如果当前控件里面查找到就返回
-		}
-		Control* pControl = this->Parent;
-		while (pControl)//如果没有则从父控件里面查找对应的样式
-		{
-			_FontFamily = pControl->GetStyle(_state).FontFamily;
-			if (__IsValid(_FontFamily)) {
-				return _FontFamily;//如果从父控件里面查找到就返回
-			}
-			pControl = pControl->Parent;
-		}
-		if (!__IsValid(_FontFamily) && _state != ControlState::Static) {
-			_state = ControlState::Static;//如果从父样式中仍然未找到,则找静态样式
-			goto loop;
-		}
-		return _FontFamily;
-	}
-	int  Control::GetFontSize(ControlState _state)
-	{
-		/*if (_state == ControlState::None && _nowStyle.FontSize.valid) {
-			return _nowStyle.FontSize;
-		}*/
-		if (_state == ControlState::None) {
-			_state = this->State;
-		}
-		int _FontSize;
-	loop:
-		_FontSize = this->GetStyle(_state).FontSize; //先看看对应状态的是否有 有效字段
-		if (__IsValid(_FontSize)) {
-			return _FontSize;//如果当前控件里面查找到就返回
-		}
-		Control* pControl = this->Parent;
-		while (pControl)//如果没有则从父控件里面查找对应的样式
-		{
-			_FontSize = pControl->GetStyle(_state).FontSize;
-			if (__IsValid(_FontSize)) {
-				return _FontSize;//如果从父控件里面查找到就返回
-			}
-			pControl = pControl->Parent;
-		}
-		if (!__IsValid(_FontSize) && _state != ControlState::Static) {
-			_state = ControlState::Static;//如果从父样式中仍然未找到,则找静态样式
-			goto loop;
-		}
-		return _FontSize;
-	}
+
 
 	const float& Control::GetScale()
 	{
@@ -389,36 +375,6 @@ return  defaultStyle .##_filed1.##_filed;\
 			return this->Style.Cursor;
 		}
 		return NULL;
-	}
-
-	Color  Control::GetForeColor(ControlState _state)
-	{
-		/*if (_state == ControlState::None && _nowStyle.ForeColor.valid) {
-			return _nowStyle.ForeColor;
-		}*/
-		if (_state == ControlState::None) {
-			_state = this->State;
-		}
-		Color _ForeColor;
-	loop:
-		_ForeColor = this->GetStyle(_state).ForeColor; //先看看对应状态的是否有 有效字段
-		if (__IsValid(_ForeColor)) {
-			return _ForeColor;//如果当前控件里面查找到就返回
-		}
-		Control* pControl = this->Parent;
-		while (pControl)//如果没有则从父控件里面查找对应的样式
-		{
-			_ForeColor = pControl->GetStyle(_state).ForeColor;
-			if (__IsValid(_ForeColor)) {
-				return _ForeColor;//如果从父控件里面查找到就返回
-			}
-			pControl = pControl->Parent;
-		}
-		if (!__IsValid(_ForeColor) && _state != ControlState::Static) {
-			_state = ControlState::Static;//如果从父样式中仍然未找到,则找静态样式
-			goto loop;
-		}
-		return _ForeColor;
 	}
 
 	const int& Control::X()
@@ -871,7 +827,8 @@ return  defaultStyle .##_filed1.##_filed;\
 		pt.PopLayer();//弹出
 #ifdef _DEBUG
 		if (PublicData->Debug) {
-			pt.DrawRectangle(Rect(0, 0, clientRect.Width, clientRect.Height));
+			int width = 1 * this->GetScale() + 0.5;
+			pt.DrawRectangle(Rect(0, 0, clientRect.Width, clientRect.Height), 0, width);
 		}
 #endif
 	}

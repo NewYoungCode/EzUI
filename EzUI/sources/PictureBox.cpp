@@ -11,6 +11,12 @@ namespace EzUI {
 	void PictureBox::SetImage(Image* image) {
 		_img = image;
 	}
+	void PictureBox::OnDpiChange(const DpiChangeEventArgs& args) {
+		if (args.Scale != this->GetScale() && _img) {
+			this->_img->Margin.Scale(args.Scale / this->GetScale());
+		}
+		__super::OnDpiChange(args);
+	}
 	void PictureBox::OnForePaint(PaintEventArgs& arg) {
 		if (_img) {
 			arg.Graphics.DrawImage(_img, Rect(0, 0, Width(), Height()));

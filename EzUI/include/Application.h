@@ -1,7 +1,5 @@
 #pragma once
 #include "Window.h"
-//#include <shellscalingapi.h>
-//#pragma comment(lib,"Shcore.lib")
 namespace EzUI {
 	extern LRESULT CALLBACK EzUI_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 	class UI_EXPORT Application
