@@ -45,9 +45,6 @@ namespace EzUI {
 
 	Window::~Window()
 	{
-		if (__rollTimer) {
-			delete __rollTimer;
-		}
 		if (::IsWindow(Hwnd())) {
 			::DestroyWindow(Hwnd());
 		}
@@ -514,8 +511,7 @@ namespace EzUI {
 			auto zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
 			auto xPos = GET_X_LPARAM(lParam);
 			auto yPos = GET_Y_LPARAM(lParam);
-			//OnMouseWheel(5, zDelta, { xPos,yPos });
-			OnMouseWheelSlower(zDelta, { xPos,yPos });
+			OnMouseWheel({ xPos,yPos }, zDelta);
 			break;
 		}
 		default:
@@ -696,42 +692,13 @@ namespace EzUI {
 		_mouseDown = false;
 	}
 
-	void Window::OnMouseWheelSlower(short zDelta, const Point& point) {
-		if (__rollTimer == NULL) {
-			__rollTimer = new Windows::Timer;
-			__rollTimer->Interval = 10;
-		}
-		__rollTimer->Tick = [this, zDelta, point](Windows::Timer* tm)->void {
-			_rollCount--;
-			StopWatch sw;
-			this->OnMouseWheel(_rollCount, zDelta, point);
-			time_t t = sw.ElapsedMilliseconds();
-			if (tm->Interval > 0) {
-				_rollCount -= t / tm->Interval;
-			}
-			if (_rollCount <= 0) {
-				_rollCount = 0;
-				tm->Stop();
-			}
-			};
-		int fx = (zDelta > 0 ? -5 : 5);//滚动方向
-		if (fx != _rollSpeed) {//如果滚动方向与上次不同 即可停止
-			_rollCount = 1;//滚动一次
-		}
-		else {
-			_rollCount += 3;//将滚动五次
-		}
-		_rollSpeed = fx;//控制方向与速度
-		__rollTimer->Start();
-	}
-	void Window::OnMouseWheel(int rollCount, short zDelta, const Point& point)
+	void Window::OnMouseWheel(const Point& point, int zDelta)
 	{
 		if (_focusControl == NULL) return;
 		if (_focusControl) {
 			MouseEventArgs args(Event::OnMouseWheel);
-			args.ZDelta = zDelta;
 			args.Location = point;
-			args.RollCount = rollCount;
+			args.ZDelta = zDelta;
 			_focusControl->DispatchEvent(args);
 		}
 		ScrollBar* scrollBar = NULL;
@@ -749,9 +716,8 @@ namespace EzUI {
 		}
 		if (scrollBar) {
 			MouseEventArgs args(Event::OnMouseWheel);
-			args.ZDelta = zDelta;
 			args.Location = point;
-			args.RollCount = rollCount;
+			args.ZDelta = zDelta;
 			scrollBar->DispatchEvent(args);
 
 			//取消注释即可实时跟踪控件刷新状态 但是感觉没什么必要

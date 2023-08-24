@@ -3,7 +3,7 @@
 #include <TimeAPI.h>
 namespace EzUI {
 	namespace Thread {
-		class UI_EXPORT Timer {
+		class UI_EXPORT Timer:public IControl {
 			MMRESULT timer = 0;
 		public:
 			std::function<void(Timer*)> Tick;
@@ -17,7 +17,7 @@ namespace EzUI {
 	}
 	namespace Windows {
 		//在操作UI的时候建议使用此Timer类
-		class UI_EXPORT Timer {
+		class UI_EXPORT Timer :public IControl {
 		public:
 			std::function<void(Timer*)> Tick;
 			size_t Interval = -1;

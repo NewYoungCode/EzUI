@@ -147,12 +147,11 @@ namespace EzUI {
 	}
 	void HScrollBar::OnMouseWheel(const MouseEventArgs& arg) {
 		__super::OnMouseWheel(arg);
-		auto offset = arg.RollCount;
+		auto offset = arg.ZDelta;
 		_sliderPos += (arg.ZDelta > 0 ? -offset : offset);
 		ScrollRollEventArgs args;
 		args.RollType = Event::OnMouseWheel;
 		args.ZDelta = arg.ZDelta;
-		args.Speed = arg.RollCount;
 		RollTo(_sliderPos, args);
 	}
 };

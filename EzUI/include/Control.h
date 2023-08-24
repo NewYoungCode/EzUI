@@ -228,9 +228,12 @@ namespace EzUI {
 		//滚动条是否能够滚动
 		virtual bool Scrollable() = 0;
 		//当OWner发生内容发生改变 请调用刷新滚动条
-		void RefreshScroll() {
-			RollTo(_sliderPos, Event::None);
+		virtual void RefreshScroll() {
+			RollToEx(_offset);
 		};
+		virtual void RollToEx(int offSet) {
+			RollTo(_sliderPos, Event::None);
+		}
 		ScrollBar() {
 			Style.ForeColor = Color(205, 205, 205);//the bar default backgroundcolor
 			SetSize({ 10,10 });

@@ -419,14 +419,14 @@ namespace EzUI {
 		if (!_multiLine) {//µ¥ÐÐ
 			int textWidth = _fontBox.Width;
 			if (arg.ZDelta > 0 && textWidth > Width()) {
-				_scrollX += arg.RollCount;
+				_scrollX += std::abs(arg.ZDelta) * 0.5;
 				if (_scrollX > 0) {
 					_scrollX = 0;
 				}
 				Invalidate();
 			}
 			else if (arg.ZDelta<0 && textWidth>Width()) {
-				_scrollX -= arg.RollCount;
+				_scrollX -= std::abs(arg.ZDelta)*0.5;
 				if (-_scrollX + Width() > textWidth) {
 					_scrollX = -(textWidth - Width());
 				}

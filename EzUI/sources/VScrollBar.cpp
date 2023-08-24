@@ -110,29 +110,32 @@ namespace EzUI {
 			OWner->ResumeLayout();
 		}
 		int _contentLength = OWner->GetContentSize().Height;
+
+		double sliderLength = 0;
 		//int overflowLen = _contentLength - OWner->Height();
 		if (_contentLength <= 0 || _contentLength <= OWner->Height()) {
-			_sliderLength = Height();
+			this->_sliderLength=sliderLength = Height();
 			return;
 		}
 		//计算滚动条滑块相关
 		if (Height() >= _contentLength) {
-			_sliderLength = Height();
+			sliderLength = Height();
 		}
 		else if (_contentLength) {
 			//滑块高度
-			_sliderLength = (int)(Height() * 1.0 * Height() / _contentLength);
+			sliderLength = (int)(Height() * 1.0 * Height() / _contentLength);
 		}
+		this->_sliderLength = sliderLength + 0.5f;
 		//滚动条滑块pos
 		_sliderPos = posY;
 		if (_sliderPos <= 0) { //滑块在顶部
 			_sliderPos = 0;
 		}
-		if (_sliderPos + _sliderLength >= GetRect().Height) { //滑块在最底部
-			_sliderPos = Height() - _sliderLength;
+		if (_sliderPos + sliderLength >= GetRect().Height) { //滑块在最底部
+			_sliderPos = Height() - sliderLength;
 		}
-		int distanceTotal = Height() - _sliderLength;//当前滑块可用滑道的总距离
-		double rate = distanceTotal * 1.0 / (_contentLength - OWner->Height());//滑块可用总高度 / list item高度总和 * 当前滑块坐标的坐标
+		double distanceTotal = Height() - sliderLength;//当前滑块可用滑道的总距离
+		double rate = distanceTotal / (_contentLength - OWner->Height());//滑块可用总高度 / list item高度总和 * 当前滑块坐标的坐标
 		double offsetY = _sliderPos / rate;
 		if (distanceTotal > 0) {
 			int y = offsetY + 0.5;
@@ -145,19 +148,35 @@ namespace EzUI {
 			//OWner->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
 			if (Rolling) {
 				((ScrollRollEventArgs&)args).Pos = _sliderPos;
-				((ScrollRollEventArgs&)args).Total = Height() - _sliderLength;
+				((ScrollRollEventArgs&)args).Total = Height() - sliderLength;
 				Rolling(this, args);
 			}
 		}
 	}
+	void VScrollBar::RollToEx(int offSet)
+	{
+		int ownerHeight = OWner->Height();
+		int ownerContentHeight = OWner->GetContentSize().Height;
+		int scrollBarHeight = Height();
+		//滑块位置 = 滚动距离 / (内容高度 - 自身高度) * (滚动条高度 - 滑块高度)
+		double sliderHeight = (double)ownerHeight / ownerContentHeight * scrollBarHeight;
+		//滑块位置 = 滚动距离 / (内容高度 - 自身高度) * (滚动条高度 - 滑块高度)
+		double pos = (double)offSet / (ownerContentHeight - ownerHeight) * (scrollBarHeight - sliderHeight);
+		RollTo(-pos, Event::None);
+	}
+	void VScrollBar::RefreshScroll() {
+		RollToEx(this->_offset);
+		//RollTo(_sliderPos, Event::None);
+	};
 	void VScrollBar::OnMouseWheel(const MouseEventArgs& arg) {
 		__super::OnMouseWheel(arg);
-		auto offset = arg.RollCount;
-		_sliderPos += (arg.ZDelta > 0 ? -offset : offset);
+		auto offset = arg.ZDelta;
 		ScrollRollEventArgs args;
 		args.RollType = Event::OnMouseWheel;
 		args.ZDelta = arg.ZDelta;
-		args.Speed = arg.RollCount;
-		RollTo(_sliderPos, args);
+		this->_offset += arg.ZDelta * 0.5;
+		RollToEx(this->_offset);
+		///*	_sliderPos += offset > 0 ? -5 : 5;
+			//RollTo(_sliderPos, args);*/
 	}
 };

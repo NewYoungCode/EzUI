@@ -298,16 +298,14 @@ namespace EzUI {
 	class MouseEventArgs :public EventArgs {
 	public:
 		MouseButton Button = MouseButton::None;
-		int RollCount = 0;
-		short ZDelta = 0;
+		int ZDelta = 0;//方向
 		Point Location;
 	public:
 		virtual ~MouseEventArgs() {}
-		MouseEventArgs(const Event& eventType, const Point& location = Point(0, 0), const MouseButton& mouseButton = MouseButton::None, const short& zdelta = 0, int rollCount = 0) :EventArgs(eventType) {
+		MouseEventArgs(const Event& eventType, const Point& location = Point(0, 0), const MouseButton& mouseButton = MouseButton::None, const int& ZDelta = 0) :EventArgs(eventType) {
 			this->Button = mouseButton;
-			this->ZDelta = zdelta;
 			this->Location = location;
-			this->RollCount = rollCount;
+			this->ZDelta = ZDelta;
 		}
 	};
 	//滚动条滚动事件
@@ -315,8 +313,7 @@ namespace EzUI {
 	public:
 		int Pos = 0;
 		int Total = 0;
-		int Speed = 0;
-		short ZDelta = 0;
+		int ZDelta = 0;
 		//滚动类型 一般分为三种 Event::OnMouseDrag Event::OnMouseWheel 其他
 		Event RollType = Event::None;
 	public:
