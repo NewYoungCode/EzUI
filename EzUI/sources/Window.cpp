@@ -335,6 +335,10 @@ namespace EzUI {
 			this->PublicData.Scale = systemScale;
 			DpiChangeEventArgs arg(systemScale);
 			MainLayout->DispatchEvent(arg);
+			_miniSize.Width = _miniSize.Width * newScale + 0.5;
+			_miniSize.Height = _miniSize.Height * newScale + 0.5;
+			_maxSize.Width = _maxSize.Width * newScale + 0.5;
+			_maxSize.Height = _maxSize.Height * newScale + 0.5;
 			SetWindowPos(Hwnd(), NULL, newX, newY, newWidth, newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
 			return 0;
 		}
@@ -511,7 +515,7 @@ namespace EzUI {
 			auto zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
 			auto xPos = GET_X_LPARAM(lParam);
 			auto yPos = GET_Y_LPARAM(lParam);
-			OnMouseWheel({ xPos,yPos }, zDelta);
+			OnMouseWheel(zDelta, { xPos,yPos });
 			break;
 		}
 		default:
@@ -692,7 +696,7 @@ namespace EzUI {
 		_mouseDown = false;
 	}
 
-	void Window::OnMouseWheel(const Point& point, int zDelta)
+	void Window::OnMouseWheel(int zDelta, const Point& point)
 	{
 		if (_focusControl == NULL) return;
 		if (_focusControl) {
@@ -953,4 +957,4 @@ namespace EzUI {
 		return false;
 	}
 
-};
+	};

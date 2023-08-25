@@ -13,7 +13,7 @@
 #include "HLayout.h"
 #include "VLayout.h"
 #include "Application.h"
-#include <TextBox.h>
+#include  "TextBox.h"
 
 using namespace EzUI;
 
@@ -21,7 +21,7 @@ class MainFrm :public Window {
 public:
 	MainFrm(int cx, int cy) :Window(cx, cy) {}
 	void OnClose(bool& b) {
-		Application::exit(0);
+		Application::Exit(0);
 	}
 };
 
@@ -88,9 +88,9 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
 	//Label labelBottom;
 	//labelBottom.SetText(L"这是一个简单的窗口示例!");
-	TileList list;
+	HList list;
 	list.SetParent(&mainLayout);
-	list.SetAutoHeight(true);
+	//list.SetAutoHeight(true);
 	for (size_t i = 0; i < 10; i++)
 	{
 		Label* lb = new Label;// (&list);
@@ -101,12 +101,12 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 		lb->Style.BackColor = Color::Green;
 		lb->HoverStyle.BackColor = Color::Gray;
 		lb->Margin = 1;
-		lb->EventNotify = [&list](Control* sd, const EventArgs&arg)->void {
+		lb->EventNotify = [&list](Control* sd, const EventArgs& arg)->void {
 			if (arg.EventType == Event::OnMouseClick) {
 				list.RemoveControl(sd);
 				list.Invalidate();
 			}
-		};
+			};
 		list.AddControl(lb);
 	}
 
@@ -135,7 +135,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 			text.SetMultiLine(!text.IsMultiLine());
 			text.Invalidate();
 		}
-	};
+		};
 
 
 	/*for (size_t i = 0; i < 99999; i++)
@@ -151,6 +151,6 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
 	frm.Show();//显示窗口
 
-	return app.exec();//进行消息循环
+	return app.Exec();//进行消息循环
 
 }

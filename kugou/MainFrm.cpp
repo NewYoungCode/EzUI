@@ -65,27 +65,31 @@ void MainFrm::InitForm() {
 	//集体设置右上角的最大化 最小化 关闭按钮 的悬浮效果
 	$(this->FindControl("btns")->GetControls()).CssHover("color:#ffffff;");
 	int pos = 0;
-	//加载左侧播放过的音乐
-	for (auto&& _it : cfg->GetSections()) {
+	for (size_t i = 0; i < 10; i++)
+	{
+		//加载左侧播放过的音乐
+		for (auto&& _it : cfg->GetSections()) {
 
-		EString name = cfg->ReadString("name", "", _it);
-		int  dur = cfg->ReadInt("dur", 0, _it);
-		EString  singer = cfg->ReadString("singer", "", _it);
-		SongItem* it = new SongItem(name, toTimeStr(dur));
-		it->SetAttribute("FileHash", _it);
-		it->SetAttribute("SingerName", singer);
-		it->SetTips(name);
+			EString name = cfg->ReadString("name", "", _it);
+			int  dur = cfg->ReadInt("dur", 0, _it);
+			EString  singer = cfg->ReadString("singer", "", _it);
+			SongItem* it = new SongItem(name, toTimeStr(dur));
+			it->SetAttribute("FileHash", _it);
+			it->SetAttribute("SingerName", singer);
+			it->SetTips(name);
 
-		Song s;
-		s.SongName = cfg->ReadString("name", "", _it);
-		s.hash = _it;
-		s.Duration = cfg->ReadInt("dur", 0, _it);
-		s.SingerName = cfg->ReadString("singer", "", _it);
-		songs.push_back(s);
+			Song s;
+			s.SongName = cfg->ReadString("name", "", _it);
+			s.hash = _it;
+			s.Duration = cfg->ReadInt("dur", 0, _it);
+			s.SingerName = cfg->ReadString("singer", "", _it);
+			songs.push_back(s);
 
-		localList->AddControl(it);
-		pos++;
+			localList->AddControl(it);
+			pos++;
+		}
 	}
+
 	//滚动条滚动事件 滚动条滚动到底部加载剩余音乐
 	searchList->GetScrollBar()->Rolling = [=](ScrollBar* sb, const ScrollRollEventArgs& args)->void {
 		if (args.RollType == Event::OnMouseWheel) {

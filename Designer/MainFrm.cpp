@@ -78,5 +78,5 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& arg) {
 }
 
 void MainFrm::OnClose(bool& cal) {
-	Application::exit(0);
+	Application::Exit(0);
 }

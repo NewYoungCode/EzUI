@@ -164,12 +164,12 @@ namespace EzUI {
 	};
 
 	//添加弹簧无需用户手动释放,
-	class Spacer :public Control {
+	class UI_EXPORT Spacer :public Control {
 	public:
 		virtual ~Spacer() {};
 	};
 	//具有绝对高度的 的弹簧
-	class VSpacer :public Spacer {
+	class UI_EXPORT VSpacer :public Spacer {
 	private:
 		VSpacer() {};
 	public:
@@ -179,7 +179,7 @@ namespace EzUI {
 		}
 	};
 	//具有绝对宽度的 的弹簧
-	class HSpacer :public Spacer {
+	class UI_EXPORT HSpacer :public Spacer {
 	private:
 		HSpacer() {};
 	public:
@@ -189,18 +189,26 @@ namespace EzUI {
 		}
 	};
 
-	class ScrollBar :public Control {
+	class UI_EXPORT ScrollBar :public Control {
 	protected:
 		//鼠标是否已经按下
 		bool _mouseDown = false;
 		//上一次鼠标命中的坐标
-		int  _lastPoint = 0;
-		// 滚动条当前的坐标
+		int _lastPoint = 0;
+		//滚动条当前的坐标
 		double _sliderPos = 0;
-		// 滚动条的长度
+		//滚动条的长度
 		int _sliderLength = 0;
-		//父容器的绘制偏移
+		//滚动条每滚动一次的比率
+		double _rollRate = 0;
+		//父容器内的坐标偏移
 		int _offset = 0;
+		//父容器的内容长度
+		int _contentLength = 0;
+		//父容器可见长度(容器自身长度)
+		int _viewLength = 0;
+		//溢出容器的长度
+		int _overflowLength = 0;
 	public:
 		//滚动条所属者 当所属者被移除或者被释放掉 请注意将此指针置零
 		Control* OWner = NULL;
@@ -208,36 +216,24 @@ namespace EzUI {
 		std::function<void(int)> OffsetCallback = NULL;
 		std::function<void(ScrollBar*, const ScrollRollEventArgs&)> Rolling = NULL;//滚动事件
 	protected:
-		virtual void OnMouseUp(const MouseEventArgs& arg)override
-		{
-			__super::OnMouseUp(arg);
-			_mouseDown = false;
-		}
-		virtual void OnMouseLeave(const MouseEventArgs& arg) override
-		{
-			__super::OnMouseLeave(arg);
-			_mouseDown = false;
-		}
+		virtual void OnBackgroundPaint(PaintEventArgs& arg)override;
+		virtual void OnForePaint(PaintEventArgs& args) override;
+		virtual void OnMouseUp(const MouseEventArgs& arg)override;
+		virtual void OnMouseLeave(const MouseEventArgs& arg) override;
+		virtual void OnMouseWheel(const MouseEventArgs& arg)override;
+		virtual void GetInfo(int* viewLength, int* contentLength, int* scrollBarLength) = 0;
 	public:
 		virtual void RollTo(Control* ctl) = 0;
-		virtual void RollTo(double pos, const ScrollRollEventArgs& args = Event::None) = 0;
+		void RollTo(double pos, const ScrollRollEventArgs& args = Event::None);
 		virtual Rect GetSliderRect() = 0;//
 		virtual void OWnerSize(const Size& ownerSize) = 0;
 		//滚动条是否已经绘制且显示
-		virtual bool IsDraw() = 0;
+		bool IsDraw();
 		//滚动条是否能够滚动
-		virtual bool Scrollable() = 0;
+		bool Scrollable();
 		//当OWner发生内容发生改变 请调用刷新滚动条
-		virtual void RefreshScroll() {
-			RollToEx(_offset);
-		};
-		virtual void RollToEx(int offSet) {
-			RollTo(_sliderPos, Event::None);
-		}
-		ScrollBar() {
-			Style.ForeColor = Color(205, 205, 205);//the bar default backgroundcolor
-			SetSize({ 10,10 });
-		}
-		virtual ~ScrollBar() {}
+		void RefreshScroll();
+		ScrollBar();
+		virtual ~ScrollBar();
 	};
 };

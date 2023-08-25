@@ -35,7 +35,7 @@ namespace EzUI {
 		void MoveWindow();//鼠标按下移动窗口
 		virtual void OnMouseMove(const Point& point);//鼠标移动时发生
 		virtual void OnMouseLeave();//鼠标离开时发生
-		virtual void OnMouseWheel(const Point& point,int zDelta);//鼠标滚动发生
+		virtual void OnMouseWheel(int zDelta,const Point& point);//鼠标滚动发生
 		virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point);//鼠标双击是发生
 		virtual void OnMouseDown(MouseButton mbtn, const Point& point);//鼠标按下时发生
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point);//鼠标弹起时发生

@@ -16,7 +16,7 @@ namespace EzUI {
 		return !value.empty();
 	}
 
-#define UI_EXSTYLE_BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed(ControlState _state)  { \
+#define UI_SUPER_STYLE_BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed(ControlState _state)  { \
 	if (_state == ControlState::None) {\
 		_state = this->State;\
 	}\
@@ -86,6 +86,9 @@ return  defaultStyle .##_filed1.##_filed;\
 /*以上两种样式都未获取成功的情况下才采用此样式*/ \
 	return this->Style .##_filed1.##_filed;\
 }\
+//end
+};
+namespace EzUI {
 
 	UI_BORDER_BINDFUNC(int, Border, TopLeftRadius);
 	UI_BORDER_BINDFUNC(int, Border, TopRightRadius);
@@ -101,12 +104,11 @@ return  defaultStyle .##_filed1.##_filed;\
 	UI_STYLE_BINDFUNC(Image*, ForeImage);
 	UI_STYLE_BINDFUNC(Image*, BackImage);
 
-	UI_EXSTYLE_BINDFUNC(int, FontSize);
-	UI_EXSTYLE_BINDFUNC(Color, ForeColor);
-	UI_EXSTYLE_BINDFUNC(std::wstring, FontFamily);
+	UI_SUPER_STYLE_BINDFUNC(int, FontSize);
+	UI_SUPER_STYLE_BINDFUNC(Color, ForeColor);
+	UI_SUPER_STYLE_BINDFUNC(std::wstring, FontFamily);
 
 	Control::Control() {}
-
 	void Control::OnChildPaint(PaintEventArgs& args)
 	{
 		VisibleControls = GetControls();
@@ -121,13 +123,11 @@ return  defaultStyle .##_filed1.##_filed;\
 			args.Graphics.SetTransform(offset.X, offset.Y);
 		}
 	}
-
 	void Control::OnPaint(PaintEventArgs& args)
 	{
 		OnBackgroundPaint(args);//先绘制背景
 		OnForePaint(args);//再绘制前景
 	}
-
 	void Control::OnBackgroundPaint(PaintEventArgs& e)
 	{
 		const Color& backgroundColor = this->GetBackColor();
@@ -191,7 +191,6 @@ return  defaultStyle .##_filed1.##_filed;\
 			e.Graphics.DrawGeometry(rr.Get(), maxBorder);
 		}
 	}
-
 	ControlStyle& Control::GetStyle(const ControlState& _state) {
 		if (_state == ControlState::Static) {
 			return this->Style;
@@ -226,7 +225,6 @@ return  defaultStyle .##_filed1.##_filed;\
 		} while (false);
 
 	}
-
 	void Control::SetAttribute(const EString& attrName, const EString& attrValue)
 	{
 		__super::SetAttribute(attrName, attrValue);
@@ -360,13 +358,10 @@ return  defaultStyle .##_filed1.##_filed;\
 
 		} while (false);
 	}
-
-
 	const float& Control::GetScale()
 	{
 		return this->_scale;
 	}
-
 	HCURSOR Control::GetHCursor() {
 		if (this->HoverStyle.Cursor != NULL) {
 			return this->HoverStyle.Cursor;
@@ -376,7 +371,6 @@ return  defaultStyle .##_filed1.##_filed;\
 		}
 		return NULL;
 	}
-
 	const int& Control::X()
 	{
 		return _rect.X;
@@ -424,7 +418,6 @@ return  defaultStyle .##_filed1.##_filed;\
 	{
 		return _rect;
 	}
-
 	void Control::SetFixedWidth(const int& fixedWidth)
 	{
 		_fixedSize.Width = fixedWidth;
@@ -456,11 +449,9 @@ return  defaultStyle .##_filed1.##_filed;\
 		}
 		return false;
 	}
-
 	bool Control::IsPendLayout() {
 		return this->_layoutState == LayoutState::Pend;
 	}
-
 	const LayoutState& Control::TryPendLayout() {
 		if (this->_layoutState == LayoutState::None) {
 			this->_layoutState = LayoutState::Pend;
@@ -470,7 +461,6 @@ return  defaultStyle .##_filed1.##_filed;\
 	void Control::EndLayout() {
 		this->_layoutState = LayoutState::None;
 	}
-
 	Rect Control::GetClientRect() {
 		Control* pCtrl = this;
 		const Rect& rect = GetRect();
@@ -668,7 +658,6 @@ return  defaultStyle .##_filed1.##_filed;\
 		}
 		return false;
 	}
-
 	void Control::AddEventNotify(int eventType) {
 		_eventNotify = _eventNotify | eventType;
 	}
@@ -704,8 +693,6 @@ return  defaultStyle .##_filed1.##_filed;\
 			}
 		} while (false);
 	}
-
-
 	//专门处理鼠标消息的
 	void Control::OnMouseEvent(const MouseEventArgs& _args) {
 		do
@@ -832,7 +819,6 @@ return  defaultStyle .##_filed1.##_filed;\
 		}
 #endif
 	}
-
 	void Control::OnDpiChange(const DpiChangeEventArgs& arg)
 	{
 		float scale = arg.Scale / this->_scale;
@@ -872,7 +858,6 @@ return  defaultStyle .##_filed1.##_filed;\
 		}
 
 	}
-
 	Control::~Control()
 	{
 		if (PublicData) {
@@ -896,7 +881,6 @@ return  defaultStyle .##_filed1.##_filed;\
 			}
 		}
 	}
-
 	size_t Control::FindControl(Control* childCtl)
 	{
 		const auto& pControls = this->GetControls();
@@ -1055,7 +1039,6 @@ return  defaultStyle .##_filed1.##_filed;\
 	bool Control::IsVisible() {
 		return this->_visible;
 	}
-
 	bool Control::Invalidate() {
 		if (PublicData) {
 			WindowData* winData = PublicData;
@@ -1172,7 +1155,6 @@ return  defaultStyle .##_filed1.##_filed;\
 		_controls.clear();//清空子控件集合
 		DestroySpacers();//清空弹簧并删除弹簧
 	}
-
 	void Control::OnMouseMove(const MouseEventArgs& args)
 	{
 	}
@@ -1229,10 +1211,127 @@ return  defaultStyle .##_filed1.##_filed;\
 	void Control::OnRect(const RectEventArgs& arg)
 	{
 	}
-
 	ScrollBar* Control::GetScrollBar()
 	{
 		return NULL;
 	}
+};
 
+//滚动条相关
+namespace EzUI {
+	void ScrollBar::OnMouseUp(const MouseEventArgs& arg)
+	{
+		__super::OnMouseUp(arg);
+		_mouseDown = false;
+	}
+	void  ScrollBar::OnMouseLeave(const MouseEventArgs& arg)
+	{
+		__super::OnMouseLeave(arg);
+		_mouseDown = false;
+	}
+	ScrollBar::ScrollBar() {
+		Style.ForeColor = Color(205, 205, 205);//the bar default backgroundcolor
+		SetSize({ 10,10 });
+	}
+	ScrollBar::~ScrollBar() {}
+	bool ScrollBar::IsDraw()
+	{
+		if (!Scrollable()) {
+			return false;
+		}
+		return this->IsVisible();
+	}
+	bool ScrollBar::Scrollable()
+	{
+		if (this->_overflowLength > 0) {
+			return true;
+		}
+		return false;
+	}
+	void ScrollBar::OnBackgroundPaint(PaintEventArgs& e) {
+		if (!Scrollable()) {
+			return;
+		}
+		__super::OnBackgroundPaint(e);
+	}
+	void ScrollBar::OnForePaint(PaintEventArgs& args)
+	{
+		if (!Scrollable()) {
+			return;
+		}
+		__super::OnForePaint(args);
+		//绘制滑块
+		Rect sliderRect = GetSliderRect();
+		const Color& color = GetForeColor();
+		if (color.GetValue() != 0) {
+			args.Graphics.SetColor(color);
+			args.Graphics.FillRectangle(sliderRect, GetBorderTopLeftRadius());
+		}
+	}
+	void ScrollBar::RollTo(double posY, const  ScrollRollEventArgs& args) {
+		if (OWner == NULL) return;
+		if (OWner->IsPendLayout()) {
+			OWner->ResumeLayout();
+		}
+		if (!Scrollable()) {
+			return;
+		}
+		int viewLength;
+		int contentLength;
+		int scrollBarLength;
+		this->GetInfo(&viewLength, &contentLength, &scrollBarLength);
+		//滚动条滑块pos
+		_sliderPos = posY;
+		if (_sliderPos < 0) { //滑块在顶部
+			_sliderPos = 0;
+		}
+		if ((_sliderPos + this->_sliderLength) > scrollBarLength) { //滑块在最底部
+			_sliderPos = scrollBarLength - this->_sliderLength;
+		}
+		this->_offset = (-_sliderPos) * this->_rollRate;
+		if (OffsetCallback) {
+			OffsetCallback(this->_offset);
+		}
+		OWner->Invalidate();
+		//OWner->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
+		if (Rolling) {
+			((ScrollRollEventArgs&)args).Pos = _sliderPos;
+			((ScrollRollEventArgs&)args).Total = scrollBarLength - this->_sliderLength;
+			Rolling(this, args);
+		}
+	}
+	void ScrollBar::RefreshScroll() {
+		if (OWner == NULL)return;
+		if (OWner->IsPendLayout()) {
+			OWner->ResumeLayout();
+		}
+		int scrollBarLength;
+		this->GetInfo(&this->_viewLength, &this->_contentLength, &scrollBarLength);
+		this->_overflowLength = this->_contentLength - this->_viewLength;//超出容器的内容长度
+		if (_overflowLength > 0) {
+			this->_sliderLength = (double)this->_viewLength / this->_contentLength * scrollBarLength + 0.5;//滑块长度
+			double rollTotal = scrollBarLength - this->_sliderLength;//当前滑块可用滑道的总距离
+			this->_rollRate = (double)(_contentLength - this->_viewLength) / rollTotal;//滑块每次滚动一次的对应上下文内容的比率
+		}
+		else {
+			this->_sliderLength = scrollBarLength;
+			this->_sliderPos = 0;
+			this->_offset = 0;
+			this->_rollRate = 0;
+			this->_overflowLength = 0;
+		}
+		//计算偏移滚动
+		double pos = (double)this->_offset / this->_rollRate;
+		RollTo(-pos, Event::None);
+	};
+	void ScrollBar::OnMouseWheel(const MouseEventArgs& arg) {
+		__super::OnMouseWheel(arg);
+		ScrollRollEventArgs args;
+		args.RollType = Event::OnMouseWheel;
+		args.ZDelta = arg.ZDelta;
+		this->_offset += arg.ZDelta * 0.5;
+		//计算偏移滚动
+		double pos = (double)this->_offset / this->_rollRate;
+		RollTo(-pos, args);
+	}
 };
