@@ -377,7 +377,7 @@ namespace EzUI {
 	{
 		BuildImageCallback = [this](Image* img)->void {
 			this->freeImages.push_back((Image*)img);
-		};
+			};
 	}
 	void UIManager::SetupUI(Window* window)
 	{
@@ -459,6 +459,15 @@ namespace EzUI {
 	_Selector::_Selector(Control* ctl)
 	{
 		this->ctl = ctl;
+	}
+	_Selector::_Selector(Control* ct, const EString& _mathStr)
+	{
+		EString mathStr = _mathStr;
+		mathStr.Replace("  ", " ");
+		//模仿jquery进行元素匹配
+	}
+	_Selector::~_Selector()
+	{
 	}
 	_Selector& _Selector::Css(const EString& styleStr)
 	{

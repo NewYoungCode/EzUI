@@ -71,6 +71,8 @@ namespace EzUI {
 	public:
 		_Selector(const std::list<Control*>& Controls);
 		_Selector(Control* control);
+		_Selector(Control* control,const EString&mathStr);
+		virtual ~_Selector();
 		_Selector& Css(const EString& styleStr);
 		_Selector& CssHover(const EString& styleStr);
 		_Selector& CssActive(const EString& styleStr);

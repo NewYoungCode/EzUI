@@ -86,6 +86,7 @@ public:
 		this->SetFixedHeight(33);
 		HoverStyle.BackColor = Color(100, 230, 230, 230);
 		ActiveStyle.BackColor = Color(100, 255, 230, 230);
+		ActiveStyle.FontSize = 10;
 
 		AddControl(new HSpacer(15));
 		AddControl(&songName);
