@@ -471,7 +471,7 @@ namespace EzUI {
 			x += pCtrl->X();
 			y += pCtrl->Y();
 		}
-		return Rect{ x,y,rect.Width,rect.Height };
+		return Rect{ x,y,Width(),Height() };
 	}
 	const DockStyle& Control::GetDockStyle()
 	{
@@ -898,6 +898,12 @@ namespace EzUI {
 		return size_t(-1);
 	}
 	void Control::AddControl(Control* ctl) {
+#ifdef _DEBUG
+		auto itor = std::find(_controls.begin(), _controls.end(), ctl);
+		if (itor != _controls.end()) {
+			ASSERT(!"The control already exists and cannot be added repeatedly");
+		}
+#endif
 		_controls.push_back(ctl);
 		ctl->PublicData = this->PublicData;
 		ctl->Parent = this;
@@ -911,6 +917,12 @@ namespace EzUI {
 	}
 	void Control::InsertControl(size_t pos, Control* ctl)
 	{
+#ifdef _DEBUG
+		auto itor = std::find(_controls.begin(), _controls.end(), ctl);
+		if (itor != _controls.end()) {
+			ASSERT(!"The control already exists and cannot be added repeatedly");
+		}
+#endif
 		size_t i = 0;
 		std::list<Control*>::iterator it = _controls.begin();
 		for (; it != _controls.end(); it++) {

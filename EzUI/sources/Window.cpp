@@ -169,24 +169,22 @@ namespace EzUI {
 	void Window::ShowMaximized() {
 		Show(SW_MAXIMIZE);
 	}
-	int Window::ShowModal(bool wait)
+	int Window::ShowModal()
 	{
 		_OwnerHwnd = ::GetWindowOwner(Hwnd());
 		Show();
 		if (_OwnerHwnd) {
 			::EnableWindow(_OwnerHwnd, FALSE);
 		}
-		if (wait) {//
-			MSG msg{ 0 };
-			while (::IsWindow(Hwnd()) && ::GetMessage(&msg, NULL, 0, 0) && msg.message != WM_QUIT)
-			{
-				::TranslateMessage(&msg);
-				::DispatchMessage(&msg);
-			}
-			if (msg.message == WM_QUIT) {//
-				::PostQuitMessage(msg.wParam);
-				return _closeCode;
-			}
+		MSG msg{ 0 };
+		while (::IsWindow(Hwnd()) && ::GetMessage(&msg, NULL, 0, 0) && msg.message != WM_QUIT)
+		{
+			::TranslateMessage(&msg);
+			::DispatchMessage(&msg);
+		}
+		if (msg.message == WM_QUIT) {//
+			::PostQuitMessage(msg.wParam);
+			return _closeCode;
 		}
 		if (_OwnerHwnd) {
 			::SetForegroundWindow(_OwnerHwnd);
@@ -402,11 +400,6 @@ namespace EzUI {
 			bool bClose = true;
 			OnClose(bClose);
 			if (bClose) {
-				//开始关闭窗口
-				if (_OwnerHwnd) {
-					::EnableWindow(_OwnerHwnd, TRUE);
-					_OwnerHwnd = NULL;
-				}
 				::DestroyWindow(_hWnd);
 			}
 			else {
@@ -436,6 +429,11 @@ namespace EzUI {
 		case WM_DESTROY:
 		{
 			OnDestroy();
+			//开始关闭窗口
+			if (_OwnerHwnd) {
+				::EnableWindow(_OwnerHwnd, TRUE);
+				_OwnerHwnd = NULL;
+			}
 			break;
 		}
 		case WM_SETCURSOR: {
@@ -838,6 +836,7 @@ namespace EzUI {
 	}
 	void Window::OnDestroy()
 	{
+
 	}
 	void Window::OnKeyChar(WPARAM wParam, LPARAM lParam)
 	{
@@ -957,4 +956,4 @@ namespace EzUI {
 		return false;
 	}
 
-	};
+};

@@ -80,7 +80,7 @@ namespace EzUI {
 		virtual void Hide();//隐藏窗口
 		void ShowNormal();//正常显示窗口
 		void Close(int exitCode = 0);//关闭窗口 exitCode为退出代码
-		int ShowModal(bool wait = true);//参数 wait 是否阻塞
+		virtual int ShowModal();//会阻塞
 		void ShowMinimized();//最小化窗口
 		void ShowMaximized();//最大化窗口
 		bool IsVisible();//窗口是否显示

@@ -74,6 +74,10 @@ namespace EzUI {
 				this->TextAlign = EzUI::TextAlign((int)this->TextAlign | (int)v);
 				break;
 			}
+			if (key == "ellipsis") {
+				this->Ellipsis = value;
+				break;
+			}
 			if (key == "halign") {
 				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)HAlign::Left);
 				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)HAlign::Center);

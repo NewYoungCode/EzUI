@@ -37,11 +37,11 @@ namespace EzUI {
 	}
 
 	ComBox::~ComBox() {
-		if (poupWnd) {
+	/*	if (poupWnd) {
 			poupWnd->Close();
 			delete poupWnd;
 			poupWnd = NULL;
-		}
+		}*/
 	}
 	//void ComBox::OnLoad() {
 	//	if (poupWnd == NULL) {

@@ -13,7 +13,7 @@ namespace EzUI {
 		TextBox edit;
 		Label label;
 		VList vlist;
-		PoupWindow* poupWnd = NULL;
+		//PoupWindow* poupWnd = NULL;
 		void Init();
 	public:
 		ComBox();
