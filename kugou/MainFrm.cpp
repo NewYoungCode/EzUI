@@ -39,7 +39,7 @@ void MainFrm::InitForm() {
 	std::list<MonitorInfo> monitorInfo;
 	GetMonitors(&monitorInfo);
 	const MonitorInfo& def = *monitorInfo.begin();
-	deskTopWnd = new LayeredWindow(def.WorkRect.Width, def.WorkRect.Height);
+	deskTopWnd = new LayeredWindow(def.Rect.Width, def.Rect.Height);
 	deskTopWnd->CloseShadow();
 	deskTopLrc = new LrcControl();
 	deskTopLrc->Style.FontSize = 20;
