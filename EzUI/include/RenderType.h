@@ -291,90 +291,77 @@ namespace EzUI {
 				Y += dy;
 			}
 		};
-		class Color
+
+		class __Color
 		{
 		protected:
-			DWORD Argb = 0;
+			DWORD RGBA = 0;
 		public:
-			Color() {}
-			Color(const BYTE& r,
-				const BYTE& g,
-				const BYTE& b)
-			{
-				Argb = MakeARGB(255, r, g, b);
-			}
-			Color(const BYTE& a,
+			__Color() {}
+			__Color(
 				const BYTE& r,
 				const BYTE& g,
-				const BYTE& b)
+				const BYTE& b,
+				const BYTE& a = 255)
 			{
-				Argb = MakeARGB(a, r, g, b);
+				((BYTE*)&RGBA)[0] = r;
+				((BYTE*)&RGBA)[1] = g;
+				((BYTE*)&RGBA)[2] = b;
+				((BYTE*)&RGBA)[3] = a;
 			}
-			Color(const DWORD& argb)
+			__Color(const DWORD& argb)
 			{
-				Argb = argb;
+				RGBA = argb;
 			}
-			const BYTE& GetA() const
-			{
-				return ((BYTE*)&Argb)[0];
-			}
+			virtual ~__Color() {}
 			const BYTE& GetR() const
 			{
-				return ((BYTE*)&Argb)[1];
+				return ((BYTE*)&RGBA)[0];
 			}
 			const BYTE& GetG() const
 			{
-				return ((BYTE*)&Argb)[2];
+				return ((BYTE*)&RGBA)[1];
 			}
 			const BYTE& GetB() const
 			{
-				return ((BYTE*)&Argb)[3];
+				return ((BYTE*)&RGBA)[2];
+			}
+			const BYTE& GetA() const
+			{
+				return ((BYTE*)&RGBA)[3];
 			}
 			const DWORD& GetValue() const
 			{
-				return Argb;
+				return RGBA;
 			}
 			void SetValue(DWORD argb)
 			{
-				Argb = argb;
-			}
-			void SetA(const BYTE& value) {
-				((BYTE*)&Argb)[0] = value;
+				RGBA = argb;
 			}
 			void SetR(const BYTE& value) {
-				((BYTE*)&Argb)[1] = value;
+				((BYTE*)&RGBA)[0] = value;
 			}
 			void SetG(const BYTE& value) {
-				((BYTE*)&Argb)[2] = value;
+				((BYTE*)&RGBA)[1] = value;
 			}
 			void SetB(const BYTE& value) {
-				((BYTE*)&Argb)[3] = value;
+				((BYTE*)&RGBA)[2] = value;
+			}
+			void SetA(const BYTE& value) {
+				((BYTE*)&RGBA)[3] = value;
 			}
 		public:
 			// Common color constants
 			enum :DWORD
 			{
 				Transparent = 0,
-				Red = 65535,
-				Green = 16711935,
-				Blue = 4278190335,
-				Black = 255,
+				Red = 4278190335,
+				Green = 4278255360,
+				Blue = 4294901760,
+				Black = 4278190080,
 				White = 4294967295,
-				Gray = 2155905279
+				Gray = 4286611584,
 			};
-		private:
-			static DWORD MakeARGB(const BYTE& a,
-				const BYTE& r,
-				const BYTE& g,
-				const BYTE& b)
-			{
-				DWORD argb = 0;
-				((BYTE*)&argb)[0] = a;
-				((BYTE*)&argb)[1] = r;
-				((BYTE*)&argb)[2] = g;
-				((BYTE*)&argb)[3] = b;
-				return argb;
-			}
 		};
 
 		template<typename T>
@@ -404,7 +391,6 @@ namespace EzUI {
 	typedef  RenderType::__Size<FLOAT> SizeF;
 	typedef  RenderType::__Rect<INT> Rect;
 	typedef  RenderType::__Rect<FLOAT> RectF;
-	typedef  RenderType::Color Color;
 
 	struct Distance {
 	public:
@@ -463,7 +449,7 @@ namespace EzUI {
 		int TopRightRadius = 0;
 		int BottomRightRadius = 0;
 		int BottomLeftRadius = 0;
-		Color Color;
+		RenderType::__Color Color;
 	public:
 		class Radius {
 			Border& Border;

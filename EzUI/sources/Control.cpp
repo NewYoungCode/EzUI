@@ -234,8 +234,28 @@ namespace EzUI {
 				this->Name = attrValue;
 				break;
 			}
-			if (attrName == "rect") {
-				this->SetRect(Convert::StringToRect(attrValue));
+			if (attrName == "point" || attrName == "location") {
+				auto arr = attrValue.Split(",");
+				int x = std::stoi(arr[0]);
+				int y = std::stoi(arr[1]);
+				this->SetLocation(Point(x, y));
+				break;
+			}
+			if (attrName == "size") {
+				auto arr = attrValue.Split(",");
+				int width = std::stoi(arr[0]);
+				int height = std::stoi(arr[1]);
+				this->SetFixedSize(Size(width, height));
+				break;
+			}
+			if (attrName == "rect" && !attrValue.empty()) {
+				auto rectStr = attrValue.Split(",");
+				Rect rect;
+				rect.X = std::stoi(rectStr.at(0));
+				rect.Y = std::stoi(rectStr.at(1));
+				rect.Width = std::stoi(rectStr.at(2));
+				rect.Height = std::stoi(rectStr.at(3));
+				this->SetRect(rect);
 				break;
 			}
 			if (attrName == "margin-left") {

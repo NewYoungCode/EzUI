@@ -23,7 +23,6 @@ namespace EzUI {
 		HWND _hWnd = NULL;//windows原生句柄
 		Rect _rect;//基于桌面的坐标
 		Rect _rectClient;//客户绘图区域
-
 		void InitData(const DWORD& ExStyle);
 	public:
 		WindowData PublicData;//存储公共数据
@@ -87,6 +86,5 @@ namespace EzUI {
 		void SetVisible(bool flag);
 		void Invalidate();//使区域无效(延迟刷新)
 		void Refresh();//立即更新所有无效区域(立即刷新)
-
 	};
 };

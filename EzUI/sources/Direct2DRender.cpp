@@ -226,7 +226,7 @@ namespace EzUI {
 	void TextLayout::SetUnderline(size_t pos, size_t count)
 	{
 		if (count > 0) {
-			value->SetUnderline(TRUE, { pos,count });
+			value->SetUnderline(TRUE, { (UINT32)pos,(UINT32)count });
 		}
 	}
 	TextLayout::~TextLayout() {
@@ -601,7 +601,7 @@ namespace EzUI {
 		}
 		font = new Font(_copy_font);
 	}
-	void DXRender::SetColor(const Color& color) {
+	void DXRender::SetColor(const RenderType::__Color& color) {
 		if (brush == NULL) {
 			render->CreateSolidColorBrush(__To_D2D_COLOR_F(color), &brush);
 		}

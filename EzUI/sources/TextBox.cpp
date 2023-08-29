@@ -174,7 +174,7 @@ namespace EzUI {
 			}
 			*outPos = pos;
 			*outCount = count;
-			if (outCount > 0) {
+			if (*outCount > 0) {
 				return true;
 			}
 		}

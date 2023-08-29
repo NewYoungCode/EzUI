@@ -61,7 +61,7 @@ namespace EzUI {
 		return false;
 	}
 	void Ziper::UnZip(const ZIPENTRY& ze, void** pData) {
-		*pData = new char[ze.unc_size]{ 0 };
+		*pData = new char[ze.unc_size] { 0 };
 		UnzipItem(HZipResource, ze.index, *pData, ze.unc_size);
 	}
 	void Ziper::UnZip(std::function<bool(int index, const EString& fileName, void* pData, size_t len, DWORD fileAttribute)> callback) {
@@ -335,7 +335,7 @@ namespace EzUI {
 				break;
 			}
 			if (key == "background-color") {
-				style->BackColor = Convert::StringToColor(value);
+				style->BackColor = Color::Make(value);
 				break;
 			}
 			if (key == "background-image") {
@@ -355,11 +355,11 @@ namespace EzUI {
 				break;
 			}
 			if (key == "border-color") {
-				style->Border.Color = Convert::StringToColor(value);
+				style->Border.Color = Color::Make(value);
 				break;
 			}
 			if (key == "color" || key == "fore-color") {
-				style->ForeColor = Convert::StringToColor(value);
+				style->ForeColor = Color::Make(value);
 				break;
 			}
 			if (key == "border-radius") {

@@ -14,7 +14,7 @@ namespace EzUI {
 	class ScrollBar;
 	enum class Cursor :ULONG_PTR;
 
-	extern WCHAR WindowClassName[];
+	extern UI_EXPORT WCHAR WindowClassName[];
 	//全局资源句柄
 	extern UI_EXPORT HZIP HZipResource;//zip文件中的全局资源句柄
 	extern UI_EXPORT HGLOBAL HVSResource;//vs中的资源文件句柄
@@ -33,33 +33,26 @@ namespace EzUI {
 		virtual ~Ziper();
 	};
 	//
-	extern const std::list<EzUI::MonitorInfo> MonitorInfos;
-	//解压文件
-	//extern UI_EXPORT void UnZip(const EString& zipFileName, const EString& outPath, const EString& password = "", std::function<void(int index, int fileCount)> callback = NULL);
+	extern UI_EXPORT const std::list<EzUI::MonitorInfo> MonitorInfos;
 	//从获取文件资源
 	extern UI_EXPORT bool GetResource(const EString& fileName, std::string* outData);
 	//获取当前所有监视器的信息
-	extern size_t GetMonitors(std::list<MonitorInfo>* outMonitorInfo);
+	extern UI_EXPORT size_t GetMonitors(std::list<MonitorInfo>* outMonitorInfo);
 	//获取用户当前正在操作的的显示器
-	extern bool GetMontior(MonitorInfo* outInfo);
-	extern HCURSOR LoadCursor(Cursor cursorType);
-	extern HCURSOR LoadCursor(const EString& fileName);//需要释放
-	extern void FreeCursor(HCURSOR hCursor);
+	extern UI_EXPORT bool GetMontior(MonitorInfo* outInfo);
+	extern UI_EXPORT HCURSOR LoadCursor(Cursor cursorType);
+	extern UI_EXPORT HCURSOR LoadCursor(const EString& fileName);//需要释放
+	extern UI_EXPORT void FreeCursor(HCURSOR hCursor);
 
-	namespace Convert {
-		inline Rect StringToRect(const EString& str) {
-			auto rectStr = str.Split(",");
-			Rect rect;
-			if (str.empty()) {
-				return rect;//如果没写矩形区域
-			}
-			rect.X = std::stoi(rectStr.at(0));
-			rect.Y = std::stoi(rectStr.at(1));
-			rect.Width = std::stoi(rectStr.at(2));
-			rect.Height = std::stoi(rectStr.at(3));
-			return rect;
+	class UI_EXPORT Color :public RenderType::__Color {
+	public:
+		Color(const RenderType::__Color& copy) {
+			this->RGBA = copy.GetValue();
 		}
-		inline Color StringToColor(const EString& colorStr) {
+		Color(const DWORD& rgba = 0) :RenderType::__Color(rgba) {}
+		Color(BYTE r, BYTE g, BYTE b, BYTE a = 255) :RenderType::__Color(r, g, b, a) {}
+	public:
+		static Color Make(const EString& colorStr) {
 			if (colorStr.find("#") == 0) { //"#4e6ef2"
 				auto rStr = colorStr.substr(1, 2);
 				auto gStr = colorStr.substr(3, 2);
@@ -69,7 +62,7 @@ namespace EzUI {
 				sscanf_s(gStr.c_str(), "%x", &g);
 				sscanf_s(bStr.c_str(), "%x", &b);
 				//Argb = MakeARGB(255, r, g, b);
-				return Color(255, r, g, b);
+				return Color(r, g, b);
 			}
 			if (colorStr.find("rgb") == 0) { //"rgb(255,100,2,3)"
 				int pos1 = colorStr.find("(");
@@ -84,11 +77,12 @@ namespace EzUI {
 				if (colorStr.find("rgba") == 0) {
 					a = std::stoi(rgbList.at(3));
 				}
-				return Color(a, r, g, b);
+				return Color(r, g, b, a);
 			}
 			return Color();
 		}
-	}
+		virtual ~Color() {}
+	};
 
 	class UI_EXPORT EBitmap {
 	public:
@@ -117,7 +111,7 @@ namespace EzUI {
 	};
 
 #if USED_DIRECT2D
-	class Image :public DXImage {
+	class UI_EXPORT Image :public DXImage {
 	public:
 		virtual ~Image() {}
 		Image(UINT width, UINT height) :DXImage(width, height) {}
@@ -159,7 +153,7 @@ namespace EzUI {
 		std::function<bool(Control*, EventArgs&)> Notify = NULL;//
 		std::function<void(Control*)> RemoveControl = NULL;//清空控件标记等等...
 	};
-	class StopWatch {
+	class UI_EXPORT StopWatch {
 	private:
 		std::chrono::system_clock::time_point beg_t;
 	public:
@@ -286,7 +280,7 @@ namespace EzUI {
 	};
 
 	//基础事件
-	class EventArgs {
+	class UI_EXPORT EventArgs {
 	public:
 		Event EventType = Event::None;
 		EventArgs(const Event& eventType) {
@@ -295,7 +289,7 @@ namespace EzUI {
 		virtual ~EventArgs() {};
 	};
 	//为鼠标事件提供基础数据
-	class MouseEventArgs :public EventArgs {
+	class UI_EXPORT MouseEventArgs :public EventArgs {
 	public:
 		MouseButton Button = MouseButton::None;
 		int ZDelta = 0;//方向
@@ -309,7 +303,7 @@ namespace EzUI {
 		}
 	};
 	//滚动条滚动事件
-	class ScrollRollEventArgs :public EventArgs {
+	class UI_EXPORT ScrollRollEventArgs :public EventArgs {
 	public:
 		int Pos = 0;
 		int Total = 0;
@@ -323,7 +317,7 @@ namespace EzUI {
 	};
 	// 摘要: 
 	//为键盘事件提供基础数据
-	class KeyboardEventArgs :public EventArgs {
+	class UI_EXPORT KeyboardEventArgs :public EventArgs {
 	public:
 		/// <summary>
 		/// 一般是指 键盘的ascii值
@@ -337,7 +331,7 @@ namespace EzUI {
 		virtual ~KeyboardEventArgs() {}
 	};
 	//失去焦点
-	class KillFocusEventArgs :public EventArgs {
+	class UI_EXPORT KillFocusEventArgs :public EventArgs {
 	public:
 		Control* Control;
 		KillFocusEventArgs(EzUI::Control* ctl) :EventArgs(Event::OnKillFocus) {
@@ -346,34 +340,34 @@ namespace EzUI {
 		virtual ~KillFocusEventArgs() {}
 	};
 	//坐标发生改变
-	class LocationEventArgs :public EventArgs {
+	class UI_EXPORT LocationEventArgs :public EventArgs {
 	public:
 		const EzUI::Point& Location;
 		LocationEventArgs(const EzUI::Point& location) :EventArgs(Event::OnLocation), Location(location) {}
 		virtual ~LocationEventArgs() {}
 	};
 	//大小发生改变
-	class SizeEventArgs :public EventArgs {
+	class UI_EXPORT SizeEventArgs :public EventArgs {
 	public:
 		const EzUI::Size& Size;
 		SizeEventArgs(const EzUI::Size& size) :EventArgs(Event::OnSize), Size(size) {}
 		virtual ~SizeEventArgs() {}
 	};
 	//矩形发生改变
-	class RectEventArgs :public EventArgs {
+	class UI_EXPORT RectEventArgs :public EventArgs {
 	public:
 		const EzUI::Rect& Rect;
 		RectEventArgs(const EzUI::Rect& rect) :EventArgs(Event::OnRect), Rect(rect) {}
 		virtual ~RectEventArgs() {}
 	};
-	class DpiChangeEventArgs :public EventArgs {
+	class UI_EXPORT DpiChangeEventArgs :public EventArgs {
 	public:
 		float Scale = 1.0;
 		DpiChangeEventArgs(const float& scale) :EventArgs(Event::OnDpiChange), Scale(scale) {}
 
 	};
 	// 为 OnPaint 事件提供数据。
-	class PaintEventArgs :public EventArgs {
+	class UI_EXPORT PaintEventArgs :public EventArgs {
 	public:
 		std::list<Point> OffSetPoint;//用于记录每次绘制控件的偏移位置
 		PaintEventArgs(const PaintEventArgs&) = delete;

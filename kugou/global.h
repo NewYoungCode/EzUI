@@ -84,8 +84,8 @@ public:
 		time.TextAlign = TextAlign::MiddleRight;
 
 		this->SetFixedHeight(33);
-		HoverStyle.BackColor = Color(100, 230, 230, 230);
-		ActiveStyle.BackColor = Color(100, 255, 230, 230);
+		HoverStyle.BackColor = Color(230, 230, 230, 100);
+		ActiveStyle.BackColor = Color( 255, 230, 230, 100);
 		ActiveStyle.FontSize = 10;
 
 		AddControl(new HSpacer(15));

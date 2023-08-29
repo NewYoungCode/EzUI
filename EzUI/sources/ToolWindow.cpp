@@ -1,10 +1,10 @@
 #include "ToolWindow.h"
 namespace EzUI {
-	MenuWindow::MenuWindow(int width, int height, HWND owner) :BorderlessWindow(width, height, owner)
+	MenuWindow::MenuWindow(int width, int height, HWND owner) :LayeredWindow(width, height, owner)
 	{
 		this->Zoom = false;
 	}
-	MenuWindow::MenuWindow(int width, int height, Control* ownerCtl) :BorderlessWindow(width, height, ownerCtl->PublicData->HANDLE)
+	MenuWindow::MenuWindow(int width, int height, Control* ownerCtl) :LayeredWindow(width, height, ownerCtl->PublicData->HANDLE)
 	{
 		this->_ownerCtl = ownerCtl;
 		this->Zoom = false;
@@ -14,6 +14,9 @@ namespace EzUI {
 		if (uMsg == WM_KILLFOCUS) {
 			HWND wnd = (HWND)wParam;
 			if (this->GetShadowWindow() && wnd != this->GetShadowWindow()->Hwnd()) {
+				this->OnKillFocus(wnd);
+			}
+			else if (this->GetShadowWindow() == NULL) {
 				this->OnKillFocus(wnd);
 			}
 		}
@@ -61,7 +64,7 @@ namespace EzUI {
 		if ((location.x + width) > monitorInfo->Rect.Width) {
 			x -= width;
 		}
-		::SetWindowPos(Hwnd(), HWND_TOPMOST, x, y, width, height, NULL);
+		::SetWindowPos(Hwnd(), HWND_TOPMOST, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE);
 		__super::Show(cmdShow);
 		::SetForegroundWindow(Hwnd());
 	}
@@ -79,7 +82,7 @@ namespace EzUI {
 		if (msg.message == WM_QUIT) {//
 			::PostQuitMessage(msg.wParam);
 		}
-		::SetForegroundWindow(OwnerHwnd);
+		::SetFocus(OwnerHwnd);
 		return 0;
 	}
 

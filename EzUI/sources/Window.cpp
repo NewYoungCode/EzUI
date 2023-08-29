@@ -33,8 +33,8 @@ namespace EzUI {
 		width = width * this->PublicData.Scale + 0.5;
 		height = height * this->PublicData.Scale + 0.5;
 
-		_rect.X = x + (sw - width) / 2;//保证左右居中
-		_rect.Y = y + (sh - height) / 2;//保证上下居中
+		_rect.X = x + (sw - width) / 2.0f + 0.5;//保证左右居中
+		_rect.Y = y + (sh - height) / 2.0f + 0.5;//保证上下居中
 		_rect.Width = width;
 		_rect.Height = height;
 
@@ -156,7 +156,7 @@ namespace EzUI {
 		ASSERT(MainLayout);
 		::ShowWindow(Hwnd(), cmdShow);
 		if (IsVisible()) {
-			::UpdateWindow(Hwnd());
+			MainLayout->Refresh();
 		}
 	}
 	void Window::ShowNormal()
@@ -386,7 +386,6 @@ namespace EzUI {
 				//Debug::Log("SWP_NOCOPYBITS!");
 				//丢弃工作区的整个内容。 如果未指定此标志，则会在调整或重新定位窗口后保存并复制回工作区的有效内容。
 				Invalidate();
-
 			}
 			Point point = _rect.GetLocation();
 			if (!_lastPoint.Equals(point)) {

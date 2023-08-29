@@ -10,23 +10,15 @@ namespace EzUI {
 		PublicData.InvalidateRect = [=](void* _rect) ->void {
 			Rect& rect = *(Rect*)_rect;
 			this->InvalidateRect(rect);
-			//::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
-		};
-		PublicData.UpdateWindow = [=]()->void {
-			if (!_InvalidateRect.IsEmptyArea()) {
+			if (IsVisible()) {
 				::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
 			}
-		};
-
-		task = new std::thread([=]() {
-			while (bRunTask)
-			{
-				if (!_InvalidateRect.IsEmptyArea() && this->IsVisible()) {
-					::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
-				}
-				Sleep(1);//检测无效区域的延时
+			};
+		PublicData.UpdateWindow = [=]()->void {
+			if (IsVisible() && !_InvalidateRect.IsEmptyArea()) {
+				::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
 			}
-			});
+			};
 	}
 	ShadowWindow* LayeredWindow::GetShadowWindow()
 	{
@@ -46,13 +38,6 @@ namespace EzUI {
 		UpdateShadow();
 	}
 	LayeredWindow::~LayeredWindow() {
-		if (bRunTask) {
-			bRunTask = false;
-			//存在隐患 导致程序无法正常退出
-			task->join();
-			delete task;
-			task = NULL;
-		}
 		CloseShadow();
 	}
 	void LayeredWindow::UpdateShadow() {
@@ -113,28 +98,27 @@ namespace EzUI {
 		{
 		case WM_PAINT: {
 			if (_winBitmap && !_InvalidateRect.IsEmptyArea()) {
-				//Debug::Info("%d %d %d %d", _InvalidateRect.X, _InvalidateRect.Y, _InvalidateRect.Width, _InvalidateRect.Height);
 				_winBitmap->Earse(_InvalidateRect);//清除背景
 				HDC winHDC = _winBitmap->GetDC();
 				DoPaint(winHDC, _InvalidateRect);
 				PushDC(winHDC);//updatelaredwindow 更新窗口
-				_InvalidateRect = { 0,0,0,0 };//重置区域
+				_InvalidateRect = Rect();//重置区域
 			}
 			return 0;
 		}
-		//case WM_NCPAINT:
-		//{
-		//	return 0;
-		//}
-		//case WM_NCCALCSIZE:
-		//{
-		//	return 0;
-		//}
-		//case WM_NCACTIVATE:
-		//{
-		//	if (::IsIconic(Hwnd())) break;
-		//	return (wParam == 0) ? TRUE : FALSE;
-		//}
+					 //case WM_NCPAINT:
+					 //{
+					 //	return 0;
+					 //}
+					 //case WM_NCCALCSIZE:
+					 //{
+					 //	return 0;
+					 //}
+					 //case WM_NCACTIVATE:
+					 //{
+					 //	if (::IsIconic(Hwnd())) break;
+					 //	return (wParam == 0) ? TRUE : FALSE;
+					 //}
 		case WM_NCHITTEST: {
 			if (!::IsZoomed(Hwnd()) && Zoom) {
 				return ZoomWindow(lParam);

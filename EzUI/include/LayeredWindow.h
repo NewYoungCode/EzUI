@@ -11,8 +11,6 @@ namespace EzUI {
 		int _shadowWidth = 12;
 		void PushDC(HDC hdc);
 		Rect _InvalidateRect;
-		bool bRunTask = true;
-		std::thread* task = NULL;
 		EBitmap* _winBitmap = NULL;
 		ShadowWindow* _boxShadow = NULL;
 	protected:

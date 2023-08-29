@@ -3,10 +3,11 @@
 #include "BorderlessWindow.h"
 #include "LayeredWindow.h"
 namespace EzUI {
-	class  UI_EXPORT MenuWindow :public BorderlessWindow {
+	class  UI_EXPORT MenuWindow :public LayeredWindow {
+	private:
+		Control* _ownerCtl = NULL;
 	protected:
 		virtual void OnKillFocus(HWND hWnd) override;
-		Control* _ownerCtl = NULL;
 	public:
 		MenuWindow(int width, int height, HWND ownerHwnd);
 		MenuWindow(int width, int height, Control* ownerCtl = NULL);

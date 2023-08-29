@@ -273,7 +273,7 @@ namespace EzUI {
 		virtual ~DXRender();
 		void SetFont(const std::wstring& fontFamily, int fontSize);//必须先调用
 		void SetFont(const Font& _copy_font);//必须先调用
-		void SetColor(const Color& color);//会之前必须调用
+		void SetColor(const RenderType::__Color& color);//会之前必须调用
 		void SetStrokeStyle(StrokeStyle strokeStyle = StrokeStyle::Solid, int dashWidth = 3);//设置样式 虚线/实线
 		void DrawString(const TextLayout& textLayout, Point = { 0,0 });//根据已有的布局绘制文字
 		void DrawString(const std::wstring& text, const Rect& _rect, EzUI::TextAlign textAlign);//绘制文字

@@ -63,7 +63,7 @@ void MainFrm::InitForm() {
 	//美化搜索列表的滚动条
 	searchList->GetScrollBar()->SetWidth(9);
 	searchList->GetScrollBar()->Style.Border.Radius = 9;
-	searchList->GetScrollBar()->Style.BackColor = Color(50, 200, 200, 200);
+	searchList->GetScrollBar()->Style.BackColor = Color(200, 200, 200, 50);
 	//集体设置右上角的最大化 最小化 关闭按钮 的悬浮效果
 	$(this->FindControl("btns")->GetControls()).CssHover("color:#ffffff;");
 	int pos = 0;
@@ -97,7 +97,7 @@ void MainFrm::InitForm() {
 		if (args.RollType == Event::OnMouseWheel) {
 			NextPage(args.Pos, args.Total);
 		}
-	};
+		};
 	//忽略一些事件 可穿透父控件
 	playerBar2->MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseClick;
 	//创建启动一个实时获取歌曲进度以及状态
@@ -105,7 +105,7 @@ void MainFrm::InitForm() {
 	timer->Interval = 10;
 	timer->Tick = [=](Thread::Timer*) {
 		Task();
-	};
+		};
 	//添加一些事件到窗口中的OnNotify函数进行拦截
 	player.Tag = main;
 
@@ -554,7 +554,7 @@ void  MainFrm::OpenSongView() {
 	centerLeft->Style.BackColor = Color::Transparent;
 	tools->Style.Border.Bottom = 1;
 	tools->Style.Border.Color = Color(238, 238, 238);
-	localList->GetScrollBar()->Style.BackColor = Color(50, 200, 200, 200);
+	localList->GetScrollBar()->Style.BackColor = Color(200, 200, 200, 50);
 	localList->GetScrollBar()->Style.ForeColor = Color(217, 217, 217);
 	localList->GetScrollBar()->ActiveStyle.ForeColor = Color(191, 191, 191);
 	center->Style.BackColor = Color::White;
@@ -562,12 +562,12 @@ void  MainFrm::OpenSongView() {
 	Invalidate();
 }
 void  MainFrm::OpenLrcView() {
-	centerLeft->Style.BackColor = Color(100, 200, 200, 200);
+	centerLeft->Style.BackColor = Color(200, 200, 200, 100);
 	tools->Style.Border.Bottom = 1;
 	tools->Style.Border.Color = Color(238, 238, 238);
-	localList->GetScrollBar()->Style.BackColor = Color(50, 200, 200, 200);
-	localList->GetScrollBar()->Style.ForeColor = Color(100, 255, 255, 255);
-	localList->GetScrollBar()->ActiveStyle.ForeColor = Color(150, 255, 255, 255);
+	localList->GetScrollBar()->Style.BackColor = Color(200, 200, 200, 50);
+	localList->GetScrollBar()->Style.ForeColor = Color(255, 255, 255, 100);
+	localList->GetScrollBar()->ActiveStyle.ForeColor = Color(255, 255, 255, 150);
 	center->Style.BackColor = Color::Transparent;
 	center->Style.ForeColor = Color::White;
 	Invalidate();
