@@ -37,7 +37,7 @@ namespace EzUI {
 	private:
 		void Init();
 		void Analysis();//分析字符串
-		void Insert(const std::wstring& str);//插入文字
+		void _Insert(const std::wstring& str);//插入文字
 		bool DeleteRange();//删除选中内容
 		bool GetSelectedRange(int* outPos, int* outCount);//获取当前被选中的区域 返回下标和个数
 		bool Copy();//复制到剪切板
@@ -71,6 +71,7 @@ namespace EzUI {
 		virtual ~TextBox();
 		virtual void SetAttribute(const EString& key, const EString& value)override;
 		virtual Rect GetCareRect()override;
+		void Insert(const EString& str);//在当前光标中插入文字
 		const EString GetText();
 		virtual ScrollBar* GetScrollBar()override;
 		void SetText(const EString& text);

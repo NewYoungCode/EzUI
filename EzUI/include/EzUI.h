@@ -14,10 +14,15 @@ namespace EzUI {
 	class ScrollBar;
 	enum class Cursor :ULONG_PTR;
 
-	extern UI_EXPORT WCHAR WindowClassName[];
-	//全局资源句柄
-	extern UI_EXPORT HZIP HZipResource;//zip文件中的全局资源句柄
-	extern UI_EXPORT HGLOBAL HVSResource;//vs中的资源文件句柄
+	namespace Base {
+		//全局资源句柄
+		extern UI_EXPORT WCHAR WindowClassName[];//窗口类名
+		extern UI_EXPORT std::mutex ResourceMtx;//资源锁
+		extern UI_EXPORT HZIP HZipResource;//zip文件中的全局资源句柄
+		extern UI_EXPORT HGLOBAL HVSResource;//vs中的资源文件句柄
+		extern UI_EXPORT const std::list<EzUI::MonitorInfo> MonitorInfos;//所有监视器信息
+	};
+
 	class UI_EXPORT Ziper {
 		HZIP _hZip = NULL;
 		size_t _count = 0;
@@ -32,23 +37,32 @@ namespace EzUI {
 		void UnZip(std::function<bool(int index, const EString& fileName, void* pData, size_t len, DWORD fileAttribute)> callback);
 		virtual ~Ziper();
 	};
-	//
-	extern UI_EXPORT const std::list<EzUI::MonitorInfo> MonitorInfos;
+	//复制内容到剪切板
+	extern UI_EXPORT bool CopyToClipboard(int uFormat, void* pData, size_t size, HWND hWnd = NULL);
+	//打开剪切板
+	extern UI_EXPORT bool GetClipboardData(int uFormat, std::function<void(void*, size_t)> Callback, HWND hWnd = NULL);
+	//复制unicode文字
+	extern UI_EXPORT bool CopyToClipboard(const std::wstring& str, HWND hWnd = NULL);
+	//粘贴unicode文字
+	extern UI_EXPORT bool GetClipboardData(std::wstring* outStr, HWND hWnd = NULL);
+	//解压资源文件
+	extern UI_EXPORT bool UnZipResource(const EString& fileName, std::string* outData);
 	//从获取文件资源
 	extern UI_EXPORT bool GetResource(const EString& fileName, std::string* outData);
 	//获取当前所有监视器的信息
 	extern UI_EXPORT size_t GetMonitors(std::list<MonitorInfo>* outMonitorInfo);
 	//获取用户当前正在操作的的显示器
 	extern UI_EXPORT bool GetMontior(MonitorInfo* outInfo);
+	//加载光标
 	extern UI_EXPORT HCURSOR LoadCursor(Cursor cursorType);
-	extern UI_EXPORT HCURSOR LoadCursor(const EString& fileName);//需要释放
+	//加载光标(//需要释放)
+	extern UI_EXPORT HCURSOR LoadCursor(const EString& fileName);
+	//释放光标
 	extern UI_EXPORT void FreeCursor(HCURSOR hCursor);
 
 	class UI_EXPORT Color :public RenderType::__Color {
 	public:
-		Color(const RenderType::__Color& copy) {
-			this->RGBA = copy.GetValue();
-		}
+		Color(const RenderType::__Color& copy) { this->RGBA = copy.GetValue(); }
 		Color(const DWORD& rgba = 0) :RenderType::__Color(rgba) {}
 		Color(BYTE r, BYTE g, BYTE b, BYTE a = 255) :RenderType::__Color(r, g, b, a) {}
 	public:
@@ -117,12 +131,19 @@ namespace EzUI {
 		Image(UINT width, UINT height) :DXImage(width, height) {}
 		Image(HBITMAP hBitmap) :DXImage(hBitmap) {}
 		Image(IStream* iStream) :DXImage(iStream) {}
+		Image(const std::wstring& fileName) :DXImage(fileName) {}
 		Image(const void* data, size_t dataCount) :DXImage(data, dataCount) {}
 	public:
 		static Image* FromFile(const EString& fileOrRes) {
+			//本地文件中获取
+			std::wstring wstr = fileOrRes.utf16();
+			DWORD dwAttr = GetFileAttributesW(wstr.c_str());
+			if (dwAttr && (dwAttr & FILE_ATTRIBUTE_ARCHIVE)) {
+				return new Image(wstr);
+			}
 			//从资源中获取
 			std::string data;
-			GetResource(fileOrRes, &data);
+			UnZipResource(fileOrRes, &data);
 			if (data.empty()) {
 				return NULL;
 			}

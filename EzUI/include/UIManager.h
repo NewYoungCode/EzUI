@@ -41,6 +41,7 @@ namespace EzUI {
 		Control* BuildControl(void* node);
 		void LoadStyle(Control* ctl, const EString& selectorName);
 		void AnalysisStyle(const EString& styleStr);
+		void Load(void* doc);//内部函数
 	protected:
 		virtual Control* OnBuildControl(const EString& nodeName);
 		virtual void OnSetAttribute(Control* ctl, const EString& attrName, const EString& attrValue);
@@ -51,8 +52,10 @@ namespace EzUI {
 		void SetupUI(Control* parentCtl);
 		std::function<Control* (const EString& nodeName)> EventBuilControl;//用于自定义控件
 		std::function<void(Control* ctl, const EString& attrName, const EString& attrValue)> EventSetAttribute;//用于自定义控件
-		void LoadFromRaw(const char* utf8str);
-		void LoadFile(const EString& fileName);
+		void LoadFromRaw(const char* utf8str);//从内存中加载
+		void LoadFromFile(const EString& fileName);//从文件中加载
+		void LoadFile(const EString& fileName);//自动判断并且加载内容
+		
 		Control* GetNodeByName(const EString& nodeName = "");
 		Control* GetNode(size_t pos = 0);
 		void Free(Control** ctl);
@@ -71,7 +74,7 @@ namespace EzUI {
 	public:
 		_Selector(const std::list<Control*>& Controls);
 		_Selector(Control* control);
-		_Selector(Control* control,const EString&mathStr);
+		_Selector(Control* control, const EString& mathStr);
 		virtual ~_Selector();
 		_Selector& Css(const EString& styleStr);
 		_Selector& CssHover(const EString& styleStr);

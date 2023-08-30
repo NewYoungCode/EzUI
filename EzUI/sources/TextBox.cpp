@@ -13,7 +13,7 @@ namespace EzUI {
 		this->GetScrollBar()->OWner = this;
 		this->GetScrollBar()->OffsetCallback = [=](int offset) {
 			this->Offset(offset);
-		};
+			};
 
 		Style.Cursor = LoadCursor(Cursor::IBEAM);
 		_timer.Interval = 500;
@@ -26,7 +26,7 @@ namespace EzUI {
 				_careShow = !_careShow;
 				this->Invalidate();
 			}
-		};
+			};
 	}
 	void TextBox::OnRemove() {
 		__super::OnRemove();
@@ -97,9 +97,8 @@ namespace EzUI {
 
 		if (wParam < 32)return;//控制字符
 		if (ReadOnly) return;//只读
-		DeleteRange();//先删除是否有选中的区域
 		WCHAR buf[2]{ (WCHAR)wParam ,0 };//
-		Insert(buf);//插入新的字符
+		_Insert(std::wstring(buf));//插入新的字符
 		Analysis();//分析字符串
 		Invalidate();//刷新
 	}
@@ -180,7 +179,8 @@ namespace EzUI {
 		}
 		return false;
 	}
-	void TextBox::Insert(const std::wstring& str) {
+	void TextBox::_Insert(const std::wstring& str) {
+		DeleteRange();//先删除是否有选中的区域
 		if (_textPos < 0)_textPos = 0;
 		if (_textPos > (int)_text.size()) {
 			_textPos = _text.size();
@@ -197,7 +197,6 @@ namespace EzUI {
 			//isTrailingHit = FALSE;
 			_textPos = pos;
 			_text.erase(pos, count);
-
 			if (TextChange) {
 				TextChange(EString(_text));
 			}
@@ -206,56 +205,22 @@ namespace EzUI {
 		return false;
 	}
 	bool TextBox::Copy() {
-		do
-		{
-			int pos, count;
-			if (!GetSelectedRange(&pos, &count))break;
-			std::wstring wBuf(_text.substr(pos, count));
-			std::string str;
-			EString::UnicodeToANSI(wBuf, &str);
-
-			//打开剪贴板
-			if (!OpenClipboard(PublicData->HANDLE))break;
-			//清空剪贴板
-			EmptyClipboard();
-			//为剪切板申请内存
-			HGLOBAL clip = GlobalAlloc(GMEM_DDESHARE, (str.size() + 1));
-			memcpy((void*)clip, str.c_str(), (str.size() + 1));
-			//解锁
-			GlobalUnlock(clip);
-			SetClipboardData(CF_TEXT, clip);
-			CloseClipboard();
-			return true;
-		} while (false);
-		return false;
+		int pos, count;
+		if (!GetSelectedRange(&pos, &count))return false;
+		std::wstring wBuf(_text.substr(pos, count));
+		return EzUI::CopyToClipboard(wBuf, PublicData->HANDLE);
 	}
 	bool TextBox::Paste() {
-		do
-		{
-			//只接收文本
-			if (!IsClipboardFormatAvailable(CF_TEXT))break;
-			//打开剪贴版
-			if (!OpenClipboard(PublicData->HANDLE))break;
-			//获取剪贴板数据
-			HANDLE hClipboard = GetClipboardData(CF_TEXT);
-			EString buf((CHAR*)GlobalLock(hClipboard));
-			if (!_multiLine) {
-				EString::Replace(&buf, "\r", "");//行编辑框不允许有换行符
-				EString::Replace(&buf, "\n", "");//行编辑框不允许有换行符
-			}
-			std::wstring wBuf;
-
-			EString::ANSIToUniCode(buf, &wBuf);
-			//解锁
-			GlobalUnlock(hClipboard);
-			CloseClipboard();
-
-			DeleteRange();//先删除是否有选中的区域
-			Insert(wBuf);//插入新的字符
-			return true;
-
-		} while (false);
-		return false;
+		std::wstring wBuf;
+		bool bRet = EzUI::GetClipboardData(&wBuf, PublicData->HANDLE);
+		EString u8Str(wBuf);
+		if (!_multiLine) {
+			//行编辑框不允许有换行符
+			EString::Replace(&u8Str, "\r", "");
+			EString::Replace(&u8Str, "\n", "");
+		}
+		_Insert(u8Str.utf16());//插入新的字符
+		return bRet;
 	}
 	void TextBox::OnBackspace() {
 		if (_text.size() <= 0)return;
@@ -426,7 +391,7 @@ namespace EzUI {
 				Invalidate();
 			}
 			else if (arg.ZDelta<0 && textWidth>Width()) {
-				_scrollX -= std::abs(arg.ZDelta)*0.5;
+				_scrollX -= std::abs(arg.ZDelta) * 0.5;
 				if (-_scrollX + Width() > textWidth) {
 					_scrollX = -(textWidth - Width());
 				}
@@ -553,6 +518,11 @@ namespace EzUI {
 		rect.X += _scrollX;//偏移
 		rect.Y += _scrollY;
 		return rect;
+	}
+	void TextBox::Insert(const EString& str)
+	{
+		_Insert(str.utf16());
+		Analysis();//分析字符串
 	}
 	void TextBox::SetAttribute(const EString& key, const EString& value) {
 		__super::SetAttribute(key, value);

@@ -8,16 +8,68 @@
 #pragma comment(lib, "Msimg32.lib")
 //#pragma comment(lib,"Shcore.lib")
 namespace EzUI {
-	WCHAR WindowClassName[]{ L"EzUI_Window" };
-	HZIP HZipResource = NULL;
-	HGLOBAL HVSResource = NULL;
-	const std::list<EzUI::MonitorInfo> MonitorInfos;
 
-	std::mutex _resourceMtx;
+	namespace Base {
+		WCHAR WindowClassName[]{ L"EzUI_Window" };
+		HZIP HZipResource = NULL;
+		HGLOBAL HVSResource = NULL;
+		const std::list<EzUI::MonitorInfo> MonitorInfos;
+		std::mutex ResourceMtx;
+	};
+
+	bool CopyToClipboard(int uFormat, void* pData, size_t size, HWND hWnd) {
+		//打开剪贴板
+		bool ret = OpenClipboard(hWnd);
+		if (!ret)return ret;
+		//清空剪贴板
+		::EmptyClipboard();
+		//为剪切板申请内存
+		HGLOBAL clip = ::GlobalAlloc(GMEM_DDESHARE, size);
+		memcpy((void*)clip, pData, size);
+		//解锁
+		ret = ::GlobalUnlock(clip);
+		ret = ::SetClipboardData(uFormat, clip);
+		ret = ::CloseClipboard();
+		return ret;
+	}
+
+	bool GetClipboardData(int uFormat, std::function<void(void*, size_t)> Callback, HWND hWnd) {
+		//只接收当前类型
+		bool ret = ::IsClipboardFormatAvailable(uFormat);
+		if (!ret)return ret;
+		//打开剪贴版
+		ret = OpenClipboard(hWnd);
+		if (!ret)return ret;
+		//获取剪贴板数据
+		HANDLE hClipboard = ::GetClipboardData(uFormat);
+		size_t dataSize = ::GlobalSize(hClipboard);
+		void* pData = ::GlobalLock(hClipboard);
+		if (Callback) {
+			Callback(pData, dataSize);
+		}
+		//解锁
+		ret = ::GlobalUnlock(hClipboard);
+		ret = ::CloseClipboard();
+		return ret;
+	}
+
+	bool CopyToClipboard(const std::wstring& str, HWND hWnd) {
+		return CopyToClipboard(CF_UNICODETEXT, (void*)str.c_str(), (str.size() + 1) * 2, hWnd);
+	}
+	bool GetClipboardData(std::wstring* outStr, HWND hWnd) {
+		bool ret = GetClipboardData(CF_UNICODETEXT, [=](void* data, size_t _sz) {
+			wchar_t* wstr = (wchar_t*)data;
+			size_t sz = _sz / 2;
+			outStr->clear();
+			outStr->append(wstr, wstr[sz - 1] == 0 ? sz - 1 : sz);
+			}, hWnd);
+		return ret;
+	}
+
 	bool FindZipResource(const EString& fileName, int* index, size_t* fileSize) {
-		if (HZipResource) {
+		if (Base::HZipResource) {
 			ZIPENTRY z;
-			ZRESULT ret = FindZipItem(HZipResource, fileName.c_str(), false, index, &z);
+			ZRESULT ret = FindZipItem(Base::HZipResource, fileName.c_str(), false, index, &z);
 			if (ret == 0 && z.unc_size != 0) {
 				*fileSize = z.unc_size;
 				return true;
@@ -26,12 +78,12 @@ namespace EzUI {
 		return false;
 	}
 	bool UnZipResource(const EString& fileName, std::string* outData) {
-		std::unique_lock<std::mutex> autoLock(_resourceMtx);
+		std::unique_lock<std::mutex> autoLock(Base::ResourceMtx);
 		int index;
 		size_t fileSize;
 		if (FindZipResource(fileName, &index, &fileSize)) {
 			outData->resize(fileSize);
-			UnzipItem(HZipResource, index, (void*)(outData->c_str()), fileSize);
+			UnzipItem(Base::HZipResource, index, (void*)(outData->c_str()), fileSize);
 			return true;
 		}
 		return false;
@@ -62,7 +114,7 @@ namespace EzUI {
 	}
 	void Ziper::UnZip(const ZIPENTRY& ze, void** pData) {
 		*pData = new char[ze.unc_size] { 0 };
-		UnzipItem(HZipResource, ze.index, *pData, ze.unc_size);
+		UnzipItem(Base::HZipResource, ze.index, *pData, ze.unc_size);
 	}
 	void Ziper::UnZip(std::function<bool(int index, const EString& fileName, void* pData, size_t len, DWORD fileAttribute)> callback) {
 		ZIPENTRY ze;

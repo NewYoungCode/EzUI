@@ -30,7 +30,7 @@ namespace EzUI {
 	//TextFormat
 	Font::Font(const std::wstring& fontFamily, int fontSize) {
 		this->fontFamily = fontFamily;
-		this->fontSize = fontSize;// *1.25f;//Ëõ·Å×ÖÌå
+		this->fontSize = fontSize;
 		D2D::g_WriteFactory->CreateTextFormat(fontFamily.c_str(), NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, (FLOAT)this->fontSize, L"", &value);
 	}
 	Font::~Font() {

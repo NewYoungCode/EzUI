@@ -1,5 +1,4 @@
 #include "MainFrm.h"
-#include "ComBox.h"
 MainFrm::MainFrm() :BorderlessWindow(1020, 690)
 {
 	InitForm();

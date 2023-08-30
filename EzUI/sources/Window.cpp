@@ -11,7 +11,7 @@ namespace EzUI {
 		float scanle = 1.0f;
 		POINT cursorPos;
 		::GetCursorPos(&cursorPos);
-		for (auto& it : EzUI::MonitorInfos) {
+		for (auto& it : EzUI::Base::MonitorInfos) {
 			Rect rect = it.Rect;
 			rect.Width = it.Physical.Width;
 			rect.Height = it.Physical.Height;
@@ -38,7 +38,7 @@ namespace EzUI {
 		_rect.Width = width;
 		_rect.Height = height;
 
-		_hWnd = ::CreateWindowExW(ExStyle | WS_EX_ACCEPTFILES, WindowClassName, WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
+		_hWnd = ::CreateWindowExW(ExStyle | WS_EX_ACCEPTFILES, Base::WindowClassName, Base::WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
 			_rect.X, _rect.Y, width, height, owner, NULL, GetModuleHandle(NULL), NULL);
 		InitData(ExStyle);//设置基本数据
 	}
@@ -169,13 +169,16 @@ namespace EzUI {
 	void Window::ShowMaximized() {
 		Show(SW_MAXIMIZE);
 	}
-	int Window::ShowModal()
+	int Window::ShowModal(bool disableOnwer)
 	{
-		_OwnerHwnd = ::GetWindowOwner(Hwnd());
-		Show();
-		if (_OwnerHwnd) {
-			::EnableWindow(_OwnerHwnd, FALSE);
+		//此处代码不能随意更改 解决关闭窗口时,owner窗口闪烁问题
+		if (disableOnwer) {
+			_oWnerWnd = ::GetWindowOwner(Hwnd());
 		}
+		if (_oWnerWnd) {
+			::EnableWindow(_oWnerWnd, FALSE);
+		}
+		Show();
 		MSG msg{ 0 };
 		while (::IsWindow(Hwnd()) && ::GetMessage(&msg, NULL, 0, 0) && msg.message != WM_QUIT)
 		{
@@ -186,8 +189,9 @@ namespace EzUI {
 			::PostQuitMessage(msg.wParam);
 			return _closeCode;
 		}
-		if (_OwnerHwnd) {
-			::SetForegroundWindow(_OwnerHwnd);
+		if (_oWnerWnd) {
+			::SetFocus(_oWnerWnd);
+			_oWnerWnd = NULL;
 		}
 		return _closeCode;
 	}
@@ -399,6 +403,10 @@ namespace EzUI {
 			bool bClose = true;
 			OnClose(bClose);
 			if (bClose) {
+				//解决关闭窗口时 owner窗口闪烁的问题
+				if (_oWnerWnd) {
+					::EnableWindow(_oWnerWnd, TRUE);
+				}
 				::DestroyWindow(_hWnd);
 			}
 			else {
@@ -428,11 +436,6 @@ namespace EzUI {
 		case WM_DESTROY:
 		{
 			OnDestroy();
-			//开始关闭窗口
-			if (_OwnerHwnd) {
-				::EnableWindow(_OwnerHwnd, TRUE);
-				_OwnerHwnd = NULL;
-			}
 			break;
 		}
 		case WM_SETCURSOR: {
@@ -780,7 +783,6 @@ namespace EzUI {
 			return;
 		}
 		_mouseDown = false;
-
 		if (_inputControl) {
 			Rect ctlRect = _inputControl->GetClientRect();
 			MouseEventArgs args(Event::None);
@@ -790,6 +792,7 @@ namespace EzUI {
 			{
 				args.EventType = Event::OnMouseUp;
 				_inputControl->DispatchEvent(args);
+
 			}
 			//触发单击事件 如果焦点还在并且鼠标未移出控件内 
 			if (_inputControl && mbtn == _lastBtn && ctlRect.Contains(point)) {

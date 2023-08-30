@@ -28,7 +28,7 @@ namespace EzUI {
 		wc.lpfnWndProc = EzUI_WndProc;//窗口过程
 		wc.hInstance = hInstance;//
 		wc.hCursor = LoadCursorW(NULL, IDC_ARROW);//光标
-		wc.lpszClassName = WindowClassName;//类名
+		wc.lpszClassName = Base::WindowClassName;//类名
 		if (!RegisterClassW(&wc)) //注册窗口
 		{
 			::MessageBoxW(NULL, L"This program requires Windows NT !",
@@ -55,7 +55,7 @@ namespace EzUI {
 		RenderInitialize();
 	}
 	void Application::EnableHighDpi() {
-		EzUI::GetMonitors((std::list<MonitorInfo>*) & EzUI::MonitorInfos);
+		EzUI::GetMonitors((std::list<MonitorInfo>*) & EzUI::Base::MonitorInfos);
 		//DPI感知相关
 		//不跟随系统放大无法接收WM_DISPLAYCHANGED消息
 		//bool b = SetProcessDPIAware();
@@ -87,15 +87,15 @@ namespace EzUI {
 #endif
 		if (!hRsrc)return;
 		DWORD len = SizeofResource(hInst, hRsrc);
-		HVSResource = LoadResource(hInst, hRsrc);
-		HZipResource = OpenZip((void*)HVSResource, len, password.empty() ? NULL : password.c_str());
+		Base::HVSResource = LoadResource(hInst, hRsrc);
+		Base::HZipResource = OpenZip((void*)Base::HVSResource, len, password.empty() ? NULL : password.c_str());
 	}
 	//使用本地文件名称加载资源包
 	Application::Application(const EString& fileName, const EString& password) {
 		Init();
-		HZipResource = OpenZip(fileName.utf16().c_str(), password.empty() ? NULL : password.c_str());
+		Base::HZipResource = OpenZip(fileName.utf16().c_str(), password.empty() ? NULL : password.c_str());
 #ifdef _DEBUG
-		if (HZipResource == NULL) {
+		if (Base::HZipResource == NULL) {
 			::MessageBoxW(NULL, fileName.utf16().c_str(), L"Failed to open zip", MB_ICONWARNING);
 		}
 #endif
@@ -106,13 +106,13 @@ namespace EzUI {
 	Application::~Application() {
 		RenderUnInitialize();
 		::CoUninitialize();
-		if (HZipResource) {
-			CloseZip(HZipResource);
+		if (Base::HZipResource) {
+			CloseZip(Base::HZipResource);
 		}
-		if (HVSResource) {
-			FreeResource(HVSResource);
+		if (Base::HVSResource) {
+			FreeResource(Base::HVSResource);
 		}
-		UnregisterClassW(WindowClassName, GetModuleHandle(NULL));
+		UnregisterClassW(Base::WindowClassName, GetModuleHandle(NULL));
 	}
 
 	int Application::Exec()

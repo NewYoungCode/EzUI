@@ -507,23 +507,6 @@ namespace EzUI {
 	const Rect& Control::SetRect(const Rect& rect)
 	{
 		this->_rect = rect;
-		while (_dock != DockStyle::None && this->Parent)
-		{
-			const Rect& pRect = Parent->GetRect();
-			if (_dock == DockStyle::Fill) {
-				_rect = Rect{ 0,0,pRect.Width,pRect.Height };
-				break;
-			}
-			if (_dock == DockStyle::Vertical) {
-				_rect = Rect{ X(),0,Width(),pRect.Height };
-				break;
-			}
-			if (_dock == DockStyle::Horizontal) {
-				_rect = Rect{ 0,Y(),pRect.Width,Height() };
-				break;
-			}
-			break;
-		}
 
 		if (GetFixedWidth() > 0) {
 			_rect.Width = GetFixedWidth();
@@ -594,8 +577,14 @@ namespace EzUI {
 		int _height;
 		for (auto& it : GetControls()) {
 
-			if (it->GetScale() != this->GetScale()) {
-				it->DispatchEvent(DpiChangeEventArgs(this->GetScale()));
+			if (it->GetDockStyle() == DockStyle::Fill) {
+				it->SetRect(Rect{ 0,0,Width(),Height() });
+			}
+			else if (it->GetDockStyle() == DockStyle::Vertical) {
+				it->SetRect(Rect{ 0,0,it->Width(),Height() });
+			}
+			else if (it->GetDockStyle() == DockStyle::Horizontal) {
+				it->SetRect(Rect{ 0,0,Width(),it->Height() });
 			}
 
 			_width = it->X() + it->Width();

@@ -5,7 +5,7 @@ namespace EzUI {
 	ShadowWindow::ShadowWindow(int width, int height, HWND hwnd)
 	{
 		DWORD dwFlags = WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT;
-		_hWnd = CreateWindowExW(dwFlags, WindowClassName, L"BoxShadow", WS_POPUP, 0, 0, width, height, hwnd, NULL, GetModuleHandle(NULL), NULL);
+		_hWnd = CreateWindowExW(dwFlags, Base::WindowClassName, L"BoxShadow", WS_POPUP, 0, 0, width, height, hwnd, NULL, GetModuleHandle(NULL), NULL);
 		ASSERT(_hWnd);
 	}
 

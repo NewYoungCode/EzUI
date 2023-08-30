@@ -19,10 +19,10 @@ namespace EzUI {
 		Point _lastPoint;//上一次移动的坐标
 		MouseButton _lastBtn = MouseButton::None;
 		int _closeCode = 0;//当窗口关闭的时候退出代码
-		HWND _OwnerHwnd = NULL;//所属窗口句柄
 		HWND _hWnd = NULL;//windows原生句柄
 		Rect _rect;//基于桌面的坐标
 		Rect _rectClient;//客户绘图区域
+		HWND _oWnerWnd = NULL;
 		void InitData(const DWORD& ExStyle);
 	public:
 		WindowData PublicData;//存储公共数据
@@ -34,7 +34,7 @@ namespace EzUI {
 		void MoveWindow();//鼠标按下移动窗口
 		virtual void OnMouseMove(const Point& point);//鼠标移动时发生
 		virtual void OnMouseLeave();//鼠标离开时发生
-		virtual void OnMouseWheel(int zDelta,const Point& point);//鼠标滚动发生
+		virtual void OnMouseWheel(int zDelta, const Point& point);//鼠标滚动发生
 		virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point);//鼠标双击是发生
 		virtual void OnMouseDown(MouseButton mbtn, const Point& point);//鼠标按下时发生
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point);//鼠标弹起时发生
@@ -79,7 +79,7 @@ namespace EzUI {
 		virtual void Hide();//隐藏窗口
 		void ShowNormal();//正常显示窗口
 		void Close(int exitCode = 0);//关闭窗口 exitCode为退出代码
-		virtual int ShowModal();//会阻塞
+		virtual int ShowModal(bool disableOnwer = true);//会阻塞
 		void ShowMinimized();//最小化窗口
 		void ShowMaximized();//最大化窗口
 		bool IsVisible();//窗口是否显示

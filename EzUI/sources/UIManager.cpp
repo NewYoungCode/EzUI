@@ -246,14 +246,10 @@ namespace EzUI {
 			}
 		}
 	}
-
-	void UIManager::LoadFromRaw(const char* xmlRaw)
-	{
-		TiXmlDocument doc;
-		auto result = doc.Parse(xmlRaw, NULL, TiXmlEncoding::TIXML_ENCODING_UTF8);
+	void UIManager::Load(void* _doc) {
+		TiXmlDocument* doc = (TiXmlDocument*)_doc;
 		//doc.Parse
-		TiXmlElement* element = doc.FirstChildElement();//read frist element
-
+		TiXmlElement* element = doc->FirstChildElement();//read frist element
 		std::list<TiXmlElement*> controlNodes;
 		//先处理样式
 		do
@@ -272,6 +268,24 @@ namespace EzUI {
 			LoadControl(element, control);//加载子节点
 			if (control) controls.push_back(control);
 		}
+
+	}
+	void UIManager::LoadFromRaw(const char* xmlRaw)
+	{
+		TiXmlDocument doc;
+		auto result = doc.Parse(xmlRaw, NULL, TiXmlEncoding::TIXML_ENCODING_UTF8);
+		Load(&doc);
+	}
+
+	void UIManager::LoadFromFile(const EString& fileName)
+	{
+		FILE* file(0);
+		_wfopen_s(&file, fileName.utf16().c_str(), L"rb");
+		if (file == NULL) return;
+		TiXmlDocument doc;
+		auto result = doc.LoadFile(file, TiXmlEncoding::TIXML_ENCODING_UTF8);
+		Load(&doc);
+		::fclose(file);
 	}
 
 	void UIManager::AnalysisStyle(const EString& styleStr) {

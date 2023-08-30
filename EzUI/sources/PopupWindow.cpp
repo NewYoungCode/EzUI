@@ -1,15 +1,15 @@
-#include "ToolWindow.h"
+#include "PopupWindow.h"
 namespace EzUI {
-	MenuWindow::MenuWindow(int width, int height, HWND owner) :LayeredWindow(width, height, owner)
+	PopupWindow::PopupWindow(int width, int height, HWND owner) :LayeredWindow(width, height, owner)
 	{
 		this->Zoom = false;
 	}
-	MenuWindow::MenuWindow(int width, int height, Control* ownerCtl) :LayeredWindow(width, height, ownerCtl->PublicData->HANDLE)
+	PopupWindow::PopupWindow(int width, int height, Control* ownerCtl) :LayeredWindow(width, height, ownerCtl->PublicData->HANDLE)
 	{
 		this->_ownerCtl = ownerCtl;
 		this->Zoom = false;
 	}
-	LRESULT MenuWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
+	LRESULT PopupWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		if (uMsg == WM_KILLFOCUS) {
 			HWND wnd = (HWND)wParam;
@@ -22,7 +22,7 @@ namespace EzUI {
 		}
 		return __super::WndProc(uMsg, wParam, lParam);
 	}
-	void MenuWindow::Show(int cmdShow)
+	void PopupWindow::Show(int cmdShow)
 	{
 		int x, y, width, height;
 		const Rect& rect = this->GetClientRect();
@@ -55,7 +55,7 @@ namespace EzUI {
 		if (_ownerCtl) {
 			width = ctlRect.Width;
 		}
-		if ((location.y + height) > monitorInfo->Rect.Height) {
+		if ((location.y + height) > (monitorInfo->Rect.Height + monitorInfo->Rect.Y)) {
 			y -= height;
 			if (_ownerCtl) {
 				y -= ctlRect.Height;
@@ -64,29 +64,17 @@ namespace EzUI {
 		if ((location.x + width) > monitorInfo->Rect.Width) {
 			x -= width;
 		}
-		::SetWindowPos(Hwnd(), HWND_TOPMOST, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE);
+		::SetWindowPos(Hwnd(), HWND_TOPMOST, x, y, width, height, NULL);
 		__super::Show(cmdShow);
 		::SetForegroundWindow(Hwnd());
 	}
 
-	int MenuWindow::ShowModal()
+	int PopupWindow::ShowModal(bool disableOnwer)
 	{
-		HWND OwnerHwnd = ::GetWindowOwner(Hwnd());
-		Show();
-		MSG msg{ 0 };
-		while (::IsWindow(Hwnd()) && ::GetMessage(&msg, NULL, 0, 0) && msg.message != WM_QUIT)
-		{
-			::TranslateMessage(&msg);
-			::DispatchMessage(&msg);
-		}
-		if (msg.message == WM_QUIT) {//
-			::PostQuitMessage(msg.wParam);
-		}
-		::SetFocus(OwnerHwnd);
-		return 0;
+		return __super::ShowModal(disableOnwer);
 	}
 
-	void MenuWindow::OnKillFocus(HWND hWnd)
+	void PopupWindow::OnKillFocus(HWND hWnd)
 	{
 		this->Close();
 	}
