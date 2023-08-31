@@ -32,8 +32,8 @@ void MainFrm::InitForm() {
 
 	auto aaa = $(this->MainLayout, "#centerLeft label");
 
-	this->FindControl("vlcDock")->AddControl(&player);
-	this->FindControl("lrcView2")->AddControl(&lrcCtl);//添加歌词控件
+	this->FindControl("vlcDock")->Add(&player);
+	this->FindControl("lrcView2")->Add(&lrcCtl);//添加歌词控件
 
 	std::list<MonitorInfo> monitorInfo;
 	GetMonitors(&monitorInfo);
@@ -86,7 +86,7 @@ void MainFrm::InitForm() {
 			s.SingerName = cfg->ReadString("singer", "", _it);
 			songs.push_back(s);
 
-			localList->AddControl(it);
+			localList->Add(it);
 			pos++;
 		}
 	}
@@ -252,7 +252,7 @@ void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 		searchList->Clear(true);
 		for (auto&& it : songs) {
 			SongItem2* sit = new SongItem2(it);
-			searchList->AddControl(sit);
+			searchList->Add(sit);
 		}
 		searchList->Invalidate();
 	}
@@ -334,8 +334,8 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 						SongItem* it = new SongItem(tag->SongName, toTimeStr(dur));
 						it->SetAttribute("FileHash", hash);
 						it->SetAttribute("SingerName", SingerName);
-						localList->AddControl(it);
-						localList->ResumeLayout();
+						localList->Add(it);
+						localList->RefreshLayout();
 
 						localList->GetScrollBar()->RollTo(it);
 						//localList->GetScrollBar()->Move(localList->GetContentSize().Height);
@@ -431,7 +431,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 		}
 		if (sender->Name == "dellocal") {//删除本地
 			SongItem* songItem = (SongItem*)sender->Parent;
-			localList->RemoveControl(songItem);
+			localList->Remove(songItem);
 
 			EString hash = songItem->GetAttribute("FileHash");
 			if (!hash.empty()) {
@@ -537,14 +537,14 @@ void MainFrm::NextPage(int a, int b) {
 		std::vector<Song> songs = global::SearchSongs(keyword);
 		for (auto&& it : songs) {
 			SongItem2* sit = new SongItem2(it);
-			searchList->AddControl(sit);
+			searchList->Add(sit);
 		}
 		if (!global::nextPage) {
 			Label* end = new Label;
 			end->SetFixedHeight(35);
 			end->Style.BackColor = Color(254, 249, 229);
 			end->SetText(L"已经没有更多数据");
-			searchList->AddControl(end);
+			searchList->Add(end);
 		}
 		searchList->Invalidate();
 	}

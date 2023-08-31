@@ -136,7 +136,7 @@ namespace EzUI {
 		const LayoutState& TryPendLayout();//尝试挂起布局 返回当前布局状态
 		void EndLayout();//结束布局
 		const Rect& SetRect(const Rect& rect);//设置相对父控件矩形 返回实际的rect
-		virtual void ResumeLayout();//直接进行布局
+		virtual void RefreshLayout();//刷新布局
 		virtual void SetTips(const EString& text);//设置tips
 		virtual ScrollBar* GetScrollBar();//获取控件的滚动条
 		bool DispatchEvent(const EventArgs& arg);//派发失去焦点事件
@@ -151,10 +151,10 @@ namespace EzUI {
 		Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
 		std::list<Control*> FindControl(const EString& attr, const EString& attrValue);//使用属性查找
 		Control* FindSingleControl(const EString& attr, const EString& attrValue);//使用属性查找出第一个
-		bool SwapControl(Control* childCtl, Control* childCt2);//对子控件的两个控件进行位置交换
-		virtual void InsertControl(size_t pos, Control* childCtl);//选择性插入控件
-		virtual void AddControl(Control* childCtl);//添加控件到末尾
-		virtual void RemoveControl(Control* childCtl);//删除控件 返回下一个迭代器
+		bool SwapChild(Control* childCtl, Control* childCt2);//对子控件的两个控件进行位置交换
+		virtual void Insert(size_t pos, Control* childCtl);//选择性插入控件
+		virtual void Add(Control* childCtl);//添加控件到末尾
+		virtual void Remove(Control* childCtl);//删除控件 返回下一个迭代器
 		virtual void SetParent(Control* parentCtl);//设置父控件
 		virtual void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件
 		virtual void SetVisible(bool flag);//设置Visible标志

@@ -234,14 +234,14 @@ namespace EzUI {
 			//Debug::Log("node %s", fristChild->Value());
 			Control* ctl = BuildControl(fristChild);
 			LoadControl(fristChild, ctl);
-			control->AddControl(ctl);
+			control->Add(ctl);
 			TiXmlElement* nextChild = fristChild->NextSiblingElement();
 			while (nextChild)//È»ºóÑ°ÕÒÐÖµÜ
 			{
 				//Debug::Log("node %s", nextChild->Value());
 				Control* ctl2 = BuildControl(nextChild);
 				LoadControl(nextChild, ctl2);
-				control->AddControl(ctl2);
+				control->Add(ctl2);
 				nextChild = nextChild->NextSiblingElement();
 			}
 		}
@@ -399,7 +399,7 @@ namespace EzUI {
 	}
 	void UIManager::SetupUI(Control* parentCtl)
 	{
-		parentCtl->AddControl(GetNode(0));
+		parentCtl->Add(GetNode(0));
 	}
 
 	void UIManager::LoadFile(const EString& fileName) {
@@ -439,7 +439,7 @@ namespace EzUI {
 		}
 		for (auto& it : freeControls) {
 			if (it->Parent) {
-				it->Parent->RemoveControl(it);
+				it->Parent->Remove(it);
 			}
 			delete it;
 		}

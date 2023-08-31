@@ -88,12 +88,12 @@ public:
 		ActiveStyle.BackColor = Color( 255, 230, 230, 100);
 		ActiveStyle.FontSize = 10;
 
-		AddControl(new HSpacer(15));
-		AddControl(&songName);
-		AddControl(&time);
-		AddControl(new HSpacer(15));
-		AddControl(&del);
-		AddControl(new HSpacer(10));
+		Add(new HSpacer(15));
+		Add(&songName);
+		Add(&time);
+		Add(new HSpacer(15));
+		Add(&del);
+		Add(new HSpacer(10));
 	}
 };
 
@@ -174,14 +174,14 @@ public:
 		img->Margin = 8;
 		del.Style.BackImage = img;
 
-		AddControl(new HSpacer(15));
-		AddControl(&songName);
-		AddControl(&AlbumName);
-		AddControl(&mv);
-		AddControl(&del);
-		AddControl(new HSpacer(5));
-		AddControl(&time);
-		AddControl(new HSpacer(5));
+		Add(new HSpacer(15));
+		Add(&songName);
+		Add(&AlbumName);
+		Add(&mv);
+		Add(&del);
+		Add(new HSpacer(5));
+		Add(&time);
+		Add(new HSpacer(5));
 	}
 };
 namespace global {

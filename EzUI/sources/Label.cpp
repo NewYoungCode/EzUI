@@ -106,7 +106,7 @@ namespace EzUI {
 		} while (false);
 		__super::SetAttribute(key, value);
 	}
-	void Label::ResumeLayout()
+	void Label::RefreshLayout()
 	{
 		//比较特殊需要屏蔽
 		this->OnLayout();

@@ -23,7 +23,7 @@ namespace EzUI {
 		Label();
 		virtual ~Label();
 		virtual void SetAttribute(const EString& key, const EString& value)override;
-		virtual void ResumeLayout() override;
+		virtual void RefreshLayout() override;
 		void SetText(const EString& text);
 		void SetUnderline(size_t pos, size_t count);
 		EString GetText()const;

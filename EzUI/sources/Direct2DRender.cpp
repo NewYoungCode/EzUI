@@ -270,14 +270,15 @@ namespace EzUI {
 	}
 	void DXImage::CreateFromFile(const std::wstring& filew)
 	{
+		HRESULT ret = S_OK;
 		if (D2D::g_ImageFactory) {
-			D2D::g_ImageFactory->CreateDecoderFromFilename(filew.c_str(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &bitmapdecoder);//
+			ret = D2D::g_ImageFactory->CreateDecoderFromFilename(filew.c_str(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &bitmapdecoder);//
 		}
 		if (bitmapdecoder) {
-			D2D::g_ImageFactory->CreateFormatConverter(&fmtcovter);
-			bitmapdecoder->GetFrame(0, &pframe);
-			fmtcovter->Initialize(pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
-			pframe->GetSize(&Width, &Height);
+			ret = D2D::g_ImageFactory->CreateFormatConverter(&fmtcovter);
+			ret = bitmapdecoder->GetFrame(0, &pframe);
+			ret = fmtcovter->Initialize(pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
+			ret = pframe->GetSize(&Width, &Height);
 			Init();
 		}
 	}

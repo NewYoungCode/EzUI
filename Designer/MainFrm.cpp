@@ -35,7 +35,7 @@ MainFrm::MainFrm(int width, int height) :Window(width, height)
 		ctl->SetAttribute("ctlName", it);
 		ctl->Name = "ctl";
 		ctl->SetText(it);
-		left.AddControl(ctl);
+		left.Add(ctl);
 	}
 
 
@@ -43,9 +43,9 @@ MainFrm::MainFrm(int width, int height) :Window(width, height)
 	right.Style.Border.Left = 1;
 	right.Style.Border.Color = Color::Gray;
 
-	mainLayout.AddControl(&left);
-	mainLayout.AddControl(new Spacer);
-	mainLayout.AddControl(&right);
+	mainLayout.Add(&left);
+	mainLayout.Add(new Spacer);
+	mainLayout.Add(&right);
 
 
 	::SetParent(ui->Hwnd(), this->Hwnd());
@@ -70,7 +70,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& arg) {
 			lb->SetText(ctlName);
 			lb->SetSize({ 100,30 });
 			lb->SetLocation({ point.X - lb->Width() / 2 ,point.Y - lb->Height() / 2 });
-			test->AddControl(lb);
+			test->Add(lb);
 			ui->Invalidate();
 		}
 	}

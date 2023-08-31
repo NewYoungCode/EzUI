@@ -7,7 +7,6 @@ namespace EzUI {
 
 	Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 	{
-
 		float scanle = 1.0f;
 		POINT cursorPos;
 		::GetCursorPos(&cursorPos);
@@ -33,8 +32,23 @@ namespace EzUI {
 		width = width * this->PublicData.Scale + 0.5;
 		height = height * this->PublicData.Scale + 0.5;
 
-		_rect.X = x + (sw - width) / 2.0f + 0.5;//保证左右居中
-		_rect.Y = y + (sh - height) / 2.0f + 0.5;//保证上下居中
+		if (owner) {
+			//基于父窗口的中心点
+			RECT ownerRECT;
+			::GetWindowRect(owner, &ownerRECT);
+			int onwerWidth = ownerRECT.right - ownerRECT.left;
+			int onwerHeight = ownerRECT.bottom - ownerRECT.top;
+			if (width > 0 && height > 0) {
+				_rect.X = ownerRECT.left + (onwerWidth - width) / 2.0f + 0.5;
+				_rect.Y = ownerRECT.top + (onwerHeight - height) / 2.0f + 0.5;
+			}
+		}
+		else {
+			//基于屏幕的中心点
+			_rect.X = x + (sw - width) / 2.0f + 0.5;//保证左右居中
+			_rect.Y = y + (sh - height) / 2.0f + 0.5;//保证上下居中
+		}
+
 		_rect.Width = width;
 		_rect.Height = height;
 

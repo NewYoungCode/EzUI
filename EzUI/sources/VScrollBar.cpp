@@ -6,7 +6,7 @@ namespace EzUI {
 	{
 		if (ctl && OWner->Parent && ctl->Parent == OWner) {
 			if (OWner->IsPendLayout()) {
-				OWner->ResumeLayout();
+				OWner->RefreshLayout();
 			}
 			//控件的矩形位置
 			const Rect& ctlRect = ctl->GetRect();

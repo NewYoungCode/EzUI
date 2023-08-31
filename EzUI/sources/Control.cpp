@@ -538,7 +538,7 @@ namespace EzUI {
 	{
 		_tipsText = text.utf16();
 	}
-	void Control::ResumeLayout()
+	void Control::RefreshLayout()
 	{
 		if (this->_layoutState == LayoutState::Layouting) {
 			return;
@@ -553,7 +553,7 @@ namespace EzUI {
 		if (IsAutoHeight() && Height() != _contentSize.Height) {
 			this->SetFixedHeight(_contentSize.Height);
 			this->EndLayout();
-			this->ResumeLayout();
+			this->RefreshLayout();
 			if (Parent) {
 				Parent->Invalidate();
 			}
@@ -562,7 +562,7 @@ namespace EzUI {
 		if (IsAutoWidth() && Width() != _contentSize.Width) {
 			this->SetFixedWidth(_contentSize.Width);
 			this->EndLayout();
-			this->ResumeLayout();
+			this->RefreshLayout();
 			if (Parent) {
 				Parent->Invalidate();
 			}
@@ -757,7 +757,7 @@ namespace EzUI {
 	void Control::OnPaintBefore(PaintEventArgs& args, bool paintSelf) {
 		this->PublicData = args.PublicData;
 		if (this->IsPendLayout()) {//绘制的时候会检查时候有挂起的布局 如果有 立即让布局生效并重置布局标志
-			this->ResumeLayout();
+			this->RefreshLayout();
 		}
 		auto clientRect = this->GetClientRect();//获取基于窗口的位置
 		if (clientRect.IsEmptyArea()) { return; }
@@ -885,7 +885,7 @@ namespace EzUI {
 		auto temp = _controls;
 		for (auto& it : temp) {
 			if (dynamic_cast<Spacer*>(it)) {
-				this->RemoveControl(it);
+				this->Remove(it);
 				delete it;
 			}
 		}
@@ -906,7 +906,7 @@ namespace EzUI {
 		}
 		return size_t(-1);
 	}
-	void Control::AddControl(Control* ctl) {
+	void Control::Add(Control* ctl) {
 #ifdef _DEBUG
 		auto itor = std::find(_controls.begin(), _controls.end(), ctl);
 		if (itor != _controls.end()) {
@@ -924,7 +924,7 @@ namespace EzUI {
 		ctl->TryPendLayout();
 		this->TryPendLayout();//添加控件需要将布局重新挂起
 	}
-	void Control::InsertControl(size_t pos, Control* ctl)
+	void Control::Insert(size_t pos, Control* ctl)
 	{
 #ifdef _DEBUG
 		auto itor = std::find(_controls.begin(), _controls.end(), ctl);
@@ -956,9 +956,9 @@ namespace EzUI {
 	}
 	void Control::SetParent(Control* parentCtl)
 	{
-		parentCtl->AddControl(this);
+		parentCtl->Add(this);
 	}
-	void Control::RemoveControl(Control* ctl)
+	void Control::Remove(Control* ctl)
 	{
 		auto it1 = ::std::find(_controls.begin(), _controls.end(), ctl);
 		if (it1 != _controls.end()) {
@@ -1027,7 +1027,7 @@ namespace EzUI {
 		}
 		return NULL;
 	}
-	bool Control::SwapControl(Control* ct1, Control* ct2)
+	bool Control::SwapChild(Control* ct1, Control* ct2)
 	{
 		int swapCount = 0;
 		for (auto& it : this->_controls) {
@@ -1174,7 +1174,7 @@ namespace EzUI {
 		}
 		VisibleControls.clear();//清空可见控件
 		_controls.clear();//清空子控件集合
-		DestroySpacers();//清空弹簧并删除弹簧
+		this->TryPendLayout();
 	}
 	void Control::OnMouseMove(const MouseEventArgs& args)
 	{
@@ -1292,7 +1292,7 @@ namespace EzUI {
 	void ScrollBar::RollTo(double posY, const  ScrollRollEventArgs& args) {
 		if (OWner == NULL) return;
 		if (OWner->IsPendLayout()) {
-			OWner->ResumeLayout();
+			OWner->RefreshLayout();
 		}
 		if (!Scrollable()) {
 			return;
@@ -1324,7 +1324,7 @@ namespace EzUI {
 	void ScrollBar::RefreshScroll() {
 		if (OWner == NULL)return;
 		if (OWner->IsPendLayout()) {
-			OWner->ResumeLayout();
+			OWner->RefreshLayout();
 		}
 		int scrollBarLength;
 		this->GetInfo(&this->_viewLength, &this->_contentLength, &scrollBarLength);

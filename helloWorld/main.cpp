@@ -103,11 +103,11 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 		lb->Margin = 1;
 		lb->EventNotify = [&list](Control* sd, const EventArgs& arg)->void {
 			if (arg.EventType == Event::OnMouseClick) {
-				list.RemoveControl(sd);
+				list.Remove(sd);
 				list.Invalidate();
 			}
 			};
-		list.AddControl(lb);
+		list.Add(lb);
 	}
 
 	TextBox text;
