@@ -1,6 +1,5 @@
 #pragma once
 #include "Control.h"
-#include "Timer.h"
 
 namespace EzUI {
 	/// <summary>

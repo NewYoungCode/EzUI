@@ -157,12 +157,6 @@ namespace EzUI {
 				ctl->SetAttribute(attrName, attrValue);
 				continue;
 			}
-			if (std::strcmp(attrName, "src") == 0 && dynamic_cast<IFrame*>(ctl)) {
-				UIManager* umg = new UIManager;
-				umg->LoadFile(attrValue);
-				umg->SetupUI(ctl);
-				this->iFrames.push_back(umg);
-			}
 			ctl->SetAttribute(attr->Name(), attrValue);
 			this->OnSetAttribute(ctl, attrName, attrValue);
 		} while ((attr = attr->Next()));
@@ -434,13 +428,7 @@ namespace EzUI {
 		*img = NULL;
 	}
 	UIManager::~UIManager() {
-		for (auto& it : iFrames) {
-			delete it;
-		}
 		for (auto& it : freeControls) {
-			if (it->Parent) {
-				it->Parent->Remove(it);
-			}
 			delete it;
 		}
 		for (auto& it : freeImages) {

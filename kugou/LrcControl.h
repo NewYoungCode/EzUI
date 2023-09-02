@@ -1,6 +1,5 @@
 #pragma once
 #include "global.h"
-#include "Timer.h"
 class Lrc
 {
 public:

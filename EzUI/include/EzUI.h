@@ -4,6 +4,7 @@
 #include "unzip.h"
 #include "RenderType.h"
 #include "Direct2DRender.h"
+#include <TimeAPI.h>
 
 namespace EzUI {
 	struct MonitorInfo;
@@ -436,4 +437,35 @@ namespace EzUI {
 		virtual EString GetAttribute(const EString& attrName);//获取属性
 	};
 
+};
+
+namespace EzUI {
+	namespace Thread {
+		class UI_EXPORT Timer :public IControl {
+			MMRESULT timer = 0;
+		public:
+			std::function<void(Timer*)> Tick;
+			size_t Interval = -1;
+		public:
+			Timer();
+			void Start();
+			void Stop();
+			virtual ~Timer();
+		};
+	}
+	namespace Windows {
+		//在操作UI的时候建议使用此Timer类
+		class UI_EXPORT Timer :public IControl {
+		public:
+			std::function<void(Timer*)> Tick;
+			size_t Interval = -1;
+			UINT_PTR TimerId = NULL;
+		public:
+			void Stop();
+			void Start();
+			Timer() {}
+			virtual ~Timer();
+		};
+	};
+	using Timer = Thread::Timer;
 };

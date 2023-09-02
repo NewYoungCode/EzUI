@@ -2,7 +2,6 @@
 #include "global.h"
 #include "VlcPlayer.h"
 #include "LrcControl.h"
-#include "Timer.h"
 #include "TabLayout.h"
 #include "NotifyIcon.h"
 #include "BorderlessWindow.h"

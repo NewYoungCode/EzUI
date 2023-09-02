@@ -1,6 +1,5 @@
 #pragma once
 #include "Control.h"
-#include "Timer.h"
 #include "VScrollBar.h"
 namespace EzUI {
 	class UI_EXPORT TextBox :

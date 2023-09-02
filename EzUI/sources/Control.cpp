@@ -873,10 +873,6 @@ namespace EzUI {
 			PublicData->RemoveControl(this);
 			PublicData = NULL;
 		}
-		//销毁控件前请先将控件从父容器中移除
-	/*	if (Parent) {
-			Parent->RemoveControl(this);
-		}*/
 		DestroySpacers();
 		Parent = NULL;
 	}
@@ -884,10 +880,10 @@ namespace EzUI {
 		//控件释放的时候自动释放弹簧
 		auto temp = _controls;
 		for (auto& it : temp) {
-			if (dynamic_cast<Spacer*>(it)) {
+		/*	if (dynamic_cast<Spacer*>(it)) {
 				this->Remove(it);
 				delete it;
-			}
+			}*/
 		}
 	}
 	size_t Control::FindControl(Control* childCtl)

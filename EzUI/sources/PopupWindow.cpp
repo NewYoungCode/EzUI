@@ -76,6 +76,6 @@ namespace EzUI {
 
 	void PopupWindow::OnKillFocus(HWND hWnd)
 	{
-		this->Close();
+		::DestroyWindow(Hwnd());
 	}
 };

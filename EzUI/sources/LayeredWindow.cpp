@@ -10,14 +10,13 @@ namespace EzUI {
 		PublicData.InvalidateRect = [=](void* _rect) ->void {
 			Rect& rect = *(Rect*)_rect;
 			this->InvalidateRect(rect);
-			if (IsVisible()) {
-				::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
-			}
+			PublicData.UpdateWindow();
 			};
 		PublicData.UpdateWindow = [=]()->void {
-			if (IsVisible() && !_InvalidateRect.IsEmptyArea()) {
+			//无需重复绘制 后期会改为别的方式
+		/*	if (IsVisible() && !_InvalidateRect.IsEmptyArea()) {
 				::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
-			}
+			}*/
 			};
 	}
 	ShadowWindow* LayeredWindow::GetShadowWindow()

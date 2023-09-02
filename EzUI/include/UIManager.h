@@ -14,9 +14,9 @@
 #include "TextBox.h"
 #include "TabLayout.h"
 #include "PictureBox.h"
-#include "IFrame.h"
 #include "Window.h"
 namespace EzUI {
+	extern class IFrame;
 	class UI_EXPORT UIManager {
 		enum class Style {
 			Static,
@@ -31,7 +31,6 @@ namespace EzUI {
 			EString styleStr;
 		};
 	private:
-		std::vector<UIManager*> iFrames;
 		std::function<void(Image*)> BuildImageCallback;
 		std::list<Control*> freeControls;
 		std::list<Image*> freeImages;
@@ -55,11 +54,29 @@ namespace EzUI {
 		void LoadFromRaw(const char* utf8str);//从内存中加载
 		void LoadFromFile(const EString& fileName);//从文件中加载
 		void LoadFile(const EString& fileName);//自动判断并且加载内容
-		
+
 		Control* GetNodeByName(const EString& nodeName = "");
 		Control* GetNode(size_t pos = 0);
 		void Free(Control** ctl);
 		void Free(Image** img);
+	};
+
+	class IFrame :public Control {
+		UIManager umg;
+	public:
+		IFrame() {}
+		virtual ~IFrame() {}
+		virtual void SetAttribute(const EString& attrName, const EString& attrValue)override {
+			if (attrName == "src") {
+				umg.LoadFile(attrValue);
+				umg.SetupUI(this);
+				if (this->GetControls().size() > 0) {
+					Control* root = this->FindControl(this->GetControls().size() - 1);
+					root->SetDockStyle(DockStyle::Fill);
+				}
+			}
+			__super::SetAttribute(attrName, attrValue);
+		};
 	};
 
 	//选择器

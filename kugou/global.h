@@ -11,7 +11,6 @@
 #include "VLayout.h"
 #include "Button.h"
 
-#include "timer.h"
 #include "resource.h"
 
 #include "WebClient.h"

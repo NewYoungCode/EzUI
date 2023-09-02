@@ -32,6 +32,7 @@ void MainFrm::InitForm() {
 
 	auto aaa = $(this->MainLayout, "#centerLeft label");
 
+	player.Name = "player";
 	this->FindControl("vlcDock")->Add(&player);
 	this->FindControl("lrcView2")->Add(&lrcCtl);//Ìí¼Ó¸è´Ê¿Ø¼þ
 
@@ -151,7 +152,6 @@ MainFrm::~MainFrm()
 		delete deskTopLrc;
 	}
 	if (deskTopWnd) {
-		deskTopWnd->Close();
 		delete deskTopWnd;
 	}
 }
