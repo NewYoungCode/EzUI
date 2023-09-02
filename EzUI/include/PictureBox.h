@@ -3,6 +3,7 @@
 namespace EzUI {
 	class UI_EXPORT PictureBox : public Control {
 	private:
+		Image* _srcImg = NULL;
 		Image* _img = NULL;
 		Windows::Timer _timer;
 	protected:
