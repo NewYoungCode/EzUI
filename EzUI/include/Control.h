@@ -8,6 +8,7 @@ namespace EzUI {
 		bool _visible = true;//控件是否可见 此标志为true的时候 可能实际中并不会可见 
 		float _scale = 1.0f;
 		std::list<Control*> _controls;//子控件
+		std::list<Control*> _spacers;//存储弹簧控件
 		//布局状态AddControl丶InsertControl丶RemoveControl丶OnSize时候此标志为挂起 调用ResumeLayout标志为布局中 当调用OnLayout()之后此标志为None
 		EzUI::LayoutState _layoutState = EzUI::LayoutState::None;
 		std::wstring _tipsText;//鼠标悬浮的提示文字

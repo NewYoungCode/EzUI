@@ -878,13 +878,11 @@ namespace EzUI {
 	}
 	void Control::DestroySpacers() {
 		//控件释放的时候自动释放弹簧
-		auto temp = _controls;
-		for (auto& it : temp) {
-		/*	if (dynamic_cast<Spacer*>(it)) {
-				this->Remove(it);
-				delete it;
-			}*/
+		for (auto& it : _spacers) {
+			this->Remove(it);
+			delete it;
 		}
+		_spacers.clear();
 	}
 	size_t Control::FindControl(Control* childCtl)
 	{
@@ -909,6 +907,9 @@ namespace EzUI {
 			ASSERT(!"The control already exists and cannot be added repeatedly");
 		}
 #endif
+		if (dynamic_cast<Spacer*>(ctl)) {
+			_spacers.push_back(ctl);
+		}
 		_controls.push_back(ctl);
 		ctl->PublicData = this->PublicData;
 		ctl->Parent = this;
@@ -928,6 +929,9 @@ namespace EzUI {
 			ASSERT(!"The control already exists and cannot be added repeatedly");
 		}
 #endif
+		if (dynamic_cast<Spacer*>(ctl)) {
+			_spacers.push_back(ctl);
+		}
 		size_t i = 0;
 		std::list<Control*>::iterator it = _controls.begin();
 		for (; it != _controls.end(); it++) {
@@ -1168,9 +1172,10 @@ namespace EzUI {
 				delete* i;
 			}
 		}
-		VisibleControls.clear();//清空可见控件
-		_controls.clear();//清空子控件集合
-		this->TryPendLayout();
+		this->VisibleControls.clear();//清空可见控件
+		this->_controls.clear();//清空子控件集合
+		this->DestroySpacers();//清空弹簧
+		this->TryPendLayout();//挂起布局
 	}
 	void Control::OnMouseMove(const MouseEventArgs& args)
 	{
