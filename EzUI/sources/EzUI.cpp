@@ -8,7 +8,50 @@
 #pragma comment(lib, "Msimg32.lib")
 //#pragma comment(lib,"Shcore.lib")
 #pragma comment(lib,"Winmm.lib")
+#include <shared_mutex>
 namespace EzUI {
+
+	/*namespace LayeredRender {
+		std::map<HWND, Rect*> RenderMap;
+		Thread::Timer RenderTimer;
+		std::shared_mutex _mtx;
+
+		void Enqueue(HWND wnd, Rect* rect)
+		{
+			std::unique_lock<std::shared_mutex> lock(_mtx);
+			auto it = RenderMap.find(wnd);
+			if (it != RenderMap.end()) {
+				return;
+			}
+			RenderMap.insert(std::pair<HWND, Rect*>(wnd, rect));
+			if (RenderTimer.Tick == NULL) {
+				RenderTimer.Interval = 1;
+				RenderTimer.Tick = [=](Thread::Timer*) {
+					std::unique_lock<std::shared_mutex> lock(_mtx);
+					OutputDebugStringA("loop\n");
+					for (auto& it : RenderMap) {
+						if (::IsWindow(it.first) && ::IsWindowVisible(it.first) && !it.second->IsEmptyArea()) {
+							::SendMessage(it.first, WM_PAINT, (WPARAM)&it.second, NULL);
+						}
+					}
+					};
+			}
+			RenderTimer.Start();
+		}
+		void EarseQueue(HWND hWnd) {
+			OutputDebugStringA("EraseQueue\n");
+			std::unique_lock<std::shared_mutex> lock(_mtx);
+			auto it = RenderMap.find(hWnd);
+			if (it != RenderMap.end()) {
+				RenderMap.erase(it);
+			}
+			if (RenderMap.size() < 1) {
+				RenderTimer.Stop();
+				OutputDebugStringA("stop\n");
+			}
+		}
+	};*/
+
 
 	namespace Base {
 		WCHAR WindowClassName[]{ L"EzUI_Window" };
@@ -521,16 +564,11 @@ namespace EzUI {
 	}
 	namespace Windows {
 		std::map<UINT_PTR, UINT_PTR>  __timers;
-		std::mutex __timerMtx;
 		void __InsertTimer(UINT_PTR TimerId, UINT_PTR timer) {
-			__timerMtx.lock();
 			__timers.insert(std::pair<UINT_PTR, UINT_PTR>(TimerId, timer));
-			__timerMtx.unlock();
 		};
 		void __Erase(UINT_PTR iTimerID) {
-			__timerMtx.lock();
 			__timers.erase(iTimerID);
-			__timerMtx.unlock();
 		};
 		void  CALLBACK __TimeProc(HWND hwnd, UINT message, UINT_PTR iTimerID, DWORD dwTime)
 		{

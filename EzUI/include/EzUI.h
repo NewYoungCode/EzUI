@@ -8,12 +8,20 @@
 
 namespace EzUI {
 	struct MonitorInfo;
+	class IControl;
 	class EventArgs;
 	class ControlStyle;
 	class Control;
 	class Spacer;
 	class ScrollBar;
 	enum class Cursor :ULONG_PTR;
+
+	namespace Windows {
+		class Timer;
+	};
+	namespace Thread {
+		class Timer;
+	};
 
 	namespace Base {
 		//全局资源句柄
@@ -24,6 +32,15 @@ namespace EzUI {
 		extern UI_EXPORT const std::list<EzUI::MonitorInfo> MonitorInfos;//所有监视器信息
 	};
 
+	////分层窗口渲染相关
+	//namespace LayeredRender {
+	//	extern UI_EXPORT std::map<HWND, Rect*> RenderMap;
+	//	extern UI_EXPORT Thread::Timer RenderTimer;
+	//	extern UI_EXPORT void Enqueue(HWND wnd, Rect* rect);
+	//	extern UI_EXPORT void EarseQueue(HWND hWnd);
+	//};
+
+	//解压缩相关
 	class UI_EXPORT Ziper {
 		HZIP _hZip = NULL;
 		size_t _count = 0;

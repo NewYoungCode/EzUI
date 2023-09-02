@@ -89,7 +89,7 @@ namespace EzUI {
 		DWORD len = SizeofResource(hInst, hRsrc);
 		Base::HVSResource = LoadResource(hInst, hRsrc);
 		Base::HZipResource = OpenZip((void*)Base::HVSResource, len, password.empty() ? NULL : password.c_str());
-	}
+}
 	//使用本地文件名称加载资源包
 	Application::Application(const EString& fileName, const EString& password) {
 		Init();

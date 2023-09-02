@@ -18,6 +18,7 @@ namespace EzUI {
 		virtual void OnSize(const Size& sz)override;
 		virtual void DoPaint(HDC winHDC, const Rect& rePaintRect)override;
 		virtual void OnRect(const Rect& rect)override;
+		virtual void OnDestroy()override;
 		void UpdateShadow();
 		void InvalidateRect(const Rect& rect);
 	public:

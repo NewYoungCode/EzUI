@@ -6,15 +6,19 @@ namespace EzUI {
 	LayeredWindow::LayeredWindow(int width, int height, HWND owner) :Window(width, height, owner, /*WS_THICKFRAME |*/ WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP, WS_EX_LAYERED)
 	{
 		_boxShadow = new ShadowWindow(width, height, Hwnd());
+		//LayeredRender::Enqueue(Hwnd(), &_InvalidateRect);
 		UpdateShadow();
 		PublicData.InvalidateRect = [=](void* _rect) ->void {
 			Rect& rect = *(Rect*)_rect;
 			this->InvalidateRect(rect);
-			PublicData.UpdateWindow();
+			//进行实时绘制
+			if (IsVisible() && !_InvalidateRect.IsEmptyArea()) {
+				::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
+			}
 			};
 		PublicData.UpdateWindow = [=]()->void {
 			//无需重复绘制 后期会改为别的方式
-		/*	if (IsVisible() && !_InvalidateRect.IsEmptyArea()) {
+			/*if (IsVisible() && !_InvalidateRect.IsEmptyArea()) {
 				::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
 			}*/
 			};
@@ -22,6 +26,10 @@ namespace EzUI {
 	ShadowWindow* LayeredWindow::GetShadowWindow()
 	{
 		return _boxShadow;
+	}
+	void LayeredWindow::OnDestroy() {
+		//LayeredRender::EarseQueue(Hwnd());
+		__super::OnDestroy();
 	}
 	void LayeredWindow::SetShadow(int width)
 	{
@@ -37,6 +45,7 @@ namespace EzUI {
 		UpdateShadow();
 	}
 	LayeredWindow::~LayeredWindow() {
+		//LayeredRender::EarseQueue(Hwnd());
 		CloseShadow();
 	}
 	void LayeredWindow::UpdateShadow() {

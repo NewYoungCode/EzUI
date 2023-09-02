@@ -1,5 +1,5 @@
 #include "MainFrm.h"
-MainFrm::MainFrm() :BorderlessWindow(1020, 690)
+MainFrm::MainFrm() :LayeredWindow(1020, 690)
 {
 	InitForm();
 	//мпел
@@ -497,9 +497,11 @@ void MainFrm::Task() {
 		double rate = position / (player.Duration() * 1000.0);
 		int w = playerBar->Width() * rate;
 
-		lrcCtl.ChangePostion(position);
 		if (deskTopWnd->IsVisible()) {
 			deskTopLrc->ChangePostion(position);
+		}
+		else {
+			lrcCtl.ChangePostion(position);
 		}
 
 		EString f1 = toTimeStr(position / 1000);

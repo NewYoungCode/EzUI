@@ -16,7 +16,7 @@
 #include "PictureBox.h"
 #include "Window.h"
 namespace EzUI {
-	extern class IFrame;
+	class IFrame;
 	class UI_EXPORT UIManager {
 		enum class Style {
 			Static,
