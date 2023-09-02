@@ -1,5 +1,6 @@
 #pragma once
 #include "Control.h"
+#include "Timer.h"
 namespace EzUI {
 	class UI_EXPORT PictureBox : public Control {
 	private:

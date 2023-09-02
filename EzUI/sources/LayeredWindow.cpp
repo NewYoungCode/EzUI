@@ -6,7 +6,6 @@ namespace EzUI {
 	LayeredWindow::LayeredWindow(int width, int height, HWND owner) :Window(width, height, owner, /*WS_THICKFRAME |*/ WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP, WS_EX_LAYERED)
 	{
 		_boxShadow = new ShadowWindow(width, height, Hwnd());
-		//LayeredRender::Enqueue(Hwnd(), &_InvalidateRect);
 		UpdateShadow();
 		PublicData.InvalidateRect = [=](void* _rect) ->void {
 			Rect& rect = *(Rect*)_rect;
@@ -27,10 +26,6 @@ namespace EzUI {
 	{
 		return _boxShadow;
 	}
-	void LayeredWindow::OnDestroy() {
-		//LayeredRender::EarseQueue(Hwnd());
-		__super::OnDestroy();
-	}
 	void LayeredWindow::SetShadow(int width)
 	{
 		_shadowWidth = width;
@@ -45,7 +40,6 @@ namespace EzUI {
 		UpdateShadow();
 	}
 	LayeredWindow::~LayeredWindow() {
-		//LayeredRender::EarseQueue(Hwnd());
 		CloseShadow();
 	}
 	void LayeredWindow::UpdateShadow() {

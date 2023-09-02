@@ -16,13 +16,6 @@ namespace EzUI {
 	class ScrollBar;
 	enum class Cursor :ULONG_PTR;
 
-	namespace Windows {
-		class Timer;
-	};
-	namespace Thread {
-		class Timer;
-	};
-
 	namespace Base {
 		//全局资源句柄
 		extern UI_EXPORT WCHAR WindowClassName[];//窗口类名
@@ -31,15 +24,7 @@ namespace EzUI {
 		extern UI_EXPORT HGLOBAL HVSResource;//vs中的资源文件句柄
 		extern UI_EXPORT const std::list<EzUI::MonitorInfo> MonitorInfos;//所有监视器信息
 	};
-
-	////分层窗口渲染相关
-	//namespace LayeredRender {
-	//	extern UI_EXPORT std::map<HWND, Rect*> RenderMap;
-	//	extern UI_EXPORT Thread::Timer RenderTimer;
-	//	extern UI_EXPORT void Enqueue(HWND wnd, Rect* rect);
-	//	extern UI_EXPORT void EarseQueue(HWND hWnd);
-	//};
-
+	
 	//解压缩相关
 	class UI_EXPORT Ziper {
 		HZIP _hZip = NULL;
@@ -454,35 +439,4 @@ namespace EzUI {
 		virtual EString GetAttribute(const EString& attrName);//获取属性
 	};
 
-};
-
-namespace EzUI {
-	namespace Thread {
-		class UI_EXPORT Timer :public IControl {
-			MMRESULT timer = 0;
-		public:
-			std::function<void(Timer*)> Tick;
-			size_t Interval = -1;
-		public:
-			Timer();
-			void Start();
-			void Stop();
-			virtual ~Timer();
-		};
-	}
-	namespace Windows {
-		//在操作UI的时候建议使用此Timer类
-		class UI_EXPORT Timer :public IControl {
-		public:
-			std::function<void(Timer*)> Tick;
-			size_t Interval = -1;
-			UINT_PTR TimerId = NULL;
-		public:
-			void Stop();
-			void Start();
-			Timer() {}
-			virtual ~Timer();
-		};
-	};
-	using Timer = Thread::Timer;
 };
