@@ -576,6 +576,11 @@ void  MainFrm::OpenLrcView() {
 
 LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
 {
+	if (WM_Invalidate == msg) {
+		Control* ct = (Control*)W;
+		ct->Invalidate();
+		return 0;
+	}
 	if (refreshImage == msg) {
 		if (headImg) {
 			singer->Style.ForeImage = headImg;

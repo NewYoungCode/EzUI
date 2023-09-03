@@ -26,6 +26,7 @@
 #endif
 
 #define refreshImage WM_UIMESSAGE+1
+#define WM_Invalidate  WM_UIMESSAGE+2
 using namespace EzUI;
 struct Song {
 	EString hash;
@@ -72,9 +73,9 @@ public:
 		songName.MousePassThrough = time.MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseDoubleClick;
 		songName.HoverStyle.FontSize = 15;
 
-	/*	songName.Padding.Left = 10;
-		songName.SetAutoHeight(true);
-		songName.SetUnderline(0,5);*/
+		/*	songName.Padding.Left = 10;
+			songName.SetAutoHeight(true);
+			songName.SetUnderline(0,5);*/
 
 		songName.Name = "autosz";
 
@@ -84,7 +85,7 @@ public:
 
 		this->SetFixedHeight(33);
 		HoverStyle.BackColor = Color(230, 230, 230, 100);
-		ActiveStyle.BackColor = Color( 255, 230, 230, 100);
+		ActiveStyle.BackColor = Color(255, 230, 230, 100);
 		ActiveStyle.FontSize = 10;
 
 		Add(new HSpacer(15));

@@ -26,8 +26,8 @@ namespace EzUI {
 			if (_img->FrameCount() > 1) {
 				_timer.Interval = _img->NextFrame();
 				_timer.Tick = [=](Windows::Timer* timer) {
-					this->Invalidate();
 					timer->Stop();
+					this->Invalidate();
 					};
 				_timer.Start();
 			}

@@ -17,10 +17,12 @@ namespace EzUI {
 	{
 		VlcPlayer* vp = (VlcPlayer*)opaque;
 		if ((Control*)vp->Tag) {
-			((Control*)vp->Tag)->Invalidate();
+			//((Control*)vp->Tag)->Invalidate();
+			::SendMessage(vp->PublicData->HANDLE, WM_UIMESSAGE + 2, (WPARAM)((Control*)vp->Tag), 0);
 		}
 		else {
-			vp->Invalidate();
+			//vp->Invalidate();
+			::SendMessage(vp->PublicData->HANDLE, WM_UIMESSAGE + 2, (WPARAM)vp, 0);
 		}
 	}
 	unsigned setup(void** opaque, char* chroma, unsigned* width, unsigned* height, unsigned* pitches, unsigned* lines)
