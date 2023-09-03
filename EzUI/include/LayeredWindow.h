@@ -13,7 +13,6 @@ namespace EzUI {
 	protected:
 		LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
 		virtual void OnSize(const Size& sz)override;
-		virtual void DoPaint(HDC winHDC, const Rect& rePaintRect)override;
 		void InvalidateRect(const Rect& rect);
 	public:
 		LayeredWindow(int width, int height, HWND owner = NULL);

@@ -881,7 +881,7 @@ namespace EzUI {
 	void Window::OnKillFocus(HWND hWnd)
 	{
 	}
-	
+
 
 	void Window::MoveWindow() {
 		::ReleaseCapture();

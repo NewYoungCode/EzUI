@@ -17,8 +17,8 @@ namespace EzUI {
 		_shadowWeight = padding;
 		UpdateShadowBox();
 	}
-	void BorderlessWindow::OnPaint(PaintEventArgs& args) {
-		__super::OnPaint(args);
+	void BorderlessWindow::DoPaint(HDC winHDC, const Rect& rePaintRect) {
+		__super::DoPaint(winHDC, rePaintRect);
 		if (_firstPaint) {
 			_firstPaint = false;
 			UpdateShadowBox();

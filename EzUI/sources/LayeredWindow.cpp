@@ -55,16 +55,6 @@ namespace EzUI {
 		__super::OnSize(sz);
 	}
 
-	void LayeredWindow::DoPaint(HDC winHDC, const Rect& rePaintRect) {
-		const Rect& clientRect = GetClientRect();//
-		DXRender pt(winHDC, clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height);//
-		PaintEventArgs args(pt);
-		args.InvalidRectangle = rePaintRect;//
-		args.PublicData = &PublicData;
-		args.DC = winHDC;
-		OnPaint(args);//¿ªÊ¼ÖØ»æ
-	}
-
 	LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		if (uMsg == WM_PAINT && _winBitmap && !_InvalidateRect.IsEmptyArea()) {

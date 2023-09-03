@@ -13,7 +13,7 @@ namespace EzUI {
 	protected:
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
 		virtual void OnRect(const Rect& rect) override;
-		virtual void OnPaint(PaintEventArgs& args)override;
+		virtual void DoPaint(HDC winHDC, const Rect& rePaintRect)override;
 		void UpdateShadowBox();
 	public:
 		void SetShadow(int weight);
