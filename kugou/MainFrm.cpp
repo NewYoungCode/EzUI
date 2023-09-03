@@ -1,5 +1,5 @@
 #include "MainFrm.h"
-MainFrm::MainFrm() :LayeredWindow(1020, 690)
+MainFrm::MainFrm() :BorderlessWindow(1020, 690)
 {
 	InitForm();
 	//мпел
@@ -40,7 +40,7 @@ void MainFrm::InitForm() {
 	GetMonitors(&monitorInfo);
 	const MonitorInfo& def = *monitorInfo.begin();
 	deskTopWnd = new LayeredWindow(def.Rect.Width, def.Rect.Height);
-	deskTopWnd->CloseShadow();
+	deskTopWnd->CloseShadowBox();
 	deskTopLrc = new LrcControl();
 	deskTopLrc->Style.FontSize = 20;
 	deskTopLrc->Style.ForeColor = Color::White;

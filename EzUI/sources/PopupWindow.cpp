@@ -13,10 +13,10 @@ namespace EzUI {
 	{
 		if (uMsg == WM_KILLFOCUS) {
 			HWND wnd = (HWND)wParam;
-			if (this->GetShadowWindow() && wnd != this->GetShadowWindow()->Hwnd()) {
+			if (this->GetShadowBox() && wnd != this->GetShadowBox()->Hwnd()) {
 				this->OnKillFocus(wnd);
 			}
-			else if (this->GetShadowWindow() == NULL) {
+			else if (this->GetShadowBox() == NULL) {
 				this->OnKillFocus(wnd);
 			}
 		}

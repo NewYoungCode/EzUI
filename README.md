@@ -18,13 +18,13 @@ WIN32 desktop application UI framework (2d graphical library:direct2d,后期可�
 
 	Window            //经典带边框带系统菜单WIN32窗口样式
 
-	BorderlessWindow :public Window //继承于Window 无边框 带阴影 不透明窗口   屏幕外拖入会重绘  常规接受WM_PAINT消息 
+	BorderlessWindow :public Window //继承于Window 无边框 带阴影 
 
-	LayeredWindow :public Window	  //继承于Window 无边框 带阴影 窗口透明异形 窗口大小发生改变重绘 手动发送WM_PAINT消息 
+	LayeredWindow :public BorderlessWindow	  //继承于Window 无边框 带阴影 窗口透明异形 窗口大小发生改变重绘 手动发送WM_PAINT消息 
 
 	PopupWindow :public LayeredWindow    //继承于LayeredWindow 特点(弹出式窗口 窗口失去焦点将会自动关闭,可用于做菜单)
 
-	注:调用Show()函数之前 所有窗口必须设置布局 使用 Window::SetLayout()进行设置布局
+	注:所有窗口调用Show()函数之前 所有窗口必须设置布局 使用 Window::SetLayout()进行设置布局
 
 常用控件类:
 
@@ -43,4 +43,4 @@ WIN32 desktop application UI framework (2d graphical library:direct2d,后期可�
 Tips:
     Debug模式运行程序按下F11可查看当前布局信息 每个控件将高亮显示边框
 
-学习&技术支持 QQ:718987717 //qq群:758485934 //email:19980103ly@gmail.com
+学习&技术支持 QQ:718987717 //qq群:758485934 //email:19980103ly@gmail.com //微信:

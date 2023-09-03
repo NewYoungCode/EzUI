@@ -29,7 +29,6 @@ namespace EzUI {
 		Window(const Window&) {};
 		bool IsInWindow(Control& pControl, Control& it);
 	protected:
-		LRESULT ZoomWindow(const LPARAM& lParam);//缩放窗口
 		void MoveWindow();//鼠标按下移动窗口
 		virtual void OnMouseMove(const Point& point);//鼠标移动时发生
 		virtual void OnMouseLeave();//鼠标离开时发生

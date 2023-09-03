@@ -18,10 +18,15 @@ file(GLOB ezuiHeads ${libBasePath}/include/*.h)
 
 file(GLOB ezuiSrc ${libBasePath}/sources/*.cpp)
 file(GLOB tinyxmlSrc ${libBasePath}/sources/tinyxml/*.cpp)
-# target_include_directories(EzUI PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-add_library(EzUI STATIC ${ezuiSrc} ${tinyxmlSrc} ${ezuiHeads})
+# 添加一个选项，供用户选择构建静态库或动态库
+option(BUILD_SHARED_LIBS "Build shared library instead of static library" OFF)
+if(BUILD_SHARED_LIBS)
+    add_library(EzUI SHARED ${ezuiSrc} ${tinyxmlSrc} ${ezuiHeads})
+else()
+    add_library(EzUI STATIC ${ezuiSrc} ${tinyxmlSrc} ${ezuiHeads})
+endif()
 set_target_properties(EzUI PROPERTIES LINKER_LANGUAGE CXX)
-
+set_target_properties(EzUI PROPERTIES DEBUG_POSTFIX "_D")
 
 #一个简单的helloworld
 project(helloWorld)

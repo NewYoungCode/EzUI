@@ -3,10 +3,9 @@
 namespace EzUI {
 
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
-	LayeredWindow::LayeredWindow(int width, int height, HWND owner) :Window(width, height, owner, /*WS_THICKFRAME |*/ WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP, WS_EX_LAYERED)
+	LayeredWindow::LayeredWindow(int width, int height, HWND owner) :BorderlessWindow(width, height, owner, WS_EX_LAYERED)
 	{
-		_boxShadow = new ShadowWindow(width, height, Hwnd());
-		UpdateShadow();
+		UpdateShadowBox();
 		PublicData.InvalidateRect = [=](void* _rect) ->void {
 			Rect& rect = *(Rect*)_rect;
 			this->InvalidateRect(rect);
@@ -22,38 +21,10 @@ namespace EzUI {
 			}*/
 			};
 	}
-	ShadowWindow* LayeredWindow::GetShadowWindow()
-	{
-		return _boxShadow;
-	}
-	void LayeredWindow::SetShadow(int width)
-	{
-		_shadowWidth = width;
-		UpdateShadow();
-	}
-	void LayeredWindow::OnRect(const Rect& rect) {
-		UpdateShadow();
-		__super::OnRect(rect);
-	}
-	void LayeredWindow::Hide() {
-		__super::Hide();
-		UpdateShadow();
-	}
+
 	LayeredWindow::~LayeredWindow() {
-		CloseShadow();
 	}
-	void LayeredWindow::UpdateShadow() {
-		if (_boxShadow) {
-			_boxShadow->Update(_shadowWidth);
-		}
-	}
-	void LayeredWindow::CloseShadow()
-	{
-		if (_boxShadow) {
-			delete _boxShadow;
-			_boxShadow = NULL;
-		}
-	}
+
 	void LayeredWindow::InvalidateRect(const Rect& _rect) {
 		int Width = GetClientRect().Width;
 		int Height = GetClientRect().Height;
@@ -96,50 +67,21 @@ namespace EzUI {
 
 	LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		switch (uMsg)
-		{
-		case WM_PAINT: {
-			if (_winBitmap && !_InvalidateRect.IsEmptyArea()) {
-				_winBitmap->Earse(_InvalidateRect);//清除背景
-				HDC winHDC = _winBitmap->GetDC();
-				DoPaint(winHDC, _InvalidateRect);
-				PushDC(winHDC);//updatelaredwindow 更新窗口
-				_InvalidateRect = Rect();//重置区域
-			}
+		if (uMsg == WM_PAINT && _winBitmap && !_InvalidateRect.IsEmptyArea()) {
+			_winBitmap->Earse(_InvalidateRect);//清除背景
+			HDC winHDC = _winBitmap->GetDC();
+			DoPaint(winHDC, _InvalidateRect);
+			PushDC(winHDC);//updatelaredwindow 更新窗口
+			_InvalidateRect = Rect();//重置区域
 			return 0;
-		}
-					 //case WM_NCPAINT:
-					 //{
-					 //	return 0;
-					 //}
-					 //case WM_NCCALCSIZE:
-					 //{
-					 //	return 0;
-					 //}
-					 //case WM_NCACTIVATE:
-					 //{
-					 //	if (::IsIconic(Hwnd())) break;
-					 //	return (wParam == 0) ? TRUE : FALSE;
-					 //}
-		case WM_NCHITTEST: {
-			if (!::IsZoomed(Hwnd()) && Zoom) {
-				return ZoomWindow(lParam);
-			}
-			break;
-		}
-		default:
-			break;
 		}
 		return __super::WndProc(uMsg, wParam, lParam);
 	}
 
 	void LayeredWindow::PushDC(HDC hdc) {
-
 		const Rect& _rectClient = GetClientRect();
-
 		POINT point{ _rectClient.X,_rectClient.Y };
 		SIZE size{ _rectClient.Width,  _rectClient.Height };
-
 		BLENDFUNCTION blendFunc{ 0 };
 		blendFunc.SourceConstantAlpha = 255;
 		blendFunc.BlendOp = AC_SRC_OVER;

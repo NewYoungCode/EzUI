@@ -881,27 +881,8 @@ namespace EzUI {
 	void Window::OnKillFocus(HWND hWnd)
 	{
 	}
-	LRESULT Window::ZoomWindow(const  LPARAM& lParam) {
-		RECT rc;
-		::GetWindowRect(Hwnd(), &rc);
-		POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
-		int x = 4;//
-		if (pt.x < rc.left + x)
-		{
-			if (pt.y < rc.top + x)return HTTOPLEFT;//
-			if (pt.y >= rc.bottom - x)return HTBOTTOMLEFT;//
-			return HTLEFT;//
-		}
-		if (pt.x >= rc.right - x)//
-		{
-			if (pt.y < rc.top + x)return HTTOPRIGHT;//
-			if (pt.y >= rc.bottom - x)return HTBOTTOMRIGHT;//
-			return HTRIGHT;//
-		}
-		if (pt.y < rc.top + x)return HTTOP;//
-		if (pt.y >= rc.bottom - x)return HTBOTTOM;//
-		return HTCLIENT;//
-	}
+	
+
 	void Window::MoveWindow() {
 		::ReleaseCapture();
 		SendMessage(Hwnd(), WM_NCLBUTTONDOWN, HTCAPTION, NULL);//模拟鼠标按住标题栏移动窗口

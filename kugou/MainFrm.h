@@ -8,7 +8,7 @@
 #include "LayeredWindow.h"
 #include "UIManager.h"
 class MainFrm :
-	public LayeredWindow
+	public BorderlessWindow
 {
 private:
 	std::vector<Song> songs;

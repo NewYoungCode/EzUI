@@ -1,15 +1,15 @@
-#include "ShadowWindow.h"
+#include "ShadowBox.h"
 
 namespace EzUI {
 
-	ShadowWindow::ShadowWindow(int width, int height, HWND hwnd)
+	ShadowBox::ShadowBox(int width, int height, HWND hwnd)
 	{
 		DWORD dwFlags = WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT;
-		_hWnd = CreateWindowExW(dwFlags, Base::WindowClassName, L"BoxShadow", WS_POPUP, 0, 0, width, height, hwnd, NULL, GetModuleHandle(NULL), NULL);
+		_hWnd = CreateWindowExW(dwFlags, Base::WindowClassName, L"ShadowBox", WS_POPUP, 0, 0, width, height, hwnd, NULL, GetModuleHandle(NULL), NULL);
 		ASSERT(_hWnd);
 	}
 
-	bool ShadowWindow::SetShadow(int m_Width, int m_Height, size_t iSize) {
+	bool ShadowBox::SetShadow(int m_Width, int m_Height, size_t iSize) {
 		int width = m_Width < m_Height ? m_Width : m_Height;
 		float radius = iSize / 2.0f;//半径
 		int max_size = width / 2 - radius;
@@ -74,7 +74,7 @@ namespace EzUI {
 		return true;
 	}
 
-	void ShadowWindow::setA(const int& x, const int& y, const BYTE& a) {
+	void ShadowBox::setA(const int& x, const int& y, const BYTE& a) {
 		if (clipRect.Contains(x, y)) { //不允许绘制在OWner窗口区域
 			return;
 		}
@@ -84,7 +84,7 @@ namespace EzUI {
 		//((BYTE*)point)[1] = 10;//修改G通道数值
 		//((BYTE*)point)[0] = 10;//修改B通道数值
 	}
-	void ShadowWindow::Update(int _shadowWidth) {
+	void ShadowBox::Update(int _shadowWidth) {
 		HWND OwnerWnd = ::GetWindowOwner(_hWnd);
 		if (!::IsWindowVisible(OwnerWnd)) {
 			::ShowWindow(_hWnd, SW_HIDE);
@@ -127,11 +127,11 @@ namespace EzUI {
 		blend.SourceConstantAlpha = 255;
 		::UpdateLayeredWindow(_hWnd, NULL, NULL, &size, _bufBitmap->GetDC(), &point, 0, &blend, ULW_ALPHA);//。。。。。。更新分层窗口
 	}
-	const HWND& ShadowWindow::Hwnd()
+	const HWND& ShadowBox::Hwnd()
 	{
 		return _hWnd;
 	}
-	ShadowWindow::~ShadowWindow()
+	ShadowBox::~ShadowBox()
 	{
 		::SendMessage(_hWnd, WM_DESTROY, 0, 0);
 		if (_bufBitmap) {
