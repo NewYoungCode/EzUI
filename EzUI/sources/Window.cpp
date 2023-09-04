@@ -133,10 +133,12 @@ namespace EzUI {
 	void Window::SetMiniSize(const Size& size)
 	{
 		_miniSize = size;
+		_miniSize.Scale(this->PublicData.Scale);
 	}
 	void Window::SetMaxSize(const Size& size)
 	{
 		_maxSize = size;
+		_maxSize.Scale(this->PublicData.Scale);
 	}
 	void Window::SetIcon(short id)
 	{
@@ -342,20 +344,11 @@ namespace EzUI {
 			//新的缩放比
 			FLOAT systemScale = (float)dpi / USER_DEFAULT_SCREEN_DPI;
 			RECT* const prcNewWindow = (RECT*)lParam;
-			const Rect& oldRect = this->GetWindowRect();
 			int newX = prcNewWindow->left;
 			int newY = prcNewWindow->top;
 			int newWidth = prcNewWindow->right - prcNewWindow->left;
 			int newHeight = prcNewWindow->bottom - prcNewWindow->top;
-			float newScale = systemScale / PublicData.Scale;
-			this->PublicData.Scale = systemScale;
-			DpiChangeEventArgs arg(systemScale);
-			MainLayout->DispatchEvent(arg);
-			_miniSize.Width = _miniSize.Width * newScale + 0.5;
-			_miniSize.Height = _miniSize.Height * newScale + 0.5;
-			_maxSize.Width = _maxSize.Width * newScale + 0.5;
-			_maxSize.Height = _maxSize.Height * newScale + 0.5;
-			SetWindowPos(Hwnd(), NULL, newX, newY, newWidth, newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
+			this->OnDpiChange(systemScale, Rect(newX, newY, newWidth, newHeight));
 			return 0;
 		}
 		case WM_PAINT:
@@ -837,9 +830,6 @@ namespace EzUI {
 		if (!MainLayout) {
 			return;
 		}
-		if (MainLayout->GetScale() != PublicData.Scale) {
-			MainLayout->DispatchEvent(DpiChangeEventArgs(PublicData.Scale));
-		}
 		MainLayout->SetRect(this->GetClientRect());
 		MainLayout->Invalidate();
 	}
@@ -882,11 +872,24 @@ namespace EzUI {
 	{
 	}
 
-
 	void Window::MoveWindow() {
 		::ReleaseCapture();
 		SendMessage(Hwnd(), WM_NCLBUTTONDOWN, HTCAPTION, NULL);//模拟鼠标按住标题栏移动窗口
 		SendMessage(Hwnd(), WM_LBUTTONUP, NULL, NULL);//松开
+	}
+
+	void Window::OnDpiChange(const float& systemScale, const Rect& newRect)
+	{
+		//新的缩放比
+		float newScale = systemScale / PublicData.Scale;
+		this->PublicData.Scale = systemScale;
+		this->_miniSize.Scale(newScale);
+		this->_maxSize.Scale(newScale);
+		DpiChangeEventArgs arg(systemScale);
+		if (MainLayout) {
+			MainLayout->DispatchEvent(arg);
+		}
+		SetWindowPos(Hwnd(), NULL, newRect.X, newRect.Y, newRect.Width, newRect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
 	}
 	bool Window::OnNotify(Control* sender, EventArgs& args) {
 		if (args.EventType == Event::OnMouseDoubleClick) {

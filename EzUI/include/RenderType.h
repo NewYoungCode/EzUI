@@ -45,7 +45,10 @@ namespace EzUI {
 			{
 				return !(Width == _right.Width && Height == _right.Height);
 			}
-
+			void Scale(const float& scale) {
+				Width = (Width * scale) + 0.5;
+				Height = (Height * scale) + 0.5;
+			}
 			bool Equals(const __Size& sz) const
 			{
 				return (Width == sz.Width) && (Height == sz.Height);
@@ -99,7 +102,10 @@ namespace EzUI {
 				return __Point(X - __Point.X,
 					Y - __Point.Y);
 			}
-
+			void Scale(const float& scale) {
+				X = (X * scale) + 0.5;
+				Y = (Y * scale) + 0.5;
+			}
 			bool Equals(const __Point& __Point)
 			{
 				return (X == __Point.X) && (Y == __Point.Y);

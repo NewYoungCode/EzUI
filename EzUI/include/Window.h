@@ -30,6 +30,7 @@ namespace EzUI {
 		bool IsInWindow(Control& pControl, Control& it);
 	protected:
 		void MoveWindow();//鼠标按下移动窗口
+		virtual void OnDpiChange(const float& systemScale, const Rect& newRect);//当dpi发生更改时
 		virtual void OnMouseMove(const Point& point);//鼠标移动时发生
 		virtual void OnMouseLeave();//鼠标离开时发生
 		virtual void OnMouseWheel(int zDelta, const Point& point);//鼠标滚动发生

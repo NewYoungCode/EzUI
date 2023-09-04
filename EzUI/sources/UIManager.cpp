@@ -125,39 +125,14 @@ namespace EzUI {
 			freeControls.push_front(ctl);
 		}
 
-		//内联样式
-		EString inlineStyle;
-		EString inlineStyle_active;
-		EString inlineStyle_hover;
-
+		//设置控件属性
 		TiXmlAttribute* attr = node->FirstAttribute();
 		do
 		{
 			if (!attr)break;
-			auto attrName = attr->Name();
+			EString attrName = attr->Name();
 			EString attrValue(attr->Value());
-
-			if (std::strcmp(attrName, "style") == 0) {
-				TrimStyle(attrValue);
-				ctl->SetAttribute(attrName, attrValue);
-				continue;
-			}
-			if (std::strcmp(attrName, "hover") == 0) {
-				TrimStyle(attrValue);
-				ctl->SetAttribute(attrName, attrValue);
-				continue;
-			}
-			if (std::strcmp(attrName, "active") == 0) {
-				TrimStyle(attrValue);
-				ctl->SetAttribute(attrName, attrValue);
-				continue;
-			}
-			if (std::strcmp(attrName, "checked") == 0) {
-				TrimStyle(attrValue);
-				ctl->SetAttribute(attrName, attrValue);
-				continue;
-			}
-			ctl->SetAttribute(attr->Name(), attrValue);
+			ctl->SetAttribute(attrName, attrValue);
 			this->OnSetAttribute(ctl, attrName, attrValue);
 		} while ((attr = attr->Next()));
 
@@ -202,17 +177,21 @@ namespace EzUI {
 			EString style_checked = ctl->GetAttribute("style:checked");//内联样式语法
 
 			if (!sytle_static.empty()) {
+				TrimStyle(sytle_static);
 				ctl->Style.SetStyleSheet(sytle_static, BuildImageCallback);
 			}
 			if (!style_hover.empty()) {
+				TrimStyle(style_hover);
 				ctl->HoverStyle.SetStyleSheet(style_hover, BuildImageCallback);
 			}
 			if (!style_active.empty()) {
+				TrimStyle(style_active);
 				ctl->ActiveStyle.SetStyleSheet(style_active, BuildImageCallback);
 			}
 			if (!style_checked.empty()) {
 				auto* ckBox = dynamic_cast<CheckBox*>(ctl);
 				if (ckBox) {
+					TrimStyle(style_checked);
 					ckBox->CheckedStyle.SetStyleSheet(style_checked, BuildImageCallback);
 				}
 			}

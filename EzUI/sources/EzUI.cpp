@@ -143,20 +143,22 @@ namespace EzUI {
 	}
 	///--------------------------
 
-	bool GetResource(const EString& filename, std::string* outFileData) {
+	bool GetResource(const EString& filename, std::string* out) {
 		FILE* file(0);
 		_wfopen_s(&file, filename.utf16().c_str(), L"rb");
 		if (file) {
-			std::ifstream ifs(file);
-			std::stringstream ss;
-			ss << ifs.rdbuf();
-			*outFileData = ss.str();
-			ifs.close();
+			std::ifstream fs(file);
+			fs.seekg(0, std::ios_base::end);
+			auto size = fs.tellg();
+			fs.seekg(0);
+			out->resize(static_cast<size_t>(size));
+			fs.read((char*)out->c_str(), static_cast<std::streamsize>(size));
+			fs.close();
 			::fclose(file);
 			return true;
 		}
 		else {
-			return UnZipResource(filename, outFileData);
+			return UnZipResource(filename, out);
 		}
 	}
 	size_t GetMonitors(std::list<MonitorInfo>* outMonitorInfo)
