@@ -830,6 +830,9 @@ namespace EzUI {
 		if (!MainLayout) {
 			return;
 		}
+		if (MainLayout->GetScale() != PublicData.Scale) {
+			this->OnDpiChange(PublicData.Scale, Rect());
+		}
 		MainLayout->SetRect(this->GetClientRect());
 		MainLayout->Invalidate();
 	}
@@ -889,7 +892,9 @@ namespace EzUI {
 		if (MainLayout) {
 			MainLayout->DispatchEvent(arg);
 		}
-		SetWindowPos(Hwnd(), NULL, newRect.X, newRect.Y, newRect.Width, newRect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
+		if (!newRect.IsEmptyArea()) {
+			SetWindowPos(Hwnd(), NULL, newRect.X, newRect.Y, newRect.Width, newRect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
+		}
 	}
 	bool Window::OnNotify(Control* sender, EventArgs& args) {
 		if (args.EventType == Event::OnMouseDoubleClick) {

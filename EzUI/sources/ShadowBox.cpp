@@ -20,7 +20,7 @@ namespace EzUI {
 		iSize = (int)iSize < max_size ? iSize : max_size;
 		double piAngle = 3.1415926;
 		int iSizeB = 4 * iSize;
-		double fN = piAngle / iSize / 4.5;//设置四条边外模糊度
+		double fN = piAngle / iSize / 4.7;//设置四条边外模糊度
 		double lN = 1.0 / iSize;
 		int iAplpha = 0;
 		int Left = iSize + radius,
@@ -113,11 +113,14 @@ namespace EzUI {
 			_bufBitmap = NULL;
 		}
 		_bufBitmap = new EBitmap(width, height, EBitmap::PixelFormat::PixelFormatARGB);//32位透明图
-		//Debug::Log(TEXT("Update BoxShadow"));
 		Rect rect{ 0,0,width, height };
-		//做异形
 		SetShadow(rect.Width, rect.Height, _shadowWidth);
-
+		/*	{
+				Rect clientRect(rect.X + _shadowWidth, rect.Y + _shadowWidth, rect.Width - _shadowWidth * 2, rect.Height - _shadowWidth * 2);
+				DXRender render(_bufBitmap->GetDC(), clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height);
+				render.SetColor(Color(128, 128, 128, 128));
+				render.DrawRectangle(Rect(0, 0, clientRect.Width, clientRect.Height), 0, 1);
+			}*/
 		POINT point{ 0,0 };
 		SIZE size{ rect.Width,  rect.Height };
 		BLENDFUNCTION blend{ 0 };

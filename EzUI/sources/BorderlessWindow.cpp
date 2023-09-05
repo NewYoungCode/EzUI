@@ -31,6 +31,19 @@ namespace EzUI {
 			UpdateShadowBox();
 		}
 	}
+	void BorderlessWindow::OnDpiChange(const float& systemScale, const Rect& newRect)
+	{
+		if (_shadowBox) {
+			if (this->_shadowScale != systemScale) {
+				this->_shadowWeight *= systemScale / _shadowScale;
+				this->_shadowScale = systemScale;
+				if (!_firstPaint) {
+					UpdateShadowBox();
+				}
+			}
+		}
+		__super::OnDpiChange(systemScale, newRect);
+	}
 	void BorderlessWindow::Hide() {
 		__super::Hide();
 		UpdateShadowBox();
