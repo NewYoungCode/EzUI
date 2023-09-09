@@ -161,6 +161,39 @@ namespace EzUI {
 			return UnZipResource(filename, out);
 		}
 	}
+
+#undef GetMonitorInfo
+	void GetMonitorInfo(MonitorInfo& mt, HMONITOR hMonitor) {
+		//获取显示器信息
+		MONITORINFOEX infoEx;
+		infoEx.cbSize = sizeof(infoEx);
+		::GetMonitorInfoW(hMonitor, &infoEx);
+		//逻辑宽高
+		mt.Rect.X = infoEx.rcMonitor.left;
+		mt.Rect.Y = infoEx.rcMonitor.top;
+		mt.Rect.Width = infoEx.rcMonitor.right - infoEx.rcMonitor.left;
+		mt.Rect.Height = infoEx.rcMonitor.bottom - infoEx.rcMonitor.top;
+		if ((infoEx.dwFlags & MONITORINFOF_PRIMARY) == MONITORINFOF_PRIMARY) {//是否为主显示器
+			mt.Primary = true;
+		}
+		//获取工作区域 自动排除任务栏
+		mt.WorkRect.X = infoEx.rcWork.left;
+		mt.WorkRect.Y = infoEx.rcWork.top;
+		mt.WorkRect.Width = infoEx.rcWork.right - infoEx.rcWork.left;
+		mt.WorkRect.Height = infoEx.rcWork.bottom - infoEx.rcWork.top;
+		//获取物理宽高
+		DEVMODE dm;
+		dm.dmSize = sizeof(dm);
+		dm.dmDriverExtra = 0;
+		::EnumDisplaySettings(infoEx.szDevice, ENUM_REGISTRY_SETTINGS, &dm);
+		mt.Physical.Width = dm.dmPelsWidth;//物理宽
+		mt.Physical.Height = dm.dmPelsHeight;//物理高
+		//计算缩放
+		mt.Scale = ((float)mt.Physical.Height / (float)mt.Rect.Height);
+		//显示器fps
+		mt.FPS = (float)dm.dmDisplayFrequency;
+	}
+
 	size_t GetMonitors(std::list<MonitorInfo>* outMonitorInfo)
 	{
 		outMonitorInfo->clear();
@@ -169,53 +202,27 @@ namespace EzUI {
 			// 获取当前所有显示器的信息
 			std::list<MonitorInfo>* monitors = (std::list<MonitorInfo>*)dwData;
 			MonitorInfo mt;
-			//逻辑宽高
-			mt.Rect.X = lprcMonitor->left;
-			mt.Rect.Y = lprcMonitor->top;
-			mt.Rect.Width = lprcMonitor->right - lprcMonitor->left;
-			mt.Rect.Height = lprcMonitor->bottom - lprcMonitor->top;
-			//获取显示器信息
-			MONITORINFOEX miex;
-			miex.cbSize = sizeof(miex);
-			::GetMonitorInfo(hMonitor, &miex);
-			if ((miex.dwFlags & MONITORINFOF_PRIMARY) == MONITORINFOF_PRIMARY) {//是否为主显示器
-				mt.Primary = true;
-			}
-			//获取工作区域 自动排除任务栏
-			mt.WorkRect.X = miex.rcWork.left;
-			mt.WorkRect.Y = miex.rcWork.top;
-			mt.WorkRect.Width = miex.rcWork.right - miex.rcWork.left;
-			mt.WorkRect.Height = miex.rcWork.bottom - miex.rcWork.top;
-			//获取物理宽高
-			DEVMODE dm;
-			dm.dmSize = sizeof(dm);
-			dm.dmDriverExtra = 0;
-			::EnumDisplaySettings(miex.szDevice, ENUM_REGISTRY_SETTINGS, &dm);
-			mt.Physical.Width = dm.dmPelsWidth;//物理宽
-			mt.Physical.Height = dm.dmPelsHeight;//物理高
-			//计算缩放
-			mt.Scale = ((float)mt.Physical.Height / (float)mt.Rect.Height);
-			//显示器fps
-			mt.FPS = (float)dm.dmDisplayFrequency;
+			GetMonitorInfo(mt, hMonitor);
 			monitors->push_back(mt);
 			return TRUE;
 			}, LPARAM(outMonitorInfo));
 		return outMonitorInfo->size();
 	}
 
-	bool GetMontior(MonitorInfo* monitorInfo)
+	void GetMontior(MonitorInfo* monitorInfo, HWND hWnd)
 	{
-		std::list<MonitorInfo> outMonitorInfo;
-		GetMonitors(&outMonitorInfo);
 		POINT cursorPos;
-		::GetCursorPos(&cursorPos);
-		for (auto& it : outMonitorInfo) {
-			if (it.Rect.Contains(cursorPos.x, cursorPos.y)) {
-				*monitorInfo = it;
-				return true;
-			}
+		HMONITOR hMonitor;
+		if (hWnd) {
+			hMonitor = ::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
 		}
-		return false;
+		else {
+			// 确定包含鼠标位置的屏幕
+			GetCursorPos(&cursorPos);
+			hMonitor = ::MonitorFromPoint(cursorPos, MONITOR_DEFAULTTONEAREST);
+		}
+		// 获取屏幕信息
+		GetMonitorInfo(*monitorInfo, hMonitor);
 	}
 
 	HCURSOR LoadCursor(Cursor cursorType)

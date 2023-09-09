@@ -27,9 +27,7 @@ namespace EzUI {
 		int x, y, width, height;
 		const Rect& rect = this->GetClientRect();
 		Rect ctlRect;
-		//获取显示器 达到鼠标在哪个显示器 窗口就在哪个显示器中显示
-		std::list<MonitorInfo> outMonitorInfo;
-		GetMonitors(&outMonitorInfo);
+
 		POINT location;
 		if (_ownerCtl) {
 			ctlRect = _ownerCtl->GetClientRect();
@@ -41,13 +39,8 @@ namespace EzUI {
 			::GetCursorPos(&location);
 		}
 
-		MonitorInfo* monitorInfo = NULL;
-		for (auto& it : outMonitorInfo) {
-			if (it.Rect.Contains(location.x, location.y)) {
-				monitorInfo = &it;
-				break;
-			}
-		}
+		MonitorInfo monitorInfo;
+		GetMontior(&monitorInfo, ::GetWindowOwner(Hwnd()));
 		x = location.x;
 		y = location.y;
 		width = rect.Width;
@@ -55,13 +48,13 @@ namespace EzUI {
 		if (_ownerCtl) {
 			width = ctlRect.Width;
 		}
-		if ((location.y + height) > (monitorInfo->Rect.Height + monitorInfo->Rect.Y)) {
+		if ((location.y + height) > monitorInfo.Rect.GetBottom()) {
 			y -= height;
 			if (_ownerCtl) {
 				y -= ctlRect.Height;
 			}
 		}
-		if ((location.x + width) > monitorInfo->Rect.Width) {
+		if ((location.x + width) > monitorInfo.Rect.GetRight()) {
 			x -= width;
 		}
 		::SetWindowPos(Hwnd(), HWND_TOPMOST, x, y, width, height, NULL);

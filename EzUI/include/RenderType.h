@@ -156,6 +156,9 @@ namespace EzUI {
 				return __Size<T>(Width, Height);
 			}
 
+			RECT ToRECT() {
+				return RECT{ GetLeft(),GetTop(),GetRight(),GetBottom() };
+			}
 
 			T GetLeft() const
 			{

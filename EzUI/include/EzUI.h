@@ -24,7 +24,7 @@ namespace EzUI {
 		extern UI_EXPORT HGLOBAL HVSResource;//vs中的资源文件句柄
 		extern UI_EXPORT const std::list<EzUI::MonitorInfo> MonitorInfos;//所有监视器信息
 	};
-	
+
 	//解压缩相关
 	class UI_EXPORT Ziper {
 		HZIP _hZip = NULL;
@@ -54,8 +54,8 @@ namespace EzUI {
 	extern UI_EXPORT bool GetResource(const EString& fileName, std::string* outData);
 	//获取当前所有监视器的信息
 	extern UI_EXPORT size_t GetMonitors(std::list<MonitorInfo>* outMonitorInfo);
-	//获取用户当前正在操作的的显示器
-	extern UI_EXPORT bool GetMontior(MonitorInfo* outInfo);
+	//获取用户当前所在的显示器
+	extern UI_EXPORT void GetMontior(MonitorInfo* outInfo, HWND hWnd = NULL);
 	//加载光标
 	extern UI_EXPORT HCURSOR LoadCursor(Cursor cursorType);
 	//加载光标(//需要释放)
