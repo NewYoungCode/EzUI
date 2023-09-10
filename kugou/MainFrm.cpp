@@ -67,7 +67,7 @@ void MainFrm::InitForm() {
 	//集体设置右上角的最大化 最小化 关闭按钮 的悬浮效果
 	$(this->FindControl("btns")->GetControls()).CssHover("color:#ffffff;");
 	int pos = 0;
-	for (size_t i = 0; i < 10; i++)
+	for (size_t i = 0; i < 1; i++)
 	{
 		//加载左侧播放过的音乐
 		for (auto&& _it : cfg->GetSections()) {
@@ -95,7 +95,7 @@ void MainFrm::InitForm() {
 	//滚动条滚动事件 滚动条滚动到底部加载剩余音乐
 	searchList->GetScrollBar()->Rolling = [=](ScrollBar* sb, const ScrollRollEventArgs& args)->void {
 		if (args.RollType == Event::OnMouseWheel) {
-			NextPage(args.Pos, args.Total);
+			NextPage(args.Pos);
 		}
 		};
 	//忽略一些事件 可穿透父控件
@@ -531,9 +531,9 @@ void MainFrm::Task() {
 	}
 }
 
-void MainFrm::NextPage(int a, int b) {
+void MainFrm::NextPage(float scrollPos) {
 	//Debug::Info(L"滚动条当前位置:%d 可滚动距离:%d", a, b);
-	if (a != 0 && a >= b && global::nextPage) {
+	if (scrollPos >= 1.0f && global::nextPage) {
 		global::page++;
 		EString keyword = searchEdit->GetText();
 		std::vector<Song> songs = global::SearchSongs(keyword);

@@ -16,11 +16,11 @@ namespace EzUI {
 	void display(void* opaque, void* picture)
 	{
 		VlcPlayer* vp = (VlcPlayer*)opaque;
-		if ((Control*)vp->Tag) {
+		if ((Control*)vp->Tag && vp->PublicData) {
 			//((Control*)vp->Tag)->Invalidate();
 			::SendMessage(vp->PublicData->HANDLE, WM_UIMESSAGE + 2, (WPARAM)((Control*)vp->Tag), 0);
 		}
-		else {
+		else if(vp->PublicData){
 			//vp->Invalidate();
 			::SendMessage(vp->PublicData->HANDLE, WM_UIMESSAGE + 2, (WPARAM)vp, 0);
 		}

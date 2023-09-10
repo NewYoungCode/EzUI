@@ -1290,7 +1290,13 @@ namespace EzUI {
 			args.Graphics.FillRectangle(sliderRect, GetBorderTopLeftRadius());
 		}
 	}
-	void ScrollBar::RollTo(double posY, const  ScrollRollEventArgs& args) {
+
+	void ScrollBar::RollTo(const float& scrollRate) {
+		int offset = scrollRate * this->_overflowLength;
+		RollTo(-offset, Event::None);
+	}
+
+	void ScrollBar::RollTo(int offset, const  ScrollRollEventArgs& args) {
 		if (OWner == NULL) return;
 		if (OWner->IsPendLayout()) {
 			OWner->RefreshLayout();
@@ -1302,23 +1308,29 @@ namespace EzUI {
 		int contentLength;
 		int scrollBarLength;
 		this->GetInfo(&viewLength, &contentLength, &scrollBarLength);
-		//滚动条滑块pos
-		_sliderPos = posY;
-		if (_sliderPos < 0) { //滑块在顶部
-			_sliderPos = 0;
+		if (offset > 0) {
+			//滚动条在顶部
+			this->_offset = 0;
+			this->_sliderPos = 0;
 		}
-		if ((_sliderPos + this->_sliderLength) > scrollBarLength) { //滑块在最底部
-			_sliderPos = scrollBarLength - this->_sliderLength;
+		else if (std::abs(offset) > this->_overflowLength) {
+			//滚动条在底部
+			this->_offset = -this->_overflowLength;
+			this->_sliderPos = scrollBarLength - this->_sliderLength;
 		}
-		this->_offset = (-_sliderPos) * this->_rollRate;
+		else {
+			//正常滚动
+			this->_offset = offset;
+			this->_sliderPos = -offset / this->_rollRate;
+		}
+		//调用容器的滚动函数进行偏移
 		if (OffsetCallback) {
 			OffsetCallback(this->_offset);
 		}
 		OWner->Invalidate();
 		//OWner->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
 		if (Rolling) {
-			((ScrollRollEventArgs&)args).Pos = _sliderPos;
-			((ScrollRollEventArgs&)args).Total = scrollBarLength - this->_sliderLength;
+			((ScrollRollEventArgs&)args).Pos = (double)this->_offset / (-this->_overflowLength);
 			Rolling(this, args);
 		}
 	}
@@ -1343,8 +1355,8 @@ namespace EzUI {
 			this->_overflowLength = 0;
 		}
 		//计算偏移滚动
-		double pos = (double)this->_offset / this->_rollRate;
-		RollTo(-pos, Event::None);
+		//double pos = (double)this->_offset / this->_rollRate;
+		RollTo(this->_offset, Event::None);
 	};
 	void ScrollBar::OnMouseWheel(const MouseEventArgs& arg) {
 		__super::OnMouseWheel(arg);
@@ -1353,7 +1365,7 @@ namespace EzUI {
 		args.ZDelta = arg.ZDelta;
 		this->_offset += arg.ZDelta * 0.5;
 		//计算偏移滚动
-		double pos = (double)this->_offset / this->_rollRate;
-		RollTo(-pos, args);
+		//double pos = (double)this->_offset / this->_rollRate;
+		RollTo(this->_offset, args);
 	}
 };

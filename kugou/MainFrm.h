@@ -36,7 +36,7 @@ protected:
 	virtual void OnKeyDown(WPARAM wparam, LPARAM lParam)override;
 	bool OnNotify(Control* sender, EventArgs& args)override;
 	LRESULT WndProc(UINT msg, WPARAM W, LPARAM L) override;
-	void NextPage(int a, int b);
+	void NextPage(float scrollPos);
 	void OpenSongView();
 	void Task();
 	void OpenLrcView();

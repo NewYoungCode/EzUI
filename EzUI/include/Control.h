@@ -223,9 +223,12 @@ namespace EzUI {
 		virtual void OnMouseLeave(const MouseEventArgs& arg) override;
 		virtual void OnMouseWheel(const MouseEventArgs& arg)override;
 		virtual void GetInfo(int* viewLength, int* contentLength, int* scrollBarLength) = 0;
+		void RollTo(int offset, const ScrollRollEventArgs& args);
 	public:
+		//滚动到指定控件可见位置
 		virtual void RollTo(Control* ctl) = 0;
-		void RollTo(double pos, const ScrollRollEventArgs& args = Event::None);
+		//按照百分比滚动 0.0f~1.0f
+		void RollTo(const float& scrollRate);
 		virtual Rect GetSliderRect() = 0;//
 		virtual void OWnerSize(const Size& ownerSize) = 0;
 		//滚动条是否已经绘制且显示

@@ -329,9 +329,10 @@ namespace EzUI {
 	//滚动条滚动事件
 	class UI_EXPORT ScrollRollEventArgs :public EventArgs {
 	public:
-		int Pos = 0;
-		int Total = 0;
+		//滚动方向
 		int ZDelta = 0;
+		//当前已经滚动的百分比数值 0.0f~1.0f
+		float Pos = 0.0f;
 		//滚动类型 一般分为三种 Event::OnMouseDrag Event::OnMouseWheel 其他
 		Event RollType = Event::None;
 	public:
