@@ -114,18 +114,13 @@ namespace EzUI {
 	void Label::OnLayout() {
 		__super::OnLayout();
 		if (IsAutoWidth() || IsAutoHeight()) {
+
 			Font font(GetFontFamily(), GetFontSize());
-			int maxW = 0;
-			int maxH = 0;
-			if (IsAutoHeight()) {
-				maxW = Width() - this->TextMargin.GetHSpace();
-			}
-			if (IsAutoWidth()) {
-				maxH = Height() - this->TextMargin.GetVSpace();
-			}
-			maxW = maxW > 0 ? maxW : __MAXFLOAT;
-			maxH = maxH > 0 ? maxH : __MAXFLOAT;
-			TextLayout text(this->_wstr, font, Size(maxW, maxH));
+
+			int maxWidth = IsAutoWidth() ? __MAXFLOAT : Width() - this->TextMargin.GetHSpace();
+			int maxHeight = IsAutoHeight() ? __MAXFLOAT : Height() - this->TextMargin.GetVSpace();
+
+			TextLayout text(this->_wstr, font, Size(maxWidth, maxHeight));
 			Size box = text.GetFontBox();
 			this->SetContentSize(box);
 			if (IsAutoWidth()) {

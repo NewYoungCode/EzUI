@@ -1099,6 +1099,9 @@ namespace EzUI {
 		if (flag != this->_autoWidth && Parent) {
 			Parent->TryPendLayout();
 		}
+		if (flag && Width() == 0) {
+			_rect.Width = 1;
+		}
 		this->_autoWidth = flag;
 	}
 	bool Control::IsAutoHeight()
@@ -1109,6 +1112,9 @@ namespace EzUI {
 	{
 		if (flag != this->_autoHeight && Parent) {
 			Parent->TryPendLayout();
+		}
+		if (flag && Height() == 0) {
+			_rect.Height = 1;
 		}
 		this->_autoHeight = flag;
 	}
