@@ -433,9 +433,16 @@ namespace EzUI {
 		return NULL;
 	}
 
-	_Selector::_Selector(const std::list<Control*>& Controls)
+	_Selector::_Selector(const std::vector<Control*>& controls)
 	{
-		this->ctls = Controls;
+		this->ctls = controls;
+	}
+	_Selector::_Selector(const std::list<Control*>& controls)
+	{
+		this->ctls.resize(controls.size());
+		for (auto& it : controls) {
+			this->ctls.push_back(it);
+		}
 	}
 	_Selector::_Selector(Control* ctl)
 	{

@@ -85,11 +85,12 @@ namespace EzUI {
 	private:
 		Control* ctl = NULL;
 		Control* notCtl = NULL;
-		std::list<Control*> ctls;
+		std::vector<Control*> ctls;
 		_Selector& NextName(const EString& key) { return *this; };
 		_Selector& NextId(const EString& key) { return *this; };
 	public:
-		_Selector(const std::list<Control*>& Controls);
+		_Selector(const std::vector<Control*>& controls);
+		_Selector(const std::list<Control*>& controls);
 		_Selector(Control* control);
 		_Selector(Control* control, const EString& mathStr);
 		virtual ~_Selector();

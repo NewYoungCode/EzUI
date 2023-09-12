@@ -1002,9 +1002,9 @@ namespace EzUI {
 		}
 		return NULL;
 	}
-	std::list<Control*> Control::FindControl(const EString& attr, const EString& attrValue)
+	std::vector<Control*> Control::FindControl(const EString& attr, const EString& attrValue)
 	{
-		std::list<Control*> ctls;
+		std::vector<Control*> ctls;
 		if (attr.empty() || attrValue.empty()) {
 			return ctls;
 		}

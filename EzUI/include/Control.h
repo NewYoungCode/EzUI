@@ -150,7 +150,7 @@ namespace EzUI {
 		Control* FindControl(size_t pos);//使用下标获取控件
 		size_t   FindControl(Control* childCtl);//获取子控件的索引
 		Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
-		std::list<Control*> FindControl(const EString& attr, const EString& attrValue);//使用属性查找
+		std::vector<Control*> FindControl(const EString& attr, const EString& attrValue);//使用属性查找
 		Control* FindSingleControl(const EString& attr, const EString& attrValue);//使用属性查找出第一个
 		bool SwapChild(Control* childCtl, Control* childCt2);//对子控件的两个控件进行位置交换
 		virtual void Insert(size_t pos, Control* childCtl);//选择性插入控件

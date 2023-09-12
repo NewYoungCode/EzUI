@@ -7,7 +7,7 @@ namespace EzUI {
 		this->GetScrollBar()->OWner = this;
 		this->GetScrollBar()->OffsetCallback = [this](int offsetValue)->void {
 			this->Offset(offsetValue);
-		};
+			};
 	}
 	VList::VList()
 	{
@@ -55,10 +55,11 @@ namespace EzUI {
 				if (x == 0 && width < this->Width()) {
 					x = int((this->Width() * 1.0 - width) / 2 + 0.5);
 				}
+				_maxBottom += it->Margin.Top;
 				it->SetRect(Rect{ x,_maxBottom,width,it->Height() });
+				_maxBottom += it->Height();
+				_maxBottom += it->Margin.Bottom;
 			}
-			_maxBottom += it->Height();
-			_maxBottom += it->Margin.GetVSpace();
 			//计算最大宽度
 			int _width = it->X() + it->Width() + it->Margin.Right;
 			if (_width > contentWidth) {
