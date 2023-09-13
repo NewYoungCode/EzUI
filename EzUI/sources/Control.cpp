@@ -1182,6 +1182,9 @@ namespace EzUI {
 		this->_controls.clear();//清空子控件集合
 		this->DestroySpacers();//清空弹簧
 		this->TryPendLayout();//挂起布局
+		if (this->GetScrollBar()) {
+			this->GetScrollBar()->RefreshScroll();
+		}
 	}
 	void Control::OnMouseMove(const MouseEventArgs& args)
 	{
@@ -1298,8 +1301,18 @@ namespace EzUI {
 	}
 
 	void ScrollBar::RollTo(const float& scrollRate) {
+		if (OWner == NULL) return;
+		if (OWner->IsPendLayout()) {
+			OWner->RefreshLayout();
+		}
 		int offset = scrollRate * this->_overflowLength;
 		RollTo(-offset, Event::None);
+	}
+
+	float ScrollBar::RollPos()
+	{
+		if (this->_overflowLength <= 0)  return 1.0f;
+		return std::abs(this->_offset) * 1.0f / this->_overflowLength;
 	}
 
 	void ScrollBar::RollTo(int offset, const  ScrollRollEventArgs& args) {

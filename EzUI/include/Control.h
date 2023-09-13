@@ -229,6 +229,9 @@ namespace EzUI {
 		virtual void RollTo(Control* ctl) = 0;
 		//按照百分比滚动 0.0f~1.0f
 		void RollTo(const float& scrollRate);
+		//获取当前滚动到的位置
+		float RollPos();
+		//获取滑块的矩形
 		virtual Rect GetSliderRect() = 0;//
 		virtual void OWnerSize(const Size& ownerSize) = 0;
 		//滚动条是否已经绘制且显示
