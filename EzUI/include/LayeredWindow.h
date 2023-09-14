@@ -1,5 +1,7 @@
 #pragma once
 #include "BorderlessWindow.h"
+#include "EBitmap.h"
+
 namespace EzUI {
 	/// <summary>
 	/// //LayeredWindow	  //无边框  带阴影 窗口透明异形 窗口大小发生改变重绘

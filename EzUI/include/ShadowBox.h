@@ -1,5 +1,6 @@
 #pragma once
 #include "Window.h"
+#include "EBitmap.h"
 
 namespace EzUI {
 	class UI_EXPORT ShadowBox

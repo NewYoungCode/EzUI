@@ -269,7 +269,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 		if (sender == main && player.BuffBitmap) {
 			if (tabCtrl->GetPageIndex() == 1) {
 				PaintEventArgs& arg = (PaintEventArgs&)args;
-				Image img(player.BuffBitmap->_bitmap);
+				Image img(player.BuffBitmap->GetHBITMAP());
 				img.SizeMode = ImageSizeMode::CenterImage;
 				arg.Graphics.DrawImage(&img, main->GetRect());
 				return true;

@@ -101,32 +101,6 @@ namespace EzUI {
 		virtual ~Color() {}
 	};
 
-	class UI_EXPORT EBitmap {
-	public:
-		enum class PixelFormat :int {
-			PixelFormatRGB = 24,
-			PixelFormatARGB = 32
-		};
-	private:
-		HDC _hdc = NULL;
-		EBitmap(const EBitmap& hBitmap) {}
-		void operator=(const EBitmap& hBitmap) {}
-	public:
-		HBITMAP _bitmap = NULL;
-		WORD Width;
-		WORD Height;
-		void* point = NULL;
-		BITMAPINFO bmi;
-		byte biteCount = 0;
-		EBitmap(WORD width, WORD height, PixelFormat piexlFormat = PixelFormat::PixelFormatRGB);
-		void SetPixel(int x, int y, const Color& color);
-		Color GetPixel(int x, int y);
-		void Earse(const Rect& rect);//Ä¨³ý¾ØÐÎÄÚÈÝ
-		void FillRect(const Rect& rect, const Color& color);//
-		HDC& GetDC();
-		virtual ~EBitmap();
-	};
-
 #if USED_DIRECT2D
 	class UI_EXPORT Image :public DXImage {
 	public:

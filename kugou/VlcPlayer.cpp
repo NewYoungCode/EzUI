@@ -4,7 +4,7 @@ namespace EzUI {
 	{
 		VlcPlayer* vp = (VlcPlayer*)opaque;
 		vp->mtx.lock();
-		*planes = vp->BuffBitmap->point;           /*tell VLC to put decoded data to this buffer*/
+		*planes = vp->BuffBitmap->GetPixel();           /*tell VLC to put decoded data to this buffer*/
 		return NULL;
 	}
 	/*##get the argb picture AND save to file*/
@@ -62,7 +62,7 @@ namespace EzUI {
 	void VlcPlayer::OnBackgroundPaint(PaintEventArgs& pArg) {
 		__super::OnBackgroundPaint(pArg);
 		if (BuffBitmap) {
-			Image img(BuffBitmap->_bitmap);
+			Image img(BuffBitmap->GetHBITMAP());
 			img.SizeMode = ImageSizeMode::Zoom;
 			//img.Offset = Rect(500,50,200,200);
 			pArg.Graphics.DrawImage(&img, GetRect());

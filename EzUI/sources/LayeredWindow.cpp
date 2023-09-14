@@ -23,6 +23,9 @@ namespace EzUI {
 	}
 
 	LayeredWindow::~LayeredWindow() {
+		if (_winBitmap) {
+			delete _winBitmap;
+		}
 	}
 
 	void LayeredWindow::InvalidateRect(const Rect& _rect) {
@@ -59,7 +62,7 @@ namespace EzUI {
 	{
 		if (uMsg == WM_PAINT && _winBitmap && !_InvalidateRect.IsEmptyArea()) {
 			_winBitmap->Earse(_InvalidateRect);//清除背景
-			HDC winHDC = _winBitmap->GetDC();
+			HDC winHDC = _winBitmap->GetHDC();
 			DoPaint(winHDC, _InvalidateRect);
 			PushDC(winHDC);//updatelaredwindow 更新窗口
 			_InvalidateRect = Rect();//重置区域

@@ -78,7 +78,7 @@ namespace EzUI {
 		if (clipRect.Contains(x, y)) { //不允许绘制在OWner窗口区域
 			return;
 		}
-		DWORD* point = (DWORD*)_bufBitmap->point + (x + y * _bufBitmap->Width);//起始地址+坐标偏移
+		DWORD* point = (DWORD*)_bufBitmap->GetPixel() + (x + y * _bufBitmap->Width);//起始地址+坐标偏移
 		((BYTE*)point)[3] = a;//修改A通道数值
 		//((BYTE*)point)[2] = 0;//修改R通道数值
 		//((BYTE*)point)[1] = 10;//修改G通道数值
@@ -128,7 +128,7 @@ namespace EzUI {
 		blend.BlendFlags = 0;
 		blend.AlphaFormat = AC_SRC_ALPHA;
 		blend.SourceConstantAlpha = 255;
-		::UpdateLayeredWindow(_hWnd, NULL, NULL, &size, _bufBitmap->GetDC(), &point, 0, &blend, ULW_ALPHA);//。。。。。。更新分层窗口
+		::UpdateLayeredWindow(_hWnd, NULL, NULL, &size, _bufBitmap->GetHDC(), &point, 0, &blend, ULW_ALPHA);//。。。。。。更新分层窗口
 	}
 	const HWND& ShadowBox::Hwnd()
 	{
