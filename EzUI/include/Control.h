@@ -6,7 +6,7 @@ namespace EzUI {
 	private:
 		bool* _isRemove = NULL;//控件是否已经被移除或释放
 		bool _visible = true;//控件是否可见 此标志为true的时候 可能实际中并不会可见 
-		float _scale = 1.0f;
+		float _scale = 1.0f;//当前控件的dpi缩放
 		std::list<Control*> _controls;//子控件
 		std::list<Control*> _spacers;//存储弹簧控件
 		//布局状态AddControl丶InsertControl丶RemoveControl丶OnSize时候此标志为挂起 调用ResumeLayout标志为布局中 当调用OnLayout()之后此标志为None
@@ -14,7 +14,6 @@ namespace EzUI {
 		std::wstring _tipsText;//鼠标悬浮的提示文字
 		Point _lastLocation;//上一次位置
 		Size _lastSize;//上一次大小
-		Rect _lastDrawRect;//最后一次显示的位置
 		bool _autoWidth = false;//是否根据内容自动宽度
 		bool _autoHeight = false;//根据内容的高度自动变化
 		Size _contentSize;//控件内容宽高

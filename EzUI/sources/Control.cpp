@@ -770,7 +770,6 @@ namespace EzUI {
 		}
 		//绘制数量+1
 		args.PublicData->PaintCount++;
-		this->_lastDrawRect = _ClipRect;//记录最后一次绘制的区域
 		//设置绘制偏移
 		pt.SetTransform(clientRect.X, clientRect.Y);
 		args.OffSetPoint.push_back(Point(clientRect.X, clientRect.Y));
@@ -1062,10 +1061,12 @@ namespace EzUI {
 	}
 	bool Control::Invalidate() {
 		if (PublicData) {
+			if (Parent && this->IsPendLayout()) {
+				return Parent->Invalidate();
+			}
 			WindowData* winData = PublicData;
 			if (winData) {
 				Rect _InvalidateRect = GetClientRect();
-				Rect::Union(_InvalidateRect, _lastDrawRect, _InvalidateRect);
 				winData->InvalidateRect(&_InvalidateRect);
 				return true;
 			}

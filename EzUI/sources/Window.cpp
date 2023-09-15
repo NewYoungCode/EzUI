@@ -101,12 +101,7 @@ namespace EzUI {
 	}
 	void Window::SetTopMost(bool top)
 	{
-		if (top) {
-			::SetWindowPos(Hwnd(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-		}
-		else {
-			::SetWindowPos(Hwnd(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-		}
+		::SetWindowPos(Hwnd(), top ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 	}
 	bool Window::IsTopMost()
 	{
@@ -730,12 +725,6 @@ namespace EzUI {
 			args.Location = point;
 			args.ZDelta = zDelta;
 			scrollBar->DispatchEvent(args);
-
-			//取消注释即可实时跟踪控件刷新状态 但是感觉没什么必要
-		/*	POINT p1{ 0 };
-			::GetCursorPos(&p1);
-			::ScreenToClient(_hWnd, &p1);
-			OnMouseMove({ p1.x, p1.y });*/
 		}
 	}
 	void Window::OnMouseDoubleClick(MouseButton mbtn, const Point& point)
@@ -822,7 +811,6 @@ namespace EzUI {
 	}
 
 	void Window::OnMouseClick(MouseButton mbtn, const Point& point) {
-
 	}
 
 	void Window::OnSize(const Size& sz)
