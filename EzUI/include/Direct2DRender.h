@@ -34,14 +34,14 @@ namespace EzUI {
 	private:
 		Font() = delete;
 		std::wstring fontFamily;
-		int fontSize = 0;
+		float fontSize = 0;
 		IDWriteTextFormat* value = NULL;
 		void Copy(const Font& _copy);
 	public:
 		bool Ref = false;
 		Font(const Font& _copy);
-		Font(const std::wstring& fontFamily, int fontSize);
-		const int& GetFontSize()const;
+		Font(const std::wstring& fontFamily, const float& fontSize);
+		const float& GetFontSize()const;
 		const std::wstring& GetFontFamily()const;
 		IDWriteTextFormat* Get() const;
 		Font& operator=(const Font& _copy);
@@ -79,7 +79,7 @@ namespace EzUI {
 		void SetTextAlign(TextAlign textAlign);
 		std::wstring fontFamily;
 		DWRITE_TEXT_METRICS textMetrics{ 0 };
-		int fontSize;
+		float fontSize = 0;
 	public:
 		void GetMetrics();
 		TextLayout(const std::wstring& text, const Font& font, Size maxSize = Size{ __MAXFLOAT,__MAXFLOAT }, TextAlign textAlgin = TextAlign::TopLeft);
@@ -87,7 +87,7 @@ namespace EzUI {
 		void HitTestPoint(const Point& pt, HitTestMetrics* hitTestMetrics);//根据坐标执行命中测试
 		Point HitTestTextPosition(int textPos, BOOL isTrailingHit);//根据文字下标执行命中测试
 		const std::wstring& GetFontFamily();
-		const int& GetFontSize();
+		const float& GetFontSize();
 		int Width();
 		int Height();
 		Size GetFontBox();//获取文字绘制的时候占用多少行
@@ -259,11 +259,13 @@ namespace EzUI {
 
 	class UI_EXPORT DXRender {
 	private:
-		std::list<bool> layers;
 		ID2D1DCRenderTarget* render = NULL;
 		ID2D1SolidColorBrush* brush = NULL;
 		Font* font = NULL;
 		ID2D1StrokeStyle* pStrokeStyle = NULL;
+		Point Offset;
+		PointF RotatePoint;
+		float Angle = 0;
 	public:
 		ID2D1SolidColorBrush* GetBrush();
 		ID2D1StrokeStyle* GetStrokeStyle();
@@ -271,20 +273,23 @@ namespace EzUI {
 		DXRender(DXImage* dxImage);
 		DXRender(HDC dc, int x, int y, int width, int height);//创建dx绘图对象
 		virtual ~DXRender();
-		void SetFont(const std::wstring& fontFamily, int fontSize);//必须先调用
+		void SetFont(const std::wstring& fontFamily, const float& fontSize);//必须先调用
 		void SetFont(const Font& _copy_font);//必须先调用
 		void SetColor(const RenderType::__Color& color);//会之前必须调用
 		void SetStrokeStyle(StrokeStyle strokeStyle = StrokeStyle::Solid, int dashWidth = 3);//设置样式 虚线/实线
-		void DrawString(const TextLayout& textLayout, Point = { 0,0 });//根据已有的布局绘制文字
+		void DrawTextLayout(const TextLayout& textLayout, Point = { 0,0 });//根据已有的布局绘制文字
 		void DrawString(const std::wstring& text, const Rect& _rect, EzUI::TextAlign textAlign);//绘制文字
 		void DrawLine(const Point& _A, const  Point& _B, int width = 1);//绘制一条线
 		void DrawRectangle(const Rect& _rect, int _radius = 0, int width = 1);//绘制矩形
 		void FillRectangle(const Rect& _rect, int _radius = 0);//填充矩形
-		void PushLayer(const Rect& rectBounds);//速度较快
-		void PushLayer(const Geometry& dxGeometry);//比较耗性能,但是可以异形抗锯齿裁剪
-		void PopLayer();//弹出最后一个裁剪
+		void PushLayer(const Geometry& dxGeometry);
+		void PopLayer();
+		void PushAxisAlignedClip(const Rect& rectBounds);
+		void PopAxisAlignedClip();
+		void SetTransform(int offsetX, int offsetY);//对画布进行旋转和偏移
+		void SetTransform(float startX, float startY, float angle);//设置旋转起始点与旋转角度
+		void SetTransform(int offsetX, int offsetY, float startX, float startY, float angle);
 		void DrawImage(DXImage* _image, const  Rect& tagRect, float opacity = 1.0f);//绘制图像
-		void SetTransform(int xOffset, int yOffset, int angle = 0);//对画布进行旋转和偏移
 		void DrawBezier(const Point& startPoint, const Bezier& points, int width = 1);//贝塞尔线
 		void DrawBezier(const Point& startPoint, std::list<Bezier>& points, int width = 1);//贝塞尔线
 		void DrawEllipse(const Point& point, int radiusX, int radiusY, int width = 1);

@@ -361,14 +361,16 @@ namespace EzUI {
 	};
 	class UI_EXPORT DpiChangeEventArgs :public EventArgs {
 	public:
-		float Scale = 1.0;
+		float Scale = 1.0f;
 		DpiChangeEventArgs(const float& scale) :EventArgs(Event::OnDpiChange), Scale(scale) {}
 
 	};
 	// 为 OnPaint 事件提供数据。
 	class UI_EXPORT PaintEventArgs :public EventArgs {
+	private:
+		std::list<bool> layers;
+		std::list<Point> offsets;
 	public:
-		std::list<Point> OffSetPoint;//用于记录每次绘制控件的偏移位置
 		PaintEventArgs(const PaintEventArgs&) = delete;
 		PaintEventArgs& operator=(const PaintEventArgs&) = delete;
 		WindowData* PublicData = NULL;
@@ -377,6 +379,11 @@ namespace EzUI {
 		Rect InvalidRectangle;//WM_PAINT里面的无效区域
 		PaintEventArgs(EzUI::DXRender& _painter) : EventArgs(Event::OnPaint), Graphics(_painter) {}
 		virtual ~PaintEventArgs() {}
+		void PushLayer(const Rect& rectBounds);//速度较快
+		void PushLayer(const Geometry& dxGeometry);//比较耗性能,但是可以异形抗锯齿裁剪
+		void PopLayer();//弹出最后一个裁剪
+		void PushOffset(const Point& offset);
+		void PopOffset();//弹出最后一个偏移
 	};
 	// 为控件样式提供数据。
 	class UI_EXPORT ControlStyle {
@@ -387,9 +394,10 @@ namespace EzUI {
 		Image* BackImage = NULL;//背景图片 如果指定的图片被删除 请必须将此置零
 		Image* ForeImage = NULL;//前景图片 如果指定的图片被删除 请必须将此置零
 		std::wstring FontFamily;//字体名称 具有继承性
-		int FontSize = 0;//字体大小 具有继承性
+		int FontSize = 0;//字体大小 具有继承性 此处采用int
 		Color ForeColor;//前景颜色  具有继承性
 		HCURSOR Cursor = NULL;//鼠标样式
+		float Angle = 0;//旋转范围 0~360
 	private:
 		void operator=(const ControlStyle& right) {} //禁止直接赋值 因为这样会导致 Color执行拷贝使得Color变得不合法的有效
 		ControlStyle(const ControlStyle& right) {} //禁止拷贝 

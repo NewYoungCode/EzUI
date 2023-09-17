@@ -28,7 +28,8 @@ namespace EzUI {
 	}
 
 	//TextFormat
-	Font::Font(const std::wstring& fontFamily, int fontSize) {
+	Font::Font(const std::wstring& fontFamily, const float& fontSize) {
+		ASSERT(!(fontSize == 0));
 		this->fontFamily = fontFamily;
 		this->fontSize = fontSize;
 		D2D::g_WriteFactory->CreateTextFormat(fontFamily.c_str(), NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, (FLOAT)this->fontSize, L"", &value);
@@ -38,7 +39,7 @@ namespace EzUI {
 			SafeRelease(&value);
 		}
 	}
-	const int& Font::GetFontSize()const {
+	const float& Font::GetFontSize()const {
 		return fontSize;
 	}
 	const std::wstring& Font::GetFontFamily()const {
@@ -147,7 +148,7 @@ namespace EzUI {
 		FLOAT height = textMetrics.height;
 		return  Size{ (int)(width + 1) ,(int)(height + 1) };
 	}
-	const int& TextLayout::GetFontSize()
+	const float& TextLayout::GetFontSize()
 	{
 		return this->fontSize;
 	}
@@ -584,7 +585,7 @@ namespace EzUI {
 	ID2D1StrokeStyle* DXRender::GetStrokeStyle() {
 		return pStrokeStyle;
 	}
-	void DXRender::SetFont(const std::wstring& fontFamily, int fontSize) {
+	void DXRender::SetFont(const std::wstring& fontFamily, const float& fontSize) {
 		if (font != NULL) {
 			if (font->GetFontFamily() == fontFamily && font->GetFontSize() == fontSize) {
 				return;
@@ -625,13 +626,13 @@ namespace EzUI {
 			delete[] dashes;
 		}
 	}
-	void DXRender::DrawString(const TextLayout& textLayout, Point startLacation) {
+	void DXRender::DrawTextLayout(const TextLayout& textLayout, Point startLacation) {
 		render->DrawTextLayout(D2D1_POINT_2F{ (FLOAT)(startLacation.X) ,(FLOAT)(startLacation.Y) }, textLayout.Get(), GetBrush());
 	}
 	void DXRender::DrawString(const std::wstring& text, const  Rect& _rect, EzUI::TextAlign textAlign) {
 		const Rect& rect = _rect;
 		TextLayout textLayout(text, *font, Size{ rect.Width, rect.Height }, textAlign);
-		this->DrawString(textLayout, { _rect.X,_rect.Y });
+		this->DrawTextLayout(textLayout, { _rect.X,_rect.Y });
 	}
 	void DXRender::DrawLine(const Point& _A, const Point& _B, int width) {
 		const Point& A = _A;
@@ -660,19 +661,35 @@ namespace EzUI {
 			render->FillRectangle(__To_D2D_RectF(rect), GetBrush());
 		}
 	}
-	void DXRender::SetTransform(int xOffset, int yOffset, int angle)
+
+	void DXRender::SetTransform(int offsetX, int offsetY)
 	{
-		if (xOffset == 0 && yOffset == 0 && angle == 0) {
-			render->SetTransform(D2D1::Matrix3x2F::Identity());
-		}
-		else if (angle != 0) {
-			render->SetTransform(D2D1::Matrix3x2F::Rotation((FLOAT)angle, D2D1::Point2F((FLOAT)xOffset, (FLOAT)yOffset)));
-		}
-		else if (angle == 0) {
-			// 设置x和y方向的偏移
-			render->SetTransform(D2D1::Matrix3x2F::Translation((FLOAT)xOffset, (FLOAT)yOffset));
-		}
+		this->Offset.X = offsetX;
+		this->Offset.Y = offsetY;
+		this->SetTransform(this->Offset.X, this->Offset.Y, this->RotatePoint.X, this->RotatePoint.Y, this->Angle);
 	}
+
+	void DXRender::SetTransform(float startX, float startY, float angle) {
+		this->RotatePoint.X = startX;
+		this->RotatePoint.Y = startY;
+		this->Angle = angle;
+		this->SetTransform(this->Offset.X, this->Offset.Y, this->RotatePoint.X, this->RotatePoint.Y, this->Angle);
+	}
+
+	void DXRender::SetTransform(int offsetX, int offsetY, float startX, float startY, float angle)
+	{
+		// 创建D2D矩阵转换对象 平移变换
+		D2D1::Matrix3x2F transformMatrix = D2D1::Matrix3x2F::Translation(offsetX, offsetY);
+		// 判断是否需要进行旋转变换
+		if (angle != 0)
+		{
+			// 旋转变换
+			transformMatrix = transformMatrix * D2D1::Matrix3x2F::Rotation(angle, D2D1_POINT_2F{ startX, startY });
+		}
+		// 将转换矩阵应用于绘制对象
+		render->SetTransform(transformMatrix);
+	}
+
 	void DXRender::DrawBezier(const Point& startPoint, const Bezier& points, int width) {
 		ID2D1GeometrySink* pSink = NULL;
 		ID2D1PathGeometry* pathGeometry = NULL;
@@ -704,28 +721,23 @@ namespace EzUI {
 		SafeRelease(&pathGeometry);
 		SafeRelease(&pSink);
 	}
+
 	void DXRender::PushLayer(const Geometry& dxGeometry) {
 		ID2D1Layer* layer = NULL;
 		render->CreateLayer(&layer);
 		render->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.Get()), layer);//放入layer
 		SafeRelease(&layer);
-		layers.push_back(false);
-	}
-	void DXRender::PushLayer(const Rect& rectBounds) {
-		render->PushAxisAlignedClip(__To_D2D_RectF(rectBounds), D2D1_ANTIALIAS_MODE::D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
-		layers.push_back(true);
 	}
 	void DXRender::PopLayer() {
-		if (layers.size() > 0) {
-			if (*layers.rbegin() == true) {
-				render->PopAxisAlignedClip();
-			}
-			else {
-				render->PopLayer();
-			}
-			layers.pop_back();
-		}
+		render->PopLayer();
 	}
+	void DXRender::PushAxisAlignedClip(const Rect& rectBounds) {
+		render->PushAxisAlignedClip(__To_D2D_RectF(rectBounds), D2D1_ANTIALIAS_MODE::D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+	}
+	void DXRender::PopAxisAlignedClip() {
+		render->PopAxisAlignedClip();
+	}
+	
 	void DXRender::DrawImage(DXImage* image, const  Rect& tagRect, float opacity) {
 		_NOREND_IMAGE_
 			if (image->Visible == false) return;

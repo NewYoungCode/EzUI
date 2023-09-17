@@ -17,7 +17,8 @@ namespace EzUI {
 			int maxHeight = Height() - this->TextMargin.GetVSpace();
 			std::wstring drawText(_wstr);
 			std::wstring fontFamily = GetFontFamily();
-			int fontSize = GetFontSize();
+			auto fontSize = GetFontSize();
+			if (fontSize == 0)return;
 			Font font(fontFamily, fontSize);
 			args.Graphics.SetFont(font);
 			args.Graphics.SetColor(GetForeColor());
@@ -53,7 +54,7 @@ namespace EzUI {
 			if (this->_underlineCount != 0) {//ÏÂ»®Ïß
 				textLayout.SetUnderline(_underlinePos, _underlineCount);
 			}
-			args.Graphics.DrawString(textLayout, { (int)this->TextMargin.Left,(int)this->TextMargin.Top });
+			args.Graphics.DrawTextLayout(textLayout, { (int)this->TextMargin.Left,(int)this->TextMargin.Top });
 		}
 	}
 
@@ -115,7 +116,9 @@ namespace EzUI {
 		__super::OnLayout();
 		if (IsAutoWidth() || IsAutoHeight()) {
 
-			Font font(GetFontFamily(), GetFontSize());
+			auto fontSize = GetFontSize();
+			if (fontSize == 0)return;
+			Font font(GetFontFamily(), fontSize);
 
 			int maxWidth = IsAutoWidth() ? __MAXFLOAT : Width() - this->TextMargin.GetHSpace();
 			int maxHeight = IsAutoHeight() ? __MAXFLOAT : Height() - this->TextMargin.GetVSpace();

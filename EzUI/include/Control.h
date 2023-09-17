@@ -93,6 +93,7 @@ namespace EzUI {
 		Image* GetForeImage(ControlState _state = ControlState::None);
 		Image* GetBackImage(ControlState _state = ControlState::None);
 		Color GetBackColor(ControlState _state = ControlState::None);
+		float GetAngle(ControlState _state = ControlState::None);
 		//具有继承性样式
 		virtual HCURSOR GetHCursor();
 		Color GetForeColor(ControlState _state = ControlState::None);//获取默认控件状态下前景色

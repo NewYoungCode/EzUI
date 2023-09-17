@@ -161,19 +161,30 @@ void MainFrm::OnClose(bool& cal) {
 }
 void MainFrm::OnPaint(PaintEventArgs& _arg) {
 	__super::OnPaint(_arg);
-	//Font font(L"宋体", 20);
-	//TextLayout text(L"你好hello word!", font);
-	//Size box = text.GetFontBox();
-	//_arg.Graphics.SetFont(font);
-	//_arg.Graphics.SetColor(Color::Black);
-	//_arg.Graphics.DrawString(text, { 500,200 });
-	//TextLayout text2(L"你好hello word!", font, box);
-	//_arg.Graphics.DrawString(text2, { 500,300 });
+
+
+	/*Font font(L"宋体", 20);
+	TextLayout text(L"你好hello word!", font);
+	Size box = text.GetFontBox();
+	_arg.Graphics.SetFont(font);
+	_arg.Graphics.SetColor(Color::Black);
+	_arg.Graphics.DrawString(text, { 500,200 });
+	TextLayout text2(L"你好hello word!", font, box);
+	_arg.Graphics.DrawString(text2, { 500,300 });*/
+
+	//{
+	//	Rect rect2({ 100,100,100,30 });
+	//	D2D_RECT_F rect{ (FLOAT)rect2.X,(FLOAT)rect2.Y,(FLOAT)rect2.GetRight(),(FLOAT)rect2.GetBottom() };
+	//	_arg.Graphics.SetColor(Color::Black);
+	//	_arg.Graphics.SetStrokeStyle(StrokeStyle::Dash, 3);
+	//	_arg.Graphics.FillRectangle(rect2);
+	//}
+	
 	Rect rect2({ 100,100,100,30 });
 	D2D_RECT_F rect{ (FLOAT)rect2.X,(FLOAT)rect2.Y,(FLOAT)rect2.GetRight(),(FLOAT)rect2.GetBottom() };
-	//_arg.Graphics.SetColor(Color::Black);
-	//_arg.Graphics.SetStrokeStyle(StrokeStyle::Dash, 3);
-	//_arg.Graphics.FillRectangle(rect);
+	_arg.Graphics.SetColor(Color::Red);
+	_arg.Graphics.SetStrokeStyle(StrokeStyle::Dash, 3);
+	_arg.Graphics.FillRectangle(rect2);
 }
 size_t MainFrm::FindLocalSong(const EString& hash)
 {

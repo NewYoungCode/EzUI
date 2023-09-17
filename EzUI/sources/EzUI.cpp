@@ -391,4 +391,37 @@ namespace EzUI {
 		}
 		return "";
 	}
+
+	void PaintEventArgs::PushLayer(const Geometry& dxGeometry) {
+		this->Graphics.PushLayer(dxGeometry);
+		layers.push_back(false);
+	}
+	void PaintEventArgs::PushLayer(const Rect& rectBounds) {
+		this->Graphics.PushAxisAlignedClip(rectBounds);
+		layers.push_back(true);
+	}
+	void PaintEventArgs::PopLayer() {
+		if (layers.size() > 0) {
+			if (*layers.rbegin() == true) {
+				this->Graphics.PopAxisAlignedClip();
+			}
+			else {
+				this->Graphics.PopLayer();
+			}
+			layers.pop_back();
+		}
+	}
+	void PaintEventArgs::PushOffset(const Point& offset)
+	{
+		this->Graphics.SetTransform(offset.X, offset.Y);
+		this->offsets.push_back(offset);
+	}
+	void PaintEventArgs::PopOffset()
+	{
+		this->offsets.pop_back();
+		if (this->offsets.size() > 0) {
+			auto& offset = *this->offsets.rbegin();
+			this->Graphics.SetTransform(offset.X, offset.Y);
+		}
+	}
 };

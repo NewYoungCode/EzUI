@@ -59,7 +59,8 @@ public:
 	SongItem(const EString& _songName, const EString& _songTime = "03:56") {
 
 		Style.FontSize = 12;
-
+		this->Style.Angle = 5;
+		//time.HoverStyle.Angle = 180;
 		//this->ShadowWidth = 5;
 		del.Style.ForeImage = Image::FromFile(L"imgs/del.png");
 		del.SetFixedSize({ 20,20 });

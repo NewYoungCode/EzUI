@@ -3,6 +3,9 @@ namespace EzUI {
 	bool __IsValid(const int& value) {
 		return value != 0;
 	}
+	bool __IsValid(const float& value) {
+		return value != 0;
+	}
 	bool __IsValid(const Image* value) {
 		return value != NULL;
 	}
@@ -103,6 +106,7 @@ namespace EzUI {
 	UI_STYLE_BINDFUNC(Color, BackColor);
 	UI_STYLE_BINDFUNC(Image*, ForeImage);
 	UI_STYLE_BINDFUNC(Image*, BackImage);
+	UI_STYLE_BINDFUNC(float, Angle);
 
 	UI_SUPER_STYLE_BINDFUNC(int, FontSize);
 	UI_SUPER_STYLE_BINDFUNC(Color, ForeColor);
@@ -115,12 +119,6 @@ namespace EzUI {
 		//绘制子控件
 		for (auto& it : VisibleControls) {
 			it->DispatchEvent(args);
-		}
-		//子控件绘制完毕
-		//设置偏移 用于置顶绘制
-		if (args.OffSetPoint.size() > 0) {
-			Point& offset = *(args.OffSetPoint.rbegin());
-			args.Graphics.SetTransform(offset.X, offset.Y);
 		}
 	}
 	void Control::OnPaint(PaintEventArgs& args)
@@ -770,9 +768,14 @@ namespace EzUI {
 		}
 		//绘制数量+1
 		args.PublicData->PaintCount++;
-		//设置绘制偏移
-		pt.SetTransform(clientRect.X, clientRect.Y);
-		args.OffSetPoint.push_back(Point(clientRect.X, clientRect.Y));
+		//设置绘制偏移 以及旋转
+		args.PushOffset({ clientRect.X ,clientRect.Y });
+		float angle = this->GetAngle();
+		if (angle != 0) {//围绕着控件中心点旋转
+			float pointX = clientRect.X + clientRect.Width / 2.0f;
+			float pointY = clientRect.Y + clientRect.Height / 2.0f;
+			pt.SetTransform(pointX, pointY, angle);
+		}
 		//border信息
 		Border border;
 		border.Left = GetBorderLeft();
@@ -791,11 +794,11 @@ namespace EzUI {
 			Geometry _clientRect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height);
 			Geometry outClipRect;
 			Geometry::Intersect(outClipRect, roundRect, _clientRect);
-			pt.PushLayer(outClipRect);
+			args.PushLayer(outClipRect);
 		}
 		else {
 			//针对矩形控件
-			pt.PushLayer(Rect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height));
+			args.PushLayer(Rect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height));
 		}
 #endif 
 		//绘制基本上下文
@@ -808,24 +811,22 @@ namespace EzUI {
 		EzUI::ScrollBar* scrollbar = NULL;
 		if (scrollbar = this->GetScrollBar()) {
 			scrollbar->PublicData = args.PublicData;
-			Rect barRect = scrollbar->GetClientRect();
-			//设置偏移
-			pt.SetTransform(barRect.X, barRect.Y);
 			scrollbar->DispatchEvent(args);
 		}
-		//设置偏移
-		pt.SetTransform(clientRect.X, clientRect.Y);
 		//绘制边框
 		border.Color = GetBorderColor();
 		this->OnBorderPaint(args, border);//绘制边框
-		args.OffSetPoint.pop_back();
-		pt.PopLayer();//弹出
 #ifdef _DEBUG
 		if (PublicData->Debug) {
 			int width = 1 * this->GetScale() + 0.5;
 			pt.DrawRectangle(Rect(0, 0, clientRect.Width, clientRect.Height), 0, width);
 		}
 #endif
+		args.PopLayer();//弹出纹理层
+		args.PopOffset();//弹出偏移
+		if (angle != 0) {
+			pt.SetTransform(0, 0, 0);
+		}
 	}
 	void Control::OnDpiChange(const DpiChangeEventArgs& arg)
 	{

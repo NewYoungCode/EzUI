@@ -622,12 +622,12 @@ namespace EzUI {
 		if (imageSizeMode == ImageSizeMode::Zoom) {
 			if (clientRate < imgRate) {
 				float zoomHeight = clientWidth / imgWidth * imgHeight + 0.5f;
-				float y = (clientHeight - zoomHeight) / 2 + rect.Y;
+				float y = (clientHeight - zoomHeight) / 2.0f + rect.Y;
 				return Rect(rect.X, y, clientWidth, zoomHeight);
 			}
 			else {
 				float zoomWidth = clientHeight / imgHeight * imgWidth + 0.5f;
-				float x = (clientWidth - zoomWidth) / 2 + rect.X;
+				float x = (clientWidth - zoomWidth) / 2.0f + rect.X;
 				return Rect(x, rect.Y, zoomWidth, clientHeight);
 			}
 		}
@@ -637,7 +637,7 @@ namespace EzUI {
 				//1000 300 图片
 				//2233 670     缩放后的图片大小 
 				float zoomWidth = clientHeight / imgHeight * imgWidth + 0.5f;//图片应该这么宽才对
-				float x = (zoomWidth - clientWidth) / 2 + 0.5f;
+				float x = (zoomWidth - clientWidth) / 2.0f + 0.5f;
 				return Rect((rect.X - x), rect.Y, zoomWidth, clientHeight);
 			}
 			else {
@@ -645,7 +645,7 @@ namespace EzUI {
 				//400  600 图片
 				//1000 1500     缩放后的图片大小 
 				float zoomHeight = clientWidth / imgWidth * imgHeight + 0.5f;//图片应该这么高才对
-				float y = (zoomHeight - clientHeight) / 2 + 0.5f;
+				float y = (zoomHeight - clientHeight) / 2.0f + 0.5f;
 				return Rect(rect.X, (rect.Y - y), clientWidth, zoomHeight);
 			}
 		}

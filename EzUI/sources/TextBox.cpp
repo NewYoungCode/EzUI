@@ -565,8 +565,8 @@ namespace EzUI {
 
 	void TextBox::OnForePaint(PaintEventArgs& e) {
 		std::wstring fontFamily = GetFontFamily();
-		const int& fontSize = GetFontSize();
-
+		auto fontSize = GetFontSize();
+		if (fontSize == 0)return;
 		if (_font == NULL || ((_font != NULL) && (_font->GetFontFamily() != fontFamily || _font->GetFontSize() != fontSize))) {
 			if (_font != NULL) {
 				delete _font;
@@ -599,7 +599,7 @@ namespace EzUI {
 
 		if (_textLayout) {
 			e.Graphics.SetColor(fontColor);
-			e.Graphics.DrawString(*_textLayout, { _scrollX, _scrollY });
+			e.Graphics.DrawTextLayout(*_textLayout, { _scrollX, _scrollY });
 		}
 
 		if (!_careRect.IsEmptyArea() && _focus) {
