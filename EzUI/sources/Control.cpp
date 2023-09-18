@@ -1060,9 +1060,34 @@ namespace EzUI {
 	bool Control::IsVisible() {
 		return this->_visible;
 	}
+
+	//void CalculateRotatedMaxRect(const Rect& rect, double angle, RectF* outRect) {
+	//	// 将角度转换为弧度
+	//	double angleRad = angle * 3.14159265358979323846 / 180.0;
+	//	// 计算旋转后的矩形的宽度和高度
+	//	double newWidth = fabs(rect.Width * cos(angleRad)) + fabs(rect.Height * sin(angleRad));
+	//	double newHeight = fabs(rect.Width * sin(angleRad)) + fabs(rect.Height * cos(angleRad));
+	//	// 计算旋转后的矩形的中心点坐标
+	//	double centerX = rect.X + rect.Width / 2.0f;
+	//	double centerY = rect.Y + rect.Height / 2.0f;
+	//	// 计算新矩形的位置
+	//	outRect->X = centerX - newWidth / 2.0f;
+	//	outRect->Y = centerY - newHeight / 2.0f;
+	//	outRect->Width = newWidth;
+	//	outRect->Height = newHeight;
+	//}
+	/*	RectF rect;
+	CalculateRotatedMaxRect(_InvalidateRect, angle, &rect);
+	Rect r2(rect.X, rect.Y, rect.Width, rect.Height);
+	winData->InvalidateRect(&r2);*/
+
 	bool Control::Invalidate() {
 		if (PublicData) {
 			if (Parent && this->IsPendLayout()) {
+				return Parent->Invalidate();
+			}
+			float angle = this->GetAngle();
+			if (angle != 0 && Parent) {
 				return Parent->Invalidate();
 			}
 			WindowData* winData = PublicData;
@@ -1182,7 +1207,7 @@ namespace EzUI {
 		}
 		this->VisibleControls.clear();//清空可见控件
 		this->_controls.clear();//清空子控件集合
-		this->DestroySpacers();//清空弹簧
+		this->_spacers.clear();//清空弹簧
 		this->TryPendLayout();//挂起布局
 		if (this->GetScrollBar()) {
 			this->GetScrollBar()->RefreshScroll();

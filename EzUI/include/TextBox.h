@@ -65,7 +65,7 @@ namespace EzUI {
 		EString Placeholder;//placeholder懂得都懂 (在没有文字的情况下显示的文字)
 		std::wstring PasswordChar;
 		bool ReadOnly = false;//是否只读
-		std::function<void(const EString&)> TextChange = NULL;
+		std::function<void(const EString&)> TextChanged = NULL;
 	public:
 		TextBox();
 		virtual ~TextBox();

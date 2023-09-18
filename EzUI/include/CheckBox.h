@@ -16,6 +16,7 @@ namespace EzUI {
 		virtual void OnMouseClick(const MouseEventArgs& arg)override;
 		virtual void OnDpiChange(const DpiChangeEventArgs& args)override;
 	public:
+		std::function<void(CheckBox* sender, bool checked)> CheckedChanged = NULL;
 		CheckBox();
 		virtual void SetAttribute(const EString& key, const EString& value)override;
 		virtual void SetCheck(bool checked);

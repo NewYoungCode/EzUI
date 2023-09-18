@@ -187,8 +187,8 @@ namespace EzUI {
 		}
 		_text.insert(_textPos, str);
 		_textPos += str.size();
-		if (TextChange) {
-			TextChange(EString(_text));
+		if (TextChanged) {
+			TextChanged(EString(_text));
 		}
 	}
 	bool TextBox::DeleteRange() {
@@ -197,8 +197,8 @@ namespace EzUI {
 			//isTrailingHit = FALSE;
 			_textPos = pos;
 			_text.erase(pos, count);
-			if (TextChange) {
-				TextChange(EString(_text));
+			if (TextChanged) {
+				TextChanged(EString(_text));
 			}
 			return true;
 		}
@@ -230,8 +230,8 @@ namespace EzUI {
 			_textPos--;
 			if (_textPos > -1) {
 				_text.erase(_textPos, 1);
-				if (TextChange) {
-					TextChange(EString(_text));
+				if (TextChanged) {
+					TextChanged(EString(_text));
 				}
 			}
 		}

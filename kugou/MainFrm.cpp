@@ -180,11 +180,11 @@ void MainFrm::OnPaint(PaintEventArgs& _arg) {
 	//	_arg.Graphics.FillRectangle(rect2);
 	//}
 	
-	Rect rect2({ 100,100,100,30 });
+	/*Rect rect2({ 100,100,100,30 });
 	D2D_RECT_F rect{ (FLOAT)rect2.X,(FLOAT)rect2.Y,(FLOAT)rect2.GetRight(),(FLOAT)rect2.GetBottom() };
 	_arg.Graphics.SetColor(Color::Red);
 	_arg.Graphics.SetStrokeStyle(StrokeStyle::Dash, 3);
-	_arg.Graphics.FillRectangle(rect2);
+	_arg.Graphics.FillRectangle(rect2);*/
 }
 size_t MainFrm::FindLocalSong(const EString& hash)
 {

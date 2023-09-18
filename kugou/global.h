@@ -60,6 +60,7 @@ public:
 
 		Style.FontSize = 12;
 		this->Style.Angle = 5;
+		this->HoverStyle.Angle =6;
 		//time.HoverStyle.Angle = 180;
 		//this->ShadowWidth = 5;
 		del.Style.ForeImage = Image::FromFile(L"imgs/del.png");

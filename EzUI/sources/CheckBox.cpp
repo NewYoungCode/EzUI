@@ -42,6 +42,7 @@ namespace EzUI {
 		}
 		return __super::GetDefaultStyle();
 	}
+
 	ControlStyle& CheckBox::GetStyle(const ControlState& _state) {
 		if (_state == ControlState::Static) {
 			if (GetCheck()) {
@@ -54,5 +55,8 @@ namespace EzUI {
 	void CheckBox::OnMouseClick(const MouseEventArgs& arg) {
 		__super::OnMouseClick(arg);
 		SetCheck(!GetCheck());
+		if (CheckedChanged) {
+			CheckedChanged(this, GetCheck());
+		}
 	}
 };
