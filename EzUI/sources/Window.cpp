@@ -59,7 +59,7 @@ namespace EzUI {
 
 	Window::~Window()
 	{
-		if (::IsWindow(Hwnd())) {
+		if (Hwnd()) {
 			::DestroyWindow(Hwnd());
 		}
 	}
@@ -71,7 +71,6 @@ namespace EzUI {
 		}
 		return this->MainLayout->FindControl(objectName);
 	}
-
 
 	const HWND& Window::Hwnd()
 	{
@@ -198,23 +197,11 @@ namespace EzUI {
 			::EnableWindow(_oWnerWnd, FALSE);
 		}
 		Show();
-		BOOL bRet;
 		::MSG msg{ 0 };
-		while (::IsWindow(Hwnd()) && (bRet = ::GetMessage(&msg, NULL, 0, 0)) != 0 && msg.message != WM_QUIT)
+		while (Hwnd() && ::GetMessage(&msg, NULL, 0, 0))
 		{
-			if (bRet == -1)
-			{
-				// handle the error and possibly exit
-			}
-			else
-			{
-				::TranslateMessage(&msg);
-				::DispatchMessage(&msg);
-			}
-		}
-		if (msg.message == WM_QUIT) {//
-			::PostQuitMessage(msg.wParam);
-			return _closeCode;
+			::TranslateMessage(&msg);
+			::DispatchMessage(&msg);
 		}
 		if (_oWnerWnd) {
 			::SetFocus(_oWnerWnd);
@@ -253,9 +240,12 @@ namespace EzUI {
 
 	LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		if (WM_COMMAND == uMsg) {
-			//windows子控件消息
-		}
+		//if (uMsg == WM_QUIT) {
+		//	int pause = 0;
+		//}
+		//if (WM_COMMAND == uMsg) {
+		//	//windows子控件消息
+		//}
 		switch (uMsg)
 		{
 		case WM_MOVE: {
@@ -453,6 +443,7 @@ namespace EzUI {
 
 		case WM_DESTROY:
 		{
+			this->_hWnd = NULL;
 			OnDestroy();
 			break;
 		}

@@ -117,19 +117,11 @@ namespace EzUI {
 
 	int Application::Exec()
 	{
-		BOOL bRet;
 		::MSG msg{ 0 };
-		while ((bRet = ::GetMessage(&msg, NULL, 0, 0)) != 0)
+		while (::GetMessage(&msg, NULL, 0, 0))
 		{
-			if (bRet == -1)
-			{
-				// handle the error and possibly exit
-			}
-			else
-			{
-				::TranslateMessage(&msg);
-				::DispatchMessage(&msg);
-			}
+			::TranslateMessage(&msg);
+			::DispatchMessage(&msg);
 		}
 		return (int)msg.wParam;
 	}

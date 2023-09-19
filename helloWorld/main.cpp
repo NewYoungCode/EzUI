@@ -22,6 +22,7 @@ public:
 	MainFrm(int cx, int cy) :Window(cx, cy) {}
 	void OnClose(bool& b) {
 		if (this->GetText()=="modal") {
+			//Application::Exit(0);
 
 		}
 		else {
@@ -164,7 +165,6 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	frm.SetLayout(&mainLayout);//给窗口设置布局
 
 	frm.Show();//显示窗口
-
 	return app.Exec();//进行消息循环
 
 }
