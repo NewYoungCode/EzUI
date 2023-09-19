@@ -200,7 +200,7 @@ namespace EzUI {
 		Show();
 		BOOL bRet;
 		::MSG msg{ 0 };
-		while (::IsWindow(Hwnd()) && (bRet = GetMessage(&msg, NULL, 0, 0)) != 0 && msg.message != WM_QUIT)
+		while (::IsWindow(Hwnd()) && (bRet = ::GetMessage(&msg, NULL, 0, 0)) != 0 && msg.message != WM_QUIT)
 		{
 			if (bRet == -1)
 			{
@@ -208,8 +208,8 @@ namespace EzUI {
 			}
 			else
 			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
+				::TranslateMessage(&msg);
+				::DispatchMessage(&msg);
 			}
 		}
 		if (msg.message == WM_QUIT) {//
