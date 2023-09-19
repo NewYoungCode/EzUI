@@ -89,7 +89,7 @@ namespace EzUI {
 		DWORD len = SizeofResource(hInst, hRsrc);
 		Base::HVSResource = LoadResource(hInst, hRsrc);
 		Base::HZipResource = OpenZip((void*)Base::HVSResource, len, password.empty() ? NULL : password.c_str());
-}
+	}
 	//使用本地文件名称加载资源包
 	Application::Application(const EString& fileName, const EString& password) {
 		Init();
@@ -117,11 +117,19 @@ namespace EzUI {
 
 	int Application::Exec()
 	{
+		BOOL bRet;
 		::MSG msg{ 0 };
-		while (GetMessageW(&msg, NULL, 0, 0) != 0)
+		while ((bRet = GetMessage(&msg, NULL, 0, 0)) != 0)
 		{
-			::TranslateMessage(&msg);
-			::DispatchMessageW(&msg);
+			if (bRet == -1)
+			{
+				// handle the error and possibly exit
+			}
+			else
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
 		}
 		return (int)msg.wParam;
 	}

@@ -21,7 +21,12 @@ class MainFrm :public Window {
 public:
 	MainFrm(int cx, int cy) :Window(cx, cy) {}
 	void OnClose(bool& b) {
-		Application::Exit(0);
+		if (this->GetText()=="modal") {
+
+		}
+		else {
+			Application::Exit(0);
+		}
 	}
 };
 
@@ -103,8 +108,14 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 		lb->Margin = 1;
 		lb->EventNotify = [&list](Control* sd, const EventArgs& arg)->void {
 			if (arg.EventType == Event::OnMouseClick) {
-				list.Remove(sd);
-				list.Invalidate();
+				/*list.Remove(sd);
+				list.Invalidate();*/
+				MainFrm frm(500, 300);//无边框窗口
+				frm.SetText("modal");
+				VLayout mainLayout;//窗口中的main布局
+				mainLayout.Style.BackColor = Color::White;//主布局背景颜色
+				frm.SetLayout(&mainLayout);
+				frm.ShowModal();
 			}
 			};
 		list.Add(lb);
@@ -132,8 +143,11 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	btn.SetFixedSize({ 150,40 });
 	btn.EventNotify = [&text](Control* sd, const EventArgs& arg)->void {
 		if (arg.EventType == Event::OnMouseClick) {
-			text.SetMultiLine(!text.IsMultiLine());
-			text.Invalidate();
+			/*text.SetMultiLine(!text.IsMultiLine());
+			text.Invalidate();*/
+
+		
+
 		}
 		};
 

@@ -73,6 +73,7 @@ namespace EzUI {
 		void SetIcon(HICON icon);//设置窗口ico
 		void SetLayout(EzUI::Control* layout);//设置窗口主布局
 		void SetText(const EString& text);//设置窗口标题
+		EString GetText();//获取窗口标题
 		void SetTopMost(bool top);//设置与取消窗口置顶
 		bool IsTopMost();//窗口是否置顶
 		virtual void Show(int cmdShow = SW_SHOW);//操作窗口的显示

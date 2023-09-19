@@ -95,10 +95,18 @@ namespace EzUI {
 		}
 		return _rectClient;
 	}
+
 	void Window::SetText(const EString& text)
 	{
 		::SetWindowTextW(_hWnd, text.utf16().c_str());
 	}
+
+	EString Window::GetText() {
+		WCHAR buf[513]{ 0 };
+		::GetWindowTextW(Hwnd(), buf, 512);
+		return buf;
+	}
+
 	void Window::SetTopMost(bool top)
 	{
 		::SetWindowPos(Hwnd(), top ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
@@ -190,11 +198,19 @@ namespace EzUI {
 			::EnableWindow(_oWnerWnd, FALSE);
 		}
 		Show();
-		MSG msg{ 0 };
-		while (::IsWindow(Hwnd()) && ::GetMessage(&msg, NULL, 0, 0) && msg.message != WM_QUIT)
+		BOOL bRet;
+		::MSG msg{ 0 };
+		while (::IsWindow(Hwnd()) && (bRet = GetMessage(&msg, NULL, 0, 0)) != 0 && msg.message != WM_QUIT)
 		{
-			::TranslateMessage(&msg);
-			::DispatchMessage(&msg);
+			if (bRet == -1)
+			{
+				// handle the error and possibly exit
+			}
+			else
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
 		}
 		if (msg.message == WM_QUIT) {//
 			::PostQuitMessage(msg.wParam);
