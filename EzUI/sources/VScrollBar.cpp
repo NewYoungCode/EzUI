@@ -4,9 +4,9 @@ namespace EzUI {
 	VScrollBar::~VScrollBar() { }
 	void VScrollBar::RollTo(Control* ctl)
 	{
-		if (ctl && OWner->Parent && ctl->Parent == OWner) {
-			if (OWner->IsPendLayout()) {
-				OWner->RefreshLayout();
+		if (ctl && ctl->Parent && ctl->Parent == this->Parent) {
+			if (ctl->Parent->IsPendLayout()) {
+				ctl->Parent->RefreshLayout();
 			}
 			//控件的矩形位置
 			const Rect& ctlRect = ctl->GetRect();
@@ -36,14 +36,12 @@ namespace EzUI {
 	}
 	void VScrollBar::GetInfo(int* viewLength, int* contentLength, int* scrollBarLength)
 	{
-		*viewLength = OWner->Height();
-		*contentLength = OWner->GetContentSize().Height;
+		*viewLength = this->Parent->Height();
+		*contentLength = this->Parent->GetContentSize().Height;
 		*scrollBarLength = Height();
 	}
-	void VScrollBar::OWnerSize(const Size& size) {
-		if (this->Parent == this->OWner) {
-			this->SetRect({ size.Width - this->Width() ,0,this->Width(),size.Height });
-		}
+	void VScrollBar::ParentSize(const Size& size) {
+		this->SetRect({ size.Width - this->Width() ,0,this->Width(),size.Height });
 	}
 	void VScrollBar::OnMouseDown(const MouseEventArgs& arg) {
 		__super::OnMouseDown(arg);

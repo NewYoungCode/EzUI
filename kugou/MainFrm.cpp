@@ -93,7 +93,7 @@ void MainFrm::InitForm() {
 	}
 
 	//滚动条滚动事件 滚动条滚动到底部加载剩余音乐
-	searchList->GetScrollBar()->Rolling = [=](ScrollBar* sb, const ScrollRollEventArgs& args)->void {
+	searchList->GetScrollBar()->Scroll = [=](ScrollBar* sb, const ScrollRollEventArgs& args)->void {
 		if (args.RollType == Event::OnMouseWheel) {
 			NextPage(args.Pos);
 		}

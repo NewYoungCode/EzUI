@@ -15,9 +15,9 @@ namespace EzUI {
 	}
 	void HScrollBar::RollTo(Control* ctl)
 	{
-		if (ctl && OWner->Parent && ctl->Parent == OWner) {
-			if (OWner->IsPendLayout()) {
-				OWner->RefreshLayout();
+		if (ctl && ctl->Parent && ctl->Parent == this->Parent) {
+			if (ctl->Parent->IsPendLayout()) {
+				ctl->Parent->RefreshLayout();
 			}
 			//控件的矩形位置
 			const Rect& ctlRect = ctl->GetRect();
@@ -35,14 +35,12 @@ namespace EzUI {
 	}
 	void HScrollBar::GetInfo(int* viewLength, int* contentLength, int* scrollBarLength)
 	{
-		*viewLength = OWner->Width();
-		*contentLength = OWner->GetContentSize().Width;
+		*viewLength = this->Parent->Width();
+		*contentLength = this->Parent->GetContentSize().Width;
 		*scrollBarLength = Width();
 	}
-	void HScrollBar::OWnerSize(const Size& OWnerSize) {
-		if (this->Parent == this->OWner) {
-			this->SetRect({ 0,OWnerSize.Height - this->Height(),OWnerSize.Width,Height() });
-		}
+	void HScrollBar::ParentSize(const Size& size) {
+		this->SetRect({ 0,size.Height - this->Height(),size.Width,Height() });
 	}
 	void HScrollBar::OnMouseDown(const MouseEventArgs& arg) {
 		__super::OnMouseDown(arg);

@@ -211,11 +211,9 @@ namespace EzUI {
 		//溢出容器的长度
 		int _overflowLength = 0;
 	public:
-		//滚动条所属者 当所属者被移除或者被释放掉 请注意将此指针置零
-		Control* OWner = NULL;
 		//滚动条计算出偏移之后的回调函数
 		std::function<void(int)> OffsetCallback = NULL;
-		std::function<void(ScrollBar*, const ScrollRollEventArgs&)> Rolling = NULL;//滚动事件
+		std::function<void(ScrollBar*, const ScrollRollEventArgs&)> Scroll = NULL;//滚动事件
 	protected:
 		virtual void OnBackgroundPaint(PaintEventArgs& arg)override;
 		virtual void OnForePaint(PaintEventArgs& args) override;
@@ -233,12 +231,12 @@ namespace EzUI {
 		float RollPos();
 		//获取滑块的矩形
 		virtual Rect GetSliderRect() = 0;//
-		virtual void OWnerSize(const Size& ownerSize) = 0;
+		virtual void ParentSize(const Size& parentSize) = 0;
 		//滚动条是否已经绘制且显示
 		bool IsDraw();
 		//滚动条是否能够滚动
 		bool Scrollable();
-		//当OWner发生内容发生改变 请调用刷新滚动条
+		//当父控件发生内容发生改变 请调用刷新滚动条
 		void RefreshScroll();
 		ScrollBar();
 		virtual ~ScrollBar();

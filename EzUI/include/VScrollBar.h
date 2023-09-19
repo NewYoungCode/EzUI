@@ -13,7 +13,7 @@ namespace EzUI {
 		VScrollBar();
 		virtual ~VScrollBar();
 		virtual void RollTo(Control* ctl)override;
-		virtual void OWnerSize(const Size& ownerSize)override;
+		virtual void ParentSize(const Size& size)override;
 		virtual Rect GetSliderRect()override;
 	};
 

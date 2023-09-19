@@ -10,7 +10,6 @@ namespace EzUI {
 	{
 		this->GetScrollBar()->SetWidth(5);
 		this->GetScrollBar()->Parent = this;
-		this->GetScrollBar()->OWner = this;
 		this->GetScrollBar()->OffsetCallback = [=](int offset) {
 			this->Offset(offset);
 			};

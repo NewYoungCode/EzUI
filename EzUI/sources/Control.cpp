@@ -543,7 +543,7 @@ namespace EzUI {
 		}
 		this->_layoutState = LayoutState::Layouting;//布局中
 		if (GetScrollBar()) {//如果存在滚动条就设置滚动条的矩形位置
-			GetScrollBar()->OWnerSize({ _rect.Width,_rect.Height });
+			GetScrollBar()->ParentSize({ _rect.Width,_rect.Height });
 		}
 		_contentSize.Width = 0;
 		_contentSize.Height = 0;
@@ -1328,9 +1328,9 @@ namespace EzUI {
 	}
 
 	void ScrollBar::RollTo(const float& scrollRate) {
-		if (OWner == NULL) return;
-		if (OWner->IsPendLayout()) {
-			OWner->RefreshLayout();
+		if (Parent == NULL) return;
+		if (Parent->IsPendLayout()) {
+			Parent->RefreshLayout();
 		}
 		int offset = scrollRate * this->_overflowLength;
 		RollTo(-offset, Event::None);
@@ -1343,9 +1343,9 @@ namespace EzUI {
 	}
 
 	void ScrollBar::RollTo(int offset, const  ScrollRollEventArgs& args) {
-		if (OWner == NULL) return;
-		if (OWner->IsPendLayout()) {
-			OWner->RefreshLayout();
+		if (Parent == NULL) return;
+		if (Parent->IsPendLayout()) {
+			Parent->RefreshLayout();
 		}
 		if (!Scrollable()) {
 			return;
@@ -1373,17 +1373,17 @@ namespace EzUI {
 		if (OffsetCallback) {
 			OffsetCallback(this->_offset);
 		}
-		OWner->Invalidate();
-		//OWner->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
-		if (Rolling) {
+		Parent->Invalidate();
+		//Parent->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
+		if (Scroll) {
 			((ScrollRollEventArgs&)args).Pos = (double)this->_offset / (-this->_overflowLength);
-			Rolling(this, args);
+			Scroll(this, args);
 		}
 	}
 	void ScrollBar::RefreshScroll() {
-		if (OWner == NULL)return;
-		if (OWner->IsPendLayout()) {
-			OWner->RefreshLayout();
+		if (Parent == NULL)return;
+		if (Parent->IsPendLayout()) {
+			Parent->RefreshLayout();
 		}
 		int scrollBarLength;
 		this->GetInfo(&this->_viewLength, &this->_contentLength, &scrollBarLength);
