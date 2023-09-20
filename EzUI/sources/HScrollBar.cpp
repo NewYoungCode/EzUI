@@ -13,7 +13,7 @@ namespace EzUI {
 		}
 		return sliderRect;
 	}
-	void HScrollBar::RollTo(Control* ctl)
+	void HScrollBar::ScrollTo(Control* ctl)
 	{
 		if (ctl && ctl->Parent && ctl->Parent == this->Parent) {
 			if (ctl->Parent->IsPendLayout()) {
@@ -30,7 +30,7 @@ namespace EzUI {
 				//出现在底部
 				offset += this->_viewLength - ctlRect.Width;
 			}
-			__super::RollTo(offset, ScrollRollEventArgs(Event::None));
+			__super::ScrollTo(offset, Event::None);
 		}
 	}
 	void HScrollBar::GetInfo(int* viewLength, int* contentLength, int* scrollBarLength)
@@ -60,12 +60,8 @@ namespace EzUI {
 			int offsetX = point.X - this->_lastPoint;
 			_sliderPos += offsetX;
 			_lastPoint = point.X;
-			ScrollRollEventArgs sbArg;
-			sbArg.RollType = Event::OnMouseDrag;
-			sbArg.ZDelta = -offsetX;
-
 			int offset = _sliderPos * this->_rollRate + 0.5;
-			__super::RollTo(-offset, sbArg);
+			__super::ScrollTo(-offset, Event::OnMouseDrag);
 		}
 	}
 };

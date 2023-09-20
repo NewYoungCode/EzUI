@@ -2,7 +2,7 @@
 namespace EzUI {
 	VScrollBar::VScrollBar() { }
 	VScrollBar::~VScrollBar() { }
-	void VScrollBar::RollTo(Control* ctl)
+	void VScrollBar::ScrollTo(Control* ctl)
 	{
 		if (ctl && ctl->Parent && ctl->Parent == this->Parent) {
 			if (ctl->Parent->IsPendLayout()) {
@@ -19,7 +19,7 @@ namespace EzUI {
 				//出现在底部
 				offset += this->_viewLength - ctlRect.Height;
 			}
-			__super::RollTo(offset, ScrollRollEventArgs(Event::None));
+			__super::ScrollTo(offset, Event::None);
 		}
 	}
 
@@ -61,13 +61,8 @@ namespace EzUI {
 			int offsetY = point.Y - this->_lastPoint;
 			_sliderPos += offsetY;
 			_lastPoint = point.Y;
-			ScrollRollEventArgs sbArg;
-			sbArg.RollType = Event::OnMouseDrag;
-			sbArg.ZDelta = -offsetY;
-			/*		double rate = _sliderPos / (Height() - this->_sliderLength);
-					printf("%f\n", rate);*/
 			int offset = _sliderPos * this->_rollRate + 0.5;
-			__super::RollTo(-offset, sbArg);
+			__super::ScrollTo(-offset, Event::OnMouseDrag);
 		}
 	}
 };

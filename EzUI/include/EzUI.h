@@ -196,7 +196,6 @@ namespace EzUI {
 		OnRect = 65536,
 		OnTextChange = 131072,
 		OnDpiChange = 262144,
-		OnScrollRoll = 524288,
 		OnActive = OnMouseDown | OnMouseUp,
 		OnMouseDrag = OnMouseDown | OnMouseMove,
 		OnHover = OnMouseEnter | OnMouseLeave,
@@ -293,26 +292,12 @@ namespace EzUI {
 		int ZDelta = 0;//方向
 		Point Location;
 	public:
-		virtual ~MouseEventArgs() {}
 		MouseEventArgs(const Event& eventType, const Point& location = Point(0, 0), const MouseButton& mouseButton = MouseButton::None, const int& ZDelta = 0) :EventArgs(eventType) {
 			this->Button = mouseButton;
 			this->Location = location;
 			this->ZDelta = ZDelta;
 		}
-	};
-	//滚动条滚动事件
-	class UI_EXPORT ScrollRollEventArgs :public EventArgs {
-	public:
-		//滚动方向
-		int ZDelta = 0;
-		//当前已经滚动的百分比数值 0.0f~1.0f
-		float Pos = 0.0f;
-		//滚动类型 一般分为三种 Event::OnMouseDrag Event::OnMouseWheel 其他
-		Event RollType = Event::None;
-	public:
-		ScrollRollEventArgs(Event rollType = Event::None) :EventArgs(Event::OnScrollRoll), RollType(rollType) {
-		}
-		virtual ~ScrollRollEventArgs() {}
+		virtual ~MouseEventArgs() {}
 	};
 	// 摘要: 
 	//为键盘事件提供基础数据
@@ -361,9 +346,9 @@ namespace EzUI {
 	};
 	class UI_EXPORT DpiChangeEventArgs :public EventArgs {
 	public:
-		float Scale = 1.0f;
+		float Scale = 1;
 		DpiChangeEventArgs(const float& scale) :EventArgs(Event::OnDpiChange), Scale(scale) {}
-
+		virtual ~DpiChangeEventArgs() {}
 	};
 	// 为 OnPaint 事件提供数据。
 	class UI_EXPORT PaintEventArgs :public EventArgs {

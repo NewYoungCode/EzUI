@@ -1327,22 +1327,22 @@ namespace EzUI {
 		}
 	}
 
-	void ScrollBar::RollTo(const float& scrollRate) {
+	void ScrollBar::ScrollTo(const float& scrollRate) {
 		if (Parent == NULL) return;
 		if (Parent->IsPendLayout()) {
 			Parent->RefreshLayout();
 		}
 		int offset = scrollRate * this->_overflowLength;
-		RollTo(-offset, Event::None);
+		ScrollTo(-offset, Event::None);
 	}
 
-	float ScrollBar::RollPos()
+	float ScrollBar::ScrollPos()
 	{
 		if (this->_overflowLength <= 0)  return 1.0f;
 		return std::abs(this->_offset) * 1.0f / this->_overflowLength;
 	}
 
-	void ScrollBar::RollTo(int offset, const  ScrollRollEventArgs& args) {
+	void ScrollBar::ScrollTo(int offset, const Event& type) {
 		if (Parent == NULL) return;
 		if (Parent->IsPendLayout()) {
 			Parent->RefreshLayout();
@@ -1376,8 +1376,7 @@ namespace EzUI {
 		Parent->Invalidate();
 		//Parent->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
 		if (Scroll) {
-			((ScrollRollEventArgs&)args).Pos = (double)this->_offset / (-this->_overflowLength);
-			Scroll(this, args);
+			Scroll(this, (double)this->_offset / (-this->_overflowLength), type);
 		}
 	}
 	void ScrollBar::RefreshScroll() {
@@ -1400,18 +1399,11 @@ namespace EzUI {
 			this->_rollRate = 0;
 			this->_overflowLength = 0;
 		}
-		//计算偏移滚动
-		//double pos = (double)this->_offset / this->_rollRate;
-		RollTo(this->_offset, Event::None);
+		ScrollTo(this->_offset, Event::None);
 	};
 	void ScrollBar::OnMouseWheel(const MouseEventArgs& arg) {
 		__super::OnMouseWheel(arg);
-		ScrollRollEventArgs args;
-		args.RollType = Event::OnMouseWheel;
-		args.ZDelta = arg.ZDelta;
 		this->_offset += arg.ZDelta * 0.5;
-		//计算偏移滚动
-		//double pos = (double)this->_offset / this->_rollRate;
-		RollTo(this->_offset, args);
+		ScrollTo(this->_offset, Event::OnMouseWheel);
 	}
 };

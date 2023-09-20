@@ -93,9 +93,9 @@ void MainFrm::InitForm() {
 	}
 
 	//滚动条滚动事件 滚动条滚动到底部加载剩余音乐
-	searchList->GetScrollBar()->Scroll = [=](ScrollBar* sb, const ScrollRollEventArgs& args)->void {
-		if (args.RollType == Event::OnMouseWheel) {
-			NextPage(args.Pos);
+	searchList->GetScrollBar()->Scroll = [=](ScrollBar* sb, float pos,Event type)->void {
+		if (type == Event::OnMouseWheel) {
+			NextPage(pos);
 		}
 		};
 	//忽略一些事件 可穿透父控件
@@ -348,7 +348,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 						localList->Add(it);
 						localList->RefreshLayout();
 
-						localList->GetScrollBar()->RollTo(it);
+						localList->GetScrollBar()->ScrollTo(it);
 						//localList->GetScrollBar()->Move(localList->GetContentSize().Height);
 						localList->Invalidate();
 
@@ -401,7 +401,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				hash = songs[pos].hash;
 			}
 			auto it = localList->FindSingleControl("FileHash", hash);
-			localList->GetScrollBar()->RollTo(it);
+			localList->GetScrollBar()->ScrollTo(it);
 			it->DispatchEvent(MouseEventArgs(Event::OnMouseDoubleClick));
 		}
 		if (sender->Name == "up") {
@@ -415,7 +415,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				hash = songs[pos].hash;
 			}
 			auto it = localList->FindSingleControl("FileHash", hash);
-			localList->GetScrollBar()->RollTo(it);
+			localList->GetScrollBar()->ScrollTo(it);
 			it->DispatchEvent(MouseEventArgs(Event::OnMouseDoubleClick));
 		}
 		if (sender->Name == "deskLrc") {

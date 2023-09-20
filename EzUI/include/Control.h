@@ -213,7 +213,8 @@ namespace EzUI {
 	public:
 		//滚动条计算出偏移之后的回调函数
 		std::function<void(int)> OffsetCallback = NULL;
-		std::function<void(ScrollBar*, const ScrollRollEventArgs&)> Scroll = NULL;//滚动事件
+		//滚动事件 arg1:发送者 arg2:滚动百分比 arg3:滚动类型
+		std::function<void(ScrollBar*, float, Event)> Scroll = NULL;
 	protected:
 		virtual void OnBackgroundPaint(PaintEventArgs& arg)override;
 		virtual void OnForePaint(PaintEventArgs& args) override;
@@ -221,14 +222,14 @@ namespace EzUI {
 		virtual void OnMouseLeave(const MouseEventArgs& arg) override;
 		virtual void OnMouseWheel(const MouseEventArgs& arg)override;
 		virtual void GetInfo(int* viewLength, int* contentLength, int* scrollBarLength) = 0;
-		void RollTo(int offset, const ScrollRollEventArgs& args);
+		void ScrollTo(int offset, const Event& type);
 	public:
 		//滚动到指定控件可见位置
-		virtual void RollTo(Control* ctl) = 0;
+		virtual void ScrollTo(Control* ctl) = 0;
 		//按照百分比滚动 0.0f~1.0f
-		void RollTo(const float& scrollRate);
-		//获取当前滚动到的位置
-		float RollPos();
+		void ScrollTo(const float& scrollRate);
+		//获取当前滚动到的位置 进度的百分比
+		float ScrollPos();
 		//获取滑块的矩形
 		virtual Rect GetSliderRect() = 0;//
 		virtual void ParentSize(const Size& parentSize) = 0;

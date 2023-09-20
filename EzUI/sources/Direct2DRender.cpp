@@ -257,9 +257,9 @@ namespace EzUI {
 		return Height;
 	}
 	void DXImage::CreateFormStream(IStream* istram) {
-		HRESULT ret = S_OK;
+		HRESULT imgCreate = S_OK;
 		if (D2D::g_ImageFactory) {
-			ret = D2D::g_ImageFactory->CreateDecoderFromStream(istram, NULL, WICDecodeMetadataCacheOnDemand, &bitmapdecoder);//
+			imgCreate = D2D::g_ImageFactory->CreateDecoderFromStream(istram, NULL, WICDecodeMetadataCacheOnDemand, &bitmapdecoder);//
 		}
 		if (bitmapdecoder) {
 			D2D::g_ImageFactory->CreateFormatConverter(&fmtcovter);
@@ -301,11 +301,9 @@ namespace EzUI {
 		if (pframe) {
 			SafeRelease(&pframe);
 		}
-
 		if (fmtcovter) {
 			SafeRelease(&fmtcovter);
 		}
-
 		D2D::g_ImageFactory->CreateFormatConverter(&fmtcovter);
 		bitmapdecoder->GetFrame(_framePos, &pframe);
 		fmtcovter->Initialize(pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
@@ -326,21 +324,20 @@ namespace EzUI {
 			bitMap->GetSize(&Width, &Height);
 			Init();
 		}
-		ASSERT(bitMap);
 	}
 	DXImage::DXImage(const std::wstring& file) {
 		CreateFromFile(file);
-		ASSERT(bitmapdecoder);
 	}
-	DXImage::DXImage(UINT width, UINT height)
+	DXImage::DXImage(int width, int height)
 	{
 		this->Width = width;
 		this->Height = height;
-		HRESULT hr = D2D::g_ImageFactory->CreateBitmap(width, height, GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnDemand, &bitMap);
-		ASSERT(bitMap);
+		ASSERT(!(width <= 0 || height <= 0));
+		HRESULT hr = D2D::g_ImageFactory->CreateBitmap((UINT)width, (UINT)height, GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnDemand, &bitMap);
 	}
 	DXImage::DXImage(const void* data, size_t imgSize)
 	{
+		ASSERT(data);
 		ASSERT(imgSize);
 		IStream* stream = SHCreateMemStream((BYTE*)data, imgSize);
 		if (stream) {
@@ -358,7 +355,6 @@ namespace EzUI {
 	}
 	DXImage::DXImage(IStream* istram) {
 		CreateFormStream(istram);
-		ASSERT(bitmapdecoder);
 	}
 	DXImage::~DXImage()
 	{
@@ -458,7 +454,7 @@ namespace EzUI {
 		HRESULT hr = S_OK;
 		// Create a Direct2D factory.
 		if (D2D::g_Direct2dFactory == NULL) {
-			hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, &D2D::g_Direct2dFactory);
+			hr = ::D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, &D2D::g_Direct2dFactory);
 			if (!D2D::g_Direct2dFactory) {
 				::MessageBoxW(NULL, L"Failed to create ID2D1Factory", L"Error", MB_ICONSTOP);
 			}
@@ -737,7 +733,7 @@ namespace EzUI {
 	void DXRender::PopAxisAlignedClip() {
 		render->PopAxisAlignedClip();
 	}
-	
+
 	void DXRender::DrawImage(DXImage* image, const  Rect& tagRect, float opacity) {
 		_NOREND_IMAGE_
 			if (image->Visible == false) return;
@@ -764,7 +760,6 @@ namespace EzUI {
 		}
 		Rect drawRect = EzUI::Transformation(imageSizeMode, rect, imgSize);
 		//¿ªÊ¼»æÖÆ
-		ASSERT(bitmap);
 		D2D_RECT_F drawRectF = __To_D2D_RectF(drawRect);
 		if (!sourceRect.IsEmptyArea()) {
 			D2D_RECT_F sourceRectF = __To_D2D_RectF(sourceRect);

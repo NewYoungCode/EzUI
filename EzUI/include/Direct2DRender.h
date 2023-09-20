@@ -229,7 +229,7 @@ namespace EzUI {
 		DXImage(HBITMAP hBitmap);
 		DXImage(IStream* istram);
 		DXImage(const std::wstring& file);
-		DXImage(UINT width, UINT height);
+		DXImage(int width, int height);
 		DXImage(const void* data, size_t count);
 		ID2D1Bitmap* Get();
 		IWICBitmap* GetIWICBitmap();
