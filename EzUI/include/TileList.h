@@ -16,7 +16,6 @@ namespace EzUI {
 	public:
 		TileList();
 		virtual ~TileList();
-		virtual void Clear(bool freeList = false)override;
 		virtual ScrollBar* GetScrollBar()override;
 	};
 };

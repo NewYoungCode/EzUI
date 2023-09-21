@@ -30,7 +30,7 @@ void MainFrm::InitForm() {
 	searchList = (VList*)this->FindControl("searchList");
 	searchEdit = (TextBox*)this->FindControl("searchEdit");
 
-	auto aaa = $(this->MainLayout, "#centerLeft label");
+	auto aaa = $(this->GetLayout(), "#centerLeft label");
 
 	player.Name = "player";
 	this->FindControl("vlcDock")->Add(&player);
@@ -328,7 +328,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				if (bkImg) {
 					delete bkImg;
 					main->Style.ForeImage = NULL;
-					deskTopWnd->MainLayout->Style.BackImage = NULL;
+					deskTopWnd->GetLayout()->Style.BackImage = NULL;
 					bkImg = NULL;
 					main->Invalidate();
 				}
@@ -359,7 +359,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				}
 
 				this->nowSong = hash;
-				auto it = localList->FindSingleControl("FileHash", hash);
+				auto it = localList->FindSingleControl("FileHash", hash, true);
 				$(localList->GetControls()).Css("background-color:rgba(0,0,0,0)").Not(it);
 				$(it).Css("background-color:rgba(255,255,255,100)");
 
@@ -400,7 +400,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			else {
 				hash = songs[pos].hash;
 			}
-			auto it = localList->FindSingleControl("FileHash", hash);
+			auto it = localList->FindSingleControl("FileHash", hash, true);
 			localList->GetScrollBar()->ScrollTo(it);
 			it->DispatchEvent(MouseEventArgs(Event::OnMouseDoubleClick));
 		}
@@ -414,7 +414,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			else {
 				hash = songs[pos].hash;
 			}
-			auto it = localList->FindSingleControl("FileHash", hash);
+			auto it = localList->FindSingleControl("FileHash", hash,true);
 			localList->GetScrollBar()->ScrollTo(it);
 			it->DispatchEvent(MouseEventArgs(Event::OnMouseDoubleClick));
 		}
@@ -453,7 +453,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			return false;
 		}
 		if (sender->GetAttribute("tablayout") == "rightView") {
-			size_t pos = sender->Parent->FindControl(sender);
+			size_t pos = sender->Parent->IndexOf(sender);
 			if (pos == 0) {
 				OpenSongView();
 			}
@@ -603,7 +603,7 @@ LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
 		if (bkImg) {
 			main->Style.ForeImage = bkImg;
 			main->Style.BackImage->Visible = false;
-			deskTopWnd->MainLayout->Style.BackImage = bkImg;
+			deskTopWnd->GetLayout()->Style.BackImage = bkImg;
 		}
 		else {
 			main->Style.BackImage->Visible = true;

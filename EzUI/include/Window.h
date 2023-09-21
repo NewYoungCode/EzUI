@@ -8,25 +8,27 @@ namespace EzUI {
 	class UI_EXPORT Window :public IControl
 	{
 	private:
-		Rect _downRect;
-		Size _miniSize;
-		Size _maxSize;
+		Rect _downRect;//上次按下的区域
+		Size _miniSize;//窗口最小尺寸
+		Size _maxSize;//窗口最大尺寸
 		bool _mouseIn = false;//鼠标是否在里面
 		bool _mouseDown = false;//鼠标是否已经按下
-		std::chrono::system_clock::time_point _lastDownTime = std::chrono::system_clock::from_time_t(0);
+		std::chrono::system_clock::time_point _lastDownTime = std::chrono::system_clock::from_time_t(0);//上一次鼠标按下的时间
 		Size _lastSize;//上一次客户端大小的信息
 		Point _lastPoint;//上一次移动的坐标
-		MouseButton _lastBtn = MouseButton::None;
+		MouseButton _lastBtn = MouseButton::None;//上一次鼠标按下的按钮
 		int _closeCode = 0;//当窗口关闭的时候退出代码
 		HWND _hWnd = NULL;//windows原生句柄
 		Rect _rect;//基于桌面的坐标
 		Rect _rectClient;//客户绘图区域
-		HWND _oWnerWnd = NULL;
-		void InitData(const DWORD& ExStyle);
+		HWND _oWnerWnd = NULL;//所属窗口句柄
+		Control* _layout = NULL;//窗口布局
+		void InitWindow(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
 	public:
 		WindowData PublicData;//存储公共数据
 	private:
-		Window(const Window&) {};
+		Window(const Window&) = delete;
+		Window& operator=(const Window&) = delete;
 		bool IsInWindow(Control& pControl, Control& it);
 	protected:
 		void MoveWindow();//鼠标按下移动窗口
@@ -55,7 +57,6 @@ namespace EzUI {
 	public:
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);//处理消息队列的
 	public:
-		Control* MainLayout = NULL;//布局
 		bool Zoom = true;//是否支持缩放
 		Window(int width, int height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
 		virtual ~Window();
@@ -72,6 +73,7 @@ namespace EzUI {
 		void SetIcon(short id);//设置窗口ico
 		void SetIcon(HICON icon);//设置窗口ico
 		void SetLayout(EzUI::Control* layout);//设置窗口主布局
+		Control* GetLayout();//获取窗口主布局
 		void SetText(const EString& text);//设置窗口标题
 		EString GetText();//获取窗口标题
 		void SetTopMost(bool top);//设置与取消窗口置顶

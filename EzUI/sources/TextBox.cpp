@@ -264,6 +264,9 @@ namespace EzUI {
 
 	void TextBox::Analysis()
 	{
+		if (_text.size() > this->MaxCount) {
+			_text.erase(this->MaxCount);
+		}
 		_scrollX = 0;
 		_scrollY = 0;
 		_A = Point();

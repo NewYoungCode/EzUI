@@ -143,23 +143,23 @@ namespace EzUI {
 		bool DispatchEvent(const EventArgs& arg);//派发失去焦点事件
 		void AddEventNotify(int eventType);//添加到主窗口Ontify函数中可拦截
 		void RemoveEventNotify(int eventType);//移除一个主窗口的Ontify消息
-		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::Static);//
+		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::Static);//设置样式类似qt那样
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性
 		const std::list<Control*>& GetControls();//获取当前所有子控件 const修饰是因为不建议直接修改子控件内容
+		Control* GetControl(size_t pos);//使用下标获取控件 会自动过滤spacer(弹簧)这类的控件
 		bool Contains(Control* ctl);//会递归循全部包含的控件是否存在
-		Control* FindControl(size_t pos);//使用下标获取控件
-		size_t   FindControl(Control* childCtl);//获取子控件的索引
-		Control* FindControl(const EString& objectName);//寻找子控件 包含孙子 曾孙 等等
-		std::vector<Control*> FindControl(const EString& attr, const EString& attrValue);//使用属性查找
-		Control* FindSingleControl(const EString& attr, const EString& attrValue);//使用属性查找出第一个
-		bool SwapChild(Control* childCtl, Control* childCt2);//对子控件的两个控件进行位置交换
+		size_t IndexOf(Control* childCtl);//获取子控件在此容器中的索引
+		Control* FindControl(const EString& objectName, bool recursive = true);//使用name寻找容器中控件 recursive:是否递归子控件
+		Control* FindSingleControl(const EString& attrName, const EString& attrValue, bool recursive = true);//使用属性寻找容器中第一个符合条件的控件 recursive:是否递归子控件
+		std::vector<Control*> FindControl(const EString& attrName, const EString& attrValue, bool recursive = true);//使用属性寻找容器中符合条件的控件 recursive:是否递归子控件
+		virtual bool SwapChild(Control* childCtl, Control* childCt2);//对子控件的两个控件进行位置交换
 		virtual void Insert(size_t pos, Control* childCtl);//选择性插入控件
 		virtual void Add(Control* childCtl);//添加控件到末尾
 		virtual void Remove(Control* childCtl);//删除控件 返回下一个迭代器
 		virtual void SetParent(Control* parentCtl);//设置父控件
 		virtual void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件
 		virtual void SetVisible(bool flag);//设置Visible标志
-		bool IsVisible();//获取Visible标志
+		virtual bool IsVisible();//获取Visible标志
 		virtual bool Invalidate();// 使当前控件的区域为无效区域
 		virtual void Refresh();// 使当前控件区域为无效区域并且立即更新全部的无效区域
 	};

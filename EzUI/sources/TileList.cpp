@@ -2,11 +2,6 @@
 
 namespace EzUI {
 
-	void TileList::Clear(bool freeChilds)
-	{
-		__super::Clear(freeChilds);
-	}
-
 	void TileList::Init()
 	{
 		this->GetScrollBar()->SetHeight(Height());

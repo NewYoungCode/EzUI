@@ -7,6 +7,19 @@ namespace EzUI {
 
 	Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 	{
+		InitWindow(width, height, owner, dStyle, ExStyle);//设置基本数据
+	}
+
+	Window::~Window()
+	{
+		if (Hwnd()) {
+			::DestroyWindow(Hwnd());
+		}
+	}
+
+
+	void Window::InitWindow(int width, int height, HWND owner, DWORD dStyle, DWORD  exStyle)
+	{
 		float scanle = 1.0f;
 		POINT cursorPos;
 		::GetCursorPos(&cursorPos);
@@ -52,24 +65,46 @@ namespace EzUI {
 		_rect.Width = width;
 		_rect.Height = height;
 
-		_hWnd = ::CreateWindowExW(ExStyle | WS_EX_ACCEPTFILES, Base::WindowClassName, Base::WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
+		_hWnd = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, Base::WindowClassName, Base::WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
 			_rect.X, _rect.Y, width, height, owner, NULL, GetModuleHandle(NULL), NULL);
-		InitData(ExStyle);//设置基本数据
-	}
 
-	Window::~Window()
-	{
-		if (Hwnd()) {
-			::DestroyWindow(Hwnd());
+		PublicData.HANDLE = Hwnd();
+		PublicData.Window = this;
+
+		if ((exStyle & WS_EX_LAYERED) != WS_EX_LAYERED) {
+			PublicData.InvalidateRect = [=](void* _rect)->void {
+				RECT r;
+				r.left = ((Rect*)_rect)->GetLeft();
+				r.top = ((Rect*)_rect)->GetTop();
+				r.right = ((Rect*)_rect)->GetRight();
+				r.bottom = ((Rect*)_rect)->GetBottom();
+				::InvalidateRect(Hwnd(), &r, FALSE);
+				};
+			PublicData.UpdateWindow = [=]()->void {
+				::UpdateWindow(Hwnd());
+				};
 		}
+
+		PublicData.RemoveControl = [=](Control* delControl)->void {
+			if (_focusControl == delControl) {
+				_focusControl = NULL;
+			}
+			if (_inputControl == delControl) {
+				_inputControl = NULL;
+			}
+			};
+		PublicData.Notify = [=](Control* sender, EventArgs& args)->bool {
+			return OnNotify(sender, args);
+			};
+		UI_SET_USERDATA(_hWnd, &PublicData);
 	}
 
 	Control* Window::FindControl(const EString& objectName)
 	{
-		if (!MainLayout) {
+		if (!_layout) {
 			return NULL;
 		}
-		return this->MainLayout->FindControl(objectName);
+		return this->_layout->FindControl(objectName, true);
 	}
 
 	const HWND& Window::Hwnd()
@@ -152,18 +187,22 @@ namespace EzUI {
 	}
 	void Window::SetLayout(EzUI::Control* layout) {
 		ASSERT(layout);
-		MainLayout = layout;
-		if (MainLayout->Style.FontFamily.empty()) {
-			MainLayout->Style.FontFamily = L"Microsoft YaHei";
+		_layout = layout;
+		if (_layout->Style.FontFamily.empty()) {
+			_layout->Style.FontFamily = L"Microsoft YaHei";
 		}
-		if (MainLayout->Style.FontSize == 0) {
-			MainLayout->Style.FontSize = 12;
+		if (_layout->Style.FontSize == 0) {
+			_layout->Style.FontSize = 12;
 		}
-		if (MainLayout->Style.ForeColor.GetValue() == 0) {
-			MainLayout->Style.ForeColor = Color::Black;
+		if (_layout->Style.ForeColor.GetValue() == 0) {
+			_layout->Style.ForeColor = Color::Black;
 		}
-		MainLayout->PublicData = &PublicData;
-		MainLayout->SetRect(this->GetClientRect());
+		_layout->PublicData = &PublicData;
+		_layout->SetRect(this->GetClientRect());
+	}
+	Control* Window::GetLayout()
+	{
+		return this->_layout;
 	}
 	void Window::Close(int code) {
 		_closeCode = code;
@@ -171,10 +210,10 @@ namespace EzUI {
 	}
 	void Window::Show(int cmdShow)
 	{
-		ASSERT(MainLayout);
+		ASSERT(_layout);
 		::ShowWindow(Hwnd(), cmdShow);
 		if (IsVisible()) {
-			MainLayout->Refresh();
+			_layout->Refresh();
 		}
 	}
 	void Window::ShowNormal()
@@ -227,14 +266,14 @@ namespace EzUI {
 
 	void Window::Invalidate()
 	{
-		if (MainLayout) {
-			MainLayout->Invalidate();
+		if (_layout) {
+			_layout->Invalidate();
 		}
 	}
 	void Window::Refresh()
 	{
-		if (MainLayout) {
-			MainLayout->Refresh();
+		if (_layout) {
+			_layout->Refresh();
 		}
 	}
 
@@ -559,42 +598,9 @@ namespace EzUI {
 
 	void Window::OnPaint(PaintEventArgs& arg)
 	{
-		if (MainLayout) {
-			MainLayout->DispatchEvent(arg);//
+		if (_layout) {
+			_layout->DispatchEvent(arg);//
 		}
-	}
-
-	void Window::InitData(const DWORD& ExStyle)
-	{
-		PublicData.HANDLE = Hwnd();
-		PublicData.Window = this;
-
-		if ((ExStyle & WS_EX_LAYERED) != WS_EX_LAYERED) {
-			PublicData.InvalidateRect = [=](void* _rect)->void {
-				RECT r;
-				r.left = ((Rect*)_rect)->GetLeft();
-				r.top = ((Rect*)_rect)->GetTop();
-				r.right = ((Rect*)_rect)->GetRight();
-				r.bottom = ((Rect*)_rect)->GetBottom();
-				::InvalidateRect(Hwnd(), &r, FALSE);
-				};
-			PublicData.UpdateWindow = [=]()->void {
-				::UpdateWindow(Hwnd());
-				};
-		}
-
-		PublicData.RemoveControl = [=](Control* delControl)->void {
-			if (_focusControl == delControl) {
-				_focusControl = NULL;
-			}
-			if (_inputControl == delControl) {
-				_inputControl = NULL;
-			}
-			};
-		PublicData.Notify = [=](Control* sender, EventArgs& args)->bool {
-			return OnNotify(sender, args);
-			};
-		UI_SET_USERDATA(_hWnd, &PublicData);
 	}
 
 	bool Window::IsInWindow(Control& pControl, Control& it) {
@@ -615,7 +621,7 @@ namespace EzUI {
 
 	Control* Window::FindControl(const Point clientPoint, Point* outPoint) {
 		*outPoint = clientPoint;
-		Control* outCtl = MainLayout;
+		Control* outCtl = _layout;
 	Find_Loop:
 		ScrollBar* scrollBar = outCtl->GetScrollBar();
 		if (scrollBar && scrollBar->GetClientRect().Contains(clientPoint)) {
@@ -822,14 +828,14 @@ namespace EzUI {
 
 	void Window::OnSize(const Size& sz)
 	{
-		if (!MainLayout) {
+		if (!_layout) {
 			return;
 		}
-		if (MainLayout->GetScale() != PublicData.Scale) {
+		if (_layout->GetScale() != PublicData.Scale) {
 			this->OnDpiChange(PublicData.Scale, Rect());
 		}
-		MainLayout->SetRect(this->GetClientRect());
-		MainLayout->Invalidate();
+		_layout->SetRect(this->GetClientRect());
+		_layout->Invalidate();
 	}
 
 	void Window::OnRect(const Rect& rect)
@@ -884,8 +890,8 @@ namespace EzUI {
 		this->_miniSize.Scale(newScale);
 		this->_maxSize.Scale(newScale);
 		DpiChangeEventArgs arg(systemScale);
-		if (MainLayout) {
-			MainLayout->DispatchEvent(arg);
+		if (_layout) {
+			_layout->DispatchEvent(arg);
 		}
 		if (!newRect.IsEmptyArea()) {
 			SetWindowPos(Hwnd(), NULL, newRect.X, newRect.Y, newRect.Width, newRect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
@@ -893,7 +899,7 @@ namespace EzUI {
 	}
 	bool Window::OnNotify(Control* sender, EventArgs& args) {
 		if (args.EventType == Event::OnMouseDoubleClick) {
-			if (sender->Action == ControlAction::MoveWindow || sender == MainLayout) {
+			if (sender->Action == ControlAction::MoveWindow || sender == _layout) {
 				if (this->Zoom) {
 					if (::IsZoomed(Hwnd())) {
 						this->ShowNormal();
@@ -906,7 +912,7 @@ namespace EzUI {
 			return false;
 		}
 		if (args.EventType == Event::OnMouseDown) {
-			if (sender->Action == ControlAction::MoveWindow || sender == MainLayout) {
+			if (sender->Action == ControlAction::MoveWindow || sender == _layout) {
 				MoveWindow();
 				return false;
 			}
@@ -935,7 +941,7 @@ namespace EzUI {
 			//if (args.EventType == Event::OnMouseClick && ((MouseEventArgs&)(args)).Button == MouseButton::Left) {
 			EString  ctlName = sender->GetAttribute("tablayout");
 			if (!ctlName.empty()) {
-				auto ctls = sender->Parent->FindControl("tablayout", ctlName);
+				auto ctls = sender->Parent->FindControl("tablayout", ctlName, true);
 				TabLayout* tabLayout = dynamic_cast<TabLayout*>(FindControl(ctlName));
 				if (tabLayout && sender->Parent) {
 					size_t pos = 0;
@@ -943,7 +949,6 @@ namespace EzUI {
 					{
 						if (it == sender) {
 							tabLayout->SetPageIndex(pos);
-							//tabLayout->ResumeLayout();
 							tabLayout->Invalidate();
 							break;
 						}

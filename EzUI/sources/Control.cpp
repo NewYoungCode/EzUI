@@ -884,7 +884,7 @@ namespace EzUI {
 		}
 		_spacers.clear();
 	}
-	size_t Control::FindControl(Control* childCtl)
+	size_t Control::IndexOf(Control* childCtl)
 	{
 		const auto& pControls = this->GetControls();
 		size_t pos = 0;
@@ -984,7 +984,7 @@ namespace EzUI {
 			PublicData = NULL;
 		}
 	}
-	Control* Control::FindControl(const EString& objectName)
+	Control* Control::FindControl(const EString& objectName, bool recursive)
 	{
 		if (objectName.empty()) {
 			return NULL;
@@ -997,31 +997,35 @@ namespace EzUI {
 			if (it->Name == objectName) {
 				return it;
 			}
-			auto ctl = it->FindControl(objectName);
-			if (ctl) return ctl;
+			if (recursive) {
+				auto ctl = it->FindControl(objectName, recursive);
+				if (ctl) return ctl;
+			}
 		}
 		return NULL;
 	}
-	std::vector<Control*> Control::FindControl(const EString& attr, const EString& attrValue)
+	std::vector<Control*> Control::FindControl(const EString& attrName, const EString& attrValue, bool recursive)
 	{
 		std::vector<Control*> ctls;
-		if (attr.empty() || attrValue.empty()) {
+		if (attrName.empty() || attrValue.empty()) {
 			return ctls;
 		}
 		for (auto& it : (this->_controls))
 		{
-			if (it->GetAttribute(attr) == attrValue) {
+			if (it->GetAttribute(attrName) == attrValue) {
 				ctls.push_back(it);
 			}
-			auto _ctls = it->FindControl(attr, attrValue);
-			for (auto& it2 : _ctls) {
-				ctls.push_back(it2);
+			if (recursive) {
+				auto _ctls = it->FindControl(attrName, attrValue, recursive);
+				for (auto& it2 : _ctls) {
+					ctls.push_back(it2);
+				}
 			}
 		}
 		return ctls;
 	}
-	Control* Control::FindSingleControl(const EString& attr, const EString& attrValue) {
-		auto list = this->FindControl(attr, attrValue);
+	Control* Control::FindSingleControl(const EString& attrName, const EString& attrValue, bool recursive) {
+		auto list = this->FindControl(attrName, attrValue, recursive);
 		if (list.size() > 0) {
 			return *list.begin();
 		}
@@ -1172,7 +1176,7 @@ namespace EzUI {
 	{
 		return _controls;
 	}
-	Control* Control::FindControl(size_t pos)
+	Control* Control::GetControl(size_t pos)
 	{
 		size_t _pos = 0;
 		for (auto& it : _controls) {

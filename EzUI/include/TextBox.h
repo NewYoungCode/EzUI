@@ -62,6 +62,7 @@ namespace EzUI {
 		virtual void OnLayout();
 		void Offset(int moveY);
 	public:
+		size_t MaxCount = -1;//最大文字数量
 		EString Placeholder;//placeholder懂得都懂 (在没有文字的情况下显示的文字)
 		std::wstring PasswordChar;
 		bool ReadOnly = false;//是否只读

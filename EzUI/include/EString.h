@@ -3,6 +3,9 @@
 #include <codecvt>
 
 namespace EzUI {
+	/// <summary>
+	/// utf8×Ö·û´®
+	/// </summary>
 	class  UI_EXPORT EString :public std::string {
 	public:
 		//the utf8 length

@@ -71,7 +71,7 @@ namespace EzUI {
 				umg.LoadFile(attrValue);
 				umg.SetupUI(this);
 				if (this->GetControls().size() > 0) {
-					Control* root = this->FindControl(this->GetControls().size() - 1);
+					Control* root = this->GetControl(this->GetControls().size() - 1);
 					root->SetDockStyle(DockStyle::Fill);
 				}
 			}
