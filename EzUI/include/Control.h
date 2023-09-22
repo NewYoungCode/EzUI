@@ -149,9 +149,12 @@ namespace EzUI {
 		Control* GetControl(size_t pos);//使用下标获取控件 会自动过滤spacer(弹簧)这类的控件
 		bool Contains(Control* ctl);//会递归循全部包含的控件是否存在
 		size_t IndexOf(Control* childCtl);//获取子控件在此容器中的索引
-		Control* FindControl(const EString& objectName, bool recursive = true);//使用name寻找容器中控件 recursive:是否递归子控件
-		Control* FindSingleControl(const EString& attrName, const EString& attrValue, bool recursive = true);//使用属性寻找容器中第一个符合条件的控件 recursive:是否递归子控件
-		std::vector<Control*> FindControl(const EString& attrName, const EString& attrValue, bool recursive = true);//使用属性寻找容器中符合条件的控件 recursive:是否递归子控件
+		Control* FindControl(const EString& ctlName);//使用name寻找容器中控件,包括自身
+		std::vector<Control*> FindControl(const EString& attrName, const EString& attrValue);//使用属性寻找容器中符合条件的控件,包括自身
+		Control* FindSingleControl(const EString& attrName, const EString& attrValue);//使用属性寻找容器中第一个符合条件的控件,包括自身
+		Control* FindChild(const EString& ctlName);//寻找控件,仅限子集
+		std::vector<Control*> FindChild(const EString& attrName, const EString& attrValue);//寻找控件,仅限子集
+		Control* FindSingleChild(const EString& attrName, const EString& attrValue);//寻找控件,仅限子集
 		virtual bool SwapChild(Control* childCtl, Control* childCt2);//对子控件的两个控件进行位置交换
 		virtual void Insert(size_t pos, Control* childCtl);//选择性插入控件
 		virtual void Add(Control* childCtl);//添加控件到末尾

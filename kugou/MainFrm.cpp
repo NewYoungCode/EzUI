@@ -359,7 +359,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				}
 
 				this->nowSong = hash;
-				auto it = localList->FindSingleControl("FileHash", hash, true);
+				auto it = localList->FindSingleChild("FileHash", hash);
 				$(localList->GetControls()).Css("background-color:rgba(0,0,0,0)").Not(it);
 				$(it).Css("background-color:rgba(255,255,255,100)");
 
@@ -400,7 +400,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			else {
 				hash = songs[pos].hash;
 			}
-			auto it = localList->FindSingleControl("FileHash", hash, true);
+			auto it = localList->FindSingleChild("FileHash", hash);
 			localList->GetScrollBar()->ScrollTo(it);
 			it->DispatchEvent(MouseEventArgs(Event::OnMouseDoubleClick));
 		}
@@ -414,7 +414,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			else {
 				hash = songs[pos].hash;
 			}
-			auto it = localList->FindSingleControl("FileHash", hash,true);
+			auto it = localList->FindSingleChild("FileHash", hash);
 			localList->GetScrollBar()->ScrollTo(it);
 			it->DispatchEvent(MouseEventArgs(Event::OnMouseDoubleClick));
 		}

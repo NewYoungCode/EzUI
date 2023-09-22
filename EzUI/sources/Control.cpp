@@ -984,27 +984,25 @@ namespace EzUI {
 			PublicData = NULL;
 		}
 	}
-	Control* Control::FindControl(const EString& objectName, bool recursive)
+	Control* Control::FindControl(const EString& ctlName)
 	{
-		if (objectName.empty()) {
+		if (ctlName.empty()) {
 			return NULL;
 		}
-		if (this->Name == objectName) {
+		if (this->Name == ctlName) {
 			return this;
 		}
 		for (auto& it : (this->_controls))
 		{
-			if (it->Name == objectName) {
+			if (it->Name == ctlName) {
 				return it;
 			}
-			if (recursive) {
-				auto ctl = it->FindControl(objectName, recursive);
-				if (ctl) return ctl;
-			}
+			auto ctl = it->FindControl(ctlName);
+			if (ctl) return ctl;
 		}
 		return NULL;
 	}
-	std::vector<Control*> Control::FindControl(const EString& attrName, const EString& attrValue, bool recursive)
+	std::vector<Control*> Control::FindControl(const EString& attrName, const EString& attrValue)
 	{
 		std::vector<Control*> ctls;
 		if (attrName.empty() || attrValue.empty()) {
@@ -1015,22 +1013,56 @@ namespace EzUI {
 			if (it->GetAttribute(attrName) == attrValue) {
 				ctls.push_back(it);
 			}
-			if (recursive) {
-				auto _ctls = it->FindControl(attrName, attrValue, recursive);
-				for (auto& it2 : _ctls) {
-					ctls.push_back(it2);
-				}
+			auto _ctls = it->FindControl(attrName, attrValue);
+			for (auto& it2 : _ctls) {
+				ctls.push_back(it2);
 			}
 		}
 		return ctls;
 	}
-	Control* Control::FindSingleControl(const EString& attrName, const EString& attrValue, bool recursive) {
-		auto list = this->FindControl(attrName, attrValue, recursive);
+	Control* Control::FindSingleControl(const EString& attrName, const EString& attrValue) {
+		auto list = this->FindControl(attrName, attrValue);
 		if (list.size() > 0) {
 			return *list.begin();
 		}
 		return NULL;
 	}
+
+	Control* Control::FindChild(const EString& ctlName)
+	{
+		if (ctlName.empty()) {
+			return NULL;
+		}
+		for (auto& it : (this->_controls))
+		{
+			if (it->Name == ctlName) {
+				return it;
+			}
+		}
+		return NULL;
+	}
+	std::vector<Control*> Control::FindChild(const EString& attrName, const EString& attrValue)
+	{
+		std::vector<Control*> ctls;
+		if (attrName.empty() || attrValue.empty()) {
+			return ctls;
+		}
+		for (auto& it : (this->_controls))
+		{
+			if (it->GetAttribute(attrName) == attrValue) {
+				ctls.push_back(it);
+			}
+		}
+		return ctls;
+	}
+	Control* Control::FindSingleChild(const EString& ctlName, const EString& attrValue) {
+		auto list = this->FindChild(ctlName, attrValue);
+		if (list.size() > 0) {
+			return *list.begin();
+		}
+		return NULL;
+	}
+
 	bool Control::SwapChild(Control* ct1, Control* ct2)
 	{
 		int swapCount = 0;

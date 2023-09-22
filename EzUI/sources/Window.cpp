@@ -104,7 +104,7 @@ namespace EzUI {
 		if (!_layout) {
 			return NULL;
 		}
-		return this->_layout->FindControl(objectName, true);
+		return this->_layout->FindControl(objectName);
 	}
 
 	const HWND& Window::Hwnd()
@@ -941,7 +941,7 @@ namespace EzUI {
 			//if (args.EventType == Event::OnMouseClick && ((MouseEventArgs&)(args)).Button == MouseButton::Left) {
 			EString  ctlName = sender->GetAttribute("tablayout");
 			if (!ctlName.empty()) {
-				auto ctls = sender->Parent->FindControl("tablayout", ctlName, true);
+				auto ctls = sender->Parent->FindControl("tablayout", ctlName);
 				TabLayout* tabLayout = dynamic_cast<TabLayout*>(FindControl(ctlName));
 				if (tabLayout && sender->Parent) {
 					size_t pos = 0;
