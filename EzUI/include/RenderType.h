@@ -139,6 +139,13 @@ namespace EzUI {
 				Height = height;
 			}
 
+			__Rect(const RECT& rect) {
+				X = rect.left;
+				Y = rect.top;
+				Width = rect.right - rect.left;
+				Height = rect.bottom - rect.top;
+			}
+
 			__Rect(const __Point<T>& location, const __Size<T>& size) {
 				X = location.X;
 				Y = location.Y;
@@ -156,7 +163,7 @@ namespace EzUI {
 				return __Size<T>(Width, Height);
 			}
 
-			RECT ToRECT() {
+			RECT ToRECT() const {
 				return RECT{ GetLeft(),GetTop(),GetRight(),GetBottom() };
 			}
 

@@ -59,16 +59,18 @@ public:
 	SongItem(const EString& _songName, const EString& _songTime = "03:56") {
 
 		Style.FontSize = 12;
-		this->Style.Angle = 5;
-		this->HoverStyle.Angle =6;
+		//this->Style.Angle = 5;
+		//this->HoverStyle.Angle =6;
 		//time.HoverStyle.Angle = 180;
 		//this->ShadowWidth = 5;
 		del.Style.ForeImage = Image::FromFile(L"imgs/del.png");
 		del.SetFixedSize({ 20,20 });
 		del.Style.Cursor = LoadCursor(Cursor::HAND);
 		del.Name = "dellocal";
-		del.MousePassThrough = Event::OnHover;
+		//del.MousePassThrough = Event::OnHover;
 
+
+		songName.Name = "xxxx";
 		songName.SetText(_songName);
 		songName.Ellipsis = "...";//文本超出容器之外采用省略号
 		songName.TextAlign = TextAlign::MiddleLeft;
@@ -132,7 +134,7 @@ public:
 		SetAttribute("FileHash", s.hash);
 		SetAttribute("SingerName", s.SingerName);
 
-		//SetTips(s.SongName);
+		SetTips(s.SongName);
 		SetFixedHeight(35);
 		Style.Border.Bottom = 1;
 		Style.Border.Color = Color(245, 245, 245);

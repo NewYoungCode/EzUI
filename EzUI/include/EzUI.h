@@ -150,6 +150,8 @@ namespace EzUI {
 		std::function<void()> UpdateWindow = NULL;//立即更新全部无效区域
 		std::function<bool(Control*, EventArgs&)> Notify = NULL;//
 		std::function<void(Control*)> RemoveControl = NULL;//清空控件标记等等...
+		std::function<void(Control*, const std::wstring&)> SetTips = NULL;//设置tips文字
+		std::function<void(Control*)> DelTips = NULL;//删除tips文字
 	};
 	class UI_EXPORT StopWatch {
 	private:
@@ -176,7 +178,7 @@ namespace EzUI {
 		Pend = 2,//挂起中
 		Layouting = 4//布局中
 	};
-	enum Event :int {
+	enum Event :long long {
 		None = 1,
 		OnMouseWheel = 2,
 		OnMouseEnter = 4,
@@ -194,11 +196,10 @@ namespace EzUI {
 		OnLocation = 16384,
 		OnSize = 32768,
 		OnRect = 65536,
-		OnTextChange = 131072,
-		OnDpiChange = 262144,
+		OnDpiChange = 131072,
 		OnActive = OnMouseDown | OnMouseUp,
-		OnMouseDrag = OnMouseDown | OnMouseMove,
 		OnHover = OnMouseEnter | OnMouseLeave,
+		OnMouseDrag = OnMouseDown | OnMouseMove,
 		OnMouseEvent = OnMouseWheel | OnMouseEnter | OnMouseMove | OnMouseLeave | OnMouseClick | OnMouseDoubleClick | OnMouseDown | OnMouseUp,
 		OnKeyBoardEvent = OnKeyDown | OnKeyUp | OnKeyChar
 	};

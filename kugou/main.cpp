@@ -21,7 +21,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	rect.Y = 100;
 	rect.Width = 100;
 	rect.Height = 30;
-
+	
 
 	Curl_Global_Init();
 	EzUI::Application app("res.zip");//指定资源文件

@@ -18,11 +18,11 @@ namespace EzUI {
 		Point _lastPoint;//上一次移动的坐标
 		MouseButton _lastBtn = MouseButton::None;//上一次鼠标按下的按钮
 		int _closeCode = 0;//当窗口关闭的时候退出代码
-		HWND _hWnd = NULL;//windows原生句柄
 		Rect _rect;//基于桌面的坐标
 		Rect _rectClient;//客户绘图区域
 		HWND _oWnerWnd = NULL;//所属窗口句柄
 		Control* _layout = NULL;//窗口布局
+		HWND _hWndTips = NULL;
 		void InitWindow(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
 	public:
 		WindowData PublicData;//存储公共数据
@@ -60,6 +60,12 @@ namespace EzUI {
 		bool Zoom = true;//是否支持缩放
 		Window(int width, int height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
 		virtual ~Window();
+		/// <summary>
+		/// 在窗口中寻找命中的控件
+		/// </summary>
+		/// <param name="clientPoint">输入的坐标点寻找控件</param>
+		/// <param name="outPoint">返回控件的相对坐标</param>
+		/// <returns>返回命中的控件指针</returns>
 		Control* FindControl(const Point clientPoint, Point* outPoint);//根据坐标获取控件
 		Control* FindControl(const EString& objectName);//使用id寻找控件
 		const HWND& Hwnd();//获取窗口句柄

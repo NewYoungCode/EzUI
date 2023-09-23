@@ -12,11 +12,13 @@ namespace EzUI {
 
 	Window::~Window()
 	{
+		if (_hWndTips) {
+			::DestroyWindow(_hWndTips);
+		}
 		if (Hwnd()) {
 			::DestroyWindow(Hwnd());
 		}
 	}
-
 
 	void Window::InitWindow(int width, int height, HWND owner, DWORD dStyle, DWORD  exStyle)
 	{
@@ -65,8 +67,24 @@ namespace EzUI {
 		_rect.Width = width;
 		_rect.Height = height;
 
-		_hWnd = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, Base::WindowClassName, Base::WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
+		PublicData.HANDLE = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, Base::WindowClassName, Base::WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
 			_rect.X, _rect.Y, width, height, owner, NULL, GetModuleHandle(NULL), NULL);
+
+		//创建冒泡提示窗口
+		_hWndTips = CreateWindowEx(WS_EX_TOPMOST,
+			TOOLTIPS_CLASS,
+			NULL,
+			WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
+			CW_USEDEFAULT,
+			CW_USEDEFAULT,
+			CW_USEDEFAULT,
+			CW_USEDEFAULT,
+			Hwnd(),
+			NULL,
+			::GetModuleHandle(NULL),
+			NULL
+		);
+
 
 		PublicData.HANDLE = Hwnd();
 		PublicData.Window = this;
@@ -84,7 +102,46 @@ namespace EzUI {
 				::UpdateWindow(Hwnd());
 				};
 		}
+		PublicData.SetTips = [=](Control* ctl, const std::wstring& text)->void {
 
+			// 枚举并删除每个提示项
+			int toolCount = SendMessage(_hWndTips, TTM_GETTOOLCOUNT, 0, 0);
+			for (int i = 0; i < toolCount; i++) {
+				TOOLINFO toolInfo{ 0 };
+				toolInfo.cbSize = sizeof(TOOLINFO);
+				toolInfo.hwnd = Hwnd();
+				toolInfo.uFlags = TTF_IDISHWND;
+				toolInfo.hwnd = _hWndTips;
+				// 发送 TTM_ENUMTOOLS 消息以获取提示项信息
+				if (SendMessage(_hWndTips, TTM_ENUMTOOLS, i, (LPARAM)&toolInfo)) {
+					// 发送 TTM_DELTOOL 消息删除提示项
+					SendMessage(_hWndTips, TTM_DELTOOL, 0, (LPARAM)&toolInfo);
+				}
+			}
+			//EString str;
+			//EString::UnicodeToANSI(text, &str);
+			//printf("tips: %s\n", str.c_str());
+			if (!text.empty()) {
+				// 发送 TTM_DELALLTOOL 消息
+				TOOLINFO	tti{ 0 };
+				tti.cbSize = sizeof(TOOLINFO);
+				tti.uFlags = TTF_SUBCLASS;// | TTF_TRACK;
+				tti.hwnd = Hwnd();
+				tti.rect = ctl->ClipRect.ToRECT();
+				tti.uId = (UINT_PTR)ctl;
+				tti.lpszText = (LPWSTR)text.c_str();
+				//添加一个tips信息
+				SendMessage(_hWndTips, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
+			}
+			};
+		PublicData.DelTips = [=](Control* ctl)->void {
+			TOOLINFO	tti{ 0 };
+			tti.cbSize = sizeof(TOOLINFO);
+			tti.hwnd = Hwnd();
+			tti.uId = (UINT_PTR)ctl;
+			//移除
+			SendMessage(_hWndTips, TTM_DELTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
+			};
 		PublicData.RemoveControl = [=](Control* delControl)->void {
 			if (_focusControl == delControl) {
 				_focusControl = NULL;
@@ -96,7 +153,7 @@ namespace EzUI {
 		PublicData.Notify = [=](Control* sender, EventArgs& args)->bool {
 			return OnNotify(sender, args);
 			};
-		UI_SET_USERDATA(_hWnd, &PublicData);
+		UI_SET_USERDATA(Hwnd(), &PublicData);
 	}
 
 	Control* Window::FindControl(const EString& objectName)
@@ -109,13 +166,13 @@ namespace EzUI {
 
 	const HWND& Window::Hwnd()
 	{
-		return _hWnd;
+		return PublicData.HANDLE;
 	}
 	const Rect& Window::GetWindowRect()
 	{
 		if (_rect.IsEmptyArea()) {
 			RECT rect;
-			::GetWindowRect(_hWnd, &rect);
+			::GetWindowRect(Hwnd(), &rect);
 			_rect = { rect.left,rect.top,rect.right - rect.left,rect.bottom - rect.top };
 		}
 		return _rect;
@@ -124,7 +181,7 @@ namespace EzUI {
 	{
 		if (_rectClient.IsEmptyArea()) {
 			RECT rect;
-			::GetClientRect(_hWnd, &rect);
+			::GetClientRect(Hwnd(), &rect);
 			_rectClient = { rect.left,rect.top,rect.right - rect.left,rect.bottom - rect.top };
 		}
 		return _rectClient;
@@ -132,7 +189,7 @@ namespace EzUI {
 
 	void Window::SetText(const EString& text)
 	{
-		::SetWindowTextW(_hWnd, text.utf16().c_str());
+		::SetWindowTextW(Hwnd(), text.utf16().c_str());
 	}
 
 	EString Window::GetText() {
@@ -341,7 +398,7 @@ namespace EzUI {
 		case  WM_IME_STARTCOMPOSITION://
 		{
 			if (_inputControl) {
-				HIMC hIMC = ImmGetContext(_hWnd);
+				HIMC hIMC = ImmGetContext(Hwnd());
 				COMPOSITIONFORM cpf{ 0 };
 				cpf.dwStyle = CFS_POINT;
 				Control* input = _inputControl;
@@ -354,7 +411,7 @@ namespace EzUI {
 				cpf.ptCurrentPos.x = x;
 				cpf.ptCurrentPos.y = y;
 				ImmSetCompositionWindow(hIMC, &cpf);
-				ImmReleaseContext(_hWnd, hIMC);
+				ImmReleaseContext(Hwnd(), hIMC);
 			}
 			//Debug::Log("%d %d", x, y);
 			break;
@@ -454,7 +511,7 @@ namespace EzUI {
 				if (_oWnerWnd) {
 					::EnableWindow(_oWnerWnd, TRUE);
 				}
-				::DestroyWindow(_hWnd);
+				::DestroyWindow(Hwnd());
 			}
 			else {
 				//关闭已取消
@@ -479,10 +536,9 @@ namespace EzUI {
 			OnKeyUp(wParam, lParam);
 			break;
 		}
-
 		case WM_DESTROY:
 		{
-			this->_hWnd = NULL;
+			this->PublicData.HANDLE = NULL;
 			OnDestroy();
 			break;
 		}
@@ -527,6 +583,9 @@ namespace EzUI {
 			TrackMouseEvent(&tme);
 			OnMouseMove({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 			_mouseIn = true;
+			//给hwndTip发送消息告诉现在移动到什么位置了
+			//LPARAM lp = MAKELPARAM(args.Location.X, args.Location.Y);
+			//SendMessage(_hWndTips, TTM_TRACKPOSITION, 0, lParam);
 			break;
 		}
 		case WM_LBUTTONDOWN:
@@ -571,7 +630,7 @@ namespace EzUI {
 			break;
 		}
 		}
-		return ::DefWindowProc(_hWnd, uMsg, wParam, lParam);
+		return ::DefWindowProc(Hwnd(), uMsg, wParam, lParam);
 	}
 
 	void Window::DoPaint(HDC winHDC, const Rect& rePaintRect) {
@@ -658,12 +717,13 @@ namespace EzUI {
 				goto Find_Loop;
 			}
 		}
-		/*Spacer* isSpacer = dynamic_cast<Spacer*>(outCtl);
-		if ((isSpacer || outCtl->MousePassThrough != 0) && outCtl->Parent) {
-			return  outCtl->Parent;
-		}*/
+		//如果控件是弹簧的情况下直接穿透
 		if (dynamic_cast<Spacer*>(outCtl) && outCtl->Parent) {
 			return  outCtl->Parent;
+		}
+		//鼠标键盘的事件是可以穿透的
+		if ((outCtl->MousePassThrough & Event::OnMouseEvent || outCtl->MousePassThrough & Event::OnKeyBoardEvent) && outCtl->Parent) {
+			return outCtl->Parent;
 		}
 		return outCtl;
 	}
@@ -754,7 +814,7 @@ namespace EzUI {
 
 	void Window::OnMouseDown(MouseButton mbtn, const Point& point)
 	{
-		::SetCapture(_hWnd);
+		::SetCapture(Hwnd());
 		_mouseDown = true;
 		//寻早控件
 		Point relativePoint;
@@ -921,7 +981,7 @@ namespace EzUI {
 				return false;
 			}
 			if (sender->Action == ControlAction::Max) {
-				if (!IsZoomed(_hWnd)) {
+				if (!IsZoomed(Hwnd())) {
 					this->ShowMaximized();
 				}
 				else {

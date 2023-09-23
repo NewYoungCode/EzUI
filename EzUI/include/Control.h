@@ -11,7 +11,7 @@ namespace EzUI {
 		std::list<Control*> _spacers;//存储弹簧控件
 		//布局状态AddControl丶InsertControl丶RemoveControl丶OnSize时候此标志为挂起 调用ResumeLayout标志为布局中 当调用OnLayout()之后此标志为None
 		EzUI::LayoutState _layoutState = EzUI::LayoutState::None;
-		std::wstring _tipsText;//鼠标悬浮的提示文字
+		EString _tipsText;//鼠标悬浮的提示文字
 		Point _lastLocation;//上一次位置
 		Size _lastSize;//上一次大小
 		bool _autoWidth = false;//是否根据内容自动宽度
@@ -138,7 +138,8 @@ namespace EzUI {
 		void EndLayout();//结束布局
 		const Rect& SetRect(const Rect& rect);//设置相对父控件矩形 返回实际的rect
 		virtual void RefreshLayout();//刷新布局
-		virtual void SetTips(const EString& text);//设置tips
+		 void SetTips(const EString& text);//设置tips文字
+		const EString& GetTips();//获取tips文字
 		virtual ScrollBar* GetScrollBar();//获取控件的滚动条
 		bool DispatchEvent(const EventArgs& arg);//派发失去焦点事件
 		void AddEventNotify(int eventType);//添加到主窗口Ontify函数中可拦截

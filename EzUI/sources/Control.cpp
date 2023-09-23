@@ -534,7 +534,11 @@ namespace EzUI {
 	}
 	void Control::SetTips(const EString& text)
 	{
-		_tipsText = text.utf16();
+		_tipsText = text;
+	}
+	const EString& Control::GetTips()
+	{
+		return _tipsText;
 	}
 	void Control::RefreshLayout()
 	{
@@ -1123,7 +1127,7 @@ namespace EzUI {
 				return Parent->Invalidate();
 			}
 			float angle = this->GetAngle();
-			if (angle != 0 && Parent) {
+			if (!(angle == 0 || angle == 180) && Parent) {
 				return Parent->Invalidate();
 			}
 			WindowData* winData = PublicData;
@@ -1265,6 +1269,9 @@ namespace EzUI {
 	{
 		this->State = ControlState::Hover;
 		Invalidate();
+		if (PublicData) {
+			PublicData->SetTips(this, _tipsText.utf16());
+		}
 	}
 	void Control::OnMouseDown(const MouseEventArgs& args)
 	{
