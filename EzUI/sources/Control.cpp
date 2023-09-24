@@ -460,13 +460,6 @@ namespace EzUI {
 	{
 		return _fixedSize.Height;
 	}
-	bool Control::CheckEventPassThrough(const Event& eventType)
-	{
-		if ((MousePassThrough & eventType) == eventType) {
-			return true;
-		}
-		return false;
-	}
 	bool Control::IsPendLayout() {
 		return this->_layoutState == LayoutState::Pend;
 	}
@@ -613,7 +606,7 @@ namespace EzUI {
 			if (arg.EventType == Event::OnPaint && !IsVisible()) {
 				break;
 			}
-			if ((_eventNotify & arg.EventType) == arg.EventType) {
+			if ((this->EventNotify & arg.EventType) == arg.EventType) {
 				if (PublicData && PublicData->Notify(this, (EventArgs&)arg)) {
 					if (arg.EventType == Event::OnPaint) {
 						//如果处理了OnPaint那么只是不绘制自己 但是子控件还是需要继续绘制的
@@ -659,8 +652,8 @@ namespace EzUI {
 			}
 		} while (false);
 		if (!isRemove) {
-			if (this->EventNotify) {
-				this->EventNotify(this, arg);
+			if (this->EventHandler) {
+				this->EventHandler(this, arg);
 			}
 			if (!isRemove) {
 				this->_isRemove = NULL;
@@ -669,19 +662,14 @@ namespace EzUI {
 		}
 		return false;
 	}
-	void Control::AddEventNotify(int eventType) {
-		_eventNotify = _eventNotify | eventType;
-	}
-	void Control::RemoveEventNotify(int eventType) {
-		_eventNotify = _eventNotify & ~eventType;
-	}
+
 	//专门处理键盘消息的
 	void Control::OnKeyBoardEvent(const KeyboardEventArgs& _args) {
 		do
 		{
 			if (Enable == false) break;
 			KeyboardEventArgs& args = (KeyboardEventArgs&)_args;
-			if (CheckEventPassThrough(args.EventType) && this->Parent) {//检查鼠标穿透
+			if ((this->EventPassThrough & args.EventType) == args.EventType && this->Parent) {//检查鼠标穿透
 				KeyboardEventArgs copy_args = args;
 				this->Parent->DispatchEvent(copy_args);//如果设置了穿透就直接发送给上一层控件
 			}
@@ -706,16 +694,10 @@ namespace EzUI {
 	}
 	//专门处理鼠标消息的
 	void Control::OnMouseEvent(const MouseEventArgs& _args) {
+		if (!Enable) return;
+		MouseEventArgs& args = (MouseEventArgs&)_args;
 		do
 		{
-			if (Enable == false) break;
-			MouseEventArgs& args = (MouseEventArgs&)_args;
-			if (CheckEventPassThrough(args.EventType) && this->Parent) {//检查鼠标穿透
-				MouseEventArgs copy_args = args;
-				copy_args.Location.X += this->X();
-				copy_args.Location.Y += this->Y();
-				this->Parent->DispatchEvent(copy_args);//如果设置了穿透就直接发送给上一层控件
-			}
 			switch (args.EventType)
 			{
 			case Event::OnMouseWheel: {
@@ -753,8 +735,13 @@ namespace EzUI {
 			default:
 				break;
 			}
-
 		} while (false);
+		if ((this->EventPassThrough & args.EventType) == args.EventType && this->Parent) {//检查鼠标穿透
+			MouseEventArgs copy_args = args;
+			copy_args.Location.X += this->X();
+			copy_args.Location.Y += this->Y();
+			this->Parent->DispatchEvent(copy_args);//如果设置了穿透就发送给上一层控件
+		}
 	}
 	void Control::OnPaintBefore(PaintEventArgs& args, bool paintSelf) {
 		this->PublicData = args.PublicData;
@@ -1268,9 +1255,11 @@ namespace EzUI {
 	void Control::OnMouseEnter(const MouseEventArgs& args)
 	{
 		this->State = ControlState::Hover;
-		Invalidate();
 		if (PublicData) {
-			PublicData->SetTips(this, _tipsText.utf16());
+			PublicData->SetTips(this, this->GetTips().utf16());
+		}
+		if (!(this->EventPassThrough & Event::OnMouseEnter)) {
+			this->Invalidate();
 		}
 	}
 	void Control::OnMouseDown(const MouseEventArgs& args)
@@ -1279,16 +1268,23 @@ namespace EzUI {
 		if (ActiveStyle.Cursor) {
 			::SetCursor(ActiveStyle.Cursor);
 		}
-		Invalidate();
+		if (!(this->EventPassThrough & Event::OnMouseDown)) {
+			this->Invalidate();
+		}
 	}
 	void Control::OnMouseUp(const MouseEventArgs& args)
 	{
-		Invalidate();
+		if (!(this->EventPassThrough & Event::OnMouseUp)) {
+			this->Invalidate();
+		}
 	}
 	void Control::OnMouseLeave(const MouseEventArgs& args)
 	{
 		this->State = ControlState::Static;
-		Invalidate();
+		if (!(this->EventPassThrough & Event::OnMouseLeave)) {
+			this->Invalidate();
+		}
+
 	}
 	void Control::OnKeyChar(const KeyboardEventArgs& args) {
 	}

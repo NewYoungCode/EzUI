@@ -20,16 +20,16 @@ namespace EzUI {
 		Size _fixedSize;//绝对Size
 		Rect _rect;//控件矩形区域(基于父控件)
 		DockStyle _dock = DockStyle::None;//dock样式
-		int _eventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnKeyChar | Event::OnKeyDown | Event::OnKeyUp;//默认添加到主窗口通知函数中可拦截
 	private:
 		Control(const Control&) = delete;
 		Control& operator=(const Control&) = delete;
-		bool CheckEventPassThrough(const Event& eventType);//检查事件是否已经过滤
 		void ComputeClipRect();//计算基于父控件的裁剪区域
 	public:
 		Distance Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数
 		WindowData* PublicData = NULL;//窗口上的公共数据
-		int MousePassThrough = 0;//忽略的鼠标消息
+		//添加到主窗口通知函数中可拦截
+		int EventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnKeyChar | Event::OnKeyDown | Event::OnKeyUp;
+		int EventPassThrough = 0;//控件可被穿透的事件
 		bool Enable = true;//控件被启用 禁止状态下鼠标键盘消息将不可用
 		EString Name;//控件的ObjectName ID
 		ControlState State = ControlState::Static;//控件状态
@@ -40,7 +40,7 @@ namespace EzUI {
 		Control* Parent = NULL;//父控件
 		std::list<Control*> VisibleControls;//基于控件中的可见控件
 		const Rect ClipRect;//控件在窗口中的可见区域
-		std::function<void(Control*, const EventArgs&)> EventNotify = NULL;
+		std::function<void(Control*, const EventArgs&)> EventHandler = NULL;//事件处理器
 	protected:
 		//仅限子类使用
 		virtual void SetContentWidth(const int& width);//
@@ -138,12 +138,10 @@ namespace EzUI {
 		void EndLayout();//结束布局
 		const Rect& SetRect(const Rect& rect);//设置相对父控件矩形 返回实际的rect
 		virtual void RefreshLayout();//刷新布局
-		 void SetTips(const EString& text);//设置tips文字
+		void SetTips(const EString& text);//设置tips文字
 		const EString& GetTips();//获取tips文字
 		virtual ScrollBar* GetScrollBar();//获取控件的滚动条
 		bool DispatchEvent(const EventArgs& arg);//派发失去焦点事件
-		void AddEventNotify(int eventType);//添加到主窗口Ontify函数中可拦截
-		void RemoveEventNotify(int eventType);//移除一个主窗口的Ontify消息
 		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::Static);//设置样式类似qt那样
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性
 		const std::list<Control*>& GetControls();//获取当前所有子控件 const修饰是因为不建议直接修改子控件内容

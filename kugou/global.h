@@ -67,25 +67,26 @@ public:
 		del.SetFixedSize({ 20,20 });
 		del.Style.Cursor = LoadCursor(Cursor::HAND);
 		del.Name = "dellocal";
-		//del.MousePassThrough = Event::OnHover;
+		del.EventPassThrough = Event::OnHover;
 
+		this->Name = "songItem";
 
-		songName.Name = "xxxx";
+		songName.Name = "autosz";
 		songName.SetText(_songName);
 		songName.Ellipsis = "...";//文本超出容器之外采用省略号
 		songName.TextAlign = TextAlign::MiddleLeft;
-		songName.MousePassThrough = time.MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseDoubleClick;
+		songName.SetTips("child_" + _songName);
+		songName.EventPassThrough = time.EventPassThrough = Event::OnHover | Event::OnActive | Event::OnMouseDoubleClick;
 		songName.HoverStyle.FontSize = 15;
 
 		/*	songName.Padding.Left = 10;
 			songName.SetAutoHeight(true);
 			songName.SetUnderline(0,5);*/
 
-		songName.Name = "autosz";
-
 		time.SetFixedWidth(50);
 		time.SetText(_songTime);
 		time.TextAlign = TextAlign::MiddleRight;
+		time.HoverStyle.FontSize = 20;
 
 		this->SetFixedHeight(33);
 		HoverStyle.BackColor = Color(230, 230, 230, 100);
@@ -143,7 +144,7 @@ public:
 		songName.Ellipsis = L"...";
 		songName.SetText(s.SongName);
 		songName.TextAlign = TextAlign::MiddleLeft;
-		songName.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
+		songName.EventPassThrough = Event::OnHover | Event::OnMouseDoubleClick;
 		songName.HoverStyle.ForeColor = Color(200, 100, 1);
 
 		AlbumName.SetFixedWidth(180);
@@ -151,10 +152,10 @@ public:
 		AlbumName.TextAlign = TextAlign::MiddleLeft;
 		AlbumName.Style.Cursor = LoadCursor(Cursor::HAND);
 		AlbumName.Style.ForeColor = Color(150, 150, 150);
-		AlbumName.MousePassThrough = Event::OnHover;
+		AlbumName.EventPassThrough = Event::OnHover;
 
 		mv.SetFixedWidth(35);
-		mv.MousePassThrough = Event::OnHover;
+		mv.EventPassThrough = Event::OnHover;
 		if (!s.MvHash.empty()) {
 			mv.SetAttribute("mvhash", s.MvHash);
 			mv.Style.ForeImage = Image::FromFile(L"imgs/mvicon.png");;
@@ -162,13 +163,13 @@ public:
 			mv.Style.Cursor = LoadCursor(Cursor::HAND);
 		}
 		else {
-			mv.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
+			mv.EventPassThrough = Event::OnHover | Event::OnMouseDoubleClick;
 		}
 
 		time.SetFixedWidth(60);
 		time.SetText(toTimeStr(s.Duration));
 		time.TextAlign = TextAlign::MiddleLeft;
-		time.MousePassThrough = Event::OnHover | Event::OnMouseDoubleClick;
+		time.EventPassThrough = Event::OnHover | Event::OnMouseDoubleClick;
 		time.Style.ForeColor = Color(150, 150, 150);
 
 		del.SetFixedWidth(33);

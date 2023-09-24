@@ -459,10 +459,13 @@ namespace EzUI {
 			return 0;
 		}
 		case WM_NOTIFY: {
-			LPNMTTDISPINFO lpnmttdi = (LPNMTTDISPINFO)lParam;
-			if (lpnmttdi->hdr.code == TTN_GETDISPINFO) {
-				//拦截冒泡提示文字
-			}
+			//NMHDR* pNMHDR = reinterpret_cast<NMHDR*>(lParam);
+			//if (pNMHDR->hwndFrom == _hWndTips && pNMHDR->code==) {
+			//	NMTTDISPINFO* pDispInfo = reinterpret_cast<NMTTDISPINFO*>(lParam);
+			//	// 在这里更改提示文字
+			//	pDispInfo->szText = const_cast<TCHAR*>(L"新的提示文字");
+			//	return true;
+			//}
 			break;
 		}
 
@@ -552,7 +555,7 @@ namespace EzUI {
 				Control* outCtl = this->FindControl(point, &relativePoint);//找到当前控件的位置
 				if (outCtl && outCtl->Enable) {
 					Control* pCtl = outCtl;
-					if ((pCtl->MousePassThrough & Event::OnHover)) {
+					if ((pCtl->EventPassThrough & Event::OnHover)) {
 						while (pCtl)
 						{
 							auto cursor = pCtl->GetHCursor();
@@ -721,10 +724,10 @@ namespace EzUI {
 		if (dynamic_cast<Spacer*>(outCtl) && outCtl->Parent) {
 			return  outCtl->Parent;
 		}
-		//鼠标键盘的事件是可以穿透的
-		if ((outCtl->MousePassThrough & Event::OnMouseEvent || outCtl->MousePassThrough & Event::OnKeyBoardEvent) && outCtl->Parent) {
-			return outCtl->Parent;
-		}
+		////鼠标键盘的事件是可以穿透的(这样做貌似不是很好)
+		//if ((outCtl->MousePassThrough & Event::OnMouseEvent || outCtl->MousePassThrough & Event::OnKeyBoardEvent) && outCtl->Parent) {
+		//	return outCtl->Parent;
+		//}
 		return outCtl;
 	}
 

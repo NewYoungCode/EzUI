@@ -31,7 +31,7 @@ void LrcControl::Task()
 	}
 
 	auto v = std::abs(offsetY);
-	int v2 = v * 0.05;
+	int v2 = v * 0.025;
 	if (v2 == 0) {
 		v2 = 1;
 	};

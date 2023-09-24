@@ -93,13 +93,13 @@ void MainFrm::InitForm() {
 	}
 
 	//滚动条滚动事件 滚动条滚动到底部加载剩余音乐
-	searchList->GetScrollBar()->Scroll = [=](ScrollBar* sb, float pos,Event type)->void {
+	searchList->GetScrollBar()->Scroll = [=](ScrollBar* sb, float pos, Event type)->void {
 		if (type == Event::OnMouseWheel) {
 			NextPage(pos);
 		}
 		};
-	//忽略一些事件 可穿透父控件
-	playerBar2->MousePassThrough = Event::OnHover | Event::OnActive | Event::OnMouseClick;
+	//可穿透父控件
+	playerBar2->EventPassThrough = Event::OnHover | Event::OnActive | Event::OnMouseClick;
 	//创建启动一个实时获取歌曲进度以及状态
 	timer = new Thread::Timer;
 	timer->Interval = 10;
@@ -109,8 +109,9 @@ void MainFrm::InitForm() {
 	//添加一些事件到窗口中的OnNotify函数进行拦截
 	player.Tag = main;
 
-	player.AddEventNotify(Event::OnPaint);
-	main->AddEventNotify(Event::OnPaint);
+
+	player.EventNotify = player.EventNotify | Event::OnPaint;
+	main->EventNotify = main->EventNotify | Event::OnPaint;
 
 	OpenSongView();//
 	//设置阴影
@@ -179,7 +180,7 @@ void MainFrm::OnPaint(PaintEventArgs& _arg) {
 	//	_arg.Graphics.SetStrokeStyle(StrokeStyle::Dash, 3);
 	//	_arg.Graphics.FillRectangle(rect2);
 	//}
-	
+
 	/*Rect rect2({ 100,100,100,30 });
 	D2D_RECT_F rect{ (FLOAT)rect2.X,(FLOAT)rect2.Y,(FLOAT)rect2.GetRight(),(FLOAT)rect2.GetBottom() };
 	_arg.Graphics.SetColor(Color::Red);
