@@ -484,6 +484,10 @@ namespace EzUI {
 		}
 		return Rect{ x,y,Width(),Height() };
 	}
+	const Rect& Control::GetViewRect()
+	{
+		return this->_viewRect;
+	}
 	const DockStyle& Control::GetDockStyle()
 	{
 		return this->_dock;
@@ -754,7 +758,7 @@ namespace EzUI {
 		auto& pt = args.Graphics;
 		Rect _ClipRect = clientRect;
 		this->ComputeClipRect();//重新计算基于父亲的裁剪区域
-		if (!Rect::Intersect(_ClipRect, this->ClipRect, invalidRect)) {//和重绘区域进行裁剪
+		if (!Rect::Intersect(_ClipRect, this->_viewRect, invalidRect)) {//和重绘区域进行裁剪
 			return;
 		}
 		//绘制数量+1
@@ -1187,11 +1191,11 @@ namespace EzUI {
 	void Control::ComputeClipRect()
 	{
 		if (Parent) {
-			Rect& ClipRectRef = *(Rect*)(&this->ClipRect);//引用父控件的裁剪区域
-			Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->ClipRect);//自身和父控件对比较裁剪区域
+			Rect& ClipRectRef = *(Rect*)(&this->_viewRect);//引用父控件的裁剪区域
+			Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->_viewRect);//自身和父控件对比较裁剪区域
 		}
 		else {
-			Rect& ClipRectRef = *(Rect*)(&this->ClipRect);
+			Rect& ClipRectRef = *(Rect*)(&this->_viewRect);
 			ClipRectRef = this->GetClientRect();
 		}
 	}

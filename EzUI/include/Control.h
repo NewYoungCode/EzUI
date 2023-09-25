@@ -19,6 +19,7 @@ namespace EzUI {
 		Size _contentSize;//控件内容宽高
 		Size _fixedSize;//绝对Size
 		Rect _rect;//控件矩形区域(基于父控件)
+		Rect _viewRect;//控件在窗口中的可见区域
 		DockStyle _dock = DockStyle::None;//dock样式
 	private:
 		Control(const Control&) = delete;
@@ -39,7 +40,6 @@ namespace EzUI {
 		ControlStyle ActiveStyle;//鼠标按下样式
 		Control* Parent = NULL;//父控件
 		std::list<Control*> VisibleControls;//基于控件中的可见控件
-		const Rect ClipRect;//控件在窗口中的可见区域
 		std::function<void(Control*, const EventArgs&)> EventHandler = NULL;//事件处理器
 	protected:
 		//仅限子类使用
@@ -129,7 +129,8 @@ namespace EzUI {
 		Size GetSize();
 		Point GetLocation();
 		virtual const Rect& GetRect();//获取相对与父控件矩形 布局计算后
-		Rect GetClientRect();//获取基于客户端的矩形
+		Rect GetClientRect();//获取基于客户端的区域
+		const Rect& GetViewRect();//获取基于窗口中的可视区域
 		const DockStyle& GetDockStyle();//获取dock标志
 		void SetDockStyle(const DockStyle& dockStyle);
 		const float& GetScale();
@@ -163,7 +164,7 @@ namespace EzUI {
 		virtual void SetVisible(bool flag);//设置Visible标志
 		virtual bool IsVisible();//获取Visible标志
 		virtual bool Invalidate();// 使当前控件的区域为无效区域
-		virtual void Refresh();// 使当前控件区域为无效区域并且立即更新全部的无效区域
+		virtual void Refresh();//使当前控件区域为无效区域并且立即更新全部的无效区域(更新时会对正在挂起的布局立即生效,直到无效区域更新完毕)
 	};
 
 	//添加弹簧无需用户手动释放,

@@ -99,7 +99,15 @@ namespace EzUI {
 				::InvalidateRect(Hwnd(), &r, FALSE);
 				};
 			PublicData.UpdateWindow = [=]()->void {
-				::UpdateWindow(Hwnd());
+				RECT updateRect;
+				while (::GetUpdateRect(Hwnd(), &updateRect, FALSE))
+				{
+					Rect rect(updateRect);
+					if (updateRect.left == 0 && updateRect.top == 0 && updateRect.left == 0 && updateRect.right == 0) {
+						break;
+					}
+					::UpdateWindow(Hwnd());
+				}
 				};
 		}
 		PublicData.SetTips = [=](Control* ctl, const std::wstring& text)->void {
@@ -127,7 +135,7 @@ namespace EzUI {
 				tti.cbSize = sizeof(TOOLINFO);
 				tti.uFlags = TTF_SUBCLASS;// | TTF_TRACK;
 				tti.hwnd = Hwnd();
-				tti.rect = ctl->ClipRect.ToRECT();
+				tti.rect = ctl->GetViewRect().ToRECT();
 				tti.uId = (UINT_PTR)ctl;
 				tti.lpszText = (LPWSTR)text.c_str();
 				//添加一个tips信息
