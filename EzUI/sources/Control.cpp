@@ -329,6 +329,10 @@ namespace EzUI {
 				this->_visible = (::strcmp(attrValue.c_str(), "true") == 0 ? true : false);
 				break;
 			}
+			if (attrName == "tips") {
+				this->SetTips(attrValue);
+				break;
+			}
 			if (attrName == "dock") {
 				if (attrValue == "fill") {
 					this->_dock = DockStyle::Fill; break;
@@ -373,7 +377,6 @@ namespace EzUI {
 				}
 				break;
 			}
-
 		} while (false);
 	}
 	const float& Control::GetScale()
