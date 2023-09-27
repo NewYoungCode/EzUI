@@ -115,7 +115,7 @@ namespace EzUI {
 			//本地文件中获取
 			std::wstring wstr = fileOrRes.utf16();
 			DWORD dwAttr = GetFileAttributesW(wstr.c_str());
-			if (dwAttr && (dwAttr & FILE_ATTRIBUTE_ARCHIVE)) {
+			if (dwAttr && (dwAttr != -1) && (dwAttr & FILE_ATTRIBUTE_ARCHIVE)) {
 				return new Image(wstr);
 			}
 			//从资源中获取
