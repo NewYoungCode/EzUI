@@ -16,15 +16,13 @@ public:
 		int a = 0;
 	}
 };
+
 class LrcControl :
 	public Control
 {
 	float offsetY = 0;
 	Lrc* LrcNow = NULL;
 	Timer* timer = NULL;
-	/// <summary>
-	 /// ??????§Ö?Y?????
-	 /// </summary>
 	int VerticalCenter = 0;
 	std::vector<Lrc*> LrcList;
 	int marginVertical = 40;
@@ -32,19 +30,11 @@ class LrcControl :
 public:
 	LrcControl();
 	virtual ~LrcControl();
-	/// <summary>
-/// ???????????????????????¦Ë??
-/// </summary>
-/// <param name="postion">???/??</param>
-/// 
 	void Task();
 	void ChangePostion(int postion);
 
 	void OnBackgroundPaint(PaintEventArgs& arg)override;
 	void LoadLrc(const EString& lrcData);
-	/// <summary>
-	/// ??????§Ú??
-	/// </summary>
 	void Clear();
 };
 

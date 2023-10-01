@@ -75,7 +75,7 @@ void MainFrm::InitForm() {
 			EString name = cfg->ReadString("name", "", _it);
 			int  dur = cfg->ReadInt("dur", 0, _it);
 			EString  singer = cfg->ReadString("singer", "", _it);
-			SongItem* it = new SongItem(name, toTimeStr(dur));
+			LocalItem* it = new LocalItem(name, global::toTimeStr(dur));
 			it->SetAttribute("FileHash", _it);
 			it->SetAttribute("SingerName", singer);
 			it->SetTips(name);
@@ -263,7 +263,7 @@ void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 		std::vector<Song> songs = global::SearchSongs(keyword);
 		searchList->Clear(true);
 		for (auto&& it : songs) {
-			SongItem2* sit = new SongItem2(it);
+			SearchItem* sit = new SearchItem(it);
 			searchList->Add(sit);
 		}
 		searchList->Invalidate();
@@ -339,11 +339,11 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 					this->DownLoadImage(singname, imgUrl);
 					}, SingerName, json["imgUrl"].asString()));
 
-				if (dynamic_cast<SongItem2*>(sender)) {
+				if (dynamic_cast<SearchItem*>(sender)) {
 					Song* tag = (Song*)sender->Tag;
 					if (this->FindLocalSong(tag->hash) == size_t(-1)) {
 						songs.push_back(*tag);
-						SongItem* it = new SongItem(tag->SongName, toTimeStr(dur));
+						LocalItem* it = new LocalItem(tag->SongName, global::toTimeStr(dur));
 						it->SetAttribute("FileHash", hash);
 						it->SetAttribute("SingerName", SingerName);
 						localList->Add(it);
@@ -442,7 +442,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			return false;
 		}
 		if (sender->Name == "dellocal") {//É¾³ý±¾µØ
-			SongItem* songItem = (SongItem*)sender->Parent;
+			LocalItem* songItem = (LocalItem*)sender->Parent;
 			localList->Remove(songItem);
 
 			EString hash = songItem->GetAttribute("FileHash");
@@ -516,8 +516,8 @@ void MainFrm::Task() {
 			lrcCtl.ChangePostion(position);
 		}
 
-		EString f1 = toTimeStr(position / 1000);
-		EString f2 = toTimeStr(player.Duration());
+		EString f1 = global::toTimeStr(position / 1000);
+		EString f2 = global::toTimeStr(player.Duration());
 		EString fen = f1 + "/" + f2;
 
 		if (control->GetPageIndex() != 1) {
@@ -550,7 +550,7 @@ void MainFrm::NextPage(float scrollPos) {
 		EString keyword = searchEdit->GetText();
 		std::vector<Song> songs = global::SearchSongs(keyword);
 		for (auto&& it : songs) {
-			SongItem2* sit = new SongItem2(it);
+			SearchItem* sit = new SearchItem(it);
 			searchList->Add(sit);
 		}
 		if (!global::nextPage) {
@@ -614,5 +614,7 @@ LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
 		return 0;
 	}
 
+	if (msg == WM_LBUTTONDOWN) {
+	}
 	return __super::WndProc(msg, W, L);
 }

@@ -7,6 +7,7 @@
 #pragma comment(lib,"libvlc.lib")
 #pragma comment(lib,"libvlccore.lib")
 namespace EzUI {
+	//封装用于播放视频的控件
 	class VlcPlayer :public Control
 	{
 	private:

@@ -733,7 +733,7 @@ namespace EzUI {
 			return  outCtl->Parent;
 		}
 		////鼠标键盘的事件是可以穿透的(这样做貌似不是很好)
-		//if ((outCtl->MousePassThrough & Event::OnMouseEvent || outCtl->MousePassThrough & Event::OnKeyBoardEvent) && outCtl->Parent) {
+		//if ((outCtl->EventPassThrough & Event::OnMouseEvent || outCtl->EventPassThrough & Event::OnKeyBoardEvent) && outCtl->Parent) {
 		//	return outCtl->Parent;
 		//}
 		return outCtl;
@@ -757,15 +757,20 @@ namespace EzUI {
 		//触发上一个
 		if (_focusControl != newCtl) {
 			if (_focusControl) {
-				args.EventType = Event::OnMouseLeave;
+				MouseEventArgs args(Event::OnMouseLeave);
+				auto rect = _focusControl->GetClientRect();
+				args.Location.X = point.X - rect.X;
+				args.Location.Y = point.Y - rect.Y;
 				ok = _focusControl->DispatchEvent(args);
 			}
-			ok = newCtl->DispatchEvent(Event::OnMouseEnter);
+			//触发MouseEnter
+			args.EventType = Event::OnMouseEnter;
+			ok = newCtl->DispatchEvent(args);
 			if (ok) {
 				_focusControl = newCtl;
 			}
 		}
-		//触发命中的
+		//触发命中的MouseMove
 		if (_focusControl) {
 			args.EventType = Event::OnMouseMove;
 			_focusControl->DispatchEvent(args);
