@@ -81,7 +81,7 @@ namespace EzUI {
 		Init();
 		HINSTANCE hInst = ::GetModuleHandle(NULL);
 #ifdef UNICODE
-		HRSRC hRsrc = ::FindResource(hInst, MAKEINTRESOURCE(resID), custResType.utf16().c_str());
+		HRSRC hRsrc = ::FindResource(hInst, MAKEINTRESOURCE(resID), custResType.unicode().c_str());
 #else
 		HRSRC hRsrc = ::FindResource(hInst, MAKEINTRESOURCE(resID), custResType.c_str());
 #endif
@@ -93,10 +93,10 @@ namespace EzUI {
 	//使用本地文件名称加载资源包
 	Application::Application(const EString& fileName, const EString& password) {
 		Init();
-		Base::HZipResource = OpenZip(fileName.utf16().c_str(), password.empty() ? NULL : password.c_str());
+		Base::HZipResource = OpenZip(fileName.unicode().c_str(), password.empty() ? NULL : password.c_str());
 #ifdef _DEBUG
 		if (Base::HZipResource == NULL) {
-			::MessageBoxW(NULL, fileName.utf16().c_str(), L"Failed to open zip", MB_ICONWARNING);
+			::MessageBoxW(NULL, fileName.unicode().c_str(), L"Failed to open zip", MB_ICONWARNING);
 		}
 #endif
 	}

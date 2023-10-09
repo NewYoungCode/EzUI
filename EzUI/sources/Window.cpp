@@ -197,7 +197,7 @@ namespace EzUI {
 
 	void Window::SetText(const EString& text)
 	{
-		::SetWindowTextW(Hwnd(), text.utf16().c_str());
+		::SetWindowTextW(Hwnd(), text.unicode().c_str());
 	}
 
 	EString Window::GetText() {

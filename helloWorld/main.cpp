@@ -107,7 +107,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 		lb->Style.BackColor = Color::Green;
 		lb->HoverStyle.BackColor = Color::Gray;
 		lb->Margin = 1;
-		lb->EventNotify = [&list](Control* sd, const EventArgs& arg)->void {
+		lb->EventHandler = [&list](Control* sd, const EventArgs& arg)->void {
 			if (arg.EventType == Event::OnMouseClick) {
 				/*list.Remove(sd);
 				list.Invalidate();*/
@@ -137,18 +137,14 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	//text.ActiveStyle.FontSize = 50;
 	text.GetScrollBar()->SetFixedWidth(20);
 
-
 	Button btn;
 	btn.SetParent(&mainLayout);
 	btn.SetText(L"单行/多行切换");
 	btn.SetFixedSize({ 150,40 });
-	btn.EventNotify = [&text](Control* sd, const EventArgs& arg)->void {
+	btn.EventHandler = [&text](Control* sd, const EventArgs& arg)->void {
 		if (arg.EventType == Event::OnMouseClick) {
 			/*text.SetMultiLine(!text.IsMultiLine());
 			text.Invalidate();*/
-
-		
-
 		}
 		};
 

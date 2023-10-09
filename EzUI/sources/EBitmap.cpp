@@ -92,7 +92,7 @@ namespace EzUI {
 		bmfh.bfReserved2 = 0;
 		bmfh.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER); // 位图数据偏移量
 		//写入文件头
-		std::ofstream ofs(fileName.utf16(), std::ios::binary);
+		std::ofstream ofs(fileName.unicode(), std::ios::binary);
 		ofs.write((char*)&bmfh, sizeof(bmfh));
 		ofs.write((char*)&bi, sizeof(bi));
 		//获取像素数据 第五个参数传空可获取详细的BITMAPINFO

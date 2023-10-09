@@ -58,7 +58,7 @@ void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
 	{
 		Lrc& lrc = *item;
 		Rect rectangle(lrc.point.X, lrc.point.Y, Width(), (int)FontHeight);
-		auto w = EString(lrc.text).utf16();
+		auto w = EString(lrc.text).unicode();
 		Rect drawRec(GetRect());
 		if (drawRec.Contains(rectangle))
 		{
@@ -66,13 +66,13 @@ void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
 			{
 				arg.Graphics.SetColor(Color(211, 174, 87));
 				arg.Graphics.SetFont(GetFontFamily(), GetFontSize() + 3);
-				arg.Graphics.DrawString(lrc.text.utf16(), rectangle, TextAlign::MiddleCenter);
+				arg.Graphics.DrawString(lrc.text.unicode(), rectangle, TextAlign::MiddleCenter);
 			}
 			else
 			{
 				arg.Graphics.SetColor(GetForeColor());
 				arg.Graphics.SetFont(GetFontFamily(), GetFontSize());
-				arg.Graphics.DrawString(lrc.text.utf16(), rectangle, TextAlign::MiddleCenter);
+				arg.Graphics.DrawString(lrc.text.unicode(), rectangle, TextAlign::MiddleCenter);
 			}
 		}
 	}

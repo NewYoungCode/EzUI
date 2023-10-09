@@ -22,7 +22,7 @@ namespace EzUI {
 			Font font(fontFamily, fontSize);
 			args.Graphics.SetFont(font);
 			args.Graphics.SetColor(GetForeColor());
-			std::wstring wEllipsisText = Ellipsis.utf16();
+			std::wstring wEllipsisText = Ellipsis.unicode();
 			if (!wEllipsisText.empty()) { //水平文本溢出的显示方案
 				Size ellipsisTextSize;
 				{
@@ -49,7 +49,7 @@ namespace EzUI {
 					}
 				}
 			}
-			std::wstring viewStr = !drawText.empty() ? drawText : Ellipsis.utf16();
+			std::wstring viewStr = !drawText.empty() ? drawText : Ellipsis.unicode();
 			TextLayout textLayout(viewStr, font, Size(maxWidth, maxHeight), (IsAutoWidth() && IsAutoHeight()) ? TextAlign::TopLeft : this->TextAlign);
 			if (this->_underlineCount != 0) {//下划线
 				textLayout.SetUnderline(_underlinePos, _underlineCount);
@@ -135,7 +135,7 @@ namespace EzUI {
 		}
 	}
 	void Label::SetText(const EString& text) {
-		_wstr = text.utf16();
+		_wstr = text.unicode();
 		this->TryPendLayout();
 	}
 	void Label::SetUnderline(size_t pos, size_t count)

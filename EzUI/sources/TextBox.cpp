@@ -218,7 +218,7 @@ namespace EzUI {
 			EString::Replace(&u8Str, "\r", "");
 			EString::Replace(&u8Str, "\n", "");
 		}
-		_Insert(u8Str.utf16());//插入新的字符
+		_Insert(u8Str.unicode());//插入新的字符
 		return bRet;
 	}
 	void TextBox::OnBackspace() {
@@ -500,7 +500,7 @@ namespace EzUI {
 	}
 	void TextBox::SetText(const EString& text)
 	{
-		this->_text = text.utf16();
+		this->_text = text.unicode();
 		Analysis();
 	}
 	bool TextBox::IsMultiLine()
@@ -523,7 +523,7 @@ namespace EzUI {
 	}
 	void TextBox::Insert(const EString& str)
 	{
-		_Insert(str.utf16());
+		_Insert(str.unicode());
 		Analysis();//分析字符串
 	}
 	void TextBox::SetAttribute(const EString& key, const EString& value) {
@@ -531,7 +531,7 @@ namespace EzUI {
 		do
 		{
 			if (key == "passwordchar") {
-				PasswordChar = value.utf16();
+				PasswordChar = value.unicode();
 				break;
 			}
 			if (key == "placeholder") {
@@ -582,7 +582,7 @@ namespace EzUI {
 			Color placeholderColor = fontColor;
 			placeholderColor.SetA(fontColor.GetA() * 0.6);
 			e.Graphics.SetColor(placeholderColor);
-			e.Graphics.DrawString(Placeholder.utf16(), Rect(0, 0, Width(), Height()), _multiLine ? TextAlign::TopLeft : TextAlign::MiddleLeft);
+			e.Graphics.DrawString(Placeholder.unicode(), Rect(0, 0, Width(), Height()), _multiLine ? TextAlign::TopLeft : TextAlign::MiddleLeft);
 		}
 
 		if (_selectRects.size() > 0) {

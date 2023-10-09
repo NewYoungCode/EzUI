@@ -63,7 +63,7 @@ namespace EzUI {
 		EString::UnicodeToUTF8(wStr, &u8str);
 		return (*this == u8str);
 	}
-	std::wstring EString::utf16() const {
+	std::wstring EString::unicode() const {
 		std::wstring wstr;
 		EString::UTF8ToUnicode(*this, &wstr);
 		return wstr;

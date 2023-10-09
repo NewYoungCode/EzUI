@@ -1263,7 +1263,7 @@ namespace EzUI {
 	{
 		this->State = ControlState::Hover;
 		if (PublicData) {
-			PublicData->SetTips(this, this->GetTips().utf16());
+			PublicData->SetTips(this, this->GetTips().unicode());
 		}
 		if (!(this->EventPassThrough & Event::OnMouseEnter)) {
 			this->Invalidate();

@@ -110,7 +110,7 @@ SearchItem::SearchItem(const Song& s) {
 	del.SetFixedWidth(33);
 
 	EString fileName = "imgs/" + std::to_string(s.QualityLevel) + ".png";
-	Image* img = Image::FromFile(fileName.utf16());
+	Image* img = Image::FromFile(fileName.unicode());
 	img->Margin = 8;
 	del.Style.BackImage = img;
 

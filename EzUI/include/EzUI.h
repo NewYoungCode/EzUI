@@ -113,7 +113,7 @@ namespace EzUI {
 	public:
 		static Image* FromFile(const EString& fileOrRes) {
 			//本地文件中获取
-			std::wstring wstr = fileOrRes.utf16();
+			std::wstring wstr = fileOrRes.unicode();
 			DWORD dwAttr = GetFileAttributesW(wstr.c_str());
 			if (dwAttr && (dwAttr != -1) && (dwAttr & FILE_ATTRIBUTE_ARCHIVE)) {
 				return new Image(wstr);

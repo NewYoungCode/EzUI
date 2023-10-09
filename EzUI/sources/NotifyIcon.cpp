@@ -95,8 +95,8 @@ namespace EzUI {
 		_nid.uTimeout = timeOut;
 		_nid.uFlags = NIF_INFO;
 		_nid.dwInfoFlags = NIIF_INFO;
-		wcscpy_s(_nid.szInfoTitle, title.utf16().c_str());
-		wcscpy_s(_nid.szInfo, msg.utf16().c_str());
+		wcscpy_s(_nid.szInfoTitle, title.unicode().c_str());
+		wcscpy_s(_nid.szInfo, msg.unicode().c_str());
 		Shell_NotifyIconW(NIM_MODIFY, &_nid);
 	}
 

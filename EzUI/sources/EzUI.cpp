@@ -90,7 +90,7 @@ namespace EzUI {
 	}
 	///--------------------------
 	Ziper::Ziper(const EString& fileName, const EString& password) {
-		_hZip = OpenZip(fileName.utf16().c_str(), password.empty() ? NULL : password.c_str());
+		_hZip = OpenZip(fileName.unicode().c_str(), password.empty() ? NULL : password.c_str());
 		ASSERT(_hZip);
 		GetZipItem(_hZip, -1, &_ze);
 		_numitems = _ze.index;
@@ -145,7 +145,7 @@ namespace EzUI {
 
 	bool GetResource(const EString& filename, std::string* out) {
 		FILE* file(0);
-		_wfopen_s(&file, filename.utf16().c_str(), L"rb");
+		_wfopen_s(&file, filename.unicode().c_str(), L"rb");
 		if (file) {
 			std::ifstream fs(file);
 			fs.seekg(0, std::ios_base::end);
@@ -231,7 +231,7 @@ namespace EzUI {
 	}
 	HCURSOR LoadCursor(const EString& fileName)
 	{
-		return ::LoadCursorFromFileW(fileName.utf16().c_str());
+		return ::LoadCursorFromFileW(fileName.unicode().c_str());
 	}
 	void FreeCursor(HCURSOR hCursor)
 	{
@@ -341,7 +341,7 @@ namespace EzUI {
 			}
 			if (key == "font-family") {
 				value = value.Erase('"');//É¾³ýË«ÒýºÅ;
-				style->FontFamily = value.utf16();
+				style->FontFamily = value.unicode();
 				break;
 			}
 			if (key == "border") {

@@ -253,7 +253,7 @@ namespace EzUI {
 	void UIManager::LoadFromFile(const EString& fileName)
 	{
 		FILE* file(0);
-		_wfopen_s(&file, fileName.utf16().c_str(), L"rb");
+		_wfopen_s(&file, fileName.unicode().c_str(), L"rb");
 		if (file == NULL) return;
 		TiXmlDocument doc;
 		auto result = doc.LoadFile(file, TiXmlEncoding::TIXML_ENCODING_UTF8);

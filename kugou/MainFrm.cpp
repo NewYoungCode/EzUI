@@ -303,7 +303,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			JObject json(resp);
 
 			if (json["errcode"].asInt() != 0) {
-				::MessageBoxW(Hwnd(), EString(json["error"].asString()).utf16().c_str(), L"“Ù¿÷API¥ÌŒÛ", 0);
+				::MessageBoxW(Hwnd(), EString(json["error"].asString()).unicode().c_str(), L"“Ù¿÷API¥ÌŒÛ", 0);
 				return 0;
 			}
 

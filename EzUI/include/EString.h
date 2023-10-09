@@ -15,7 +15,7 @@ namespace EzUI {
 		EString(const char* szbuf)noexcept;
 		EString(const wchar_t* szbuf)noexcept;
 		EString(const std::wstring& wstr)noexcept;
-		std::wstring utf16() const;
+		std::wstring unicode() const;
 		std::string ansi() const;
 		EString Erase(const char& _char)const;
 		std::vector<std::string> Split(const EString& ch_)const;
