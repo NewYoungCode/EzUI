@@ -41,7 +41,7 @@ namespace EzUI {
 		__super::SetAttribute(key, value);
 		if (key == "src" || key == "img") {
 			if (_srcImg)delete _srcImg;
-			_srcImg = Image::FromFile(value);
+			_srcImg = Image::Make(value);
 			SetImage(_srcImg);
 		}
 	}

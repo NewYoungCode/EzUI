@@ -111,7 +111,8 @@ namespace EzUI {
 		Image(const std::wstring& fileName) :DXImage(fileName) {}
 		Image(const void* data, size_t dataCount) :DXImage(data, dataCount) {}
 	public:
-		static Image* FromFile(const EString& fileOrRes) {
+		//从资源或者本地文件自动构建一个Image
+		static Image* Make(const EString& fileOrRes) {
 			//本地文件中获取
 			std::wstring wstr = fileOrRes.unicode();
 			DWORD dwAttr = GetFileAttributesW(wstr.c_str());
@@ -203,6 +204,11 @@ namespace EzUI {
 		OnMouseEvent = OnMouseWheel | OnMouseEnter | OnMouseMove | OnMouseLeave | OnMouseClick | OnMouseDoubleClick | OnMouseDown | OnMouseUp,
 		OnKeyBoardEvent = OnKeyDown | OnKeyUp | OnKeyChar
 	};
+	//重载枚举的 | 运算符
+	inline Event operator|(Event left, Event right)
+	{
+		return static_cast<Event>(static_cast<long long>(left) | static_cast<long long>(right));
+	}
 	enum class ControlAction {
 		None,
 		MoveWindow,//移动窗口

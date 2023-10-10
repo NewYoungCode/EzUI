@@ -19,7 +19,7 @@ LocalItem::LocalItem(const EString& _songName, const EString& _songTime) {
 	//this->HoverStyle.Angle =6;
 	//time.HoverStyle.Angle = 180;
 	//this->ShadowWidth = 5;
-	del.Style.ForeImage = Image::FromFile(L"imgs/del.png");
+	del.Style.ForeImage = Image::Make(L"imgs/del.png");
 	del.SetFixedSize({ 20,20 });
 	del.Style.Cursor = LoadCursor(Cursor::HAND);
 	del.Name = "dellocal";
@@ -93,7 +93,7 @@ SearchItem::SearchItem(const Song& s) {
 	mv.EventPassThrough = Event::OnHover;
 	if (!s.MvHash.empty()) {
 		mv.SetAttribute("mvhash", s.MvHash);
-		mv.Style.ForeImage = Image::FromFile(L"imgs/mvicon.png");;
+		mv.Style.ForeImage = Image::Make(L"imgs/mvicon.png");;
 		mv.Style.ForeImage->Margin = 8;
 		mv.Style.Cursor = LoadCursor(Cursor::HAND);
 	}
@@ -110,7 +110,7 @@ SearchItem::SearchItem(const Song& s) {
 	del.SetFixedWidth(33);
 
 	EString fileName = "imgs/" + std::to_string(s.QualityLevel) + ".png";
-	Image* img = Image::FromFile(fileName.unicode());
+	Image* img = Image::Make(fileName.unicode());
 	img->Margin = 8;
 	del.Style.BackImage = img;
 

@@ -7,6 +7,14 @@ namespace EzUI {
 	TabLayout::~TabLayout()
 	{
 	}
+	void TabLayout::Remove(Control* ctl)
+	{
+		size_t index = this->IndexOf(ctl);
+		__super::Remove(ctl);
+		int newIndex = this->GetControls().size() - 1;
+		newIndex = newIndex < 0 ? 0 : newIndex;
+		this->SetPageIndex(newIndex);
+	}
 	void TabLayout::OnLayout()
 	{
 		int pos = 0;
@@ -38,6 +46,16 @@ namespace EzUI {
 		this->TryPendLayout();
 	}
 
+	Control* TabLayout::GetPage() {
+		int pos = 0;
+		for (auto& it : GetControls()) {
+			if (pos == this->_index) {
+				return it;
+			}
+			pos++;
+		}
+		return NULL;
+	}
 	int TabLayout::GetPageIndex()
 	{
 		return _index;
