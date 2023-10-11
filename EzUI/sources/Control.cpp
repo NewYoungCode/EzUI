@@ -659,7 +659,8 @@ namespace EzUI {
 			}
 		} while (false);
 		if (!isRemove) {
-			if (this->EventHandler) {
+			//绘制函数比较特殊
+			if (this->EventHandler && arg.EventType != Event::OnPaint) {
 				this->EventHandler(this, arg);
 			}
 			if (!isRemove) {
@@ -820,6 +821,9 @@ namespace EzUI {
 			pt.DrawRectangle(Rect(0, 0, clientRect.Width, clientRect.Height), 0, width);
 		}
 #endif
+		if (this->EventHandler) {
+			this->EventHandler(this, args);
+		}
 		args.PopLayer();//弹出纹理层
 		args.PopOffset();//弹出偏移
 		if (angle != 0) {

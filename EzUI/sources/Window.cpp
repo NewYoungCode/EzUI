@@ -900,6 +900,11 @@ namespace EzUI {
 	}
 
 	void Window::OnMouseClick(MouseButton mbtn, const Point& point) {
+
+	}
+
+	const float& Window::GetScale() {
+		return this->PublicData.Scale;
 	}
 
 	void Window::OnSize(const Size& sz)

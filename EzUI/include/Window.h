@@ -71,6 +71,7 @@ namespace EzUI {
 		const HWND& Hwnd();//获取窗口句柄
 		const Rect& GetWindowRect();//获取窗口基于显示器的矩形
 		const Rect& GetClientRect();//获取客户区矩形
+		const float& GetScale();//获取当前窗口dpi缩放
 		void SetSize(const Size& size);//设置窗口size
 		void SetLocation(const Point& pt);//设置窗口位置
 		void SetRect(const Rect& rect);//设置窗口矩形
