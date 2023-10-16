@@ -13,7 +13,7 @@ namespace EzUI {
 	DECLARE_HANDLE(HZIP);
 #endif
 	// An HZIP identifies a zip file that has been opened
-
+	 
 	typedef DWORD ZRESULT;
 	// return codes from any of the zip functions. Listed later.
 

@@ -6,7 +6,7 @@ namespace EzUI {
 	private:
 		Image* _srcImg = NULL;
 		Image* _img = NULL;
-		Windows::Timer _timer;
+		Timer _timer;
 	protected:
 		virtual void OnRemove()override;
 		virtual void OnForePaint(PaintEventArgs& arg)override;

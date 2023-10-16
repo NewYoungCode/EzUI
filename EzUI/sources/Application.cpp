@@ -28,7 +28,7 @@ namespace EzUI {
 		wc.lpfnWndProc = EzUI_WndProc;//窗口过程
 		wc.hInstance = hInstance;//
 		wc.hCursor = LoadCursorW(NULL, IDC_ARROW);//光标
-		wc.lpszClassName = Base::WindowClassName;//类名
+		wc.lpszClassName = EzUI::__EzUI__WindowClassName;//类名
 		if (!RegisterClassW(&wc)) //注册窗口
 		{
 			::MessageBoxW(NULL, L"This program requires Windows NT !",
@@ -55,7 +55,7 @@ namespace EzUI {
 		RenderInitialize();
 	}
 	void Application::EnableHighDpi() {
-		EzUI::GetMonitors((std::list<MonitorInfo>*) & EzUI::Base::MonitorInfos);
+		EzUI::GetMonitors((std::list<MonitorInfo>*) & EzUI::__EzUI__MonitorInfos);
 		//DPI感知相关
 		//不跟随系统放大无法接收WM_DISPLAYCHANGED消息
 		//bool b = SetProcessDPIAware();
@@ -87,15 +87,15 @@ namespace EzUI {
 #endif
 		if (!hRsrc)return;
 		DWORD len = SizeofResource(hInst, hRsrc);
-		Base::HVSResource = LoadResource(hInst, hRsrc);
-		Base::HZipResource = OpenZip((void*)Base::HVSResource, len, password.empty() ? NULL : password.c_str());
+		EzUI::__EzUI__HVSResource = LoadResource(hInst, hRsrc);
+		EzUI::__EzUI__HZipResource = OpenZip((void*)EzUI::__EzUI__HVSResource, len, password.empty() ? NULL : password.c_str());
 	}
 	//使用本地文件名称加载资源包
 	Application::Application(const EString& fileName, const EString& password) {
 		Init();
-		Base::HZipResource = OpenZip(fileName.unicode().c_str(), password.empty() ? NULL : password.c_str());
+		EzUI::__EzUI__HZipResource = OpenZip(fileName.unicode().c_str(), password.empty() ? NULL : password.c_str());
 #ifdef _DEBUG
-		if (Base::HZipResource == NULL) {
+		if (EzUI::__EzUI__HZipResource == NULL) {
 			::MessageBoxW(NULL, fileName.unicode().c_str(), L"Failed to open zip", MB_ICONWARNING);
 		}
 #endif
@@ -106,13 +106,13 @@ namespace EzUI {
 	Application::~Application() {
 		RenderUnInitialize();
 		::CoUninitialize();
-		if (Base::HZipResource) {
-			CloseZip(Base::HZipResource);
+		if (EzUI::__EzUI__HZipResource) {
+			CloseZip(EzUI::__EzUI__HZipResource);
 		}
-		if (Base::HVSResource) {
-			FreeResource(Base::HVSResource);
+		if (EzUI::__EzUI__HVSResource) {
+			FreeResource(EzUI::__EzUI__HVSResource);
 		}
-		UnregisterClassW(Base::WindowClassName, GetModuleHandle(NULL));
+		UnregisterClassW(EzUI::__EzUI__WindowClassName, GetModuleHandle(NULL));
 	}
 
 	int Application::Exec()

@@ -2,411 +2,408 @@
 #include <Windows.h>
 namespace EzUI {
 
-	namespace RenderType {
-
-		template<typename T>
-		class __Size
+	template<typename T>
+	class __EzUI__Size
+	{
+	public:
+		T Width;
+		T Height;
+	public:
+		__EzUI__Size()
 		{
-		public:
-			T Width;
-			T Height;
-		public:
-			__Size()
-			{
-				Width = Height = 0;
-			}
-			__Size(const __Size& __Size)
-			{
-				Width = __Size.Width;
-				Height = __Size.Height;
-			}
-			__Size(T width,
-				T height)
-			{
-				Width = width;
-				Height = height;
-			}
-			__Size operator+(const __Size& sz) const
-			{
-				return __Size(Width + sz.Width,
-					Height + sz.Height);
-			}
-			__Size operator-(const __Size& sz) const
-			{
-				return __Size(Width - sz.Width,
-					Height - sz.Height);
-			}
-
-			bool operator==(const __Size& _right) const
-			{
-				return (Width == _right.Width && Height == _right.Height);
-			}
-			bool operator!=(const __Size& _right) const
-			{
-				return !(Width == _right.Width && Height == _right.Height);
-			}
-			void Scale(const float& scale) {
-				Width = (Width * scale) + 0.5;
-				Height = (Height * scale) + 0.5;
-			}
-			bool Equals(const __Size& sz) const
-			{
-				return (Width == sz.Width) && (Height == sz.Height);
-			}
-
-			bool Empty() const
-			{
-				return (Width == 0 && Height == 0);
-			}
-		};
-
-		template<typename T>
-		class __Point
+			Width = Height = 0;
+		}
+		__EzUI__Size(const __EzUI__Size& __Size)
 		{
-		public:
-			T X;
-			T Y;
-		public:
-			__Point()
-			{
-				X = Y = 0;
-			}
-
-			__Point(const __Point& __Point)
-			{
-				X = __Point.X;
-				Y = __Point.Y;
-			}
-
-			__Point(const __Size<T>& __Size)
-			{
-				X = __Size.Width;
-				Y = __Size.Height;
-			}
-
-			__Point(T x,
-				T y)
-			{
-				X = x;
-				Y = y;
-			}
-
-			__Point operator+(const __Point& __Point) const
-			{
-				return __Point(X + __Point.X,
-					Y + __Point.Y);
-			}
-
-			__Point operator-(const __Point& __Point) const
-			{
-				return __Point(X - __Point.X,
-					Y - __Point.Y);
-			}
-			void Scale(const float& scale) {
-				X = (X * scale) + 0.5;
-				Y = (Y * scale) + 0.5;
-			}
-			bool Equals(const __Point& __Point)
-			{
-				return (X == __Point.X) && (Y == __Point.Y);
-			}
-
-		};
-
-		template<typename T>
-		class __Rect
+			Width = __Size.Width;
+			Height = __Size.Height;
+		}
+		__EzUI__Size(T width,
+			T height)
 		{
-		public:
-			T X;
-			T Y;
-			T Width;
-			T Height;
-		public:
+			Width = width;
+			Height = height;
+		}
+		__EzUI__Size operator+(const __EzUI__Size& sz) const
+		{
+			return __EzUI__Size(Width + sz.Width,
+				Height + sz.Height);
+		}
+		__EzUI__Size operator-(const __EzUI__Size& sz) const
+		{
+			return __EzUI__Size(Width - sz.Width,
+				Height - sz.Height);
+		}
 
-			__Rect()
-			{
-				X = Y = Width = Height = 0;
-			}
+		bool operator==(const __EzUI__Size& _right) const
+		{
+			return (Width == _right.Width && Height == _right.Height);
+		}
+		bool operator!=(const __EzUI__Size& _right) const
+		{
+			return !(Width == _right.Width && Height == _right.Height);
+		}
+		void Scale(const float& scale) {
+			Width = (Width * scale) + 0.5;
+			Height = (Height * scale) + 0.5;
+		}
+		bool Equals(const __EzUI__Size& sz) const
+		{
+			return (Width == sz.Width) && (Height == sz.Height);
+		}
 
-			__Rect(T x,
-				T y,
-				T width,
-				T height)
-			{
-				X = x;
-				Y = y;
-				Width = width;
-				Height = height;
-			}
+		bool Empty() const
+		{
+			return (Width == 0 && Height == 0);
+		}
+	};
 
-			__Rect(const RECT& rect) {
-				X = rect.left;
-				Y = rect.top;
-				Width = rect.right - rect.left;
-				Height = rect.bottom - rect.top;
-			}
+	template<typename T>
+	class __EzUI__Point
+	{
+	public:
+		T X;
+		T Y;
+	public:
+		__EzUI__Point()
+		{
+			X = Y = 0;
+		}
 
-			__Rect(const __Point<T>& location, const __Size<T>& size) {
-				X = location.X;
-				Y = location.Y;
-				Width = size.Width;
-				Height = size.Height;
-			}
+		__EzUI__Point(const __EzUI__Point& __Point)
+		{
+			X = __Point.X;
+			Y = __Point.Y;
+		}
 
-			__Point<T> GetLocation() const
-			{
-				return __Point<T>{ X, Y };
-			}
+		__EzUI__Point(const __EzUI__Size<T>& __Size)
+		{
+			X = __Size.Width;
+			Y = __Size.Height;
+		}
 
-			__Size<T> GetSize() const
-			{
-				return __Size<T>(Width, Height);
-			}
+		__EzUI__Point(T x,
+			T y)
+		{
+			X = x;
+			Y = y;
+		}
 
-			RECT ToRECT() const {
-				return RECT{ GetLeft(),GetTop(),GetRight(),GetBottom() };
-			}
+		__EzUI__Point operator+(const __EzUI__Point& __Point) const
+		{
+			return __Point(X + __Point.X,
+				Y + __Point.Y);
+		}
 
-			T GetLeft() const
-			{
-				return X;
-			}
+		__EzUI__Point operator-(const __EzUI__Point& __Point) const
+		{
+			return __Point(X - __Point.X,
+				Y - __Point.Y);
+		}
+		void Scale(const float& scale) {
+			X = (X * scale) + 0.5;
+			Y = (Y * scale) + 0.5;
+		}
+		bool Equals(const __EzUI__Point& __Point)
+		{
+			return (X == __Point.X) && (Y == __Point.Y);
+		}
 
-			T GetTop() const
-			{
-				return Y;
-			}
-			T GetRight() const
-			{
-				return X + Width;
-			}
-			T GetBottom() const
-			{
-				return Y + Height;
-			}
-			bool IsEmptyArea() const
-			{
-				return (Width <= 0) || (Height <= 0);
-			}
+	};
 
-			const __Rect& Scale(const float& scale) {
-				X = (X * scale) + 0.5;
-				Y = (Y * scale) + 0.5;
-				Width = (Width * scale) + 0.5;
-				Height = (Height * scale) + 0.5;
-				return *this;
+	template<typename T>
+	class __EzUI__Rect
+	{
+	public:
+		T X;
+		T Y;
+		T Width;
+		T Height;
+	public:
+
+		__EzUI__Rect()
+		{
+			X = Y = Width = Height = 0;
+		}
+
+		__EzUI__Rect(T x,
+			T y,
+			T width,
+			T height)
+		{
+			X = x;
+			Y = y;
+			Width = width;
+			Height = height;
+		}
+
+		__EzUI__Rect(const RECT& rect) {
+			X = rect.left;
+			Y = rect.top;
+			Width = rect.right - rect.left;
+			Height = rect.bottom - rect.top;
+		}
+
+		__EzUI__Rect(const __EzUI__Point<T>& location, const __EzUI__Size<T>& size) {
+			X = location.X;
+			Y = location.Y;
+			Width = size.Width;
+			Height = size.Height;
+		}
+
+		__EzUI__Point<T> GetLocation() const
+		{
+			return __EzUI__Point<T>{ X, Y };
+		}
+
+		__EzUI__Size<T> GetSize() const
+		{
+			return __EzUI__Size<T>(Width, Height);
+		}
+
+		RECT ToRECT() const {
+			return RECT{ GetLeft(),GetTop(),GetRight(),GetBottom() };
+		}
+
+		T GetLeft() const
+		{
+			return X;
+		}
+
+		T GetTop() const
+		{
+			return Y;
+		}
+		T GetRight() const
+		{
+			return X + Width;
+		}
+		T GetBottom() const
+		{
+			return Y + Height;
+		}
+		bool IsEmptyArea() const
+		{
+			return (Width <= 0) || (Height <= 0);
+		}
+
+		const __EzUI__Rect& Scale(const float& scale) {
+			X = (X * scale) + 0.5;
+			Y = (Y * scale) + 0.5;
+			Width = (Width * scale) + 0.5;
+			Height = (Height * scale) + 0.5;
+			return *this;
+		}
+
+		bool Equals(const __EzUI__Rect& __Rect) const
+		{
+			return X == __Rect.X &&
+				Y == __Rect.Y &&
+				Width == __Rect.Width &&
+				Height == __Rect.Height;
+		}
+
+		bool  operator == (const __EzUI__Rect& right) {
+			return Equals(right);
+		}
+
+		bool Contains(T x,
+			T y) const
+		{
+			return x >= X && x < X + Width &&
+				y >= Y && y < Y + Height;
+		}
+
+		bool Contains(const __EzUI__Point<T>& pt) const
+		{
+			return Contains(pt.X, pt.Y);
+		}
+
+		bool Contains(const __EzUI__Rect& __Rect) const
+		{
+			return (X <= __Rect.X) && (__Rect.GetRight() <= GetRight()) &&
+				(Y <= __Rect.Y) && (__Rect.GetBottom() <= GetBottom());
+
+		}
+
+		void Inflate(T dx,
+			T dy)
+		{
+			X -= dx;
+			Y -= dy;
+			Width += 2 * dx;
+			Height += 2 * dy;
+		}
+
+		void Inflate(const __EzUI__Point<T>& point)
+		{
+			Inflate(point.X, point.Y);
+		}
+
+		bool Intersect(const __EzUI__Rect& __Rect)
+		{
+			return Intersect(*this, *this, __Rect);
+		}
+
+		static bool Intersect(__EzUI__Rect& c,
+			const __EzUI__Rect& a,
+			const __EzUI__Rect& b)
+		{
+			T right = min(a.GetRight(), b.GetRight());
+			T bottom = min(a.GetBottom(), b.GetBottom());
+			T left = max(a.GetLeft(), b.GetLeft());
+			T top = max(a.GetTop(), b.GetTop());
+
+			c.X = left;
+			c.Y = top;
+			c.Width = right - left;
+			c.Height = bottom - top;
+			return !c.IsEmptyArea();
+		}
+
+		bool IntersectsWith(const __EzUI__Rect& __Rect) const
+		{
+			return (GetLeft() < __Rect.GetRight() &&
+				GetTop() < __Rect.GetBottom() &&
+				GetRight() > __Rect.GetLeft() &&
+				GetBottom() > __Rect.GetTop());
+		}
+
+		static bool Union(__EzUI__Rect& c,
+			const __EzUI__Rect& a,
+			const __EzUI__Rect& b)
+		{
+
+			if (a.IsEmptyArea()) {
+				c = b;
+				return !c.IsEmptyArea();
 			}
-
-			bool Equals(const __Rect& __Rect) const
-			{
-				return X == __Rect.X &&
-					Y == __Rect.Y &&
-					Width == __Rect.Width &&
-					Height == __Rect.Height;
-			}
-
-			bool  operator == (const __Rect& right) {
-				return Equals(right);
-			}
-
-			bool Contains(T x,
-				T y) const
-			{
-				return x >= X && x < X + Width &&
-					y >= Y && y < Y + Height;
-			}
-
-			bool Contains(const __Point<T>& pt) const
-			{
-				return Contains(pt.X, pt.Y);
-			}
-
-			bool Contains(const __Rect& __Rect) const
-			{
-				return (X <= __Rect.X) && (__Rect.GetRight() <= GetRight()) &&
-					(Y <= __Rect.Y) && (__Rect.GetBottom() <= GetBottom());
-
-			}
-
-			void Inflate(T dx,
-				T dy)
-			{
-				X -= dx;
-				Y -= dy;
-				Width += 2 * dx;
-				Height += 2 * dy;
-			}
-
-			void Inflate(const __Point<T>& point)
-			{
-				Inflate(point.X, point.Y);
-			}
-
-			bool Intersect(const __Rect& __Rect)
-			{
-				return Intersect(*this, *this, __Rect);
-			}
-
-			static bool Intersect(__Rect& c,
-				const __Rect& a,
-				const __Rect& b)
-			{
-				T right = min(a.GetRight(), b.GetRight());
-				T bottom = min(a.GetBottom(), b.GetBottom());
-				T left = max(a.GetLeft(), b.GetLeft());
-				T top = max(a.GetTop(), b.GetTop());
-
-				c.X = left;
-				c.Y = top;
-				c.Width = right - left;
-				c.Height = bottom - top;
+			if (b.IsEmptyArea()) {
+				c = a;
 				return !c.IsEmptyArea();
 			}
 
-			bool IntersectsWith(const __Rect& __Rect) const
-			{
-				return (GetLeft() < __Rect.GetRight() &&
-					GetTop() < __Rect.GetBottom() &&
-					GetRight() > __Rect.GetLeft() &&
-					GetBottom() > __Rect.GetTop());
-			}
+			T right = max(a.GetRight(), b.GetRight());
+			T bottom = max(a.GetBottom(), b.GetBottom());
+			T left = min(a.GetLeft(), b.GetLeft());
+			T top = min(a.GetTop(), b.GetTop());
 
-			static bool Union(__Rect& c,
-				const __Rect& a,
-				const __Rect& b)
-			{
-
-				if (a.IsEmptyArea()) {
-					c = b;
-					return !c.IsEmptyArea();
-				}
-				if (b.IsEmptyArea()) {
-					c = a;
-					return !c.IsEmptyArea();
-				}
-
-				T right = max(a.GetRight(), b.GetRight());
-				T bottom = max(a.GetBottom(), b.GetBottom());
-				T left = min(a.GetLeft(), b.GetLeft());
-				T top = min(a.GetTop(), b.GetTop());
-
-				c.X = left;
-				c.Y = top;
-				c.Width = right - left;
-				c.Height = bottom - top;
-				return !c.IsEmptyArea();
-			}
-			void Offset(const __Point<T>& point)
-			{
-				Offset(point.X, point.Y);
-			}
-			void Offset(const T& dx,
-				const T& dy)
-			{
-				X += dx;
-				Y += dy;
-			}
-		};
-
-		class __Color
+			c.X = left;
+			c.Y = top;
+			c.Width = right - left;
+			c.Height = bottom - top;
+			return !c.IsEmptyArea();
+		}
+		void Offset(const __EzUI__Point<T>& point)
 		{
-		protected:
-			DWORD RGBA = 0;
-		public:
-			__Color() {}
-			__Color(
-				const BYTE& r,
-				const BYTE& g,
-				const BYTE& b,
-				const BYTE& a = 255)
-			{
-				((BYTE*)&RGBA)[0] = r;
-				((BYTE*)&RGBA)[1] = g;
-				((BYTE*)&RGBA)[2] = b;
-				((BYTE*)&RGBA)[3] = a;
-			}
-			__Color(const DWORD& argb)
-			{
-				RGBA = argb;
-			}
-			virtual ~__Color() {}
-			const BYTE& GetR() const
-			{
-				return ((BYTE*)&RGBA)[0];
-			}
-			const BYTE& GetG() const
-			{
-				return ((BYTE*)&RGBA)[1];
-			}
-			const BYTE& GetB() const
-			{
-				return ((BYTE*)&RGBA)[2];
-			}
-			const BYTE& GetA() const
-			{
-				return ((BYTE*)&RGBA)[3];
-			}
-			const DWORD& GetValue() const
-			{
-				return RGBA;
-			}
-			void SetValue(DWORD argb)
-			{
-				RGBA = argb;
-			}
-			void SetR(const BYTE& value) {
-				((BYTE*)&RGBA)[0] = value;
-			}
-			void SetG(const BYTE& value) {
-				((BYTE*)&RGBA)[1] = value;
-			}
-			void SetB(const BYTE& value) {
-				((BYTE*)&RGBA)[2] = value;
-			}
-			void SetA(const BYTE& value) {
-				((BYTE*)&RGBA)[3] = value;
-			}
-		public:
-			// Common color constants
-			enum :DWORD
-			{
-				Transparent = 0,
-				Red = 4278190335,
-				Green = 4278255360,
-				Blue = 4294901760,
-				Black = 4278190080,
-				White = 4294967295,
-				Gray = 4286611584,
-			};
-		};
+			Offset(point.X, point.Y);
+		}
+		void Offset(const T& dx,
+			const T& dy)
+		{
+			X += dx;
+			Y += dy;
+		}
+	};
 
-		template<typename T>
-		class __Line {
-		public:
-			__Point<T> pointA;
-			__Point<T> pointB;
-		public:
-			__Line() {
-				pointA.X = 0;
-				pointA.Y = 0;
-				pointB.X = 0;
-				pointB.Y = 0;
-			}
-			__Line(const __Point<T>& _pointA, const __Point<T>& _pointB) {
-				this->pointA = _pointA;
-				this->pointB = _pointB;
-			}
+	class __EzUI__Color
+	{
+	protected:
+		DWORD RGBA = 0;
+	public:
+		__EzUI__Color() {}
+		__EzUI__Color(
+			const BYTE& r,
+			const BYTE& g,
+			const BYTE& b,
+			const BYTE& a = 255)
+		{
+			((BYTE*)&RGBA)[0] = r;
+			((BYTE*)&RGBA)[1] = g;
+			((BYTE*)&RGBA)[2] = b;
+			((BYTE*)&RGBA)[3] = a;
+		}
+		__EzUI__Color(const DWORD& argb)
+		{
+			RGBA = argb;
+		}
+		virtual ~__EzUI__Color() {}
+		const BYTE& GetR() const
+		{
+			return ((BYTE*)&RGBA)[0];
+		}
+		const BYTE& GetG() const
+		{
+			return ((BYTE*)&RGBA)[1];
+		}
+		const BYTE& GetB() const
+		{
+			return ((BYTE*)&RGBA)[2];
+		}
+		const BYTE& GetA() const
+		{
+			return ((BYTE*)&RGBA)[3];
+		}
+		const DWORD& GetValue() const
+		{
+			return RGBA;
+		}
+		void SetValue(DWORD argb)
+		{
+			RGBA = argb;
+		}
+		void SetR(const BYTE& value) {
+			((BYTE*)&RGBA)[0] = value;
+		}
+		void SetG(const BYTE& value) {
+			((BYTE*)&RGBA)[1] = value;
+		}
+		void SetB(const BYTE& value) {
+			((BYTE*)&RGBA)[2] = value;
+		}
+		void SetA(const BYTE& value) {
+			((BYTE*)&RGBA)[3] = value;
+		}
+	public:
+		// Common color constants
+		enum :DWORD
+		{
+			Transparent = 0,
+			Red = 4278190335,
+			Green = 4278255360,
+			Blue = 4294901760,
+			Black = 4278190080,
+			White = 4294967295,
+			Gray = 4286611584,
 		};
 	};
 
-	typedef  RenderType::__Point<INT> Point;
-	typedef  RenderType::__Point<FLOAT> PointF;
-	typedef  RenderType::__Line<INT> Line;
-	typedef  RenderType::__Line<FLOAT> LineF;
-	typedef  RenderType::__Size<INT> Size;
-	typedef  RenderType::__Size<FLOAT> SizeF;
-	typedef  RenderType::__Rect<INT> Rect;
-	typedef  RenderType::__Rect<FLOAT> RectF;
+	template<typename T>
+	class __EzUI__Line {
+	public:
+		__EzUI__Point<T> pointA;
+		__EzUI__Point<T> pointB;
+	public:
+		__EzUI__Line() {
+			pointA.X = 0;
+			pointA.Y = 0;
+			pointB.X = 0;
+			pointB.Y = 0;
+		}
+		__EzUI__Line(const __EzUI__Point<T>& _pointA, const __EzUI__Point<T>& _pointB) {
+			this->pointA = _pointA;
+			this->pointB = _pointB;
+		}
+	};
+
+	typedef  __EzUI__Point<INT> Point;
+	typedef  __EzUI__Point<FLOAT> PointF;
+	typedef  __EzUI__Line<INT> Line;
+	typedef  __EzUI__Line<FLOAT> LineF;
+	typedef  __EzUI__Size<INT> Size;
+	typedef  __EzUI__Size<FLOAT> SizeF;
+	typedef  __EzUI__Rect<INT> Rect;
+	typedef  __EzUI__Rect<FLOAT> RectF;
 
 	struct Distance {
 	public:
@@ -465,7 +462,7 @@ namespace EzUI {
 		int TopRightRadius = 0;
 		int BottomRightRadius = 0;
 		int BottomLeftRadius = 0;
-		RenderType::__Color Color;
+		__EzUI__Color Color;
 	public:
 		class Radius {
 			Border& Border;

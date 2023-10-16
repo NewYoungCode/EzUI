@@ -26,7 +26,7 @@ private:
 	TabLayout* tabCtrl, * control;
 	Control* main, * center, * centerLeft, * tools, * playerBar, * playerBar2;
 	//need new ÐèÒªÊÍ·Å
-	Thread::Timer* timer = NULL;
+	ThreadTimer* timer = NULL;
 	ConfigIni* cfg = NULL;
 	Image* bkImg = NULL, * headImg = NULL;
 	std::future<void>* downloadTask = NULL;

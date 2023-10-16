@@ -599,7 +599,7 @@ namespace EzUI {
 		}
 		font = new Font(_copy_font);
 	}
-	void DXRender::SetColor(const RenderType::__Color& color) {
+	void DXRender::SetColor(const __EzUI__Color& color) {
 		if (brush == NULL) {
 			render->CreateSolidColorBrush(__To_D2D_COLOR_F(color), &brush);
 		}

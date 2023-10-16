@@ -9,17 +9,15 @@
 //#pragma comment(lib,"Shcore.lib")
 namespace EzUI {
 
-	namespace Base {
-		WCHAR WindowClassName[]{ L"EzUI_Window" };
-		HZIP HZipResource = NULL;
-		HGLOBAL HVSResource = NULL;
-		const std::list<EzUI::MonitorInfo> MonitorInfos;
-		std::mutex ResourceMtx;
-	};
+	WCHAR __EzUI__WindowClassName[]{ L"EzUI_Window" };
+	HZIP __EzUI__HZipResource = NULL;
+	HGLOBAL __EzUI__HVSResource = NULL;
+	const std::list<EzUI::MonitorInfo> __EzUI__MonitorInfos;
+	std::mutex __EzUI__ResourceMtx;
 
 	bool CopyToClipboard(int uFormat, void* pData, size_t size, HWND hWnd) {
 		//´ò¿ª¼ôÌù°å
-		bool ret = OpenClipboard(hWnd);
+		bool ret = ::OpenClipboard(hWnd);
 		if (!ret)return ret;
 		//Çå¿Õ¼ôÌù°å
 		::EmptyClipboard();
@@ -67,9 +65,9 @@ namespace EzUI {
 	}
 
 	bool FindZipResource(const EString& fileName, int* index, size_t* fileSize) {
-		if (Base::HZipResource) {
+		if (EzUI::__EzUI__HZipResource) {
 			ZIPENTRY z;
-			ZRESULT ret = FindZipItem(Base::HZipResource, fileName.c_str(), false, index, &z);
+			ZRESULT ret = FindZipItem(EzUI::__EzUI__HZipResource, fileName.c_str(), false, index, &z);
 			if (ret == 0 && z.unc_size != 0) {
 				*fileSize = z.unc_size;
 				return true;
@@ -78,12 +76,12 @@ namespace EzUI {
 		return false;
 	}
 	bool UnZipResource(const EString& fileName, std::string* outData) {
-		std::unique_lock<std::mutex> autoLock(Base::ResourceMtx);
+		std::unique_lock<std::mutex> autoLock(EzUI::__EzUI__ResourceMtx);
 		int index;
 		size_t fileSize;
 		if (FindZipResource(fileName, &index, &fileSize)) {
 			outData->resize(fileSize);
-			UnzipItem(Base::HZipResource, index, (void*)(outData->c_str()), fileSize);
+			UnzipItem(EzUI::__EzUI__HZipResource, index, (void*)(outData->c_str()), fileSize);
 			return true;
 		}
 		return false;
@@ -114,7 +112,7 @@ namespace EzUI {
 	}
 	void Ziper::UnZip(const ZIPENTRY& ze, void** pData) {
 		*pData = new char[ze.unc_size] { 0 };
-		UnzipItem(Base::HZipResource, ze.index, *pData, ze.unc_size);
+		UnzipItem(EzUI::__EzUI__HZipResource, ze.index, *pData, ze.unc_size);
 	}
 	void Ziper::UnZip(std::function<bool(int index, const EString& fileName, void* pData, size_t len, DWORD fileAttribute)> callback) {
 		ZIPENTRY ze;

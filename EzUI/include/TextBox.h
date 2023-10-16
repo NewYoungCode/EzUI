@@ -32,7 +32,7 @@ namespace EzUI {
 		int _scrollY = 0;//用于y轴滚动
 		int _lastX = 0;//上一个x位置
 		int _lastY = 0;//上一个y位置 
-		Windows::Timer _timer;//用于光标闪烁
+		Timer _timer;//用于光标闪烁
 		bool _careShow = false;//用于光标闪烁
 	private:
 		void Init();

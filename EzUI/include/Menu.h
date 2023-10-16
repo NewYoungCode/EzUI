@@ -2,7 +2,7 @@
 #include "EzUI.h"
 namespace EzUI {
 
-	class UI_EXPORT  Menu
+	class UI_EXPORT Menu
 	{
 	public:
 		std::function<void(UINT_PTR)> _callback = NULL;

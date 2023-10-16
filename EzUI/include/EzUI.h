@@ -16,14 +16,12 @@ namespace EzUI {
 	class ScrollBar;
 	enum class Cursor :ULONG_PTR;
 
-	namespace Base {
-		//全局资源句柄
-		extern UI_EXPORT WCHAR WindowClassName[];//窗口类名
-		extern UI_EXPORT std::mutex ResourceMtx;//资源锁
-		extern UI_EXPORT HZIP HZipResource;//zip文件中的全局资源句柄
-		extern UI_EXPORT HGLOBAL HVSResource;//vs中的资源文件句柄
-		extern UI_EXPORT const std::list<EzUI::MonitorInfo> MonitorInfos;//所有监视器信息
-	};
+	//全局资源句柄
+	extern UI_EXPORT WCHAR __EzUI__WindowClassName[];//窗口类名
+	extern UI_EXPORT std::mutex __EzUI__ResourceMtx;//资源锁
+	extern UI_EXPORT HZIP __EzUI__HZipResource;//zip文件中的全局资源句柄
+	extern UI_EXPORT HGLOBAL __EzUI__HVSResource;//vs中的资源文件句柄
+	extern UI_EXPORT const std::list<EzUI::MonitorInfo> __EzUI__MonitorInfos;//所有监视器信息
 
 	//解压缩相关
 	class UI_EXPORT Ziper {
@@ -63,11 +61,11 @@ namespace EzUI {
 	//释放光标
 	extern UI_EXPORT void FreeCursor(HCURSOR hCursor);
 
-	class UI_EXPORT Color :public RenderType::__Color {
+	class UI_EXPORT Color :public EzUI::__EzUI__Color {
 	public:
-		Color(const RenderType::__Color& copy) { this->RGBA = copy.GetValue(); }
-		Color(const DWORD& rgba = 0) :RenderType::__Color(rgba) {}
-		Color(BYTE r, BYTE g, BYTE b, BYTE a = 255) :RenderType::__Color(r, g, b, a) {}
+		Color(const EzUI::__EzUI__Color& copy) { this->RGBA = copy.GetValue(); }
+		Color(const DWORD& rgba = 0) :EzUI::__EzUI__Color(rgba) {}
+		Color(BYTE r, BYTE g, BYTE b, BYTE a = 255) :EzUI::__EzUI__Color(r, g, b, a) {}
 	public:
 		static Color Make(const EString& colorStr) {
 			if (colorStr.find("#") == 0) { //"#4e6ef2"

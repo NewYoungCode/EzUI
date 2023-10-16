@@ -25,7 +25,7 @@ namespace EzUI {
 		float scanle = 1.0f;
 		POINT cursorPos;
 		::GetCursorPos(&cursorPos);
-		for (auto& it : EzUI::Base::MonitorInfos) {
+		for (auto& it : EzUI::__EzUI__MonitorInfos) {
 			Rect rect = it.Rect;
 			rect.Width = it.Physical.Width;
 			rect.Height = it.Physical.Height;
@@ -67,7 +67,7 @@ namespace EzUI {
 		_rect.Width = width;
 		_rect.Height = height;
 
-		PublicData.HANDLE = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, Base::WindowClassName, Base::WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
+		PublicData.HANDLE = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, EzUI::__EzUI__WindowClassName, EzUI::__EzUI__WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
 			_rect.X, _rect.Y, width, height, owner, NULL, GetModuleHandle(NULL), NULL);
 
 		//创建冒泡提示窗口

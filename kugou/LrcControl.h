@@ -22,7 +22,7 @@ class LrcControl :
 {
 	float offsetY = 0;
 	Lrc* LrcNow = NULL;
-	Timer* timer = NULL;
+	ThreadTimer* timer = NULL;
 	int VerticalCenter = 0;
 	std::vector<Lrc*> LrcList;
 	int marginVertical = 40;

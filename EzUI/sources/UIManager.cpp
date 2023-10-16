@@ -1,7 +1,7 @@
 #include "UIManager.h"
 
-#include "tinyxml/tinyxml.h"
-#include "tinyxml/tinystr.h"
+#include "tinyxml.h"
+#include "tinystr.h"
 
 namespace EzUI {
 	//去除空格或者其他符号 双引号内的空格不会去除
