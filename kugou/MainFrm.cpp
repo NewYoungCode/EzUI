@@ -37,7 +37,7 @@ void MainFrm::InitForm() {
 	this->FindControl("lrcView2")->Add(&lrcCtl);//Ìí¼Ó¸è´Ê¿Ø¼þ
 
 	std::list<MonitorInfo> monitorInfo;
-	GetMonitors(&monitorInfo);
+	GetMonitor(&monitorInfo);
 	const MonitorInfo& def = *monitorInfo.begin();
 	deskTopWnd = new LayeredWindow(def.Rect.Width, def.Rect.Height);
 	deskTopWnd->CloseShadowBox();

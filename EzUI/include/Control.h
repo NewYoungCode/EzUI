@@ -117,6 +117,7 @@ namespace EzUI {
 		void SetHeight(const int& height);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
 		void SetFixedWidth(const int& fixedWidth);//设置绝对宽度
 		void SetFixedHeight(const int& fixedHeight);//设置绝对高度
+		const Rect& SetRect(const Rect& rect);//设置相对父控件矩形 返回实际的rect
 		const int& GetFixedWidth();//获取绝对宽度
 		const int& GetFixedHeight();//获取绝对高度
 		virtual Rect GetCareRect();//获取光标位置
@@ -137,7 +138,6 @@ namespace EzUI {
 		bool IsPendLayout();//是否含有挂起的布局
 		const LayoutState& TryPendLayout();//尝试挂起布局 返回当前布局状态
 		void EndLayout();//结束布局
-		const Rect& SetRect(const Rect& rect);//设置相对父控件矩形 返回实际的rect
 		virtual void RefreshLayout();//刷新布局
 		void SetTips(const EString& text);//设置tips文字
 		const EString& GetTips();//获取tips文字

@@ -10,6 +10,7 @@
 namespace EzUI {
 
 	WCHAR __EzUI__WindowClassName[]{ L"EzUI_Window" };
+	HMODULE __EzUI__HINSTANCE = NULL;
 	HZIP __EzUI__HZipResource = NULL;
 	HGLOBAL __EzUI__HVSResource = NULL;
 	const std::list<EzUI::MonitorInfo> __EzUI__MonitorInfos;
@@ -192,7 +193,7 @@ namespace EzUI {
 		mt.FPS = (float)dm.dmDisplayFrequency;
 	}
 
-	size_t GetMonitors(std::list<MonitorInfo>* outMonitorInfo)
+	size_t GetMonitor(std::list<MonitorInfo>* outMonitorInfo)
 	{
 		outMonitorInfo->clear();
 		//// 枚举显示器回调函数
@@ -219,6 +220,14 @@ namespace EzUI {
 			GetCursorPos(&cursorPos);
 			hMonitor = ::MonitorFromPoint(cursorPos, MONITOR_DEFAULTTONEAREST);
 		}
+		// 获取屏幕信息
+		GetMonitorInfo(*monitorInfo, hMonitor);
+	}
+
+	void GetMontior(MonitorInfo* monitorInfo, const Rect& rect)
+	{
+		RECT r = rect.ToRECT();
+		HMONITOR hMonitor = ::MonitorFromRect(&r, MONITOR_DEFAULTTONEAREST);
 		// 获取屏幕信息
 		GetMonitorInfo(*monitorInfo, hMonitor);
 	}

@@ -96,5 +96,7 @@ namespace EzUI {
 		void SetVisible(bool flag);
 		void Invalidate();//使区域无效(延迟刷新)
 		void Refresh();//立即更新所有无效区域(立即刷新)
+		void CenterToScreen();//居中到屏幕
+		void CenterToWindow(HWND wnd = NULL);//参考某个窗口进行居中
 	};
 };

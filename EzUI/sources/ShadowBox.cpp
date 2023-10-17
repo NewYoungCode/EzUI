@@ -5,7 +5,7 @@ namespace EzUI {
 	ShadowBox::ShadowBox(int width, int height, HWND hwnd)
 	{
 		DWORD dwFlags = WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT;
-		_hWnd = CreateWindowExW(dwFlags, EzUI::__EzUI__WindowClassName, L"ShadowBox", WS_POPUP, 0, 0, width, height, hwnd, NULL, GetModuleHandle(NULL), NULL);
+		_hWnd = CreateWindowExW(dwFlags, EzUI::__EzUI__WindowClassName, L"ShadowBox", WS_POPUP, 0, 0, width, height, hwnd, NULL,  EzUI::__EzUI__HINSTANCE, NULL);
 		ASSERT(_hWnd);
 	}
 

@@ -22,7 +22,8 @@ namespace EzUI {
 
 	void Window::InitWindow(int width, int height, HWND owner, DWORD dStyle, DWORD  exStyle)
 	{
-		float scanle = 1.0f;
+		Rect _rect(0, 0, width, height);
+
 		POINT cursorPos;
 		::GetCursorPos(&cursorPos);
 		for (auto& it : EzUI::__EzUI__MonitorInfos) {
@@ -30,45 +31,24 @@ namespace EzUI {
 			rect.Width = it.Physical.Width;
 			rect.Height = it.Physical.Height;
 			if (rect.Contains(cursorPos.x, cursorPos.y)) {
-				scanle = it.Scale;
+				_rect.X = rect.X;
+				_rect.Y = rect.Y;
+				this->PublicData.Scale = it.Scale;
 				break;
 			}
 		}
 
-		MonitorInfo monitorInfo;
-		EzUI::GetMontior(&monitorInfo);
-
-		int x = monitorInfo.WorkRect.X;
-		int y = monitorInfo.WorkRect.Y;
-		int sw = monitorInfo.WorkRect.Width;//当前工作区域的宽
-		int sh = monitorInfo.WorkRect.Height;//当前工作区域的高
-
-		this->PublicData.Scale = scanle;
-		width = width * this->PublicData.Scale + 0.5;
-		height = height * this->PublicData.Scale + 0.5;
-
-		if (owner) {
-			//基于父窗口的中心点
-			RECT ownerRECT;
-			::GetWindowRect(owner, &ownerRECT);
-			int onwerWidth = ownerRECT.right - ownerRECT.left;
-			int onwerHeight = ownerRECT.bottom - ownerRECT.top;
-			if (width > 0 && height > 0) {
-				_rect.X = ownerRECT.left + (onwerWidth - width) / 2.0f + 0.5;
-				_rect.Y = ownerRECT.top + (onwerHeight - height) / 2.0f + 0.5;
-			}
-		}
-		else {
-			//基于屏幕的中心点
-			_rect.X = x + (sw - width) / 2.0f + 0.5;//保证左右居中
-			_rect.Y = y + (sh - height) / 2.0f + 0.5;//保证上下居中
-		}
-
-		_rect.Width = width;
-		_rect.Height = height;
+		_rect.Scale(this->PublicData.Scale);
 
 		PublicData.HANDLE = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, EzUI::__EzUI__WindowClassName, EzUI::__EzUI__WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
-			_rect.X, _rect.Y, width, height, owner, NULL, GetModuleHandle(NULL), NULL);
+			_rect.X, _rect.Y, _rect.Width, _rect.Height, owner, NULL, EzUI::__EzUI__HINSTANCE, NULL);
+
+		if (owner) {
+			this->CenterToWindow(owner);
+		}
+		else {
+			this->CenterToScreen();
+		}
 
 		//创建冒泡提示窗口
 		_hWndTips = CreateWindowEx(WS_EX_TOPMOST,
@@ -81,7 +61,7 @@ namespace EzUI {
 			CW_USEDEFAULT,
 			Hwnd(),
 			NULL,
-			::GetModuleHandle(NULL),
+			EzUI::__EzUI__HINSTANCE,
 			NULL
 		);
 
@@ -226,6 +206,10 @@ namespace EzUI {
 	}
 	void Window::SetRect(const Rect& rect)
 	{
+		//int newX = rect.X;
+		//int newY = rect.Y;
+		//int newWidth = rect.Width;
+		//int newHeight = rect.Height;
 		int newX = PublicData.Scale * rect.X + 0.5;
 		int newY = PublicData.Scale * rect.Y + 0.5;
 		int newWidth = PublicData.Scale * rect.Width + 0.5;
@@ -244,7 +228,7 @@ namespace EzUI {
 	}
 	void Window::SetIcon(short id)
 	{
-		SetIcon(::LoadIcon(::GetModuleHandle(0), MAKEINTRESOURCE(id)));//
+		SetIcon(::LoadIcon(::EzUI::__EzUI__HINSTANCE, MAKEINTRESOURCE(id)));//
 	}
 	void Window::SetIcon(HICON icon)
 	{
@@ -253,6 +237,7 @@ namespace EzUI {
 	void Window::SetLayout(EzUI::Control* layout) {
 		ASSERT(layout);
 		_layout = layout;
+		_layout->PublicData = &PublicData;
 		if (_layout->Style.FontFamily.empty()) {
 			_layout->Style.FontFamily = L"Microsoft YaHei";
 		}
@@ -262,9 +247,12 @@ namespace EzUI {
 		if (_layout->Style.ForeColor.GetValue() == 0) {
 			_layout->Style.ForeColor = Color::Black;
 		}
-		_layout->PublicData = &PublicData;
+		if (_layout->GetScale() != this->GetScale()) {
+			_layout->DispatchEvent(DpiChangeEventArgs(this->GetScale()));
+		}
 		_layout->SetRect(this->GetClientRect());
 	}
+
 	Control* Window::GetLayout()
 	{
 		return this->_layout;
@@ -339,6 +327,53 @@ namespace EzUI {
 	{
 		if (_layout) {
 			_layout->Refresh();
+		}
+	}
+
+	void Window::CenterToScreen()
+	{
+		MonitorInfo monitorInfo;
+		EzUI::GetMontior(&monitorInfo);
+
+		int x = monitorInfo.WorkRect.X;
+		int y = monitorInfo.WorkRect.Y;
+		int sw = monitorInfo.WorkRect.Width;//当前工作区域的宽
+		int sh = monitorInfo.WorkRect.Height;//当前工作区域的高
+
+		Rect _rect = this->GetWindowRect();
+		const int& width = _rect.Width;
+		const int& height = _rect.Height;
+		//基于屏幕的中心点
+		_rect.X = x + (sw - width) / 2.0f + 0.5;//保证左右居中
+		_rect.Y = y + (sh - height) / 2.0f + 0.5;//保证上下居中
+		//移动窗口
+		::SetWindowPos(Hwnd(), NULL, _rect.X, _rect.Y, _rect.Width, _rect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
+	}
+
+	void Window::CenterToWindow(HWND wnd)
+	{
+		if (wnd == NULL) {
+			wnd = ::GetWindow(Hwnd(), GW_OWNER);
+		}
+		if (wnd == NULL) {
+			wnd = ::GetParent(Hwnd());
+		}
+		if (wnd == NULL) {
+			return;
+		}
+		Rect _rect = this->GetWindowRect();
+		const int& width = _rect.Width;
+		const int& height = _rect.Height;
+		//基于父窗口的中心点
+		RECT ownerRECT;
+		::GetWindowRect(wnd, &ownerRECT);
+		int onwerWidth = ownerRECT.right - ownerRECT.left;
+		int onwerHeight = ownerRECT.bottom - ownerRECT.top;
+		if (width > 0 && height > 0 && onwerWidth > 0 && onwerHeight > 0) {
+			_rect.X = ownerRECT.left + (onwerWidth - width) / 2.0f + 0.5;
+			_rect.Y = ownerRECT.top + (onwerHeight - height) / 2.0f + 0.5;
+			//移动窗口
+			::SetWindowPos(Hwnd(), NULL, _rect.X, _rect.Y, _rect.Width, _rect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
 		}
 	}
 
@@ -1042,4 +1077,4 @@ namespace EzUI {
 		return false;
 	}
 
-};
+	};

@@ -2,7 +2,7 @@
 
 namespace EzUI {
 
-	LRESULT CALLBACK EzUI_WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+	LRESULT CALLBACK __EzUI__WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 		WindowData* wndData = (WindowData*)UI_GET_USERDATA(hWnd);
 		//if (message == WM_CREATE)
 		//{
@@ -22,11 +22,12 @@ namespace EzUI {
 	}
 
 	void Application::Init() {
+		//存入全局实例
+		EzUI::__EzUI__HINSTANCE = GetModuleHandleW(NULL);
 		//设计窗口
-		::HINSTANCE hInstance = GetModuleHandleW(NULL);
 		::WNDCLASSW    wc{ 0 };
-		wc.lpfnWndProc = EzUI_WndProc;//窗口过程
-		wc.hInstance = hInstance;//
+		wc.lpfnWndProc = __EzUI__WndProc;//窗口过程
+		wc.hInstance = EzUI::__EzUI__HINSTANCE;//
 		wc.hCursor = LoadCursorW(NULL, IDC_ARROW);//光标
 		wc.lpszClassName = EzUI::__EzUI__WindowClassName;//类名
 		if (!RegisterClassW(&wc)) //注册窗口
@@ -55,7 +56,7 @@ namespace EzUI {
 		RenderInitialize();
 	}
 	void Application::EnableHighDpi() {
-		EzUI::GetMonitors((std::list<MonitorInfo>*) & EzUI::__EzUI__MonitorInfos);
+		EzUI::GetMonitor((std::list<MonitorInfo>*) & EzUI::__EzUI__MonitorInfos);
 		//DPI感知相关
 		//不跟随系统放大无法接收WM_DISPLAYCHANGED消息
 		//bool b = SetProcessDPIAware();
@@ -79,7 +80,7 @@ namespace EzUI {
 	}
 	Application::Application(int resID, const EString& custResType, const EString& password) {
 		Init();
-		HINSTANCE hInst = ::GetModuleHandle(NULL);
+		HINSTANCE hInst = EzUI::__EzUI__HINSTANCE;
 #ifdef UNICODE
 		HRSRC hRsrc = ::FindResource(hInst, MAKEINTRESOURCE(resID), custResType.unicode().c_str());
 #else
@@ -112,7 +113,7 @@ namespace EzUI {
 		if (EzUI::__EzUI__HVSResource) {
 			FreeResource(EzUI::__EzUI__HVSResource);
 		}
-		UnregisterClassW(EzUI::__EzUI__WindowClassName, GetModuleHandle(NULL));
+		UnregisterClassW(EzUI::__EzUI__WindowClassName, EzUI::__EzUI__HINSTANCE);
 	}
 
 	int Application::Exec()

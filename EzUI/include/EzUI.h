@@ -18,6 +18,7 @@ namespace EzUI {
 
 	//全局资源句柄
 	extern UI_EXPORT WCHAR __EzUI__WindowClassName[];//窗口类名
+	extern UI_EXPORT HMODULE __EzUI__HINSTANCE;
 	extern UI_EXPORT std::mutex __EzUI__ResourceMtx;//资源锁
 	extern UI_EXPORT HZIP __EzUI__HZipResource;//zip文件中的全局资源句柄
 	extern UI_EXPORT HGLOBAL __EzUI__HVSResource;//vs中的资源文件句柄
@@ -51,9 +52,11 @@ namespace EzUI {
 	//从获取文件资源
 	extern UI_EXPORT bool GetResource(const EString& fileName, std::string* outData);
 	//获取当前所有监视器的信息
-	extern UI_EXPORT size_t GetMonitors(std::list<MonitorInfo>* outMonitorInfo);
+	extern UI_EXPORT size_t GetMonitor(std::list<MonitorInfo>* outMonitorInfo);
 	//获取用户当前所在的显示器
 	extern UI_EXPORT void GetMontior(MonitorInfo* outInfo, HWND hWnd = NULL);
+	//获取用户当前所在的显示器
+	extern UI_EXPORT void GetMontior(MonitorInfo* outInfo, const Rect& rect);
 	//加载光标
 	extern UI_EXPORT HCURSOR LoadCursor(Cursor cursorType);
 	//加载光标(//需要释放)

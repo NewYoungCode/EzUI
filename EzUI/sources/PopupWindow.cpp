@@ -57,8 +57,8 @@ namespace EzUI {
 		if ((location.x + width) > monitorInfo.Rect.GetRight()) {
 			x -= width;
 		}
-		::SetWindowPos(Hwnd(), HWND_TOPMOST, x, y, width, height, NULL);
 		__super::Show(cmdShow);
+		::SetWindowPos(Hwnd(), HWND_TOPMOST, x, y, width, height, NULL);
 		::SetForegroundWindow(Hwnd());
 	}
 

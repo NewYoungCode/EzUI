@@ -45,7 +45,7 @@ namespace EzUI {
 
 	NotifyIcon::NotifyIcon()
 	{
-		::HINSTANCE hInstance = GetModuleHandleW(NULL);
+		::HINSTANCE hInstance = EzUI::__EzUI__HINSTANCE;
 
 		if (!__Init__RegeditClass__) {
 			::WNDCLASSW    wc{ 0 };

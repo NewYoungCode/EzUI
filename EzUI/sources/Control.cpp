@@ -119,7 +119,7 @@ namespace EzUI {
 		//»æÖÆ×Ó¿Ø¼þ
 		for (auto& it : VisibleControls) {
 			it->DispatchEvent(args);
-		}
+		}	
 	}
 	void Control::OnPaint(PaintEventArgs& args)
 	{
