@@ -39,6 +39,10 @@ namespace EzUI {
 		void UnZip(std::function<bool(int index, const EString& fileName, void* pData, size_t len, DWORD fileAttribute)> callback);
 		virtual ~Ziper();
 	};
+	//装载字体
+	extern UI_EXPORT void InstallFont(const EString& fontFileName);
+	//卸载字体
+	extern UI_EXPORT void UnstallFont(const EString& fontFileName);
 	//复制内容到剪切板
 	extern UI_EXPORT bool CopyToClipboard(int uFormat, void* pData, size_t size, HWND hWnd = NULL);
 	//打开剪切板

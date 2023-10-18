@@ -24,7 +24,7 @@ namespace EzUI {
 		PopupWindow(int width, int height, HWND ownerHwnd);
 		PopupWindow(int width, int height, Control* ownerCtl = NULL);
 		LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
-		virtual void Show(int cmdShow = SW_SHOW)override;
+		virtual void Show()override;
 		virtual int ShowModal(bool disableOnwer = false)override;
 	};
 };

@@ -8,7 +8,7 @@ namespace EzUI {
 		this->GetScrollBar()->Parent = this;
 		this->GetScrollBar()->OffsetCallback = [this](int offsetValue)->void {
 			this->Offset(offsetValue);
-		};
+			};
 	}
 
 	TileList::TileList()
@@ -22,7 +22,21 @@ namespace EzUI {
 	{
 		return &vScrollBar;
 	}
-
+	void TileList::OnChildPaint(PaintEventArgs& args)
+	{
+		ViewControls.clear();
+		//绘制子控件
+		auto rect = Rect(0, 0, Width(), Height());
+		for (auto& it : GetControls()) {
+			if (rect.IntersectsWith(it->GetRect())) {
+				ViewControls.push_back(it);
+			}
+			it->DispatchEvent(args);
+			if (it->Y() >= Height()) { //纵向列表控件超出则不再绘制后面的控件 优化
+				break;
+			}
+		}
+	}
 	void TileList::OnLayout()
 	{
 		this->SetContentHeight(this->Offset(0));

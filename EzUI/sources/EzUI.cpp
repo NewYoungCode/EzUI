@@ -16,6 +16,16 @@ namespace EzUI {
 	const std::list<EzUI::MonitorInfo> __EzUI__MonitorInfos;
 	std::mutex __EzUI__ResourceMtx;
 
+	void InstallFont(const EString& fontFileName) {
+		auto ret = ::AddFontResourceW(fontFileName.unicode().c_str());
+		::SystemParametersInfoW(SPI_SETNONCLIENTMETRICS, 0, nullptr, SPIF_SENDCHANGE);//刷新
+	}
+
+	void UnstallFont(const EString& fontFileName) {
+		auto ret = ::RemoveFontResourceW(fontFileName.unicode().c_str());
+		::SystemParametersInfoW(SPI_SETNONCLIENTMETRICS, 0, nullptr, SPIF_SENDCHANGE);//刷新
+	}
+
 	bool CopyToClipboard(int uFormat, void* pData, size_t size, HWND hWnd) {
 		//打开剪贴板
 		bool ret = ::OpenClipboard(hWnd);

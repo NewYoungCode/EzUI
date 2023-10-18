@@ -22,7 +22,7 @@ namespace EzUI {
 		}
 		return __super::WndProc(uMsg, wParam, lParam);
 	}
-	void PopupWindow::Show(int cmdShow)
+	void PopupWindow::Show()
 	{
 		int x, y, width, height;
 		const Rect& rect = this->GetClientRect();
@@ -57,9 +57,10 @@ namespace EzUI {
 		if ((location.x + width) > monitorInfo.Rect.GetRight()) {
 			x -= width;
 		}
-		__super::Show(cmdShow);
-		::SetWindowPos(Hwnd(), HWND_TOPMOST, x, y, width, height, NULL);
+		::SetWindowPos(Hwnd(), NULL, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE);
+		__super::Show();
 		::SetForegroundWindow(Hwnd());
+		this->SetTopMost(true);
 	}
 
 	int PopupWindow::ShowModal(bool disableOnwer)

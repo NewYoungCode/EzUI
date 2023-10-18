@@ -238,14 +238,34 @@ namespace EzUI {
 		ASSERT(layout);
 		_layout = layout;
 		_layout->PublicData = &PublicData;
+
 		if (_layout->Style.FontFamily.empty()) {
-			_layout->Style.FontFamily = L"Microsoft YaHei";
+			WCHAR fontName[LF_FACESIZE] = { 0 };
+			NONCLIENTMETRICS ncm = { sizeof(NONCLIENTMETRICS) };
+			// 获取系统非客户区字体
+			if (::SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0))
+			{
+				::lstrcpyW(fontName, ncm.lfMessageFont.lfFaceName);
+			}
+			else
+			{
+				// 获取系统普通文本字体
+				::SystemParametersInfoW(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &fontName, 0);
+			}
+			_layout->Style.FontFamily = fontName;
 		}
 		if (_layout->Style.FontSize == 0) {
 			_layout->Style.FontSize = 12;
 		}
 		if (_layout->Style.ForeColor.GetValue() == 0) {
 			_layout->Style.ForeColor = Color::Black;
+		}
+		if (_layout->Style.BackColor.GetValue() == 0) {
+			LONG_PTR exStyle = ::GetWindowLongPtr(Hwnd(), GWL_EXSTYLE);
+			bool isLayered = ((exStyle & WS_EX_LAYERED) != 0);
+			if (!isLayered) {//非layered窗口 主布局控件必须设置背景色
+				_layout->Style.BackColor = Color::White;
+			}
 		}
 		if (_layout->GetScale() != this->GetScale()) {
 			_layout->DispatchEvent(DpiChangeEventArgs(this->GetScale()));
@@ -261,23 +281,21 @@ namespace EzUI {
 		_closeCode = code;
 		::SendMessage(Hwnd(), WM_CLOSE, 0, 0);
 	}
-	void Window::Show(int cmdShow)
+	void Window::Show()
 	{
 		ASSERT(_layout);
-		::ShowWindow(Hwnd(), cmdShow);
-		if (IsVisible()) {
-			_layout->Refresh();
-		}
+		::ShowWindow(Hwnd(), SW_SHOW);
+		_layout->Refresh();
 	}
 	void Window::ShowNormal()
 	{
-		Show(SW_SHOWNORMAL);
+		::ShowWindow(Hwnd(),SW_SHOWNORMAL);
 	}
 	void Window::ShowMinimized() {
-		Show(SW_MINIMIZE);
+		::ShowWindow(Hwnd(), SW_MINIMIZE);
 	}
 	void Window::ShowMaximized() {
-		Show(SW_MAXIMIZE);
+		::ShowWindow(Hwnd(), SW_MAXIMIZE);
 	}
 	int Window::ShowModal(bool disableOnwer)
 	{
@@ -302,14 +320,14 @@ namespace EzUI {
 		return _closeCode;
 	}
 	void Window::Hide() {
-		Show(SW_HIDE);
+		::ShowWindow(Hwnd(), SW_HIDE);
 	}
 	bool Window::IsVisible() {
 		return ::IsWindowVisible(Hwnd()) ? true : false;
 	}
 	void Window::SetVisible(bool flag) {
 		if (flag) {
-			Show(SW_RESTORE);
+			::ShowWindow(Hwnd(), SW_RESTORE);
 			::SetForegroundWindow(Hwnd());
 		}
 		else {
@@ -739,9 +757,9 @@ namespace EzUI {
 			}
 		}
 
-		std::list<Control*>* pTemp;
-		if (outCtl->VisibleControls.size() > 0) {
-			pTemp = &outCtl->VisibleControls;
+		const std::list<Control*>* pTemp;
+		if (outCtl->GetViewControls().size() > 0) {
+			pTemp = &outCtl->GetViewControls();
 		}
 		else {
 			pTemp = (std::list<Control*>*)(&(outCtl->GetControls()));
@@ -1077,4 +1095,4 @@ namespace EzUI {
 		return false;
 	}
 
-	};
+};

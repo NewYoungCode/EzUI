@@ -229,7 +229,8 @@ namespace EzUI {
 		{
 			if (element == NULL) break;
 			if (element->ValueTStr() == "style") {// if element is style
-				AnalysisStyle(element->GetText());//
+				const char* text = element->GetText();
+				AnalysisStyle(text == NULL ? "" : text);//
 			}
 			else { //if no style , must be Control
 				controlNodes.push_back(element);

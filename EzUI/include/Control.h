@@ -25,6 +25,8 @@ namespace EzUI {
 		Control(const Control&) = delete;
 		Control& operator=(const Control&) = delete;
 		void ComputeClipRect();//计算基于父控件的裁剪区域
+	protected:
+		std::list<Control*> ViewControls;//基于控件中的可见控件
 	public:
 		Distance Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数
 		WindowData* PublicData = NULL;//窗口上的公共数据
@@ -39,7 +41,6 @@ namespace EzUI {
 		ControlStyle HoverStyle;//鼠标悬浮样式
 		ControlStyle ActiveStyle;//鼠标按下样式
 		Control* Parent = NULL;//父控件
-		std::list<Control*> VisibleControls;//基于控件中的可见控件
 		std::function<void(Control*, const EventArgs&)> EventHandler = NULL;//事件处理器
 	protected:
 		//仅限子类使用
@@ -137,6 +138,7 @@ namespace EzUI {
 		const float& GetScale();
 		bool IsPendLayout();//是否含有挂起的布局
 		const LayoutState& TryPendLayout();//尝试挂起布局 返回当前布局状态
+		const LayoutState& GetLayoutState();//获取当前布局状态
 		void EndLayout();//结束布局
 		virtual void RefreshLayout();//刷新布局
 		void SetTips(const EString& text);//设置tips文字
@@ -145,6 +147,7 @@ namespace EzUI {
 		bool DispatchEvent(const EventArgs& arg);//派发失去焦点事件
 		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::Static);//设置样式类似qt那样
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性
+		const std::list<Control*>& GetViewControls();//获取当前可见控件
 		const std::list<Control*>& GetControls();//获取当前所有子控件 const修饰是因为不建议直接修改子控件内容
 		Control* GetControl(size_t pos);//使用下标获取控件 会自动过滤spacer(弹簧)这类的控件
 		bool Contains(Control* ctl);//会递归循全部包含的控件是否存在

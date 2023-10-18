@@ -115,11 +115,15 @@ namespace EzUI {
 	Control::Control() {}
 	void Control::OnChildPaint(PaintEventArgs& args)
 	{
-		VisibleControls = GetControls();
+		ViewControls.clear();
 		//绘制子控件
-		for (auto& it : VisibleControls) {
+		Rect rect(0, 0, Width(), Height());
+		for (auto& it : _controls) {
+			if (rect.IntersectsWith(it->GetRect())) {
+				ViewControls.push_back(it);
+			}
 			it->DispatchEvent(args);
-		}	
+		}
 	}
 	void Control::OnPaint(PaintEventArgs& args)
 	{
@@ -379,6 +383,10 @@ namespace EzUI {
 			}
 		} while (false);
 	}
+	const std::list<Control*>& Control::GetViewControls()
+	{
+		return this->ViewControls;
+	}
 	const float& Control::GetScale()
 	{
 		return this->_scale;
@@ -470,6 +478,10 @@ namespace EzUI {
 		if (this->_layoutState == LayoutState::None) {
 			this->_layoutState = LayoutState::Pend;
 		}
+		return this->_layoutState;
+	}
+	const LayoutState& Control::GetLayoutState()
+	{
 		return this->_layoutState;
 	}
 	void Control::EndLayout() {
@@ -967,9 +979,9 @@ namespace EzUI {
 			ctl->OnRemove();
 			this->TryPendLayout();//移除控件需要将布局重新挂起
 			_controls.erase(it1);
-			auto it2 = ::std::find(VisibleControls.begin(), VisibleControls.end(), ctl);
-			if (it2 != VisibleControls.end()) {
-				VisibleControls.erase(it2);
+			auto it2 = ::std::find(ViewControls.begin(), ViewControls.end(), ctl);
+			if (it2 != ViewControls.end()) {
+				ViewControls.erase(it2);
 			}
 		}
 	}
@@ -1243,7 +1255,7 @@ namespace EzUI {
 				delete* i;
 			}
 		}
-		this->VisibleControls.clear();//清空可见控件
+		this->ViewControls.clear();//清空可见控件
 		this->_controls.clear();//清空子控件集合
 		this->_spacers.clear();//清空弹簧
 		this->TryPendLayout();//挂起布局
