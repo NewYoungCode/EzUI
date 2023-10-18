@@ -86,6 +86,7 @@ namespace EzUI {
 		void SetTopMost(bool top);//设置与取消窗口置顶
 		bool IsTopMost();//窗口是否置顶
 		virtual void Show();//操作窗口的显示
+		void Show(int cmdShow);//
 		virtual void Hide();//隐藏窗口
 		void ShowNormal();//正常显示窗口
 		void Close(int exitCode = 0);//关闭窗口 exitCode为退出代码

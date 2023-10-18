@@ -287,6 +287,14 @@ namespace EzUI {
 		::ShowWindow(Hwnd(), SW_SHOW);
 		_layout->Refresh();
 	}
+	void Window::Show(int cmdShow)
+	{
+		::ShowWindow(Hwnd(), cmdShow);
+		if (IsVisible()) {
+			ASSERT(_layout);
+			_layout->Refresh();
+		}
+	}
 	void Window::ShowNormal()
 	{
 		::ShowWindow(Hwnd(),SW_SHOWNORMAL);
