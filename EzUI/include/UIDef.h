@@ -78,8 +78,8 @@ inline HCURSOR LoadCursor(HINSTANCE hInstance, LPCTSTR lpCursorName) {
 
 //用于GUI框架内部通讯
 #define WM_GUI_SYSTEM WM_USER
-#define WM_GUI_TASKCALLBACK 0x01
-#define WM_GUI_TIMERCALLBACK 0x02
+#define WM_GUI_INVOKE 0x01
+#define WM_GUI_BEGININVOKE 0x02
 //通知消息
 #define UI_NOTIFYICON WM_APP+0x01 //
 //GUI框架保留的消息

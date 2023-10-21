@@ -160,13 +160,6 @@ namespace EzUI {
 		std::function<void(Control*)> DelTips = NULL;//删除tips文字
 	};
 
-	//扩展消息
-	struct MessageEx {
-		UINT uMsg;
-		WPARAM wParam;
-		LPARAM lParam;
-	};
-
 	class UI_EXPORT StopWatch {
 	private:
 		std::chrono::system_clock::time_point beg_t;
@@ -419,10 +412,15 @@ namespace EzUI {
 		std::map<EString, EString> _attrs;
 	public:
 		void* Tag = NULL;
+		WindowData* PublicData = NULL;//公共数据
 	public:
 		IControl();
 		virtual ~IControl();
 	public:
+		//原理采用PostMessage
+		bool BeginInvoke(const std::function<void()>& func);
+		//原理采用SendMessage
+		bool Invoke(const std::function<void()>& func);
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//设置属性
 		virtual EString GetAttribute(const EString& attrName);//获取属性
 	};

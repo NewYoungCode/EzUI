@@ -6,12 +6,12 @@ namespace EzUI {
 	LayeredWindow::LayeredWindow(int width, int height, HWND owner) :BorderlessWindow(width, height, owner, WS_EX_LAYERED)
 	{
 		UpdateShadowBox();
-		PublicData.InvalidateRect = [=](void* _rect) ->void {
+		PublicData->InvalidateRect = [=](void* _rect) ->void {
 			Rect& rect = *(Rect*)_rect;
 			this->InvalidateRect(rect);
 			};
 
-		PublicData.UpdateWindow = [=]()->void {
+		PublicData->UpdateWindow = [=]()->void {
 			// µ ±ªÊ÷∆
 			if (IsVisible() && !_InvalidateRect.IsEmptyArea()) {
 				::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);

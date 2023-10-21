@@ -29,7 +29,6 @@ namespace EzUI {
 		std::list<Control*> ViewControls;//基于控件中的可见控件
 	public:
 		Distance Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数
-		WindowData* PublicData = NULL;//窗口上的公共数据
 		//添加到主窗口通知函数中可拦截
 		Event EventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnKeyChar | Event::OnKeyDown | Event::OnKeyUp;
 		Event EventPassThrough = Event::None;//控件可被穿透的事件

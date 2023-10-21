@@ -37,13 +37,11 @@ namespace EzUI {
 	class TaskFactory {
 		int maxCount = 0;
 		std::list<Task*> task;
-		HWND hWnd = NULL;
 	private:
 		TaskFactory(const TaskFactory&) = delete;
 	public:
-		TaskFactory(int maxTaskCount = 50, HWND hWnd = NULL) {
+		TaskFactory(int maxTaskCount = 50) {
 			this->maxCount = maxTaskCount;
-			this->hWnd = hWnd;
 		}
 		template<class F, class... Args>
 		bool Run(F&& f, Args&& ...args) {
@@ -70,19 +68,7 @@ namespace EzUI {
 			task.push_back(thread);
 			return true;
 		}
-		//如果构造时传入了HWND,Invoke函数则会到主线程
-		void Invoke(const std::function<void()>& callback) {
-			if (hWnd && callback) {
-				MessageEx ex;
-				ex.uMsg = WM_GUI_TASKCALLBACK;
-				ex.wParam = (WPARAM)&callback;
-				auto param = (WPARAM)&ex;
-				::SendMessage(hWnd, WM_GUI_SYSTEM, param, 0);
-			}
-			else if (callback) {
-				callback();
-			}
-		}
+		
 		//等待已有任务全部完成
 		void Wait() {
 			for (auto& it : task) {

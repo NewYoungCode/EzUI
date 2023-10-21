@@ -24,8 +24,6 @@ namespace EzUI {
 		Control* _layout = NULL;//窗口布局
 		HWND _hWndTips = NULL;
 		void InitWindow(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
-	public:
-		WindowData PublicData;//存储公共数据
 	private:
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;

@@ -2,8 +2,8 @@
 #include "TabLayout.h"
 
 namespace EzUI {
-#define _focusControl PublicData.FocusControl
-#define _inputControl PublicData.InputControl
+#define _focusControl PublicData->FocusControl
+#define _inputControl PublicData->InputControl
 
 	Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 	{
@@ -18,10 +18,14 @@ namespace EzUI {
 		if (Hwnd()) {
 			::DestroyWindow(Hwnd());
 		}
+		if (PublicData) {
+			delete PublicData;
+		}
 	}
 
 	void Window::InitWindow(int width, int height, HWND owner, DWORD dStyle, DWORD  exStyle)
 	{
+		this->PublicData = new WindowData;
 		Rect _rect(0, 0, width, height);
 
 		POINT cursorPos;
@@ -33,14 +37,14 @@ namespace EzUI {
 			if (rect.Contains(cursorPos.x, cursorPos.y)) {
 				_rect.X = rect.X;
 				_rect.Y = rect.Y;
-				this->PublicData.Scale = it.Scale;
+				this->PublicData->Scale = it.Scale;
 				break;
 			}
 		}
 
-		_rect.Scale(this->PublicData.Scale);
+		_rect.Scale(this->PublicData->Scale);
 
-		PublicData.HANDLE = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, EzUI::__EzUI__WindowClassName, EzUI::__EzUI__WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
+		PublicData->HANDLE = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, EzUI::__EzUI__WindowClassName, EzUI::__EzUI__WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
 			_rect.X, _rect.Y, _rect.Width, _rect.Height, owner, NULL, EzUI::__EzUI__HINSTANCE, NULL);
 
 		if (owner) {
@@ -66,11 +70,11 @@ namespace EzUI {
 		);
 
 
-		PublicData.HANDLE = Hwnd();
-		PublicData.Window = this;
+		PublicData->HANDLE = Hwnd();
+		PublicData->Window = this;
 
 		if ((exStyle & WS_EX_LAYERED) != WS_EX_LAYERED) {
-			PublicData.InvalidateRect = [=](void* _rect)->void {
+			PublicData->InvalidateRect = [=](void* _rect)->void {
 				RECT r;
 				r.left = ((Rect*)_rect)->GetLeft();
 				r.top = ((Rect*)_rect)->GetTop();
@@ -78,7 +82,7 @@ namespace EzUI {
 				r.bottom = ((Rect*)_rect)->GetBottom();
 				::InvalidateRect(Hwnd(), &r, FALSE);
 				};
-			PublicData.UpdateWindow = [=]()->void {
+			PublicData->UpdateWindow = [=]()->void {
 				RECT updateRect;
 				while (::GetUpdateRect(Hwnd(), &updateRect, FALSE))
 				{
@@ -90,7 +94,7 @@ namespace EzUI {
 				}
 				};
 		}
-		PublicData.SetTips = [=](Control* ctl, const std::wstring& text)->void {
+		PublicData->SetTips = [=](Control* ctl, const std::wstring& text)->void {
 
 			// 枚举并删除每个提示项
 			int toolCount = SendMessage(_hWndTips, TTM_GETTOOLCOUNT, 0, 0);
@@ -122,7 +126,7 @@ namespace EzUI {
 				SendMessage(_hWndTips, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
 			}
 			};
-		PublicData.DelTips = [=](Control* ctl)->void {
+		PublicData->DelTips = [=](Control* ctl)->void {
 			TOOLINFO	tti{ 0 };
 			tti.cbSize = sizeof(TOOLINFO);
 			tti.hwnd = Hwnd();
@@ -130,7 +134,7 @@ namespace EzUI {
 			//移除
 			SendMessage(_hWndTips, TTM_DELTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
 			};
-		PublicData.RemoveControl = [=](Control* delControl)->void {
+		PublicData->RemoveControl = [=](Control* delControl)->void {
 			if (_focusControl == delControl) {
 				_focusControl = NULL;
 			}
@@ -138,10 +142,10 @@ namespace EzUI {
 				_inputControl = NULL;
 			}
 			};
-		PublicData.Notify = [=](Control* sender, EventArgs& args)->bool {
+		PublicData->Notify = [=](Control* sender, EventArgs& args)->bool {
 			return OnNotify(sender, args);
 			};
-		UI_SET_USERDATA(Hwnd(), &PublicData);
+		UI_SET_USERDATA(Hwnd(), this->PublicData);
 	}
 
 	Control* Window::FindControl(const EString& objectName)
@@ -154,7 +158,7 @@ namespace EzUI {
 
 	const HWND& Window::Hwnd()
 	{
-		return PublicData.HANDLE;
+		return PublicData->HANDLE;
 	}
 	const Rect& Window::GetWindowRect()
 	{
@@ -210,21 +214,21 @@ namespace EzUI {
 		//int newY = rect.Y;
 		//int newWidth = rect.Width;
 		//int newHeight = rect.Height;
-		int newX = PublicData.Scale * rect.X + 0.5;
-		int newY = PublicData.Scale * rect.Y + 0.5;
-		int newWidth = PublicData.Scale * rect.Width + 0.5;
-		int newHeight = PublicData.Scale * rect.Height + 0.5;
+		int newX = PublicData->Scale * rect.X + 0.5;
+		int newY = PublicData->Scale * rect.Y + 0.5;
+		int newWidth = PublicData->Scale * rect.Width + 0.5;
+		int newHeight = PublicData->Scale * rect.Height + 0.5;
 		::SetWindowPos(Hwnd(), NULL, newX, newY, newWidth, newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
 	}
 	void Window::SetMiniSize(const Size& size)
 	{
 		_miniSize = size;
-		_miniSize.Scale(this->PublicData.Scale);
+		_miniSize.Scale(this->PublicData->Scale);
 	}
 	void Window::SetMaxSize(const Size& size)
 	{
 		_maxSize = size;
-		_maxSize.Scale(this->PublicData.Scale);
+		_maxSize.Scale(this->PublicData->Scale);
 	}
 	void Window::SetIcon(short id)
 	{
@@ -237,7 +241,7 @@ namespace EzUI {
 	void Window::SetLayout(EzUI::Control* layout) {
 		ASSERT(layout);
 		_layout = layout;
-		_layout->PublicData = &PublicData;
+		_layout->PublicData = this->PublicData;
 
 		if (_layout->Style.FontFamily.empty()) {
 			WCHAR fontName[LF_FACESIZE] = { 0 };
@@ -297,7 +301,7 @@ namespace EzUI {
 	}
 	void Window::ShowNormal()
 	{
-		::ShowWindow(Hwnd(),SW_SHOWNORMAL);
+		::ShowWindow(Hwnd(), SW_SHOWNORMAL);
 	}
 	void Window::ShowMinimized() {
 		::ShowWindow(Hwnd(), SW_MINIMIZE);
@@ -402,6 +406,8 @@ namespace EzUI {
 			::SetWindowPos(Hwnd(), NULL, _rect.X, _rect.Y, _rect.Width, _rect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
 		}
 	}
+
+
 
 	LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
@@ -598,7 +604,7 @@ namespace EzUI {
 		case WM_KEYDOWN:
 		{
 			if (wParam == VK_F11) {
-				PublicData.Debug = !PublicData.Debug;
+				PublicData->Debug = !PublicData->Debug;
 				Invalidate();
 			}
 			OnKeyDown(wParam, lParam);
@@ -610,7 +616,7 @@ namespace EzUI {
 		}
 		case WM_DESTROY:
 		{
-			this->PublicData.HANDLE = NULL;
+			this->PublicData->HANDLE = NULL;
 			OnDestroy();
 			break;
 		}
@@ -714,7 +720,7 @@ namespace EzUI {
 		DXRender graphics(winHDC, 0, 0, GetClientRect().Width, GetClientRect().Height);
 		PaintEventArgs args(graphics);
 		args.DC = winHDC;
-		args.PublicData = &PublicData;
+		args.PublicData = this->PublicData;
 		args.PublicData->PaintCount = 0;
 		args.InvalidRectangle = rePaintRect;
 		OnPaint(args);
@@ -965,7 +971,7 @@ namespace EzUI {
 	}
 
 	const float& Window::GetScale() {
-		return this->PublicData.Scale;
+		return this->PublicData->Scale;
 	}
 
 	void Window::OnSize(const Size& sz)
@@ -973,8 +979,8 @@ namespace EzUI {
 		if (!_layout) {
 			return;
 		}
-		if (_layout->GetScale() != PublicData.Scale) {
-			this->OnDpiChange(PublicData.Scale, Rect());
+		if (_layout->GetScale() != PublicData->Scale) {
+			this->OnDpiChange(PublicData->Scale, Rect());
 		}
 		_layout->SetRect(this->GetClientRect());
 		_layout->Invalidate();
@@ -1027,8 +1033,8 @@ namespace EzUI {
 	void Window::OnDpiChange(const float& systemScale, const Rect& newRect)
 	{
 		//新的缩放比
-		float newScale = systemScale / PublicData.Scale;
-		this->PublicData.Scale = systemScale;
+		float newScale = systemScale / PublicData->Scale;
+		this->PublicData->Scale = systemScale;
 		this->_miniSize.Scale(newScale);
 		this->_maxSize.Scale(newScale);
 		DpiChangeEventArgs arg(systemScale);
@@ -1103,4 +1109,4 @@ namespace EzUI {
 		return false;
 	}
 
-};
+	};

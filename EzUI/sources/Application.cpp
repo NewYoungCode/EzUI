@@ -16,12 +16,13 @@ namespace EzUI {
 		//		SWP_FRAMECHANGED);
 		//}
 		if (message == WM_GUI_SYSTEM) {
-			//此消息已经被GUI框架保留 用户无法接收到
-			MessageEx* ex = (MessageEx*)wParam;
-			if (ex->uMsg == WM_GUI_TASKCALLBACK) {
+			if (wParam == WM_GUI_BEGININVOKE || wParam == WM_GUI_INVOKE) {
 				typedef std::function<void()>  Func;
-				Func* callback = (Func*)ex->wParam;
+				Func* callback = (Func*)lParam;
 				(*callback)();
+				if (wParam == WM_GUI_BEGININVOKE) {
+					delete callback;
+				}
 			}
 			return 0;
 		}
@@ -100,7 +101,7 @@ namespace EzUI {
 		DWORD len = SizeofResource(hInst, hRsrc);
 		EzUI::__EzUI__HVSResource = LoadResource(hInst, hRsrc);
 		EzUI::__EzUI__HZipResource = OpenZip((void*)EzUI::__EzUI__HVSResource, len, password.empty() ? NULL : password.c_str());
-}
+	}
 	//使用本地文件名称加载资源包
 	Application::Application(const EString& fileName, const EString& password) {
 		Init();

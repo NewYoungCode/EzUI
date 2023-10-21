@@ -391,6 +391,23 @@ namespace EzUI {
 	IControl::IControl() {}
 	IControl::~IControl() {}
 
+	bool IControl::BeginInvoke(const std::function<void()>& func)
+	{
+		if (PublicData->HANDLE) {
+			std::function<void()>* f = new std::function<void()>(func);
+			BOOL ret= ::PostMessage(PublicData->HANDLE, WM_GUI_SYSTEM, WM_GUI_BEGININVOKE, (LPARAM)f);
+			if (ret == FALSE) {
+				delete f;
+			}
+			return ret;
+		}
+		return false;
+	}
+	bool IControl::Invoke(const std::function<void()>& func)
+	{
+		return ::SendMessage(PublicData->HANDLE, WM_GUI_SYSTEM, WM_GUI_INVOKE, (LPARAM)&func);
+	}
+
 	void IControl::SetAttribute(const EString& attrName, const EString& attrValue) {
 		auto itor = _attrs.find(attrName);
 		if (itor != _attrs.end()) {
