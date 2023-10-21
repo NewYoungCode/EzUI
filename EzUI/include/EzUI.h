@@ -159,6 +159,14 @@ namespace EzUI {
 		std::function<void(Control*, const std::wstring&)> SetTips = NULL;//设置tips文字
 		std::function<void(Control*)> DelTips = NULL;//删除tips文字
 	};
+
+	//扩展消息
+	struct MessageEx {
+		UINT uMsg;
+		WPARAM wParam;
+		LPARAM lParam;
+	};
+
 	class UI_EXPORT StopWatch {
 	private:
 		std::chrono::system_clock::time_point beg_t;

@@ -9,20 +9,37 @@ namespace EzUI {
 		PublicData.InvalidateRect = [=](void* _rect) ->void {
 			Rect& rect = *(Rect*)_rect;
 			this->InvalidateRect(rect);
-			//进行实时绘制
+			};
+
+		PublicData.UpdateWindow = [=]()->void {
+			//实时绘制
 			if (IsVisible() && !_InvalidateRect.IsEmptyArea()) {
 				::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
 			}
 			};
-		PublicData.UpdateWindow = [=]()->void {
-			//无需重复绘制 后期会改为别的方式
-			/*if (IsVisible() && !_InvalidateRect.IsEmptyArea()) {
-				::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
-			}*/
-			};
+
+		_paintTask = new std::thread([=]() {
+			while (!_bExit && Hwnd() != NULL)
+			{
+				if (!_InvalidateRect.IsEmptyArea() && IsVisible()) {
+					::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
+				}
+				Sleep(5);
+			}
+			this->_bStop = true;
+			});
 	}
 
 	LayeredWindow::~LayeredWindow() {
+		_bExit = true;
+		while (true)
+		{
+			if (_bStop) {
+				_paintTask->join();
+				delete _paintTask;
+				break;
+			}
+		}
 		if (_winBitmap) {
 			delete _winBitmap;
 		}

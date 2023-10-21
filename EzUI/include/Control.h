@@ -163,7 +163,8 @@ namespace EzUI {
 		virtual void Add(Control* childCtl);//添加控件到末尾
 		virtual void Remove(Control* childCtl);//删除控件 返回下一个迭代器
 		virtual void SetParent(Control* parentCtl);//设置父控件
-		virtual void Clear(bool freeControls = false);//清空当前所有子控件, freeControls是否释放所有子控件
+		virtual void Clear();//清空当前所有子控件
+		virtual void Clear(bool freeChilds);//清空当前所有子控件, freeControls是否释放所有子控件
 		virtual void SetVisible(bool flag);//设置Visible标志
 		virtual bool IsVisible();//获取Visible标志
 		virtual bool Invalidate();// 使当前控件的区域为无效区域
@@ -216,6 +217,10 @@ namespace EzUI {
 		int _viewLength = 0;
 		//溢出容器的长度
 		int _overflowLength = 0;
+
+		//int _old_viewLength = 0;
+		//int _old_contentLength = 0;
+		//int _old_offset = 0;
 	public:
 		//滚动条计算出偏移之后的回调函数
 		std::function<void(int)> OffsetCallback = NULL;

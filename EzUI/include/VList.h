@@ -1,9 +1,9 @@
 #pragma once
-#include "Control.h"
+#include "List.h"
 #include "VScrollBar.h"
 namespace EzUI {
 	class UI_EXPORT VList :
-		public Control
+		public List
 	{
 	private:
 		VScrollBar vScrollBar;

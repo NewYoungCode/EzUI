@@ -7,10 +7,12 @@
 #include "BorderlessWindow.h"
 #include "LayeredWindow.h"
 #include "UIManager.h"
+#include "Task.h"
 class MainFrm :
 	public BorderlessWindow
 {
 private:
+	TaskFactory tasks;
 	std::vector<Song> songs;
 	LayeredWindow* deskTopWnd;
 	//no new 不需要释放

@@ -8,8 +8,8 @@ namespace EzUI {
 			return;
 		}
 		timer = ::timeSetEvent(this->Interval, 0, [](UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2) {
-			Timer* t = (Timer*)dwUser;
-			if (t->Tick) {
+			ThreadTimer* t = (ThreadTimer*)dwUser;
+			if (t && t->Tick) {
 				t->Tick(t);
 			}
 			}, (DWORD_PTR)this, TIME_PERIODIC);

@@ -76,9 +76,14 @@ inline HCURSOR LoadCursor(HINSTANCE hInstance, LPCTSTR lpCursorName) {
 #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
 
-#define UI_NOTIFYICON WM_USER+0x01 //
-
-#define WM_UIMESSAGE  WM_USER+20   
+//用于GUI框架内部通讯
+#define WM_GUI_SYSTEM WM_USER
+#define WM_GUI_TASKCALLBACK 0x01
+#define WM_GUI_TIMERCALLBACK 0x02
+//通知消息
+#define UI_NOTIFYICON WM_APP+0x01 //
+//GUI框架保留的消息
+#define WM_UI_MESSAGE  WM_APP+20   
 #ifdef _WINDLL
 #define  UI_EXPORT  __declspec(dllexport) 
 #else

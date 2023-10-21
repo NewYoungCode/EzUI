@@ -1,5 +1,5 @@
 #include "MainFrm.h"
-MainFrm::MainFrm() :BorderlessWindow(1020, 690)
+MainFrm::MainFrm() :BorderlessWindow(1020, 690), tasks(50, Hwnd())
 {
 	InitForm();
 	//托盘
@@ -16,6 +16,24 @@ void MainFrm::InitForm() {
 	main = FindControl("main");
 	//第一次不显示背景图 测试无图绘制的性能
 
+	tasks.Run([=]() {
+		//异步请求
+		WebClient wc;
+		EString resp;
+		wc.HttpGet("www.baidu.com", resp);
+		//调用到主窗口
+		tasks.Invoke([=, &wc, &resp]() {
+			this->SetText(resp);
+			});
+		}
+	);
+	
+
+	EzUI::Task* tt = new EzUI::Task([=](int sleep) {
+		Sleep(sleep);
+		},100);
+	tt->Wait();
+	delete tt;
 
 	tools = FindControl("tools");
 	center = FindControl("center");

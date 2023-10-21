@@ -1,5 +1,5 @@
 #include "Application.h"
-
+#include <functional>
 namespace EzUI {
 
 	LRESULT CALLBACK __EzUI__WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -15,6 +15,16 @@ namespace EzUI {
 		//		rcClient.right - rcClient.left, rcClient.bottom - rcClient.top,
 		//		SWP_FRAMECHANGED);
 		//}
+		if (message == WM_GUI_SYSTEM) {
+			//此消息已经被GUI框架保留 用户无法接收到
+			MessageEx* ex = (MessageEx*)wParam;
+			if (ex->uMsg == WM_GUI_TASKCALLBACK) {
+				typedef std::function<void()>  Func;
+				Func* callback = (Func*)ex->wParam;
+				(*callback)();
+			}
+			return 0;
+		}
 		if (wndData) {
 			return  ((Window*)wndData->Window)->WndProc(message, wParam, lParam);
 		}
@@ -90,7 +100,7 @@ namespace EzUI {
 		DWORD len = SizeofResource(hInst, hRsrc);
 		EzUI::__EzUI__HVSResource = LoadResource(hInst, hRsrc);
 		EzUI::__EzUI__HZipResource = OpenZip((void*)EzUI::__EzUI__HVSResource, len, password.empty() ? NULL : password.c_str());
-	}
+}
 	//使用本地文件名称加载资源包
 	Application::Application(const EString& fileName, const EString& password) {
 		Init();

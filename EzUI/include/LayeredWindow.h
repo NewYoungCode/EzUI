@@ -12,6 +12,9 @@ namespace EzUI {
 		void PushDC(HDC hdc);
 		Rect _InvalidateRect;
 		EBitmap* _winBitmap = NULL;
+		bool _bStop = false;
+		bool _bExit = false;
+		std::thread* _paintTask = NULL;
 	protected:
 		LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
 		virtual void OnSize(const Size& sz)override;
