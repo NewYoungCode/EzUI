@@ -12,7 +12,6 @@ class MainFrm :
 	public BorderlessWindow
 {
 private:
-	TaskFactory tasks;
 	std::vector<Song> songs;
 	LayeredWindow* deskTopWnd;
 	//no new 不需要释放
@@ -31,20 +30,19 @@ private:
 	ThreadTimer* timer = NULL;
 	ConfigIni* cfg = NULL;
 	Image* bkImg = NULL, * headImg = NULL;
-	std::future<void>* downloadTask = NULL;
+	Task* downloadTask = NULL;
 	int lastWidth = -1;
 	EString nowSong;
 protected:
 	virtual void OnKeyDown(WPARAM wparam, LPARAM lParam)override;
 	bool OnNotify(Control* sender, EventArgs& args)override;
-	LRESULT WndProc(UINT msg, WPARAM W, LPARAM L) override;
-	void NextPage(float scrollPos);
 	void OpenSongView();
-	void Task();
+	void TimerTick();
 	void OpenLrcView();
 	void InitForm();
 	void DownLoadImage(EString SingerName, EString headImageUrl);
 public:
+	void NextPage(float scrollPos);
 	MainFrm();
 	virtual ~MainFrm();
 	void OnClose(bool& b) override;

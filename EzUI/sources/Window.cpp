@@ -1109,4 +1109,4 @@ namespace EzUI {
 		return false;
 	}
 
-	};
+};

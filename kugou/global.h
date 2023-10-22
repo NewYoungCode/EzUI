@@ -25,8 +25,9 @@
 #pragma comment(lib,"CommonD.lib")
 #endif
 
-#define refreshImage WM_UI_MESSAGE +1
-#define WM_Invalidate  WM_UI_MESSAGE+2
+//自定义通知栏消息
+#define WM_NOTIFYICON1 WM_APP+1
+
 using namespace EzUI;
 
 struct Song {

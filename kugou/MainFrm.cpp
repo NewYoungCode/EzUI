@@ -1,5 +1,5 @@
 #include "MainFrm.h"
-MainFrm::MainFrm() :BorderlessWindow(1020, 690), tasks(50)
+MainFrm::MainFrm() :BorderlessWindow(1020, 690), ntfi(WM_NOTIFYICON1)
 {
 	InitForm();
 	//托盘
@@ -16,33 +16,6 @@ void MainFrm::InitForm() {
 	main = FindControl("main");
 	//第一次不显示背景图 测试无图绘制的性能
 
-
-	tasks.Run([=]() {
-		//异步请求
-		WebClient wc;
-		EString resp;
-		wc.HttpGet("www.baidu.com", resp);
-		auto ptr = &wc;
-
-		//调用到主窗口
-		this->BeginInvoke([=]() {
-			auto aa = wc;
-			auto ptr =&wc ;
-			int a = 0;
-			});
-		//调用到主窗口
-		this->Invoke([=, &wc, &resp]() {
-			this->SetText(resp);
-			});
-		
-		}
-	);
-
-	EzUI::Task* tt = new EzUI::Task([=](int sleep) {
-		Sleep(sleep);
-		},100);
-	tt->Wait();
-	delete tt;
 
 	tools = FindControl("tools");
 	center = FindControl("center");
@@ -84,12 +57,14 @@ void MainFrm::InitForm() {
 	if (main->Style.BackImage) {
 		main->Style.BackImage->SizeMode = ImageSizeMode::CenterImage;
 	}
+
+	int scrollBarWidth = 9 * this->GetScale() + 0.5;
 	////美化左侧本地列表的滚动条
-	localList->GetScrollBar()->SetWidth(9);
-	localList->GetScrollBar()->Style.Border.Radius = 9;
+	localList->GetScrollBar()->SetWidth(scrollBarWidth);
+	localList->GetScrollBar()->Style.Border.Radius = scrollBarWidth;
 	//美化搜索列表的滚动条
-	searchList->GetScrollBar()->SetWidth(9);
-	searchList->GetScrollBar()->Style.Border.Radius = 9;
+	searchList->GetScrollBar()->SetWidth(scrollBarWidth);
+	searchList->GetScrollBar()->Style.Border.Radius = scrollBarWidth;
 	searchList->GetScrollBar()->Style.BackColor = Color(200, 200, 200, 50);
 	//集体设置右上角的最大化 最小化 关闭按钮 的悬浮效果
 	$(this->FindControl("btns")->GetControls()).CssHover("color:#ffffff;");
@@ -131,7 +106,7 @@ void MainFrm::InitForm() {
 	timer = new ThreadTimer;
 	timer->Interval = 10;
 	timer->Tick = [=](ThreadTimer*) {
-		Task();
+		TimerTick();
 		};
 	//添加一些事件到窗口中的OnNotify函数进行拦截
 	player.Tag = main;
@@ -158,7 +133,6 @@ MainFrm::~MainFrm()
 		delete timer;
 	}
 	if (downloadTask) {
-		downloadTask->get();
 		delete downloadTask;
 	}
 	if (cfg) {
@@ -278,7 +252,27 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 			//bkImg->SizeMode = ImageSizeMode::CenterImage;
 		}
 	}
-	::PostMessage(Hwnd(), refreshImage, NULL, NULL);
+
+	this->BeginInvoke([=]() {
+		if (headImg) {
+			singer->Style.ForeImage = headImg;
+			singer->Style.BackImage->Visible = false;
+		}
+		else {
+			singer->Style.BackImage->Visible = true;
+		}
+		if (bkImg) {
+			main->Style.ForeImage = bkImg;
+			main->Style.BackImage->Visible = false;
+			deskTopWnd->GetLayout()->Style.BackImage = bkImg;
+		}
+		else {
+			main->Style.BackImage->Visible = true;
+		}
+		singer->Invalidate();
+		main->Invalidate();
+		});
+
 }
 void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 {
@@ -337,13 +331,10 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			int dur = json["timeLength"].asInt();
 			EString playUrl = json["url"].asCString();
 
-
-
 			if (!playUrl.empty()) {
 				EString SingerName = sender->GetAttribute("SingerName");
 
 				if (downloadTask) {
-					downloadTask->get();
 					delete downloadTask;
 				}
 
@@ -362,9 +353,10 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				}
 
 				FindControl("lrcView")->DispatchEvent(Event::OnMouseClick);
-				downloadTask = new std::future<void>(std::async([&](EString singname, EString imgUrl)->void {
+
+				downloadTask = new Task([this](EString singname, EString imgUrl) {
 					this->DownLoadImage(singname, imgUrl);
-					}, SingerName, json["imgUrl"].asString()));
+					}, SingerName, json["imgUrl"].asString());
 
 				if (dynamic_cast<SearchItem*>(sender)) {
 					Song* tag = (Song*)sender->Tag;
@@ -530,44 +522,47 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 	}
 	return __super::OnNotify(sender, args);
 }
-void MainFrm::Task() {
-	if (player.GetState() == libvlc_state_t::libvlc_Playing) {
-		long long position = player.Position();
-		double rate = position / (player.Duration() * 1000.0);
-		int w = playerBar->Width() * rate;
+void MainFrm::TimerTick() {
 
-		if (deskTopWnd->IsVisible()) {
-			deskTopLrc->ChangePostion(position);
+	this->Invoke([=]() {
+		if (player.GetState() == libvlc_state_t::libvlc_Playing) {
+			long long position = player.Position();
+			double rate = position / (player.Duration() * 1000.0);
+			int w = playerBar->Width() * rate;
+
+			if (deskTopWnd->IsVisible()) {
+				deskTopLrc->ChangePostion(position);
+			}
+			else {
+				lrcCtl.ChangePostion(position);
+			}
+
+			EString f1 = global::toTimeStr(position / 1000);
+			EString f2 = global::toTimeStr(player.Duration());
+			EString fen = f1 + "/" + f2;
+
+			if (control->GetPageIndex() != 1) {
+				control->SetPageIndex(1);
+				control->Invalidate();
+			}
+			if (fen != lastFen) {
+				lastFen = fen;
+				time->SetText(fen);
+				time->Invalidate();
+			}
+			if (w != lastWidth) {
+				lastWidth = w;
+				playerBar2->SetFixedWidth(w);
+				playerBar2->Invalidate();
+			}
 		}
 		else {
-			lrcCtl.ChangePostion(position);
+			if (control->GetPageIndex() != 0) {
+				control->SetPageIndex(0);
+				control->Invalidate();
+			}
 		}
-
-		EString f1 = global::toTimeStr(position / 1000);
-		EString f2 = global::toTimeStr(player.Duration());
-		EString fen = f1 + "/" + f2;
-
-		if (control->GetPageIndex() != 1) {
-			control->SetPageIndex(1);
-			control->Invalidate();
-		}
-		if (fen != lastFen) {
-			lastFen = fen;
-			time->SetText(fen);
-			time->Invalidate();
-		}
-		if (w != lastWidth) {
-			lastWidth = w;
-			playerBar2->SetFixedWidth(w);
-			playerBar2->Invalidate();
-		}
-	}
-	else {
-		if (control->GetPageIndex() != 0) {
-			control->SetPageIndex(0);
-			control->Invalidate();
-		}
-	}
+		});
 }
 
 void MainFrm::NextPage(float scrollPos) {
@@ -611,37 +606,4 @@ void  MainFrm::OpenLrcView() {
 	center->Style.BackColor = Color::Transparent;
 	center->Style.ForeColor = Color::White;
 	Invalidate();
-}
-
-LRESULT MainFrm::WndProc(UINT msg, WPARAM W, LPARAM L)
-{
-	if (WM_Invalidate == msg) {
-		Control* ct = (Control*)W;
-		ct->Invalidate();
-		return 0;
-	}
-	if (refreshImage == msg) {
-		if (headImg) {
-			singer->Style.ForeImage = headImg;
-			singer->Style.BackImage->Visible = false;
-		}
-		else {
-			singer->Style.BackImage->Visible = true;
-		}
-		if (bkImg) {
-			main->Style.ForeImage = bkImg;
-			main->Style.BackImage->Visible = false;
-			deskTopWnd->GetLayout()->Style.BackImage = bkImg;
-		}
-		else {
-			main->Style.BackImage->Visible = true;
-		}
-		singer->Invalidate();
-		main->Invalidate();
-		return 0;
-	}
-
-	if (msg == WM_LBUTTONDOWN) {
-	}
-	return __super::WndProc(msg, W, L);
 }

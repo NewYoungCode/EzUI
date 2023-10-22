@@ -10,8 +10,10 @@ namespace EzUI {
 		std::function<bool(UINT)> _messageCallback = NULL;
 		NOTIFYICONDATAW _nid;
 		Menu* _menu;
+		UINT _msgId = 0;
 	public:
-		NotifyIcon();
+		//需要自定义一个WIN32消息来供此类使用
+		NotifyIcon(UINT customMsg);
 		void SetIcon(short id);
 		void SetIcon(HICON icon);
 		void SetText(const WCHAR* text);

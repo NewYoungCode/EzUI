@@ -17,13 +17,16 @@ namespace EzUI {
 		//}
 		if (message == WM_GUI_SYSTEM) {
 			if (wParam == WM_GUI_BEGININVOKE || wParam == WM_GUI_INVOKE) {
-				typedef std::function<void()>  Func;
+				using Func = std::function<void()>;
 				Func* callback = (Func*)lParam;
 				(*callback)();
 				if (wParam == WM_GUI_BEGININVOKE) {
 					delete callback;
 				}
 			}
+			return 0;
+		}
+		if (message == WM_GUI_APP) {
 			return 0;
 		}
 		if (wndData) {

@@ -418,9 +418,27 @@ namespace EzUI {
 		virtual ~IControl();
 	public:
 		//原理采用PostMessage
-		bool BeginInvoke(const std::function<void()>& func);
+		template<class F, class... Args>
+		bool BeginInvoke(F&& f, Args&& ...args) {
+			if (PublicData) {
+				std::function<void()>* func = new std::function<void()>(std::bind(std::forward<F>(f), std::forward<Args>(args)...));
+				if (::PostMessage(PublicData->HANDLE, WM_GUI_SYSTEM, WM_GUI_BEGININVOKE, (LPARAM)func) == FALSE) {
+					delete func;
+					return false;
+				}
+				return true;
+			}
+			return false;
+		}
 		//原理采用SendMessage
-		bool Invoke(const std::function<void()>& func);
+		template<class F, class... Args>
+		bool Invoke(F&& f, Args&& ...args) {
+			if (PublicData) {
+				std::function<void()> func(std::bind(std::forward<F>(f), std::forward<Args>(args)...));
+				return ::SendMessage(PublicData->HANDLE, WM_GUI_SYSTEM, WM_GUI_INVOKE, (LPARAM)&func);
+			}
+			return false;
+		}
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//设置属性
 		virtual EString GetAttribute(const EString& attrName);//获取属性
 	};

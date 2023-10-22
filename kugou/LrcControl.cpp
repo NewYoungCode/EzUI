@@ -49,7 +49,11 @@ void LrcControl::Task()
 			lrc->point.Y -= v2;
 		}
 	}
-	Invalidate();
+
+	this->BeginInvoke([=]() {
+		Invalidate();
+		});
+
 }
 void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
 
