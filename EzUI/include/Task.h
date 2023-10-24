@@ -8,10 +8,10 @@ namespace EzUI {
 	private:
 		Task(const Task&) = delete;
 	public:
-		template<class F, class... Args>
-		Task(F&& f, Args&& ...args) {
+		template<class Func, class... Args>
+		Task(Func&& f, Args&& ...args) {
 			task = new std::thread([=]() mutable {
-				std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
+				std::invoke(std::forward<Func>(f), std::forward<Args>(args)...);
 				bStop = true;
 				});
 		}
@@ -43,8 +43,8 @@ namespace EzUI {
 		TaskFactory(int maxTaskCount = 50) {
 			this->maxCount = maxTaskCount;
 		}
-		template<class F, class... Args>
-		bool Run(F&& f, Args&& ...args) {
+		template<class Func, class... Args>
+		bool Run(Func&& f, Args&& ...args) {
 			int miniSize = maxCount / 2;
 			for (auto itor = task.begin(); itor != task.end();)
 			{
@@ -64,7 +64,7 @@ namespace EzUI {
 			if (task.size() >= maxCount) {
 				return false;
 			}
-			Task* thread = new Task(std::forward<F>(f), std::forward<Args>(args)...);
+			Task* thread = new Task(std::forward<Func>(f), std::forward<Args>(args)...);
 			task.push_back(thread);
 			return true;
 		}

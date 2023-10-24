@@ -407,6 +407,26 @@ namespace EzUI {
 		void SetStyle(const EString& key, const EString& value, const std::function<void(Image*)>& callback = NULL);
 	};
 
+	//原理采用PostMessage
+	template<class Func, class... Args>
+	bool BeginInvoke(HWND hWnd, Func&& f, Args&& ...args) {
+		std::function<void()>* func = new std::function<void()>(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
+		if (::PostMessage(hWnd, WM_GUI_SYSTEM, WM_GUI_BEGININVOKE, (LPARAM)func) == LRESULT(0)) {
+			delete func;
+			return false;
+		}
+		return true;
+	}
+	//原理采用SendMessage
+	template<class Func, class... Args>
+	bool Invoke(HWND hWnd, Func&& f, Args&& ...args) {
+		std::function<void()> func(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
+		if (::SendMessage(hWnd, WM_GUI_SYSTEM, WM_GUI_INVOKE, (LPARAM)&func) == LRESULT(-1)) {
+			return false;
+		}
+		return true;
+	}
+
 	class UI_EXPORT IControl {
 	private:
 		std::map<EString, EString> _attrs;
@@ -417,25 +437,17 @@ namespace EzUI {
 		IControl();
 		virtual ~IControl();
 	public:
-		//原理采用PostMessage
-		template<class F, class... Args>
-		bool BeginInvoke(F&& f, Args&& ...args) {
+		template<class Func, class... Args>
+		bool BeginInvoke(Func&& f, Args&& ...args) {
 			if (PublicData) {
-				std::function<void()>* func = new std::function<void()>(std::bind(std::forward<F>(f), std::forward<Args>(args)...));
-				if (::PostMessage(PublicData->HANDLE, WM_GUI_SYSTEM, WM_GUI_BEGININVOKE, (LPARAM)func) == FALSE) {
-					delete func;
-					return false;
-				}
-				return true;
+				return EzUI::BeginInvoke(PublicData->HANDLE, std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
 			}
 			return false;
 		}
-		//原理采用SendMessage
-		template<class F, class... Args>
-		bool Invoke(F&& f, Args&& ...args) {
+		template<class Func, class... Args>
+		bool Invoke(Func&& f, Args&& ...args) {
 			if (PublicData) {
-				std::function<void()> func(std::bind(std::forward<F>(f), std::forward<Args>(args)...));
-				return ::SendMessage(PublicData->HANDLE, WM_GUI_SYSTEM, WM_GUI_INVOKE, (LPARAM)&func);
+				return EzUI::Invoke(PublicData->HANDLE, std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
 			}
 			return false;
 		}
