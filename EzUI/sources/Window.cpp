@@ -98,7 +98,7 @@ namespace EzUI {
 
 			// 枚举并删除每个提示项
 			int toolCount = SendMessage(_hWndTips, TTM_GETTOOLCOUNT, 0, 0);
-			for (int i = 0; i < toolCount; i++) {
+			for (int i = 0; i < toolCount; ++i) {
 				TOOLINFO toolInfo{ 0 };
 				toolInfo.cbSize = sizeof(TOOLINFO);
 				toolInfo.hwnd = Hwnd();
@@ -779,8 +779,8 @@ namespace EzUI {
 			pTemp = (std::list<Control*>*)(&(outCtl->GetControls()));
 		}
 
-		for (auto i = pTemp->rbegin(); i != pTemp->rend(); i++) {
-			Control& it = **i;
+		for (auto itor = pTemp->rbegin(); itor != pTemp->rend(); ++itor) {
+			Control& it = **itor;
 			if (!it.IsVisible()) {
 				continue;
 			}
@@ -1100,7 +1100,7 @@ namespace EzUI {
 							tabLayout->Invalidate();
 							break;
 						}
-						pos++;
+						++pos;
 					}
 				}
 			}

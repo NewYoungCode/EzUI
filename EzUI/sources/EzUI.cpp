@@ -127,7 +127,7 @@ namespace EzUI {
 	}
 	void Ziper::UnZip(std::function<bool(int index, const EString& fileName, void* pData, size_t len, DWORD fileAttribute)> callback) {
 		ZIPENTRY ze;
-		for (int i = 0; i < _numitems; i++)
+		for (int i = 0; i < _numitems; ++i)
 		{
 			GetZipItem(_hZip, i, &ze);
 			size_t fileSize = ze.unc_size;

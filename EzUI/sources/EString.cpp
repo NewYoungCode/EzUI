@@ -5,9 +5,9 @@ namespace EzUI {
 		size_t pos = 0, count = 0;
 		while (p[pos] && pos < this->size()) {
 			if ((p[pos] & 0xc0) != 0x80) {
-				count++;
+				++count;
 			}
-			pos++;
+			++pos;
 		}
 		return count;
 	}
@@ -144,7 +144,7 @@ namespace EzUI {
 	void EString::Tolower(std::string* str_in_out)
 	{
 		std::string& str = *str_in_out;
-		for (size_t i = 0; i < str.size(); i++)
+		for (size_t i = 0; i < str.size(); ++i)
 		{
 			char& ch = (char&)str.c_str()[i];
 			if (ch >= 65 && ch <= 90) {
@@ -155,7 +155,7 @@ namespace EzUI {
 	void EString::Toupper(std::string* str_in_out)
 	{
 		std::string& str = *str_in_out;
-		for (size_t i = 0; i < str.size(); i++)
+		for (size_t i = 0; i < str.size(); ++i)
 		{
 			char& ch = (char&)str.c_str()[i];
 			if (ch >= 97 && ch <= 122) {
@@ -170,7 +170,7 @@ namespace EzUI {
 		for (auto& it : self) {
 			if (_char == it)continue;
 			bufStr[pos] = it;
-			pos++;
+			++pos;
 		}
 		*str_in_out = bufStr;
 		delete[] bufStr;

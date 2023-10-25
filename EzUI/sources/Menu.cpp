@@ -27,15 +27,15 @@ namespace EzUI {
 		::AppendMenuW(_hMenu, MF_POPUP, _dui_menu_index, text.unicode().c_str());
 		_list.push_back(_dui_menu_index);
 		auto temp = _dui_menu_index;
-		_dui_menu_index++;
+		++_dui_menu_index;
 		return temp;
 	}
 
 	void Menu::Remove(UINT_PTR id) {
 		RemoveMenu(_hMenu, (UINT)id, MF_BYCOMMAND);
-		for (auto it = _list.begin(); it < _list.end(); it++) {
-			if (id == *it) {
-				_list.erase(it);
+		for (auto itor = _list.begin(); itor < _list.end(); ++itor) {
+			if (id == *itor) {
+				_list.erase(itor);
 				break;
 			}
 		}

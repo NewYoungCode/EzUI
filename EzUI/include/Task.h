@@ -55,7 +55,7 @@ namespace EzUI {
 					itor = task.erase(itor);
 				}
 				else {
-					itor++;
+					++itor;
 				}
 				if (task.size() <= miniSize) {
 					break;
@@ -88,7 +88,7 @@ namespace EzUI {
 					itor = task.erase(itor);
 				}
 				else {
-					itor++;
+					++itor;
 				}
 			}
 		}
@@ -96,4 +96,57 @@ namespace EzUI {
 			Clear();
 		}
 	};
+
+	//class TaskFactory {
+	//	int maxCount = 0;
+	//	bool exit = false;
+	//	std::list<Task*> task;
+	//	Task* mainTask = NULL;
+	//	std::mutex mtx;
+	//private:
+	//	TaskFactory(const TaskFactory&) = delete;
+	//public:
+	//	TaskFactory(int maxTaskCount = 50) {
+	//		this->maxCount = maxTaskCount;
+	//		mainTask = new Task([=]() {
+	//			while (!exit)
+	//			{
+	//				Clear();
+	//			}
+	//			});
+	//	}
+	//	template<class Func, class... Args>
+	//	bool Run(Func&& f, Args&& ...args) {
+	//		std::unique_lock<std::mutex> autoLock(mtx);
+	//		if (task.size() >= maxCount) {
+	//			return false;
+	//		}
+	//		Task* thread = new Task(std::forward<Func>(f), std::forward<Args>(args)...);
+	//		task.push_back(thread);
+	//		return true;
+	//	}
+	//	void Clear() {
+	//		std::unique_lock<std::mutex> autoLock(mtx);
+	//		std::list<Task*>::iterator itor = task.begin();
+	//		while (task.size() > 0)
+	//		{
+	//			if (itor == task.end()) {
+	//				itor = task.begin();
+	//			}
+	//			if ((*itor)->IsStop()) {
+	//				(*itor)->Wait();
+	//				delete (*itor);
+	//				itor = task.erase(itor);
+	//			}
+	//			else {
+	//				++itor;
+	//			}
+	//		}
+	//	}
+	//	virtual ~TaskFactory() {
+	//		Clear();
+	//		exit = true;
+	//		delete mainTask;
+	//	}
+	//};
 };

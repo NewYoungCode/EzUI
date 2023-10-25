@@ -18,15 +18,15 @@ namespace EzUI {
 	void TabLayout::OnLayout()
 	{
 		int pos = 0;
-		for (auto i = GetControls().begin(); i != GetControls().end(); i++)
+		for (auto itor = GetControls().begin(); itor != GetControls().end(); ++itor)
 		{
-			(*i)->SetRect(Rect(0, 0, Width(), Height()));
-			(*i)->SetVisible(false);
+			(*itor)->SetRect(Rect(0, 0, Width(), Height()));
+			(*itor)->SetVisible(false);
 			if (pos == _index) {
-				(*i)->SetVisible(true);
+				(*itor)->SetVisible(true);
 				_index = pos;
 			}
-			pos++;
+			++pos;
 		}
 		this->EndLayout();
 	}
@@ -52,7 +52,7 @@ namespace EzUI {
 			if (pos == this->_index) {
 				return it;
 			}
-			pos++;
+			++pos;
 		}
 		return NULL;
 	}

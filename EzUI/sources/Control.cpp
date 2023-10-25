@@ -778,7 +778,7 @@ namespace EzUI {
 			return;
 		}
 		//绘制数量+1
-		args.PublicData->PaintCount++;
+		++args.PublicData->PaintCount;
 		//设置绘制偏移 以及旋转
 		args.PushOffset({ clientRect.X ,clientRect.Y });
 		float angle = this->GetAngle();
@@ -902,15 +902,15 @@ namespace EzUI {
 	{
 		const auto& pControls = this->GetControls();
 		size_t pos = 0;
-		for (auto i = pControls.begin(); i != pControls.end(); i++)
+		for (auto itor = pControls.begin(); itor != pControls.end(); ++itor)
 		{
-			if (dynamic_cast<Spacer*>(*i)) {
+			if (dynamic_cast<Spacer*>(*itor)) {
 				continue;
 			}
-			if (*i == childCtl) {
+			if ((*itor) == childCtl) {
 				return pos;
 			}
-			pos++;
+			++pos;
 		}
 		return size_t(-1);
 	}
@@ -938,27 +938,29 @@ namespace EzUI {
 	void Control::Insert(size_t pos, Control* ctl)
 	{
 #ifdef _DEBUG
-		auto itor = std::find(_controls.begin(), _controls.end(), ctl);
-		if (itor != _controls.end()) {
-			ASSERT(!"The control already exists and cannot be added repeatedly");
+		{
+			auto itor = std::find(_controls.begin(), _controls.end(), ctl);
+			if (itor != _controls.end()) {
+				ASSERT(!"The control already exists and cannot be added repeatedly");
+			}
 		}
 #endif
 		if (dynamic_cast<Spacer*>(ctl)) {
 			_spacers.push_back(ctl);
 		}
 		size_t i = 0;
-		std::list<Control*>::iterator it = _controls.begin();
-		for (; it != _controls.end(); it++) {
+		std::list<Control*>::iterator itor = _controls.begin();
+		for (; itor != _controls.end(); ++itor) {
 			if (i == pos) {
 				break;
 			}
-			i++;
+			++i;
 		}
-		if (it == _controls.end()) {
+		if (itor == _controls.end()) {
 			_controls.push_back(ctl);
 		}
 		else {
-			_controls.insert(it, ctl);
+			_controls.insert(itor, ctl);
 		}
 		ctl->PublicData = this->PublicData;
 		ctl->Parent = this;
@@ -974,14 +976,14 @@ namespace EzUI {
 	}
 	void Control::Remove(Control* ctl)
 	{
-		auto it1 = ::std::find(_controls.begin(), _controls.end(), ctl);
-		if (it1 != _controls.end()) {
+		auto itor = ::std::find(_controls.begin(), _controls.end(), ctl);
+		if (itor != _controls.end()) {
 			ctl->OnRemove();
 			this->TryPendLayout();//移除控件需要将布局重新挂起
-			_controls.erase(it1);
-			auto it2 = ::std::find(ViewControls.begin(), ViewControls.end(), ctl);
-			if (it2 != ViewControls.end()) {
-				ViewControls.erase(it2);
+			_controls.erase(itor);
+			auto itor2 = ::std::find(ViewControls.begin(), ViewControls.end(), ctl);
+			if (itor2 != ViewControls.end()) {
+				ViewControls.erase(itor2);
 			}
 		}
 	}
@@ -1086,12 +1088,12 @@ namespace EzUI {
 			}
 			if (it == ct1) {
 				it = ct2;
-				swapCount++;
+				++swapCount;
 				continue;
 			}
 			if (it == ct2) {
 				it = ct1;
-				swapCount++;
+				++swapCount;
 				continue;
 			}
 		}
@@ -1229,7 +1231,7 @@ namespace EzUI {
 			if (_pos == pos) {
 				return it;
 			}
-			_pos++;
+			++_pos;
 		}
 		return NULL;
 	}
@@ -1254,11 +1256,12 @@ namespace EzUI {
 	void Control::Clear(bool freeChilds)
 	{
 		std::list<Control*> temp = _controls;
-		for (auto i = temp.begin(); i != temp.end(); i++)
+		for (auto itor = temp.begin(); itor != temp.end(); ++itor)
 		{
-			(*i)->OnRemove();
+			Control* it = *itor;
+			it->OnRemove();
 			if (freeChilds) {
-				delete* i;
+				delete it;
 			}
 		}
 		this->ViewControls.clear();//清空可见控件

@@ -11,14 +11,14 @@ namespace EzUI {
 		char count = 0;
 		for (auto& it : str) {
 			if (it == '"') {
-				count++;
+				++count;
 			}
 			if (it == _char && count != 1) {
 				continue;
 			}
 			if (count == 2)count = 0;
 			bufStr[pos] = it;
-			pos++;
+			++pos;
 		}
 		str = bufStr;
 		delete bufStr;
@@ -429,7 +429,7 @@ namespace EzUI {
 			if (pos == _pos) {
 				return it;
 			}
-			_pos++;
+			++_pos;
 		}
 		return NULL;
 	}

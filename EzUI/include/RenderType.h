@@ -603,7 +603,7 @@ namespace EzUI {
 			if (_framePos >= _frameCount) {
 				_framePos = 0;
 			}
-			_framePos++;
+			++_framePos;
 			return 0;
 		}
 	};

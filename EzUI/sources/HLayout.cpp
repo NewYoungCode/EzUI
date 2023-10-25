@@ -11,11 +11,11 @@ namespace EzUI {
 				it->RefreshLayout();
 			}
 			if (it->IsVisible() == false || (it->IsAutoWidth() && it->GetFixedWidth() <= 0)) continue;
-			count++;
+			++count;
 			auto width = it->GetFixedWidth();
 			if (width > 0) {
 				fixedWidth += width;
-				fixedTotal++;
+				++fixedTotal;
 			}
 			fixedWidth += +it->Margin.GetHSpace();
 		}

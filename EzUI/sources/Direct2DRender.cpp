@@ -308,7 +308,7 @@ namespace EzUI {
 		bitmapdecoder->GetFrame(_framePos, &pframe);
 		fmtcovter->Initialize(pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
 
-		_framePos++;
+		++_framePos;
 		return 60;
 	}
 	DXImage* DXImage::Clone()

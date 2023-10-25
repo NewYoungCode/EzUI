@@ -252,7 +252,7 @@ namespace EzUI {
 			return;
 		}
 		if (wParam == VK_RIGHT) {
-			_textPos++;
+			++_textPos;
 			_careShow = true;
 			_selectRects.clear();
 			BuildCare();
@@ -284,7 +284,7 @@ namespace EzUI {
 		if (!PasswordChar.empty()) {
 			drawText = new std::wstring;
 			int count = PasswordChar.size() * _text.size();
-			for (size_t i = 0; i < _text.size(); i++)
+			for (size_t i = 0; i < _text.size(); ++i)
 			{
 				*drawText += PasswordChar;
 			}
@@ -373,7 +373,7 @@ namespace EzUI {
 
 				_textPos = _A_TextPos;
 				if (_A_isTrailingHit) {
-					_textPos++;
+					++_textPos;
 				}
 			}
 			Invalidate();

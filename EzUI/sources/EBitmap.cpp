@@ -64,7 +64,7 @@ namespace EzUI {
 		if (rect.GetRight() > Width) {
 			rect.Width = this->Width - rect.X;
 		}
-		for (int y = rect.Y; y < rect.GetBottom(); y++)
+		for (int y = rect.Y; y < rect.GetBottom(); ++y)
 		{
 			DWORD* point = (DWORD*)this->point + (rect.X + y * this->Width);//起始地址+坐标偏移
 			::memset(point, 0, rect.Width * 4);//抹除

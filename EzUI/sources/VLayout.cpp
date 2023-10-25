@@ -19,11 +19,11 @@ namespace EzUI {
 				it->RefreshLayout();
 			}
 			if (it->IsVisible() == false || (it->IsAutoHeight() && it->GetFixedHeight() <= 0))continue;
-			count++;
+			++count;
 			auto height = it->GetFixedHeight();
 			if (height > 0) {
 				fixedHeight += height;
-				fixedTotal++;
+				++fixedTotal;
 			}
 			fixedHeight += +it->Margin.GetVSpace();
 		}

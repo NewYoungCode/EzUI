@@ -28,15 +28,15 @@ namespace EzUI {
 			Right = m_Width - iSize - radius,
 			Bottom = m_Height - iSize - radius;
 		int x = 0, y = 0;
-		for (size_t i = 0; i < iSize; i++)
+		for (size_t i = 0; i < iSize; ++i)
 		{
 			iAplpha = int(255 - cos(fN * (i)) * 255);
-			for (x = Left; x <= Right; x++)
+			for (x = Left; x <= Right; ++x)
 			{
 				setA(x, i, iAplpha);
 				setA(x, m_Height - i - 1, iAplpha);
 			}
-			for (y = Top; y <= Bottom; y++)
+			for (y = Top; y <= Bottom; ++y)
 			{
 				setA(i, y, iAplpha);
 				setA(m_Width - i - 1, y, iAplpha);
@@ -44,9 +44,9 @@ namespace EzUI {
 		}
 		double fL = 0;
 		int iSizeR = iSize + radius;
-		for (int y = 0; y < iSizeR; y++)
+		for (int y = 0; y < iSizeR; ++y)
 		{
-			for (int x = y; x < iSizeR; x++)
+			for (int x = y; x < iSizeR; ++x)
 			{
 				fL = sqrt((iSizeR - x) * (iSizeR - x) + (iSizeR - y) * (iSizeR - y));
 				if (fL <= radius) {
