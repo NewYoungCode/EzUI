@@ -1,10 +1,13 @@
 #pragma once
 #include "EzUI.h"
+#include <condition_variable>
 namespace EzUI {
 	class Task {
 		bool bStop = false;
 		std::thread* task = NULL;
 		bool bJoin = false;
+		std::mutex mtx;
+		std::condition_variable codv;
 	private:
 		Task(const Task&) = delete;
 	public:
@@ -12,141 +15,40 @@ namespace EzUI {
 		Task(Func&& f, Args&& ...args) {
 			task = new std::thread([=]() mutable {
 				std::invoke(std::forward<Func>(f), std::forward<Args>(args)...);
-				bStop = true;
+				{
+					std::unique_lock<std::mutex> autoLock(mtx);
+					bStop = true;
+				}
+				codv.notify_one();
 				});
 		}
-		void Wait() {
-			while (!bJoin)
-			{
-				if (IsStop()) {
-					task->join();
-					bJoin = true;
-					break;
-				}
-			}
-		}
-		bool IsStop() {
-			return bStop;
-		}
-		virtual ~Task() {
-			Wait();
-			delete task;
-		}
+		void Wait();
+		bool IsStopped();
+		virtual ~Task();
 	};
 
 	class TaskFactory {
-		int maxCount = 0;
-		std::list<Task*> task;
+		bool bStop = false;
+		std::list<Task*> tasks;
+		std::list<std::function<void()>> funcs;
+		std::mutex mtx;
+		std::condition_variable codv;
 	private:
 		TaskFactory(const TaskFactory&) = delete;
 	public:
-		TaskFactory(int maxTaskCount = 50) {
-			this->maxCount = maxTaskCount;
-		}
+		TaskFactory(int maxTaskCount = 50);
 		template<class Func, class... Args>
-		bool Run(Func&& f, Args&& ...args) {
-			int miniSize = maxCount / 2;
-			for (auto itor = task.begin(); itor != task.end();)
+		bool Add(Func&& f, Args&& ...args) {
 			{
-				Task* thread = *itor;
-				if (thread->IsStop()) {
-					thread->Wait();
-					delete thread;
-					itor = task.erase(itor);
-				}
-				else {
-					++itor;
-				}
-				if (task.size() <= miniSize) {
-					break;
-				}
+				std::unique_lock<std::mutex> autoLock(mtx);
+				std::function<void()> func(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
+				funcs.push_back(func);
 			}
-			if (task.size() >= maxCount) {
-				return false;
-			}
-			Task* thread = new Task(std::forward<Func>(f), std::forward<Args>(args)...);
-			task.push_back(thread);
+			codv.notify_one();
 			return true;
 		}
-		
-		//等待已有任务全部完成
-		void Wait() {
-			for (auto& it : task) {
-				it->Wait();
-			}
-		}
-		void Clear() {
-			std::list<Task*>::iterator itor = task.begin();
-			while (task.size() > 0)
-			{
-				if (itor == task.end()) {
-					itor = task.begin();
-				}
-				if ((*itor)->IsStop()) {
-					(*itor)->Wait();
-					delete (*itor);
-					itor = task.erase(itor);
-				}
-				else {
-					++itor;
-				}
-			}
-		}
-		virtual ~TaskFactory() {
-			Clear();
-		}
+		void Clear();
+		virtual ~TaskFactory();
 	};
 
-	//class TaskFactory {
-	//	int maxCount = 0;
-	//	bool exit = false;
-	//	std::list<Task*> task;
-	//	Task* mainTask = NULL;
-	//	std::mutex mtx;
-	//private:
-	//	TaskFactory(const TaskFactory&) = delete;
-	//public:
-	//	TaskFactory(int maxTaskCount = 50) {
-	//		this->maxCount = maxTaskCount;
-	//		mainTask = new Task([=]() {
-	//			while (!exit)
-	//			{
-	//				Clear();
-	//			}
-	//			});
-	//	}
-	//	template<class Func, class... Args>
-	//	bool Run(Func&& f, Args&& ...args) {
-	//		std::unique_lock<std::mutex> autoLock(mtx);
-	//		if (task.size() >= maxCount) {
-	//			return false;
-	//		}
-	//		Task* thread = new Task(std::forward<Func>(f), std::forward<Args>(args)...);
-	//		task.push_back(thread);
-	//		return true;
-	//	}
-	//	void Clear() {
-	//		std::unique_lock<std::mutex> autoLock(mtx);
-	//		std::list<Task*>::iterator itor = task.begin();
-	//		while (task.size() > 0)
-	//		{
-	//			if (itor == task.end()) {
-	//				itor = task.begin();
-	//			}
-	//			if ((*itor)->IsStop()) {
-	//				(*itor)->Wait();
-	//				delete (*itor);
-	//				itor = task.erase(itor);
-	//			}
-	//			else {
-	//				++itor;
-	//			}
-	//		}
-	//	}
-	//	virtual ~TaskFactory() {
-	//		Clear();
-	//		exit = true;
-	//		delete mainTask;
-	//	}
-	//};
 };
