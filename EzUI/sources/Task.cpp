@@ -3,12 +3,12 @@ namespace EzUI {
 	void Task::Wait() {
 		if (!bJoin)
 		{
+			bJoin = true;
 			std::unique_lock<std::mutex> autoLock(mtx);
 			codv.wait(autoLock, [this]() ->bool {
 				return bStop;
 				});
 			task->join();
-			bJoin = true;
 		}
 	}
 	bool Task::IsStopped() {
@@ -32,6 +32,9 @@ namespace EzUI {
 						this->codv.wait(lock, [this]()->bool {
 							return this->bStop || !this->funcs.empty();
 							});
+						if (funcs.empty()) {
+							this->codv2.notify_one();
+						}
 						if (this->bStop && funcs.empty()) {
 							break;
 						}
@@ -44,8 +47,19 @@ namespace EzUI {
 		}
 	}
 
-	void TaskFactory::Clear() {
+	void TaskFactory::WaitAll() {
 		codv.notify_all();
+		std::unique_lock<std::mutex> lock2(this->mtx2);
+		this->codv2.wait(lock2, [this]()->bool {
+			return funcs.empty();
+			});
+	}
+	TaskFactory::~TaskFactory() {
+		{
+			std::unique_lock<std::mutex> autoLock(mtx);
+			bStop = true;
+		}
+		WaitAll();
 		while (tasks.size() > 0)
 		{
 			for (auto itor = tasks.begin(); itor != tasks.end(); )
@@ -60,12 +74,5 @@ namespace EzUI {
 				}
 			}
 		}
-	}
-	TaskFactory::~TaskFactory() {
-		{
-			std::unique_lock<std::mutex> autoLock(mtx);
-			bStop = true;
-		}
-		Clear();
 	}
 };

@@ -23,6 +23,7 @@ namespace EzUI {
 				});
 		}
 		void Wait();
+		//当前任务是否已经停止
 		bool IsStopped();
 		virtual ~Task();
 	};
@@ -33,21 +34,24 @@ namespace EzUI {
 		std::list<std::function<void()>> funcs;
 		std::mutex mtx;
 		std::condition_variable codv;
+		//用于等待任务清空的锁和条件变量
+		std::mutex mtx2;
+		std::condition_variable codv2;
 	private:
 		TaskFactory(const TaskFactory&) = delete;
 	public:
 		TaskFactory(int maxTaskCount = 50);
 		template<class Func, class... Args>
-		bool Add(Func&& f, Args&& ...args) {
+		void Add(Func&& f, Args&& ...args) {
 			{
 				std::unique_lock<std::mutex> autoLock(mtx);
 				std::function<void()> func(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
 				funcs.push_back(func);
 			}
 			codv.notify_one();
-			return true;
 		}
-		void Clear();
+		//等待所有任务完成
+		void WaitAll();
 		virtual ~TaskFactory();
 	};
 
