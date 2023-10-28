@@ -1145,7 +1145,7 @@ namespace EzUI {
 			WindowData* winData = PublicData;
 			if (winData) {
 				Rect _InvalidateRect = GetClientRect();
-				winData->InvalidateRect(&_InvalidateRect);
+				winData->InvalidateRect(_InvalidateRect);
 				return true;
 			}
 		}

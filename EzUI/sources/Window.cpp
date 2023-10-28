@@ -69,20 +69,19 @@ namespace EzUI {
 			NULL
 		);
 
-
 		PublicData->HANDLE = Hwnd();
 		PublicData->Window = this;
 
 		if ((exStyle & WS_EX_LAYERED) != WS_EX_LAYERED) {
-			PublicData->InvalidateRect = [=](void* _rect)->void {
+			PublicData->InvalidateRect = [this](const Rect& rect)->void {
 				RECT r;
-				r.left = ((Rect*)_rect)->GetLeft();
-				r.top = ((Rect*)_rect)->GetTop();
-				r.right = ((Rect*)_rect)->GetRight();
-				r.bottom = ((Rect*)_rect)->GetBottom();
+				r.left = rect.GetLeft();
+				r.top = rect.GetTop();
+				r.right = rect.GetRight();
+				r.bottom = rect.GetBottom();
 				::InvalidateRect(Hwnd(), &r, FALSE);
 				};
-			PublicData->UpdateWindow = [=]()->void {
+			PublicData->UpdateWindow = [this]()->void {
 				RECT updateRect;
 				while (::GetUpdateRect(Hwnd(), &updateRect, FALSE))
 				{
@@ -94,7 +93,7 @@ namespace EzUI {
 				}
 				};
 		}
-		PublicData->SetTips = [=](Control* ctl, const std::wstring& text)->void {
+		PublicData->SetTips = [this](Control* ctl, const std::wstring& text)->void {
 
 			// 枚举并删除每个提示项
 			int toolCount = SendMessage(_hWndTips, TTM_GETTOOLCOUNT, 0, 0);
@@ -126,7 +125,7 @@ namespace EzUI {
 				SendMessage(_hWndTips, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
 			}
 			};
-		PublicData->DelTips = [=](Control* ctl)->void {
+		PublicData->DelTips = [this](Control* ctl)->void {
 			TOOLINFO	tti{ 0 };
 			tti.cbSize = sizeof(TOOLINFO);
 			tti.hwnd = Hwnd();
@@ -134,7 +133,7 @@ namespace EzUI {
 			//移除
 			SendMessage(_hWndTips, TTM_DELTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
 			};
-		PublicData->RemoveControl = [=](Control* delControl)->void {
+		PublicData->RemoveControl = [this](Control* delControl)->void {
 			if (_focusControl == delControl) {
 				_focusControl = NULL;
 			}
@@ -142,7 +141,7 @@ namespace EzUI {
 				_inputControl = NULL;
 			}
 			};
-		PublicData->Notify = [=](Control* sender, EventArgs& args)->bool {
+		PublicData->Notify = [this](Control* sender, EventArgs& args)->bool {
 			return OnNotify(sender, args);
 			};
 		UI_SET_USERDATA(Hwnd(), this->PublicData);

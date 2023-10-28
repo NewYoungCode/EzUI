@@ -28,12 +28,12 @@ namespace EzUI {
 				{
 					std::function<void()> task;
 					{
-						std::unique_lock<std::mutex> lock(this->mtx);
-						this->codv.wait(lock, [this]()->bool {
+						std::unique_lock<std::mutex> autoLock(this->mtx);
+						this->codv.wait(autoLock, [this]()->bool {
 							return this->bStop || !this->funcs.empty();
 							});
 						if (funcs.empty()) {
-							this->codv2.notify_one();
+							this->codv2.notify_all();
 						}
 						if (this->bStop && funcs.empty()) {
 							break;
@@ -60,7 +60,7 @@ namespace EzUI {
 			bStop = true;
 		}
 		WaitAll();
-		while (tasks.size() > 0)
+		while (!tasks.empty())
 		{
 			for (auto itor = tasks.begin(); itor != tasks.end(); )
 			{

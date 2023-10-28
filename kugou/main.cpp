@@ -7,12 +7,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ int       nCmdShow)
 {
 
-//#ifdef _DEBUG
-//	AllocConsole();
-//	FILE* fp = NULL;
-//	freopen_s(&fp, "CONOUT$", "w+t", stdout);
-//#endif
-//	printf("福来day");
+#ifdef _DEBUG
+	AllocConsole();
+	FILE* fp = NULL;
+	freopen_s(&fp, "CONOUT$", "w+t", stdout);
+#endif
+	printf("福来day");
 
 	Curl_Global_Init();
 	EzUI::Application app("res.zip");//指定资源文件

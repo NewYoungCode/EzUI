@@ -1,29 +1,43 @@
 #pragma once
 #include "Timer.h"
-#pragma comment(lib,"Winmm.lib")
 namespace EzUI {
-	ThreadTimer::ThreadTimer() {}
-	void ThreadTimer::Start() {
-		if (timer != NULL) {
-			return;
-		}
-		timer = ::timeSetEvent(this->Interval, 0, [](UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2) {
-			ThreadTimer* t = (ThreadTimer*)dwUser;
-			if (t && t->Tick) {
-				t->Tick(t);
+	ThreadTimer::ThreadTimer() {
+		task = new Task([this]() {
+			while (true)
+			{
+				{
+					std::unique_lock<std::mutex> autoLock(mtx);
+					condv.wait(autoLock, [this]() {
+						return  this->bExit || !this->bStop;
+						});
+					if (this->bExit) {
+						break;
+					}
+				}
+				if (this->Tick) {
+					this->Tick(this);
+				}
+				Sleep(this->Interval);
 			}
-			}, (DWORD_PTR)this, TIME_PERIODIC);
-		ASSERT(timer);
+			});
+	}
+	void ThreadTimer::Start() {
+		std::unique_lock<std::mutex> autoLock(mtx);
+		bStop = false;
+		condv.notify_one();
 	}
 	void ThreadTimer::Stop() {
-		if (timer) {
-			MMRESULT ret = ::timeKillEvent(timer);
-			ASSERT(!ret);
-			timer = NULL;
-		}
+		std::unique_lock<std::mutex> autoLock(mtx);
+		bStop = true;
+		condv.notify_one();
 	}
-	ThreadTimer:: ~ThreadTimer() {
-		Stop();
+	ThreadTimer::~ThreadTimer() {
+		{
+			std::unique_lock<std::mutex> autoLock(mtx);
+			bExit = true;
+			condv.notify_one();
+		}
+		delete task;
 	}
 
 	std::map<UINT_PTR, UINT_PTR>  __EzUI__Timers;

@@ -2,7 +2,7 @@
 #include "EzUI.h"
 #include <condition_variable>
 namespace EzUI {
-	class Task {
+	class UI_EXPORT Task {
 		bool bStop = false;
 		std::thread* task = NULL;
 		bool bJoin = false;
@@ -13,13 +13,14 @@ namespace EzUI {
 	public:
 		template<class Func, class... Args>
 		Task(Func&& f, Args&& ...args) {
-			task = new std::thread([=]() mutable {
-				std::invoke(std::forward<Func>(f), std::forward<Args>(args)...);
+			std::function<void()> func(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
+			task = new std::thread([this, func]() mutable {
+				func();
 				{
 					std::unique_lock<std::mutex> autoLock(mtx);
 					bStop = true;
 				}
-				codv.notify_one();
+				codv.notify_all();
 				});
 		}
 		void Wait();
@@ -28,7 +29,7 @@ namespace EzUI {
 		virtual ~Task();
 	};
 
-	class TaskFactory {
+	class UI_EXPORT TaskFactory {
 		bool bStop = false;
 		std::list<Task*> tasks;
 		std::list<std::function<void()>> funcs;
@@ -41,15 +42,25 @@ namespace EzUI {
 		TaskFactory(const TaskFactory&) = delete;
 	public:
 		TaskFactory(int maxTaskCount = 50);
+		//添加到任务队列中的末尾(先后顺序执行)
 		template<class Func, class... Args>
 		void Add(Func&& f, Args&& ...args) {
 			{
 				std::unique_lock<std::mutex> autoLock(mtx);
-				std::function<void()> func(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
-				funcs.push_back(func);
+				funcs.emplace_back(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
 			}
 			codv.notify_one();
 		}
+		//添加至任务队列的第一位(优先执行)
+		template<class Func, class... Args>
+		void AddToFrist(Func&& f, Args&& ...args) {
+			{
+				std::unique_lock<std::mutex> autoLock(mtx);
+				funcs.emplace_front(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
+			}
+			codv.notify_one();
+		}
+
 		//等待所有任务完成
 		void WaitAll();
 		virtual ~TaskFactory();

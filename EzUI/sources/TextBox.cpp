@@ -16,7 +16,7 @@ namespace EzUI {
 
 		Style.Cursor = LoadCursor(Cursor::IBEAM);
 		_timer.Interval = 500;
-		_timer.Tick = [&](Timer*) {
+		_timer.Tick = [this](Timer*) {
 			if (this->Enable == false || this->ReadOnly == true) {
 				_careShow = false;
 				return;

@@ -2,19 +2,19 @@
 
 #include <list>
 #include <vector>
-#include <functional>
+#include <map>
 #include <chrono>
 #include <exception>
 #include <iostream>
 #include <sstream>
 #include <fstream>
 #include <string>
-#include <map>
 #include <memory>
 #include <functional>
 #include <thread>
 #include <mutex>
 #include <future>
+#include <condition_variable>
 
 #include <windows.h>
 #include <windowsx.h>
@@ -23,7 +23,6 @@
 #include <commdlg.h>
 #include <stdlib.h>
 #include <malloc.h>
-#include <memory.h>
 #include <tchar.h>
 #include <Ime.h>
 #include <shellapi.h>

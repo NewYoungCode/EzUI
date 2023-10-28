@@ -152,7 +152,7 @@ namespace EzUI {
 		size_t PaintCount = 0;
 		bool Debug = false;//是否开启debug模式
 		HWND HANDLE = NULL;//窗口句柄
-		std::function<void(void*)> InvalidateRect = NULL;//使一个区域无效
+		std::function<void(const Rect&)> InvalidateRect = NULL;//使一个区域无效
 		std::function<void()> UpdateWindow = NULL;//立即更新全部无效区域
 		std::function<bool(Control*, EventArgs&)> Notify = NULL;//
 		std::function<void(Control*)> RemoveControl = NULL;//清空控件标记等等...

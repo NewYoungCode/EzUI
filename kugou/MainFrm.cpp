@@ -1,5 +1,5 @@
 #include "MainFrm.h"
-MainFrm::MainFrm() :BorderlessWindow(1020, 690), ntfi(WM_NOTIFYICON1)
+MainFrm::MainFrm() :LayeredWindow(1020, 690), ntfi(WM_NOTIFYICON1)
 {
 	InitForm();
 	//мпел
@@ -129,7 +129,6 @@ void MainFrm::InitForm() {
 MainFrm::~MainFrm()
 {
 	if (timer) {
-		timer->Stop();
 		delete timer;
 	}
 	if (downloadTask) {

@@ -6,48 +6,67 @@ namespace EzUI {
 	LayeredWindow::LayeredWindow(int width, int height, HWND owner) :BorderlessWindow(width, height, owner, WS_EX_LAYERED)
 	{
 		UpdateShadowBox();
-		PublicData->InvalidateRect = [=](void* _rect) ->void {
-			Rect& rect = *(Rect*)_rect;
-			this->InvalidateRect(rect);
+		PublicData->InvalidateRect = [this](const Rect& rect) ->void {
+			{
+				std::unique_lock<std::mutex> autoLock(mtx);
+				//标记无效区域
+				this->InvalidateRect(rect);
+			}
+			if (IsVisible()) {
+				//通知线程绘制
+				condv.notify_one();
+			}
 			};
 
-		PublicData->UpdateWindow = [=]()->void {
+		PublicData->UpdateWindow = [this]()->void {
 			//实时绘制
 			if (IsVisible() && !_InvalidateRect.IsEmptyArea()) {
-				::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
+				this->Invoke([this]() {
+					this->Paint();
+					});
 			}
 			};
 
-		_paintTask = new std::thread([=]() {
-			while (!_bExit && Hwnd() != NULL)
+		_paintTask = new Task([this]() {
+			while (true)
 			{
-				if (!_InvalidateRect.IsEmptyArea() && IsVisible()) {
-					::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
+				{
+					std::unique_lock<std::mutex> autoLock(mtx);
+					condv.wait(autoLock, [this]()->bool {
+						if (this->PublicData->HANDLE == NULL) {
+							this->_bStop = true;
+						}
+						return (this->_bStop || !_InvalidateRect.IsEmptyArea());
+						});
+					if (this->_bStop) {
+						break;
+					}
 				}
+				//1000/5=200帧封顶
 				Sleep(5);
+				this->Invoke([this]() {
+					this->Paint();
+					});
 			}
-			this->_bStop = true;
 			});
 	}
 
 	LayeredWindow::~LayeredWindow() {
-		_bExit = true;
-		while (true)
 		{
-			if (_bStop) {
-				_paintTask->join();
-				delete _paintTask;
-				break;
-			}
+			std::unique_lock<std::mutex> autoLock(mtx);
+			_bStop = true;
 		}
+		condv.notify_all();
+		delete _paintTask;
 		if (_winBitmap) {
 			delete _winBitmap;
 		}
 	}
 
 	void LayeredWindow::InvalidateRect(const Rect& _rect) {
-		int Width = GetClientRect().Width;
-		int Height = GetClientRect().Height;
+		const Rect& clientRect = GetClientRect();
+		int Width = clientRect.Width;
+		int Height = clientRect.Height;
 		Rect rect = _rect;
 		if (rect.X < 0) {
 			rect.X = 0;
@@ -65,7 +84,7 @@ namespace EzUI {
 		} //这段代码是保证重绘区域一定是在窗口内
 		Rect::Union(_InvalidateRect, _InvalidateRect, rect);
 		//闪烁问题找到了 如果永远重绘整个客户端将不会闪烁
-		//_InvalidateRect = GetClientRect();
+		//_InvalidateRect = clientRect;
 	}
 	void LayeredWindow::OnSize(const Size& sz) {
 		if (_winBitmap) {
@@ -75,17 +94,15 @@ namespace EzUI {
 		__super::OnSize(sz);
 	}
 
-	LRESULT  LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
+	void LayeredWindow::Paint()
 	{
-		if (uMsg == WM_PAINT && _winBitmap && !_InvalidateRect.IsEmptyArea()) {
+		if (_winBitmap && !_InvalidateRect.IsEmptyArea()) {
 			_winBitmap->Earse(_InvalidateRect);//清除背景
 			HDC winHDC = _winBitmap->GetHDC();
 			DoPaint(winHDC, _InvalidateRect);
 			PushDC(winHDC);//updatelaredwindow 更新窗口
 			_InvalidateRect = Rect();//重置区域
-			return 0;
 		}
-		return __super::WndProc(uMsg, wParam, lParam);
 	}
 
 	void LayeredWindow::PushDC(HDC hdc) {

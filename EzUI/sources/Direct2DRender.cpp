@@ -290,9 +290,6 @@ namespace EzUI {
 			bitmapdecoder->GetFrameCount(&fCount);
 			_frameCount = fCount;
 		}
-		if (fCount > 1) {
-			int a = 0;
-		}
 	}
 	size_t DXImage::NextFrame() {
 		if (_framePos >= _frameCount) {

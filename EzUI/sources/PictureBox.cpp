@@ -25,7 +25,7 @@ namespace EzUI {
 			arg.Graphics.DrawImage(_img, Rect(0, 0, Width(), Height()));
 			if (_img->FrameCount() > 1) {
 				_timer.Interval = _img->NextFrame();
-				_timer.Tick = [=](Timer* timer) {
+				_timer.Tick = [this](Timer* timer) {
 					timer->Stop();
 					this->Invalidate();
 					};
