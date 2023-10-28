@@ -13,9 +13,10 @@ namespace EzUI {
 	public:
 		template<class Func, class... Args>
 		Task(Func&& f, Args&& ...args) {
-			std::function<void()> func(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
+			std::function<void()>* func = new std::function<void()>(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
 			task = new std::thread([this, func]() mutable {
-				func();
+				(*func)();
+				delete func;
 				{
 					std::unique_lock<std::mutex> autoLock(mtx);
 					bStop = true;
