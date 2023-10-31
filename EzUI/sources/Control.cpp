@@ -1268,8 +1268,9 @@ namespace EzUI {
 		this->_controls.clear();//清空子控件集合
 		this->_spacers.clear();//清空弹簧
 		this->TryPendLayout();//挂起布局
-		if (this->GetScrollBar()) {
-			this->GetScrollBar()->RefreshScroll();
+		ScrollBar* scrollBar = this->GetScrollBar();
+		if (scrollBar) {
+			scrollBar->Reset();
 		}
 	}
 	void Control::OnMouseMove(const MouseEventArgs& args)
@@ -1369,6 +1370,11 @@ namespace EzUI {
 			return false;
 		}
 		return this->IsVisible();
+	}
+	void ScrollBar::Reset()
+	{
+		this->_sliderPos = 0;
+		this->_offset = 0;
 	}
 	bool ScrollBar::Scrollable()
 	{
