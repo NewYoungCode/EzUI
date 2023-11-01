@@ -94,7 +94,7 @@ SearchItem::SearchItem(const Song& s) {
 	if (!s.MvHash.empty()) {
 		mv.SetAttribute("mvhash", s.MvHash);
 		mv.Style.ForeImage = Image::Make(L"imgs/mvicon.png");;
-		mv.Style.ForeImage->Margin = 8;
+		mv.Margin = 8;
 		mv.Style.Cursor = LoadCursor(Cursor::HAND);
 	}
 	else {
@@ -111,8 +111,8 @@ SearchItem::SearchItem(const Song& s) {
 
 	EString fileName = "imgs/" + std::to_string(s.QualityLevel) + ".png";
 	Image* img = Image::Make(fileName.unicode());
-	img->Margin = 8;
 	del.Style.BackImage = img;
+	del.Margin = 8;
 
 	Add(new HSpacer(15));
 	Add(&songName);
