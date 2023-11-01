@@ -245,8 +245,6 @@ namespace EzUI {
 		virtual void ParentSize(const Size& parentSize) = 0;
 		//滚动条是否已经绘制且显示
 		bool IsDraw();
-		//重置滚动条数据到起点(不执行重绘)
-		void Reset();
 		//滚动条是否能够滚动
 		bool Scrollable();
 		//当父控件发生内容发生改变 请调用刷新滚动条

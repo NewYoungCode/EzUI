@@ -742,13 +742,8 @@ namespace EzUI {
 		}
 		const ImageSizeMode& imageSizeMode = image->SizeMode;
 		const Rect& sourceRect = image->Offset;
-		const EzUI::Distance& padding = image->Margin;
 		//计算坐标
 		Rect rect = tagRect;
-		rect.X += padding.Left;
-		rect.Y += padding.Top;
-		rect.Width -= padding.Right * 2;
-		rect.Height -= padding.Bottom * 2;
 		//转换坐标,缩放
 		Size imgSize(image->GetWidth(), image->GetHeight());
 		if (!sourceRect.IsEmptyArea()) {

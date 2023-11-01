@@ -58,31 +58,6 @@ namespace EzUI {
 		bool Zoom = true;//是否支持缩放
 		Window(int width, int height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
 		virtual ~Window();
-		//原理采用PostMessage
-		template<class Func, class... Args>
-		bool BeginInvoke(Func&& f, Args&& ...args) {
-			if (PublicData->HANDLE == NULL) {
-				return false;
-			}
-			std::function<void()>* func = new std::function<void()>(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
-			if (::PostMessage(PublicData->HANDLE, WM_GUI_SYSTEM, WM_GUI_BEGININVOKE, (LPARAM)func) == LRESULT(0)) {
-				delete func;
-				return false;
-			}
-			return true;
-		}
-		//原理采用SendMessage
-		template<class Func, class... Args>
-		bool Invoke(Func&& f, Args&& ...args) {
-			if (PublicData->HANDLE == NULL) {
-				return false;
-			}
-			std::function<void()> func(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
-			if (::SendMessage(PublicData->HANDLE, WM_GUI_SYSTEM, WM_GUI_INVOKE, (LPARAM)&func) == LRESULT(-1)) {
-				return false;
-			}
-			return true;
-		}
 		/// <summary>
 		/// 在窗口中寻找命中的控件
 		/// </summary>

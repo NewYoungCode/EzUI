@@ -46,7 +46,7 @@ namespace EzUI {
 
 		PublicData->HANDLE = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, EzUI::__EzUI__WindowClassName, EzUI::__EzUI__WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
 			_rect.X, _rect.Y, _rect.Width, _rect.Height, owner, NULL, EzUI::__EzUI__HINSTANCE, NULL);
-
+		PublicData->Window = this;
 		if (owner) {
 			this->CenterToWindow(owner);
 		}

@@ -590,7 +590,6 @@ namespace EzUI {
 		size_t _frameCount = 0;//总帧数
 		size_t _framePos = 0;//当前帧率索引
 	public:
-		Distance Margin;//与图片与绘制矩形的距离 该数值越大 图片将越小 
 		Rect Offset;//取出图像部分区域进行绘制
 		ImageSizeMode SizeMode = ImageSizeMode::Zoom;// 图像显示模式
 	public:

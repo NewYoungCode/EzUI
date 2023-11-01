@@ -10,7 +10,6 @@ namespace EzUI {
 	protected:
 		virtual void OnRemove()override;
 		virtual void OnForePaint(PaintEventArgs& arg)override;
-		virtual void OnDpiChange(const DpiChangeEventArgs& args)override;
 	public:
 		PictureBox();
 		virtual ~PictureBox();

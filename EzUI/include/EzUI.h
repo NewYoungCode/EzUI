@@ -12,6 +12,7 @@ namespace EzUI {
 	class EventArgs;
 	class ControlStyle;
 	class Control;
+	class Window;
 	class Spacer;
 	class ScrollBar;
 	enum class Cursor :ULONG_PTR;
@@ -145,12 +146,12 @@ namespace EzUI {
 		bool Primary = false;//是否为主显示器
 	};
 	struct WindowData {
-		void* Window = NULL;//窗口类实例
 		float Scale = 1.0f;//缩放率
 		Control* FocusControl = NULL;//具有焦点的控件
 		Control* InputControl = NULL;//输入框
 		size_t PaintCount = 0;
 		bool Debug = false;//是否开启debug模式
+		EzUI::Window* Window = NULL;//主窗类的实例
 		HWND HANDLE = NULL;//窗口句柄
 		std::function<void(const Rect&)> InvalidateRect = NULL;//使一个区域无效
 		std::function<void()> UpdateWindow = NULL;//立即更新全部无效区域
@@ -407,6 +408,26 @@ namespace EzUI {
 		void SetStyle(const EString& key, const EString& value, const std::function<void(Image*)>& callback = NULL);
 	};
 
+	//原理采用PostMessage
+	template<class Func, class... Args>
+	bool BeginInvoke(HWND hWnd, Func&& f, Args&& ...args) {
+		std::function<void()>* func = new std::function<void()>(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
+		if (::PostMessage(hWnd, WM_GUI_SYSTEM, WM_GUI_BEGININVOKE, (LPARAM)func) == LRESULT(0)) {
+			delete func;
+			return false;
+		}
+		return true;
+	}
+	//原理采用SendMessage
+	template<class Func, class... Args>
+	bool Invoke(HWND hWnd, Func&& f, Args&& ...args) {
+		std::function<void()> func(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
+		if (::SendMessage(hWnd, WM_GUI_SYSTEM, WM_GUI_INVOKE, (LPARAM)&func) == LRESULT(-1)) {
+			return false;
+		}
+		return true;
+	}
+
 	class UI_EXPORT IControl {
 	private:
 		std::map<EString, EString> _attrs;
@@ -417,6 +438,20 @@ namespace EzUI {
 		IControl();
 		virtual ~IControl();
 	public:
+		template<class Func, class... Args>
+		bool BeginInvoke(Func&& f, Args&& ...args) {
+			if (PublicData) {
+				return EzUI::BeginInvoke(PublicData->HANDLE, std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
+			}
+			return false;
+		}
+		template<class Func, class... Args>
+		bool Invoke(Func&& f, Args&& ...args) {
+			if (PublicData) {
+				return EzUI::Invoke(PublicData->HANDLE, std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
+			}
+			return false;
+		}
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//设置属性
 		virtual EString GetAttribute(const EString& attrName);//获取属性
 	};
