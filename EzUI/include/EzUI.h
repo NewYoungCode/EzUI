@@ -150,7 +150,10 @@ namespace EzUI {
 		Control* FocusControl = NULL;//具有焦点的控件
 		Control* InputControl = NULL;//输入框
 		size_t PaintCount = 0;
+#ifdef _DEBUG
 		bool Debug = false;//是否开启debug模式
+		Color DebugColor;//调试模式下的特有字段
+#endif
 		EzUI::Window* Window = NULL;//主窗类的实例
 		HWND HANDLE = NULL;//窗口句柄
 		std::function<void(const Rect&)> InvalidateRect = NULL;//使一个区域无效

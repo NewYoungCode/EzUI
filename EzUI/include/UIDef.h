@@ -15,6 +15,7 @@
 #include <mutex>
 #include <future>
 #include <condition_variable>
+#include <random>
 
 #include <windows.h>
 #include <windowsx.h>

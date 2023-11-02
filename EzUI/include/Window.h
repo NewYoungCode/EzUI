@@ -75,8 +75,8 @@ namespace EzUI {
 		void SetRect(const Rect& rect);//设置窗口矩形
 		void SetMiniSize(const Size& size);//设置窗口最小size
 		void SetMaxSize(const Size& size);//设置窗口最大size
-		void SetIcon(short id);//设置窗口ico
-		void SetIcon(HICON icon);//设置窗口ico
+		void SetIcon(short id);//设置窗口icon
+		void SetIcon(HICON icon);//设置窗口icon
 		void SetLayout(EzUI::Control* layout);//设置窗口主布局
 		Control* GetLayout();//获取窗口主布局
 		void SetText(const EString& text);//设置窗口标题
@@ -91,6 +91,7 @@ namespace EzUI {
 		virtual int ShowModal(bool disableOnwer = true);//会阻塞
 		void ShowMinimized();//最小化窗口
 		void ShowMaximized();//最大化窗口
+		void ShowFullScreen();//让窗口占满当前屏幕
 		bool IsVisible();//窗口是否显示
 		void SetVisible(bool flag);
 		void Invalidate();//使区域无效(延迟刷新)

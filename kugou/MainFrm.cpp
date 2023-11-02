@@ -401,7 +401,10 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 	}
 
 	if (args.EventType == Event::OnMouseClick) {
-
+		if (sender->Name == "login") {
+			this->ShowFullScreen();
+			return false;
+		}
 		if (sender->Name == "singer") {
 			/*MainFrm* m = new MainFrm();
 			m->SetSize({ 800,600 });

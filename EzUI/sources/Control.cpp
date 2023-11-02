@@ -829,8 +829,9 @@ namespace EzUI {
 		this->OnBorderPaint(args, border);//»æÖÆ±ß¿ò
 #ifdef _DEBUG
 		if (PublicData->Debug) {
-			int width = 1 * this->GetScale() + 0.5;
-			pt.DrawRectangle(Rect(0, 0, clientRect.Width, clientRect.Height), 0, width);
+			float width = 1 * this->GetScale();
+			pt.SetColor(PublicData->DebugColor);
+			pt.DrawRectangle(RectF(0, 0, clientRect.Width, clientRect.Height), 0, width);
 		}
 #endif
 		if (this->EventHandler) {

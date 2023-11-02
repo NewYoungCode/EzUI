@@ -308,6 +308,14 @@ namespace EzUI {
 	void Window::ShowMaximized() {
 		::ShowWindow(Hwnd(), SW_MAXIMIZE);
 	}
+	void Window::ShowFullScreen()
+	{
+		::ShowWindow(Hwnd(), SW_MAX);
+		MonitorInfo monitorInfo;
+		EzUI::GetMontior(&monitorInfo, Hwnd());
+		::SetWindowPos(Hwnd(), HWND_TOP, monitorInfo.Rect.X, monitorInfo.Rect.Y, monitorInfo.Rect.Width, monitorInfo.Rect.Height, NULL);
+		::ShowWindow(Hwnd(), SW_SHOW);
+	}
 	int Window::ShowModal(bool disableOnwer)
 	{
 		//此处代码不能随意更改 解决关闭窗口时,owner窗口闪烁问题
@@ -602,10 +610,25 @@ namespace EzUI {
 		}
 		case WM_KEYDOWN:
 		{
+#ifdef _DEBUG
 			if (wParam == VK_F11) {
 				PublicData->Debug = !PublicData->Debug;
+				if (PublicData->Debug) {
+					byte temp[3];
+					for (size_t i = 0; i < 3; i++)
+					{
+						std::random_device rd;   // 获取一个真随机数种子
+						std::mt19937 gen(rd());  // 使用种子初始化随机数引擎
+						std::uniform_int_distribution<int> distribution(0, 255);  // 创建一个均匀分布的随机数生成器，范围为 [0, 255]
+						int randomNum = distribution(gen);  // 生成随机数
+						temp[i] = randomNum;
+					}
+					float width = 1 * this->GetScale();
+					PublicData->DebugColor = Color(temp[0], temp[1], temp[2]);
+				}
 				Invalidate();
 			}
+#endif
 			OnKeyDown(wParam, lParam);
 			break;
 		}
