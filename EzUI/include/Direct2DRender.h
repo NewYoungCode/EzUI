@@ -29,7 +29,7 @@ namespace EzUI {
 	}
 	UI_EXPORT void RenderInitialize();//全局初始化direct2d
 	UI_EXPORT void RenderUnInitialize();//释放direct2d
-	UI_EXPORT float  GetMaxRadius(int width, int height, int _radius);//获取最大半径 用于自动适应border-radius属性
+	UI_EXPORT float GetMaxRadius(float width, float height, float _radius);//获取最大半径 用于自动适应border-radius属性
 	class UI_EXPORT Font {
 	private:
 		Font() = delete;
@@ -82,7 +82,7 @@ namespace EzUI {
 		float fontSize = 0;
 	public:
 		void GetMetrics();
-		TextLayout(const std::wstring& text, const Font& font, Size maxSize = Size{ __MAXFLOAT,__MAXFLOAT }, TextAlign textAlgin = TextAlign::TopLeft);
+		TextLayout(const std::wstring& text, const Font& font, const SizeF &maxSize = SizeF{ __MAXFLOAT,__MAXFLOAT }, TextAlign textAlgin = TextAlign::TopLeft);
 		Point HitTestPoint(const Point& pt, int* outTextPos, BOOL* outIsTrailingHit, int* fontHeight);
 		void HitTestPoint(const Point& pt, HitTestMetrics* hitTestMetrics);//根据坐标执行命中测试
 		Point HitTestTextPosition(int textPos, BOOL isTrailingHit);//根据文字下标执行命中测试
@@ -171,15 +171,15 @@ namespace EzUI {
 		}
 		void AddRectangle(const Rect& rect) {
 			if (!isBegin) {
-				pSink->BeginFigure({ (FLOAT)rect.GetLeft(),(FLOAT)rect.GetTop() }, D2D1_FIGURE_BEGIN_FILLED);
+				pSink->BeginFigure({ (float)rect.GetLeft(),(float)rect.GetTop() }, D2D1_FIGURE_BEGIN_FILLED);
 				isBegin = true;
 			}
 			else {
-				pSink->AddLine({ (FLOAT)rect.GetLeft(),(FLOAT)rect.GetTop() });
+				pSink->AddLine({ (float)rect.GetLeft(),(float)rect.GetTop() });
 			}
-			pSink->AddLine({ (FLOAT)rect.GetRight(),(FLOAT)rect.GetTop() });
-			pSink->AddLine({ (FLOAT)rect.GetRight(),(FLOAT)rect.GetBottom() });
-			pSink->AddLine({ (FLOAT)rect.GetLeft(),(FLOAT)rect.GetBottom() });
+			pSink->AddLine({ (float)rect.GetRight(),(float)rect.GetTop() });
+			pSink->AddLine({ (float)rect.GetRight(),(float)rect.GetBottom() });
+			pSink->AddLine({ (float)rect.GetLeft(),(float)rect.GetBottom() });
 		}
 		void AddArc(const Rect& rect, int startAngle, int sweepAngle) {
 
@@ -216,8 +216,8 @@ namespace EzUI {
 		IWICBitmapFrameDecode* pframe = NULL;
 		IWICFormatConverter* fmtcovter = NULL;//从文件加载
 		IWICBitmap* bitMap = NULL;//从HBITMAP中加载
-		UINT Width = 0;
-		UINT Height = 0;
+		int Width = 0;
+		int Height = 0;
 		ID2D1Bitmap* d2dBitmap = NULL;
 	private:
 		void CreateFormStream(IStream* istram);
@@ -233,8 +233,8 @@ namespace EzUI {
 		DXImage(const void* data, size_t count);
 		ID2D1Bitmap* Get();
 		IWICBitmap* GetIWICBitmap();
-		UINT GetWidth();
-		UINT GetHeight();
+		int GetWidth();
+		int GetHeight();
 		virtual size_t NextFrame()override;
 		DXImage* Clone();
 		DXImage() {}
@@ -276,32 +276,33 @@ namespace EzUI {
 		void SetFont(const std::wstring& fontFamily, const float& fontSize);//必须先调用
 		void SetFont(const Font& _copy_font);//必须先调用
 		void SetColor(const __EzUI__Color& color);//会之前必须调用
-		void SetStrokeStyle(StrokeStyle strokeStyle = StrokeStyle::Solid, int dashWidth = 3);//设置样式 虚线/实线
-		void DrawTextLayout(const TextLayout& textLayout, Point = { 0,0 });//根据已有的布局绘制文字
-		void DrawString(const std::wstring& text, const Rect& _rect, EzUI::TextAlign textAlign);//绘制文字
-		void DrawLine(const Point& _A, const  Point& _B, int width = 1);//绘制一条线
-		void DrawRectangle(const Rect& _rect, int _radius = 0, int width = 1);//绘制矩形
-		void FillRectangle(const Rect& _rect, int _radius = 0);//填充矩形
+		void SetStrokeStyle(StrokeStyle strokeStyle = StrokeStyle::Solid, float dashWidth = 3);//设置样式 虚线/实线
+		void DrawTextLayout(const TextLayout& textLayout, const PointF & = { 0,0 });//根据已有的布局绘制文字
+		void DrawString(const std::wstring& text, const RectF& _rect, EzUI::TextAlign textAlign);//绘制文字
+		void DrawLine(const PointF& _A, const  PointF& _B, float width = 1);//绘制一条线
+		void DrawRectangle(const RectF& _rect, float _radius = 0, float width = 1);//绘制矩形
+		void FillRectangle(const RectF& _rect, float _radius = 0);
+		//填充矩形
 		void PushLayer(const Geometry& dxGeometry);
 		void PopLayer();
-		void PushAxisAlignedClip(const Rect& rectBounds);
+		void PushAxisAlignedClip(const RectF& rectBounds);
 		void PopAxisAlignedClip();
-		void SetTransform(int offsetX, int offsetY);//对画布进行旋转和偏移
+		void SetTransform(float offsetX, float offsetY);//对画布进行旋转和偏移
 		void SetTransform(float startX, float startY, float angle);//设置旋转起始点与旋转角度
-		void SetTransform(int offsetX, int offsetY, float startX, float startY, float angle);
-		void DrawImage(DXImage* _image, const  Rect& tagRect, float opacity = 1.0f);//绘制图像
-		void DrawBezier(const Point& startPoint, const Bezier& points, int width = 1);//贝塞尔线
-		void DrawBezier(const Point& startPoint, std::list<Bezier>& points, int width = 1);//贝塞尔线
-		void DrawEllipse(const Point& point, int radiusX, int radiusY, int width = 1);
-		void FillEllipse(const Point& point, int radiusX, int radiusY);
-		void DrawPoint(const Point& pt);
-		void DrawArc(const Rect& rect, int startAngle, int sweepAngle, int width = 1);//未实现
-		void DrawArc(const Point& point1, const  Point& point2, const Point& point3, int width = 1);
-		void DrawGeometry(ID2D1Geometry* path, int width);
+		void SetTransform(float offsetX, float offsetY, float startX, float startY, float angle);
+		void DrawImage(DXImage* _image, const  RectF& tagRect, float opacity = 1);//绘制图像
+		void DrawBezier(const PointF& startPoint, const Bezier& points, float width = 1);//贝塞尔线
+		void DrawBezier(const PointF& startPoint, std::list<Bezier>& points, float width = 1);//贝塞尔线
+		void DrawEllipse(const PointF& point, float radiusX, float radiusY, float width = 1);
+		void FillEllipse(const PointF& point, float radiusX, float radiusY);
+		void DrawPoint(const PointF& pt);
+		void DrawArc(const RectF& rect, float startAngle, float sweepAngle, float width = 1);//未实现
+		void DrawArc(const PointF& point1, const  PointF& point2, const PointF& point3, float width = 1);
+		void DrawGeometry(ID2D1Geometry* path, float width);
 		void FillGeometry(ID2D1Geometry* path);
 		void Flush();
 		//绘制弧线 未实现
-		void DrawPath(const DXPath& path, int width = 1);//绘制path 未实现
+		void DrawPath(const DXPath& path, float width = 1);//绘制path 未实现
 		void FillPath(const DXPath& path);//填充Path 未实现
 		ID2D1DCRenderTarget* Get();//获取原生DX对象
 	};

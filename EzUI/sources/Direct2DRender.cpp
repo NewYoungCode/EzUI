@@ -74,7 +74,7 @@ namespace EzUI {
 		}
 	}
 	//TextLayout
-	TextLayout::TextLayout(const std::wstring& text, const Font& font, Size maxSize, TextAlign textAlign) {
+	TextLayout::TextLayout(const std::wstring& text, const Font& font, const SizeF& maxSize, TextAlign textAlign) {
 		this->fontSize = font.GetFontSize();
 		this->fontFamily = font.GetFontFamily();
 		D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), font.Get(), (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &value);
@@ -250,10 +250,10 @@ namespace EzUI {
 			hr = render->CreateBitmapFromWicBitmap(bitMap, &d2dBitmap);
 		}
 	}
-	UINT DXImage::GetWidth() {
+	int DXImage::GetWidth() {
 		return Width;
 	}
-	UINT DXImage::GetHeight() {
+	int DXImage::GetHeight() {
 		return Height;
 	}
 	void DXImage::CreateFormStream(IStream* istram) {
@@ -265,7 +265,10 @@ namespace EzUI {
 			D2D::g_ImageFactory->CreateFormatConverter(&fmtcovter);
 			bitmapdecoder->GetFrame(0, &pframe);
 			fmtcovter->Initialize(pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
-			pframe->GetSize(&Width, &Height);
+			UINT width, height;
+			pframe->GetSize(&width, &height);
+			this->Width = width;
+			this->Height = height;
 			Init();
 		}
 	}
@@ -279,7 +282,10 @@ namespace EzUI {
 			ret = D2D::g_ImageFactory->CreateFormatConverter(&fmtcovter);
 			ret = bitmapdecoder->GetFrame(0, &pframe);
 			ret = fmtcovter->Initialize(pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
-			ret = pframe->GetSize(&Width, &Height);
+			UINT width, height;
+			ret = pframe->GetSize(&width, &height);
+			this->Width = width;
+			this->Height = height;
 			Init();
 		}
 	}
@@ -318,7 +324,10 @@ namespace EzUI {
 	DXImage::DXImage(HBITMAP hBitmap) {
 		if (D2D::g_ImageFactory) {
 			D2D::g_ImageFactory->CreateBitmapFromHBITMAP(hBitmap, NULL, WICBitmapUsePremultipliedAlpha, &bitMap);
-			bitMap->GetSize(&Width, &Height);
+			UINT width, height;
+			bitMap->GetSize(&width, &height);
+			this->Width = width;
+			this->Height = height;
 			Init();
 		}
 	}
@@ -510,7 +519,7 @@ namespace EzUI {
 			SafeRelease(&D2D::g_ImageFactory);
 		}
 	}
-	float GetMaxRadius(int width, int height, int _radius)
+	float GetMaxRadius(float width, float height, float _radius)
 	{
 		float radius = (float)_radius;//半径
 		float diameter = radius * 2;//直径
@@ -604,7 +613,7 @@ namespace EzUI {
 			brush->SetColor(__To_D2D_COLOR_F(color));
 		}
 	}
-	void DXRender::SetStrokeStyle(StrokeStyle strokeStyle, int dashWidth)
+	void DXRender::SetStrokeStyle(StrokeStyle strokeStyle, float dashWidth)
 	{
 		if (pStrokeStyle != NULL) {
 			SafeRelease(&pStrokeStyle);
@@ -619,21 +628,23 @@ namespace EzUI {
 			delete[] dashes;
 		}
 	}
-	void DXRender::DrawTextLayout(const TextLayout& textLayout, Point startLacation) {
-		render->DrawTextLayout(D2D1_POINT_2F{ (FLOAT)(startLacation.X) ,(FLOAT)(startLacation.Y) }, textLayout.Get(), GetBrush());
+	void DXRender::DrawTextLayout(const TextLayout& textLayout, const PointF& startLacation) {
+		render->DrawTextLayout(D2D1_POINT_2F{ (float)(startLacation.X) ,(float)(startLacation.Y) }, textLayout.Get(), GetBrush());
 	}
-	void DXRender::DrawString(const std::wstring& text, const  Rect& _rect, EzUI::TextAlign textAlign) {
-		const Rect& rect = _rect;
-		TextLayout textLayout(text, *font, Size{ rect.Width, rect.Height }, textAlign);
+	void DXRender::DrawString(const std::wstring& text, const  RectF& _rect, EzUI::TextAlign textAlign) {
+		const auto& rect = _rect;
+		TextLayout textLayout(text, *font, { rect.Width, rect.Height }, textAlign);
 		this->DrawTextLayout(textLayout, { _rect.X,_rect.Y });
 	}
-	void DXRender::DrawLine(const Point& _A, const Point& _B, int width) {
-		const Point& A = _A;
-		const Point& B = _B;
+	void DXRender::DrawLine(const PointF& _A, const PointF& _B, float width) {
+		const auto& A = _A;
+		const auto& B = _B;
 		render->DrawLine(D2D1_POINT_2F{ (float)A.X,(float)A.Y }, D2D1_POINT_2F{ (float)B.X,(float)B.Y }, GetBrush(), (FLOAT)width, GetStrokeStyle());
 	}
-	void DXRender::DrawRectangle(const  Rect& _rect, int _radius, int width) {
-		const Rect& rect = _rect;
+
+	void DXRender::DrawRectangle(const RectF& _rect, float _radius, float width)
+	{
+		const auto& rect = _rect;
 		if (_radius > 0) {
 			float radius = GetMaxRadius(_rect.Width, _rect.Height, (float)_radius);
 			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), (float)radius, (float)radius };
@@ -643,8 +654,10 @@ namespace EzUI {
 			render->DrawRectangle(__To_D2D_RectF(rect), GetBrush(), (FLOAT)width, GetStrokeStyle());
 		}
 	}
-	void DXRender::FillRectangle(const Rect& _rect, int _radius) {
-		const Rect& rect = _rect;
+
+
+	void DXRender::FillRectangle(const RectF& _rect, float _radius) {
+		const auto& rect = _rect;
 		if (_radius > 0) {
 			float radius = GetMaxRadius(_rect.Width, _rect.Height, (float)_radius);
 			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), (float)radius, (float)radius };
@@ -655,7 +668,7 @@ namespace EzUI {
 		}
 	}
 
-	void DXRender::SetTransform(int offsetX, int offsetY)
+	void DXRender::SetTransform(float offsetX, float offsetY)
 	{
 		this->Offset.X = offsetX;
 		this->Offset.Y = offsetY;
@@ -669,7 +682,7 @@ namespace EzUI {
 		this->SetTransform(this->Offset.X, this->Offset.Y, this->RotatePoint.X, this->RotatePoint.Y, this->Angle);
 	}
 
-	void DXRender::SetTransform(int offsetX, int offsetY, float startX, float startY, float angle)
+	void DXRender::SetTransform(float offsetX, float offsetY, float startX, float startY, float angle)
 	{
 		// 创建D2D矩阵转换对象 平移变换
 		D2D1::Matrix3x2F transformMatrix = D2D1::Matrix3x2F::Translation(offsetX, offsetY);
@@ -683,7 +696,7 @@ namespace EzUI {
 		render->SetTransform(transformMatrix);
 	}
 
-	void DXRender::DrawBezier(const Point& startPoint, const Bezier& points, int width) {
+	void DXRender::DrawBezier(const PointF& startPoint, const Bezier& points, float width) {
 		ID2D1GeometrySink* pSink = NULL;
 		ID2D1PathGeometry* pathGeometry = NULL;
 		D2D::g_Direct2dFactory->CreatePathGeometry(&pathGeometry);
@@ -697,7 +710,7 @@ namespace EzUI {
 		SafeRelease(&pathGeometry);
 		SafeRelease(&pSink);
 	}
-	void DXRender::DrawBezier(const Point& startPoint, std::list<Bezier>& beziers, int width)
+	void DXRender::DrawBezier(const PointF& startPoint, std::list<Bezier>& beziers, float width)
 	{
 		ID2D1GeometrySink* pSink = NULL;
 		ID2D1PathGeometry* pathGeometry = NULL;
@@ -710,7 +723,7 @@ namespace EzUI {
 		}
 		pSink->EndFigure(D2D1_FIGURE_END_OPEN);
 		pSink->Close();
-		render->DrawGeometry(pathGeometry, GetBrush(), (FLOAT)width, GetStrokeStyle());
+		render->DrawGeometry(pathGeometry, GetBrush(), width, GetStrokeStyle());
 		SafeRelease(&pathGeometry);
 		SafeRelease(&pSink);
 	}
@@ -724,14 +737,14 @@ namespace EzUI {
 	void DXRender::PopLayer() {
 		render->PopLayer();
 	}
-	void DXRender::PushAxisAlignedClip(const Rect& rectBounds) {
+	void DXRender::PushAxisAlignedClip(const RectF& rectBounds) {
 		render->PushAxisAlignedClip(__To_D2D_RectF(rectBounds), D2D1_ANTIALIAS_MODE::D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	}
 	void DXRender::PopAxisAlignedClip() {
 		render->PopAxisAlignedClip();
 	}
 
-	void DXRender::DrawImage(DXImage* image, const  Rect& tagRect, float opacity) {
+	void DXRender::DrawImage(DXImage* image, const  RectF& tagRect, float opacity) {
 		_NOREND_IMAGE_
 			if (image->Visible == false) return;
 		//解码
@@ -743,7 +756,7 @@ namespace EzUI {
 		const ImageSizeMode& imageSizeMode = image->SizeMode;
 		const Rect& sourceRect = image->Offset;
 		//计算坐标
-		Rect rect = tagRect;
+		Rect rect(tagRect.X + 0.5, tagRect.Y + 0.5, tagRect.Width + 0.5, tagRect.Height + 0.5);
 		//转换坐标,缩放
 		Size imgSize(image->GetWidth(), image->GetHeight());
 		if (!sourceRect.IsEmptyArea()) {
@@ -761,28 +774,28 @@ namespace EzUI {
 			render->DrawBitmap(bitmap, drawRectF, opacity);
 		}
 	}
-	void DXRender::DrawEllipse(const Point& point, int radiusX, int radiusY, int width)
+	void DXRender::DrawEllipse(const PointF& point, float radiusX, float radiusY, float width)
 	{
 		D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F((FLOAT)point.X, (FLOAT)point.Y), (FLOAT)radiusX, (FLOAT)radiusY);
 		render->DrawEllipse(ellipse, GetBrush(), (FLOAT)width, this->GetStrokeStyle());
 	}
-	void DXRender::FillEllipse(const Point& point, int radiusX, int radiusY)
+	void DXRender::FillEllipse(const PointF& point, float radiusX, float radiusY)
 	{
 		D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F((FLOAT)point.X, (FLOAT)point.Y), (FLOAT)radiusX, (FLOAT)radiusY);
 		render->FillEllipse(ellipse, GetBrush());
 	}
-	void DXRender::DrawPoint(const Point& pt) {
+	void DXRender::DrawPoint(const PointF& pt) {
 		D2D1_ELLIPSE ellipse = D2D1::Ellipse(__To_D2D_PointF(pt), 0.5, 0.5);
 		render->FillEllipse(ellipse, GetBrush());
 	}
-	void DXRender::DrawArc(const Rect& rect, int startAngle, int sweepAngle, int width) {
+	void DXRender::DrawArc(const RectF& rect, float startAngle, float sweepAngle, float width) {
 
 	}
-	void DXRender::DrawArc(const Point& point1, const Point& point2, const Point& point3, int width)
+	void DXRender::DrawArc(const PointF& point1, const PointF& point2, const PointF& point3, float width)
 	{
 
 	}
-	void DXRender::DrawGeometry(ID2D1Geometry* geometry, int width)
+	void DXRender::DrawGeometry(ID2D1Geometry* geometry, float width)
 	{
 		render->DrawGeometry(geometry, GetBrush(), (FLOAT)width, this->GetStrokeStyle());
 	}
@@ -794,7 +807,7 @@ namespace EzUI {
 	{
 		render->Flush();
 	}
-	void DXRender::DrawPath(const DXPath& path, int width)
+	void DXRender::DrawPath(const DXPath& path, float width)
 	{
 		render->DrawGeometry(path.Get(), GetBrush(), (FLOAT)width, this->GetStrokeStyle());
 	}

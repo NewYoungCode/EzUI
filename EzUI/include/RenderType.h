@@ -187,7 +187,7 @@ namespace EzUI {
 			return (Width <= 0) || (Height <= 0);
 		}
 
-		const __EzUI__Rect& Scale(const float& scale) {
+		virtual const __EzUI__Rect& Scale(const float& scale) {
 			X = (X * scale) + 0.5;
 			Y = (Y * scale) + 0.5;
 			Width = (Width * scale) + 0.5;
@@ -304,6 +304,7 @@ namespace EzUI {
 			X += dx;
 			Y += dy;
 		}
+		virtual ~__EzUI__Rect() {}
 	};
 
 	class __EzUI__Color
@@ -396,14 +397,49 @@ namespace EzUI {
 		}
 	};
 
-	typedef  __EzUI__Point<INT> Point;
-	typedef  __EzUI__Point<FLOAT> PointF;
-	typedef  __EzUI__Line<INT> Line;
-	typedef  __EzUI__Line<FLOAT> LineF;
-	typedef  __EzUI__Size<INT> Size;
-	typedef  __EzUI__Size<FLOAT> SizeF;
-	typedef  __EzUI__Rect<INT> Rect;
-	typedef  __EzUI__Rect<FLOAT> RectF;
+	typedef  __EzUI__Point<int> Point;
+	typedef  __EzUI__Point<float> PointF;
+	typedef  __EzUI__Line<int> Line;
+	typedef  __EzUI__Line<float> LineF;
+	typedef  __EzUI__Size<int> Size;
+	typedef  __EzUI__Size<float> SizeF;
+	typedef  __EzUI__Rect<int> Rect;
+
+	class RectF :public __EzUI__Rect<float> {
+	public:
+		RectF() {
+			this->X = 0;
+			this->Y = 0;
+			this->Width = 0;
+			this->Height = 0;
+		}
+		RectF(const Rect& rect) {
+			this->X = rect.X;
+			this->Y = rect.Y;
+			this->Width = rect.Width;
+			this->Height = rect.Height;
+		}
+		RectF(const RectF& rect) {
+			this->X = rect.X;
+			this->Y = rect.Y;
+			this->Width = rect.Width;
+			this->Height = rect.Height;
+		}
+		RectF(float x, float y, float width, float height) {
+			this->X = x;
+			this->Y = y;
+			this->Width = width;
+			this->Height = height;
+		}
+		virtual const RectF& Scale(const float& scale) {
+			X = (X * scale);
+			Y = (Y * scale);
+			Width = (Width * scale);
+			Height = (Height * scale);
+			return *this;
+		}
+		virtual ~RectF() {};
+	};
 
 	struct Distance {
 	public:

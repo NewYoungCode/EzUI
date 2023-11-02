@@ -50,11 +50,11 @@ namespace EzUI {
 				}
 			}
 			std::wstring viewStr = !drawText.empty() ? drawText : Ellipsis.unicode();
-			TextLayout textLayout(viewStr, font, Size(maxWidth, maxHeight), (IsAutoWidth() && IsAutoHeight()) ? TextAlign::TopLeft : this->TextAlign);
+			TextLayout textLayout(viewStr, font, SizeF(maxWidth, maxHeight), (IsAutoWidth() && IsAutoHeight()) ? TextAlign::TopLeft : this->TextAlign);
 			if (this->_underlineCount != 0) {//ÏÂ»®Ïß
 				textLayout.SetUnderline(_underlinePos, _underlineCount);
 			}
-			args.Graphics.DrawTextLayout(textLayout, { (int)this->TextMargin.Left,(int)this->TextMargin.Top });
+			args.Graphics.DrawTextLayout(textLayout, { (float)this->TextMargin.Left,(float)this->TextMargin.Top });
 		}
 	}
 
@@ -123,7 +123,7 @@ namespace EzUI {
 			int maxWidth = IsAutoWidth() ? __MAXFLOAT : Width() - this->TextMargin.GetHSpace();
 			int maxHeight = IsAutoHeight() ? __MAXFLOAT : Height() - this->TextMargin.GetVSpace();
 
-			TextLayout text(this->_wstr, font, Size(maxWidth, maxHeight));
+			TextLayout text(this->_wstr, font, SizeF(maxWidth, maxHeight));
 			Size box = text.GetFontBox();
 			this->SetContentSize(box);
 			if (IsAutoWidth()) {

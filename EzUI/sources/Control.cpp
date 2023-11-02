@@ -137,16 +137,16 @@ namespace EzUI {
 
 		if (backgroundColor.GetValue() != 0) {
 			e.Graphics.SetColor(backgroundColor);
-			e.Graphics.FillRectangle(Rect{ 0,0,_rect.Width,_rect.Height });
+			e.Graphics.FillRectangle(RectF{ 0,0,(float)_rect.Width,(float)_rect.Height });
 		}
 		if (backgroundImage != NULL) {
-			e.Graphics.DrawImage(backgroundImage, Rect{ 0,0,_rect.Width,_rect.Height });
+			e.Graphics.DrawImage(backgroundImage, RectF{ 0,0,(float)_rect.Width,(float)_rect.Height });
 		}
 	}
 	void Control::OnForePaint(PaintEventArgs& e) {
 		Image* foreImage = this->GetForeImage();
 		if (foreImage) {
-			e.Graphics.DrawImage(foreImage, Rect{ 0,0,_rect.Width,_rect.Height });
+			e.Graphics.DrawImage(foreImage, RectF{ 0,0,(float)_rect.Width,(float)_rect.Height });
 		}
 	}
 	void Control::OnBorderPaint(PaintEventArgs& e, const Border& border)
@@ -168,19 +168,19 @@ namespace EzUI {
 			if (!hasBorder) return;//边框为0不绘制
 			e.Graphics.SetColor(borderColor);
 			if (borderLeft > 0) {
-				Rect rect(0, 0, borderLeft, Height());
+				RectF rect(0, 0, (float)borderLeft, (float)Height());
 				e.Graphics.FillRectangle(rect);
 			}
 			if (borderTop > 0) {
-				Rect rect(0, 0, Width(), borderTop);
+				RectF rect(0, 0, (float)Width(), (float)borderTop);
 				e.Graphics.FillRectangle(rect);
 			}
 			if (borderRight > 0) {
-				Rect rect(_rect.Width - borderRight, 0, borderRight, Height());
+				RectF rect((float)(_rect.Width - borderRight), 0, (float)borderRight, (float)Height());
 				e.Graphics.FillRectangle(rect);
 			}
 			if (borderBottom > 0) {
-				Rect rect(0, _rect.Height - borderBottom, Width(), borderBottom);
+				RectF rect(0, (float)(_rect.Height - borderBottom), (float)Width(), (float)borderBottom);
 				e.Graphics.FillRectangle(rect);
 			}
 		}
@@ -1390,7 +1390,7 @@ namespace EzUI {
 		}
 		__super::OnForePaint(args);
 		//绘制滑块
-		Rect sliderRect = GetSliderRect();
+		RectF sliderRect = GetSliderRect();
 		const Color& color = GetForeColor();
 		if (color.GetValue() != 0) {
 			args.Graphics.SetColor(color);

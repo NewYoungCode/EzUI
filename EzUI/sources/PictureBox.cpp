@@ -16,7 +16,7 @@ namespace EzUI {
 	}
 	void PictureBox::OnForePaint(PaintEventArgs& arg) {
 		if (_img) {
-			arg.Graphics.DrawImage(_img, Rect(0, 0, Width(), Height()));
+			arg.Graphics.DrawImage(_img, RectF(0, 0, (float)Width(), (float)Height()));
 			if (_img->FrameCount() > 1) {
 				_timer.Interval = _img->NextFrame();
 				_timer.Tick = [this](Timer* timer) {

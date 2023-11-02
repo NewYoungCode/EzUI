@@ -9,7 +9,7 @@
 #include "UIManager.h"
 #include "Task.h"
 class MainFrm :
-	public LayeredWindow
+	public BorderlessWindow
 {
 private:
 	std::vector<Song> songs;

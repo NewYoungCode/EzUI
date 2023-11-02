@@ -1,5 +1,5 @@
 #include "MainFrm.h"
-MainFrm::MainFrm() :LayeredWindow(1020, 690), ntfi(WM_NOTIFYICON1)
+MainFrm::MainFrm() :BorderlessWindow(1020, 690), ntfi(WM_NOTIFYICON1)
 {
 	InitForm();
 	//мпел

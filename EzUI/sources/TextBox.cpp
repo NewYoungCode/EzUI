@@ -295,7 +295,7 @@ namespace EzUI {
 
 		if (!_multiLine) {//单行编辑框
 			_font->Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
-			_textLayout = new TextLayout(*drawText, *_font, Size{ __MAXFLOAT,Height() }, TextAlign::MiddleLeft);
+			_textLayout = new TextLayout(*drawText, *_font, SizeF{ __MAXFLOAT,(float)Height() }, TextAlign::MiddleLeft);
 			_fontBox = _textLayout->GetFontBox();
 			if (_fontBox.Width < this->Width()) {
 				_scrollX = 0;
@@ -306,7 +306,7 @@ namespace EzUI {
 		}
 		else {//多行编辑框
 			_font->Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);
-			_textLayout = new TextLayout(*drawText, *_font, Size{ Width(),__MAXFLOAT }, TextAlign::TopLeft);
+			_textLayout = new TextLayout(*drawText, *_font, SizeF{ (float)Width(),__MAXFLOAT }, TextAlign::TopLeft);
 			_fontBox = _textLayout->GetFontBox();
 		}
 		if (drawText != &this->_text) {
@@ -582,7 +582,7 @@ namespace EzUI {
 			Color placeholderColor = fontColor;
 			placeholderColor.SetA(fontColor.GetA() * 0.6);
 			e.Graphics.SetColor(placeholderColor);
-			e.Graphics.DrawString(Placeholder.unicode(), Rect(0, 0, Width(), Height()), _multiLine ? TextAlign::TopLeft : TextAlign::MiddleLeft);
+			e.Graphics.DrawString(Placeholder.unicode(), RectF(0, 0, (float)Width(), (float)Height()), _multiLine ? TextAlign::TopLeft : TextAlign::MiddleLeft);
 		}
 
 		if (_selectRects.size() > 0) {
@@ -591,7 +591,7 @@ namespace EzUI {
 			e.Graphics.SetColor(selectedColor);
 			for (auto& it : _selectRects) {
 				if (!it.IsEmptyArea()) {
-					Rect rect(it);
+					RectF rect(it);
 					rect.X += _scrollX;//偏移
 					rect.Y += _scrollY;
 					e.Graphics.FillRectangle(rect);
@@ -601,17 +601,18 @@ namespace EzUI {
 
 		if (_textLayout) {
 			e.Graphics.SetColor(fontColor);
-			e.Graphics.DrawTextLayout(*_textLayout, { _scrollX, _scrollY });
+			e.Graphics.DrawTextLayout(*_textLayout, PointF{ (float)_scrollX, (float)_scrollY });
 		}
 
 		if (!_careRect.IsEmptyArea() && _focus) {
 			if (_careShow) {
-				Rect rect(_careRect);
+				RectF rect(_careRect.X, _careRect.Y, _careRect.Width, _careRect.Height);
 				rect.X += _scrollX;//偏移
 				rect.Y += _scrollY;
 				if (rect.X == this->Width()) {//如果刚好处于边界
-					rect.X = this->Width() - 1;
+					rect.X = this->Width() - 1 * this->GetScale();
 				}
+				rect.Width = rect.Width * this->GetScale();
 				e.Graphics.SetColor(fontColor);
 				e.Graphics.FillRectangle(rect);
 			}
