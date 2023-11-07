@@ -23,9 +23,9 @@
 namespace EzUI {
 #define __MAXFLOAT 16777216
 	namespace D2D {
-		extern ID2D1Factory* g_Direct2dFactory;
-		extern IDWriteFactory* g_WriteFactory;
-		extern IWICImagingFactory* g_ImageFactory;
+		extern UI_VAR_EXPORT ID2D1Factory* g_Direct2dFactory;
+		extern UI_VAR_EXPORT IDWriteFactory* g_WriteFactory;
+		extern UI_VAR_EXPORT IWICImagingFactory* g_ImageFactory;
 	}
 	UI_EXPORT void RenderInitialize();//全局初始化direct2d
 	UI_EXPORT void RenderUnInitialize();//释放direct2d

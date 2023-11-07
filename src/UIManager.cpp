@@ -378,8 +378,9 @@ namespace EzUI {
 
 	void UIManager::LoadFile(const EString& fileName) {
 		std::string data;
-		GetResource(fileName, &data);
-		LoadFromRaw((const char*)data.c_str());
+		if (GetResource(fileName, &data)) {
+			LoadFromRaw((const char*)data.c_str());
+		}
 	}
 	void UIManager::Free(Control** ctl)
 	{

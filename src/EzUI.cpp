@@ -11,10 +11,9 @@ namespace EzUI {
 
 	WCHAR __EzUI__WindowClassName[]{ L"EzUI_Window" };
 	HMODULE __EzUI__HINSTANCE = NULL;
-	HZIP __EzUI__HZipResource = NULL;
 	HGLOBAL __EzUI__HVSResource = NULL;
+	ZipResource* __EzUI__ZipResource = NULL;
 	const std::list<EzUI::MonitorInfo> __EzUI__MonitorInfos;
-	std::mutex __EzUI__ResourceMtx;
 
 	void InstallFont(const EString& fontFileName) {
 		auto ret = ::AddFontResourceW(fontFileName.unicode().c_str());
@@ -75,46 +74,27 @@ namespace EzUI {
 		return ret;
 	}
 
-	bool FindZipResource(const EString& fileName, int* index, size_t* fileSize) {
-		if (EzUI::__EzUI__HZipResource) {
-			ZIPENTRY z;
-			ZRESULT ret = FindZipItem(EzUI::__EzUI__HZipResource, fileName.c_str(), false, index, &z);
-			if (ret == 0 && z.unc_size != 0) {
-				*fileSize = z.unc_size;
-				return true;
-			}
-		}
-		return false;
-	}
-	bool UnZipResource(const EString& fileName, std::string* outData) {
-		std::unique_lock<std::mutex> autoLock(EzUI::__EzUI__ResourceMtx);
-		int index;
-		size_t fileSize;
-		if (FindZipResource(fileName, &index, &fileSize)) {
-			outData->resize(fileSize);
-			UnzipItem(EzUI::__EzUI__HZipResource, index, (void*)(outData->c_str()), fileSize);
-			return true;
-		}
-		return false;
-	}
-
 	bool GetResource(const EString& filename, std::string* out) {
-		FILE* file(0);
-		_wfopen_s(&file, filename.unicode().c_str(), L"rb");
-		if (file) {
-			std::ifstream fs(file);
-			fs.seekg(0, std::ios_base::end);
-			auto size = fs.tellg();
-			fs.seekg(0);
-			out->resize(static_cast<size_t>(size));
-			fs.read((char*)out->c_str(), static_cast<std::streamsize>(size));
-			fs.close();
-			::fclose(file);
-			return true;
-		}
-		else {
-			return UnZipResource(filename, out);
-		}
+		bool ok = false;
+		do
+		{
+			FILE* file(0);
+			_wfopen_s(&file, filename.unicode().c_str(), L"rb");
+			if (file) {
+				std::ifstream fs(file);
+				fs.seekg(0, std::ios_base::end);
+				auto size = fs.tellg();
+				fs.seekg(0);
+				out->resize(static_cast<size_t>(size));
+				fs.read((char*)out->c_str(), static_cast<std::streamsize>(size));
+				fs.close();
+				::fclose(file);
+				ok = true;
+				break;
+			}
+			ok = EzUI::__EzUI__ZipResource->GetResource(filename, out);
+		} while (false);
+		return ok;
 	}
 
 #undef GetMonitorInfo

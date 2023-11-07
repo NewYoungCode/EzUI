@@ -1,10 +1,9 @@
 #pragma once
 #include "UIDef.h"
 #include "EString.h"
-#include "unzip.h"
+#include "ZipResource.h"
 #include "RenderType.h"
 #include "Direct2DRender.h"
-#include <TimeAPI.h>
 
 namespace EzUI {
 	struct MonitorInfo;
@@ -18,12 +17,11 @@ namespace EzUI {
 	enum class Cursor :ULONG_PTR;
 
 	//全局资源句柄
-	extern UI_EXPORT WCHAR __EzUI__WindowClassName[];//窗口类名
-	extern UI_EXPORT HMODULE __EzUI__HINSTANCE;
-	extern UI_EXPORT std::mutex __EzUI__ResourceMtx;//资源锁
-	extern UI_EXPORT HZIP __EzUI__HZipResource;//zip文件中的全局资源句柄
-	extern UI_EXPORT HGLOBAL __EzUI__HVSResource;//vs中的资源文件句柄
-	extern UI_EXPORT const std::list<EzUI::MonitorInfo> __EzUI__MonitorInfos;//所有监视器信息
+	extern UI_VAR_EXPORT WCHAR __EzUI__WindowClassName[];//窗口类名
+	extern UI_VAR_EXPORT HMODULE __EzUI__HINSTANCE;//全局实例
+	extern UI_VAR_EXPORT HGLOBAL __EzUI__HVSResource;//vs中的资源文件句柄
+	extern UI_VAR_EXPORT ZipResource* __EzUI__ZipResource;//zip文件中的全局资源句柄
+	extern UI_VAR_EXPORT const std::list<EzUI::MonitorInfo> __EzUI__MonitorInfos;//所有监视器信息
 
 	//装载字体
 	extern UI_EXPORT void InstallFont(const EString& fontFileName);
@@ -37,8 +35,6 @@ namespace EzUI {
 	extern UI_EXPORT bool CopyToClipboard(const std::wstring& str, HWND hWnd = NULL);
 	//粘贴unicode文字
 	extern UI_EXPORT bool GetClipboardData(std::wstring* outStr, HWND hWnd = NULL);
-	//解压资源文件
-	extern UI_EXPORT bool UnZipResource(const EString& fileName, std::string* outData);
 	//从获取文件资源
 	extern UI_EXPORT bool GetResource(const EString& fileName, std::string* outData);
 	//获取当前所有监视器的信息
@@ -111,12 +107,15 @@ namespace EzUI {
 				return new Image(wstr);
 			}
 			//从资源中获取
-			std::string data;
-			UnZipResource(fileOrRes, &data);
-			if (data.empty()) {
-				return NULL;
+			if (EzUI::__EzUI__ZipResource) {
+				std::string data;
+				EzUI::__EzUI__ZipResource->GetResource(fileOrRes, &data);
+				if (data.empty()) {
+					return NULL;
+				}
+				return new Image(data.c_str(), data.size());
 			}
-			return new Image(data.c_str(), data.size());
+			return NULL;
 		}
 	};
 #endif
@@ -396,26 +395,6 @@ namespace EzUI {
 		void SetStyle(const EString& key, const EString& value, const std::function<void(Image*)>& callback = NULL);
 	};
 
-	//原理采用PostMessage
-	template<class Func, class... Args>
-	bool BeginInvoke(HWND hWnd, Func&& f, Args&& ...args) {
-		std::function<void()>* func = new std::function<void()>(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
-		if (::PostMessage(hWnd, WM_GUI_SYSTEM, WM_GUI_BEGININVOKE, (LPARAM)func) == LRESULT(0)) {
-			delete func;
-			return false;
-		}
-		return true;
-	}
-	//原理采用SendMessage
-	template<class Func, class... Args>
-	bool Invoke(HWND hWnd, Func&& f, Args&& ...args) {
-		std::function<void()> func(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
-		if (::SendMessage(hWnd, WM_GUI_SYSTEM, WM_GUI_INVOKE, (LPARAM)&func) == LRESULT(-1)) {
-			return false;
-		}
-		return true;
-	}
-
 	class UI_EXPORT IControl {
 	private:
 		std::map<EString, EString> _attrs;
@@ -426,20 +405,6 @@ namespace EzUI {
 		IControl();
 		virtual ~IControl();
 	public:
-		template<class Func, class... Args>
-		bool BeginInvoke(Func&& f, Args&& ...args) {
-			if (PublicData) {
-				return EzUI::BeginInvoke(PublicData->HANDLE, std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
-			}
-			return false;
-		}
-		template<class Func, class... Args>
-		bool Invoke(Func&& f, Args&& ...args) {
-			if (PublicData) {
-				return EzUI::Invoke(PublicData->HANDLE, std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
-			}
-			return false;
-		}
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//设置属性
 		virtual EString GetAttribute(const EString& attrName);//获取属性
 	};

@@ -103,15 +103,17 @@ namespace EzUI {
 		if (!hRsrc)return;
 		DWORD len = SizeofResource(hInst, hRsrc);
 		EzUI::__EzUI__HVSResource = LoadResource(hInst, hRsrc);
-		EzUI::__EzUI__HZipResource = OpenZip((void*)EzUI::__EzUI__HVSResource, len, password.empty() ? NULL : password.c_str());
+		EzUI::__EzUI__ZipResource = new ZipResource((void*)EzUI::__EzUI__HVSResource, len, password);
 	}
 	//使用本地文件名称加载资源包
 	Application::Application(const EString& fileName, const EString& password) {
 		Init();
-		EzUI::__EzUI__HZipResource = OpenZip(fileName.unicode().c_str(), password.empty() ? NULL : password.c_str());
+		EzUI::__EzUI__ZipResource = new ZipResource(fileName.unicode().c_str(), password.c_str());
 #ifdef _DEBUG
-		if (EzUI::__EzUI__HZipResource == NULL) {
-			::MessageBoxW(NULL, fileName.unicode().c_str(), L"Failed to open zip", MB_ICONWARNING);
+		if (EzUI::__EzUI__ZipResource->IsValid() == false) {
+			delete EzUI::__EzUI__ZipResource;
+			EzUI::__EzUI__ZipResource = NULL;
+			::MessageBoxW(NULL, fileName.unicode().c_str(), L"Failed to open zip", MB_OK | MB_ICONINFORMATION);
 		}
 #endif
 	}
@@ -121,8 +123,8 @@ namespace EzUI {
 	Application::~Application() {
 		RenderUnInitialize();
 		::CoUninitialize();
-		if (EzUI::__EzUI__HZipResource) {
-			CloseZipU(EzUI::__EzUI__HZipResource);
+		if (EzUI::__EzUI__ZipResource) {
+			delete EzUI::__EzUI__ZipResource;
 		}
 		if (EzUI::__EzUI__HVSResource) {
 			FreeResource(EzUI::__EzUI__HVSResource);

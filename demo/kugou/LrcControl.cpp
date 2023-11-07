@@ -50,9 +50,11 @@ void LrcControl::Task()
 		}
 	}
 
-	this->BeginInvoke([=]() {
-		Invalidate();
-		});
+	if (this->PublicData) {
+		this->PublicData->Window->BeginInvoke([=]() {
+			Invalidate();
+			});
+	}
 
 }
 void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {

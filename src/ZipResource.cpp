@@ -1,9 +1,61 @@
-#include <windows.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <tchar.h>
-#include "unzip.h"
+#include "ZipResource.h"
+#pragma  warning (disable:4996) 
+namespace EzUI {
+	// UNZIPPING functions -- for unzipping.
+	// This file is a repackaged form of extracts from the zlib code available
+	// at www.gzip.org/zlib, by Jean-Loup Gailly and Mark Adler. The original
+	// copyright notice may be found in unzip.cpp. The repackaging was done
+	// by Lucian Wischik to simplify and extend its use in Windows/C++. Also
+	// encryption and unicode filenames have been added.
+
+	DECLARE_HANDLE(HZIP);
+	// An HZIP identifies a zip file that has been opened
+
+#define ZRESULT DWORD
+// return codes from any of the zip functions. Listed later.
+
+	typedef struct
+	{
+		int index;                 // index of this file within the zip
+		TCHAR name[MAX_PATH];      // filename within the zip
+		DWORD attr;                // attributes, as in GetFileAttributes.
+		FILETIME atime, ctime, mtime;// access, create, modify filetimes
+		long comp_size;            // sizes of item, compressed and uncompressed. These
+		long unc_size;             // may be -1 if not yet known (e.g. being streamed in)
+	} ZIPENTRY;
+
+	// These are the result codes:
+#define ZR_OK         0x00000000     // nb. the pseudo-code zr-recent is never returned,
+#define ZR_RECENT     0x00000001     // but can be passed to FormatZipMessage.
+// The following come from general system stuff (e.g. files not openable)
+#define ZR_GENMASK    0x0000FF00
+#define ZR_NODUPH     0x00000100     // couldn't duplicate the handle
+#define ZR_NOFILE     0x00000200     // couldn't create/open the file
+#define ZR_NOALLOC    0x00000300     // failed to allocate some resource
+#define ZR_WRITE      0x00000400     // a general error writing to the file
+#define ZR_NOTFOUND   0x00000500     // couldn't find that file in the zip
+#define ZR_MORE       0x00000600     // there's still more data to be unzipped
+#define ZR_CORRUPT    0x00000700     // the zipfile is corrupt or not a zipfile
+#define ZR_READ       0x00000800     // a general error reading the file
+#define ZR_PASSWORD   0x00001000     // we didn't get the right password to unzip the file
+// The following come from mistakes on the part of the caller
+#define ZR_CALLERMASK 0x00FF0000
+#define ZR_ARGS       0x00010000     // general mistake with the arguments
+#define ZR_NOTMMAP    0x00020000     // tried to ZipGetMemory, but that only works on mmap zipfiles, which yours wasn't
+#define ZR_MEMSIZE    0x00030000     // the memory size is too small
+#define ZR_FAILED     0x00040000     // the thing was already failed when you called this function
+#define ZR_ENDED      0x00050000     // the zip creation has already been closed
+#define ZR_MISSIZE    0x00060000     // the indicated input file size turned out mistaken
+#define ZR_PARTIALUNZ 0x00070000     // the file had already been partially unzipped
+#define ZR_ZMODE      0x00080000     // tried to mix creating/opening a zip 
+// The following come from bugs within the zip library itself
+#define ZR_BUGMASK    0xFF000000
+#define ZR_NOTINITED  0x01000000     // initialisation didn't work
+#define ZR_SEEK       0x02000000     // trying to seek in an unseekable file
+#define ZR_NOCHANGE   0x04000000     // changed its mind on storage, but not allowed
+#define ZR_FLATE      0x05000000     // an internal error in the de/inflation code
+
+};
 namespace EzUI {
 	// THIS FILE is almost entirely based upon code by Jean-loup Gailly
 	// and Mark Adler. It has been modified by Lucian Wischik.
@@ -4132,7 +4184,6 @@ void zfree(void *buf)
 		TUnzipHandleData* han = new TUnzipHandleData;
 		han->flag = 1; han->unz = unz; return (HZIP)han;
 	}
-	HZIP OpenZipHandle(HANDLE h, const char* password) { return OpenZipInternal((void*)h, 0, ZIP_HANDLE, password); }
 	HZIP OpenZip(const WCHAR* fn, const char* password) { return OpenZipInternal((void*)fn, 0, ZIP_FILENAME, password); }
 	HZIP OpenZip(void* z, unsigned int len, const char* password) { return OpenZipInternal(z, len, ZIP_MEMORY, password); }
 
@@ -4188,4 +4239,32 @@ void zfree(void *buf)
 		return (han->flag == 1);
 	}
 
-}
+	}
+namespace EzUI {
+	ZipResource::ZipResource(const std::wstring& fileName, const std::string& pwd) {
+		this->handle = OpenZip(fileName.c_str(), pwd.c_str());
+	}
+	ZipResource::ZipResource(const void* fileData, unsigned int fileSize, const std::string& pwd) {
+		this->handle = OpenZip((void*)fileData, fileSize, pwd.c_str());
+	}
+	bool ZipResource::GetResource(const std::string& itemName, std::string* outData) {
+		std::unique_lock<std::mutex> autoLock(mtx);
+		ZIPENTRY ze;
+		int index = -1;
+		if ((errCode = FindZipItem((HZIP)this->handle, itemName.c_str(), false, &index, &ze)) != ZR_OK || ze.unc_size == 0) {
+			return false;
+		}
+		outData->resize(ze.unc_size);
+		return (errCode = UnzipItem((HZIP)this->handle, index, (void*)outData->c_str(), ze.unc_size)) == ZR_OK;
+	}
+	bool ZipResource::IsValid()
+	{
+		return this->handle;
+	}
+	ZipResource::~ZipResource()
+	{
+		if (this->handle) {
+			CloseZipU((HZIP)this->handle);
+		}
+	}
+};

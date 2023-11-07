@@ -16,14 +16,16 @@ namespace EzUI {
 	void display(void* opaque, void* picture)
 	{
 		VlcPlayer* vp = (VlcPlayer*)opaque;
-		vp->Invoke([=]() {
-			if (vp->Tag) {
-				((Control*)vp->Tag)->Invalidate();
-			}
-			else {
-				vp->Invalidate();
-			}
-			});
+		if (vp->PublicData) {
+			vp->PublicData->Window->Invoke([=]() {
+				if (vp->Tag) {
+					((Control*)vp->Tag)->Invalidate();
+				}
+				else {
+					vp->Invalidate();
+				}
+				});
+		}
 	}
 	unsigned setup(void** opaque, char* chroma, unsigned* width, unsigned* height, unsigned* pitches, unsigned* lines)
 	{
