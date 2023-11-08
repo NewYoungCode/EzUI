@@ -34,15 +34,20 @@ namespace EzUI {
 			if (rect.IntersectsWith(it->GetRect())) {
 				ViewControls.push_back(it);
 			}
-			it->DispatchEvent(args);
-			if (it->Y() >= Height()) { //纵向列表控件超出则不再绘制后面的控件 优化
-				break;
+			if (it->Y() >= Height()) {
+				//当控件超出容器底部将不再派发绘制事件 但是仍然要进行布局
+				if ((it->IsAutoWidth() || it->IsAutoHeight()) && it->GetLayoutState() == LayoutState::Pend) {
+					it->RefreshLayout();
+				}
+			}
+			else {
+				it->DispatchEvent(args);
 			}
 		}
 	}
 	void TileList::OnLayout()
 	{
-		this->SetContentHeight(this->Offset(0));
+		this->Offset(0);
 		if (AutoHeight) {
 			this->SetFixedHeight(this->GetContentSize().Height);
 			this->GetScrollBar()->SetVisible(false);
@@ -52,8 +57,8 @@ namespace EzUI {
 		}
 		this->GetScrollBar()->RefreshScroll();
 	}
-	int TileList::Offset(int offset) {
-		int contentWidth = 0;
+	void TileList::Offset(int offset) {
+		int _contentWidth = 0;
 		int _contentHeight = 0;
 		const int& maxWith = this->Width();
 		int maxHeight = 0;//每行最高的那个
@@ -86,11 +91,10 @@ namespace EzUI {
 			_contentHeight = y + maxHeight;
 			//计算最大宽度
 			int _width = it.X() + it.Width();
-			if (_width > contentWidth) {
-				contentWidth = _width;
+			if (_width > _contentWidth) {
+				_contentWidth = _width;
 			}
 		}
-		this->SetContentWidth(contentWidth);
-		return _contentHeight;
+		this->SetContentSize({ _contentWidth,_contentHeight });
 	}
 };

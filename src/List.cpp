@@ -1,4 +1,3 @@
-#pragma once
 #include "List.h"
 namespace EzUI {
 

@@ -19,7 +19,7 @@ namespace EzUI {
 	{
 	}
 	void VList::OnLayout() {
-		this->SetContentHeight(this->Offset(0));
+		this->Offset(0);
 		if (IsAutoHeight()) {
 			this->GetScrollBar()->SetVisible(false);
 		}
@@ -35,7 +35,7 @@ namespace EzUI {
 		return &vScrollBar;
 	}
 
-	int VList::Offset(int offset)
+	void VList::Offset(int offset)
 	{
 		int contentWidth = 0;
 		int	_maxBottom = offset;
@@ -68,8 +68,7 @@ namespace EzUI {
 				contentWidth = _width;
 			}
 		}
-		this->SetContentWidth(contentWidth);
-		return _maxBottom;
+		this->SetContentSize({ contentWidth, _maxBottom - offset });
 	}
 
 	void VList::OnChildPaint(PaintEventArgs& args) {
@@ -80,9 +79,14 @@ namespace EzUI {
 			if (rect.IntersectsWith(it->GetRect())) {
 				ViewControls.push_back(it);
 			}
-			it->DispatchEvent(args);
-			if (it->Y() >= Height()) { //纵向列表控件超出则不再绘制后面的控件 优化
-				break;
+			if (it->Y() >= Height()) {
+				//当控件超出容器底部将不再派发绘制事件 但是仍然要进行布局
+				if (it->IsAutoHeight() && it->GetLayoutState() == LayoutState::Pend) {
+					it->RefreshLayout();
+				}
+			}
+			else {
+				it->DispatchEvent(args);
 			}
 		}
 	}

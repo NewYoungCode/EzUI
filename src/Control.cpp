@@ -569,7 +569,8 @@ namespace EzUI {
 			this->EndLayout();
 			this->RefreshLayout();
 			if (Parent) {
-				Parent->Invalidate();
+				Parent->EndLayout();
+				Parent->RefreshLayout();
 			}
 			return;
 		}
@@ -578,7 +579,8 @@ namespace EzUI {
 			this->EndLayout();
 			this->RefreshLayout();
 			if (Parent) {
-				Parent->Invalidate();
+				Parent->EndLayout();
+				Parent->RefreshLayout();
 			}
 			return;
 		}
@@ -1425,9 +1427,6 @@ namespace EzUI {
 		if (Parent->IsPendLayout()) {
 			Parent->RefreshLayout();
 		}
-		if (!Scrollable()) {
-			return;
-		}
 		int viewLength;
 		int contentLength;
 		int scrollBarLength;
@@ -1437,7 +1436,7 @@ namespace EzUI {
 			this->_offset = 0;
 			this->_sliderPos = 0;
 		}
-		else if (std::abs(offset) > this->_overflowLength) {
+		else if (std::abs(offset) >= this->_overflowLength) {
 			//滚动条在底部
 			this->_offset = -this->_overflowLength;
 			this->_sliderPos = scrollBarLength - this->_sliderLength;
@@ -1447,14 +1446,6 @@ namespace EzUI {
 			this->_offset = offset;
 			this->_sliderPos = -offset / this->_rollRate;
 		}
-
-		//if (_viewLength == _old_viewLength && _contentLength == _old_contentLength && _offset == _old_offset) {
-		//	return;
-		//}
-		//_old_viewLength = _viewLength;
-		//_old_contentLength = _contentLength;
-		//_old_offset = _offset;
-
 		//调用容器的滚动函数进行偏移
 		if (OffsetCallback) {
 			OffsetCallback(this->_offset);

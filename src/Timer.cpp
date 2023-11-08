@@ -1,4 +1,3 @@
-#pragma once
 #include "Timer.h"
 namespace EzUI {
 	ThreadTimer::ThreadTimer() {

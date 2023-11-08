@@ -22,6 +22,8 @@ project(kugou)
 #主程序
 file(GLOB src ./kugou/*.*)
 add_executable(kugou WIN32 ${src})
+#程序输出目录
+set_target_properties(kugou PROPERTIES RUNTIME_OUTPUT_DIRECTORY ../${tag})
 #添加常用库依赖
 target_include_directories(kugou PRIVATE  ${include})
 target_include_directories(kugou PRIVATE ./kugou/lib/Common/include)
