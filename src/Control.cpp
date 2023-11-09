@@ -569,8 +569,7 @@ namespace EzUI {
 			this->EndLayout();
 			this->RefreshLayout();
 			if (Parent) {
-				Parent->EndLayout();
-				Parent->RefreshLayout();
+				Parent->Invalidate();
 			}
 			return;
 		}
@@ -579,8 +578,7 @@ namespace EzUI {
 			this->EndLayout();
 			this->RefreshLayout();
 			if (Parent) {
-				Parent->EndLayout();
-				Parent->RefreshLayout();
+				Parent->Invalidate();
 			}
 			return;
 		}
@@ -1427,6 +1425,9 @@ namespace EzUI {
 		if (Parent->IsPendLayout()) {
 			Parent->RefreshLayout();
 		}
+		//if (!Scrollable()) {
+		//	return;
+		//}
 		int viewLength;
 		int contentLength;
 		int scrollBarLength;
@@ -1449,6 +1450,7 @@ namespace EzUI {
 		//调用容器的滚动函数进行偏移
 		if (OffsetCallback) {
 			OffsetCallback(this->_offset);
+			SyncInfo();
 		}
 		Parent->Invalidate();
 		//Parent->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
@@ -1456,7 +1458,8 @@ namespace EzUI {
 			Scroll(this, (double)this->_offset / (-this->_overflowLength), type);
 		}
 	}
-	void ScrollBar::RefreshScroll() {
+	void ScrollBar::SyncInfo()
+	{
 		if (Parent == NULL)return;
 		if (Parent->IsPendLayout()) {
 			Parent->RefreshLayout();
@@ -1476,6 +1479,9 @@ namespace EzUI {
 			this->_rollRate = 0;
 			this->_overflowLength = 0;
 		}
+	}
+	void ScrollBar::RefreshScroll() {
+		SyncInfo();
 		ScrollTo(this->_offset, Event::None);
 	};
 	void ScrollBar::OnMouseWheel(const MouseEventArgs& arg) {

@@ -5,10 +5,10 @@ namespace EzUI {
 		this->GetScrollBar()->SetHeight(Height());//¹ö¶¯Ìõ¿í¶È
 		this->GetScrollBar()->Parent = this;
 		this->GetScrollBar()->OffsetCallback = [this](int offsetValue)->void {
-			this->Offset(offsetValue);
 			if (this->GetScrollBar()->ScrollPos() >= 1) {
 				NextPage();
 			}
+			this->Offset(offsetValue);
 			};
 	}
 	VList::VList()

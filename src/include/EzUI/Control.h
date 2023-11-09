@@ -233,6 +233,7 @@ namespace EzUI {
 		virtual void OnMouseWheel(const MouseEventArgs& arg)override;
 		virtual void GetInfo(int* viewLength, int* contentLength, int* scrollBarLength) = 0;
 		void ScrollTo(int offset, const Event& type);
+		void SyncInfo();
 	public:
 		//滚动到指定控件可见位置
 		virtual void ScrollTo(Control* ctl) = 0;

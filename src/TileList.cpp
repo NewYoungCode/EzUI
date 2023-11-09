@@ -7,10 +7,10 @@ namespace EzUI {
 		this->GetScrollBar()->SetHeight(Height());
 		this->GetScrollBar()->Parent = this;
 		this->GetScrollBar()->OffsetCallback = [this](int offsetValue)->void {
-			this->Offset(offsetValue);
 			if (this->GetScrollBar()->ScrollPos() >= 1) {
 				NextPage();
 			}
+			this->Offset(offsetValue);
 			};
 	}
 
@@ -95,6 +95,6 @@ namespace EzUI {
 				_contentWidth = _width;
 			}
 		}
-		this->SetContentSize({ _contentWidth,_contentHeight });
+		this->SetContentSize({ _contentWidth,_contentHeight - offset });
 	}
 };

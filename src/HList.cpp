@@ -6,10 +6,10 @@ namespace EzUI {
 		this->GetScrollBar()->SetWidth(Width());//¹ö¶¯Ìõ¿í¶È
 		this->GetScrollBar()->Parent = this;
 		this->GetScrollBar()->OffsetCallback = [this](int offsetValue)->void {
-			this->Offset(offsetValue);
 			if (this->GetScrollBar()->ScrollPos() >= 1) {
 				NextPage();
 			}
+			this->Offset(offsetValue);
 			};
 	}
 	HList::HList()
@@ -66,7 +66,7 @@ namespace EzUI {
 				_contentHeight = _height;
 			}
 		}
-		this->SetContentSize({ _contentWidth- offset,_contentHeight });
+		this->SetContentSize({ _contentWidth - offset,_contentHeight });
 	}
 
 	void HList::OnChildPaint(PaintEventArgs& args) {
