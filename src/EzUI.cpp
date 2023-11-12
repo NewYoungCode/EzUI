@@ -11,8 +11,7 @@ namespace EzUI {
 
 	WCHAR __EzUI__WindowClassName[]{ L"EzUI_Window" };
 	HMODULE __EzUI__HINSTANCE = NULL;
-	HGLOBAL __EzUI__HVSResource = NULL;
-	ZipResource* __EzUI__ZipResource = NULL;
+	Resource* __EzUI__Resource = NULL;
 	const std::list<EzUI::MonitorInfo> __EzUI__MonitorInfos;
 
 	void InstallFont(const EString& fontFileName) {
@@ -92,7 +91,7 @@ namespace EzUI {
 				ok = true;
 				break;
 			}
-			ok = EzUI::__EzUI__ZipResource->GetResource(filename, out);
+			ok = EzUI::__EzUI__Resource->GetFile(filename, out);
 		} while (false);
 		return ok;
 	}

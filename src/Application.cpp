@@ -92,7 +92,7 @@ namespace EzUI {
 			::FreeLibrary(hModNtdll);
 		}
 	}
-	Application::Application(int resID, const EString& custResType, const EString& password) {
+	Application::Application(int resID, const EString& custResType) {
 		Init();
 		HINSTANCE hInst = EzUI::__EzUI__HINSTANCE;
 #ifdef UNICODE
@@ -101,19 +101,20 @@ namespace EzUI {
 		HRSRC hRsrc = ::FindResource(hInst, MAKEINTRESOURCE(resID), custResType.c_str());
 #endif
 		if (!hRsrc)return;
-		DWORD len = SizeofResource(hInst, hRsrc);
-		EzUI::__EzUI__HVSResource = LoadResource(hInst, hRsrc);
-		EzUI::__EzUI__ZipResource = new ZipResource((void*)EzUI::__EzUI__HVSResource, len, password);
+		EzUI::__EzUI__Resource = new Resource(hRsrc);
 	}
 	//使用本地文件名称加载资源包
-	Application::Application(const EString& fileName, const EString& password) {
+	Application::Application(const EString& fileName) {
 		Init();
-		EzUI::__EzUI__ZipResource = new ZipResource(fileName.unicode().c_str(), password.c_str());
+		//本地文件中获取
+		std::wstring wstr = fileName.unicode();
+		DWORD dwAttr = GetFileAttributesW(wstr.c_str());
+		if (dwAttr && (dwAttr != -1) && (dwAttr & FILE_ATTRIBUTE_ARCHIVE)) {
+			EzUI::__EzUI__Resource = new Resource(fileName);
+		}
 #ifdef _DEBUG
-		if (EzUI::__EzUI__ZipResource->IsValid() == false) {
-			delete EzUI::__EzUI__ZipResource;
-			EzUI::__EzUI__ZipResource = NULL;
-			::MessageBoxW(NULL, fileName.unicode().c_str(), L"Failed to open zip", MB_OK | MB_ICONINFORMATION);
+		else {
+			::MessageBoxW(NULL, fileName.unicode().c_str(), L"Failed to open Resource", MB_OK | MB_ICONINFORMATION);
 		}
 #endif
 	}
@@ -123,11 +124,8 @@ namespace EzUI {
 	Application::~Application() {
 		RenderUnInitialize();
 		::CoUninitialize();
-		if (EzUI::__EzUI__ZipResource) {
-			delete EzUI::__EzUI__ZipResource;
-		}
-		if (EzUI::__EzUI__HVSResource) {
-			FreeResource(EzUI::__EzUI__HVSResource);
+		if (EzUI::__EzUI__Resource) {
+			delete EzUI::__EzUI__Resource;
 		}
 		UnregisterClassW(EzUI::__EzUI__WindowClassName, EzUI::__EzUI__HINSTANCE);
 	}

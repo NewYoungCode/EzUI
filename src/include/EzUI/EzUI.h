@@ -1,7 +1,7 @@
 #pragma once
 #include "UIDef.h"
 #include "EString.h"
-#include "ZipResource.h"
+#include "Resource.h"
 #include "RenderType.h"
 #include "Direct2DRender.h"
 
@@ -19,8 +19,7 @@ namespace EzUI {
 	//全局资源句柄
 	extern UI_VAR_EXPORT WCHAR __EzUI__WindowClassName[];//窗口类名
 	extern UI_VAR_EXPORT HMODULE __EzUI__HINSTANCE;//全局实例
-	extern UI_VAR_EXPORT HGLOBAL __EzUI__HVSResource;//vs中的资源文件句柄
-	extern UI_VAR_EXPORT ZipResource* __EzUI__ZipResource;//zip文件中的全局资源句柄
+	extern UI_VAR_EXPORT Resource* __EzUI__Resource;//文件中的全局资源句柄
 	extern UI_VAR_EXPORT const std::list<EzUI::MonitorInfo> __EzUI__MonitorInfos;//所有监视器信息
 
 	//装载字体
@@ -35,7 +34,7 @@ namespace EzUI {
 	extern UI_EXPORT bool CopyToClipboard(const std::wstring& str, HWND hWnd = NULL);
 	//粘贴unicode文字
 	extern UI_EXPORT bool GetClipboardData(std::wstring* outStr, HWND hWnd = NULL);
-	//从获取文件资源
+	//自动获取文件资源(本地文件/资源文件)
 	extern UI_EXPORT bool GetResource(const EString& fileName, std::string* outData);
 	//获取当前所有监视器的信息
 	extern UI_EXPORT size_t GetMonitor(std::list<MonitorInfo>* outMonitorInfo);
@@ -107,9 +106,9 @@ namespace EzUI {
 				return new Image(wstr);
 			}
 			//从资源中获取
-			if (EzUI::__EzUI__ZipResource) {
+			if (EzUI::__EzUI__Resource) {
 				std::string data;
-				EzUI::__EzUI__ZipResource->GetResource(fileOrRes, &data);
+				EzUI::__EzUI__Resource->GetFile(fileOrRes, &data);
 				if (data.empty()) {
 					return NULL;
 				}

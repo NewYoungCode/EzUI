@@ -1,6 +1,7 @@
 #include "global.h"
 #include "MainFrm.h"
 
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPWSTR    lpCmdLine,
@@ -15,13 +16,19 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	printf("福来day");
 
 	Curl_Global_Init();
-	EzUI::Application app("res.zip");//指定资源文件
-	//EzUI::Application app;//不指定资源
-	//EzUI::Application app(ID_FILE,"zip","");//指定vs中资源文件
+
+	//if(0){
+	//	EzUI::Application app;//指定资源文件
+	//	//打包资源文件
+	//	Resource::Package(Path::StartPath()+"/res","d:/res.bin");
+	//}
+
+	EzUI::Application app("res.bin");//指定资源文件
 	app.EnableHighDpi();
 
 	MainFrm frm;
 	frm.Show();
+	
 
 	return app.Exec();
 }
