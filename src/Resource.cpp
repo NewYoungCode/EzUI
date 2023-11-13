@@ -127,7 +127,7 @@ namespace EzUI {
 			ofs.write(name.c_str(), name.size() + 1);
 		}
 		//首位呼应
-		ofs.write((char*)(&headOffset), 4);
+		//ofs.write((char*)(&headOffset), 4);
 		ofs.flush();
 		ofs.close();
 	}
@@ -143,15 +143,15 @@ namespace EzUI {
 		ifs.seekg(0);
 		DWORD headOffset;
 		ifs.read((char*)&headOffset, 4);
-		//读取末尾
-		ifs.seekg(ifs.size() - 4);
-		DWORD endValue;
-		ifs.read((char*)&endValue, 4);
-		if (headOffset != endValue) {
-			//不是标准的资源文件 不执行解析
-			ASSERT(!"error resource");
-			return;
-		}
+		////读取末尾
+		//ifs.seekg(ifs.size() - 4);
+		//DWORD endValue;
+		//ifs.read((char*)&endValue, 4);
+		//if (headOffset != endValue) {
+		//	//不是标准的资源文件 不执行解析
+		//	ASSERT(!"error resource");
+		//	return;
+		//}
 		//开始读取文件剩余条目
 		ifs.seekg(headOffset);
 		while (ifs.tellg() < ifs.size())
@@ -198,6 +198,7 @@ namespace EzUI {
 		for (const auto& it : items) {
 			if (it.name == fileName) {
 				out->resize(it.size);
+				rStream->seekg(it.offset);
 				rStream->read((char*)out->c_str(), it.size);
 				return true;
 			}
