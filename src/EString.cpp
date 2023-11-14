@@ -33,10 +33,10 @@ namespace EzUI {
 		EString::Split(*this, ch_, &arr);
 		return arr;
 	}
-	EString EString::Replace(const EString& oldText, const EString& newText) const
+	EString EString::Replace(const EString& oldText, const EString& newText, bool replaceAll) const
 	{
 		EString newStr = *this;
-		EString::Replace(&newStr, oldText, newText);
+		EString::Replace(&newStr, oldText, newText, replaceAll);
 		return newStr;
 	}
 	EString EString::Tolower() const
@@ -165,7 +165,7 @@ namespace EzUI {
 	}
 	void EString::Erase(std::string* str_in_out, const char& _char) {
 		const EString& self = *str_in_out;
-		char* bufStr = new char[self.size() + 1]{ 0 };
+		char* bufStr = new char[self.size() + 1] { 0 };
 		size_t pos = 0;
 		for (auto& it : self) {
 			if (_char == it)continue;
@@ -175,7 +175,7 @@ namespace EzUI {
 		*str_in_out = bufStr;
 		delete[] bufStr;
 	}
-	void EString::Replace(std::string* str_in_out, const std::string& oldText, const std::string& newText)
+	void EString::Replace(std::string* str_in_out, const std::string& oldText, const std::string& newText, bool replaceAll)
 	{
 		std::string& newStr = *str_in_out;
 		size_t pos;
@@ -184,6 +184,9 @@ namespace EzUI {
 		{
 			newStr.replace(pos, oldText.size(), newText);
 			pos = newStr.find(oldText);
+			if (!replaceAll) {
+				break;
+			}
 		}
 	}
 	void EString::Split(const std::string& str_in, const std::string& ch_, std::vector<std::string>* strs_out) {

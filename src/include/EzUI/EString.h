@@ -19,7 +19,7 @@ namespace EzUI {
 		std::string ansi() const;
 		EString Erase(const char& _char)const;
 		std::vector<std::string> Split(const EString& ch_)const;
-		EString Replace(const EString& oldText, const EString& newText)const;
+		EString Replace(const EString& oldText, const EString& newText,bool replaceAll=true)const;
 		EString Tolower()const;
 		EString Toupper()const;
 		bool operator==(const wchar_t* szbuf)const;
@@ -41,7 +41,7 @@ namespace EzUI {
 		static void Tolower(std::string* str_in_out);
 		static void Toupper(std::string* str_in_out);
 		static void Erase(std::string* str_in_out, const char& ch);
-		static void Replace(std::string* str_in_out, const std::string& oldText, const std::string& newText);
+		static void Replace(std::string* str_in_out, const std::string& oldText, const std::string& newText,bool replaceAll=true);
 		static void Split(const std::string& str_in, const std::string& ch, std::vector<std::string>* strs_out);
 	};
 #define utf8(text) EString(L##text)

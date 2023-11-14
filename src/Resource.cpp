@@ -123,7 +123,7 @@ namespace EzUI {
 			EString name = item.name;
 			name = name.Replace("\\", "/");
 			name = name.Replace("//", "/");
-			name = name.Replace(root, "");
+			name = name.Replace(root, "",false);
 			ofs.write(name.c_str(), name.size() + 1);
 		}
 		//Ê×Î»ºôÓ¦

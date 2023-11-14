@@ -17,6 +17,16 @@ add_executable(designer WIN32 ${src} )
 target_include_directories(designer PRIVATE  ${include})
 target_link_libraries(designer PRIVATE EzUI)
 
+
+#资源打包器
+project(ResPackage)
+file(GLOB src ./ResPackage/*.*)
+add_executable(ResPackage WIN32 ${src} )
+target_include_directories(ResPackage PRIVATE  ${include})
+target_link_libraries(ResPackage PRIVATE EzUI)
+set_target_properties(ResPackage PROPERTIES RUNTIME_OUTPUT_DIRECTORY ../${tag})
+
+
 #模仿酷狗音乐demo
 project(kugou)
 #主程序
