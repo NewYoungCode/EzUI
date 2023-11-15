@@ -72,7 +72,7 @@ namespace EzUI {
 		} while (FindNextFileW(findHandle, &findData));
 		FindClose(findHandle);
 	}
-	void  Resource::Package(const EString& dir, const EString& outFile) {
+	void  Resource::Package(const EString& dir, const EString& outFile, const std::function<void(const EString&, int, int)>& packCallback) {
 		std::list<Entry> items;
 		std::list<std::wstring> files;
 		__Resource__FindFilesRecursively(dir.unicode(), &files);
@@ -114,6 +114,7 @@ namespace EzUI {
 		if (pos != size_t(-1)) {
 			root = root.substr(0, pos + 1);
 		}
+		int index = 0;
 		for (auto& item : items) {
 			//写入文件偏移位置
 			ofs.write((char*)(&item.offset), 4);
@@ -123,16 +124,21 @@ namespace EzUI {
 			EString name = item.name;
 			name = name.Replace("\\", "/");
 			name = name.Replace("//", "/");
-			name = name.Replace(root, "",false);
+			name = name.Replace(root, "", false);
 			ofs.write(name.c_str(), name.size() + 1);
+			if (packCallback) {
+				packCallback(name, index, items.size());
+			}
+			index++;
 		}
 		//首位呼应
-		//ofs.write((char*)(&headOffset), 4);
+		ofs.write((char*)(&headOffset), 4);
 		ofs.flush();
 		ofs.close();
 	}
 
 	void Resource::UnPackage() {
+		std::list<Entry>& items = (std::list<Entry>&)this->Items;
 		auto& ifs = *(this->rStream);
 		if (ifs.size() < 8) {
 			//不是标准的资源文件 不执行解析
@@ -143,18 +149,19 @@ namespace EzUI {
 		ifs.seekg(0);
 		DWORD headOffset;
 		ifs.read((char*)&headOffset, 4);
-		////读取末尾
-		//ifs.seekg(ifs.size() - 4);
-		//DWORD endValue;
-		//ifs.read((char*)&endValue, 4);
-		//if (headOffset != endValue) {
-		//	//不是标准的资源文件 不执行解析
-		//	ASSERT(!"error resource");
-		//	return;
-		//}
+		//读取末尾
+		ifs.seekg(ifs.size() - 4);
+		DWORD endValue;
+		ifs.read((char*)&endValue, 4);
+		if (headOffset != endValue) {
+			//不是标准的资源文件 不执行解析
+			ASSERT(!"error resource");
+			return;
+		}
 		//开始读取文件剩余条目
 		ifs.seekg(headOffset);
-		while (ifs.tellg() < ifs.size())
+		size_t endPos = ifs.size() - 4;
+		while (ifs.tellg() < endPos)
 		{
 			//读取到文件偏移位置
 			DWORD fileOffset;
@@ -195,7 +202,7 @@ namespace EzUI {
 		}
 	}
 	bool Resource::GetFile(const EString& fileName, std::string* out) {
-		for (const auto& it : items) {
+		for (const auto& it : this->Items) {
 			if (it.name == fileName) {
 				out->resize(it.size);
 				rStream->seekg(it.offset);

@@ -27,12 +27,12 @@ namespace EzUI {
 			virtual ~ReadStream();
 		};
 	private:
-		std::list<Entry> items;
 		ReadStream* rStream = NULL;
 		void UnPackage();
 	public:
+		const std::list<Entry> Items;
 		//对资源目录进行打包
-		UI_EXPORT static void Package(const EString& dir, const EString& outFile);
+		UI_EXPORT static void Package(const EString& dir, const EString& outFile, const std::function<void(const EString&, int, int)>& packCallback = NULL);
 	public:
 		virtual ~Resource();
 		//从本地文件创建对象
