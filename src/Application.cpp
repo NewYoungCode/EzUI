@@ -1,9 +1,7 @@
 #include "Application.h"
 #include <functional>
 namespace EzUI {
-
 	LRESULT CALLBACK __EzUI__WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-		WindowData* wndData = (WindowData*)UI_GET_USERDATA(hWnd);
 		//if (message == WM_CREATE)
 		//{
 		//	RECT rcClient;
@@ -15,7 +13,17 @@ namespace EzUI {
 		//		rcClient.right - rcClient.left, rcClient.bottom - rcClient.top,
 		//		SWP_FRAMECHANGED);
 		//}
-		if (message == WM_GUI_SYSTEM) {
+		WindowData* wndData = (WindowData*)UI_GET_USERDATA(hWnd);
+		if (message == WM_CREATE) {
+			__EzUI__WNDS.push_back(hWnd);
+		}
+		else if (message == WM_DESTROY) {
+			auto itor = std::find(__EzUI__WNDS.begin(), __EzUI__WNDS.end(), hWnd);
+			if (itor != __EzUI__WNDS.end()) {
+				__EzUI__WNDS.erase(itor);
+			}
+		}
+		else if (message == WM_GUI_SYSTEM) {
 			if (wParam == WM_GUI_BEGININVOKE || wParam == WM_GUI_INVOKE) {
 				using Func = std::function<void()>;
 				Func* callback = (Func*)lParam;
@@ -26,7 +34,7 @@ namespace EzUI {
 			}
 			return 0;
 		}
-		if (message == WM_GUI_APP) {
+		else if (message == WM_GUI_APP) {
 			return 0;
 		}
 		if (wndData) {
@@ -37,7 +45,8 @@ namespace EzUI {
 
 	void Application::Init() {
 		//存入全局实例
-		EzUI::__EzUI__HINSTANCE = GetModuleHandleW(NULL);
+		EzUI::__EzUI__HINSTANCE = ::GetModuleHandleW(NULL);
+		EzUI::__EzUI__ThreadId = ::GetCurrentThreadId();
 		//设计窗口
 		::WNDCLASSW    wc{ 0 };
 		wc.lpfnWndProc = __EzUI__WndProc;//窗口过程

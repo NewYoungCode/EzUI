@@ -26,9 +26,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	EzUI::Application app("res.bin");//指定资源文件
 	app.EnableHighDpi();
 
+	while (true)
+	{
+		UIManager umg;
+		umg.LoadXml("xml/main.htm");
+	}
+
 	MainFrm frm;
 	frm.Show();
-	
 
 	return app.Exec();
 }

@@ -21,9 +21,7 @@ namespace EzUI {
 		PublicData->UpdateWindow = [this]()->void {
 			//ÊµÊ±»æÖÆ
 			if (IsVisible() && !_InvalidateRect.IsEmptyArea()) {
-				this->Invoke([this]() {
-					this->Paint();
-					});
+				this->Paint();
 			}
 			};
 
@@ -43,10 +41,10 @@ namespace EzUI {
 					}
 				}
 				//1000/5=200Ö¡·â¶¥
-				Sleep(5);
 				this->Invoke([this]() {
 					this->Paint();
 					});
+				Sleep(5);
 			}
 			});
 	}

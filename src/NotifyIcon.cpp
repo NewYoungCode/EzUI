@@ -2,7 +2,7 @@
 
 namespace EzUI {
 	bool __Init__RegeditClass__ = false;
-	LRESULT CALLBACK _NotifyIcon_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+	LRESULT CALLBACK __NotifyIcon_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		LONG_PTR USERDATA = GetWindowLongPtr(hwnd, GWLP_USERDATA);
 		NotifyIcon* ntfi = (NotifyIcon*)USERDATA;
@@ -39,7 +39,7 @@ namespace EzUI {
 
 		if (!__Init__RegeditClass__) {
 			::WNDCLASSW    wc{ 0 };
-			wc.lpfnWndProc = _NotifyIcon_WndProc;//窗口过程
+			wc.lpfnWndProc = __NotifyIcon_WndProc;//窗口过程
 			wc.hInstance = hInstance;//
 			wc.hCursor = ::LoadCursorW(NULL, IDC_ARROW);//光标
 			wc.lpszClassName = L"EzUI_NotifyIcon";//类名

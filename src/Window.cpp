@@ -26,6 +26,7 @@ namespace EzUI {
 	void Window::InitWindow(int width, int height, HWND owner, DWORD dStyle, DWORD  exStyle)
 	{
 		this->PublicData = new WindowData;
+		(bool&)this->IsWindow = true;
 		Rect _rect(0, 0, width, height);
 
 		POINT cursorPos;
