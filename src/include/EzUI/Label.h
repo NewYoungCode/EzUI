@@ -14,9 +14,9 @@ namespace EzUI {
 		virtual void OnDpiChange(const DpiChangeEventArgs& args)override;
 		virtual void OnLayout()override;
 	public:
-		//文字溢出将显示的文字
+		//鏂囧瓧婧㈠嚭灏嗘樉绀虹殑鏂囧瓧
 		EString Ellipsis;
-		//基于控件的文字的边距
+		//鍩轰簬鎺т欢鐨勬枃瀛楃殑杈硅窛
 		EzUI::Distance TextMargin;
 	public:
 		TextAlign TextAlign = TextAlign::MiddleCenter;

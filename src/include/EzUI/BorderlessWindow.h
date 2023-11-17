@@ -3,7 +3,7 @@
 #include "ShadowBox.h"
 namespace EzUI {
 	/// <summary>
-	/// BorderlessWindow //ÎŞ±ß¿ò ´øÒõÓ° 
+	/// BorderlessWindow //æ— è¾¹æ¡† å¸¦é˜´å½± 
 	/// </summary>
 	class UI_EXPORT BorderlessWindow :public Window {
 	private:
@@ -14,7 +14,7 @@ namespace EzUI {
 	protected:
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
 		virtual void OnRect(const Rect& rect) override;
-		virtual void OnDpiChange(const float& systemScale, const Rect& newRect);//µ±dpi·¢Éú¸ü¸ÄÊ±
+		virtual void OnDpiChange(const float& systemScale, const Rect& newRect);//å½“dpiå‘ç”Ÿæ›´æ”¹æ—¶
 		virtual void DoPaint(HDC winHDC, const Rect& rePaintRect)override;
 		void UpdateShadowBox();
 	public:

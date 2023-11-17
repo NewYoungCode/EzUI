@@ -2,7 +2,7 @@
 #include "EString.h"
 namespace EzUI {
 	/// <summary>
-	/// ×ÊÔ´Àà
+	/// èµ„æºç±»
 	/// </summary>
 	class UI_EXPORT Resource {
 	public:
@@ -11,7 +11,7 @@ namespace EzUI {
 			size_t size = 0;
 			EString name;
 		};
-		//×ÊÔ´ÎÄ¼ş¶ÁÈ¡Á÷
+		//èµ„æºæ–‡ä»¶è¯»å–æµ
 		class UI_EXPORT ReadStream {
 			size_t pos = 0;
 			size_t count = 0;
@@ -31,15 +31,15 @@ namespace EzUI {
 		void UnPackage();
 	public:
 		const std::list<Entry> Items;
-		//¶Ô×ÊÔ´Ä¿Â¼½øĞĞ´ò°ü
+		//å¯¹èµ„æºç›®å½•è¿›è¡Œæ‰“åŒ…
 		UI_EXPORT static void Package(const EString& dir, const EString& outFile, const std::function<void(const EString&, int, int)>& packCallback = NULL);
 	public:
 		virtual ~Resource();
-		//´Ó±¾µØÎÄ¼ş´´½¨¶ÔÏó
+		//ä»æœ¬åœ°æ–‡ä»¶åˆ›å»ºå¯¹è±¡
 		Resource(const EString& resFile);
-		//Ê¹ÓÃvsÄÚÖÃ×ÊÔ´ÎÄ¼ş´´½¨¶ÔÏó
+		//ä½¿ç”¨vså†…ç½®èµ„æºæ–‡ä»¶åˆ›å»ºå¯¹è±¡
 		Resource(HRSRC hRsrc);
-		//Ñ°ÕÒ×ÊÔ´ÖĞµÄÎÄ¼ş
+		//å¯»æ‰¾èµ„æºä¸­çš„æ–‡ä»¶
 		bool GetFile(const EString& fileName, std::string* out);
 	};
 };

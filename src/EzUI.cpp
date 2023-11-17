@@ -18,24 +18,24 @@ namespace EzUI {
 
 	void InstallFont(const EString& fontFileName) {
 		auto ret = ::AddFontResourceW(fontFileName.unicode().c_str());
-		::SystemParametersInfoW(SPI_SETNONCLIENTMETRICS, 0, nullptr, SPIF_SENDCHANGE);//Ë¢ĞÂ
+		::SystemParametersInfoW(SPI_SETNONCLIENTMETRICS, 0, nullptr, SPIF_SENDCHANGE);//åˆ·æ–°
 	}
 
 	void UnstallFont(const EString& fontFileName) {
 		auto ret = ::RemoveFontResourceW(fontFileName.unicode().c_str());
-		::SystemParametersInfoW(SPI_SETNONCLIENTMETRICS, 0, nullptr, SPIF_SENDCHANGE);//Ë¢ĞÂ
+		::SystemParametersInfoW(SPI_SETNONCLIENTMETRICS, 0, nullptr, SPIF_SENDCHANGE);//åˆ·æ–°
 	}
 
 	bool CopyToClipboard(int uFormat, void* pData, size_t size, HWND hWnd) {
-		//´ò¿ª¼ôÌù°å
+		//æ‰“å¼€å‰ªè´´æ¿
 		bool ret = ::OpenClipboard(hWnd);
 		if (!ret)return ret;
-		//Çå¿Õ¼ôÌù°å
+		//æ¸…ç©ºå‰ªè´´æ¿
 		::EmptyClipboard();
-		//Îª¼ôÇĞ°åÉêÇëÄÚ´æ
+		//ä¸ºå‰ªåˆ‡æ¿ç”³è¯·å†…å­˜
 		HGLOBAL clip = ::GlobalAlloc(GMEM_DDESHARE, size);
 		memcpy((void*)clip, pData, size);
-		//½âËø
+		//è§£é”
 		ret = ::GlobalUnlock(clip);
 		ret = ::SetClipboardData(uFormat, clip);
 		ret = ::CloseClipboard();
@@ -43,20 +43,20 @@ namespace EzUI {
 	}
 
 	bool GetClipboardData(int uFormat, std::function<void(void*, size_t)> Callback, HWND hWnd) {
-		//Ö»½ÓÊÕµ±Ç°ÀàĞÍ
+		//åªæ¥æ”¶å½“å‰ç±»å‹
 		bool ret = ::IsClipboardFormatAvailable(uFormat);
 		if (!ret)return ret;
-		//´ò¿ª¼ôÌù°æ
+		//æ‰“å¼€å‰ªè´´ç‰ˆ
 		ret = OpenClipboard(hWnd);
 		if (!ret)return ret;
-		//»ñÈ¡¼ôÌù°åÊı¾İ
+		//è·å–å‰ªè´´æ¿æ•°æ®
 		HANDLE hClipboard = ::GetClipboardData(uFormat);
 		size_t dataSize = ::GlobalSize(hClipboard);
 		void* pData = ::GlobalLock(hClipboard);
 		if (Callback) {
 			Callback(pData, dataSize);
 		}
-		//½âËø
+		//è§£é”
 		ret = ::GlobalUnlock(hClipboard);
 		ret = ::CloseClipboard();
 		return ret;
@@ -100,42 +100,42 @@ namespace EzUI {
 
 #undef GetMonitorInfo
 	void GetMonitorInfo(MonitorInfo& mt, HMONITOR hMonitor) {
-		//»ñÈ¡ÏÔÊ¾Æ÷ĞÅÏ¢
+		//è·å–æ˜¾ç¤ºå™¨ä¿¡æ¯
 		MONITORINFOEX infoEx;
 		infoEx.cbSize = sizeof(infoEx);
 		::GetMonitorInfoW(hMonitor, &infoEx);
-		//Âß¼­¿í¸ß
+		//é€»è¾‘å®½é«˜
 		mt.Rect.X = infoEx.rcMonitor.left;
 		mt.Rect.Y = infoEx.rcMonitor.top;
 		mt.Rect.Width = infoEx.rcMonitor.right - infoEx.rcMonitor.left;
 		mt.Rect.Height = infoEx.rcMonitor.bottom - infoEx.rcMonitor.top;
-		if ((infoEx.dwFlags & MONITORINFOF_PRIMARY) == MONITORINFOF_PRIMARY) {//ÊÇ·ñÎªÖ÷ÏÔÊ¾Æ÷
+		if ((infoEx.dwFlags & MONITORINFOF_PRIMARY) == MONITORINFOF_PRIMARY) {//æ˜¯å¦ä¸ºä¸»æ˜¾ç¤ºå™¨
 			mt.Primary = true;
 		}
-		//»ñÈ¡¹¤×÷ÇøÓò ×Ô¶¯ÅÅ³ıÈÎÎñÀ¸
+		//è·å–å·¥ä½œåŒºåŸŸ è‡ªåŠ¨æ’é™¤ä»»åŠ¡æ 
 		mt.WorkRect.X = infoEx.rcWork.left;
 		mt.WorkRect.Y = infoEx.rcWork.top;
 		mt.WorkRect.Width = infoEx.rcWork.right - infoEx.rcWork.left;
 		mt.WorkRect.Height = infoEx.rcWork.bottom - infoEx.rcWork.top;
-		//»ñÈ¡ÎïÀí¿í¸ß
+		//è·å–ç‰©ç†å®½é«˜
 		DEVMODE dm;
 		dm.dmSize = sizeof(dm);
 		dm.dmDriverExtra = 0;
 		::EnumDisplaySettings(infoEx.szDevice, ENUM_REGISTRY_SETTINGS, &dm);
-		mt.Physical.Width = dm.dmPelsWidth;//ÎïÀí¿í
-		mt.Physical.Height = dm.dmPelsHeight;//ÎïÀí¸ß
-		//¼ÆËãËõ·Å
+		mt.Physical.Width = dm.dmPelsWidth;//ç‰©ç†å®½
+		mt.Physical.Height = dm.dmPelsHeight;//ç‰©ç†é«˜
+		//è®¡ç®—ç¼©æ”¾
 		mt.Scale = ((float)mt.Physical.Height / (float)mt.Rect.Height);
-		//ÏÔÊ¾Æ÷fps
+		//æ˜¾ç¤ºå™¨fps
 		mt.FPS = (float)dm.dmDisplayFrequency;
 	}
 
 	size_t GetMonitor(std::list<MonitorInfo>* outMonitorInfo)
 	{
 		outMonitorInfo->clear();
-		//// Ã¶¾ÙÏÔÊ¾Æ÷»Øµ÷º¯Êı
+		//// æšä¸¾æ˜¾ç¤ºå™¨å›è°ƒå‡½æ•°
 		::EnumDisplayMonitors(NULL, NULL, [](HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData) ->BOOL {
-			// »ñÈ¡µ±Ç°ËùÓĞÏÔÊ¾Æ÷µÄĞÅÏ¢
+			// è·å–å½“å‰æ‰€æœ‰æ˜¾ç¤ºå™¨çš„ä¿¡æ¯
 			std::list<MonitorInfo>* monitors = (std::list<MonitorInfo>*)dwData;
 			MonitorInfo mt;
 			GetMonitorInfo(mt, hMonitor);
@@ -153,11 +153,11 @@ namespace EzUI {
 			hMonitor = ::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
 		}
 		else {
-			// È·¶¨°üº¬Êó±êÎ»ÖÃµÄÆÁÄ»
+			// ç¡®å®šåŒ…å«é¼ æ ‡ä½ç½®çš„å±å¹•
 			GetCursorPos(&cursorPos);
 			hMonitor = ::MonitorFromPoint(cursorPos, MONITOR_DEFAULTTONEAREST);
 		}
-		// »ñÈ¡ÆÁÄ»ĞÅÏ¢
+		// è·å–å±å¹•ä¿¡æ¯
 		GetMonitorInfo(*monitorInfo, hMonitor);
 	}
 
@@ -165,7 +165,7 @@ namespace EzUI {
 	{
 		RECT r = rect.ToRECT();
 		HMONITOR hMonitor = ::MonitorFromRect(&r, MONITOR_DEFAULTTONEAREST);
-		// »ñÈ¡ÆÁÄ»ĞÅÏ¢
+		// è·å–å±å¹•ä¿¡æ¯
 		GetMonitorInfo(*monitorInfo, hMonitor);
 	}
 
@@ -212,15 +212,15 @@ namespace EzUI {
 					style->Cursor = LoadCursor(EzUI::Cursor::HELP);
 				}
 				else if (value == "n-resize") {
-					//ÄÏ±±¼ıÍ· ×İÏò
+					//å—åŒ—ç®­å¤´ çºµå‘
 					style->Cursor = LoadCursor(EzUI::Cursor::SIZENS);
 				}
 				else if (value == "e-resize") {
-					//¶«Î÷¼ıÍ· Ë®Æ½
+					//ä¸œè¥¿ç®­å¤´ æ°´å¹³
 					style->Cursor = LoadCursor(EzUI::Cursor::SIZEWE);
 				}
 				else if (value == "move") {
-					//ËÄ¸ö·½ÏòµÄ¼ıÍ·¶¼ÓĞ
+					//å››ä¸ªæ–¹å‘çš„ç®­å¤´éƒ½æœ‰
 					style->Cursor = LoadCursor(EzUI::Cursor::SIZEALL);
 				}
 				break;
@@ -230,7 +230,7 @@ namespace EzUI {
 				break;
 			}
 			if (key == "background-image") {
-				value = value.Erase('"');//É¾³ıË«ÒıºÅ;
+				value = value.Erase('"');//åˆ é™¤åŒå¼•å·;
 				style->BackImage = Image::Make(value);
 				if (callback) {
 					callback(style->BackImage);
@@ -238,7 +238,7 @@ namespace EzUI {
 				break;
 			}
 			if (key == "fore-image") {
-				value = value.Erase('"');//É¾³ıË«ÒıºÅ;
+				value = value.Erase('"');//åˆ é™¤åŒå¼•å·;
 				style->ForeImage = Image::Make(value);
 				if (callback) {
 					callback(style->ForeImage);
@@ -278,7 +278,7 @@ namespace EzUI {
 				break;
 			}
 			if (key == "font-family") {
-				value = value.Erase('"');//É¾³ıË«ÒıºÅ;
+				value = value.Erase('"');//åˆ é™¤åŒå¼•å·;
 				style->FontFamily = value.unicode();
 				break;
 			}

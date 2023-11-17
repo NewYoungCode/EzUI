@@ -3,7 +3,7 @@
 #include "Task.h"
 namespace EzUI {
 
-	//Ê¹ÓÃÏß³ÌµÄ¼ÆÊ±Æ÷ ²»ÓëÖ÷½ø³ÌÍ¬²½(Æô¶¯µÄÊ±ºò¾ÍÖ±½Ó¿ªÊ¼Ö´ĞĞ»Øµ÷º¯Êı)
+	//ä½¿ç”¨çº¿ç¨‹çš„è®¡æ—¶å™¨ ä¸ä¸ä¸»è¿›ç¨‹åŒæ­¥(å¯åŠ¨çš„æ—¶å€™å°±ç›´æ¥å¼€å§‹æ‰§è¡Œå›è°ƒå‡½æ•°)
 	class UI_EXPORT ThreadTimer :public IControl {
 		bool bExit = false;
 		bool bStop = true;
@@ -20,7 +20,7 @@ namespace EzUI {
 		virtual ~ThreadTimer();
 	};
 
-	//ÔÚ²Ù×÷UIµÄÊ±ºò½¨ÒéÊ¹ÓÃ´ËTimerÀà ÓëÖ÷Ïß³ÌÍ¬²½(Æô¶¯µÄÊ±ºòµÚÒ»´Î»á¼ä¸ô²Å»áÆô¶¯)
+	//åœ¨æ“ä½œUIçš„æ—¶å€™å»ºè®®ä½¿ç”¨æ­¤Timerç±» ä¸ä¸»çº¿ç¨‹åŒæ­¥(å¯åŠ¨çš„æ—¶å€™ç¬¬ä¸€æ¬¡ä¼šé—´éš”æ‰ä¼šå¯åŠ¨)
 	class UI_EXPORT Timer :public IControl {
 	public:
 		std::function<void(Timer*)> Tick = NULL;

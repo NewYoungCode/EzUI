@@ -27,7 +27,7 @@ namespace EzUI {
 	void BorderlessWindow::OnRect(const Rect& rect) {
 		__super::OnRect(rect);
 		if (!_firstPaint) {
-			//±ÜÃâÏÈÏÔÊ¾ÒõÓ°ÔÙÏÔÊ¾´°¿ÚµÄÎÊÌâ
+			//é¿å…å…ˆæ˜¾ç¤ºé˜´å½±å†æ˜¾ç¤ºçª—å£çš„é—®é¢˜
 			UpdateShadowBox();
 		}
 	}

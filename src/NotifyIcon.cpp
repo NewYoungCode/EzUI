@@ -39,11 +39,11 @@ namespace EzUI {
 
 		if (!__Init__RegeditClass__) {
 			::WNDCLASSW    wc{ 0 };
-			wc.lpfnWndProc = __NotifyIcon_WndProc;//´°¿Ú¹ý³Ì
+			wc.lpfnWndProc = __NotifyIcon_WndProc;//çª—å£è¿‡ç¨‹
 			wc.hInstance = hInstance;//
-			wc.hCursor = ::LoadCursorW(NULL, IDC_ARROW);//¹â±ê
-			wc.lpszClassName = L"EzUI_NotifyIcon";//ÀàÃû
-			RegisterClassW(&wc); //×¢²á´°¿Ú
+			wc.hCursor = ::LoadCursorW(NULL, IDC_ARROW);//å…‰æ ‡
+			wc.lpszClassName = L"EzUI_NotifyIcon";//ç±»å
+			RegisterClassW(&wc); //æ³¨å†Œçª—å£
 			__Init__RegeditClass__ = true;
 		}
 		_menu = NULL;
@@ -51,16 +51,16 @@ namespace EzUI {
 		_hwnd = ::CreateWindowW(L"EzUI_NotifyIcon", L"EzUI_NotifyIcon", WS_OVERLAPPEDWINDOW,
 			0, 0, 10, 10, NULL, NULL, _hInstance, NULL);
 		UI_SET_USERDATA(_hwnd, this);
-		_nid.cbSize = sizeof(_nid);//½á¹¹Ìå³¤¶È
-		_nid.hWnd = _hwnd;//´°¿Ú¾ä±ú
-		_nid.uCallbackMessage = this->_msgId;//ÏûÏ¢´¦Àí£¬ÕâÀïºÜÖØÒª£¬´¦ÀíÊó±êµã»÷
+		_nid.cbSize = sizeof(_nid);//ç»“æž„ä½“é•¿åº¦
+		_nid.hWnd = _hwnd;//çª—å£å¥æŸ„
+		_nid.uCallbackMessage = this->_msgId;//æ¶ˆæ¯å¤„ç†ï¼Œè¿™é‡Œå¾ˆé‡è¦ï¼Œå¤„ç†é¼ æ ‡ç‚¹å‡»
 		_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 		Shell_NotifyIconW(NIM_ADD, &_nid);
 	}
 
 	void NotifyIcon::SetIcon(short id)
 	{
-		SetIcon(::LoadIcon(_hInstance, MAKEINTRESOURCE(id)));//¼ÓÔØÍ¼±ê
+		SetIcon(::LoadIcon(_hInstance, MAKEINTRESOURCE(id)));//åŠ è½½å›¾æ ‡
 	}
 
 	void NotifyIcon::SetIcon(HICON icon)

@@ -25,7 +25,7 @@ namespace EzUI {
 		void SetPixel(int x, int y, const Color& color);
 		Color GetPixel(int x, int y);
 		byte* GetPixel();
-		void Earse(const Rect& rect);//Ä¨³ý¾ØÐÎÄÚÈÝ
+		void Earse(const Rect& rect);//æŠ¹é™¤çŸ©å½¢å†…å®¹
 		HBITMAP GetHBITMAP();
 		HDC& GetHDC();
 		void Save(const EString& fileName);

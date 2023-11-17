@@ -9,41 +9,41 @@ namespace EzUI {
 		}
 	};
 	namespace File {
-		//ÅĞ¶ÏÎÄ¼şÊÇ·ñ´æÔÚ
+		//åˆ¤æ–­æ–‡ä»¶æ˜¯å¦å­˜åœ¨
 		UI_EXPORT bool Exists(const EString& filenNme);
-		//¿½±´ÎÄ¼ş
+		//æ‹·è´æ–‡ä»¶
 		UI_EXPORT bool Copy(const EString& src, const EString& desc);
-		//É¾³ıÎÄ¼ş
+		//åˆ é™¤æ–‡ä»¶
 		UI_EXPORT bool Delete(const EString& file);
-		//ÎÄ¼şÒÆ¶¯»òÕß¸ÄÃû
+		//æ–‡ä»¶ç§»åŠ¨æˆ–è€…æ”¹å
 		UI_EXPORT bool Move(const EString& oldName, const EString& newName);
-		//´´½¨Ò»¸öÎÄ¼ş(Èç¹ûÎÄ¼şÒÑ´æÔÚÔòÇå¿ÕÆäÄÚÈİ)
+		//åˆ›å»ºä¸€ä¸ªæ–‡ä»¶(å¦‚æœæ–‡ä»¶å·²å­˜åœ¨åˆ™æ¸…ç©ºå…¶å†…å®¹)
 		UI_EXPORT bool Create(const EString& fileName);
-		//½«Ö¸¶¨Êı¾İÒÔ¶ş½øÖÆ·½Ê½Ğ´ÈëÎÄ¼ş(Èç¹ûÎÄ¼ş´æÔÚÄÚÈİÔò×·¼Ó)
+		//å°†æŒ‡å®šæ•°æ®ä»¥äºŒè¿›åˆ¶æ–¹å¼å†™å…¥æ–‡ä»¶(å¦‚æœæ–‡ä»¶å­˜åœ¨å†…å®¹åˆ™è¿½åŠ )
 		UI_EXPORT bool Write(const char* fileData, size_t fileSize, const EString& outFileName);
-		//¶ÁÈ¡ÎÄ¼şµ½ÄÚ´æÖĞ
+		//è¯»å–æ–‡ä»¶åˆ°å†…å­˜ä¸­
 		UI_EXPORT size_t Read(const EString& fileName, std::string* data);
 	}
 	namespace Path {
-		//¸ñÊ½»¯Â·¾¶
+		//æ ¼å¼åŒ–è·¯å¾„
 		UI_EXPORT void Format(std::string* str);
-		//»ñÈ¡ÎÄ¼şÃû(²»°üÀ¨Ä¿Â¼Ãû ²»°üÀ¨À©Õ¹Ãû) 
+		//è·å–æ–‡ä»¶å(ä¸åŒ…æ‹¬ç›®å½•å ä¸åŒ…æ‹¬æ‰©å±•å) 
 		UI_EXPORT EString GetFileNameWithoutExtension(const EString& _filename);
-		//»ñÈ¡ÎÄ¼şËùÔÚÄ¿Â¼
+		//è·å–æ–‡ä»¶æ‰€åœ¨ç›®å½•
 		UI_EXPORT EString GetDirectoryName(const EString& _filename);
-		//»ñÈ¡ÎÄ¼şÀ©Õ¹Ãû
+		//è·å–æ–‡ä»¶æ‰©å±•å
 		UI_EXPORT EString GetExtension(const EString& _filename);
-		//»ñÈ¡ÎÄ¼şÃû(ÎÄ¼şÃû+À©Õ¹Ãû)
+		//è·å–æ–‡ä»¶å(æ–‡ä»¶å+æ‰©å±•å)
 		UI_EXPORT EString GetFileName(const EString& filename);
 	}
 	namespace Directory {
-		//¼ì²âÄ¿Â¼ÊÇ·ñ´æÔÚ
+		//æ£€æµ‹ç›®å½•æ˜¯å¦å­˜åœ¨
 		UI_EXPORT bool Exists(const EString& directoryNme);
-		//´´½¨Ä¿Â¼ ²»´æÔÚµÄ¶à¼¶Ä¿Â¼½«»á×Ô¶¯´´½¨
+		//åˆ›å»ºç›®å½• ä¸å­˜åœ¨çš„å¤šçº§ç›®å½•å°†ä¼šè‡ªåŠ¨åˆ›å»º
 		UI_EXPORT bool Create(const EString& path);
-		//½«Ä¿Â¼ºÍÄ¿Â¼ÏÂµÄÎÄ¼ş¸´ÖÆµ½Ö¸¶¨µÄÎ»ÖÃ
+		//å°†ç›®å½•å’Œç›®å½•ä¸‹çš„æ–‡ä»¶å¤åˆ¶åˆ°æŒ‡å®šçš„ä½ç½®
 		UI_EXPORT void Copy(const EString& srcPath, const EString& desPath);
-		//Ê¹ÓÃÍ¨Åä·ûËÑË÷ÎÄ¼şºÍÄ¿Â¼
+		//ä½¿ç”¨é€šé…ç¬¦æœç´¢æ–‡ä»¶å’Œç›®å½•
 		UI_EXPORT void Find(const EString& directory, std::vector<FileInfo>* result, const EString& pattern = "*.*", bool loopDir = true);
 	}
 };

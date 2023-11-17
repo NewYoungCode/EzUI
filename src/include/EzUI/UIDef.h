@@ -76,10 +76,10 @@ inline HCURSOR LoadCursor(HINSTANCE hInstance, LPCTSTR lpCursorName) {
 #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #endif
 
-//¿ò¼ÜÄÚ±£ÁôµÄÏûÏ¢ ÓÃÓÚGUI¿ò¼ÜÄÚ²¿Í¨Ñ¶
+//æ¡†æ¶å†…ä¿ç•™çš„æ¶ˆæ¯ ç”¨äºGUIæ¡†æ¶å†…éƒ¨é€šè®¯
 #define WM_GUI_SYSTEM WM_USER
 #define WM_GUI_APP WM_APP 
-//À©Õ¹ÏûÏ¢ ÔÚWM_GUI_SYSTEMÏûÏ¢ÖĞµÄwParam²ÎÊıÖĞÌåÏÖ
+//æ‰©å±•æ¶ˆæ¯ åœ¨WM_GUI_SYSTEMæ¶ˆæ¯ä¸­çš„wParamå‚æ•°ä¸­ä½“ç°
 #define WM_GUI_INVOKE 0x01
 #define WM_GUI_BEGININVOKE 0x02
 
@@ -91,5 +91,5 @@ inline HCURSOR LoadCursor(HINSTANCE hInstance, LPCTSTR lpCursorName) {
 #define UI_VAR_EXPORT __declspec(dllimport)
 #endif // _WINDLL
 
-//ÏÂÃæµÄäÖÈ¾·½Ê½Ö»ÄÜÑ¡Ò»¸ö
-#define USED_DIRECT2D 1  //DX»æÖÆ ĞÔÄÜºÃ ÄÚ´æÕ¼ÓÃ¸ß
+//ä¸‹é¢çš„æ¸²æŸ“æ–¹å¼åªèƒ½é€‰ä¸€ä¸ª
+#define USED_DIRECT2D 1  //DXç»˜åˆ¶ æ€§èƒ½å¥½ å†…å­˜å ç”¨é«˜

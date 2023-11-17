@@ -48,7 +48,7 @@ namespace EzUI {
 		}
 	}
 
-	//Ñ°ÕÒÖ¸¶¨Ä¿Â¼ÒÔ¼°Ä¿Â¼ÏÂµÄËùÓĞÎÄ¼ş
+	//å¯»æ‰¾æŒ‡å®šç›®å½•ä»¥åŠç›®å½•ä¸‹çš„æ‰€æœ‰æ–‡ä»¶
 	void __Resource__FindFilesRecursively(const std::wstring& path, std::list<std::wstring>* result) {
 		WIN32_FIND_DATAW findData;
 		HANDLE findHandle = FindFirstFileW((path + L"/*").c_str(), &findData);
@@ -61,7 +61,7 @@ namespace EzUI {
 				continue;
 			}
 			if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-				// Èç¹ûÊÇÄ¿Â¼£¬µİ¹é²éÕÒ¸ÃÄ¿Â¼  
+				// å¦‚æœæ˜¯ç›®å½•ï¼Œé€’å½’æŸ¥æ‰¾è¯¥ç›®å½•  
 				std::wstring newPath = path + L"/" + findData.cFileName;
 				__Resource__FindFilesRecursively(newPath, result);
 			}
@@ -80,16 +80,16 @@ namespace EzUI {
 		std::ofstream ofs(outFile.unicode(), std::ios::binary);
 		ofs.seekp(headOffset);
 		for (auto& file : files) {
-			//¶ÁÈ¡ÎÄ¼ş´óĞ¡
+			//è¯»å–æ–‡ä»¶å¤§å°
 			std::ifstream ifs(file, std::ios::binary);
 			ifs.seekg(0, std::ios::end);
 			auto size = ifs.tellg();
-			//¶ÁÈ¡ÎÄ¼ş
+			//è¯»å–æ–‡ä»¶
 			EString data;
 			data.resize(size);
 			ifs.seekg(0);
 			ifs.read((char*)data.c_str(), size);
-			//¼ÇÂ¼ÎÄ¼şÃû³Æ,Æ«ÒÆ,´óĞ¡
+			//è®°å½•æ–‡ä»¶åç§°,åç§»,å¤§å°
 			Entry item;
 			item.name = file;
 			item.size = size;
@@ -98,12 +98,12 @@ namespace EzUI {
 			headOffset += data.size();
 			items.push_back(item);
 		}
-		//½«Æ«ÒÆÎÄ¼şÍ·Æ«ÒÆĞÅÏ¢Ğ´Èëµ½ÎÄ¼ş³õÊ¼Î»ÖÃ
+		//å°†åç§»æ–‡ä»¶å¤´åç§»ä¿¡æ¯å†™å…¥åˆ°æ–‡ä»¶åˆå§‹ä½ç½®
 		ofs.seekp(0);
 		ofs.write((char*)(&headOffset), 4);
-		//ÉèÖÃµ½ÎÄ¼şÌõÄ¿Î»ÖÃ
+		//è®¾ç½®åˆ°æ–‡ä»¶æ¡ç›®ä½ç½®
 		ofs.seekp(headOffset);
-		//´¦ÀíÂ·¾¶
+		//å¤„ç†è·¯å¾„
 		EString root = dir + "/";
 		root = root.Replace("\\", "/");
 		root = root.Replace("//", "/");
@@ -116,11 +116,11 @@ namespace EzUI {
 		}
 		int index = 0;
 		for (auto& item : items) {
-			//Ğ´ÈëÎÄ¼şÆ«ÒÆÎ»ÖÃ
+			//å†™å…¥æ–‡ä»¶åç§»ä½ç½®
 			ofs.write((char*)(&item.offset), 4);
-			//Ğ´ÈëÎÄ¼ş´óĞ¡
+			//å†™å…¥æ–‡ä»¶å¤§å°
 			ofs.write((char*)(&item.size), 4);
-			//ÎÄ¼şÂ·¾¶Ãû³Æ
+			//æ–‡ä»¶è·¯å¾„åç§°
 			EString name = item.name;
 			name = name.Replace("\\", "/");
 			name = name.Replace("//", "/");
@@ -131,7 +131,7 @@ namespace EzUI {
 			}
 			index++;
 		}
-		//Ê×Î»ºôÓ¦
+		//é¦–ä½å‘¼åº”
 		ofs.write((char*)(&headOffset), 4);
 		ofs.flush();
 		ofs.close();
@@ -141,35 +141,35 @@ namespace EzUI {
 		std::list<Entry>& items = (std::list<Entry>&)this->Items;
 		auto& ifs = *(this->rStream);
 		if (ifs.size() < 8) {
-			//²»ÊÇ±ê×¼µÄ×ÊÔ´ÎÄ¼ş ²»Ö´ĞĞ½âÎö
+			//ä¸æ˜¯æ ‡å‡†çš„èµ„æºæ–‡ä»¶ ä¸æ‰§è¡Œè§£æ
 			ASSERT(!"error resource");
 			return;
 		}
-		//¶ÁÈ¡¼ÇÂ¼ÎÄ¼şÎ»ÖÃµÄÆ«ÒÆ
+		//è¯»å–è®°å½•æ–‡ä»¶ä½ç½®çš„åç§»
 		ifs.seekg(0);
 		DWORD headOffset;
 		ifs.read((char*)&headOffset, 4);
-		//¶ÁÈ¡Ä©Î²
+		//è¯»å–æœ«å°¾
 		ifs.seekg(ifs.size() - 4);
 		DWORD endValue;
 		ifs.read((char*)&endValue, 4);
 		if (headOffset != endValue) {
-			//²»ÊÇ±ê×¼µÄ×ÊÔ´ÎÄ¼ş ²»Ö´ĞĞ½âÎö
+			//ä¸æ˜¯æ ‡å‡†çš„èµ„æºæ–‡ä»¶ ä¸æ‰§è¡Œè§£æ
 			ASSERT(!"error resource");
 			return;
 		}
-		//¿ªÊ¼¶ÁÈ¡ÎÄ¼şÊ£ÓàÌõÄ¿
+		//å¼€å§‹è¯»å–æ–‡ä»¶å‰©ä½™æ¡ç›®
 		ifs.seekg(headOffset);
 		size_t endPos = ifs.size() - 4;
 		while (ifs.tellg() < endPos)
 		{
-			//¶ÁÈ¡µ½ÎÄ¼şÆ«ÒÆÎ»ÖÃ
+			//è¯»å–åˆ°æ–‡ä»¶åç§»ä½ç½®
 			DWORD fileOffset;
 			ifs.read((char*)&fileOffset, 4);
-			//¶ÁÈ¡ÎÄ¼ş´óĞ¡
+			//è¯»å–æ–‡ä»¶å¤§å°
 			DWORD fileSize;
 			ifs.read((char*)&fileSize, 4);
-			//¶ÁÈ¡ÎÄ¼şÃû³Æ
+			//è¯»å–æ–‡ä»¶åç§°
 			char buf[512];
 			for (size_t i = 0; i < sizeof(buf); i++)
 			{

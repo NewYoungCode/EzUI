@@ -27,9 +27,9 @@ namespace EzUI {
 		extern UI_VAR_EXPORT IDWriteFactory* g_WriteFactory;
 		extern UI_VAR_EXPORT IWICImagingFactory* g_ImageFactory;
 	}
-	UI_EXPORT void RenderInitialize();//È«¾Ö³õÊ¼»¯direct2d
-	UI_EXPORT void RenderUnInitialize();//ÊÍ·Ådirect2d
-	UI_EXPORT float GetMaxRadius(float width, float height, float _radius);//»ñÈ¡×î´ó°ë¾¶ ÓÃÓÚ×Ô¶¯ÊÊÓ¦border-radiusÊôĞÔ
+	UI_EXPORT void RenderInitialize();//å…¨å±€åˆå§‹åŒ–direct2d
+	UI_EXPORT void RenderUnInitialize();//é‡Šæ”¾direct2d
+	UI_EXPORT float GetMaxRadius(float width, float height, float _radius);//è·å–æœ€å¤§åŠå¾„ ç”¨äºè‡ªåŠ¨é€‚åº”border-radiuså±æ€§
 	class UI_EXPORT Font {
 	private:
 		Font() = delete;
@@ -49,13 +49,13 @@ namespace EzUI {
 		virtual ~Font();
 	};
 
-	//ÎÄ±¾ÃüÖĞ²âÊÔÊı¾İ
+	//æ–‡æœ¬å‘½ä¸­æµ‹è¯•æ•°æ®
 	class UI_EXPORT HitTestMetrics {
 	public:
 		size_t Length;
-		size_t TextPos;//ÃüÖĞµÄÏÂ±ê
-		RectF FontBox;//ÎÄ×ÖµÄ¾ØĞÎÎ»ÖÃ
-		bool IsTrailingHit;//ÃüÖĞÎ»ÖÃÊÇ·ñÔÚÎ²²¿
+		size_t TextPos;//å‘½ä¸­çš„ä¸‹æ ‡
+		RectF FontBox;//æ–‡å­—çš„çŸ©å½¢ä½ç½®
+		bool IsTrailingHit;//å‘½ä¸­ä½ç½®æ˜¯å¦åœ¨å°¾éƒ¨
 	public:
 		Rect GetCare() {
 			float x = FontBox.X;
@@ -84,16 +84,16 @@ namespace EzUI {
 		void GetMetrics();
 		TextLayout(const std::wstring& text, const Font& font, const SizeF &maxSize = SizeF{ __MAXFLOAT,__MAXFLOAT }, TextAlign textAlgin = TextAlign::TopLeft);
 		Point HitTestPoint(const Point& pt, int* outTextPos, BOOL* outIsTrailingHit, int* fontHeight);
-		void HitTestPoint(const Point& pt, HitTestMetrics* hitTestMetrics);//¸ù¾İ×ø±êÖ´ĞĞÃüÖĞ²âÊÔ
-		Point HitTestTextPosition(int textPos, BOOL isTrailingHit);//¸ù¾İÎÄ×ÖÏÂ±êÖ´ĞĞÃüÖĞ²âÊÔ
+		void HitTestPoint(const Point& pt, HitTestMetrics* hitTestMetrics);//æ ¹æ®åæ ‡æ‰§è¡Œå‘½ä¸­æµ‹è¯•
+		Point HitTestTextPosition(int textPos, BOOL isTrailingHit);//æ ¹æ®æ–‡å­—ä¸‹æ ‡æ‰§è¡Œå‘½ä¸­æµ‹è¯•
 		const std::wstring& GetFontFamily();
 		const float& GetFontSize();
 		int Width();
 		int Height();
-		Size GetFontBox();//»ñÈ¡ÎÄ×Ö»æÖÆµÄÊ±ºòÕ¼ÓÃ¶àÉÙĞĞ
+		Size GetFontBox();//è·å–æ–‡å­—ç»˜åˆ¶çš„æ—¶å€™å ç”¨å¤šå°‘è¡Œ
 		Rect GetLineBox(int lineIndex);
-		int GetFontHeight();//»ñÈ¡×ÖÌå¸ß¶È
-		int GetLineCount();//»ñÈ¡Ò»¹²ÓĞ¶àÉÙĞĞ
+		int GetFontHeight();//è·å–å­—ä½“é«˜åº¦
+		int GetLineCount();//è·å–ä¸€å…±æœ‰å¤šå°‘è¡Œ
 		IDWriteTextLayout* Get() const;
 		void SetUnderline(size_t pos = 0, size_t count = 0);
 		virtual ~TextLayout();
@@ -143,11 +143,11 @@ namespace EzUI {
 			out.rgn = outPathGeometry;
 			geometrySink->Release();
 		}
-		//Á½¿éÇøÓòÈ¡×î´ó±ß½ç
+		//ä¸¤å—åŒºåŸŸå–æœ€å¤§è¾¹ç•Œ
 		static void Union(Geometry& out, const Geometry& a, const Geometry& b) {
 			Combine(out, a, b, D2D1_COMBINE_MODE::D2D1_COMBINE_MODE_UNION);
 		}
-		//Á½¿éÇøÓòÓĞ½»¼¯µÄ²¿·Ö
+		//ä¸¤å—åŒºåŸŸæœ‰äº¤é›†çš„éƒ¨åˆ†
 		static void Intersect(Geometry& out, const Geometry& a, const Geometry& b) {
 			Combine(out, a, b, D2D1_COMBINE_MODE::D2D1_COMBINE_MODE_INTERSECT);
 		}
@@ -214,8 +214,8 @@ namespace EzUI {
 	protected:
 		IWICBitmapDecoder* bitmapdecoder = NULL;
 		IWICBitmapFrameDecode* pframe = NULL;
-		IWICFormatConverter* fmtcovter = NULL;//´ÓÎÄ¼ş¼ÓÔØ
-		IWICBitmap* bitMap = NULL;//´ÓHBITMAPÖĞ¼ÓÔØ
+		IWICFormatConverter* fmtcovter = NULL;//ä»æ–‡ä»¶åŠ è½½
+		IWICBitmap* bitMap = NULL;//ä»HBITMAPä¸­åŠ è½½
 		int Width = 0;
 		int Height = 0;
 		ID2D1Bitmap* d2dBitmap = NULL;
@@ -253,8 +253,8 @@ namespace EzUI {
 
 	enum class StrokeStyle
 	{
-		Solid,//ÊµÏß
-		Dash//ĞéÏß
+		Solid,//å®çº¿
+		Dash//è™šçº¿
 	};
 
 	class UI_EXPORT DXRender {
@@ -271,40 +271,40 @@ namespace EzUI {
 		ID2D1StrokeStyle* GetStrokeStyle();
 	public:
 		DXRender(DXImage* dxImage);
-		DXRender(HDC dc, int x, int y, int width, int height);//´´½¨dx»æÍ¼¶ÔÏó
+		DXRender(HDC dc, int x, int y, int width, int height);//åˆ›å»ºdxç»˜å›¾å¯¹è±¡
 		virtual ~DXRender();
-		void SetFont(const std::wstring& fontFamily, const float& fontSize);//±ØĞëÏÈµ÷ÓÃ
-		void SetFont(const Font& _copy_font);//±ØĞëÏÈµ÷ÓÃ
-		void SetColor(const __EzUI__Color& color);//»áÖ®Ç°±ØĞëµ÷ÓÃ
-		void SetStrokeStyle(StrokeStyle strokeStyle = StrokeStyle::Solid, float dashWidth = 3);//ÉèÖÃÑùÊ½ ĞéÏß/ÊµÏß
-		void DrawTextLayout(const TextLayout& textLayout, const PointF & = { 0,0 });//¸ù¾İÒÑÓĞµÄ²¼¾Ö»æÖÆÎÄ×Ö
-		void DrawString(const std::wstring& text, const RectF& _rect, EzUI::TextAlign textAlign);//»æÖÆÎÄ×Ö
-		void DrawLine(const PointF& _A, const  PointF& _B, float width = 1);//»æÖÆÒ»ÌõÏß
-		void DrawRectangle(const RectF& _rect, float _radius = 0, float width = 1);//»æÖÆ¾ØĞÎ
+		void SetFont(const std::wstring& fontFamily, const float& fontSize);//å¿…é¡»å…ˆè°ƒç”¨
+		void SetFont(const Font& _copy_font);//å¿…é¡»å…ˆè°ƒç”¨
+		void SetColor(const __EzUI__Color& color);//ä¼šä¹‹å‰å¿…é¡»è°ƒç”¨
+		void SetStrokeStyle(StrokeStyle strokeStyle = StrokeStyle::Solid, float dashWidth = 3);//è®¾ç½®æ ·å¼ è™šçº¿/å®çº¿
+		void DrawTextLayout(const TextLayout& textLayout, const PointF & = { 0,0 });//æ ¹æ®å·²æœ‰çš„å¸ƒå±€ç»˜åˆ¶æ–‡å­—
+		void DrawString(const std::wstring& text, const RectF& _rect, EzUI::TextAlign textAlign);//ç»˜åˆ¶æ–‡å­—
+		void DrawLine(const PointF& _A, const  PointF& _B, float width = 1);//ç»˜åˆ¶ä¸€æ¡çº¿
+		void DrawRectangle(const RectF& _rect, float _radius = 0, float width = 1);//ç»˜åˆ¶çŸ©å½¢
 		void FillRectangle(const RectF& _rect, float _radius = 0);
-		//Ìî³ä¾ØĞÎ
+		//å¡«å……çŸ©å½¢
 		void PushLayer(const Geometry& dxGeometry);
 		void PopLayer();
 		void PushAxisAlignedClip(const RectF& rectBounds);
 		void PopAxisAlignedClip();
-		void SetTransform(float offsetX, float offsetY);//¶Ô»­²¼½øĞĞĞı×ªºÍÆ«ÒÆ
-		void SetTransform(float startX, float startY, float angle);//ÉèÖÃĞı×ªÆğÊ¼µãÓëĞı×ª½Ç¶È
+		void SetTransform(float offsetX, float offsetY);//å¯¹ç”»å¸ƒè¿›è¡Œæ—‹è½¬å’Œåç§»
+		void SetTransform(float startX, float startY, float angle);//è®¾ç½®æ—‹è½¬èµ·å§‹ç‚¹ä¸æ—‹è½¬è§’åº¦
 		void SetTransform(float offsetX, float offsetY, float startX, float startY, float angle);
-		void DrawImage(DXImage* _image, const  RectF& tagRect, float opacity = 1);//»æÖÆÍ¼Ïñ
-		void DrawBezier(const PointF& startPoint, const Bezier& points, float width = 1);//±´Èû¶ûÏß
-		void DrawBezier(const PointF& startPoint, std::list<Bezier>& points, float width = 1);//±´Èû¶ûÏß
+		void DrawImage(DXImage* _image, const  RectF& tagRect, float opacity = 1);//ç»˜åˆ¶å›¾åƒ
+		void DrawBezier(const PointF& startPoint, const Bezier& points, float width = 1);//è´å¡å°”çº¿
+		void DrawBezier(const PointF& startPoint, std::list<Bezier>& points, float width = 1);//è´å¡å°”çº¿
 		void DrawEllipse(const PointF& point, float radiusX, float radiusY, float width = 1);
 		void FillEllipse(const PointF& point, float radiusX, float radiusY);
 		void DrawPoint(const PointF& pt);
-		void DrawArc(const RectF& rect, float startAngle, float sweepAngle, float width = 1);//Î´ÊµÏÖ
+		void DrawArc(const RectF& rect, float startAngle, float sweepAngle, float width = 1);//æœªå®ç°
 		void DrawArc(const PointF& point1, const  PointF& point2, const PointF& point3, float width = 1);
 		void DrawGeometry(ID2D1Geometry* path, float width);
 		void FillGeometry(ID2D1Geometry* path);
 		void Flush();
-		//»æÖÆ»¡Ïß Î´ÊµÏÖ
-		void DrawPath(const DXPath& path, float width = 1);//»æÖÆpath Î´ÊµÏÖ
-		void FillPath(const DXPath& path);//Ìî³äPath Î´ÊµÏÖ
-		ID2D1DCRenderTarget* Get();//»ñÈ¡Ô­ÉúDX¶ÔÏó
+		//ç»˜åˆ¶å¼§çº¿ æœªå®ç°
+		void DrawPath(const DXPath& path, float width = 1);//ç»˜åˆ¶path æœªå®ç°
+		void FillPath(const DXPath& path);//å¡«å……Path æœªå®ç°
+		ID2D1DCRenderTarget* Get();//è·å–åŸç”ŸDXå¯¹è±¡
 	};
 };
 #endif

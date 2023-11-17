@@ -24,24 +24,24 @@ namespace EzUI {
 		this->GetHDC();
 	}
 	void EBitmap::SetPixel(int x, int y, const Color& color) {
-		DWORD* point = (DWORD*)this->point + (x + y * this->Width);//ÆğÊ¼µØÖ·+×ø±êÆ«ÒÆ	
+		DWORD* point = (DWORD*)this->point + (x + y * this->Width);//èµ·å§‹åœ°å€+åæ ‡åç§»	
 		if (_bmpInfo.bmiHeader.biBitCount == 32) { //argb
-			((BYTE*)point)[3] = color.GetA();//ĞŞ¸ÄAÍ¨µÀÊıÖµ
+			((BYTE*)point)[3] = color.GetA();//ä¿®æ”¹Aé€šé“æ•°å€¼
 		}
-		((BYTE*)point)[2] = color.GetR();//ĞŞ¸ÄRÍ¨µÀÊıÖµ
-		((BYTE*)point)[1] = color.GetG();//ĞŞ¸ÄGÍ¨µÀÊıÖµ
-		((BYTE*)point)[0] = color.GetB();//ĞŞ¸ÄBÍ¨µÀÊıÖµ
+		((BYTE*)point)[2] = color.GetR();//ä¿®æ”¹Ré€šé“æ•°å€¼
+		((BYTE*)point)[1] = color.GetG();//ä¿®æ”¹Gé€šé“æ•°å€¼
+		((BYTE*)point)[0] = color.GetB();//ä¿®æ”¹Bé€šé“æ•°å€¼
 	}
 
 	Color EBitmap::GetPixel(int x, int y) {
-		DWORD* point = (DWORD*)this->point + (x + y * this->Width);//ÆğÊ¼µØÖ·+×ø±êÆ«ÒÆ
+		DWORD* point = (DWORD*)this->point + (x + y * this->Width);//èµ·å§‹åœ°å€+åæ ‡åç§»
 		BYTE a = 255, r, g, b;
 		if (_bmpInfo.bmiHeader.biBitCount == 32) { //argb
 			a = ((BYTE*)point)[3];
 		}
-		r = ((BYTE*)point)[2];//ĞŞ¸ÄRÍ¨µÀÊıÖµ
-		g = ((BYTE*)point)[1];//ĞŞ¸ÄGÍ¨µÀÊıÖµ
-		b = ((BYTE*)point)[0];//ĞŞ¸ÄBÍ¨µÀÊıÖµ
+		r = ((BYTE*)point)[2];//ä¿®æ”¹Ré€šé“æ•°å€¼
+		g = ((BYTE*)point)[1];//ä¿®æ”¹Gé€šé“æ•°å€¼
+		b = ((BYTE*)point)[0];//ä¿®æ”¹Bé€šé“æ•°å€¼
 		return Color(r, g, b, a);
 	}
 	byte* EBitmap::GetPixel()
@@ -66,8 +66,8 @@ namespace EzUI {
 		}
 		for (int y = rect.Y; y < rect.GetBottom(); ++y)
 		{
-			DWORD* point = (DWORD*)this->point + (rect.X + y * this->Width);//ÆğÊ¼µØÖ·+×ø±êÆ«ÒÆ
-			::memset(point, 0, rect.Width * 4);//Ä¨³ı
+			DWORD* point = (DWORD*)this->point + (rect.X + y * this->Width);//èµ·å§‹åœ°å€+åæ ‡åç§»
+			::memset(point, 0, rect.Width * 4);//æŠ¹é™¤
 		}
 	}
 	HBITMAP EBitmap::GetHBITMAP()
@@ -83,21 +83,21 @@ namespace EzUI {
 	}
 	void EBitmap::Save(const EString& fileName)
 	{
-		// ±£´æÎ»Í¼ÎªBMPÎÄ¼ş
+		// ä¿å­˜ä½å›¾ä¸ºBMPæ–‡ä»¶
 		BITMAPINFOHEADER& bi = _bmpInfo.bmiHeader;
 		BITMAPFILEHEADER bmfh;
-		bmfh.bfType = 0x4D42; // "BM"×Ö½Ú±ê¼Ç
-		bmfh.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + Width * Height * (_bmpInfo.bmiHeader.biBitCount / 8); // ÎÄ¼ş´óĞ¡
+		bmfh.bfType = 0x4D42; // "BM"å­—èŠ‚æ ‡è®°
+		bmfh.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + Width * Height * (_bmpInfo.bmiHeader.biBitCount / 8); // æ–‡ä»¶å¤§å°
 		bmfh.bfReserved1 = 0;
 		bmfh.bfReserved2 = 0;
-		bmfh.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER); // Î»Í¼Êı¾İÆ«ÒÆÁ¿
-		//Ğ´ÈëÎÄ¼şÍ·
+		bmfh.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER); // ä½å›¾æ•°æ®åç§»é‡
+		//å†™å…¥æ–‡ä»¶å¤´
 		std::ofstream ofs(fileName.unicode(), std::ios::binary);
 		ofs.write((char*)&bmfh, sizeof(bmfh));
 		ofs.write((char*)&bi, sizeof(bi));
-		//»ñÈ¡ÏñËØÊı¾İ µÚÎå¸ö²ÎÊı´«¿Õ¿É»ñÈ¡ÏêÏ¸µÄBITMAPINFO
+		//è·å–åƒç´ æ•°æ® ç¬¬äº”ä¸ªå‚æ•°ä¼ ç©ºå¯è·å–è¯¦ç»†çš„BITMAPINFO
 		auto ret = ::GetDIBits(this->GetHDC(), this->_bmp, 0, this->Height, NULL, &this->_bmpInfo, DIB_RGB_COLORS);
-		//Ğ´ÈëÏñËØÊı¾İ
+		//å†™å…¥åƒç´ æ•°æ®
 		BYTE* buffer = new BYTE[this->_bmpInfo.bmiHeader.biSizeImage];
 		ret = ::GetDIBits(this->GetHDC(), this->_bmp, 0, this->Height, buffer, &this->_bmpInfo, DIB_RGB_COLORS);
 		ofs.write((char*)buffer, this->_bmpInfo.bmiHeader.biSizeImage);

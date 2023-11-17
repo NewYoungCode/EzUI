@@ -28,14 +28,14 @@ namespace EzUI {
 	void TileList::OnChildPaint(PaintEventArgs& args)
 	{
 		ViewControls.clear();
-		//»æÖÆ×Ó¿Ø¼ş
+		//ç»˜åˆ¶å­æ§ä»¶
 		auto rect = Rect(0, 0, Width(), Height());
 		for (auto& it : GetControls()) {
 			if (rect.IntersectsWith(it->GetRect())) {
 				ViewControls.push_back(it);
 			}
 			if (it->Y() >= Height()) {
-				//µ±¿Ø¼ş³¬³öÈİÆ÷µ×²¿½«²»ÔÙÅÉ·¢»æÖÆÊÂ¼ş µ«ÊÇÈÔÈ»Òª½øĞĞ²¼¾Ö
+				//å½“æ§ä»¶è¶…å‡ºå®¹å™¨åº•éƒ¨å°†ä¸å†æ´¾å‘ç»˜åˆ¶äº‹ä»¶ ä½†æ˜¯ä»ç„¶è¦è¿›è¡Œå¸ƒå±€
 				if ((it->IsAutoWidth() || it->IsAutoHeight()) && it->GetLayoutState() == LayoutState::Pend) {
 					it->RefreshLayout();
 				}
@@ -61,7 +61,7 @@ namespace EzUI {
 		int _contentWidth = 0;
 		int _contentHeight = 0;
 		const int& maxWith = this->Width();
-		int maxHeight = 0;//Ã¿ĞĞ×î¸ßµÄÄÇ¸ö
+		int maxHeight = 0;//æ¯è¡Œæœ€é«˜çš„é‚£ä¸ª
 		int x = 0;
 		int y = offset;
 		for (auto& _it : GetControls()) {
@@ -73,23 +73,23 @@ namespace EzUI {
 			int _x = it.Margin.Left + it.Width();
 
 			if (x + _x > maxWith) {
-				//»»ĞĞ
+				//æ¢è¡Œ
 				x = 0;
 				y += maxHeight;
 				maxHeight = 0;
 			}
 
-			x += it.Margin.Left;//×ó±ß¾à
-			int newX = x;//ÉèÖÃX×ø±ê
-			int newY = y + it.Margin.Top;//ÉèÖÃY×ø±ê+ÉÏ±ß¾à
+			x += it.Margin.Left;//å·¦è¾¹è·
+			int newX = x;//è®¾ç½®Xåæ ‡
+			int newY = y + it.Margin.Top;//è®¾ç½®Yåæ ‡+ä¸Šè¾¹è·
 			it.SetRect(Rect(newX, newY, it.Width(), it.Height()));
-			int itemSpace = it.Height() + it.Margin.GetVSpace();//µ±Ç°¿Ø¼ş´¹Ö±Õ¼ÓÃµÄ¿Õ¼ä
+			int itemSpace = it.Height() + it.Margin.GetVSpace();//å½“å‰æ§ä»¶å‚ç›´å ç”¨çš„ç©ºé—´
 			if (maxHeight < itemSpace) {
 				maxHeight = itemSpace;
 			}
-			x += it.Margin.Right + it.Width();//ÓÒ±ß¾à
+			x += it.Margin.Right + it.Width();//å³è¾¹è·
 			_contentHeight = y + maxHeight;
-			//¼ÆËã×î´ó¿í¶È
+			//è®¡ç®—æœ€å¤§å®½åº¦
 			int _width = it.X() + it.Width();
 			if (_width > _contentWidth) {
 				_contentWidth = _width;

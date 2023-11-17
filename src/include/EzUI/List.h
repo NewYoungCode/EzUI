@@ -10,14 +10,14 @@ namespace EzUI {
 		int pageSize = 0;
 		std::vector<Control*> items;
 	public:
-		//Ò³ÃæĞèÒª¼ÓÔØÏÂÒ»Ò³µÄÊ±ºò·¢Éú
+		//é¡µé¢éœ€è¦åŠ è½½ä¸‹ä¸€é¡µçš„æ—¶å€™å‘ç”Ÿ
 		std::function<bool(List*, int)> NextPaging = NULL;
 		void SetPageInfo(const std::vector<Control*>& items, int pageSize);
 		/// <summary>
-		/// »ñÈ¡Ä³Ò³µÄitem¼¯ºÏ
+		/// è·å–æŸé¡µçš„itemé›†åˆ
 		/// </summary>
 		/// <param name="index">1~N</param>
-		/// <param name="outCtls">Êä³ö¼¯ºÏ</param>
+		/// <param name="outCtls">è¾“å‡ºé›†åˆ</param>
 		void GetPage(int index, std::vector<Control*>* outCtls);
 		virtual void NextPage();
 		virtual void Clear() override;

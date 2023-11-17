@@ -11,41 +11,41 @@ namespace EzUI {
 		int _lastWidth = 0;
 		int _lastHeight = 0;
 		bool _multiLine = false;
-		std::wstring _text;//ÎÄ×Ö
+		std::wstring _text;//æ–‡å­—
 		Size _fontBox;
-		bool _down = false;//ÊÇ·ñ¾ßÓĞ½¹µãÖĞ
-		bool _focus = false;//ÊÇ·ñ¾ßÓĞ½¹µãÖĞ
-		Point _point_Start;//¿ªÊ¼Ñ¡ÖĞµÄÎ»ÖÃ
-		Point _point_End;//½áÊøÎ»ÖÃ
-		std::list<Rect> _selectRects;//Ñ¡ÖĞµÄ×Ö·û¾ØĞÎ
-		Rect _careRect;//¹â±êÎ»ÖÃ
-		Font* _font = NULL;//×ÖÌå
-		TextLayout* _textLayout = NULL;//×ÖÌå²¼¾Ö
-		Point _A;//Aµã
-		BOOL _A_isTrailingHit;//Èç¹ûÊÇ1±íÊ¾ÊÇ×Ö·ûµÄºó°ë±ß
-		int _A_TextPos = 0;//µã»÷ÁËµÚ¼¸¸ö×Ö·û
-		Point _B;//Bµã
-		BOOL _B_isTrailingHit;//Èç¹ûÊÇ1±íÊ¾ÊÇ×Ö·ûµÄºó°ë±ß
-		int _B_TextPos = 0;//µã»÷ÁËµÚ¼¸¸ö×Ö·û
-		int _textPos = 0;//µ±Ç°ÎÄ×ÖµÄÏÂ±ê 0~text.size()
-		int _scrollX = 0;//ÓÃÓÚ×óÓÒ¹ö¶¯
-		int _scrollY = 0;//ÓÃÓÚyÖá¹ö¶¯
-		int _lastX = 0;//ÉÏÒ»¸öxÎ»ÖÃ
-		int _lastY = 0;//ÉÏÒ»¸öyÎ»ÖÃ 
-		Timer _timer;//ÓÃÓÚ¹â±êÉÁË¸
-		bool _careShow = false;//ÓÃÓÚ¹â±êÉÁË¸
+		bool _down = false;//æ˜¯å¦å…·æœ‰ç„¦ç‚¹ä¸­
+		bool _focus = false;//æ˜¯å¦å…·æœ‰ç„¦ç‚¹ä¸­
+		Point _point_Start;//å¼€å§‹é€‰ä¸­çš„ä½ç½®
+		Point _point_End;//ç»“æŸä½ç½®
+		std::list<Rect> _selectRects;//é€‰ä¸­çš„å­—ç¬¦çŸ©å½¢
+		Rect _careRect;//å…‰æ ‡ä½ç½®
+		Font* _font = NULL;//å­—ä½“
+		TextLayout* _textLayout = NULL;//å­—ä½“å¸ƒå±€
+		Point _A;//Aç‚¹
+		BOOL _A_isTrailingHit;//å¦‚æœæ˜¯1è¡¨ç¤ºæ˜¯å­—ç¬¦çš„ååŠè¾¹
+		int _A_TextPos = 0;//ç‚¹å‡»äº†ç¬¬å‡ ä¸ªå­—ç¬¦
+		Point _B;//Bç‚¹
+		BOOL _B_isTrailingHit;//å¦‚æœæ˜¯1è¡¨ç¤ºæ˜¯å­—ç¬¦çš„ååŠè¾¹
+		int _B_TextPos = 0;//ç‚¹å‡»äº†ç¬¬å‡ ä¸ªå­—ç¬¦
+		int _textPos = 0;//å½“å‰æ–‡å­—çš„ä¸‹æ ‡ 0~text.size()
+		int _scrollX = 0;//ç”¨äºå·¦å³æ»šåŠ¨
+		int _scrollY = 0;//ç”¨äºyè½´æ»šåŠ¨
+		int _lastX = 0;//ä¸Šä¸€ä¸ªxä½ç½®
+		int _lastY = 0;//ä¸Šä¸€ä¸ªyä½ç½® 
+		Timer _timer;//ç”¨äºå…‰æ ‡é—ªçƒ
+		bool _careShow = false;//ç”¨äºå…‰æ ‡é—ªçƒ
 	private:
 		void Init();
-		void _Insert(const std::wstring& str);//²åÈëÎÄ×Ö
-		bool DeleteRange();//É¾³ıÑ¡ÖĞÄÚÈİ
-		bool GetSelectedRange(int* outPos, int* outCount);//»ñÈ¡µ±Ç°±»Ñ¡ÖĞµÄÇøÓò ·µ»ØÏÂ±êºÍ¸öÊı
-		bool Copy();//¸´ÖÆµ½¼ôÇĞ°å
-		bool Paste();//Õ³Ìù
-		bool SelectedAll();//È«Ñ¡
-		void OnBackspace();//ÍË¸ñ¼üÒª×öµÄÊÂ
-		void BuildCare();//¹¹½¨¹â±ê
+		void _Insert(const std::wstring& str);//æ’å…¥æ–‡å­—
+		bool DeleteRange();//åˆ é™¤é€‰ä¸­å†…å®¹
+		bool GetSelectedRange(int* outPos, int* outCount);//è·å–å½“å‰è¢«é€‰ä¸­çš„åŒºåŸŸ è¿”å›ä¸‹æ ‡å’Œä¸ªæ•°
+		bool Copy();//å¤åˆ¶åˆ°å‰ªåˆ‡æ¿
+		bool Paste();//ç²˜è´´
+		bool SelectedAll();//å…¨é€‰
+		void OnBackspace();//é€€æ ¼é”®è¦åšçš„äº‹
+		void BuildCare();//æ„å»ºå…‰æ ‡
 		void BuildSelectedRect();
-		Point ConvertPoint(const Point& pt);//×ø±ê×ª»»
+		Point ConvertPoint(const Point& pt);//åæ ‡è½¬æ¢
 	protected:
 		virtual void OnRemove()override;
 		virtual void SetAutoWidth(bool flag)override;
@@ -61,18 +61,18 @@ namespace EzUI {
 		virtual void OnLayout();
 		void Offset(int moveY);
 	public:
-		size_t MaxCount = -1;//×î´óÎÄ×ÖÊıÁ¿
-		EString Placeholder;//placeholder¶®µÃ¶¼¶® (ÔÚÃ»ÓĞÎÄ×ÖµÄÇé¿öÏÂÏÔÊ¾µÄÎÄ×Ö)
+		size_t MaxCount = -1;//æœ€å¤§æ–‡å­—æ•°é‡
+		EString Placeholder;//placeholderæ‡‚å¾—éƒ½æ‡‚ (åœ¨æ²¡æœ‰æ–‡å­—çš„æƒ…å†µä¸‹æ˜¾ç¤ºçš„æ–‡å­—)
 		std::wstring PasswordChar;
-		bool ReadOnly = false;//ÊÇ·ñÖ»¶Á
+		bool ReadOnly = false;//æ˜¯å¦åªè¯»
 		std::function<void(const EString&)> TextChanged = NULL;
 	public:
 		TextBox();
 		virtual ~TextBox();
 		virtual void SetAttribute(const EString& key, const EString& value)override;
 		virtual Rect GetCareRect()override;
-		void Analysis();//·ÖÎö×Ö·û´®
-		void Insert(const EString& str);//ÔÚµ±Ç°¹â±êÖĞ²åÈëÎÄ×Ö
+		void Analysis();//åˆ†æå­—ç¬¦ä¸²
+		void Insert(const EString& str);//åœ¨å½“å‰å…‰æ ‡ä¸­æ’å…¥æ–‡å­—
 		const EString GetText();
 		virtual ScrollBar* GetScrollBar()override;
 		void SetText(const EString& text);

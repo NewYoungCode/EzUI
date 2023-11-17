@@ -33,46 +33,46 @@ namespace EzUI {
 	}
 	void TextBox::SetAutoWidth(bool flag)
 	{
-		//ĞèÒªÆÁ±Î
+		//éœ€è¦å±è”½
 	}
 	void TextBox::SetAutoHeight(bool flag)
 	{
-		//ĞèÒªÆÁ±Î
+		//éœ€è¦å±è”½
 	}
 	void TextBox::OnKeyChar(const KeyboardEventArgs& arg)
 	{
 		__super::OnKeyChar(arg);
 		WPARAM wParam = arg.wParam;
 		LPARAM lParam = arg.lParam;
-		//Debug::Log(utf8("°´ÏÂÁË%d"), wParam);
+		//Debug::Log(utf8("æŒ‰ä¸‹äº†%d"), wParam);
 		do
 		{
-			if (wParam == VK_BACK) { //ÍË¸ñ¼ü
+			if (wParam == VK_BACK) { //é€€æ ¼é”®
 				if (ReadOnly) {
 					break;
 				}
-				OnBackspace();//ÍË¸ñ¼üµÄ²Ù×÷ÔÚÀïÃæ
-				Analysis();//ÖØĞÂ·ÖÎö
-				Invalidate();//Ë¢ĞÂ
+				OnBackspace();//é€€æ ¼é”®çš„æ“ä½œåœ¨é‡Œé¢
+				Analysis();//é‡æ–°åˆ†æ
+				Invalidate();//åˆ·æ–°
 				break;
 			}
 			if (wParam == 1) {
-				SelectedAll();//È«Ñ¡
-				Invalidate();//Ë¢ĞÂ
+				SelectedAll();//å…¨é€‰
+				Invalidate();//åˆ·æ–°
 				break;
 			}
-			if (wParam == 3) {//¸´ÖÆ
+			if (wParam == 3) {//å¤åˆ¶
 				Copy();
 				break;
 			}
-			if (wParam == 24) {//ctrl+x²Ã¼ô
+			if (wParam == 24) {//ctrl+xè£å‰ª
 				if (ReadOnly) {
 					break;
 				}
 				if (Copy()) {
-					DeleteRange();//ÒòÎªÊÇ¼ôÇĞ ËùÒÔÒªÉ¾³ıÑ¡ÖĞµÄÕâ¶Î
+					DeleteRange();//å› ä¸ºæ˜¯å‰ªåˆ‡ æ‰€ä»¥è¦åˆ é™¤é€‰ä¸­çš„è¿™æ®µ
 					Analysis();
-					Invalidate();//Ë¢ĞÂ
+					Invalidate();//åˆ·æ–°
 				}
 				break;
 			}
@@ -80,12 +80,12 @@ namespace EzUI {
 				if (ReadOnly) {
 					break;
 				}
-				Paste();//Õ³Ìù
-				Analysis();//·ÖÎö×Ö·û´®
-				Invalidate();//Ë¢ĞÂ
+				Paste();//ç²˜è´´
+				Analysis();//åˆ†æå­—ç¬¦ä¸²
+				Invalidate();//åˆ·æ–°
 				break;
 			}
-			if (wParam == 26) {//ctrl+z³·Ïú
+			if (wParam == 26) {//ctrl+zæ’¤é”€
 				if (ReadOnly) {
 					break;
 				}
@@ -94,12 +94,12 @@ namespace EzUI {
 
 		} while (false);
 
-		if (wParam < 32)return;//¿ØÖÆ×Ö·û
-		if (ReadOnly) return;//Ö»¶Á
+		if (wParam < 32)return;//æ§åˆ¶å­—ç¬¦
+		if (ReadOnly) return;//åªè¯»
 		WCHAR buf[2]{ (WCHAR)wParam ,0 };//
-		_Insert(std::wstring(buf));//²åÈëĞÂµÄ×Ö·û
-		Analysis();//·ÖÎö×Ö·û´®
-		Invalidate();//Ë¢ĞÂ
+		_Insert(std::wstring(buf));//æ’å…¥æ–°çš„å­—ç¬¦
+		Analysis();//åˆ†æå­—ç¬¦ä¸²
+		Invalidate();//åˆ·æ–°
 	}
 
 	void TextBox::BuildSelectedRect() {
@@ -114,7 +114,7 @@ namespace EzUI {
 				point2 = _textLayout->HitTestTextPosition(_A_TextPos, _A_isTrailingHit);
 				point1 = _textLayout->HitTestTextPosition(_B_TextPos, _B_isTrailingHit);
 			}
-			if (point1.Y != point2.Y) {//¶àĞĞ
+			if (point1.Y != point2.Y) {//å¤šè¡Œ
 				Rect rect1(point1.X, point1.Y, _fontBox.Width - point1.X, _textLayout->GetFontHeight());
 				Rect rect2(0, point2.Y, point2.X, _textLayout->GetFontHeight());
 				Rect rect3(0, rect1.GetBottom(), _fontBox.Width, rect2.GetTop() - rect1.GetBottom());
@@ -179,7 +179,7 @@ namespace EzUI {
 		return false;
 	}
 	void TextBox::_Insert(const std::wstring& str) {
-		DeleteRange();//ÏÈÉ¾³ıÊÇ·ñÓĞÑ¡ÖĞµÄÇøÓò
+		DeleteRange();//å…ˆåˆ é™¤æ˜¯å¦æœ‰é€‰ä¸­çš„åŒºåŸŸ
 		if (_textPos < 0)_textPos = 0;
 		if (_textPos > (int)_text.size()) {
 			_textPos = _text.size();
@@ -192,7 +192,7 @@ namespace EzUI {
 	}
 	bool TextBox::DeleteRange() {
 		int pos, count;
-		if (GetSelectedRange(&pos, &count)) {//É¾³ıÑ¡ÖĞµÄ
+		if (GetSelectedRange(&pos, &count)) {//åˆ é™¤é€‰ä¸­çš„
 			//isTrailingHit = FALSE;
 			_textPos = pos;
 			_text.erase(pos, count);
@@ -214,18 +214,18 @@ namespace EzUI {
 		bool bRet = EzUI::GetClipboardData(&wBuf, PublicData->HANDLE);
 		EString u8Str(wBuf);
 		if (!_multiLine) {
-			//ĞĞ±à¼­¿ò²»ÔÊĞíÓĞ»»ĞĞ·û
+			//è¡Œç¼–è¾‘æ¡†ä¸å…è®¸æœ‰æ¢è¡Œç¬¦
 			EString::Replace(&u8Str, "\r", "");
 			EString::Replace(&u8Str, "\n", "");
 		}
-		_Insert(u8Str.unicode());//²åÈëĞÂµÄ×Ö·û
+		_Insert(u8Str.unicode());//æ’å…¥æ–°çš„å­—ç¬¦
 		return bRet;
 	}
 	void TextBox::OnBackspace() {
 		if (_text.size() <= 0)return;
 
-		if (!DeleteRange()) {//ÏÈ¿´¿´ÓĞÃ»ÓĞÓĞÑ¡ÖĞµÄĞèÒªÉ¾³ı
-			//·ñÔòÉ¾³ıµ¥¸ö×Ö·û
+		if (!DeleteRange()) {//å…ˆçœ‹çœ‹æœ‰æ²¡æœ‰æœ‰é€‰ä¸­çš„éœ€è¦åˆ é™¤
+			//å¦åˆ™åˆ é™¤å•ä¸ªå­—ç¬¦
 			_textPos--;
 			if (_textPos > -1) {
 				_text.erase(_textPos, 1);
@@ -259,7 +259,7 @@ namespace EzUI {
 			Invalidate();
 			return;
 		}
-		//Debug::Log(utf8("°´ÏÂÁË%d"), wParam);
+		//Debug::Log(utf8("æŒ‰ä¸‹äº†%d"), wParam);
 	}
 
 	void TextBox::Analysis()
@@ -293,7 +293,7 @@ namespace EzUI {
 			*drawText = _text;
 		}
 
-		if (!_multiLine) {//µ¥ĞĞ±à¼­¿ò
+		if (!_multiLine) {//å•è¡Œç¼–è¾‘æ¡†
 			_font->Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
 			_textLayout = new TextLayout(*drawText, *_font, SizeF{ __MAXFLOAT,(float)Height() }, TextAlign::MiddleLeft);
 			_fontBox = _textLayout->GetFontBox();
@@ -304,7 +304,7 @@ namespace EzUI {
 				_scrollX = this->Width() - _fontBox.Width;
 			}
 		}
-		else {//¶àĞĞ±à¼­¿ò
+		else {//å¤šè¡Œç¼–è¾‘æ¡†
 			_font->Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);
 			_textLayout = new TextLayout(*drawText, *_font, SizeF{ (float)Width(),__MAXFLOAT }, TextAlign::TopLeft);
 			_fontBox = _textLayout->GetFontBox();
@@ -336,12 +336,12 @@ namespace EzUI {
 		_careRect.Width = 1;
 
 		if (!_multiLine) {
-			//Ê¹¹â±êÒ»Ö±ÔÚÊäÈë¿òÄÚ
+			//ä½¿å…‰æ ‡ä¸€ç›´åœ¨è¾“å…¥æ¡†å†…
 			int drawX = _careRect.X + _scrollX;
-			if (drawX < 0) {//¹â±êÔÚ×î×ó²à
+			if (drawX < 0) {//å…‰æ ‡åœ¨æœ€å·¦ä¾§
 				_scrollX -= drawX;
 			}
-			if (drawX > Width()) {//¹â±êÔÚ×îÓÒ²à
+			if (drawX > Width()) {//å…‰æ ‡åœ¨æœ€å³ä¾§
 				int ofssetX = (Width() - drawX);
 				_scrollX += ofssetX;
 			}
@@ -383,7 +383,7 @@ namespace EzUI {
 	void TextBox::OnMouseWheel(const MouseEventArgs& arg)
 	{
 		__super::OnMouseWheel(arg);
-		if (!_multiLine) {//µ¥ĞĞ
+		if (!_multiLine) {//å•è¡Œ
 			int textWidth = _fontBox.Width;
 			if (arg.ZDelta > 0 && textWidth > Width()) {
 				_scrollX += std::abs(arg.ZDelta) * 0.5;
@@ -449,8 +449,8 @@ namespace EzUI {
 
 				BuildSelectedRect();
 
-				if (!_multiLine) {//µ¥ĞĞ
-					//µ±Êó±êÍù×ó²àÒÆ¶¯
+				if (!_multiLine) {//å•è¡Œ
+					//å½“é¼ æ ‡å¾€å·¦ä¾§ç§»åŠ¨
 					int textWidth = _fontBox.Width;
 					if (_lastX > point.X) {
 						_lastX = point.X;
@@ -460,7 +460,7 @@ namespace EzUI {
 							return;
 						}
 					}
-					//µ±Êó±êÍùÓÒ²àÒÆ¶¯
+					//å½“é¼ æ ‡å¾€å³ä¾§ç§»åŠ¨
 					if (_lastX < point.X) {
 						_lastX = point.X;
 						if (textWidth > Width() && point.X > Width()) {
@@ -517,14 +517,14 @@ namespace EzUI {
 	Rect TextBox::GetCareRect()
 	{
 		Rect rect(_careRect);
-		rect.X += _scrollX;//Æ«ÒÆ
+		rect.X += _scrollX;//åç§»
 		rect.Y += _scrollY;
 		return rect;
 	}
 	void TextBox::Insert(const EString& str)
 	{
 		_Insert(str.unicode());
-		Analysis();//·ÖÎö×Ö·û´®
+		Analysis();//åˆ†æå­—ç¬¦ä¸²
 	}
 	void TextBox::SetAttribute(const EString& key, const EString& value) {
 		__super::SetAttribute(key, value);
@@ -592,7 +592,7 @@ namespace EzUI {
 			for (auto& it : _selectRects) {
 				if (!it.IsEmptyArea()) {
 					RectF rect(it);
-					rect.X += _scrollX;//Æ«ÒÆ
+					rect.X += _scrollX;//åç§»
 					rect.Y += _scrollY;
 					e.Graphics.FillRectangle(rect);
 				}
@@ -607,9 +607,9 @@ namespace EzUI {
 		if (!_careRect.IsEmptyArea() && _focus) {
 			if (_careShow) {
 				RectF rect(_careRect.X, _careRect.Y, _careRect.Width, _careRect.Height);
-				rect.X += _scrollX;//Æ«ÒÆ
+				rect.X += _scrollX;//åç§»
 				rect.Y += _scrollY;
-				if (rect.X == this->Width()) {//Èç¹û¸ÕºÃ´¦ÓÚ±ß½ç
+				if (rect.X == this->Width()) {//å¦‚æœåˆšå¥½å¤„äºè¾¹ç•Œ
 					rect.X = this->Width() - 1 * this->GetScale();
 				}
 				rect.Width = rect.Width * this->GetScale();

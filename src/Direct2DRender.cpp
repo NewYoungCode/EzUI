@@ -100,12 +100,12 @@ namespace EzUI {
 			);
 		}
 		int posX = (int)(hitTestMetrics.left + 0.5);
-		if (isTrailingHit) {//ÅÐ¶ÏÇ°²à»¹ÊÇÎ²²à
+		if (isTrailingHit) {//åˆ¤æ–­å‰ä¾§è¿˜æ˜¯å°¾ä¾§
 			posX += (int)(hitTestMetrics.width + 0.5);
 		}
 		*fontHeight = (int)(hitTestMetrics.height + 0.5);
 		textPos = hitTestMetrics.textPosition;
-		return Point{ posX,(int)(hitTestMetrics.top + 0.5) };//·µ»Ø¹â±êËùÔÚµÄÎ»ÖÃ
+		return Point{ posX,(int)(hitTestMetrics.top + 0.5) };//è¿”å›žå…‰æ ‡æ‰€åœ¨çš„ä½ç½®
 	}
 
 	void TextLayout::HitTestPoint(const Point& pt, HitTestMetrics* outHitTestMetrics) {
@@ -174,7 +174,7 @@ namespace EzUI {
 
 	Rect TextLayout::GetLineBox(int lineIndex) {
 		UINT lineCount = GetLineCount();
-		//// »ñÈ¡Ã¿Ò»ÐÐµÄ¿í¸ß
+		//// èŽ·å–æ¯ä¸€è¡Œçš„å®½é«˜
 		DWRITE_LINE_METRICS* hitTestMetrics = new DWRITE_LINE_METRICS[lineCount]{ 0 };
 		FLOAT x = 0;
 		FLOAT y = 0;
@@ -197,7 +197,7 @@ namespace EzUI {
 #define	__Middle DWRITE_PARAGRAPH_ALIGNMENT_CENTER
 #define __Center DWRITE_TEXT_ALIGNMENT_CENTER
 		if (value == NULL)return;
-		//´¹Ö±¶ÔÆä·½Ê½
+		//åž‚ç›´å¯¹å…¶æ–¹å¼
 		if (((int)textAlign & (int)VAlign::Top) == (int)VAlign::Top) {
 			value->SetParagraphAlignment(__Top);
 		}
@@ -207,7 +207,7 @@ namespace EzUI {
 		if (((int)textAlign & (int)VAlign::Bottom) == (int)VAlign::Bottom) {
 			value->SetParagraphAlignment(__Bottom);
 		}
-		//Ë®Æ½¶ÔÆä·½Ê½
+		//æ°´å¹³å¯¹å…¶æ–¹å¼
 		if (((int)textAlign & (int)HAlign::Left) == (int)HAlign::Left) {
 			value->SetTextAlignment(__Left);
 		}
@@ -317,8 +317,8 @@ namespace EzUI {
 	DXImage* DXImage::Clone()
 	{
 		UINT width, height;
-		fmtcovter->GetSize(&width, &height); // »ñÈ¡Î»Í¼Ô´µÄ¿í¶ÈºÍ¸ß¶È
-		//ÔÝÊ±²»×öcloneº¯Êý
+		fmtcovter->GetSize(&width, &height); // èŽ·å–ä½å›¾æºçš„å®½åº¦å’Œé«˜åº¦
+		//æš‚æ—¶ä¸åšcloneå‡½æ•°
 		return NULL;
 	}
 	DXImage::DXImage(HBITMAP hBitmap) {
@@ -398,12 +398,12 @@ namespace EzUI {
 		topRightRadius = GetMaxRadius(_rect.Width, _rect.Height, topRightRadius);
 		bottomRightRadius = GetMaxRadius(_rect.Width, _rect.Height, bottomRightRadius);
 		bottomLeftRadius = GetMaxRadius(_rect.Width, _rect.Height, bottomLeftRadius);
-		// ´ò¿ªÂ·¾¶¼¸ºÎÍ¼ÐÎµÄ¼¸ºÎ½Ó¿Ú
+		// æ‰“å¼€è·¯å¾„å‡ ä½•å›¾å½¢çš„å‡ ä½•æŽ¥å£
 		ID2D1GeometrySink* pSink;
 		pPathGeometry->Open(&pSink);
-		// ¿ªÊ¼»æÖÆÂ·¾¶
+		// å¼€å§‹ç»˜åˆ¶è·¯å¾„
 		pSink->BeginFigure(D2D1::Point2F(rect.left, rect.top + topLeftRadius), D2D1_FIGURE_BEGIN_FILLED);
-		// Ìí¼Ó»¡Ïß¶Îµ½×óÉÏ½Ç
+		// æ·»åŠ å¼§çº¿æ®µåˆ°å·¦ä¸Šè§’
 		pSink->AddArc(
 			D2D1::ArcSegment(
 				D2D1::Point2F(rect.left + topLeftRadius, rect.top),
@@ -413,7 +413,7 @@ namespace EzUI {
 				D2D1_ARC_SIZE_SMALL
 			)
 		);
-		// Ìí¼Ó»¡Ïß¶Îµ½ÓÒÉÏ½Ç
+		// æ·»åŠ å¼§çº¿æ®µåˆ°å³ä¸Šè§’
 		pSink->AddLine(D2D1::Point2F(rect.right - topRightRadius, rect.top));
 		pSink->AddArc(
 			D2D1::ArcSegment(
@@ -424,7 +424,7 @@ namespace EzUI {
 				D2D1_ARC_SIZE_SMALL
 			)
 		);
-		// Ìí¼Ó»¡Ïß¶Îµ½ÓÒÏÂ½Ç
+		// æ·»åŠ å¼§çº¿æ®µåˆ°å³ä¸‹è§’
 		pSink->AddLine(D2D1::Point2F(rect.right, rect.bottom - bottomRightRadius));
 		pSink->AddArc(
 			D2D1::ArcSegment(
@@ -435,7 +435,7 @@ namespace EzUI {
 				D2D1_ARC_SIZE_SMALL
 			)
 		);
-		// Ìí¼Ó»¡Ïß¶Îµ½×óÏÂ½Ç
+		// æ·»åŠ å¼§çº¿æ®µåˆ°å·¦ä¸‹è§’
 		pSink->AddLine(D2D1::Point2F(rect.left + bottomLeftRadius, rect.bottom));
 		pSink->AddArc(
 			D2D1::ArcSegment(
@@ -446,7 +446,7 @@ namespace EzUI {
 				D2D1_ARC_SIZE_SMALL
 			)
 		);
-		// ½áÊøÂ·¾¶
+		// ç»“æŸè·¯å¾„
 		pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 		pSink->Close();
 		SafeRelease(&pSink);
@@ -475,7 +475,7 @@ namespace EzUI {
 					D2D1_RENDER_TARGET_USAGE_NONE,
 					D2D1_FEATURE_LEVEL_DEFAULT
 				);
-				//³õÊ¼»¯Ò»ÏÂDXÈÃµÚÒ»´ÎÆô¶¯´°¿Ú¿ìÒ»µã
+				//åˆå§‹åŒ–ä¸€ä¸‹DXè®©ç¬¬ä¸€æ¬¡å¯åŠ¨çª—å£å¿«ä¸€ç‚¹
 				ID2D1DCRenderTarget* initRender = NULL;
 				HRESULT	hr = D2D::g_Direct2dFactory->CreateDCRenderTarget(&defaultOption, (ID2D1DCRenderTarget**)&initRender);
 				SafeRelease(&initRender);
@@ -488,16 +488,16 @@ namespace EzUI {
 			}
 		}
 		if (D2D::g_ImageFactory == NULL) {
-			_GUID imageFactoryOld{ 0xcacaf262, 0x9370, 0x4615, 0xa1, 0x3b, 0x9f, 0x55, 0x39, 0xda, 0x4c, 0xa };//xp  win7 ¾É°æ
-			_GUID WICImagingFactoryId = CLSID_WICImagingFactory;//µ±Ç°Æ½Ì¨
+			_GUID imageFactoryOld{ 0xcacaf262, 0x9370, 0x4615, 0xa1, 0x3b, 0x9f, 0x55, 0x39, 0xda, 0x4c, 0xa };//xp  win7 æ—§ç‰ˆ
+			_GUID WICImagingFactoryId = CLSID_WICImagingFactory;//å½“å‰å¹³å°
 		ImagingFactoryInit:
 			hr = CoCreateInstance(WICImagingFactoryId, NULL, CLSCTX_INPROC_SERVER, __uuidof(IWICImagingFactory), (LPVOID*)&D2D::g_ImageFactory);
 			if (hr != S_OK) {
-				//if (hr == 0x800401F0) {//Î´³õÊ¼»¯com ×Ô¼ºÔÚÈ«¾Ö³õÊ¼»¯Ò»ÏÂ¾ÍºÃÁË (×Ô¼º¿ØÖÆ³õÊ¼»¯Ê±»ú)
+				//if (hr == 0x800401F0) {//æœªåˆå§‹åŒ–com è‡ªå·±åœ¨å…¨å±€åˆå§‹åŒ–ä¸€ä¸‹å°±å¥½äº† (è‡ªå·±æŽ§åˆ¶åˆå§‹åŒ–æ—¶æœº)
 				//	::CoInitialize(NULL);
 				//	goto ImagingFactory;
 				//}
-				if (hr == 0x80040154) {//Ã»ÓÐ×¢²áÀà ²»ÓÃwin7µÄsdkÉú³ÉµÄ³ÌÐòÔÚÏÂwin7ÏµÍ³ÉÏÔËÐÐ»á³öÏÖ´Ë´íÎó
+				if (hr == 0x80040154) {//æ²¡æœ‰æ³¨å†Œç±» ä¸ç”¨win7çš„sdkç”Ÿæˆçš„ç¨‹åºåœ¨ä¸‹win7ç³»ç»Ÿä¸Šè¿è¡Œä¼šå‡ºçŽ°æ­¤é”™è¯¯
 					WICImagingFactoryId = imageFactoryOld;
 					goto ImagingFactoryInit;
 				}
@@ -521,8 +521,8 @@ namespace EzUI {
 	}
 	float GetMaxRadius(float width, float height, float _radius)
 	{
-		float radius = (float)_radius;//°ë¾¶
-		float diameter = radius * 2;//Ö±¾¶
+		float radius = (float)_radius;//åŠå¾„
+		float diameter = radius * 2;//ç›´å¾„
 		if (width > height || width == height) {
 			if (diameter > height) {
 				radius = height / 2.0f;
@@ -540,7 +540,7 @@ namespace EzUI {
 			D2D1_RENDER_TARGET_TYPE_DEFAULT,
 			D2D1::PixelFormat(
 				DXGI_FORMAT_B8G8R8A8_UNORM,
-				D2D1_ALPHA_MODE_PREMULTIPLIED),//½â¾öÔÚ·Ö²ã´°ÖÐµÄÊó±ê´©Í¸ÎÊÌâ
+				D2D1_ALPHA_MODE_PREMULTIPLIED),//è§£å†³åœ¨åˆ†å±‚çª—ä¸­çš„é¼ æ ‡ç©¿é€é—®é¢˜
 			0,
 			0,
 			D2D1_RENDER_TARGET_USAGE_NONE,
@@ -684,15 +684,15 @@ namespace EzUI {
 
 	void DXRender::SetTransform(float offsetX, float offsetY, float startX, float startY, float angle)
 	{
-		// ´´½¨D2D¾ØÕó×ª»»¶ÔÏó Æ½ÒÆ±ä»»
+		// åˆ›å»ºD2DçŸ©é˜µè½¬æ¢å¯¹è±¡ å¹³ç§»å˜æ¢
 		D2D1::Matrix3x2F transformMatrix = D2D1::Matrix3x2F::Translation(offsetX, offsetY);
-		// ÅÐ¶ÏÊÇ·ñÐèÒª½øÐÐÐý×ª±ä»»
+		// åˆ¤æ–­æ˜¯å¦éœ€è¦è¿›è¡Œæ—‹è½¬å˜æ¢
 		if (angle != 0)
 		{
-			// Ðý×ª±ä»»
+			// æ—‹è½¬å˜æ¢
 			transformMatrix = transformMatrix * D2D1::Matrix3x2F::Rotation(angle, D2D1_POINT_2F{ startX, startY });
 		}
-		// ½«×ª»»¾ØÕóÓ¦ÓÃÓÚ»æÖÆ¶ÔÏó
+		// å°†è½¬æ¢çŸ©é˜µåº”ç”¨äºŽç»˜åˆ¶å¯¹è±¡
 		render->SetTransform(transformMatrix);
 	}
 
@@ -731,7 +731,7 @@ namespace EzUI {
 	void DXRender::PushLayer(const Geometry& dxGeometry) {
 		ID2D1Layer* layer = NULL;
 		render->CreateLayer(&layer);
-		render->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.Get()), layer);//·ÅÈëlayer
+		render->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.Get()), layer);//æ”¾å…¥layer
 		SafeRelease(&layer);
 	}
 	void DXRender::PopLayer() {
@@ -747,7 +747,7 @@ namespace EzUI {
 	void DXRender::DrawImage(DXImage* image, const  RectF& tagRect, float opacity) {
 		_NOREND_IMAGE_
 			if (image->Visible == false) return;
-		//½âÂë
+		//è§£ç 
 		image->DecodeOfRender(render);
 		ID2D1Bitmap* bitmap = image->Get();
 		if (!bitmap) {
@@ -755,16 +755,16 @@ namespace EzUI {
 		}
 		const ImageSizeMode& imageSizeMode = image->SizeMode;
 		const Rect& sourceRect = image->Offset;
-		//¼ÆËã×ø±ê
+		//è®¡ç®—åæ ‡
 		Rect rect(tagRect.X + 0.5, tagRect.Y + 0.5, tagRect.Width + 0.5, tagRect.Height + 0.5);
-		//×ª»»×ø±ê,Ëõ·Å
+		//è½¬æ¢åæ ‡,ç¼©æ”¾
 		Size imgSize(image->GetWidth(), image->GetHeight());
 		if (!sourceRect.IsEmptyArea()) {
 			imgSize.Width = sourceRect.Width;
 			imgSize.Height = sourceRect.Height;
 		}
 		Rect drawRect = EzUI::Transformation(imageSizeMode, rect, imgSize);
-		//¿ªÊ¼»æÖÆ
+		//å¼€å§‹ç»˜åˆ¶
 		D2D_RECT_F drawRectF = __To_D2D_RectF(drawRect);
 		if (!sourceRect.IsEmptyArea()) {
 			D2D_RECT_F sourceRectF = __To_D2D_RectF(sourceRect);

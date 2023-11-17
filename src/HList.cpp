@@ -3,7 +3,7 @@
 namespace EzUI {
 	void HList::Init()
 	{
-		this->GetScrollBar()->SetWidth(Width());//¹ö¶¯Ìõ¿í¶È
+		this->GetScrollBar()->SetWidth(Width());//æ»šåŠ¨æ¡å®½åº¦
 		this->GetScrollBar()->Parent = this;
 		this->GetScrollBar()->OffsetCallback = [this](int offsetValue)->void {
 			if (this->GetScrollBar()->ScrollPos() >= 1) {
@@ -42,7 +42,7 @@ namespace EzUI {
 				it->SetX(0);
 				continue;
 			}
-			//´¦Àíy×ø±êºÍmargin
+			//å¤„ç†yåæ ‡å’Œmargin
 			{
 				int height = it->GetFixedHeight();
 				if (height == 0) {
@@ -60,7 +60,7 @@ namespace EzUI {
 				_contentWidth += it->Width();
 				_contentWidth += it->Margin.Right;
 			}
-			//¼ÆËã×î´ó¸ß¶È
+			//è®¡ç®—æœ€å¤§é«˜åº¦
 			int _height = it->Y() + it->Height() + it->Margin.Bottom;
 			if (_height > _contentHeight) {
 				_contentHeight = _height;
@@ -71,14 +71,14 @@ namespace EzUI {
 
 	void HList::OnChildPaint(PaintEventArgs& args) {
 		ViewControls.clear();
-		//»æÖÆ×Ó¿Ø¼þ
+		//ç»˜åˆ¶å­æŽ§ä»¶
 		auto rect = Rect(0, 0, Width(), Height());
 		for (auto& it : GetControls()) {
 			if (rect.IntersectsWith(it->GetRect())) {
 				ViewControls.push_back(it);
 			}
 			if (it->X() >= Width()) {
-				//µ±¿Ø¼þ³¬³öÈÝÆ÷µ×²¿½«²»ÔÙÅÉ·¢»æÖÆÊÂ¼þ µ«ÊÇÈÔÈ»Òª½øÐÐ²¼¾Ö
+				//å½“æŽ§ä»¶è¶…å‡ºå®¹å™¨åº•éƒ¨å°†ä¸å†æ´¾å‘ç»˜åˆ¶äº‹ä»¶ ä½†æ˜¯ä»ç„¶è¦è¿›è¡Œå¸ƒå±€
 				if (it->IsAutoWidth() && it->GetLayoutState() == LayoutState::Pend) {
 					it->RefreshLayout();
 				}

@@ -16,39 +16,39 @@ namespace EzUI {
 	class ScrollBar;
 	enum class Cursor :ULONG_PTR;
 
-	//È«¾Ö×ÊÔ´¾ä±ú
-	extern UI_VAR_EXPORT WCHAR __EzUI__WindowClassName[];//´°¿ÚÀàÃû
-	extern UI_VAR_EXPORT HMODULE __EzUI__HINSTANCE;//È«¾ÖÊµÀı
-	extern UI_VAR_EXPORT Resource* __EzUI__Resource;//ÎÄ¼şÖĞµÄÈ«¾Ö×ÊÔ´¾ä±ú
-	extern UI_VAR_EXPORT DWORD __EzUI__ThreadId;//UIµÄÏß³ÌId
-	extern UI_VAR_EXPORT std::list<HWND> __EzUI__WNDS;//´æ´¢ËùÓĞÊ¹ÓÃ±¾¿ò¼Ü²úÉúµÄ´°¿Ú¾ä±ú
-	extern UI_VAR_EXPORT const std::list<EzUI::MonitorInfo> __EzUI__MonitorInfos;//ËùÓĞ¼àÊÓÆ÷ĞÅÏ¢
+	//å…¨å±€èµ„æºå¥æŸ„
+	extern UI_VAR_EXPORT WCHAR __EzUI__WindowClassName[];//çª—å£ç±»å
+	extern UI_VAR_EXPORT HMODULE __EzUI__HINSTANCE;//å…¨å±€å®ä¾‹
+	extern UI_VAR_EXPORT Resource* __EzUI__Resource;//æ–‡ä»¶ä¸­çš„å…¨å±€èµ„æºå¥æŸ„
+	extern UI_VAR_EXPORT DWORD __EzUI__ThreadId;//UIçš„çº¿ç¨‹Id
+	extern UI_VAR_EXPORT std::list<HWND> __EzUI__WNDS;//å­˜å‚¨æ‰€æœ‰ä½¿ç”¨æœ¬æ¡†æ¶äº§ç”Ÿçš„çª—å£å¥æŸ„
+	extern UI_VAR_EXPORT const std::list<EzUI::MonitorInfo> __EzUI__MonitorInfos;//æ‰€æœ‰ç›‘è§†å™¨ä¿¡æ¯
 
-	//×°ÔØ×ÖÌå
+	//è£…è½½å­—ä½“
 	extern UI_EXPORT void InstallFont(const EString& fontFileName);
-	//Ğ¶ÔØ×ÖÌå
+	//å¸è½½å­—ä½“
 	extern UI_EXPORT void UnstallFont(const EString& fontFileName);
-	//¸´ÖÆÄÚÈİµ½¼ôÇĞ°å
+	//å¤åˆ¶å†…å®¹åˆ°å‰ªåˆ‡æ¿
 	extern UI_EXPORT bool CopyToClipboard(int uFormat, void* pData, size_t size, HWND hWnd = NULL);
-	//´ò¿ª¼ôÇĞ°å
+	//æ‰“å¼€å‰ªåˆ‡æ¿
 	extern UI_EXPORT bool GetClipboardData(int uFormat, std::function<void(void*, size_t)> Callback, HWND hWnd = NULL);
-	//¸´ÖÆunicodeÎÄ×Ö
+	//å¤åˆ¶unicodeæ–‡å­—
 	extern UI_EXPORT bool CopyToClipboard(const std::wstring& str, HWND hWnd = NULL);
-	//Õ³ÌùunicodeÎÄ×Ö
+	//ç²˜è´´unicodeæ–‡å­—
 	extern UI_EXPORT bool GetClipboardData(std::wstring* outStr, HWND hWnd = NULL);
-	//×Ô¶¯»ñÈ¡ÎÄ¼ş×ÊÔ´(±¾µØÎÄ¼ş/×ÊÔ´ÎÄ¼ş)
+	//è‡ªåŠ¨è·å–æ–‡ä»¶èµ„æº(æœ¬åœ°æ–‡ä»¶/èµ„æºæ–‡ä»¶)
 	extern UI_EXPORT bool GetResource(const EString& fileName, std::string* outData);
-	//»ñÈ¡µ±Ç°ËùÓĞ¼àÊÓÆ÷µÄĞÅÏ¢
+	//è·å–å½“å‰æ‰€æœ‰ç›‘è§†å™¨çš„ä¿¡æ¯
 	extern UI_EXPORT size_t GetMonitor(std::list<MonitorInfo>* outMonitorInfo);
-	//»ñÈ¡ÓÃ»§µ±Ç°ËùÔÚµÄÏÔÊ¾Æ÷
+	//è·å–ç”¨æˆ·å½“å‰æ‰€åœ¨çš„æ˜¾ç¤ºå™¨
 	extern UI_EXPORT void GetMontior(MonitorInfo* outInfo, HWND hWnd = NULL);
-	//»ñÈ¡ÓÃ»§µ±Ç°ËùÔÚµÄÏÔÊ¾Æ÷
+	//è·å–ç”¨æˆ·å½“å‰æ‰€åœ¨çš„æ˜¾ç¤ºå™¨
 	extern UI_EXPORT void GetMontior(MonitorInfo* outInfo, const Rect& rect);
-	//¼ÓÔØ¹â±ê
+	//åŠ è½½å…‰æ ‡
 	extern UI_EXPORT HCURSOR LoadCursor(Cursor cursorType);
-	//¼ÓÔØ¹â±ê(//ĞèÒªÊÍ·Å)
+	//åŠ è½½å…‰æ ‡(//éœ€è¦é‡Šæ”¾)
 	extern UI_EXPORT HCURSOR LoadCursor(const EString& fileName);
-	//ÊÍ·Å¹â±ê
+	//é‡Šæ”¾å…‰æ ‡
 	extern UI_EXPORT void FreeCursor(HCURSOR hCursor);
 
 	class UI_EXPORT Color :public EzUI::__EzUI__Color {
@@ -99,15 +99,15 @@ namespace EzUI {
 		Image(const std::wstring& fileName) :DXImage(fileName) {}
 		Image(const void* data, size_t dataCount) :DXImage(data, dataCount) {}
 	public:
-		//´Ó×ÊÔ´»òÕß±¾µØÎÄ¼ş×Ô¶¯¹¹½¨Ò»¸öImage
+		//ä»èµ„æºæˆ–è€…æœ¬åœ°æ–‡ä»¶è‡ªåŠ¨æ„å»ºä¸€ä¸ªImage
 		static Image* Make(const EString& fileOrRes) {
-			//±¾µØÎÄ¼şÖĞ»ñÈ¡
+			//æœ¬åœ°æ–‡ä»¶ä¸­è·å–
 			std::wstring wstr = fileOrRes.unicode();
 			DWORD dwAttr = GetFileAttributesW(wstr.c_str());
 			if (dwAttr && (dwAttr != -1) && (dwAttr & FILE_ATTRIBUTE_ARCHIVE)) {
 				return new Image(wstr);
 			}
-			//´Ó×ÊÔ´ÖĞ»ñÈ¡
+			//ä»èµ„æºä¸­è·å–
 			if (EzUI::__EzUI__Resource) {
 				std::string data;
 				EzUI::__EzUI__Resource->GetFile(fileOrRes, &data);
@@ -120,33 +120,35 @@ namespace EzUI {
 		}
 	};
 #endif
-	// ¶¨ÒåÓÃÓÚ±£´æÏÔÊ¾Æ÷ĞÅÏ¢µÄ½á¹¹Ìå
+	// å®šä¹‰ç”¨äºä¿å­˜æ˜¾ç¤ºå™¨ä¿¡æ¯çš„ç»“æ„ä½“
 	struct MonitorInfo {
-		//ÏÔÊ¾Æ÷µÄÎ»ÖÃ ¶àÏÔÊ¾Æ÷ÏÂYÖá¿ÉÄÜ³öÏÖ¸ºÊı»òÕß´óÓÚ0µÄÊ±ºò´ú±íÏÔÊ¾Æ÷ÔÚÉèÖÃÀïÃæÏÔÊ¾Æ÷ÊÇ´íÎ»µÄ(¶àÏÔÊ¾Æ÷Ã»ÓĞÆ½ĞĞ);
-		EzUI::Rect Rect;//Âß¼­¿í¸ß
-		EzUI::Rect WorkRect;//¹¤×÷ÇøÓò
-		Size Physical;//ÏÔÊ¾Æ÷ÎïÀí¿í¸ß
-		float Scale = 1.0f;//ÏÔÊ¾Æ÷Ëõ·Å±ÈÀı
-		float FPS = 60;//ÏÔÊ¾Æ÷Ö¡ÂÊ
-		bool Primary = false;//ÊÇ·ñÎªÖ÷ÏÔÊ¾Æ÷
+		//æ˜¾ç¤ºå™¨çš„ä½ç½® å¤šæ˜¾ç¤ºå™¨ä¸‹Yè½´å¯èƒ½å‡ºç°è´Ÿæ•°æˆ–è€…å¤§äº0çš„æ—¶å€™ä»£è¡¨æ˜¾ç¤ºå™¨åœ¨è®¾ç½®é‡Œé¢æ˜¾ç¤ºå™¨æ˜¯é”™ä½çš„(å¤šæ˜¾ç¤ºå™¨æ²¡æœ‰å¹³è¡Œ);
+		EzUI::Rect Rect;//é€»è¾‘å®½é«˜
+		EzUI::Rect WorkRect;//å·¥ä½œåŒºåŸŸ
+		Size Physical;//æ˜¾ç¤ºå™¨ç‰©ç†å®½é«˜
+		float Scale = 1.0f;//æ˜¾ç¤ºå™¨ç¼©æ”¾æ¯”ä¾‹
+		float FPS = 60;//æ˜¾ç¤ºå™¨å¸§ç‡
+		bool Primary = false;//æ˜¯å¦ä¸ºä¸»æ˜¾ç¤ºå™¨
 	};
 	struct WindowData {
-		float Scale = 1.0f;//Ëõ·ÅÂÊ
-		Control* FocusControl = NULL;//¾ßÓĞ½¹µãµÄ¿Ø¼ş
-		Control* InputControl = NULL;//ÊäÈë¿ò
+		float Scale = 1.0f;//ç¼©æ”¾ç‡
+		Control* FocusControl = NULL;//å…·æœ‰ç„¦ç‚¹çš„æ§ä»¶
+		Control* InputControl = NULL;//è¾“å…¥æ¡†
 		size_t PaintCount = 0;
 #ifdef _DEBUG
-		bool Debug = false;//ÊÇ·ñ¿ªÆôdebugÄ£Ê½
-		Color DebugColor;//µ÷ÊÔÄ£Ê½ÏÂµÄÌØÓĞ×Ö¶Î
+		bool Debug = false;//æ˜¯å¦å¼€å¯debugæ¨¡å¼
+		int ColorIndex = 0;//è°ƒè¯•æ¨¡å¼ä¸‹çš„ç‰¹æœ‰å­—æ®µ
+		Color DebugColor;
+		std::vector<Color> DebugColors{ Color::Red,Color::Green,Color::Blue,Color::Black,Color::White };
 #endif
-		EzUI::Window* Window = NULL;//Ö÷´°ÀàµÄÊµÀı
-		HWND HANDLE = NULL;//´°¿Ú¾ä±ú
-		std::function<void(const Rect&)> InvalidateRect = NULL;//Ê¹Ò»¸öÇøÓòÎŞĞ§
-		std::function<void()> UpdateWindow = NULL;//Á¢¼´¸üĞÂÈ«²¿ÎŞĞ§ÇøÓò
+		EzUI::Window* Window = NULL;//ä¸»çª—ç±»çš„å®ä¾‹
+		HWND HANDLE = NULL;//çª—å£å¥æŸ„
+		std::function<void(const Rect&)> InvalidateRect = NULL;//ä½¿ä¸€ä¸ªåŒºåŸŸæ— æ•ˆ
+		std::function<void()> UpdateWindow = NULL;//ç«‹å³æ›´æ–°å…¨éƒ¨æ— æ•ˆåŒºåŸŸ
 		std::function<bool(Control*, EventArgs&)> Notify = NULL;//
-		std::function<void(Control*)> RemoveControl = NULL;//Çå¿Õ¿Ø¼ş±ê¼ÇµÈµÈ...
-		std::function<void(Control*, const std::wstring&)> SetTips = NULL;//ÉèÖÃtipsÎÄ×Ö
-		std::function<void(Control*)> DelTips = NULL;//É¾³ıtipsÎÄ×Ö
+		std::function<void(Control*)> RemoveControl = NULL;//æ¸…ç©ºæ§ä»¶æ ‡è®°ç­‰ç­‰...
+		std::function<void(Control*, const std::wstring&)> SetTips = NULL;//è®¾ç½®tipsæ–‡å­—
+		std::function<void(Control*)> DelTips = NULL;//åˆ é™¤tipsæ–‡å­—
 	};
 
 	class UI_EXPORT StopWatch {
@@ -170,9 +172,9 @@ namespace EzUI {
 
 
 	enum class LayoutState :byte {
-		None = 1, //ÎŞ×´Ì¬ (ÎŞĞè²¼¾Ö)
-		Pend = 2,//¹ÒÆğÖĞ
-		Layouting = 4//²¼¾ÖÖĞ
+		None = 1, //æ— çŠ¶æ€ (æ— éœ€å¸ƒå±€)
+		Pend = 2,//æŒ‚èµ·ä¸­
+		Layouting = 4//å¸ƒå±€ä¸­
 	};
 	enum Event :long long {
 		None = 1,
@@ -199,86 +201,86 @@ namespace EzUI {
 		OnMouseEvent = OnMouseWheel | OnMouseEnter | OnMouseMove | OnMouseLeave | OnMouseClick | OnMouseDoubleClick | OnMouseDown | OnMouseUp,
 		OnKeyBoardEvent = OnKeyDown | OnKeyUp | OnKeyChar
 	};
-	//ÖØÔØÃ¶¾ÙµÄ | ÔËËã·û
+	//é‡è½½æšä¸¾çš„ | è¿ç®—ç¬¦
 	inline Event operator|(Event left, Event right)
 	{
 		return static_cast<Event>(static_cast<long long>(left) | static_cast<long long>(right));
 	}
 	enum class ControlAction {
 		None,
-		MoveWindow,//ÒÆ¶¯´°¿Ú
-		Mini,//×îĞ¡»¯
-		Max,//×î´ó»¯|»Ö¸´
-		Close//¹Ø±Õ
+		MoveWindow,//ç§»åŠ¨çª—å£
+		Mini,//æœ€å°åŒ–
+		Max,//æœ€å¤§åŒ–|æ¢å¤
+		Close//å…³é—­
 	};
 	enum class ControlState {
-		None,//ÎŞ×´Ì¬ ÔòÊÇÊ¹ÓÃ_nowStyle»º´æÑùÊ½
-		Static,//¾²Ì¬
-		Checked,//Ñ¡ÖĞ×´Ì¬
-		Hover,//Êó±êĞü¸¡
-		Active//Êó±ê°´×¡
+		None,//æ— çŠ¶æ€ åˆ™æ˜¯ä½¿ç”¨_nowStyleç¼“å­˜æ ·å¼
+		Static,//é™æ€
+		Checked,//é€‰ä¸­çŠ¶æ€
+		Hover,//é¼ æ ‡æ‚¬æµ®
+		Active//é¼ æ ‡æŒ‰ä½
 	};
 	enum class DockStyle {
-		// ÕªÒª:
-		//Î´ÉèÖÃ
+		// æ‘˜è¦:
+		//æœªè®¾ç½®
 		None,
-		// ÕªÒª:
-		//ÔÚ¸¸¿Ø¼şÖĞ ×óÓÒ±£³Ö
+		// æ‘˜è¦:
+		//åœ¨çˆ¶æ§ä»¶ä¸­ å·¦å³ä¿æŒ
 		Horizontal,
-		// ÕªÒª:
-		//ÔÚ¸¸¿Ø¼şÖĞ ÉÏÏÂ±£³Ö
+		// æ‘˜è¦:
+		//åœ¨çˆ¶æ§ä»¶ä¸­ ä¸Šä¸‹ä¿æŒ
 		Vertical,
-		// ÕªÒª:
-		// ÆÌÂúÕû¸ö¸¸¿Ø¼ş
+		// æ‘˜è¦:
+		// é“ºæ»¡æ•´ä¸ªçˆ¶æ§ä»¶
 		Fill
 	};
 	enum class MouseButton {
-		// ÕªÒª: 
-		  //     Î´Ôø°´ÏÂÊó±ê°´Å¥¡£
+		// æ‘˜è¦: 
+		  //     æœªæ›¾æŒ‰ä¸‹é¼ æ ‡æŒ‰é’®ã€‚
 		None,
 		//
-		// ÕªÒª: 
-		//     Êó±ê×ó°´Å¥Ôø°´ÏÂ¡£
+		// æ‘˜è¦: 
+		//     é¼ æ ‡å·¦æŒ‰é’®æ›¾æŒ‰ä¸‹ã€‚
 		Left,
 		//
-		// ÕªÒª: 
-		//     Êó±êÓÒ°´Å¥Ôø°´ÏÂ¡£
+		// æ‘˜è¦: 
+		//     é¼ æ ‡å³æŒ‰é’®æ›¾æŒ‰ä¸‹ã€‚
 		Right,
 		//
-		// ÕªÒª: 
-		//     Êó±êÖĞ°´Å¥Ôø°´ÏÂ¡£
+		// æ‘˜è¦: 
+		//     é¼ æ ‡ä¸­æŒ‰é’®æ›¾æŒ‰ä¸‹ã€‚
 		Middle,
 		//
-		// ÕªÒª: 
-		//     µÚ 1 ¸ö XButton Ôø°´ÏÂ¡£
+		// æ‘˜è¦: 
+		//     ç¬¬ 1 ä¸ª XButton æ›¾æŒ‰ä¸‹ã€‚
 		XButton1,
 		//
-		// ÕªÒª: 
-		//     µÚ 2 ¸ö XButton Ôø°´ÏÂ¡£
+		// æ‘˜è¦: 
+		//     ç¬¬ 2 ä¸ª XButton æ›¾æŒ‰ä¸‹ã€‚
 		XButton2
 	};
 	enum class Cursor :ULONG_PTR
 	{
-		None = 0,//Î´Ö¸¶¨
-		APPSTARTING = (ULONG_PTR)IDC_APPSTARTING,// ±ê×¼µÄ¼ıÍ·ºÍĞ¡É³Â©
-		ARROW = (ULONG_PTR)IDC_ARROW,// ±ê×¼µÄ¼ıÍ·
-		CROSS = (ULONG_PTR)IDC_CROSS,// Ê®×Ö¹â±ê
+		None = 0,//æœªæŒ‡å®š
+		APPSTARTING = (ULONG_PTR)IDC_APPSTARTING,// æ ‡å‡†çš„ç®­å¤´å’Œå°æ²™æ¼
+		ARROW = (ULONG_PTR)IDC_ARROW,// æ ‡å‡†çš„ç®­å¤´
+		CROSS = (ULONG_PTR)IDC_CROSS,// åå­—å…‰æ ‡
 		HAND = (ULONG_PTR)IDC_HAND,// Windows 98/Me, Windows 2000/XP: Hand
-		HELP = (ULONG_PTR)IDC_HELP,// ±ê×¼µÄ¼ıÍ·ºÍÎÊºÅ
-		IBEAM = (ULONG_PTR)IDC_IBEAM,// ¹¤×Ö¹â±ê
+		HELP = (ULONG_PTR)IDC_HELP,// æ ‡å‡†çš„ç®­å¤´å’Œé—®å·
+		IBEAM = (ULONG_PTR)IDC_IBEAM,// å·¥å­—å…‰æ ‡
 		ICON = (ULONG_PTR)IDC_ICON,// Obsolete for applications marked version 4.0 or later.
-		NO = (ULONG_PTR)IDC_NO,// ½ûÖ¹È¦
+		NO = (ULONG_PTR)IDC_NO,// ç¦æ­¢åœˆ
 		SIZE = (ULONG_PTR)IDC_SIZE,// Obsolete for applications marked version 4.0 or later. Use SIZEALL.
-		SIZEALL = (ULONG_PTR)IDC_SIZEALL,// ËÄÏò¼ıÍ·Ö¸Ïò¶«¡¢Î÷¡¢ÄÏ¡¢±±
-		SIZENESW = (ULONG_PTR)IDC_SIZENESW,// Ë«¼ıÍ·Ö¸Ïò¶«±±ºÍÎ÷ÄÏ
-		SIZENS = (ULONG_PTR)IDC_SIZENS, // Ë«¼ıÍ·Ö¸ÏòÄÏ±±
-		SIZENWSE = (ULONG_PTR)IDC_SIZENWSE,// Ë«¼ıÍ·Ö¸ÏòÎ÷±±ºÍ¶«ÄÏ
-		SIZEWE = (ULONG_PTR)IDC_SIZEWE,// Ë«¼ıÍ·Ö¸Ïò¶«Î÷
-		UPARROW = (ULONG_PTR)IDC_UPARROW,// ´¹Ö±¼ıÍ·
-		WAIT = (ULONG_PTR)IDC_WAIT// É³Â©£¬Windows7ÏÂ»áÏÔÊ¾ÎªÑ¡ÔñµÄÔ²È¦±íÊ¾µÈ´ı
+		SIZEALL = (ULONG_PTR)IDC_SIZEALL,// å››å‘ç®­å¤´æŒ‡å‘ä¸œã€è¥¿ã€å—ã€åŒ—
+		SIZENESW = (ULONG_PTR)IDC_SIZENESW,// åŒç®­å¤´æŒ‡å‘ä¸œåŒ—å’Œè¥¿å—
+		SIZENS = (ULONG_PTR)IDC_SIZENS, // åŒç®­å¤´æŒ‡å‘å—åŒ—
+		SIZENWSE = (ULONG_PTR)IDC_SIZENWSE,// åŒç®­å¤´æŒ‡å‘è¥¿åŒ—å’Œä¸œå—
+		SIZEWE = (ULONG_PTR)IDC_SIZEWE,// åŒç®­å¤´æŒ‡å‘ä¸œè¥¿
+		UPARROW = (ULONG_PTR)IDC_UPARROW,// å‚ç›´ç®­å¤´
+		WAIT = (ULONG_PTR)IDC_WAIT// æ²™æ¼ï¼ŒWindows7ä¸‹ä¼šæ˜¾ç¤ºä¸ºé€‰æ‹©çš„åœ†åœˆè¡¨ç¤ºç­‰å¾…
 	};
 
-	//»ù´¡ÊÂ¼ş
+	//åŸºç¡€äº‹ä»¶
 	class UI_EXPORT EventArgs {
 	public:
 		Event EventType = Event::None;
@@ -287,11 +289,11 @@ namespace EzUI {
 		}
 		virtual ~EventArgs() {};
 	};
-	//ÎªÊó±êÊÂ¼şÌá¹©»ù´¡Êı¾İ
+	//ä¸ºé¼ æ ‡äº‹ä»¶æä¾›åŸºç¡€æ•°æ®
 	class UI_EXPORT MouseEventArgs :public EventArgs {
 	public:
 		MouseButton Button = MouseButton::None;
-		int ZDelta = 0;//·½Ïò
+		int ZDelta = 0;//æ–¹å‘
 		Point Location;
 	public:
 		MouseEventArgs(const Event& eventType, const Point& location = Point(0, 0), const MouseButton& mouseButton = MouseButton::None, const int& ZDelta = 0) :EventArgs(eventType) {
@@ -301,12 +303,12 @@ namespace EzUI {
 		}
 		virtual ~MouseEventArgs() {}
 	};
-	// ÕªÒª: 
-	//Îª¼üÅÌÊÂ¼şÌá¹©»ù´¡Êı¾İ
+	// æ‘˜è¦: 
+	//ä¸ºé”®ç›˜äº‹ä»¶æä¾›åŸºç¡€æ•°æ®
 	class UI_EXPORT KeyboardEventArgs :public EventArgs {
 	public:
 		/// <summary>
-		/// Ò»°ãÊÇÖ¸ ¼üÅÌµÄasciiÖµ
+		/// ä¸€èˆ¬æ˜¯æŒ‡ é”®ç›˜çš„asciiå€¼
 		/// </summary>
 		WPARAM wParam;
 		LPARAM lParam;
@@ -316,7 +318,7 @@ namespace EzUI {
 		}
 		virtual ~KeyboardEventArgs() {}
 	};
-	//Ê§È¥½¹µã
+	//å¤±å»ç„¦ç‚¹
 	class UI_EXPORT KillFocusEventArgs :public EventArgs {
 	public:
 		Control* Control;
@@ -325,21 +327,21 @@ namespace EzUI {
 		}
 		virtual ~KillFocusEventArgs() {}
 	};
-	//×ø±ê·¢Éú¸Ä±ä
+	//åæ ‡å‘ç”Ÿæ”¹å˜
 	class UI_EXPORT LocationEventArgs :public EventArgs {
 	public:
 		const EzUI::Point& Location;
 		LocationEventArgs(const EzUI::Point& location) :EventArgs(Event::OnLocation), Location(location) {}
 		virtual ~LocationEventArgs() {}
 	};
-	//´óĞ¡·¢Éú¸Ä±ä
+	//å¤§å°å‘ç”Ÿæ”¹å˜
 	class UI_EXPORT SizeEventArgs :public EventArgs {
 	public:
 		const EzUI::Size& Size;
 		SizeEventArgs(const EzUI::Size& size) :EventArgs(Event::OnSize), Size(size) {}
 		virtual ~SizeEventArgs() {}
 	};
-	//¾ØĞÎ·¢Éú¸Ä±ä
+	//çŸ©å½¢å‘ç”Ÿæ”¹å˜
 	class UI_EXPORT RectEventArgs :public EventArgs {
 	public:
 		const EzUI::Rect& Rect;
@@ -352,7 +354,7 @@ namespace EzUI {
 		DpiChangeEventArgs(const float& scale) :EventArgs(Event::OnDpiChange), Scale(scale) {}
 		virtual ~DpiChangeEventArgs() {}
 	};
-	// Îª OnPaint ÊÂ¼şÌá¹©Êı¾İ¡£
+	// ä¸º OnPaint äº‹ä»¶æä¾›æ•°æ®ã€‚
 	class UI_EXPORT PaintEventArgs :public EventArgs {
 	private:
 		std::list<bool> layers;
@@ -362,32 +364,32 @@ namespace EzUI {
 		PaintEventArgs& operator=(const PaintEventArgs&) = delete;
 		WindowData* PublicData = NULL;
 		HDC DC = NULL;
-		EzUI::DXRender& Graphics;//»­¼Ò
-		Rect InvalidRectangle;//WM_PAINTÀïÃæµÄÎŞĞ§ÇøÓò
+		EzUI::DXRender& Graphics;//ç”»å®¶
+		Rect InvalidRectangle;//WM_PAINTé‡Œé¢çš„æ— æ•ˆåŒºåŸŸ
 		PaintEventArgs(EzUI::DXRender& _painter) : EventArgs(Event::OnPaint), Graphics(_painter) {}
 		virtual ~PaintEventArgs() {}
-		void PushLayer(const Rect& rectBounds);//ËÙ¶È½Ï¿ì
-		void PushLayer(const Geometry& dxGeometry);//±È½ÏºÄĞÔÄÜ,µ«ÊÇ¿ÉÒÔÒìĞÎ¿¹¾â³İ²Ã¼ô
-		void PopLayer();//µ¯³ö×îºóÒ»¸ö²Ã¼ô
+		void PushLayer(const Rect& rectBounds);//é€Ÿåº¦è¾ƒå¿«
+		void PushLayer(const Geometry& dxGeometry);//æ¯”è¾ƒè€—æ€§èƒ½,ä½†æ˜¯å¯ä»¥å¼‚å½¢æŠ—é”¯é½¿è£å‰ª
+		void PopLayer();//å¼¹å‡ºæœ€åä¸€ä¸ªè£å‰ª
 		void PushOffset(const Point& offset);
-		void PopOffset();//µ¯³ö×îºóÒ»¸öÆ«ÒÆ
+		void PopOffset();//å¼¹å‡ºæœ€åä¸€ä¸ªåç§»
 	};
-	// Îª¿Ø¼şÑùÊ½Ìá¹©Êı¾İ¡£
+	// ä¸ºæ§ä»¶æ ·å¼æä¾›æ•°æ®ã€‚
 	class UI_EXPORT ControlStyle {
 	public:
-		EzUI::Border Border;//±ß¿òĞÅÏ¢
-		//UI_Float Opacity;//ÕûÌå²»Í¸Ã÷¶È
-		Color BackColor = 0;//±³¾°ÑÕÉ«
-		Image* BackImage = NULL;//±³¾°Í¼Æ¬ Èç¹ûÖ¸¶¨µÄÍ¼Æ¬±»É¾³ı Çë±ØĞë½«´ËÖÃÁã
-		Image* ForeImage = NULL;//Ç°¾°Í¼Æ¬ Èç¹ûÖ¸¶¨µÄÍ¼Æ¬±»É¾³ı Çë±ØĞë½«´ËÖÃÁã
-		std::wstring FontFamily;//×ÖÌåÃû³Æ ¾ßÓĞ¼Ì³ĞĞÔ
-		int FontSize = 0;//×ÖÌå´óĞ¡ ¾ßÓĞ¼Ì³ĞĞÔ ´Ë´¦²ÉÓÃint
-		Color ForeColor;//Ç°¾°ÑÕÉ«  ¾ßÓĞ¼Ì³ĞĞÔ
-		HCURSOR Cursor = NULL;//Êó±êÑùÊ½
-		float Angle = 0;//Ğı×ª·¶Î§ 0~360
+		EzUI::Border Border;//è¾¹æ¡†ä¿¡æ¯
+		//UI_Float Opacity;//æ•´ä½“ä¸é€æ˜åº¦
+		Color BackColor = 0;//èƒŒæ™¯é¢œè‰²
+		Image* BackImage = NULL;//èƒŒæ™¯å›¾ç‰‡ å¦‚æœæŒ‡å®šçš„å›¾ç‰‡è¢«åˆ é™¤ è¯·å¿…é¡»å°†æ­¤ç½®é›¶
+		Image* ForeImage = NULL;//å‰æ™¯å›¾ç‰‡ å¦‚æœæŒ‡å®šçš„å›¾ç‰‡è¢«åˆ é™¤ è¯·å¿…é¡»å°†æ­¤ç½®é›¶
+		std::wstring FontFamily;//å­—ä½“åç§° å…·æœ‰ç»§æ‰¿æ€§
+		int FontSize = 0;//å­—ä½“å¤§å° å…·æœ‰ç»§æ‰¿æ€§ æ­¤å¤„é‡‡ç”¨int
+		Color ForeColor;//å‰æ™¯é¢œè‰²  å…·æœ‰ç»§æ‰¿æ€§
+		HCURSOR Cursor = NULL;//é¼ æ ‡æ ·å¼
+		float Angle = 0;//æ—‹è½¬èŒƒå›´ 0~360
 	private:
-		void operator=(const ControlStyle& right) {} //½ûÖ¹Ö±½Ó¸³Öµ ÒòÎªÕâÑù»áµ¼ÖÂ ColorÖ´ĞĞ¿½±´Ê¹µÃColor±äµÃ²»ºÏ·¨µÄÓĞĞ§
-		ControlStyle(const ControlStyle& right) {} //½ûÖ¹¿½±´ 
+		void operator=(const ControlStyle& right) {} //ç¦æ­¢ç›´æ¥èµ‹å€¼ å› ä¸ºè¿™æ ·ä¼šå¯¼è‡´ Coloræ‰§è¡Œæ‹·è´ä½¿å¾—Colorå˜å¾—ä¸åˆæ³•çš„æœ‰æ•ˆ
+		ControlStyle(const ControlStyle& right) {} //ç¦æ­¢æ‹·è´ 
 	public:
 		ControlStyle() {}
 		virtual ~ControlStyle() {}
@@ -402,21 +404,21 @@ namespace EzUI {
 	public:
 		const bool IsWindow = false;
 		void* Tag = NULL;
-		WindowData* PublicData = NULL;//¹«¹²Êı¾İ
+		WindowData* PublicData = NULL;//å…¬å…±æ•°æ®
 	public:
 		IControl();
 		virtual ~IControl();
 	public:
-		//Ô­Àí²ÉÓÃPostMessage(ÇëÈ·±£µ±Ç°UIÏß³ÌÖĞÖÁÉÙ´æÔÚÒ»¸ö´°¿Ú)
+		//åŸç†é‡‡ç”¨PostMessage(è¯·ç¡®ä¿å½“å‰UIçº¿ç¨‹ä¸­è‡³å°‘å­˜åœ¨ä¸€ä¸ªçª—å£)
 		template<class Func, class... Args>
 		bool BeginInvoke(Func&& f, Args&& ...args) {
 			HWND hWnd = NULL;
-			//Èç¹ûÊÇ´°¿Ú(±ØĞëÊ¹ÓÃ×ÔÉí´°¿Ú) »òÕß (»òÕß¿Ø¼şÓĞÄÜ»ñÈ¡µ½×Ô¼ºËùÔÚµÄ´°¿Ú¾ä±ú)
+			//å¦‚æœæ˜¯çª—å£(å¿…é¡»ä½¿ç”¨è‡ªèº«çª—å£) æˆ–è€… (æˆ–è€…æ§ä»¶æœ‰èƒ½è·å–åˆ°è‡ªå·±æ‰€åœ¨çš„çª—å£å¥æŸ„)
 			if (this->IsWindow || (this->PublicData && this->PublicData)) {
 				hWnd = this->PublicData->HANDLE;
 			}
 			else if (!__EzUI__WNDS.empty()) {
-				//´ÓÈ«¾Ö´°¿ÚÖĞ»ñÈ¡
+				//ä»å…¨å±€çª—å£ä¸­è·å–
 				hWnd = *__EzUI__WNDS.begin();
 			}
 			else {
@@ -429,7 +431,7 @@ namespace EzUI {
 			}
 			return true;
 		}
-		//Ô­Àí²ÉÓÃSendMessage(ÇëÈ·±£µ±Ç°UIÏß³ÌÖĞÖÁÉÙ´æÔÚÒ»¸ö´°¿Ú)
+		//åŸç†é‡‡ç”¨SendMessage(è¯·ç¡®ä¿å½“å‰UIçº¿ç¨‹ä¸­è‡³å°‘å­˜åœ¨ä¸€ä¸ªçª—å£)
 		template<class Func, class... Args>
 		bool Invoke(Func&& f, Args&& ...args) {
 			std::function<void()> func(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
@@ -438,12 +440,12 @@ namespace EzUI {
 				return true;
 			}
 			HWND hWnd = NULL;
-			//Èç¹ûÊÇ´°¿Ú(±ØĞëÊ¹ÓÃ×ÔÉí´°¿Ú) »òÕß (¿Ø¼şÓĞÄÜ»ñÈ¡µ½×Ô¼ºËùÔÚµÄ´°¿Ú¾ä±ú)
+			//å¦‚æœæ˜¯çª—å£(å¿…é¡»ä½¿ç”¨è‡ªèº«çª—å£) æˆ–è€… (æ§ä»¶æœ‰èƒ½è·å–åˆ°è‡ªå·±æ‰€åœ¨çš„çª—å£å¥æŸ„)
 			if (this->IsWindow || (this->PublicData && this->PublicData)) {
 				hWnd = this->PublicData->HANDLE;
 			}
 			else if (!__EzUI__WNDS.empty()) {
-				//´ÓÈ«¾Ö´°¿ÚÖĞ»ñÈ¡
+				//ä»å…¨å±€çª—å£ä¸­è·å–
 				hWnd = *__EzUI__WNDS.begin();
 			}
 			else {
@@ -454,8 +456,8 @@ namespace EzUI {
 			}
 			return true;
 		}
-		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//ÉèÖÃÊôĞÔ
-		virtual EString GetAttribute(const EString& attrName);//»ñÈ¡ÊôĞÔ
+		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//è®¾ç½®å±æ€§
+		virtual EString GetAttribute(const EString& attrName);//è·å–å±æ€§
 	};
 
 };

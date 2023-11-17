@@ -4,7 +4,7 @@
 #include "Task.h"
 namespace EzUI {
 	/// <summary>
-	/// //LayeredWindow	  //ÎŞ±ß¿ò  ´øÒõÓ° ´°¿ÚÍ¸Ã÷ÒìĞÎ ´°¿Ú´óĞ¡·¢Éú¸Ä±äÖØ»æ
+	/// //LayeredWindow	  //æ— è¾¹æ¡†  å¸¦é˜´å½± çª—å£é€æ˜å¼‚å½¢ çª—å£å¤§å°å‘ç”Ÿæ”¹å˜é‡ç»˜
 	/// </summary>
 	class  UI_EXPORT LayeredWindow :public BorderlessWindow
 	{

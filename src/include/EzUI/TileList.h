@@ -7,7 +7,7 @@ namespace EzUI {
 	{
 	private:
 		VScrollBar vScrollBar;
-		bool AutoHeight = false;//¸ù¾İÄÚÈİµÄ¸ß¶È×Ô¶¯±ä»¯
+		bool AutoHeight = false;//æ ¹æ®å†…å®¹çš„é«˜åº¦è‡ªåŠ¨å˜åŒ–
 		void Init();
 		void Offset(int offset);
 	protected:

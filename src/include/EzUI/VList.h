@@ -8,7 +8,7 @@ namespace EzUI {
 	private:
 		VScrollBar vScrollBar;
 		void Init();
-		//¶Ô¿Ø¼ş½øĞĞÆ«ÒÆ
+		//å¯¹æ§ä»¶è¿›è¡Œåç§»
 		void Offset(int offset);
 	protected:
 		virtual void OnLayout()override;

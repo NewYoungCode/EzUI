@@ -19,15 +19,15 @@ namespace EzUI {
 			if (ctl->Parent->IsPendLayout()) {
 				ctl->Parent->RefreshLayout();
 			}
-			//¿Ø¼þµÄ¾ØÐÎÎ»ÖÃ
+			//æŽ§ä»¶çš„çŸ©å½¢ä½ç½®
 			const Rect& ctlRect = ctl->GetRect();
 			if (ctlRect.X >= 0 && ctlRect.GetRight() <= Width()) {
 				return;
 			}
-			//³öÏÖÔÚ¶¥²¿
+			//å‡ºçŽ°åœ¨é¡¶éƒ¨
 			int offset = this->_offset - ctlRect.X;
 			if (ctlRect.Y > 0) {
-				//³öÏÖÔÚµ×²¿
+				//å‡ºçŽ°åœ¨åº•éƒ¨
 				offset += this->_viewLength - ctlRect.Width;
 			}
 			__super::ScrollTo(offset, Event::None);

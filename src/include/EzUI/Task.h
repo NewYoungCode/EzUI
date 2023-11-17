@@ -25,7 +25,7 @@ namespace EzUI {
 				});
 		}
 		void Wait();
-		//µ±Ç°ÈÎÎñÊÇ·ñÒÑ¾­Í£Ö¹
+		//å½“å‰ä»»åŠ¡æ˜¯å¦å·²ç»åœæ­¢
 		bool IsStopped();
 		virtual ~Task();
 	};
@@ -36,14 +36,14 @@ namespace EzUI {
 		std::list<std::function<void()>> funcs;
 		std::mutex mtx;
 		std::condition_variable codv;
-		//ÓÃÓÚµÈ´ıÈÎÎñÇå¿ÕµÄËøºÍÌõ¼ş±äÁ¿
+		//ç”¨äºç­‰å¾…ä»»åŠ¡æ¸…ç©ºçš„é”å’Œæ¡ä»¶å˜é‡
 		std::mutex mtx2;
 		std::condition_variable codv2;
 	private:
 		TaskFactory(const TaskFactory&) = delete;
 	public:
 		TaskFactory(int maxTaskCount = 50);
-		//Ìí¼Óµ½ÈÎÎñ¶ÓÁĞÖĞµÄÄ©Î²(ÏÈºóË³ĞòÖ´ĞĞ)
+		//æ·»åŠ åˆ°ä»»åŠ¡é˜Ÿåˆ—ä¸­çš„æœ«å°¾(å…ˆåé¡ºåºæ‰§è¡Œ)
 		template<class Func, class... Args>
 		void Add(Func&& f, Args&& ...args) {
 			{
@@ -52,7 +52,7 @@ namespace EzUI {
 			}
 			codv.notify_one();
 		}
-		//Ìí¼ÓÖÁÈÎÎñ¶ÓÁĞµÄµÚÒ»Î»(ÓÅÏÈÖ´ĞĞ)
+		//æ·»åŠ è‡³ä»»åŠ¡é˜Ÿåˆ—çš„ç¬¬ä¸€ä½(ä¼˜å…ˆæ‰§è¡Œ)
 		template<class Func, class... Args>
 		void AddToFrist(Func&& f, Args&& ...args) {
 			{
@@ -62,7 +62,7 @@ namespace EzUI {
 			codv.notify_one();
 		}
 
-		//µÈ´ıËùÓĞÈÎÎñÍê³É
+		//ç­‰å¾…æ‰€æœ‰ä»»åŠ¡å®Œæˆ
 		void WaitAll();
 		virtual ~TaskFactory();
 	};

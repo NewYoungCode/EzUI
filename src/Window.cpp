@@ -7,7 +7,7 @@ namespace EzUI {
 
 	Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 	{
-		InitWindow(width, height, owner, dStyle, ExStyle);//ÉèÖÃ»ù±¾Êı¾İ
+		InitWindow(width, height, owner, dStyle, ExStyle);//è®¾ç½®åŸºæœ¬æ•°æ®
 	}
 
 	Window::~Window()
@@ -55,7 +55,7 @@ namespace EzUI {
 			this->CenterToScreen();
 		}
 
-		//´´½¨Ã°ÅİÌáÊ¾´°¿Ú
+		//åˆ›å»ºå†’æ³¡æç¤ºçª—å£
 		_hWndTips = CreateWindowEx(WS_EX_TOPMOST,
 			TOOLTIPS_CLASS,
 			NULL,
@@ -96,7 +96,7 @@ namespace EzUI {
 		}
 		PublicData->SetTips = [this](Control* ctl, const std::wstring& text)->void {
 
-			// Ã¶¾Ù²¢É¾³ıÃ¿¸öÌáÊ¾Ïî
+			// æšä¸¾å¹¶åˆ é™¤æ¯ä¸ªæç¤ºé¡¹
 			int toolCount = SendMessage(_hWndTips, TTM_GETTOOLCOUNT, 0, 0);
 			for (int i = 0; i < toolCount; ++i) {
 				TOOLINFO toolInfo{ 0 };
@@ -104,9 +104,9 @@ namespace EzUI {
 				toolInfo.hwnd = Hwnd();
 				toolInfo.uFlags = TTF_IDISHWND;
 				toolInfo.hwnd = _hWndTips;
-				// ·¢ËÍ TTM_ENUMTOOLS ÏûÏ¢ÒÔ»ñÈ¡ÌáÊ¾ÏîĞÅÏ¢
+				// å‘é€ TTM_ENUMTOOLS æ¶ˆæ¯ä»¥è·å–æç¤ºé¡¹ä¿¡æ¯
 				if (SendMessage(_hWndTips, TTM_ENUMTOOLS, i, (LPARAM)&toolInfo)) {
-					// ·¢ËÍ TTM_DELTOOL ÏûÏ¢É¾³ıÌáÊ¾Ïî
+					// å‘é€ TTM_DELTOOL æ¶ˆæ¯åˆ é™¤æç¤ºé¡¹
 					SendMessage(_hWndTips, TTM_DELTOOL, 0, (LPARAM)&toolInfo);
 				}
 			}
@@ -114,7 +114,7 @@ namespace EzUI {
 			//EString::UnicodeToANSI(text, &str);
 			//printf("tips: %s\n", str.c_str());
 			if (!text.empty()) {
-				// ·¢ËÍ TTM_DELALLTOOL ÏûÏ¢
+				// å‘é€ TTM_DELALLTOOL æ¶ˆæ¯
 				TOOLINFO	tti{ 0 };
 				tti.cbSize = sizeof(TOOLINFO);
 				tti.uFlags = TTF_SUBCLASS;// | TTF_TRACK;
@@ -122,7 +122,7 @@ namespace EzUI {
 				tti.rect = ctl->GetViewRect().ToRECT();
 				tti.uId = (UINT_PTR)ctl;
 				tti.lpszText = (LPWSTR)text.c_str();
-				//Ìí¼ÓÒ»¸ötipsĞÅÏ¢
+				//æ·»åŠ ä¸€ä¸ªtipsä¿¡æ¯
 				SendMessage(_hWndTips, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
 			}
 			};
@@ -131,7 +131,7 @@ namespace EzUI {
 			tti.cbSize = sizeof(TOOLINFO);
 			tti.hwnd = Hwnd();
 			tti.uId = (UINT_PTR)ctl;
-			//ÒÆ³ı
+			//ç§»é™¤
 			SendMessage(_hWndTips, TTM_DELTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
 			};
 		PublicData->RemoveControl = [this](Control* delControl)->void {
@@ -246,14 +246,14 @@ namespace EzUI {
 		if (_layout->Style.FontFamily.empty()) {
 			WCHAR fontName[LF_FACESIZE] = { 0 };
 			NONCLIENTMETRICS ncm = { sizeof(NONCLIENTMETRICS) };
-			// »ñÈ¡ÏµÍ³·Ç¿Í»§Çø×ÖÌå
+			// è·å–ç³»ç»Ÿéå®¢æˆ·åŒºå­—ä½“
 			if (::SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0))
 			{
 				::lstrcpyW(fontName, ncm.lfMessageFont.lfFaceName);
 			}
 			else
 			{
-				// »ñÈ¡ÏµÍ³ÆÕÍ¨ÎÄ±¾×ÖÌå
+				// è·å–ç³»ç»Ÿæ™®é€šæ–‡æœ¬å­—ä½“
 				::SystemParametersInfoW(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &fontName, 0);
 			}
 			_layout->Style.FontFamily = fontName;
@@ -267,7 +267,7 @@ namespace EzUI {
 		if (_layout->Style.BackColor.GetValue() == 0) {
 			LONG_PTR exStyle = ::GetWindowLongPtr(Hwnd(), GWL_EXSTYLE);
 			bool isLayered = ((exStyle & WS_EX_LAYERED) != 0);
-			if (!isLayered) {//·Çlayered´°¿Ú Ö÷²¼¾Ö¿Ø¼ş±ØĞëÉèÖÃ±³¾°É«
+			if (!isLayered) {//élayeredçª—å£ ä¸»å¸ƒå±€æ§ä»¶å¿…é¡»è®¾ç½®èƒŒæ™¯è‰²
 				_layout->Style.BackColor = Color::White;
 			}
 		}
@@ -319,7 +319,7 @@ namespace EzUI {
 	}
 	int Window::ShowModal(bool disableOnwer)
 	{
-		//´Ë´¦´úÂë²»ÄÜËæÒâ¸ü¸Ä ½â¾ö¹Ø±Õ´°¿ÚÊ±,owner´°¿ÚÉÁË¸ÎÊÌâ
+		//æ­¤å¤„ä»£ç ä¸èƒ½éšæ„æ›´æ”¹ è§£å†³å…³é—­çª—å£æ—¶,ownerçª—å£é—ªçƒé—®é¢˜
 		if (disableOnwer) {
 			_oWnerWnd = ::GetWindowOwner(Hwnd());
 		}
@@ -375,16 +375,16 @@ namespace EzUI {
 
 		int x = monitorInfo.WorkRect.X;
 		int y = monitorInfo.WorkRect.Y;
-		int sw = monitorInfo.WorkRect.Width;//µ±Ç°¹¤×÷ÇøÓòµÄ¿í
-		int sh = monitorInfo.WorkRect.Height;//µ±Ç°¹¤×÷ÇøÓòµÄ¸ß
+		int sw = monitorInfo.WorkRect.Width;//å½“å‰å·¥ä½œåŒºåŸŸçš„å®½
+		int sh = monitorInfo.WorkRect.Height;//å½“å‰å·¥ä½œåŒºåŸŸçš„é«˜
 
 		Rect _rect = this->GetWindowRect();
 		const int& width = _rect.Width;
 		const int& height = _rect.Height;
-		//»ùÓÚÆÁÄ»µÄÖĞĞÄµã
-		_rect.X = x + (sw - width) / 2.0f + 0.5;//±£Ö¤×óÓÒ¾ÓÖĞ
-		_rect.Y = y + (sh - height) / 2.0f + 0.5;//±£Ö¤ÉÏÏÂ¾ÓÖĞ
-		//ÒÆ¶¯´°¿Ú
+		//åŸºäºå±å¹•çš„ä¸­å¿ƒç‚¹
+		_rect.X = x + (sw - width) / 2.0f + 0.5;//ä¿è¯å·¦å³å±…ä¸­
+		_rect.Y = y + (sh - height) / 2.0f + 0.5;//ä¿è¯ä¸Šä¸‹å±…ä¸­
+		//ç§»åŠ¨çª—å£
 		::SetWindowPos(Hwnd(), NULL, _rect.X, _rect.Y, _rect.Width, _rect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
 	}
 
@@ -402,7 +402,7 @@ namespace EzUI {
 		Rect _rect = this->GetWindowRect();
 		const int& width = _rect.Width;
 		const int& height = _rect.Height;
-		//»ùÓÚ¸¸´°¿ÚµÄÖĞĞÄµã
+		//åŸºäºçˆ¶çª—å£çš„ä¸­å¿ƒç‚¹
 		RECT ownerRECT;
 		::GetWindowRect(wnd, &ownerRECT);
 		int onwerWidth = ownerRECT.right - ownerRECT.left;
@@ -410,7 +410,7 @@ namespace EzUI {
 		if (width > 0 && height > 0 && onwerWidth > 0 && onwerHeight > 0) {
 			_rect.X = ownerRECT.left + (onwerWidth - width) / 2.0f + 0.5;
 			_rect.Y = ownerRECT.top + (onwerHeight - height) / 2.0f + 0.5;
-			//ÒÆ¶¯´°¿Ú
+			//ç§»åŠ¨çª—å£
 			::SetWindowPos(Hwnd(), NULL, _rect.X, _rect.Y, _rect.Width, _rect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
 		}
 	}
@@ -423,7 +423,7 @@ namespace EzUI {
 		//	int pause = 0;
 		//}
 		//if (WM_COMMAND == uMsg) {
-		//	//windows×Ó¿Ø¼şÏûÏ¢
+		//	//windowså­æ§ä»¶æ¶ˆæ¯
 		//}
 		switch (uMsg)
 		{
@@ -454,9 +454,9 @@ namespace EzUI {
 			MONITORINFO monitor;
 			monitor.cbSize = sizeof(monitor);
 			::GetMonitorInfo(::MonitorFromWindow(Hwnd(), MONITOR_DEFAULTTOPRIMARY), &monitor);
-			//ÊÇ·ñÎªÖ÷ÏÔÊ¾Æ÷
+			//æ˜¯å¦ä¸ºä¸»æ˜¾ç¤ºå™¨
 			if ((monitor.dwFlags & MONITORINFOF_PRIMARY) == MONITORINFOF_PRIMARY) {
-				//±£Ö¤´°¿ÚÔÚ×î´ó»¯µÄÊ±ºòÊ¼ÖÕÔÚ¹¤×÷Çø ²»»áÕÚµ²ÈÎÎñÀ¸
+				//ä¿è¯çª—å£åœ¨æœ€å¤§åŒ–çš„æ—¶å€™å§‹ç»ˆåœ¨å·¥ä½œåŒº ä¸ä¼šé®æŒ¡ä»»åŠ¡æ 
 				RECT& rcWork = monitor.rcWork;
 				pMMInfo->ptMaxPosition.x = rcWork.left;
 				pMMInfo->ptMaxPosition.y = rcWork.top;
@@ -464,7 +464,7 @@ namespace EzUI {
 				pMMInfo->ptMaxSize.y = rcWork.bottom - rcWork.top;
 			}
 			else {
-				//»ñÈ¡Ö÷ÏÔÊ¾Æ÷
+				//è·å–ä¸»æ˜¾ç¤ºå™¨
 				HMONITOR hMonitor = MonitorFromWindow(NULL, MONITOR_DEFAULTTOPRIMARY);
 				MONITORINFO monitorInfo;
 				monitorInfo.cbSize = sizeof(monitorInfo);
@@ -489,7 +489,7 @@ namespace EzUI {
 				int	x = input->GetClientRect().X + rect.X;
 				int y = input->GetClientRect().Y + rect.Y + rect.Height;
 				if (y == _rectClient.Height) {
-					y -= 1;//ÉñÆæ!Èç¹ûÊäÈëÎ»ÖÃºÍµÈÓÚ´°¿ÚµÄ¸ß ÄÇÃ´ÊäÈë·¨¾Í»áÅÜµ½×óÉÏ½ÇÈ¥
+					y -= 1;//ç¥å¥‡!å¦‚æœè¾“å…¥ä½ç½®å’Œç­‰äºçª—å£çš„é«˜ é‚£ä¹ˆè¾“å…¥æ³•å°±ä¼šè·‘åˆ°å·¦ä¸Šè§’å»
 				}
 				cpf.ptCurrentPos.x = x;
 				cpf.ptCurrentPos.y = y;
@@ -521,7 +521,7 @@ namespace EzUI {
 		case WM_DPICHANGED:
 		{
 			int dpi = HIWORD(wParam);
-			//ĞÂµÄËõ·Å±È
+			//æ–°çš„ç¼©æ”¾æ¯”
 			FLOAT systemScale = (float)dpi / USER_DEFAULT_SCREEN_DPI;
 			RECT* const prcNewWindow = (RECT*)lParam;
 			int newX = prcNewWindow->left;
@@ -545,8 +545,8 @@ namespace EzUI {
 			//NMHDR* pNMHDR = reinterpret_cast<NMHDR*>(lParam);
 			//if (pNMHDR->hwndFrom == _hWndTips && pNMHDR->code==) {
 			//	NMTTDISPINFO* pDispInfo = reinterpret_cast<NMTTDISPINFO*>(lParam);
-			//	// ÔÚÕâÀï¸ü¸ÄÌáÊ¾ÎÄ×Ö
-			//	pDispInfo->szText = const_cast<TCHAR*>(L"ĞÂµÄÌáÊ¾ÎÄ×Ö");
+			//	// åœ¨è¿™é‡Œæ›´æ”¹æç¤ºæ–‡å­—
+			//	pDispInfo->szText = const_cast<TCHAR*>(L"æ–°çš„æç¤ºæ–‡å­—");
 			//	return true;
 			//}
 			break;
@@ -558,19 +558,19 @@ namespace EzUI {
 			if ((wPos->flags & SWP_NOCOPYBITS) == SWP_NOCOPYBITS) {
 				rePaint = true;
 			}
-			//»ñÈ¡¿Í»§ÇøµÄ¾ØĞÎ
+			//è·å–å®¢æˆ·åŒºçš„çŸ©å½¢
 			RECT rect;
 			::GetClientRect(Hwnd(), &rect);
 			Point clientPoint{ rect.left,rect.top };
 			Size clientSize{ rect.right - rect.left,rect.bottom - rect.top };
-			//¿Í»§Çø¾ØĞÎÎŞĞ§µÄÊ±ºò
+			//å®¢æˆ·åŒºçŸ©å½¢æ— æ•ˆçš„æ—¶å€™
 			if (clientSize.Width == 0 && clientSize.Height == 0) {
 				//_rect = { 0,0,0,0 };
 				return TRUE;
 			}
 			_rect = Rect{ wPos->x,wPos->y,wPos->cx,wPos->cy };
 			_rectClient = Rect{ clientPoint,clientSize };
-			//´¥·¢
+			//è§¦å‘
 			OnRect(_rect);
 			if (!_lastSize.Equals(clientSize)) {
 				_lastSize = clientSize;
@@ -578,7 +578,7 @@ namespace EzUI {
 			}
 			if (rePaint) {
 				//Debug::Log("SWP_NOCOPYBITS!");
-				//¶ªÆú¹¤×÷ÇøµÄÕû¸öÄÚÈİ¡£ Èç¹ûÎ´Ö¸¶¨´Ë±êÖ¾£¬Ôò»áÔÚµ÷Õû»òÖØĞÂ¶¨Î»´°¿Úºó±£´æ²¢¸´ÖÆ»Ø¹¤×÷ÇøµÄÓĞĞ§ÄÚÈİ¡£
+				//ä¸¢å¼ƒå·¥ä½œåŒºçš„æ•´ä¸ªå†…å®¹ã€‚ å¦‚æœæœªæŒ‡å®šæ­¤æ ‡å¿—ï¼Œåˆ™ä¼šåœ¨è°ƒæ•´æˆ–é‡æ–°å®šä½çª—å£åä¿å­˜å¹¶å¤åˆ¶å›å·¥ä½œåŒºçš„æœ‰æ•ˆå†…å®¹ã€‚
 				Invalidate();
 			}
 			Point point = _rect.GetLocation();
@@ -593,14 +593,14 @@ namespace EzUI {
 			bool bClose = true;
 			OnClose(bClose);
 			if (bClose) {
-				//½â¾ö¹Ø±Õ´°¿ÚÊ± owner´°¿ÚÉÁË¸µÄÎÊÌâ
+				//è§£å†³å…³é—­çª—å£æ—¶ ownerçª—å£é—ªçƒçš„é—®é¢˜
 				if (_oWnerWnd) {
 					::EnableWindow(_oWnerWnd, TRUE);
 				}
 				::DestroyWindow(Hwnd());
 			}
 			else {
-				//¹Ø±ÕÒÑÈ¡Ïû
+				//å…³é—­å·²å–æ¶ˆ
 				return TRUE;
 			}
 			break;
@@ -615,17 +615,12 @@ namespace EzUI {
 			if (wParam == VK_F11) {
 				PublicData->Debug = !PublicData->Debug;
 				if (PublicData->Debug) {
-					byte temp[3];
-					for (size_t i = 0; i < 3; i++)
-					{
-						std::random_device rd;   // »ñÈ¡Ò»¸öÕæËæ»úÊıÖÖ×Ó
-						std::mt19937 gen(rd());  // Ê¹ÓÃÖÖ×Ó³õÊ¼»¯Ëæ»úÊıÒıÇæ
-						std::uniform_int_distribution<int> distribution(0, 255);  // ´´½¨Ò»¸ö¾ùÔÈ·Ö²¼µÄËæ»úÊıÉú³ÉÆ÷£¬·¶Î§Îª [0, 255]
-						int randomNum = distribution(gen);  // Éú³ÉËæ»úÊı
-						temp[i] = randomNum;
+					if (PublicData->ColorIndex >= PublicData->DebugColors.size()) {
+						PublicData->ColorIndex = 0;
 					}
-					float width = 1 * this->GetScale();
-					PublicData->DebugColor = Color(temp[0], temp[1], temp[2]);
+					PublicData->DebugColors;
+					PublicData->DebugColor = PublicData->DebugColors[PublicData->ColorIndex];
+					PublicData->ColorIndex++;
 				}
 				Invalidate();
 			}
@@ -650,7 +645,7 @@ namespace EzUI {
 				::ScreenToClient(Hwnd(), &p1);
 				Point point{ p1.x,p1.y };
 				Point relativePoint;
-				Control* outCtl = this->FindControl(point, &relativePoint);//ÕÒµ½µ±Ç°¿Ø¼şµÄÎ»ÖÃ
+				Control* outCtl = this->FindControl(point, &relativePoint);//æ‰¾åˆ°å½“å‰æ§ä»¶çš„ä½ç½®
 				if (outCtl && outCtl->Enable) {
 					Control* pCtl = outCtl;
 					if ((pCtl->EventPassThrough & Event::OnHover)) {
@@ -684,7 +679,7 @@ namespace EzUI {
 			TrackMouseEvent(&tme);
 			OnMouseMove({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
 			_mouseIn = true;
-			//¸øhwndTip·¢ËÍÏûÏ¢¸æËßÏÖÔÚÒÆ¶¯µ½Ê²Ã´Î»ÖÃÁË
+			//ç»™hwndTipå‘é€æ¶ˆæ¯å‘Šè¯‰ç°åœ¨ç§»åŠ¨åˆ°ä»€ä¹ˆä½ç½®äº†
 			//LPARAM lp = MAKELPARAM(args.Location.X, args.Location.Y);
 			//SendMessage(_hWndTips, TTM_TRACKPOSITION, 0, lParam);
 			break;
@@ -818,11 +813,11 @@ namespace EzUI {
 				goto Find_Loop;
 			}
 		}
-		//Èç¹û¿Ø¼şÊÇµ¯»ÉµÄÇé¿öÏÂÖ±½Ó´©Í¸
+		//å¦‚æœæ§ä»¶æ˜¯å¼¹ç°§çš„æƒ…å†µä¸‹ç›´æ¥ç©¿é€
 		if (dynamic_cast<Spacer*>(outCtl) && outCtl->Parent) {
 			return  outCtl->Parent;
 		}
-		////Êó±ê¼üÅÌµÄÊÂ¼şÊÇ¿ÉÒÔ´©Í¸µÄ(ÕâÑù×öÃ²ËÆ²»ÊÇºÜºÃ)
+		////é¼ æ ‡é”®ç›˜çš„äº‹ä»¶æ˜¯å¯ä»¥ç©¿é€çš„(è¿™æ ·åšè²Œä¼¼ä¸æ˜¯å¾ˆå¥½)
 		//if ((outCtl->EventPassThrough & Event::OnMouseEvent || outCtl->EventPassThrough & Event::OnKeyBoardEvent) && outCtl->Parent) {
 		//	return outCtl->Parent;
 		//}
@@ -831,7 +826,7 @@ namespace EzUI {
 
 	void Window::OnMouseMove(const Point& point)
 	{
-		if (_inputControl && _mouseDown) { //°´×¡ÒÆ¶¯µÄ¿Ø¼ş
+		if (_inputControl && _mouseDown) { //æŒ‰ä½ç§»åŠ¨çš„æ§ä»¶
 			auto ctlRect = _inputControl->GetClientRect();
 			MouseEventArgs args(Event::OnMouseMove, { point.X - ctlRect.X ,point.Y - ctlRect.Y });
 			_inputControl->DispatchEvent(args);
@@ -839,12 +834,12 @@ namespace EzUI {
 		}
 
 		Point relativePoint;
-		Control* newCtl = this->FindControl(point, &relativePoint);//ÕÒµ½µ±Ç°¿Ø¼şµÄÎ»ÖÃ
+		Control* newCtl = this->FindControl(point, &relativePoint);//æ‰¾åˆ°å½“å‰æ§ä»¶çš„ä½ç½®
 		MouseEventArgs args(Event::None);
 		args.Location = relativePoint;
 
 		bool ok = true;
-		//´¥·¢ÉÏÒ»¸ö
+		//è§¦å‘ä¸Šä¸€ä¸ª
 		if (_focusControl != newCtl) {
 			if (_focusControl) {
 				MouseEventArgs args(Event::OnMouseLeave);
@@ -853,14 +848,14 @@ namespace EzUI {
 				args.Location.Y = point.Y - rect.Y;
 				ok = _focusControl->DispatchEvent(args);
 			}
-			//´¥·¢MouseEnter
+			//è§¦å‘MouseEnter
 			args.EventType = Event::OnMouseEnter;
 			ok = newCtl->DispatchEvent(args);
 			if (ok) {
 				_focusControl = newCtl;
 			}
 		}
-		//´¥·¢ÃüÖĞµÄMouseMove
+		//è§¦å‘å‘½ä¸­çš„MouseMove
 		if (_focusControl) {
 			args.EventType = Event::OnMouseMove;
 			_focusControl->DispatchEvent(args);
@@ -922,29 +917,29 @@ namespace EzUI {
 	{
 		::SetCapture(Hwnd());
 		_mouseDown = true;
-		//Ñ°Ôç¿Ø¼ş
+		//å¯»æ—©æ§ä»¶
 		Point relativePoint;
 		Control* outCtl = this->FindControl(point, &relativePoint);
-		//Èç¹ûµ¥»úµÄ²»ÊÇÉÏÒ»¸ö ÄÇÃ´ÉÏÒ»¸ö´¥·¢Ê§È¥½¹µãÊÂ¼ş
+		//å¦‚æœå•æœºçš„ä¸æ˜¯ä¸Šä¸€ä¸ª é‚£ä¹ˆä¸Šä¸€ä¸ªè§¦å‘å¤±å»ç„¦ç‚¹äº‹ä»¶
 		if (_inputControl != outCtl) {
 			if (_inputControl) {
 				KillFocusEventArgs arg(outCtl);
-				_inputControl->DispatchEvent(arg);//¸øÉÏÒ»¸öÊäÈë½¹µã´¥·¢Ê§È¥½¹µãµÄÊÂ¼ş
+				_inputControl->DispatchEvent(arg);//ç»™ä¸Šä¸€ä¸ªè¾“å…¥ç„¦ç‚¹è§¦å‘å¤±å»ç„¦ç‚¹çš„äº‹ä»¶
 			}
 			_inputControl = outCtl;
 		}
-		//¸øÃüÖĞµÄ¿Ø¼ş´¥·¢Êó±ê°´ÏÂÊÂ¼ş
+		//ç»™å‘½ä¸­çš„æ§ä»¶è§¦å‘é¼ æ ‡æŒ‰ä¸‹äº‹ä»¶
 		if (_inputControl) {
 			MouseEventArgs args(Event::OnMouseDown);
 			args.Button = mbtn;
 			args.Location = relativePoint;
 			_inputControl->DispatchEvent(args);
 		}
-		//×öË«»÷ÏûÏ¢´¦Àí
+		//åšåŒå‡»æ¶ˆæ¯å¤„ç†
 		auto _time = std::chrono::system_clock::now();
 		auto diff = _time - _lastDownTime;
 		auto timeOffset = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//
-		if (timeOffset < 300 && _lastBtn == mbtn) {//300ºÁÃëÖ®ÄÚÍ¬Ò»¸ö°´Å¥°´ÏÂÁ½´ÎËãË«»÷ÏûÏ¢
+		if (timeOffset < 300 && _lastBtn == mbtn) {//300æ¯«ç§’ä¹‹å†…åŒä¸€ä¸ªæŒ‰é’®æŒ‰ä¸‹ä¸¤æ¬¡ç®—åŒå‡»æ¶ˆæ¯
 			_lastDownTime = std::chrono::system_clock::from_time_t(0);
 			OnMouseDoubleClick(mbtn, point);
 		}
@@ -963,13 +958,13 @@ namespace EzUI {
 			MouseEventArgs args(Event::None);
 			args.Button = mbtn;
 			args.Location = { point.X - ctlRect.X,point.Y - ctlRect.Y };
-			//´¥·¢Ì§ÆğÊÂ¼ş
+			//è§¦å‘æŠ¬èµ·äº‹ä»¶
 			{
 				args.EventType = Event::OnMouseUp;
 				_inputControl->DispatchEvent(args);
 
 			}
-			//´¥·¢µ¥»÷ÊÂ¼ş Èç¹û½¹µã»¹ÔÚ²¢ÇÒÊó±êÎ´ÒÆ³ö¿Ø¼şÄÚ 
+			//è§¦å‘å•å‡»äº‹ä»¶ å¦‚æœç„¦ç‚¹è¿˜åœ¨å¹¶ä¸”é¼ æ ‡æœªç§»å‡ºæ§ä»¶å†… 
 			if (_inputControl && mbtn == _lastBtn && ctlRect.Contains(point)) {
 				args.EventType = Event::OnMouseClick;
 				_inputControl->DispatchEvent(args);
@@ -979,10 +974,10 @@ namespace EzUI {
 				::GetCursorPos(&p1);
 				::ScreenToClient(Hwnd(), &p1);
 				if (ctlRect.Contains(p1.x, p1.y) && ::GetForegroundWindow() == Hwnd()) {
-					args.EventType = Event::OnMouseEnter;//´¥·¢Êó±êĞü¸¡ÊÂ¼ş
+					args.EventType = Event::OnMouseEnter;//è§¦å‘é¼ æ ‡æ‚¬æµ®äº‹ä»¶
 				}
 				else {
-					args.EventType = Event::OnMouseLeave;//´¥·¢Êó±êÀë¿ªÊÂ¼ş
+					args.EventType = Event::OnMouseLeave;//è§¦å‘é¼ æ ‡ç¦»å¼€äº‹ä»¶
 				}
 				_inputControl->DispatchEvent(args);
 			}
@@ -1049,13 +1044,13 @@ namespace EzUI {
 
 	void Window::MoveWindow() {
 		::ReleaseCapture();
-		SendMessage(Hwnd(), WM_NCLBUTTONDOWN, HTCAPTION, NULL);//Ä£ÄâÊó±ê°´×¡±êÌâÀ¸ÒÆ¶¯´°¿Ú
-		SendMessage(Hwnd(), WM_LBUTTONUP, NULL, NULL);//ËÉ¿ª
+		SendMessage(Hwnd(), WM_NCLBUTTONDOWN, HTCAPTION, NULL);//æ¨¡æ‹Ÿé¼ æ ‡æŒ‰ä½æ ‡é¢˜æ ç§»åŠ¨çª—å£
+		SendMessage(Hwnd(), WM_LBUTTONUP, NULL, NULL);//æ¾å¼€
 	}
 
 	void Window::OnDpiChange(const float& systemScale, const Rect& newRect)
 	{
-		//ĞÂµÄËõ·Å±È
+		//æ–°çš„ç¼©æ”¾æ¯”
 		float newScale = systemScale / PublicData->Scale;
 		this->PublicData->Scale = systemScale;
 		this->_miniSize.Scale(newScale);
@@ -1108,7 +1103,7 @@ namespace EzUI {
 			}
 		}
 		if (args.EventType == Event::OnMouseClick) {
-			//Êó±ê×ó²à°´Å¥µ¥»÷
+			//é¼ æ ‡å·¦ä¾§æŒ‰é’®å•å‡»
 			//if (args.EventType == Event::OnMouseClick && ((MouseEventArgs&)(args)).Button == MouseButton::Left) {
 			EString  ctlName = sender->GetAttribute("tablayout");
 			if (!ctlName.empty()) {

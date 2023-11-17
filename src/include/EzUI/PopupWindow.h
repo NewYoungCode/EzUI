@@ -4,7 +4,7 @@
 #include "LayeredWindow.h"
 namespace EzUI {
 	/// <summary>
-	/// µ¯³öÊ½´°¿Ú(Ê§È¥½¹µã´°¿Ú½«»á¹Ø±Õ) Ò»°ãÓÃÓÚ×öÓÒ¼ü²Ëµ¥µÈµÈ
+	/// å¼¹å‡ºå¼çª—å£(å¤±å»ç„¦ç‚¹çª—å£å°†ä¼šå…³é—­) ä¸€èˆ¬ç”¨äºåšå³é”®èœå•ç­‰ç­‰
 	/// </summary>
 	class UI_EXPORT PopupWindow :public LayeredWindow {
 	public:

@@ -4,83 +4,83 @@ namespace EzUI {
 	class UI_EXPORT Control :public IControl
 	{
 	private:
-		bool* _isRemove = NULL;//¿Ø¼şÊÇ·ñÒÑ¾­±»ÒÆ³ı»òÊÍ·Å
-		bool _visible = true;//¿Ø¼şÊÇ·ñ¿É¼û ´Ë±êÖ¾ÎªtrueµÄÊ±ºò ¿ÉÄÜÊµ¼ÊÖĞ²¢²»»á¿É¼û 
-		float _scale = 1.0f;//µ±Ç°¿Ø¼şµÄdpiËõ·Å
-		std::list<Control*> _controls;//×Ó¿Ø¼ş
-		std::list<Control*> _spacers;//´æ´¢µ¯»É¿Ø¼ş
-		//²¼¾Ö×´Ì¬AddControlØ¼InsertControlØ¼RemoveControlØ¼OnSizeÊ±ºò´Ë±êÖ¾Îª¹ÒÆğ µ÷ÓÃResumeLayout±êÖ¾Îª²¼¾ÖÖĞ µ±µ÷ÓÃOnLayout()Ö®ºó´Ë±êÖ¾ÎªNone
+		bool* _isRemove = NULL;//æ§ä»¶æ˜¯å¦å·²ç»è¢«ç§»é™¤æˆ–é‡Šæ”¾
+		bool _visible = true;//æ§ä»¶æ˜¯å¦å¯è§ æ­¤æ ‡å¿—ä¸ºtrueçš„æ—¶å€™ å¯èƒ½å®é™…ä¸­å¹¶ä¸ä¼šå¯è§ 
+		float _scale = 1.0f;//å½“å‰æ§ä»¶çš„dpiç¼©æ”¾
+		std::list<Control*> _controls;//å­æ§ä»¶
+		std::list<Control*> _spacers;//å­˜å‚¨å¼¹ç°§æ§ä»¶
+		//å¸ƒå±€çŠ¶æ€AddControlä¸¶InsertControlä¸¶RemoveControlä¸¶OnSizeæ—¶å€™æ­¤æ ‡å¿—ä¸ºæŒ‚èµ· è°ƒç”¨ResumeLayoutæ ‡å¿—ä¸ºå¸ƒå±€ä¸­ å½“è°ƒç”¨OnLayout()ä¹‹åæ­¤æ ‡å¿—ä¸ºNone
 		EzUI::LayoutState _layoutState = EzUI::LayoutState::None;
-		EString _tipsText;//Êó±êĞü¸¡µÄÌáÊ¾ÎÄ×Ö
-		Point _lastLocation;//ÉÏÒ»´ÎÎ»ÖÃ
-		Size _lastSize;//ÉÏÒ»´Î´óĞ¡
-		bool _autoWidth = false;//ÊÇ·ñ¸ù¾İÄÚÈİ×Ô¶¯¿í¶È
-		bool _autoHeight = false;//¸ù¾İÄÚÈİµÄ¸ß¶È×Ô¶¯±ä»¯
-		Size _contentSize;//¿Ø¼şÄÚÈİ¿í¸ß
-		Size _fixedSize;//¾ø¶ÔSize
-		Rect _rect;//¿Ø¼ş¾ØĞÎÇøÓò(»ùÓÚ¸¸¿Ø¼ş)
-		Rect _viewRect;//¿Ø¼şÔÚ´°¿ÚÖĞµÄ¿É¼ûÇøÓò
-		DockStyle _dock = DockStyle::None;//dockÑùÊ½
+		EString _tipsText;//é¼ æ ‡æ‚¬æµ®çš„æç¤ºæ–‡å­—
+		Point _lastLocation;//ä¸Šä¸€æ¬¡ä½ç½®
+		Size _lastSize;//ä¸Šä¸€æ¬¡å¤§å°
+		bool _autoWidth = false;//æ˜¯å¦æ ¹æ®å†…å®¹è‡ªåŠ¨å®½åº¦
+		bool _autoHeight = false;//æ ¹æ®å†…å®¹çš„é«˜åº¦è‡ªåŠ¨å˜åŒ–
+		Size _contentSize;//æ§ä»¶å†…å®¹å®½é«˜
+		Size _fixedSize;//ç»å¯¹Size
+		Rect _rect;//æ§ä»¶çŸ©å½¢åŒºåŸŸ(åŸºäºçˆ¶æ§ä»¶)
+		Rect _viewRect;//æ§ä»¶åœ¨çª—å£ä¸­çš„å¯è§åŒºåŸŸ
+		DockStyle _dock = DockStyle::None;//dockæ ·å¼
 	private:
 		Control(const Control&) = delete;
 		Control& operator=(const Control&) = delete;
-		void ComputeClipRect();//¼ÆËã»ùÓÚ¸¸¿Ø¼şµÄ²Ã¼ôÇøÓò
+		void ComputeClipRect();//è®¡ç®—åŸºäºçˆ¶æ§ä»¶çš„è£å‰ªåŒºåŸŸ
 	protected:
-		std::list<Control*> ViewControls;//»ùÓÚ¿Ø¼şÖĞµÄ¿É¼û¿Ø¼ş
+		std::list<Control*> ViewControls;//åŸºäºæ§ä»¶ä¸­çš„å¯è§æ§ä»¶
 	public:
-		Distance Margin;//Íâ±ß¾à ÈÃÈİÆ÷¶ÀÕ¼Ò»ĞĞ »ò Ò»ÁĞµÄÇé¿öÏÂ ÉèÖÃ±ß¾à»áÊ¹¿Ø¼ş±äĞ¡ ²»¿ÉÉèÖÃÎª¸ºÊı
-		//Ìí¼Óµ½Ö÷´°¿ÚÍ¨Öªº¯ÊıÖĞ¿ÉÀ¹½Ø
+		Distance Margin;//å¤–è¾¹è· è®©å®¹å™¨ç‹¬å ä¸€è¡Œ æˆ– ä¸€åˆ—çš„æƒ…å†µä¸‹ è®¾ç½®è¾¹è·ä¼šä½¿æ§ä»¶å˜å° ä¸å¯è®¾ç½®ä¸ºè´Ÿæ•°
+		//æ·»åŠ åˆ°ä¸»çª—å£é€šçŸ¥å‡½æ•°ä¸­å¯æ‹¦æˆª
 		Event EventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnKeyChar | Event::OnKeyDown | Event::OnKeyUp;
-		Event EventPassThrough = Event::None;//¿Ø¼ş¿É±»´©Í¸µÄÊÂ¼ş
-		bool Enable = true;//¿Ø¼ş±»ÆôÓÃ ½ûÖ¹×´Ì¬ÏÂÊó±ê¼üÅÌÏûÏ¢½«²»¿ÉÓÃ
-		EString Name;//¿Ø¼şµÄObjectName ID
-		ControlState State = ControlState::Static;//¿Ø¼ş×´Ì¬
-		ControlAction Action = ControlAction::None;//¿Ø¼şĞĞÎª
-		ControlStyle Style;//Ä¬ÈÏÑùÊ½
-		ControlStyle HoverStyle;//Êó±êĞü¸¡ÑùÊ½
-		ControlStyle ActiveStyle;//Êó±ê°´ÏÂÑùÊ½
-		Control* Parent = NULL;//¸¸¿Ø¼ş
-		std::function<void(Control*, const EventArgs&)> EventHandler = NULL;//ÊÂ¼ş´¦ÀíÆ÷
+		Event EventPassThrough = Event::None;//æ§ä»¶å¯è¢«ç©¿é€çš„äº‹ä»¶
+		bool Enable = true;//æ§ä»¶è¢«å¯ç”¨ ç¦æ­¢çŠ¶æ€ä¸‹é¼ æ ‡é”®ç›˜æ¶ˆæ¯å°†ä¸å¯ç”¨
+		EString Name;//æ§ä»¶çš„ObjectName ID
+		ControlState State = ControlState::Static;//æ§ä»¶çŠ¶æ€
+		ControlAction Action = ControlAction::None;//æ§ä»¶è¡Œä¸º
+		ControlStyle Style;//é»˜è®¤æ ·å¼
+		ControlStyle HoverStyle;//é¼ æ ‡æ‚¬æµ®æ ·å¼
+		ControlStyle ActiveStyle;//é¼ æ ‡æŒ‰ä¸‹æ ·å¼
+		Control* Parent = NULL;//çˆ¶æ§ä»¶
+		std::function<void(Control*, const EventArgs&)> EventHandler = NULL;//äº‹ä»¶å¤„ç†å™¨
 	protected:
-		//½öÏŞ×ÓÀàÊ¹ÓÃ
+		//ä»…é™å­ç±»ä½¿ç”¨
 		virtual void SetContentWidth(const int& width);//
 		virtual void SetContentHeight(const int& height);//
 		virtual void SetContentSize(const Size& size);//
-		virtual bool OnEvent(const EventArgs& arg);//ËùÓĞÊÂ¼şÏÈ½øÕâÀï
-		virtual void OnPaintBefore(PaintEventArgs& args, bool paintSelf = true);//»æÖÆÖ®Ç°
-		virtual void OnPaint(PaintEventArgs& args);//»æÖÆ 
-		virtual void OnChildPaint(PaintEventArgs& args);//×Ó¿Ø¼ş»æÖÆ ¿ÉÒÔÖØÔØ´Ëº¯ÊıÓÅ»¯Êó±ê²Ù×÷ĞÔÄÜ
-		virtual void OnBackgroundPaint(PaintEventArgs& painter);//±³¾°»æÖÆ
-		virtual void OnForePaint(PaintEventArgs& e);//Ç°¾°»æÖÆ
-		virtual void OnBorderPaint(PaintEventArgs& painter, const Border& border);//±ß¿ò»æÖÆ
-		virtual void OnLocation(const LocationEventArgs& arg);//×ø±ê·¢Éú¸Ä±ä
-		virtual void OnSize(const SizeEventArgs& arg);//´óĞ¡·¢Éú¸Ä±ä
+		virtual bool OnEvent(const EventArgs& arg);//æ‰€æœ‰äº‹ä»¶å…ˆè¿›è¿™é‡Œ
+		virtual void OnPaintBefore(PaintEventArgs& args, bool paintSelf = true);//ç»˜åˆ¶ä¹‹å‰
+		virtual void OnPaint(PaintEventArgs& args);//ç»˜åˆ¶ 
+		virtual void OnChildPaint(PaintEventArgs& args);//å­æ§ä»¶ç»˜åˆ¶ å¯ä»¥é‡è½½æ­¤å‡½æ•°ä¼˜åŒ–é¼ æ ‡æ“ä½œæ€§èƒ½
+		virtual void OnBackgroundPaint(PaintEventArgs& painter);//èƒŒæ™¯ç»˜åˆ¶
+		virtual void OnForePaint(PaintEventArgs& e);//å‰æ™¯ç»˜åˆ¶
+		virtual void OnBorderPaint(PaintEventArgs& painter, const Border& border);//è¾¹æ¡†ç»˜åˆ¶
+		virtual void OnLocation(const LocationEventArgs& arg);//åæ ‡å‘ç”Ÿæ”¹å˜
+		virtual void OnSize(const SizeEventArgs& arg);//å¤§å°å‘ç”Ÿæ”¹å˜
 		virtual void OnRect(const RectEventArgs& arg);
 		virtual void OnDpiChange(const DpiChangeEventArgs& arg);
-		//²¼¾Ö´úÂëÔÚ´Ë ĞèÒªÖØĞ´²¼¾ÖÇëÖØĞ´´Ëº¯Êı 
+		//å¸ƒå±€ä»£ç åœ¨æ­¤ éœ€è¦é‡å†™å¸ƒå±€è¯·é‡å†™æ­¤å‡½æ•° 
 		virtual void OnLayout();
-		//Êó±êÊÂ¼ş
-		virtual void OnMouseMove(const MouseEventArgs& arg);//Êó±êÔÚ¿Ø¼şÉÏÒÆ¶¯
-		virtual void OnMouseLeave(const MouseEventArgs& args);//Êó±êÀë¿ª¿Ø¼ş
-		virtual void OnMouseWheel(const MouseEventArgs& arg);//Êó±ê¹öÂÖ
-		virtual void OnMouseDown(const MouseEventArgs& arg);//Êó±ê°´ÏÂ
-		virtual void OnMouseUp(const MouseEventArgs& arg);//Êó±êµ¯Æğ
-		virtual void OnMouseClick(const MouseEventArgs& arg);//Êó±êµ¥»÷
-		virtual void OnMouseDoubleClick(const MouseEventArgs& arg);//Êó±êË«»÷
-		virtual void OnMouseEnter(const MouseEventArgs& arg);//Êó±êÒÆÈë
-		virtual void OnMouseEvent(const MouseEventArgs& args);//Êó±êÊÂ¼şÏûÏ¢
-		//¼üÅÌÊÂ¼ş
-		virtual void OnKeyBoardEvent(const KeyboardEventArgs& _args);//¼üÅÌÊÂ¼şÏûÏ¢
-		virtual void OnKeyChar(const KeyboardEventArgs& _args);//WM_CAHRÏûÏ¢
-		virtual void OnKeyDown(const KeyboardEventArgs& _args);//WM_CAHRÏûÏ¢
-		virtual void OnKeyUp(const KeyboardEventArgs& _args);//¼üÅÌµ¯Æğ
-		//Ê§È¥½¹µã
-		virtual void OnKillFocus(const KillFocusEventArgs& _args);//Ê§È¥½¹µãµÄÊ±ºò·¢Éú
-		virtual void OnRemove();//±»ÒÆ³ı¸Ã×öµÄÊÂÇé
+		//é¼ æ ‡äº‹ä»¶
+		virtual void OnMouseMove(const MouseEventArgs& arg);//é¼ æ ‡åœ¨æ§ä»¶ä¸Šç§»åŠ¨
+		virtual void OnMouseLeave(const MouseEventArgs& args);//é¼ æ ‡ç¦»å¼€æ§ä»¶
+		virtual void OnMouseWheel(const MouseEventArgs& arg);//é¼ æ ‡æ»šè½®
+		virtual void OnMouseDown(const MouseEventArgs& arg);//é¼ æ ‡æŒ‰ä¸‹
+		virtual void OnMouseUp(const MouseEventArgs& arg);//é¼ æ ‡å¼¹èµ·
+		virtual void OnMouseClick(const MouseEventArgs& arg);//é¼ æ ‡å•å‡»
+		virtual void OnMouseDoubleClick(const MouseEventArgs& arg);//é¼ æ ‡åŒå‡»
+		virtual void OnMouseEnter(const MouseEventArgs& arg);//é¼ æ ‡ç§»å…¥
+		virtual void OnMouseEvent(const MouseEventArgs& args);//é¼ æ ‡äº‹ä»¶æ¶ˆæ¯
+		//é”®ç›˜äº‹ä»¶
+		virtual void OnKeyBoardEvent(const KeyboardEventArgs& _args);//é”®ç›˜äº‹ä»¶æ¶ˆæ¯
+		virtual void OnKeyChar(const KeyboardEventArgs& _args);//WM_CAHRæ¶ˆæ¯
+		virtual void OnKeyDown(const KeyboardEventArgs& _args);//WM_CAHRæ¶ˆæ¯
+		virtual void OnKeyUp(const KeyboardEventArgs& _args);//é”®ç›˜å¼¹èµ·
+		//å¤±å»ç„¦ç‚¹
+		virtual void OnKillFocus(const KillFocusEventArgs& _args);//å¤±å»ç„¦ç‚¹çš„æ—¶å€™å‘ç”Ÿ
+		virtual void OnRemove();//è¢«ç§»é™¤è¯¥åšçš„äº‹æƒ…
 	public:
-		virtual ControlStyle& GetStyle(const ControlState& _state);//»ñÈ¡µ±Ç°¿Ø¼ş×´Ì¬ÏÂµÄÑùÊ½ĞÅÏ¢
-		virtual ControlStyle& GetDefaultStyle();//ÓÃÓÚ»ñÈ¡²»Í¬¿Ø¼şµ±Ç°Ä¬ÈÏµÄ
-		//ÆÕÍ¨ÑùÊ½
+		virtual ControlStyle& GetStyle(const ControlState& _state);//è·å–å½“å‰æ§ä»¶çŠ¶æ€ä¸‹çš„æ ·å¼ä¿¡æ¯
+		virtual ControlStyle& GetDefaultStyle();//ç”¨äºè·å–ä¸åŒæ§ä»¶å½“å‰é»˜è®¤çš„
+		//æ™®é€šæ ·å¼
 		int GetBorderTopLeftRadius(ControlState _state = ControlState::None);
 		int GetBorderTopRightRadius(ControlState _state = ControlState::None);
 		int GetBorderBottomRightRadius(ControlState _state = ControlState::None);
@@ -94,88 +94,88 @@ namespace EzUI {
 		Image* GetBackImage(ControlState _state = ControlState::None);
 		Color GetBackColor(ControlState _state = ControlState::None);
 		float GetAngle(ControlState _state = ControlState::None);
-		//¾ßÓĞ¼Ì³ĞĞÔÑùÊ½
+		//å…·æœ‰ç»§æ‰¿æ€§æ ·å¼
 		virtual HCURSOR GetHCursor();
-		Color GetForeColor(ControlState _state = ControlState::None);//»ñÈ¡Ä¬ÈÏ¿Ø¼ş×´Ì¬ÏÂÇ°¾°É«
-		std::wstring GetFontFamily(ControlState _state = ControlState::None);//»ñÈ¡Ä¬ÈÏ¿Ø¼ş×´Ì¬ÏÂ×ÖÌåFamily
-		int GetFontSize(ControlState _state = ControlState::None);//»ñÈ¡Ä¬ÈÏ¿Ø¼ş×´Ì¬ÏÂ×ÖÌå´óĞ¡ÑùÊ½
+		Color GetForeColor(ControlState _state = ControlState::None);//è·å–é»˜è®¤æ§ä»¶çŠ¶æ€ä¸‹å‰æ™¯è‰²
+		std::wstring GetFontFamily(ControlState _state = ControlState::None);//è·å–é»˜è®¤æ§ä»¶çŠ¶æ€ä¸‹å­—ä½“Family
+		int GetFontSize(ControlState _state = ControlState::None);//è·å–é»˜è®¤æ§ä»¶çŠ¶æ€ä¸‹å­—ä½“å¤§å°æ ·å¼
 	public:
 		Control();
 		virtual ~Control();
-		void DestroySpacers();//Ïú»Ù¿Ø¼şÄÚËùÓĞµ¯»É
-		//ÒÔÏÂº¯ÊıÇë±£Ö¤ÔÚ¸¸¿Ø¼ş²¼¾ÖÒÑÍê³ÉµÄÇé¿öÏÂÊ¹ÓÃ Ê¹ÓÃResumeLayout()Ö´ĞĞ²¼¾Ö
+		void DestroySpacers();//é”€æ¯æ§ä»¶å†…æ‰€æœ‰å¼¹ç°§
+		//ä»¥ä¸‹å‡½æ•°è¯·ä¿è¯åœ¨çˆ¶æ§ä»¶å¸ƒå±€å·²å®Œæˆçš„æƒ…å†µä¸‹ä½¿ç”¨ ä½¿ç”¨ResumeLayout()æ‰§è¡Œå¸ƒå±€
 		const int& X();
 		const int& Y();
 		const int& Width();
 		const int& Height();
 		void SetX(const int& X);
 		void SetY(const int& Y);
-		void SetLocation(const Point& pt);//ÒÆ¶¯Ïà¶ÔÓë¸¸¿Ø¼şµÄÎ»ÖÃ
-		void SetSize(const Size& size); //µ±ÖØ»æ¿Ø¼şÊ±²»½¨Òé¶à´ÎÊ¹ÓÃ Ó°ÏìĞÔÄÜ(»áµ÷ÓÃSetRectº¯Êı)
-		void SetFixedSize(const Size& size); //ÉèÖÃ¾ø¶Ô¿í¸ß
-		void SetWidth(const int& width);//µ±ÖØ»æ¿Ø¼şÊ±²»½¨Òé¶à´ÎÊ¹ÓÃ Ó°ÏìĞÔÄÜ(»áµ÷ÓÃSetRectº¯Êı)
-		void SetHeight(const int& height);//µ±ÖØ»æ¿Ø¼şÊ±²»½¨Òé¶à´ÎÊ¹ÓÃ Ó°ÏìĞÔÄÜ(»áµ÷ÓÃSetRectº¯Êı)
-		void SetFixedWidth(const int& fixedWidth);//ÉèÖÃ¾ø¶Ô¿í¶È
-		void SetFixedHeight(const int& fixedHeight);//ÉèÖÃ¾ø¶Ô¸ß¶È
-		const Rect& SetRect(const Rect& rect);//ÉèÖÃÏà¶Ô¸¸¿Ø¼ş¾ØĞÎ ·µ»ØÊµ¼ÊµÄrect
-		const int& GetFixedWidth();//»ñÈ¡¾ø¶Ô¿í¶È
-		const int& GetFixedHeight();//»ñÈ¡¾ø¶Ô¸ß¶È
-		virtual Rect GetCareRect();//»ñÈ¡¹â±êÎ»ÖÃ
-		virtual bool IsAutoWidth();//ÊÇ·ñ×Ô¶¯¸ß¶È
-		virtual bool IsAutoHeight();//ÊÇ·ñ×Ô¶¯¸ß¶È
-		virtual void SetAutoWidth(bool flag);//ÉèÖÃ×Ô¶¯¿í¶È
-		virtual void SetAutoHeight(bool flag);//ÉèÖÃ×Ô¶¯¸ß¶È
+		void SetLocation(const Point& pt);//ç§»åŠ¨ç›¸å¯¹ä¸çˆ¶æ§ä»¶çš„ä½ç½®
+		void SetSize(const Size& size); //å½“é‡ç»˜æ§ä»¶æ—¶ä¸å»ºè®®å¤šæ¬¡ä½¿ç”¨ å½±å“æ€§èƒ½(ä¼šè°ƒç”¨SetRectå‡½æ•°)
+		void SetFixedSize(const Size& size); //è®¾ç½®ç»å¯¹å®½é«˜
+		void SetWidth(const int& width);//å½“é‡ç»˜æ§ä»¶æ—¶ä¸å»ºè®®å¤šæ¬¡ä½¿ç”¨ å½±å“æ€§èƒ½(ä¼šè°ƒç”¨SetRectå‡½æ•°)
+		void SetHeight(const int& height);//å½“é‡ç»˜æ§ä»¶æ—¶ä¸å»ºè®®å¤šæ¬¡ä½¿ç”¨ å½±å“æ€§èƒ½(ä¼šè°ƒç”¨SetRectå‡½æ•°)
+		void SetFixedWidth(const int& fixedWidth);//è®¾ç½®ç»å¯¹å®½åº¦
+		void SetFixedHeight(const int& fixedHeight);//è®¾ç½®ç»å¯¹é«˜åº¦
+		const Rect& SetRect(const Rect& rect);//è®¾ç½®ç›¸å¯¹çˆ¶æ§ä»¶çŸ©å½¢ è¿”å›å®é™…çš„rect
+		const int& GetFixedWidth();//è·å–ç»å¯¹å®½åº¦
+		const int& GetFixedHeight();//è·å–ç»å¯¹é«˜åº¦
+		virtual Rect GetCareRect();//è·å–å…‰æ ‡ä½ç½®
+		virtual bool IsAutoWidth();//æ˜¯å¦è‡ªåŠ¨é«˜åº¦
+		virtual bool IsAutoHeight();//æ˜¯å¦è‡ªåŠ¨é«˜åº¦
+		virtual void SetAutoWidth(bool flag);//è®¾ç½®è‡ªåŠ¨å®½åº¦
+		virtual void SetAutoHeight(bool flag);//è®¾ç½®è‡ªåŠ¨é«˜åº¦
 		virtual void SetAutoSize(bool flag);
 		virtual const Size& GetContentSize();
 		Size GetSize();
 		Point GetLocation();
-		virtual const Rect& GetRect();//»ñÈ¡Ïà¶ÔÓë¸¸¿Ø¼ş¾ØĞÎ ²¼¾Ö¼ÆËãºó
-		Rect GetClientRect();//»ñÈ¡»ùÓÚ¿Í»§¶ËµÄÇøÓò
-		const Rect& GetViewRect();//»ñÈ¡»ùÓÚ´°¿ÚÖĞµÄ¿ÉÊÓÇøÓò
-		const DockStyle& GetDockStyle();//»ñÈ¡dock±êÖ¾
+		virtual const Rect& GetRect();//è·å–ç›¸å¯¹ä¸çˆ¶æ§ä»¶çŸ©å½¢ å¸ƒå±€è®¡ç®—å
+		Rect GetClientRect();//è·å–åŸºäºå®¢æˆ·ç«¯çš„åŒºåŸŸ
+		const Rect& GetViewRect();//è·å–åŸºäºçª—å£ä¸­çš„å¯è§†åŒºåŸŸ
+		const DockStyle& GetDockStyle();//è·å–dockæ ‡å¿—
 		void SetDockStyle(const DockStyle& dockStyle);
 		const float& GetScale();
-		bool IsPendLayout();//ÊÇ·ñº¬ÓĞ¹ÒÆğµÄ²¼¾Ö
-		const LayoutState& TryPendLayout();//³¢ÊÔ¹ÒÆğ²¼¾Ö ·µ»Øµ±Ç°²¼¾Ö×´Ì¬
-		const LayoutState& GetLayoutState();//»ñÈ¡µ±Ç°²¼¾Ö×´Ì¬
-		void EndLayout();//½áÊø²¼¾Ö
-		virtual void RefreshLayout();//Ë¢ĞÂ²¼¾Ö
-		void SetTips(const EString& text);//ÉèÖÃtipsÎÄ×Ö
-		const EString& GetTips();//»ñÈ¡tipsÎÄ×Ö
-		virtual ScrollBar* GetScrollBar();//»ñÈ¡¿Ø¼şµÄ¹ö¶¯Ìõ
-		bool DispatchEvent(const EventArgs& arg);//ÅÉ·¢Ê§È¥½¹µãÊÂ¼ş
-		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::Static);//ÉèÖÃÑùÊ½ÀàËÆqtÄÇÑù
-		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//»ù´¡¿Ø¼şÉèÖÃÊôĞÔ
-		const std::list<Control*>& GetViewControls();//»ñÈ¡µ±Ç°¿É¼û¿Ø¼ş
-		const std::list<Control*>& GetControls();//»ñÈ¡µ±Ç°ËùÓĞ×Ó¿Ø¼ş constĞŞÊÎÊÇÒòÎª²»½¨ÒéÖ±½ÓĞŞ¸Ä×Ó¿Ø¼şÄÚÈİ
-		Control* GetControl(size_t pos);//Ê¹ÓÃÏÂ±ê»ñÈ¡¿Ø¼ş »á×Ô¶¯¹ıÂËspacer(µ¯»É)ÕâÀàµÄ¿Ø¼ş
-		bool Contains(Control* ctl);//»áµİ¹éÑ­È«²¿°üº¬µÄ¿Ø¼şÊÇ·ñ´æÔÚ
-		size_t IndexOf(Control* childCtl);//»ñÈ¡×Ó¿Ø¼şÔÚ´ËÈİÆ÷ÖĞµÄË÷Òı
-		Control* FindControl(const EString& ctlName);//Ê¹ÓÃnameÑ°ÕÒÈİÆ÷ÖĞ¿Ø¼ş,°üÀ¨×ÔÉí
-		std::vector<Control*> FindControl(const EString& attrName, const EString& attrValue);//Ê¹ÓÃÊôĞÔÑ°ÕÒÈİÆ÷ÖĞ·ûºÏÌõ¼şµÄ¿Ø¼ş,°üÀ¨×ÔÉí
-		Control* FindSingleControl(const EString& attrName, const EString& attrValue);//Ê¹ÓÃÊôĞÔÑ°ÕÒÈİÆ÷ÖĞµÚÒ»¸ö·ûºÏÌõ¼şµÄ¿Ø¼ş,°üÀ¨×ÔÉí
-		Control* FindChild(const EString& ctlName);//Ñ°ÕÒ¿Ø¼ş,½öÏŞ×Ó¼¯
-		std::vector<Control*> FindChild(const EString& attrName, const EString& attrValue);//Ñ°ÕÒ¿Ø¼ş,½öÏŞ×Ó¼¯
-		Control* FindSingleChild(const EString& attrName, const EString& attrValue);//Ñ°ÕÒ¿Ø¼ş,½öÏŞ×Ó¼¯
-		virtual bool SwapChild(Control* childCtl, Control* childCt2);//¶Ô×Ó¿Ø¼şµÄÁ½¸ö¿Ø¼ş½øĞĞÎ»ÖÃ½»»»
-		virtual void Insert(size_t pos, Control* childCtl);//Ñ¡ÔñĞÔ²åÈë¿Ø¼ş
-		virtual void Add(Control* childCtl);//Ìí¼Ó¿Ø¼şµ½Ä©Î²
-		virtual void Remove(Control* childCtl);//É¾³ı¿Ø¼ş ·µ»ØÏÂÒ»¸öµü´úÆ÷
-		virtual void SetParent(Control* parentCtl);//ÉèÖÃ¸¸¿Ø¼ş
-		virtual void Clear();//Çå¿Õµ±Ç°ËùÓĞ×Ó¿Ø¼ş
-		virtual void Clear(bool freeChilds);//Çå¿Õµ±Ç°ËùÓĞ×Ó¿Ø¼ş, freeControlsÊÇ·ñÊÍ·ÅËùÓĞ×Ó¿Ø¼ş
-		virtual void SetVisible(bool flag);//ÉèÖÃVisible±êÖ¾
-		virtual bool IsVisible();//»ñÈ¡Visible±êÖ¾
-		virtual bool Invalidate();// Ê¹µ±Ç°¿Ø¼şµÄÇøÓòÎªÎŞĞ§ÇøÓò
-		virtual void Refresh();//Ê¹µ±Ç°¿Ø¼şÇøÓòÎªÎŞĞ§ÇøÓò²¢ÇÒÁ¢¼´¸üĞÂÈ«²¿µÄÎŞĞ§ÇøÓò(¸üĞÂÊ±»á¶ÔÕıÔÚ¹ÒÆğµÄ²¼¾ÖÁ¢¼´ÉúĞ§,Ö±µ½ÎŞĞ§ÇøÓò¸üĞÂÍê±Ï)
+		bool IsPendLayout();//æ˜¯å¦å«æœ‰æŒ‚èµ·çš„å¸ƒå±€
+		const LayoutState& TryPendLayout();//å°è¯•æŒ‚èµ·å¸ƒå±€ è¿”å›å½“å‰å¸ƒå±€çŠ¶æ€
+		const LayoutState& GetLayoutState();//è·å–å½“å‰å¸ƒå±€çŠ¶æ€
+		void EndLayout();//ç»“æŸå¸ƒå±€
+		virtual void RefreshLayout();//åˆ·æ–°å¸ƒå±€
+		void SetTips(const EString& text);//è®¾ç½®tipsæ–‡å­—
+		const EString& GetTips();//è·å–tipsæ–‡å­—
+		virtual ScrollBar* GetScrollBar();//è·å–æ§ä»¶çš„æ»šåŠ¨æ¡
+		bool DispatchEvent(const EventArgs& arg);//æ´¾å‘å¤±å»ç„¦ç‚¹äº‹ä»¶
+		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::Static);//è®¾ç½®æ ·å¼ç±»ä¼¼qté‚£æ ·
+		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//åŸºç¡€æ§ä»¶è®¾ç½®å±æ€§
+		const std::list<Control*>& GetViewControls();//è·å–å½“å‰å¯è§æ§ä»¶
+		const std::list<Control*>& GetControls();//è·å–å½“å‰æ‰€æœ‰å­æ§ä»¶ constä¿®é¥°æ˜¯å› ä¸ºä¸å»ºè®®ç›´æ¥ä¿®æ”¹å­æ§ä»¶å†…å®¹
+		Control* GetControl(size_t pos);//ä½¿ç”¨ä¸‹æ ‡è·å–æ§ä»¶ ä¼šè‡ªåŠ¨è¿‡æ»¤spacer(å¼¹ç°§)è¿™ç±»çš„æ§ä»¶
+		bool Contains(Control* ctl);//ä¼šé€’å½’å¾ªå…¨éƒ¨åŒ…å«çš„æ§ä»¶æ˜¯å¦å­˜åœ¨
+		size_t IndexOf(Control* childCtl);//è·å–å­æ§ä»¶åœ¨æ­¤å®¹å™¨ä¸­çš„ç´¢å¼•
+		Control* FindControl(const EString& ctlName);//ä½¿ç”¨nameå¯»æ‰¾å®¹å™¨ä¸­æ§ä»¶,åŒ…æ‹¬è‡ªèº«
+		std::vector<Control*> FindControl(const EString& attrName, const EString& attrValue);//ä½¿ç”¨å±æ€§å¯»æ‰¾å®¹å™¨ä¸­ç¬¦åˆæ¡ä»¶çš„æ§ä»¶,åŒ…æ‹¬è‡ªèº«
+		Control* FindSingleControl(const EString& attrName, const EString& attrValue);//ä½¿ç”¨å±æ€§å¯»æ‰¾å®¹å™¨ä¸­ç¬¬ä¸€ä¸ªç¬¦åˆæ¡ä»¶çš„æ§ä»¶,åŒ…æ‹¬è‡ªèº«
+		Control* FindChild(const EString& ctlName);//å¯»æ‰¾æ§ä»¶,ä»…é™å­é›†
+		std::vector<Control*> FindChild(const EString& attrName, const EString& attrValue);//å¯»æ‰¾æ§ä»¶,ä»…é™å­é›†
+		Control* FindSingleChild(const EString& attrName, const EString& attrValue);//å¯»æ‰¾æ§ä»¶,ä»…é™å­é›†
+		virtual bool SwapChild(Control* childCtl, Control* childCt2);//å¯¹å­æ§ä»¶çš„ä¸¤ä¸ªæ§ä»¶è¿›è¡Œä½ç½®äº¤æ¢
+		virtual void Insert(size_t pos, Control* childCtl);//é€‰æ‹©æ€§æ’å…¥æ§ä»¶
+		virtual void Add(Control* childCtl);//æ·»åŠ æ§ä»¶åˆ°æœ«å°¾
+		virtual void Remove(Control* childCtl);//åˆ é™¤æ§ä»¶ è¿”å›ä¸‹ä¸€ä¸ªè¿­ä»£å™¨
+		virtual void SetParent(Control* parentCtl);//è®¾ç½®çˆ¶æ§ä»¶
+		virtual void Clear();//æ¸…ç©ºå½“å‰æ‰€æœ‰å­æ§ä»¶
+		virtual void Clear(bool freeChilds);//æ¸…ç©ºå½“å‰æ‰€æœ‰å­æ§ä»¶, freeControlsæ˜¯å¦é‡Šæ”¾æ‰€æœ‰å­æ§ä»¶
+		virtual void SetVisible(bool flag);//è®¾ç½®Visibleæ ‡å¿—
+		virtual bool IsVisible();//è·å–Visibleæ ‡å¿—
+		virtual bool Invalidate();// ä½¿å½“å‰æ§ä»¶çš„åŒºåŸŸä¸ºæ— æ•ˆåŒºåŸŸ
+		virtual void Refresh();//ä½¿å½“å‰æ§ä»¶åŒºåŸŸä¸ºæ— æ•ˆåŒºåŸŸå¹¶ä¸”ç«‹å³æ›´æ–°å…¨éƒ¨çš„æ— æ•ˆåŒºåŸŸ(æ›´æ–°æ—¶ä¼šå¯¹æ­£åœ¨æŒ‚èµ·çš„å¸ƒå±€ç«‹å³ç”Ÿæ•ˆ,ç›´åˆ°æ— æ•ˆåŒºåŸŸæ›´æ–°å®Œæ¯•)
 	};
 
-	//Ìí¼Óµ¯»ÉÎŞĞèÓÃ»§ÊÖ¶¯ÊÍ·Å,
+	//æ·»åŠ å¼¹ç°§æ— éœ€ç”¨æˆ·æ‰‹åŠ¨é‡Šæ”¾,
 	class UI_EXPORT Spacer :public Control {
 	public:
 		virtual ~Spacer() {};
 	};
-	//¾ßÓĞ¾ø¶Ô¸ß¶ÈµÄ µÄµ¯»É
+	//å…·æœ‰ç»å¯¹é«˜åº¦çš„ çš„å¼¹ç°§
 	class UI_EXPORT VSpacer :public Spacer {
 	private:
 		VSpacer() {};
@@ -185,7 +185,7 @@ namespace EzUI {
 			SetFixedHeight(fixedHeight);
 		}
 	};
-	//¾ßÓĞ¾ø¶Ô¿í¶ÈµÄ µÄµ¯»É
+	//å…·æœ‰ç»å¯¹å®½åº¦çš„ çš„å¼¹ç°§
 	class UI_EXPORT HSpacer :public Spacer {
 	private:
 		HSpacer() {};
@@ -198,32 +198,32 @@ namespace EzUI {
 
 	class UI_EXPORT ScrollBar :public Control {
 	protected:
-		//Êó±êÊÇ·ñÒÑ¾­°´ÏÂ
+		//é¼ æ ‡æ˜¯å¦å·²ç»æŒ‰ä¸‹
 		bool _mouseDown = false;
-		//ÉÏÒ»´ÎÊó±êÃüÖĞµÄ×ø±ê
+		//ä¸Šä¸€æ¬¡é¼ æ ‡å‘½ä¸­çš„åæ ‡
 		int _lastPoint = 0;
-		//¹ö¶¯Ìõµ±Ç°µÄ×ø±ê
+		//æ»šåŠ¨æ¡å½“å‰çš„åæ ‡
 		double _sliderPos = 0;
-		//¹ö¶¯ÌõµÄ³¤¶È
+		//æ»šåŠ¨æ¡çš„é•¿åº¦
 		int _sliderLength = 0;
-		//¹ö¶¯ÌõÃ¿¹ö¶¯Ò»´ÎµÄ±ÈÂÊ
+		//æ»šåŠ¨æ¡æ¯æ»šåŠ¨ä¸€æ¬¡çš„æ¯”ç‡
 		double _rollRate = 0;
-		//¸¸ÈİÆ÷ÄÚµÄ×ø±êÆ«ÒÆ
+		//çˆ¶å®¹å™¨å†…çš„åæ ‡åç§»
 		int _offset = 0;
-		//¸¸ÈİÆ÷µÄÄÚÈİ³¤¶È
+		//çˆ¶å®¹å™¨çš„å†…å®¹é•¿åº¦
 		int _contentLength = 0;
-		//¸¸ÈİÆ÷¿É¼û³¤¶È(ÈİÆ÷×ÔÉí³¤¶È)
+		//çˆ¶å®¹å™¨å¯è§é•¿åº¦(å®¹å™¨è‡ªèº«é•¿åº¦)
 		int _viewLength = 0;
-		//Òç³öÈİÆ÷µÄ³¤¶È
+		//æº¢å‡ºå®¹å™¨çš„é•¿åº¦
 		int _overflowLength = 0;
 
 		//int _old_viewLength = 0;
 		//int _old_contentLength = 0;
 		//int _old_offset = 0;
 	public:
-		//¹ö¶¯Ìõ¼ÆËã³öÆ«ÒÆÖ®ºóµÄ»Øµ÷º¯Êı
+		//æ»šåŠ¨æ¡è®¡ç®—å‡ºåç§»ä¹‹åçš„å›è°ƒå‡½æ•°
 		std::function<void(int)> OffsetCallback = NULL;
-		//¹ö¶¯ÊÂ¼ş arg1:·¢ËÍÕß arg2:¹ö¶¯°Ù·Ö±È arg3:¹ö¶¯ÀàĞÍ
+		//æ»šåŠ¨äº‹ä»¶ arg1:å‘é€è€… arg2:æ»šåŠ¨ç™¾åˆ†æ¯” arg3:æ»šåŠ¨ç±»å‹
 		std::function<void(ScrollBar*, float, Event)> Scroll = NULL;
 	protected:
 		virtual void OnBackgroundPaint(PaintEventArgs& arg)override;
@@ -235,22 +235,22 @@ namespace EzUI {
 		void ScrollTo(int offset, const Event& type);
 		void SyncInfo();
 	public:
-		//¹ö¶¯µ½Ö¸¶¨¿Ø¼ş¿É¼ûÎ»ÖÃ
+		//æ»šåŠ¨åˆ°æŒ‡å®šæ§ä»¶å¯è§ä½ç½®
 		virtual void ScrollTo(Control* ctl) = 0;
-		//°´ÕÕ°Ù·Ö±È¹ö¶¯ 0.0f~1.0f
+		//æŒ‰ç…§ç™¾åˆ†æ¯”æ»šåŠ¨ 0.0f~1.0f
 		void ScrollTo(const float& scrollRate);
-		//»ñÈ¡µ±Ç°¹ö¶¯µ½µÄÎ»ÖÃ ½ø¶ÈµÄ°Ù·Ö±È
+		//è·å–å½“å‰æ»šåŠ¨åˆ°çš„ä½ç½® è¿›åº¦çš„ç™¾åˆ†æ¯”
 		float ScrollPos();
-		//»ñÈ¡»¬¿éµÄ¾ØĞÎ
+		//è·å–æ»‘å—çš„çŸ©å½¢
 		virtual Rect GetSliderRect() = 0;//
 		virtual void ParentSize(const Size& parentSize) = 0;
-		//¹ö¶¯ÌõÊÇ·ñÒÑ¾­»æÖÆÇÒÏÔÊ¾
+		//æ»šåŠ¨æ¡æ˜¯å¦å·²ç»ç»˜åˆ¶ä¸”æ˜¾ç¤º
 		bool IsDraw();
-		//ÖØÖÃ¹ö¶¯ÌõÊı¾İµ½Æğµã(²»Ö´ĞĞÖØ»æ)
+		//é‡ç½®æ»šåŠ¨æ¡æ•°æ®åˆ°èµ·ç‚¹(ä¸æ‰§è¡Œé‡ç»˜)
 		void Reset();
-		//¹ö¶¯ÌõÊÇ·ñÄÜ¹»¹ö¶¯
+		//æ»šåŠ¨æ¡æ˜¯å¦èƒ½å¤Ÿæ»šåŠ¨
 		bool Scrollable();
-		//µ±¸¸¿Ø¼ş·¢ÉúÄÚÈİ·¢Éú¸Ä±ä Çëµ÷ÓÃË¢ĞÂ¹ö¶¯Ìõ
+		//å½“çˆ¶æ§ä»¶å‘ç”Ÿå†…å®¹å‘ç”Ÿæ”¹å˜ è¯·è°ƒç”¨åˆ·æ–°æ»šåŠ¨æ¡
 		void RefreshScroll();
 		ScrollBar();
 		virtual ~ScrollBar();

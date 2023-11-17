@@ -42,30 +42,31 @@ namespace EzUI {
 		std::list<Image*> freeImages;
 		std::list<XmlNode> controls;
 		void LoadControl(void* node, Control* control);
-		Control* BuildControl(void* node);//ÄÚ²¿º¯Êı
-		void Load(void* doc);//ÄÚ²¿º¯Êı
-		void RecordControl(Control* ctl, const EString& tagNamee);//¼ÇÂ¼xmlÖĞµÄ¿Ø¼ş
-		void AnalysisStyle(const EString& styleStr, std::list<UIManager::Selector>* out);//·ÖÎöÑùÊ½
-		void ApplayStyle(Control* ctl, const std::list<UIManager::Selector>& selectors, const EString& tagName);//Ó¦ÓÃÑùÊ½(Îª¿Ø¼şÓ¦ÓÃËùÓĞÑùÊ½)
+		Control* BuildControl(void* node);//å†…éƒ¨å‡½æ•°
+		void RecordControl(Control* ctl, const EString& tagNamee);//è®°å½•xmlä¸­çš„æ§ä»¶
+		void AnalysisStyle(const EString& styleStr, std::list<UIManager::Selector>* out);//åˆ†ææ ·å¼
+		void ApplayStyle(Control* ctl, const std::list<UIManager::Selector>& selectors, const EString& tagName);//åº”ç”¨æ ·å¼(ä¸ºæ§ä»¶åº”ç”¨æ‰€æœ‰æ ·å¼)
 	protected:
-		void LoadFromRaw(const char* utf8str);//´ÓÄÚ´æÖĞ¼ÓÔØ
-		void LoadFromFile(const EString& fileName);//´ÓÎÄ¼şÖĞ¼ÓÔØ
-		virtual Control* OnBuildControl(const EString& nodeName);//µ±½âÎöµ½Ò»¸ö½ÚµãµÄÊ±ºò·¢Éú
-		virtual void OnSetAttribute(Control* ctl, const EString& attrName, const EString& attrValue);//µ±¿Ø¼şÉèÖÃÊôĞÔµÄÊ±ºò·¢Éú
+		virtual Control* OnBuildControl(const EString& nodeName);//å½“è§£æåˆ°ä¸€ä¸ªèŠ‚ç‚¹çš„æ—¶å€™å‘ç”Ÿ
+		virtual void OnSetAttribute(Control* ctl, const EString& attrName, const EString& attrValue);//å½“æ§ä»¶è®¾ç½®å±æ€§çš„æ—¶å€™å‘ç”Ÿ
 	public:
 		UIManager();
 		virtual ~UIManager();
 		void SetupUI(Window* window);
 		void SetupUI(Control* parentCtl);
-		std::function<Control* (const EString& nodeName)> EventBuilControl;//ÓÃÓÚ×Ô¶¨Òå¿Ø¼ş
-		std::function<void(Control* ctl, const EString& attrName, const EString& attrValue)> EventSetAttribute;//ÓÃÓÚ×Ô¶¨Òå¿Ø¼ş
-		void LoadXml(const EString& fileName);//×Ô¶¯ÅĞ¶Ï²¢ÇÒ¼ÓÔØÄÚÈİ
-		void LoadXml(const char* memData, size_t memSize);//×Ô¶¯ÅĞ¶Ï²¢ÇÒ¼ÓÔØÄÚÈİ
-		void LoadStyle(const EString& fileName);//¼ÓÔØcss
-		void LoadStyle(const char* memData, size_t memSize);//¼ÓÔØcss
-		Control* FindControl(const EString& ctlName);
+		//ä»æ–‡ä»¶ä¸­åŠ è½½å¸ƒå±€
+		void LoadXmlFile(const EString& fileName);
+		//ä»å­—ç¬¦ä¸²ä¸­åŠ è½½å¸ƒå±€
+		void LoadXml(const EString& xmlContent);
+		//ä»å­—ç¬¦ä¸²ä¸­åŠ è½½æ ·å¼
+		void LoadStyle(const EString& styleContent);
+		//ä»æ–‡ä»¶ä¸­åŠ è½½æ ·å¼
+		void LoadStyleFile(const EString& fileName);
+		//è·å–æ ¹èŠ‚ç‚¹æ§ä»¶
 		Control* GetRoot();
+		//é‡Šæ”¾ç”±æœ¬æ­¤å¯¹è±¡åˆ›å»ºçš„æ§ä»¶
 		void Free(Control** ctl);
+		//é‡Šæ”¾ç”±æœ¬æ­¤å¯¹è±¡åˆ›å»ºçš„å›¾ç‰‡
 		void Free(Image** img);
 	};
 
@@ -76,7 +77,7 @@ namespace EzUI {
 		virtual ~IFrame() {}
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue)override {
 			if (attrName == "src") {
-				umg.LoadXml(attrValue);
+				umg.LoadXmlFile(attrValue);
 				umg.SetupUI(this);
 				if (this->GetControls().size() > 0) {
 					Control* root = this->GetControl(this->GetControls().size() - 1);
@@ -87,7 +88,7 @@ namespace EzUI {
 		};
 	};
 
-	//Ñ¡ÔñÆ÷
+	//é€‰æ‹©å™¨
 	class UI_EXPORT _Selector
 	{
 	private:

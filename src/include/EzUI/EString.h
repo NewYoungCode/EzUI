@@ -4,7 +4,7 @@
 
 namespace EzUI {
 	/// <summary>
-	/// utf8×Ö·û´®
+	/// utf8å­—ç¬¦ä¸²
 	/// </summary>
 	class  UI_EXPORT EString :public std::string {
 	public:

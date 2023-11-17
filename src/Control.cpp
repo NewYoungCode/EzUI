@@ -26,67 +26,67 @@ namespace EzUI {
 	##_type _##_filed;\
 loop:\
 	Control* pControl = this;\
-	while (pControl)/*Èç¹ûÃ»ÓÐÔò´Ó¸¸¿Ø¼þÀïÃæ²éÕÒ¶ÔÓ¦µÄÑùÊ½*/{\
+	while (pControl)/* å¦‚æžœæ²¡æœ‰åˆ™ä»Žçˆ¶æŽ§ä»¶é‡Œé¢æŸ¥æ‰¾å¯¹åº”çš„æ ·å¼ */{\
 		_##_filed = pControl->GetStyle(_state). ##_filed;\
 		if (__IsValid(_##_filed)) {\
-			return _##_filed; /*Èç¹û´Ó¸¸¿Ø¼þÀïÃæ²éÕÒµ½¾Í·µ»Ø*/\
+			return _##_filed; /* å¦‚æžœä»Žçˆ¶æŽ§ä»¶é‡Œé¢æŸ¥æ‰¾åˆ°å°±è¿”å›ž */\
 		}\
 		pControl = pControl->Parent;\
 	}\
-	/*Èç¹ûÃ»ÓÐactiveÑùÊ½ Ôò²ÉÓÃhoverÑùÊ½*/\
+	/* å¦‚æžœæ²¡æœ‰activeæ ·å¼ åˆ™é‡‡ç”¨hoveræ ·å¼ */\
 	if (!__IsValid(_##_filed) && _state == ControlState::Active) {\
 		_state = ControlState::Hover;\
 		goto loop;\
 	}\
 	if (!__IsValid(_##_filed) && _state != ControlState::Static) {\
-		_state = ControlState::Static;/*Èç¹û´Ó¸¸ÑùÊ½ÖÐÈÔÈ»Î´ÕÒµ½,ÔòÕÒ¾²Ì¬ÑùÊ½*/ \
+		_state = ControlState::Static;/* å¦‚æžœä»Žçˆ¶æ ·å¼ä¸­ä»ç„¶æœªæ‰¾åˆ°,åˆ™æ‰¾é™æ€æ ·å¼ */ \
 		goto loop;\
 	}\
 	return _##_filed;\
 	}\
 
 #define UI_STYLE_BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed(ControlState _state)  { \
-/*ÏÈ¸ù¾Ý¶ÔÓ¦µÄ×´Ì¬À´»ñÈ¡ÑùÊ½ */ \
+/* å…ˆæ ¹æ®å¯¹åº”çš„çŠ¶æ€æ¥èŽ·å–æ ·å¼  */ \
 ControlStyle& stateStyle = this->GetStyle(this->State);\
 if(__IsValid(stateStyle.##_filed)){\
 	return stateStyle.##_filed; \
 }\
-/*Èç¹ûÃ»ÓÐactiveÑùÊ½ Ôò²ÉÓÃhoverÑùÊ½*/\
+/* å¦‚æžœæ²¡æœ‰activeæ ·å¼ åˆ™é‡‡ç”¨hoveræ ·å¼ */\
 if(this->State==ControlState::Active){\
 	if(__IsValid(this->GetStyle(ControlState::Hover).##_filed)){\
 	return this->GetStyle(ControlState::Hover).##_filed; \
 	}\
 }\
-/*»ñÈ¡²»Í¬µÄ¿Ø¼þÖÐÄ¬ÈÏÑùÊ½ */ \
+/* èŽ·å–ä¸åŒçš„æŽ§ä»¶ä¸­é»˜è®¤æ ·å¼  */ \
 ControlStyle& defaultStyle = this->GetDefaultStyle(); \
 if(__IsValid(defaultStyle.##_filed)){\
 	return  defaultStyle.##_filed;\
 \
 }\
-/*ÒÔÉÏÁ½ÖÖÑùÊ½¶¼Î´»ñÈ¡³É¹¦µÄÇé¿öÏÂ²Å²ÉÓÃ´ËÑùÊ½*/ \
+/* ä»¥ä¸Šä¸¤ç§æ ·å¼éƒ½æœªèŽ·å–æˆåŠŸçš„æƒ…å†µä¸‹æ‰é‡‡ç”¨æ­¤æ ·å¼ */ \
 	return this->Style.##_filed;\
 }\
 
 
 #define UI_BORDER_BINDFUNC(_type,_filed1,_filed)  _type Control:: ##Get ##_filed1 ##_filed(ControlState _state)  { \
-/*ÏÈ¸ù¾Ý¶ÔÓ¦µÄ×´Ì¬À´»ñÈ¡ÑùÊ½ */ \
+/* å…ˆæ ¹æ®å¯¹åº”çš„çŠ¶æ€æ¥èŽ·å–æ ·å¼  */ \
 ControlStyle& stateStyle = this->GetStyle(this->State);\
 if(__IsValid(stateStyle .##_filed1. ##_filed)){\
 	return stateStyle .##_filed1.##_filed; \
 }\
-/*Èç¹ûÃ»ÓÐactiveÑùÊ½ Ôò²ÉÓÃhoverÑùÊ½*/\
+/* å¦‚æžœæ²¡æœ‰activeæ ·å¼ åˆ™é‡‡ç”¨hoveræ ·å¼ */\
 if(this->State==ControlState::Active){\
 	if(__IsValid(this->GetStyle(ControlState::Hover) .##_filed1.##_filed)){\
 	return this->GetStyle(ControlState::Hover) .##_filed1.##_filed; \
 	}\
 }\
-/*»ñÈ¡²»Í¬µÄ¿Ø¼þÖÐÄ¬ÈÏÑùÊ½ */ \
+/* èŽ·å–ä¸åŒçš„æŽ§ä»¶ä¸­é»˜è®¤æ ·å¼  */ \
 ControlStyle& defaultStyle = this->GetDefaultStyle(); \
 if(__IsValid(defaultStyle .##_filed1.##_filed)){\
 return  defaultStyle .##_filed1.##_filed;\
 \
 }\
-/*ÒÔÉÏÁ½ÖÖÑùÊ½¶¼Î´»ñÈ¡³É¹¦µÄÇé¿öÏÂ²Å²ÉÓÃ´ËÑùÊ½*/ \
+/* ä»¥ä¸Šä¸¤ç§æ ·å¼éƒ½æœªèŽ·å–æˆåŠŸçš„æƒ…å†µä¸‹æ‰é‡‡ç”¨æ­¤æ ·å¼ */ \
 	return this->Style .##_filed1.##_filed;\
 }\
 //end
@@ -116,7 +116,7 @@ namespace EzUI {
 	void Control::OnChildPaint(PaintEventArgs& args)
 	{
 		ViewControls.clear();
-		//»æÖÆ×Ó¿Ø¼þ
+		//ç»˜åˆ¶å­æŽ§ä»¶
 		Rect rect(0, 0, Width(), Height());
 		for (auto& it : _controls) {
 			if (rect.IntersectsWith(it->GetRect())) {
@@ -127,8 +127,8 @@ namespace EzUI {
 	}
 	void Control::OnPaint(PaintEventArgs& args)
 	{
-		OnBackgroundPaint(args);//ÏÈ»æÖÆ±³¾°
-		OnForePaint(args);//ÔÙ»æÖÆÇ°¾°
+		OnBackgroundPaint(args);//å…ˆç»˜åˆ¶èƒŒæ™¯
+		OnForePaint(args);//å†ç»˜åˆ¶å‰æ™¯
 	}
 	void Control::OnBackgroundPaint(PaintEventArgs& e)
 	{
@@ -152,7 +152,7 @@ namespace EzUI {
 	void Control::OnBorderPaint(PaintEventArgs& e, const Border& border)
 	{
 		const Color& borderColor = border.Color;
-		if (borderColor.GetValue() == 0) return;//±ß¿òÎÞÐ§ÑÕÉ«²»»æÖÆ
+		if (borderColor.GetValue() == 0) return;//è¾¹æ¡†æ— æ•ˆé¢œè‰²ä¸ç»˜åˆ¶
 		const int& borderLeft = border.Left;
 		const int& borderTop = border.Top;
 		const int& borderRight = border.Right;
@@ -162,10 +162,10 @@ namespace EzUI {
 		const int& bottomRightRadius = border.BottomRightRadius;
 		const int& bottomLeftRadius = border.BottomLeftRadius;
 
-		//¹æÔòµÄ¾ØÐÎ
+		//è§„åˆ™çš„çŸ©å½¢
 		if (topLeftRadius == 0 && topRightRadius == 0 && bottomLeftRadius == 0 && bottomRightRadius == 0) {
 			bool hasBorder = borderLeft || borderTop || borderRight || borderBottom;
-			if (!hasBorder) return;//±ß¿òÎª0²»»æÖÆ
+			if (!hasBorder) return;//è¾¹æ¡†ä¸º0ä¸ç»˜åˆ¶
 			e.Graphics.SetColor(borderColor);
 			if (borderLeft > 0) {
 				RectF rect(0, 0, (float)borderLeft, (float)Height());
@@ -213,15 +213,15 @@ namespace EzUI {
 		do
 		{
 			if (_state == ControlState::Static) {
-				this->Style.SetStyleSheet(styleStr);//Ä¬ÈÏÑùÊ½
+				this->Style.SetStyleSheet(styleStr);//é»˜è®¤æ ·å¼
 				break;
 			}
 			if (_state == ControlState::Hover) {
-				this->HoverStyle.SetStyleSheet(styleStr);//Ðü¸¡ÑùÊ½
+				this->HoverStyle.SetStyleSheet(styleStr);//æ‚¬æµ®æ ·å¼
 				break;
 			}
 			if (_state == ControlState::Active) {
-				this->ActiveStyle.SetStyleSheet(styleStr);//Êó±ê°´ÏÂÑùÊ½
+				this->ActiveStyle.SetStyleSheet(styleStr);//é¼ æ ‡æŒ‰ä¸‹æ ·å¼
 				break;
 			}
 		} while (false);
@@ -276,7 +276,7 @@ namespace EzUI {
 				this->Margin.Bottom = std::stoi(attrValue);
 				break;
 			}
-			if (attrName == "margin") {//×ñÑ­webÇ°¶ËµÄ¹æÔò
+			if (attrName == "margin") {//éµå¾ªwebå‰ç«¯çš„è§„åˆ™
 				auto strs = attrValue.Split(",");
 				if (strs.size() == 1) {
 					this->Margin = std::stoi(strs[0]);
@@ -314,7 +314,7 @@ namespace EzUI {
 					this->SetAutoWidth(true);
 				}
 				else {
-					//Èç¹ûµ¥¶ÀÉèÖÃÁË¿í¸ßÄÇ¾ÍÊÇ¾ø¶Ô¿í¸ßÁË
+					//å¦‚æžœå•ç‹¬è®¾ç½®äº†å®½é«˜é‚£å°±æ˜¯ç»å¯¹å®½é«˜äº†
 					this->SetFixedWidth(std::stoi(attrValue));
 				}
 				break;
@@ -324,7 +324,7 @@ namespace EzUI {
 					this->SetAutoHeight(true);
 				}
 				else {
-					//Èç¹ûµ¥¶ÀÉèÖÃÁË¿í¸ßÄÇ¾ÍÊÇ¾ø¶Ô¿í¸ßÁË
+					//å¦‚æžœå•ç‹¬è®¾ç½®äº†å®½é«˜é‚£å°±æ˜¯ç»å¯¹å®½é«˜äº†
 					this->SetFixedHeight(std::stoi(attrValue));
 				}
 				break;
@@ -557,8 +557,8 @@ namespace EzUI {
 		if (this->_layoutState == LayoutState::Layouting) {
 			return;
 		}
-		this->_layoutState = LayoutState::Layouting;//²¼¾ÖÖÐ
-		if (GetScrollBar()) {//Èç¹û´æÔÚ¹ö¶¯Ìõ¾ÍÉèÖÃ¹ö¶¯ÌõµÄ¾ØÐÎÎ»ÖÃ
+		this->_layoutState = LayoutState::Layouting;//å¸ƒå±€ä¸­
+		if (GetScrollBar()) {//å¦‚æžœå­˜åœ¨æ»šåŠ¨æ¡å°±è®¾ç½®æ»šåŠ¨æ¡çš„çŸ©å½¢ä½ç½®
 			GetScrollBar()->ParentSize({ _rect.Width,_rect.Height });
 		}
 		_contentSize.Width = 0;
@@ -628,7 +628,7 @@ namespace EzUI {
 			if ((this->EventNotify & arg.EventType) == arg.EventType) {
 				if (PublicData && PublicData->Notify(this, (EventArgs&)arg)) {
 					if (arg.EventType == Event::OnPaint) {
-						//Èç¹û´¦ÀíÁËOnPaintÄÇÃ´Ö»ÊÇ²»»æÖÆ×Ô¼º µ«ÊÇ×Ó¿Ø¼þ»¹ÊÇÐèÒª¼ÌÐø»æÖÆµÄ
+						//å¦‚æžœå¤„ç†äº†OnPainté‚£ä¹ˆåªæ˜¯ä¸ç»˜åˆ¶è‡ªå·± ä½†æ˜¯å­æŽ§ä»¶è¿˜æ˜¯éœ€è¦ç»§ç»­ç»˜åˆ¶çš„
 						this->OnPaintBefore((PaintEventArgs&)arg, false);
 					}
 					break;
@@ -671,7 +671,7 @@ namespace EzUI {
 			}
 		} while (false);
 		if (!isRemove) {
-			//»æÖÆº¯Êý±È½ÏÌØÊâ
+			//ç»˜åˆ¶å‡½æ•°æ¯”è¾ƒç‰¹æ®Š
 			if (this->EventHandler && arg.EventType != Event::OnPaint) {
 				this->EventHandler(this, arg);
 			}
@@ -683,15 +683,15 @@ namespace EzUI {
 		return false;
 	}
 
-	//×¨ÃÅ´¦Àí¼üÅÌÏûÏ¢µÄ
+	//ä¸“é—¨å¤„ç†é”®ç›˜æ¶ˆæ¯çš„
 	void Control::OnKeyBoardEvent(const KeyboardEventArgs& _args) {
 		do
 		{
 			if (Enable == false) break;
 			KeyboardEventArgs& args = (KeyboardEventArgs&)_args;
-			if ((this->EventPassThrough & args.EventType) == args.EventType && this->Parent) {//¼ì²éÊó±ê´©Í¸
+			if ((this->EventPassThrough & args.EventType) == args.EventType && this->Parent) {//æ£€æŸ¥é¼ æ ‡ç©¿é€
 				KeyboardEventArgs copy_args = args;
-				this->Parent->DispatchEvent(copy_args);//Èç¹ûÉèÖÃÁË´©Í¸¾ÍÖ±½Ó·¢ËÍ¸øÉÏÒ»²ã¿Ø¼þ
+				this->Parent->DispatchEvent(copy_args);//å¦‚æžœè®¾ç½®äº†ç©¿é€å°±ç›´æŽ¥å‘é€ç»™ä¸Šä¸€å±‚æŽ§ä»¶
 			}
 			switch (args.EventType)
 			{
@@ -712,7 +712,7 @@ namespace EzUI {
 			}
 		} while (false);
 	}
-	//×¨ÃÅ´¦ÀíÊó±êÏûÏ¢µÄ
+	//ä¸“é—¨å¤„ç†é¼ æ ‡æ¶ˆæ¯çš„
 	void Control::OnMouseEvent(const MouseEventArgs& _args) {
 		if (!Enable) return;
 		MouseEventArgs& args = (MouseEventArgs&)_args;
@@ -756,38 +756,38 @@ namespace EzUI {
 				break;
 			}
 		} while (false);
-		if ((this->EventPassThrough & args.EventType) == args.EventType && this->Parent) {//¼ì²éÊó±ê´©Í¸
+		if ((this->EventPassThrough & args.EventType) == args.EventType && this->Parent) {//æ£€æŸ¥é¼ æ ‡ç©¿é€
 			MouseEventArgs copy_args = args;
 			copy_args.Location.X += this->X();
 			copy_args.Location.Y += this->Y();
-			this->Parent->DispatchEvent(copy_args);//Èç¹ûÉèÖÃÁË´©Í¸¾Í·¢ËÍ¸øÉÏÒ»²ã¿Ø¼þ
+			this->Parent->DispatchEvent(copy_args);//å¦‚æžœè®¾ç½®äº†ç©¿é€å°±å‘é€ç»™ä¸Šä¸€å±‚æŽ§ä»¶
 		}
 	}
 	void Control::OnPaintBefore(PaintEventArgs& args, bool paintSelf) {
 		this->PublicData = args.PublicData;
-		if (this->IsPendLayout()) {//»æÖÆµÄÊ±ºò»á¼ì²éÊ±ºòÓÐ¹ÒÆðµÄ²¼¾Ö Èç¹ûÓÐ Á¢¼´ÈÃ²¼¾ÖÉúÐ§²¢ÖØÖÃ²¼¾Ö±êÖ¾
+		if (this->IsPendLayout()) {//ç»˜åˆ¶çš„æ—¶å€™ä¼šæ£€æŸ¥æ—¶å€™æœ‰æŒ‚èµ·çš„å¸ƒå±€ å¦‚æžœæœ‰ ç«‹å³è®©å¸ƒå±€ç”Ÿæ•ˆå¹¶é‡ç½®å¸ƒå±€æ ‡å¿—
 			this->RefreshLayout();
 		}
-		auto clientRect = this->GetClientRect();//»ñÈ¡»ùÓÚ´°¿ÚµÄÎ»ÖÃ
+		auto clientRect = this->GetClientRect();//èŽ·å–åŸºäºŽçª—å£çš„ä½ç½®
 		if (clientRect.IsEmptyArea()) { return; }
 		auto& invalidRect = args.InvalidRectangle;
 		auto& pt = args.Graphics;
 		Rect _ClipRect = clientRect;
-		this->ComputeClipRect();//ÖØÐÂ¼ÆËã»ùÓÚ¸¸Ç×µÄ²Ã¼ôÇøÓò
-		if (!Rect::Intersect(_ClipRect, this->_viewRect, invalidRect)) {//ºÍÖØ»æÇøÓò½øÐÐ²Ã¼ô
+		this->ComputeClipRect();//é‡æ–°è®¡ç®—åŸºäºŽçˆ¶äº²çš„è£å‰ªåŒºåŸŸ
+		if (!Rect::Intersect(_ClipRect, this->_viewRect, invalidRect)) {//å’Œé‡ç»˜åŒºåŸŸè¿›è¡Œè£å‰ª
 			return;
 		}
-		//»æÖÆÊýÁ¿+1
+		//ç»˜åˆ¶æ•°é‡+1
 		++args.PublicData->PaintCount;
-		//ÉèÖÃ»æÖÆÆ«ÒÆ ÒÔ¼°Ðý×ª
+		//è®¾ç½®ç»˜åˆ¶åç§» ä»¥åŠæ—‹è½¬
 		args.PushOffset({ clientRect.X ,clientRect.Y });
 		float angle = this->GetAngle();
-		if (angle != 0) {//Î§ÈÆ×Å¿Ø¼þÖÐÐÄµãÐý×ª
+		if (angle != 0) {//å›´ç»•ç€æŽ§ä»¶ä¸­å¿ƒç‚¹æ—‹è½¬
 			float pointX = clientRect.X + clientRect.Width / 2.0f;
 			float pointY = clientRect.Y + clientRect.Height / 2.0f;
 			pt.SetTransform(pointX, pointY, angle);
 		}
-		//borderÐÅÏ¢
+		//borderä¿¡æ¯
 		Border border;
 		border.Left = GetBorderLeft();
 		border.Top = GetBorderTop();
@@ -800,7 +800,7 @@ namespace EzUI {
 		bool hasRadius = border.TopLeftRadius || border.TopRightRadius || border.BottomRightRadius || border.BottomLeftRadius;
 #if USED_DIRECT2D
 		if (hasRadius) {
-			//´¦ÀíÔ²½Ç¿Ø¼þ Ê¹ÓÃÎÆÀíµÄ·½Ê½ (ÕâÑù×öÊÇÎªÁË¿Ø¼þÄÚ²¿ÎÞÂÛÔõÃ´»æÖÆ¶¼²»»á³¬³öÔ²½Ç²¿·Ö) ´ø¿¹¾â³Ý
+			//å¤„ç†åœ†è§’æŽ§ä»¶ ä½¿ç”¨çº¹ç†çš„æ–¹å¼ (è¿™æ ·åšæ˜¯ä¸ºäº†æŽ§ä»¶å†…éƒ¨æ— è®ºæ€Žä¹ˆç»˜åˆ¶éƒ½ä¸ä¼šè¶…å‡ºåœ†è§’éƒ¨åˆ†) å¸¦æŠ—é”¯é½¿
 			Geometry roundRect(Rect(0, 0, clientRect.Width, clientRect.Height), border.TopLeftRadius, border.TopRightRadius, border.BottomRightRadius, border.BottomLeftRadius);
 			Geometry _clientRect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height);
 			Geometry outClipRect;
@@ -808,25 +808,25 @@ namespace EzUI {
 			args.PushLayer(outClipRect);
 		}
 		else {
-			//Õë¶Ô¾ØÐÎ¿Ø¼þ
+			//é’ˆå¯¹çŸ©å½¢æŽ§ä»¶
 			args.PushLayer(Rect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height));
 		}
 #endif 
-		//»æÖÆ»ù±¾ÉÏÏÂÎÄ
+		//ç»˜åˆ¶åŸºæœ¬ä¸Šä¸‹æ–‡
 		if (paintSelf) {
 			this->OnPaint(args);
 		}
-		//»æÖÆ×Ó¿Ø¼þ
+		//ç»˜åˆ¶å­æŽ§ä»¶
 		this->OnChildPaint(args);
-		//»æÖÆ¹ö¶¯Ìõ
+		//ç»˜åˆ¶æ»šåŠ¨æ¡
 		EzUI::ScrollBar* scrollbar = NULL;
 		if (scrollbar = this->GetScrollBar()) {
 			scrollbar->PublicData = args.PublicData;
 			scrollbar->DispatchEvent(args);
 		}
-		//»æÖÆ±ß¿ò
+		//ç»˜åˆ¶è¾¹æ¡†
 		border.Color = GetBorderColor();
-		this->OnBorderPaint(args, border);//»æÖÆ±ß¿ò
+		this->OnBorderPaint(args, border);//ç»˜åˆ¶è¾¹æ¡†
 #ifdef _DEBUG
 		if (PublicData->Debug) {
 			float width = 1 * this->GetScale();
@@ -837,8 +837,8 @@ namespace EzUI {
 		if (this->EventHandler) {
 			this->EventHandler(this, args);
 		}
-		args.PopLayer();//µ¯³öÎÆÀí²ã
-		args.PopOffset();//µ¯³öÆ«ÒÆ
+		args.PopLayer();//å¼¹å‡ºçº¹ç†å±‚
+		args.PopOffset();//å¼¹å‡ºåç§»
 		if (angle != 0) {
 			pt.SetTransform(0, 0, 0);
 		}
@@ -892,7 +892,7 @@ namespace EzUI {
 		Parent = NULL;
 	}
 	void Control::DestroySpacers() {
-		//¿Ø¼þÊÍ·ÅµÄÊ±ºò×Ô¶¯ÊÍ·Åµ¯»É
+		//æŽ§ä»¶é‡Šæ”¾çš„æ—¶å€™è‡ªåŠ¨é‡Šæ”¾å¼¹ç°§
 		for (auto& it : _spacers) {
 			this->Remove(it);
 			delete it;
@@ -934,7 +934,7 @@ namespace EzUI {
 		}
 
 		ctl->TryPendLayout();
-		this->TryPendLayout();//Ìí¼Ó¿Ø¼þÐèÒª½«²¼¾ÖÖØÐÂ¹ÒÆð
+		this->TryPendLayout();//æ·»åŠ æŽ§ä»¶éœ€è¦å°†å¸ƒå±€é‡æ–°æŒ‚èµ·
 	}
 	void Control::Insert(size_t pos, Control* ctl)
 	{
@@ -969,7 +969,7 @@ namespace EzUI {
 			ctl->DispatchEvent(DpiChangeEventArgs(this->GetScale()));
 		}
 		ctl->TryPendLayout();
-		this->TryPendLayout();//Ìí¼Ó¿Ø¼þÐèÒª½«²¼¾ÖÖØÐÂ¹ÒÆð
+		this->TryPendLayout();//æ·»åŠ æŽ§ä»¶éœ€è¦å°†å¸ƒå±€é‡æ–°æŒ‚èµ·
 	}
 	void Control::SetParent(Control* parentCtl)
 	{
@@ -980,7 +980,7 @@ namespace EzUI {
 		auto itor = ::std::find(_controls.begin(), _controls.end(), ctl);
 		if (itor != _controls.end()) {
 			ctl->OnRemove();
-			this->TryPendLayout();//ÒÆ³ý¿Ø¼þÐèÒª½«²¼¾ÖÖØÐÂ¹ÒÆð
+			this->TryPendLayout();//ç§»é™¤æŽ§ä»¶éœ€è¦å°†å¸ƒå±€é‡æ–°æŒ‚èµ·
 			_controls.erase(itor);
 			auto itor2 = ::std::find(ViewControls.begin(), ViewControls.end(), ctl);
 			if (itor2 != ViewControls.end()) {
@@ -1115,24 +1115,24 @@ namespace EzUI {
 	}
 
 	//void CalculateRotatedMaxRect(const Rect& rect, double angle, RectF* outRect) {
-	//	// ½«½Ç¶È×ª»»Îª»¡¶È
+	//	// å°†è§’åº¦è½¬æ¢ä¸ºå¼§åº¦
 	//	double angleRad = angle * 3.14159265358979323846 / 180.0;
-	//	// ¼ÆËãÐý×ªºóµÄ¾ØÐÎµÄ¿í¶ÈºÍ¸ß¶È
+	//	// è®¡ç®—æ—‹è½¬åŽçš„çŸ©å½¢çš„å®½åº¦å’Œé«˜åº¦
 	//	double newWidth = fabs(rect.Width * cos(angleRad)) + fabs(rect.Height * sin(angleRad));
 	//	double newHeight = fabs(rect.Width * sin(angleRad)) + fabs(rect.Height * cos(angleRad));
-	//	// ¼ÆËãÐý×ªºóµÄ¾ØÐÎµÄÖÐÐÄµã×ø±ê
+	//	// è®¡ç®—æ—‹è½¬åŽçš„çŸ©å½¢çš„ä¸­å¿ƒç‚¹åæ ‡
 	//	double centerX = rect.X + rect.Width / 2.0f;
 	//	double centerY = rect.Y + rect.Height / 2.0f;
-	//	// ¼ÆËãÐÂ¾ØÐÎµÄÎ»ÖÃ
+	//	// è®¡ç®—æ–°çŸ©å½¢çš„ä½ç½®
 	//	outRect->X = centerX - newWidth / 2.0f;
 	//	outRect->Y = centerY - newHeight / 2.0f;
 	//	outRect->Width = newWidth;
 	//	outRect->Height = newHeight;
 	//}
-	/*	RectF rect;
+	/* 	RectF rect;
 	CalculateRotatedMaxRect(_InvalidateRect, angle, &rect);
 	Rect r2(rect.X, rect.Y, rect.Width, rect.Height);
-	winData->InvalidateRect(&r2);*/
+	winData->InvalidateRect(&r2); */
 
 	bool Control::Invalidate() {
 		if (PublicData) {
@@ -1154,7 +1154,7 @@ namespace EzUI {
 	}
 	void Control::Refresh() {
 		if (Invalidate()) {
-			PublicData->UpdateWindow();//Á¢¼´¸üÐÂÈ«²¿ÎÞÐ§ÇøÓò
+			PublicData->UpdateWindow();//ç«‹å³æ›´æ–°å…¨éƒ¨æ— æ•ˆåŒºåŸŸ
 		}
 	}
 	Rect Control::GetCareRect()
@@ -1213,8 +1213,8 @@ namespace EzUI {
 	void Control::ComputeClipRect()
 	{
 		if (Parent) {
-			Rect& ClipRectRef = *(Rect*)(&this->_viewRect);//ÒýÓÃ¸¸¿Ø¼þµÄ²Ã¼ôÇøÓò
-			Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->_viewRect);//×ÔÉíºÍ¸¸¿Ø¼þ¶Ô±È½Ï²Ã¼ôÇøÓò
+			Rect& ClipRectRef = *(Rect*)(&this->_viewRect);//å¼•ç”¨çˆ¶æŽ§ä»¶çš„è£å‰ªåŒºåŸŸ
+			Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->_viewRect);//è‡ªèº«å’Œçˆ¶æŽ§ä»¶å¯¹æ¯”è¾ƒè£å‰ªåŒºåŸŸ
 		}
 		else {
 			Rect& ClipRectRef = *(Rect*)(&this->_viewRect);
@@ -1265,10 +1265,10 @@ namespace EzUI {
 				delete it;
 			}
 		}
-		this->ViewControls.clear();//Çå¿Õ¿É¼û¿Ø¼þ
-		this->_controls.clear();//Çå¿Õ×Ó¿Ø¼þ¼¯ºÏ
-		this->_spacers.clear();//Çå¿Õµ¯»É
-		this->TryPendLayout();//¹ÒÆð²¼¾Ö
+		this->ViewControls.clear();//æ¸…ç©ºå¯è§æŽ§ä»¶
+		this->_controls.clear();//æ¸…ç©ºå­æŽ§ä»¶é›†åˆ
+		this->_spacers.clear();//æ¸…ç©ºå¼¹ç°§
+		this->TryPendLayout();//æŒ‚èµ·å¸ƒå±€
 		ScrollBar* scrollBar = this->GetScrollBar();
 		if (scrollBar) {
 			scrollBar->Reset();
@@ -1334,9 +1334,9 @@ namespace EzUI {
 	}
 	void Control::OnSize(const SizeEventArgs& arg)
 	{
-		this->TryPendLayout();//½«×Ô¼º¹ÒÆð
+		this->TryPendLayout();//å°†è‡ªå·±æŒ‚èµ·
 		if (Parent) {
-			Parent->TryPendLayout();//½«¸¸¿Ø¼þ¹ÒÆð
+			Parent->TryPendLayout();//å°†çˆ¶æŽ§ä»¶æŒ‚èµ·
 		}
 	}
 	void Control::OnRect(const RectEventArgs& arg)
@@ -1348,7 +1348,7 @@ namespace EzUI {
 	}
 };
 
-//¹ö¶¯ÌõÏà¹Ø
+//æ»šåŠ¨æ¡ç›¸å…³
 namespace EzUI {
 	void ScrollBar::OnMouseUp(const MouseEventArgs& arg)
 	{
@@ -1396,7 +1396,7 @@ namespace EzUI {
 			return;
 		}
 		__super::OnForePaint(args);
-		//»æÖÆ»¬¿é
+		//ç»˜åˆ¶æ»‘å—
 		RectF sliderRect = GetSliderRect();
 		const Color& color = GetForeColor();
 		if (color.GetValue() != 0) {
@@ -1433,27 +1433,27 @@ namespace EzUI {
 		int scrollBarLength;
 		this->GetInfo(&viewLength, &contentLength, &scrollBarLength);
 		if (offset > 0) {
-			//¹ö¶¯ÌõÔÚ¶¥²¿
+			//æ»šåŠ¨æ¡åœ¨é¡¶éƒ¨
 			this->_offset = 0;
 			this->_sliderPos = 0;
 		}
 		else if (std::abs(offset) >= this->_overflowLength) {
-			//¹ö¶¯ÌõÔÚµ×²¿
+			//æ»šåŠ¨æ¡åœ¨åº•éƒ¨
 			this->_offset = -this->_overflowLength;
 			this->_sliderPos = scrollBarLength - this->_sliderLength;
 		}
 		else {
-			//Õý³£¹ö¶¯
+			//æ­£å¸¸æ»šåŠ¨
 			this->_offset = offset;
 			this->_sliderPos = -offset / this->_rollRate;
 		}
-		//µ÷ÓÃÈÝÆ÷µÄ¹ö¶¯º¯Êý½øÐÐÆ«ÒÆ
+		//è°ƒç”¨å®¹å™¨çš„æ»šåŠ¨å‡½æ•°è¿›è¡Œåç§»
 		if (OffsetCallback) {
 			OffsetCallback(this->_offset);
 			SyncInfo();
 		}
 		Parent->Invalidate();
-		//Parent->Refresh();//¿ÉÒÔÓÃRefresh,ÕâÑù¹ö¶¯µÄÊ±ºòµÄÊ±ºòÏÔµÃË¿»¬
+		//Parent->Refresh();//å¯ä»¥ç”¨Refresh,è¿™æ ·æ»šåŠ¨çš„æ—¶å€™çš„æ—¶å€™æ˜¾å¾—ä¸æ»‘
 		if (Scroll) {
 			Scroll(this, (double)this->_offset / (-this->_overflowLength), type);
 		}
@@ -1466,11 +1466,11 @@ namespace EzUI {
 		}
 		int scrollBarLength;
 		this->GetInfo(&this->_viewLength, &this->_contentLength, &scrollBarLength);
-		this->_overflowLength = this->_contentLength - this->_viewLength;//³¬³öÈÝÆ÷µÄÄÚÈÝ³¤¶È
+		this->_overflowLength = this->_contentLength - this->_viewLength;//è¶…å‡ºå®¹å™¨çš„å†…å®¹é•¿åº¦
 		if (_overflowLength > 0) {
-			this->_sliderLength = (double)this->_viewLength / this->_contentLength * scrollBarLength + 0.5;//»¬¿é³¤¶È
-			double rollTotal = scrollBarLength - this->_sliderLength;//µ±Ç°»¬¿é¿ÉÓÃ»¬µÀµÄ×Ü¾àÀë
-			this->_rollRate = (double)(_contentLength - this->_viewLength) / rollTotal;//»¬¿éÃ¿´Î¹ö¶¯Ò»´ÎµÄ¶ÔÓ¦ÉÏÏÂÎÄÄÚÈÝµÄ±ÈÂÊ
+			this->_sliderLength = (double)this->_viewLength / this->_contentLength * scrollBarLength + 0.5;//æ»‘å—é•¿åº¦
+			double rollTotal = scrollBarLength - this->_sliderLength;//å½“å‰æ»‘å—å¯ç”¨æ»‘é“çš„æ€»è·ç¦»
+			this->_rollRate = (double)(_contentLength - this->_viewLength) / rollTotal;//æ»‘å—æ¯æ¬¡æ»šåŠ¨ä¸€æ¬¡çš„å¯¹åº”ä¸Šä¸‹æ–‡å†…å®¹çš„æ¯”çŽ‡
 		}
 		else {
 			this->_sliderLength = scrollBarLength;

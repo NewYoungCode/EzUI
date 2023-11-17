@@ -63,7 +63,7 @@ namespace EzUI {
 			}
 			for (size_t i = 0; i < size; i++)
 			{
-				// 将多个斜杠替换成单个斜杠
+				// 灏嗗涓枩鏉犳浛鎹㈡垚鍗曚釜鏂滄潬
 				if (buf[i] == '/') {
 					size_t k = i + 1;
 					while (buf[k] == '/' && k < size) {
@@ -79,7 +79,7 @@ namespace EzUI {
 			}
 			str.clear();
 			str.append(buf, size);
-			delete[] buf; // 释放内存
+			delete[] buf; // 閲婃斁鍐呭瓨
 		}
 		EString GetFileNameWithoutExtension(const EString& _filename) {
 			EString newStr = _filename;
@@ -142,7 +142,7 @@ namespace EzUI {
 			if (Exists(path)) {
 				return true;
 			}
-			//创建多级目录
+			//鍒涘缓澶氱骇鐩綍
 			if (path.find(":") != size_t(-1)) {
 				EString dir = path + "/";
 				Path::Format(&dir);

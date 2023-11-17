@@ -9,17 +9,17 @@ namespace EzUI {
 		PublicData->InvalidateRect = [this](const Rect& rect) ->void {
 			{
 				std::unique_lock<std::mutex> autoLock(mtx);
-				//±ê¼ÇÎŞĞ§ÇøÓò
+				//æ ‡è®°æ— æ•ˆåŒºåŸŸ
 				this->InvalidateRect(rect);
 			}
 			if (IsVisible()) {
-				//Í¨ÖªÏß³Ì»æÖÆ
+				//é€šçŸ¥çº¿ç¨‹ç»˜åˆ¶
 				condv.notify_one();
 			}
 			};
 
 		PublicData->UpdateWindow = [this]()->void {
-			//ÊµÊ±»æÖÆ
+			//å®æ—¶ç»˜åˆ¶
 			if (IsVisible() && !_InvalidateRect.IsEmptyArea()) {
 				this->Paint();
 			}
@@ -40,7 +40,7 @@ namespace EzUI {
 						break;
 					}
 				}
-				//1000/5=200Ö¡·â¶¥
+				//1000/5=200å¸§å°é¡¶
 				this->Invoke([this]() {
 					this->Paint();
 					});
@@ -79,9 +79,9 @@ namespace EzUI {
 		}
 		if (rect.GetRight() > Width) {
 			rect.Width = Width - rect.X;
-		} //Õâ¶Î´úÂëÊÇ±£Ö¤ÖØ»æÇøÓòÒ»¶¨ÊÇÔÚ´°¿ÚÄÚ
+		} //è¿™æ®µä»£ç æ˜¯ä¿è¯é‡ç»˜åŒºåŸŸä¸€å®šæ˜¯åœ¨çª—å£å†…
 		Rect::Union(_InvalidateRect, _InvalidateRect, rect);
-		//ÉÁË¸ÎÊÌâÕÒµ½ÁË Èç¹ûÓÀÔ¶ÖØ»æÕû¸ö¿Í»§¶Ë½«²»»áÉÁË¸
+		//é—ªçƒé—®é¢˜æ‰¾åˆ°äº† å¦‚æœæ°¸è¿œé‡ç»˜æ•´ä¸ªå®¢æˆ·ç«¯å°†ä¸ä¼šé—ªçƒ
 		//_InvalidateRect = clientRect;
 	}
 	void LayeredWindow::OnSize(const Size& sz) {
@@ -95,11 +95,11 @@ namespace EzUI {
 	void LayeredWindow::Paint()
 	{
 		if (_winBitmap && !_InvalidateRect.IsEmptyArea()) {
-			_winBitmap->Earse(_InvalidateRect);//Çå³ı±³¾°
+			_winBitmap->Earse(_InvalidateRect);//æ¸…é™¤èƒŒæ™¯
 			HDC winHDC = _winBitmap->GetHDC();
 			DoPaint(winHDC, _InvalidateRect);
-			PushDC(winHDC);//updatelaredwindow ¸üĞÂ´°¿Ú
-			_InvalidateRect = Rect();//ÖØÖÃÇøÓò
+			PushDC(winHDC);//updatelaredwindow æ›´æ–°çª—å£
+			_InvalidateRect = Rect();//é‡ç½®åŒºåŸŸ
 		}
 	}
 
@@ -112,6 +112,6 @@ namespace EzUI {
 		blendFunc.BlendOp = AC_SRC_OVER;
 		blendFunc.AlphaFormat = AC_SRC_ALPHA;
 		blendFunc.BlendFlags = 0;
-		::UpdateLayeredWindow(Hwnd(), NULL, NULL, &size, hdc, &point, 0, &blendFunc, ULW_ALPHA);//Í¸Ã÷
+		::UpdateLayeredWindow(Hwnd(), NULL, NULL, &size, hdc, &point, 0, &blendFunc, ULW_ALPHA);//é€æ˜
 	}
 }

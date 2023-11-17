@@ -12,7 +12,7 @@ namespace EzUI {
 		Menu* _menu;
 		UINT _msgId = 0;
 	public:
-		//需要自定义一个WIN32消息来供此类使用
+		//闇�瑕佽嚜瀹氫箟涓�涓猈IN32娑堟伅鏉ヤ緵姝ょ被浣跨敤
 		NotifyIcon(UINT customMsg);
 		void SetIcon(short id);
 		void SetIcon(HICON icon);

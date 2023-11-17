@@ -44,27 +44,27 @@ namespace EzUI {
 	}
 
 	void Application::Init() {
-		//´æÈëÈ«¾ÖÊµÀı
+		//å­˜å…¥å…¨å±€å®ä¾‹
 		EzUI::__EzUI__HINSTANCE = ::GetModuleHandleW(NULL);
 		EzUI::__EzUI__ThreadId = ::GetCurrentThreadId();
-		//Éè¼Æ´°¿Ú
+		//è®¾è®¡çª—å£
 		::WNDCLASSW    wc{ 0 };
-		wc.lpfnWndProc = __EzUI__WndProc;//´°¿Ú¹ı³Ì
+		wc.lpfnWndProc = __EzUI__WndProc;//çª—å£è¿‡ç¨‹
 		wc.hInstance = EzUI::__EzUI__HINSTANCE;//
-		wc.hCursor = LoadCursorW(NULL, IDC_ARROW);//¹â±ê
-		wc.lpszClassName = EzUI::__EzUI__WindowClassName;//ÀàÃû
-		if (!RegisterClassW(&wc)) //×¢²á´°¿Ú
+		wc.hCursor = LoadCursorW(NULL, IDC_ARROW);//å…‰æ ‡
+		wc.lpszClassName = EzUI::__EzUI__WindowClassName;//ç±»å
+		if (!RegisterClassW(&wc)) //æ³¨å†Œçª—å£
 		{
 			::MessageBoxW(NULL, L"This program requires Windows NT !",
 				wc.lpszClassName, MB_ICONERROR);
 			return;
 		}
-		//³õÊ¼»¯¹«¹²¿Ø¼ş¿â
+		//åˆå§‹åŒ–å…¬å…±æ§ä»¶åº“
 		INITCOMMONCONTROLSEX icex;
 		icex.dwSize = sizeof(icex);
-		icex.dwICC = ICC_WIN95_CLASSES;  // »òÕßÊ¹ÓÃÆäËûĞèÒªµÄ¿Ø¼şÀà±ğ
+		icex.dwICC = ICC_WIN95_CLASSES;  // æˆ–è€…ä½¿ç”¨å…¶ä»–éœ€è¦çš„æ§ä»¶ç±»åˆ«
 		::InitCommonControlsEx(&icex);
-		//ÉèÖÃÂ·¾¶
+		//è®¾ç½®è·¯å¾„
 		wchar_t wPath[MAX_PATH]{ 0 };
 		size_t count = ::GetModuleFileNameW(NULL, wPath, MAX_PATH);
 		for (int i = count - 1; i > -1; i--)
@@ -75,16 +75,16 @@ namespace EzUI {
 			}
 		}
 		::SetCurrentDirectoryW(wPath);
-		::CoInitialize(NULL);//³õÊ¼»¯com
+		::CoInitialize(NULL);//åˆå§‹åŒ–com
 		RenderInitialize();
 	}
 	void Application::EnableHighDpi() {
 		EzUI::GetMonitor((std::list<MonitorInfo>*) & EzUI::__EzUI__MonitorInfos);
-		//DPI¸ĞÖªÏà¹Ø
-		//²»¸úËæÏµÍ³·Å´óÎŞ·¨½ÓÊÕWM_DISPLAYCHANGEDÏûÏ¢
+		//DPIæ„ŸçŸ¥ç›¸å…³
+		//ä¸è·Ÿéšç³»ç»Ÿæ”¾å¤§æ— æ³•æ¥æ”¶WM_DISPLAYCHANGEDæ¶ˆæ¯
 		//bool b = SetProcessDPIAware();
 		//SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
-		//»á½øÈëWM_DPICHANGEDÏûÏ¢¿É½øĞĞ×ÔĞĞ¿ØÖÆËõ·Å
+		//ä¼šè¿›å…¥WM_DPICHANGEDæ¶ˆæ¯å¯è¿›è¡Œè‡ªè¡Œæ§åˆ¶ç¼©æ”¾
 		typedef void (WINAPI* DisableAutoDpi)(DWORD);
 		HMODULE hModNtdll = NULL;
 		if (hModNtdll = ::LoadLibraryW(L"User32.dll")) {
@@ -112,10 +112,10 @@ namespace EzUI {
 		if (!hRsrc)return;
 		EzUI::__EzUI__Resource = new Resource(hRsrc);
 	}
-	//Ê¹ÓÃ±¾µØÎÄ¼şÃû³Æ¼ÓÔØ×ÊÔ´°ü
+	//ä½¿ç”¨æœ¬åœ°æ–‡ä»¶åç§°åŠ è½½èµ„æºåŒ…
 	Application::Application(const EString& fileName) {
 		Init();
-		//±¾µØÎÄ¼şÖĞ»ñÈ¡
+		//æœ¬åœ°æ–‡ä»¶ä¸­è·å–
 		std::wstring wstr = fileName.unicode();
 		DWORD dwAttr = GetFileAttributesW(wstr.c_str());
 		if (dwAttr && (dwAttr != -1) && (dwAttr & FILE_ATTRIBUTE_ARCHIVE)) {

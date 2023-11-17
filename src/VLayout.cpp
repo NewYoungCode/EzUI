@@ -13,7 +13,7 @@ namespace EzUI {
 
 		int fixedHeight = 0;
 		int fixedTotal = 0;
-		int count = 0;//¿É¼û¿Ø¼þ×ÜÊý
+		int count = 0;//å¯è§æŽ§ä»¶æ€»æ•°
 		for (auto& it : GetControls()) {
 			if ((it->IsAutoWidth() || it->IsAutoHeight()) && it->IsPendLayout()) {
 				it->RefreshLayout();
@@ -34,7 +34,7 @@ namespace EzUI {
 		double otherHeight = Height() * 1.0 - fixedHeight;
 		double autoHeight = otherHeight / autoTotal;
 		double maxBottom = 0;
-		//ÅÅÐò
+		//æŽ’åº
 		for (auto& it : GetControls()) {
 			if (it->IsVisible() == false)continue;
 
@@ -67,7 +67,7 @@ namespace EzUI {
 				maxBottom += it->Height();
 			}
 			maxBottom += it->Margin.Bottom;
-			//Í³¼ÆÉÏÏÂÎÄ¿í¸ß
+			//ç»Ÿè®¡ä¸Šä¸‹æ–‡å®½é«˜
 			int maxRight = it->GetRect().GetRight() + it->Margin.Right;
 			if (maxRight > contentWidth) {
 				contentWidth = maxRight;

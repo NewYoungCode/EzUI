@@ -3,100 +3,100 @@
 
 namespace EzUI {
 	/// <summary>
-	/// Window //¾­µä´ø±ß¿ò´øÏµÍ³²Ëµ¥WIN32´°¿ÚÑùÊ½
+	/// Window //ç»å…¸å¸¦è¾¹æ¡†å¸¦ç³»ç»Ÿèœå•WIN32çª—å£æ ·å¼
 	/// </summary>
 	class UI_EXPORT Window :public IControl
 	{
 	private:
-		Rect _downRect;//ÉÏ´Î°´ÏÂµÄÇøÓò
-		Size _miniSize;//´°¿Ú×îĞ¡³ß´ç
-		Size _maxSize;//´°¿Ú×î´ó³ß´ç
-		bool _mouseIn = false;//Êó±êÊÇ·ñÔÚÀïÃæ
-		bool _mouseDown = false;//Êó±êÊÇ·ñÒÑ¾­°´ÏÂ
-		std::chrono::system_clock::time_point _lastDownTime = std::chrono::system_clock::from_time_t(0);//ÉÏÒ»´ÎÊó±ê°´ÏÂµÄÊ±¼ä
-		Size _lastSize;//ÉÏÒ»´Î¿Í»§¶Ë´óĞ¡µÄĞÅÏ¢
-		Point _lastPoint;//ÉÏÒ»´ÎÒÆ¶¯µÄ×ø±ê
-		MouseButton _lastBtn = MouseButton::None;//ÉÏÒ»´ÎÊó±ê°´ÏÂµÄ°´Å¥
-		int _closeCode = 0;//µ±´°¿Ú¹Ø±ÕµÄÊ±ºòÍË³ö´úÂë
-		Rect _rect;//»ùÓÚ×ÀÃæµÄ×ø±ê
-		Rect _rectClient;//¿Í»§»æÍ¼ÇøÓò
-		HWND _oWnerWnd = NULL;//ËùÊô´°¿Ú¾ä±ú
-		Control* _layout = NULL;//´°¿Ú²¼¾Ö
+		Rect _downRect;//ä¸Šæ¬¡æŒ‰ä¸‹çš„åŒºåŸŸ
+		Size _miniSize;//çª—å£æœ€å°å°ºå¯¸
+		Size _maxSize;//çª—å£æœ€å¤§å°ºå¯¸
+		bool _mouseIn = false;//é¼ æ ‡æ˜¯å¦åœ¨é‡Œé¢
+		bool _mouseDown = false;//é¼ æ ‡æ˜¯å¦å·²ç»æŒ‰ä¸‹
+		std::chrono::system_clock::time_point _lastDownTime = std::chrono::system_clock::from_time_t(0);//ä¸Šä¸€æ¬¡é¼ æ ‡æŒ‰ä¸‹çš„æ—¶é—´
+		Size _lastSize;//ä¸Šä¸€æ¬¡å®¢æˆ·ç«¯å¤§å°çš„ä¿¡æ¯
+		Point _lastPoint;//ä¸Šä¸€æ¬¡ç§»åŠ¨çš„åæ ‡
+		MouseButton _lastBtn = MouseButton::None;//ä¸Šä¸€æ¬¡é¼ æ ‡æŒ‰ä¸‹çš„æŒ‰é’®
+		int _closeCode = 0;//å½“çª—å£å…³é—­çš„æ—¶å€™é€€å‡ºä»£ç 
+		Rect _rect;//åŸºäºæ¡Œé¢çš„åæ ‡
+		Rect _rectClient;//å®¢æˆ·ç»˜å›¾åŒºåŸŸ
+		HWND _oWnerWnd = NULL;//æ‰€å±çª—å£å¥æŸ„
+		Control* _layout = NULL;//çª—å£å¸ƒå±€
 		HWND _hWndTips = NULL;
-		void InitWindow(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle);//³õÊ¼´°¿Ú
+		void InitWindow(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle);//åˆå§‹çª—å£
 	private:
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
 		bool IsInWindow(Control& pControl, Control& it);
 	protected:
-		void MoveWindow();//Êó±ê°´ÏÂÒÆ¶¯´°¿Ú
-		virtual void OnDpiChange(const float& systemScale, const Rect& newRect);//µ±dpi·¢Éú¸ü¸ÄÊ±
-		virtual void OnMouseMove(const Point& point);//Êó±êÒÆ¶¯Ê±·¢Éú
-		virtual void OnMouseLeave();//Êó±êÀë¿ªÊ±·¢Éú
-		virtual void OnMouseWheel(int zDelta, const Point& point);//Êó±ê¹ö¶¯·¢Éú
-		virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point);//Êó±êË«»÷ÊÇ·¢Éú
-		virtual void OnMouseDown(MouseButton mbtn, const Point& point);//Êó±ê°´ÏÂÊ±·¢Éú
-		virtual void OnMouseUp(MouseButton mbtn, const Point& point);//Êó±êµ¯ÆğÊ±·¢Éú
-		virtual void OnMouseClick(MouseButton mbtn, const Point& point);//Êó±êµ¥»÷²¢µ¯ÆğÊ±·¢Éú
-		virtual void DoPaint(HDC winDC, const Rect& rePaint);//Éú³ÉäÖÈ¾Æ÷ äÖÈ¾²ÎÊı
-		virtual void OnPaint(PaintEventArgs& arg);//äÖÈ¾ÖĞ
-		virtual void OnLocation(const Point& point);//Î»ÖÃ·¢Éú¸Ä±äÊ±·¢Éú
-		virtual void OnSize(const Size& sz);//´óĞ¡·¢Éú¸Ä±äÊ±·¢Éú
-		virtual void OnRect(const Rect& rect);//µ±´°¿Ú¾ØĞÎÇøÓò·¢Éú¸Ä±äÊ±·¢Éú
-		virtual void OnClose(bool& bClose);//µ±´°¿ÚÊÕµ½WM_CLOSEÏûÏ¢Ê±·¢Éú 
-		virtual void OnDestroy();//µ±´°¿ÚÏú»ÙÊ±·¢Éú
-		virtual void OnKeyChar(WPARAM wParam, LPARAM lParam);//×Ö·ûÏûÏ¢
-		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam);//¼üÅÌ°´ÏÂ
-		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);//¼üÅÌÌ§Æğ
-		virtual void OnKillFocus(HWND hWnd);//Ê§È¥½¹µãÊ±·¢Éú
-		//Êó±ê ¼üÅÌ ÖØ»æ »á½øÈë´Ëº¯Êı,·µ»Øtrue½«²»ÔÙÅÉ·¢¸øsender¿Ø¼ş´¦Àí ×¢Òâ:¾¡Á¿²»ÒªÔÚ´Ëº¯ÊıÄÚ²¿É¾³ı×ÔÉí¿Ø¼ş(Êó±êºÍ¼üÅÌÊÂ¼şÄÚ¿ÉÒÔÉ¾³ı) Ïàµ±ÓÚQTµÄeventFilter
-		//return true½«»áÀ¹½ØºóĞøµÄ´¦ÀíÂß¼­ Çë½÷É÷Ê¹ÓÃ
+		void MoveWindow();//é¼ æ ‡æŒ‰ä¸‹ç§»åŠ¨çª—å£
+		virtual void OnDpiChange(const float& systemScale, const Rect& newRect);//å½“dpiå‘ç”Ÿæ›´æ”¹æ—¶
+		virtual void OnMouseMove(const Point& point);//é¼ æ ‡ç§»åŠ¨æ—¶å‘ç”Ÿ
+		virtual void OnMouseLeave();//é¼ æ ‡ç¦»å¼€æ—¶å‘ç”Ÿ
+		virtual void OnMouseWheel(int zDelta, const Point& point);//é¼ æ ‡æ»šåŠ¨å‘ç”Ÿ
+		virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point);//é¼ æ ‡åŒå‡»æ˜¯å‘ç”Ÿ
+		virtual void OnMouseDown(MouseButton mbtn, const Point& point);//é¼ æ ‡æŒ‰ä¸‹æ—¶å‘ç”Ÿ
+		virtual void OnMouseUp(MouseButton mbtn, const Point& point);//é¼ æ ‡å¼¹èµ·æ—¶å‘ç”Ÿ
+		virtual void OnMouseClick(MouseButton mbtn, const Point& point);//é¼ æ ‡å•å‡»å¹¶å¼¹èµ·æ—¶å‘ç”Ÿ
+		virtual void DoPaint(HDC winDC, const Rect& rePaint);//ç”Ÿæˆæ¸²æŸ“å™¨ æ¸²æŸ“å‚æ•°
+		virtual void OnPaint(PaintEventArgs& arg);//æ¸²æŸ“ä¸­
+		virtual void OnLocation(const Point& point);//ä½ç½®å‘ç”Ÿæ”¹å˜æ—¶å‘ç”Ÿ
+		virtual void OnSize(const Size& sz);//å¤§å°å‘ç”Ÿæ”¹å˜æ—¶å‘ç”Ÿ
+		virtual void OnRect(const Rect& rect);//å½“çª—å£çŸ©å½¢åŒºåŸŸå‘ç”Ÿæ”¹å˜æ—¶å‘ç”Ÿ
+		virtual void OnClose(bool& bClose);//å½“çª—å£æ”¶åˆ°WM_CLOSEæ¶ˆæ¯æ—¶å‘ç”Ÿ 
+		virtual void OnDestroy();//å½“çª—å£é”€æ¯æ—¶å‘ç”Ÿ
+		virtual void OnKeyChar(WPARAM wParam, LPARAM lParam);//å­—ç¬¦æ¶ˆæ¯
+		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam);//é”®ç›˜æŒ‰ä¸‹
+		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);//é”®ç›˜æŠ¬èµ·
+		virtual void OnKillFocus(HWND hWnd);//å¤±å»ç„¦ç‚¹æ—¶å‘ç”Ÿ
+		//é¼ æ ‡ é”®ç›˜ é‡ç»˜ ä¼šè¿›å…¥æ­¤å‡½æ•°,è¿”å›trueå°†ä¸å†æ´¾å‘ç»™senderæ§ä»¶å¤„ç† æ³¨æ„:å°½é‡ä¸è¦åœ¨æ­¤å‡½æ•°å†…éƒ¨åˆ é™¤è‡ªèº«æ§ä»¶(é¼ æ ‡å’Œé”®ç›˜äº‹ä»¶å†…å¯ä»¥åˆ é™¤) ç›¸å½“äºQTçš„eventFilter
+		//return trueå°†ä¼šæ‹¦æˆªåç»­çš„å¤„ç†é€»è¾‘ è¯·è°¨æ…ä½¿ç”¨
 		virtual bool OnNotify(Control* sender, EventArgs& args);
 	public:
-		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);//´¦ÀíÏûÏ¢¶ÓÁĞµÄ
+		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);//å¤„ç†æ¶ˆæ¯é˜Ÿåˆ—çš„
 	public:
-		bool Zoom = true;//ÊÇ·ñÖ§³ÖËõ·Å
+		bool Zoom = true;//æ˜¯å¦æ”¯æŒç¼©æ”¾
 		Window(int width, int height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
 		virtual ~Window();
 		/// <summary>
-		/// ÔÚ´°¿ÚÖĞÑ°ÕÒÃüÖĞµÄ¿Ø¼ş
+		/// åœ¨çª—å£ä¸­å¯»æ‰¾å‘½ä¸­çš„æ§ä»¶
 		/// </summary>
-		/// <param name="clientPoint">ÊäÈëµÄ×ø±êµãÑ°ÕÒ¿Ø¼ş</param>
-		/// <param name="outPoint">·µ»Ø¿Ø¼şµÄÏà¶Ô×ø±ê</param>
-		/// <returns>·µ»ØÃüÖĞµÄ¿Ø¼şÖ¸Õë</returns>
-		Control* FindControl(const Point clientPoint, Point* outPoint);//¸ù¾İ×ø±ê»ñÈ¡¿Ø¼ş
-		Control* FindControl(const EString& objectName);//Ê¹ÓÃidÑ°ÕÒ¿Ø¼ş
-		const HWND& Hwnd();//»ñÈ¡´°¿Ú¾ä±ú
-		const Rect& GetWindowRect();//»ñÈ¡´°¿Ú»ùÓÚÏÔÊ¾Æ÷µÄ¾ØĞÎ
-		const Rect& GetClientRect();//»ñÈ¡¿Í»§Çø¾ØĞÎ
-		const float& GetScale();//»ñÈ¡µ±Ç°´°¿ÚdpiËõ·Å
-		void SetSize(const Size& size);//ÉèÖÃ´°¿Úsize
-		void SetLocation(const Point& pt);//ÉèÖÃ´°¿ÚÎ»ÖÃ
-		void SetRect(const Rect& rect);//ÉèÖÃ´°¿Ú¾ØĞÎ
-		void SetMiniSize(const Size& size);//ÉèÖÃ´°¿Ú×îĞ¡size
-		void SetMaxSize(const Size& size);//ÉèÖÃ´°¿Ú×î´ósize
-		void SetIcon(short id);//ÉèÖÃ´°¿Úicon
-		void SetIcon(HICON icon);//ÉèÖÃ´°¿Úicon
-		void SetLayout(EzUI::Control* layout);//ÉèÖÃ´°¿ÚÖ÷²¼¾Ö
-		Control* GetLayout();//»ñÈ¡´°¿ÚÖ÷²¼¾Ö
-		void SetText(const EString& text);//ÉèÖÃ´°¿Ú±êÌâ
-		EString GetText();//»ñÈ¡´°¿Ú±êÌâ
-		void SetTopMost(bool top);//ÉèÖÃÓëÈ¡Ïû´°¿ÚÖÃ¶¥
-		bool IsTopMost();//´°¿ÚÊÇ·ñÖÃ¶¥
-		virtual void Show();//²Ù×÷´°¿ÚµÄÏÔÊ¾
+		/// <param name="clientPoint">è¾“å…¥çš„åæ ‡ç‚¹å¯»æ‰¾æ§ä»¶</param>
+		/// <param name="outPoint">è¿”å›æ§ä»¶çš„ç›¸å¯¹åæ ‡</param>
+		/// <returns>è¿”å›å‘½ä¸­çš„æ§ä»¶æŒ‡é’ˆ</returns>
+		Control* FindControl(const Point clientPoint, Point* outPoint);//æ ¹æ®åæ ‡è·å–æ§ä»¶
+		Control* FindControl(const EString& objectName);//ä½¿ç”¨idå¯»æ‰¾æ§ä»¶
+		const HWND& Hwnd();//è·å–çª—å£å¥æŸ„
+		const Rect& GetWindowRect();//è·å–çª—å£åŸºäºæ˜¾ç¤ºå™¨çš„çŸ©å½¢
+		const Rect& GetClientRect();//è·å–å®¢æˆ·åŒºçŸ©å½¢
+		const float& GetScale();//è·å–å½“å‰çª—å£dpiç¼©æ”¾
+		void SetSize(const Size& size);//è®¾ç½®çª—å£size
+		void SetLocation(const Point& pt);//è®¾ç½®çª—å£ä½ç½®
+		void SetRect(const Rect& rect);//è®¾ç½®çª—å£çŸ©å½¢
+		void SetMiniSize(const Size& size);//è®¾ç½®çª—å£æœ€å°size
+		void SetMaxSize(const Size& size);//è®¾ç½®çª—å£æœ€å¤§size
+		void SetIcon(short id);//è®¾ç½®çª—å£icon
+		void SetIcon(HICON icon);//è®¾ç½®çª—å£icon
+		void SetLayout(EzUI::Control* layout);//è®¾ç½®çª—å£ä¸»å¸ƒå±€
+		Control* GetLayout();//è·å–çª—å£ä¸»å¸ƒå±€
+		void SetText(const EString& text);//è®¾ç½®çª—å£æ ‡é¢˜
+		EString GetText();//è·å–çª—å£æ ‡é¢˜
+		void SetTopMost(bool top);//è®¾ç½®ä¸å–æ¶ˆçª—å£ç½®é¡¶
+		bool IsTopMost();//çª—å£æ˜¯å¦ç½®é¡¶
+		virtual void Show();//æ“ä½œçª—å£çš„æ˜¾ç¤º
 		void Show(int cmdShow);//
-		virtual void Hide();//Òş²Ø´°¿Ú
-		void ShowNormal();//Õı³£ÏÔÊ¾´°¿Ú
-		void Close(int exitCode = 0);//¹Ø±Õ´°¿Ú exitCodeÎªÍË³ö´úÂë
-		virtual int ShowModal(bool disableOnwer = true);//»á×èÈû
-		void ShowMinimized();//×îĞ¡»¯´°¿Ú
-		void ShowMaximized();//×î´ó»¯´°¿Ú
-		void ShowFullScreen();//ÈÃ´°¿ÚÕ¼Âúµ±Ç°ÆÁÄ»
-		bool IsVisible();//´°¿ÚÊÇ·ñÏÔÊ¾
+		virtual void Hide();//éšè—çª—å£
+		void ShowNormal();//æ­£å¸¸æ˜¾ç¤ºçª—å£
+		void Close(int exitCode = 0);//å…³é—­çª—å£ exitCodeä¸ºé€€å‡ºä»£ç 
+		virtual int ShowModal(bool disableOnwer = true);//ä¼šé˜»å¡
+		void ShowMinimized();//æœ€å°åŒ–çª—å£
+		void ShowMaximized();//æœ€å¤§åŒ–çª—å£
+		void ShowFullScreen();//è®©çª—å£å æ»¡å½“å‰å±å¹•
+		bool IsVisible();//çª—å£æ˜¯å¦æ˜¾ç¤º
 		void SetVisible(bool flag);
-		void Invalidate();//Ê¹ÇøÓòÎŞĞ§(ÑÓ³ÙË¢ĞÂ)
-		void Refresh();//Á¢¼´¸üĞÂËùÓĞÎŞĞ§ÇøÓò(Á¢¼´Ë¢ĞÂ)
-		void CenterToScreen();//¾ÓÖĞµ½ÆÁÄ»
-		void CenterToWindow(HWND wnd = NULL);//²Î¿¼Ä³¸ö´°¿Ú½øĞĞ¾ÓÖĞ
+		void Invalidate();//ä½¿åŒºåŸŸæ— æ•ˆ(å»¶è¿Ÿåˆ·æ–°)
+		void Refresh();//ç«‹å³æ›´æ–°æ‰€æœ‰æ— æ•ˆåŒºåŸŸ(ç«‹å³åˆ·æ–°)
+		void CenterToScreen();//å±…ä¸­åˆ°å±å¹•
+		void CenterToWindow(HWND wnd = NULL);//å‚è€ƒæŸä¸ªçª—å£è¿›è¡Œå±…ä¸­
 	};
 };

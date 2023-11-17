@@ -23,7 +23,7 @@ namespace EzUI {
 			args.Graphics.SetFont(font);
 			args.Graphics.SetColor(GetForeColor());
 			std::wstring wEllipsisText = Ellipsis.unicode();
-			if (!wEllipsisText.empty()) { //Ë®Æ½ÎÄ±¾Òç³öµÄÏÔÊ¾·½°¸
+			if (!wEllipsisText.empty()) { //æ°´å¹³æ–‡æœ¬æº¢å‡ºçš„æ˜¾ç¤ºæ–¹æ¡ˆ
 				Size ellipsisTextSize;
 				{
 					TextLayout textLayout(wEllipsisText, font);
@@ -31,15 +31,15 @@ namespace EzUI {
 				}
 				TextLayout textLayout(_wstr, font);
 
-				if (textLayout.GetFontBox().Width > maxWidth) {//µ±ÎÄ×ÖÏÔÊ¾³¬³öµÄÊ±ºò ¿í¶È
+				if (textLayout.GetFontBox().Width > maxWidth) {//å½“æ–‡å­—æ˜¾ç¤ºè¶…å‡ºçš„æ—¶å€™ å®½åº¦
 					int pos = 0;
 					BOOL isTrailingHit;
 					int fontHeight;
-					textLayout.HitTestPoint({ maxWidth,0 }, &pos, &isTrailingHit, &fontHeight);//¶ÔÎÄ×Ö½øĞĞÃüÖĞ²âÊÔ
+					textLayout.HitTestPoint({ maxWidth,0 }, &pos, &isTrailingHit, &fontHeight);//å¯¹æ–‡å­—è¿›è¡Œå‘½ä¸­æµ‹è¯•
 					drawText.erase(pos);
 					while (drawText.size() > 0)
 					{
-						//´Ó×îºóÍùÇ°É¾³ıÎÄ×Ö Ö±µ½¿ÉÒÔÏÔÊ¾Õı³£ÎªÖ¹
+						//ä»æœ€åå¾€å‰åˆ é™¤æ–‡å­— ç›´åˆ°å¯ä»¥æ˜¾ç¤ºæ­£å¸¸ä¸ºæ­¢
 						drawText.erase(drawText.size() - 1, 1);
 						TextLayout textLayout(drawText, font);
 						if (textLayout.GetFontBox().Width + ellipsisTextSize.Width < maxWidth) {
@@ -51,7 +51,7 @@ namespace EzUI {
 			}
 			std::wstring viewStr = !drawText.empty() ? drawText : Ellipsis.unicode();
 			TextLayout textLayout(viewStr, font, SizeF(maxWidth, maxHeight), (IsAutoWidth() && IsAutoHeight()) ? TextAlign::TopLeft : this->TextAlign);
-			if (this->_underlineCount != 0) {//ÏÂ»®Ïß
+			if (this->_underlineCount != 0) {//ä¸‹åˆ’çº¿
 				textLayout.SetUnderline(_underlinePos, _underlineCount);
 			}
 			args.Graphics.DrawTextLayout(textLayout, { (float)this->TextMargin.Left,(float)this->TextMargin.Top });
@@ -109,7 +109,7 @@ namespace EzUI {
 	}
 	void Label::RefreshLayout()
 	{
-		//±È½ÏÌØÊâĞèÒªÆÁ±Î
+		//æ¯”è¾ƒç‰¹æ®Šéœ€è¦å±è”½
 		this->OnLayout();
 	}
 	void Label::OnLayout() {

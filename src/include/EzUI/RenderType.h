@@ -460,11 +460,11 @@ namespace EzUI {
 			Left = Left * scale + 0.5;
 			Right = Right * scale + 0.5;
 		}
-		//»ñÈ¡´¹Ö±ËùÕ¼¿Õ¼ä
+		//è·å–å‚ç›´æ‰€å ç©ºé—´
 		size_t GetVSpace() {
 			return Top + Bottom;
 		}
-		//»ñÈ¡Ë®Æ½ËùÕ¼¿Õ¼ä
+		//è·å–æ°´å¹³æ‰€å ç©ºé—´
 		size_t GetHSpace() {
 			return Left + Right;
 		}
@@ -472,28 +472,28 @@ namespace EzUI {
 
 	enum class ImageSizeMode {
 		//
-		// ÕªÒª:
-		//     Owner¿Ø¼ş ÖĞµÄÍ¼Ïñ±»À­Éì»òÊÕËõ£¬ÒÔÊÊºÏ Owner¿Ø¼ş
-		//     µÄ´óĞ¡¡£
+		// æ‘˜è¦:
+		//     Owneræ§ä»¶ ä¸­çš„å›¾åƒè¢«æ‹‰ä¼¸æˆ–æ”¶ç¼©ï¼Œä»¥é€‚åˆ Owneræ§ä»¶
+		//     çš„å¤§å°ã€‚
 		StretchImage = 1,
-		// ÕªÒª:
-		//     Èç¹û Owner¿Ø¼ş ±ÈÍ¼Ïñ´ó£¬ÔòÍ¼Ïñ½«¾ÓÖĞÏÔÊ¾¡£Èç¹ûÍ¼Ïñ±È Owner¿Ø¼ş
-		//     ´ó£¬ÔòÍ¼Æ¬½«¾ÓÓÚ Owner¿Ø¼ş ÖĞĞÄ£¬¶øÍâ±ßÔµ½«±»¼ô²Ãµô¡£
+		// æ‘˜è¦:
+		//     å¦‚æœ Owneræ§ä»¶ æ¯”å›¾åƒå¤§ï¼Œåˆ™å›¾åƒå°†å±…ä¸­æ˜¾ç¤ºã€‚å¦‚æœå›¾åƒæ¯” Owneræ§ä»¶
+		//     å¤§ï¼Œåˆ™å›¾ç‰‡å°†å±…äº Owneræ§ä»¶ ä¸­å¿ƒï¼Œè€Œå¤–è¾¹ç¼˜å°†è¢«å‰ªè£æ‰ã€‚
 		CenterImage = 3,
 		//
-		// ÕªÒª:
-		//     Í¼Ïñ´óĞ¡°´ÆäÔ­ÓĞµÄ´óĞ¡±ÈÀı±»Ôö¼Ó»ò¼õĞ¡¡£
+		// æ‘˜è¦:
+		//     å›¾åƒå¤§å°æŒ‰å…¶åŸæœ‰çš„å¤§å°æ¯”ä¾‹è¢«å¢åŠ æˆ–å‡å°ã€‚
 		Zoom = 4
 	};
 	/// <summary>
-	/// ÃèÊö±ß¿òµÄÒ»Ğ©ĞÅÏ¢
+	/// æè¿°è¾¹æ¡†çš„ä¸€äº›ä¿¡æ¯
 	/// </summary>
 	class  Border {
 	public:
-		int Left = 0;//×ó±ß±ß¿ò´óĞ¡
-		int Top = 0;//¶¥²¿±ß¿ò´óĞ¡
-		int Right = 0;//ÓÒ±ß±ß¿ò´óĞ¡
-		int Bottom = 0;//µ×²¿±ß¿ò´óĞ¡
+		int Left = 0;//å·¦è¾¹è¾¹æ¡†å¤§å°
+		int Top = 0;//é¡¶éƒ¨è¾¹æ¡†å¤§å°
+		int Right = 0;//å³è¾¹è¾¹æ¡†å¤§å°
+		int Bottom = 0;//åº•éƒ¨è¾¹æ¡†å¤§å°
 		int TopLeftRadius = 0;
 		int TopRightRadius = 0;
 		int BottomRightRadius = 0;
@@ -504,7 +504,7 @@ namespace EzUI {
 			Border& Border;
 		public:
 			Radius(EzUI::Border& bd) :Border(bd) {}
-			//¶ÔËÄ¸ö½Ç¶ÈÍ¬Ê±ÉèÖÃ°ë¾¶´óĞ¡
+			//å¯¹å››ä¸ªè§’åº¦åŒæ—¶è®¾ç½®åŠå¾„å¤§å°
 			Radius& operator=(const int& radius) {
 				Border.TopLeftRadius = radius;
 				Border.TopRightRadius = radius;
@@ -517,7 +517,7 @@ namespace EzUI {
 		Border::Radius Radius = (*this);
 	public:
 		Border() {}
-		//¶ÔËÄ¸ö±ßÉèÖÃ´óĞ¡
+		//å¯¹å››ä¸ªè¾¹è®¾ç½®å¤§å°
 		Border& operator=(const int& borderWidth) {
 			Left = borderWidth;
 			Top = borderWidth;
@@ -552,7 +552,7 @@ namespace EzUI {
 #define Align_Center   DT_CENTER
 #endif
 	/// <summary>
-	/// Ë®Æ½×´Ì¬ÏÂµÄ¶ÔÆä·½Ê½
+	/// æ°´å¹³çŠ¶æ€ä¸‹çš„å¯¹å…¶æ–¹å¼
 	/// </summary>
 	enum class HAlign :int
 	{
@@ -561,7 +561,7 @@ namespace EzUI {
 		Right = Align_Right
 	};
 	/// <summary>
-	/// ´¹Ö±×´Ì¬ÏÂµÄ¶ÔÆä·½Ê½
+	/// å‚ç›´çŠ¶æ€ä¸‹çš„å¯¹å…¶æ–¹å¼
 	/// </summary>
 	enum class VAlign :int
 	{
@@ -572,40 +572,40 @@ namespace EzUI {
 
 	enum class __Align :int {
 		//
-		// ÕªÒª: 
-		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏ¶¥²¿¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏ×ó±ß¶ÔÆë¡£
+		// æ‘˜è¦: 
+		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šé¡¶éƒ¨å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå·¦è¾¹å¯¹é½ã€‚
 		TopLeft = (int)VAlign::Top | (int)HAlign::Left,
 		//
-		// ÕªÒª: 
-		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏ¶¥²¿¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏ¾ÓÖĞ¶ÔÆë¡£
+		// æ‘˜è¦: 
+		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šé¡¶éƒ¨å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå±…ä¸­å¯¹é½ã€‚
 		TopCenter = (int)VAlign::Top | (int)HAlign::Center,
 		//
-		// ÕªÒª: 
-		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏ¶¥²¿¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏÓÒ±ß¶ÔÆë¡£
+		// æ‘˜è¦: 
+		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šé¡¶éƒ¨å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå³è¾¹å¯¹é½ã€‚
 		TopRight = (int)VAlign::Top | (int)HAlign::Right,
 		//
-		// ÕªÒª: 
-		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏÖĞ¼ä¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏ×ó±ß¶ÔÆë¡£
+		// æ‘˜è¦: 
+		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šä¸­é—´å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå·¦è¾¹å¯¹é½ã€‚
 		MiddleLeft = (int)VAlign::Mid | (int)HAlign::Left,
 		//
-		// ÕªÒª: 
-		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏÖĞ¼ä¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏ¾ÓÖĞ¶ÔÆë¡£
+		// æ‘˜è¦: 
+		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šä¸­é—´å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå±…ä¸­å¯¹é½ã€‚
 		MiddleCenter = (int)VAlign::Mid | (int)HAlign::Center,
 		//
-		// ÕªÒª: 
-		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏÖĞ¼ä¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏÓÒ±ß¶ÔÆë¡£
+		// æ‘˜è¦: 
+		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šä¸­é—´å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå³è¾¹å¯¹é½ã€‚
 		MiddleRight = (int)VAlign::Mid | (int)HAlign::Right,
 		//
-		// ÕªÒª: 
-		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏµ×±ß¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏ×ó±ß¶ÔÆë¡£
+		// æ‘˜è¦: 
+		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šåº•è¾¹å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå·¦è¾¹å¯¹é½ã€‚
 		BottomLeft = (int)VAlign::Bottom | (int)HAlign::Left,
 		//
-		// ÕªÒª: 
-		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏµ×±ß¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏ¾ÓÖĞ¶ÔÆë¡£
+		// æ‘˜è¦: 
+		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šåº•è¾¹å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå±…ä¸­å¯¹é½ã€‚
 		BottomCenter = (int)VAlign::Bottom | (int)HAlign::Center,
 		//
-		// ÕªÒª: 
-		//     ÄÚÈİÔÚ´¹Ö±·½ÏòÉÏµ×±ß¶ÔÆë£¬ÔÚË®Æ½·½ÏòÉÏÓÒ±ß¶ÔÆë¡£
+		// æ‘˜è¦: 
+		//     å†…å®¹åœ¨å‚ç›´æ–¹å‘ä¸Šåº•è¾¹å¯¹é½ï¼Œåœ¨æ°´å¹³æ–¹å‘ä¸Šå³è¾¹å¯¹é½ã€‚
 		BottomRight = (int)VAlign::Bottom | (int)HAlign::Right
 	};
 
@@ -613,27 +613,27 @@ namespace EzUI {
 
 	enum class FontStyle :int {
 		NORMAL = 0
-		/*DWRITE_FONT_STYLE_NORMAL
-		×ÖÌåÑùÊ½ £ºÕı³£¡£
+		/* DWRITE_FONT_STYLE_NORMAL
+		å­—ä½“æ ·å¼ ï¼šæ­£å¸¸ã€‚
 		DWRITE_FONT_STYLE_OBLIQUE
-		×ÖÌåÑùÊ½ £ºÇãĞ±¡£
+		å­—ä½“æ ·å¼ ï¼šå€¾æ–œã€‚
 		DWRITE_FONT_STYLE_ITALIC
-		×ÖÌåÑùÊ½ £ºĞ±Ìå¡£*/
+		å­—ä½“æ ·å¼ ï¼šæ–œä½“ã€‚ */
 	};
 
 	class IImage {
 	protected:
-		size_t _frameCount = 0;//×ÜÖ¡Êı
-		size_t _framePos = 0;//µ±Ç°Ö¡ÂÊË÷Òı
+		size_t _frameCount = 0;//æ€»å¸§æ•°
+		size_t _framePos = 0;//å½“å‰å¸§ç‡ç´¢å¼•
 	public:
-		Rect Offset;//È¡³öÍ¼Ïñ²¿·ÖÇøÓò½øĞĞ»æÖÆ
-		ImageSizeMode SizeMode = ImageSizeMode::Zoom;// Í¼ÏñÏÔÊ¾Ä£Ê½
+		Rect Offset;//å–å‡ºå›¾åƒéƒ¨åˆ†åŒºåŸŸè¿›è¡Œç»˜åˆ¶
+		ImageSizeMode SizeMode = ImageSizeMode::Zoom;// å›¾åƒæ˜¾ç¤ºæ¨¡å¼
 	public:
 		virtual ~IImage() {}
 		size_t FrameCount() {
 			return _frameCount;
 		}
-		//Ìø×ªµ½ÏÂÒ»Ö¡ ²¢ÇÒ»ñÈ¡ÏÂÒ»Ö¡µÄÑÓ³Ù
+		//è·³è½¬åˆ°ä¸‹ä¸€å¸§ å¹¶ä¸”è·å–ä¸‹ä¸€å¸§çš„å»¶è¿Ÿ
 		virtual size_t NextFrame() {
 			if (_framePos >= _frameCount) {
 				_framePos = 0;
@@ -649,11 +649,11 @@ namespace EzUI {
 			return rect;
 		}
 
-		//¿Í»§¶ËÊı¾İ
+		//å®¢æˆ·ç«¯æ•°æ®
 		float clientWidth = (float)rect.Width;
 		float clientHeight = (float)rect.Height;
 		float clientRate = clientWidth / clientHeight;
-		//Í¼Æ¬Êı¾İ
+		//å›¾ç‰‡æ•°æ®
 		float imgWidth = (float)imgSize.Width;
 		float imgHeight = (float)imgSize.Height;
 		float imgRate = imgWidth / imgHeight;
@@ -672,18 +672,18 @@ namespace EzUI {
 		}
 		if (imageSizeMode == ImageSizeMode::CenterImage) {
 			if (clientRate < imgRate) {
-				//1000 670 ¿Í»§¶Ë
-				//1000 300 Í¼Æ¬
-				//2233 670     Ëõ·ÅºóµÄÍ¼Æ¬´óĞ¡ 
-				float zoomWidth = clientHeight / imgHeight * imgWidth + 0.5f;//Í¼Æ¬Ó¦¸ÃÕâÃ´¿í²Å¶Ô
+				//1000 670 å®¢æˆ·ç«¯
+				//1000 300 å›¾ç‰‡
+				//2233 670     ç¼©æ”¾åçš„å›¾ç‰‡å¤§å° 
+				float zoomWidth = clientHeight / imgHeight * imgWidth + 0.5f;//å›¾ç‰‡åº”è¯¥è¿™ä¹ˆå®½æ‰å¯¹
 				float x = (zoomWidth - clientWidth) / 2.0f + 0.5f;
 				return Rect((rect.X - x), rect.Y, zoomWidth, clientHeight);
 			}
 			else {
-				//1000 600 ¿Í»§¶Ë
-				//400  600 Í¼Æ¬
-				//1000 1500     Ëõ·ÅºóµÄÍ¼Æ¬´óĞ¡ 
-				float zoomHeight = clientWidth / imgWidth * imgHeight + 0.5f;//Í¼Æ¬Ó¦¸ÃÕâÃ´¸ß²Å¶Ô
+				//1000 600 å®¢æˆ·ç«¯
+				//400  600 å›¾ç‰‡
+				//1000 1500     ç¼©æ”¾åçš„å›¾ç‰‡å¤§å° 
+				float zoomHeight = clientWidth / imgWidth * imgHeight + 0.5f;//å›¾ç‰‡åº”è¯¥è¿™ä¹ˆé«˜æ‰å¯¹
 				float y = (zoomHeight - clientHeight) / 2.0f + 0.5f;
 				return Rect(rect.X, (rect.Y - y), clientWidth, zoomHeight);
 			}

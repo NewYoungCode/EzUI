@@ -11,11 +11,11 @@ namespace EzUI {
 		}
 	public:
 		Application();
-		//Ê¹ÓÃvsÖĞµÄ×ÊÔ´ID¼ÓÔØ×ÊÔ´°ü resID×ÊÔ´ID custResType×Ô¶¨Òå×ÊÔ´ÀàĞÍÃû³Æ ÃÜÂë
+		//ä½¿ç”¨vsä¸­çš„èµ„æºIDåŠ è½½èµ„æºåŒ… resIDèµ„æºID custResTypeè‡ªå®šä¹‰èµ„æºç±»å‹åç§° å¯†ç 
 		Application(int resID, const EString& custResType);
-		//Ê¹ÓÃ±¾µØÎÄ¼şÃû³Æ¼ÓÔØ×ÊÔ´°ü
+		//ä½¿ç”¨æœ¬åœ°æ–‡ä»¶åç§°åŠ è½½èµ„æºåŒ…
 		Application(const EString& fileName);
-		//ÆôÓÃ¸ßDPIÊÊÅä
+		//å¯ç”¨é«˜DPIé€‚é…
 		void EnableHighDpi();
 		virtual ~Application();
 		int Exec();

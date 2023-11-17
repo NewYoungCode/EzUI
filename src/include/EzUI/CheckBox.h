@@ -9,7 +9,8 @@ namespace EzUI {
 	private:
 		bool _checked = false;
 	public:
-		ControlStyle CheckedStyle;//选中样式
+		//閫変腑鏍峰紡
+		ControlStyle CheckedStyle;
 	protected:
 		virtual ControlStyle& GetStyle(const ControlState& _state)override;
 		virtual ControlStyle& GetDefaultStyle()override;

@@ -22,7 +22,7 @@ namespace EzUI {
 		EString::UnicodeToUTF8(wstr, this);
 	}
 
-	//³£ÓÃº¯Êı
+	//å¸¸ç”¨å‡½æ•°
 	EString EString::Erase(const char& _char)const {
 		EString newStr(*this);
 		EString::Erase(&newStr, _char);
@@ -87,7 +87,7 @@ namespace EzUI {
 		bytes = ::WideCharToMultiByte(codePage, 0, wstr.c_str(), wstr.size(), const_cast<char*>(strCmd.c_str()), strCmd.size(), NULL, NULL);
 	}
 
-	//ÒÔÏÂÊÇ¾²Ì¬º¯Êı
+	//ä»¥ä¸‹æ˜¯é™æ€å‡½æ•°
 	void EString::ANSIToUniCode(const std::string& str, std::wstring* outStr)
 	{
 		AnyToUnicode(str, ::GetACP(), outStr);
@@ -115,7 +115,7 @@ namespace EzUI {
 	{
 		UINT codePage = ::GetACP();
 		if (codePage == CP_UTF8) {
-			*outStr = str;//Èç¹û±¾Éí¾ÍÊÇutf8Ôò²»ĞèÒª×ª»»
+			*outStr = str;//å¦‚æœæœ¬èº«å°±æ˜¯utf8åˆ™ä¸éœ€è¦è½¬æ¢
 			return;
 		}
 		std::wstring wstr;
@@ -125,7 +125,7 @@ namespace EzUI {
 	void EString::UTF8ToANSI(const std::string& str, std::string* outStr) {
 		UINT codePage = ::GetACP();
 		if (codePage == CP_UTF8) {
-			*outStr = str;//Èç¹û±¾Éí¾ÍÊÇutf8Ôò²»ĞèÒª×ª»»
+			*outStr = str;//å¦‚æœæœ¬èº«å°±æ˜¯utf8åˆ™ä¸éœ€è¦è½¬æ¢
 			return;
 		}
 		std::wstring wstr;
