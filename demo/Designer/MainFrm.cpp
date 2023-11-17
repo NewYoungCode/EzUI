@@ -9,7 +9,7 @@ MainFrm::MainFrm(int width, int height) :Window(width, height)
 	ui = new UIWindow(750, 500);
 
 	UIManager* umg = new UIManager;
-	umg->LoadXml("xml/main.htm");
+	umg->LoadXmlFile("xml/main.htm");
 	umg->SetupUI(ui);
 
 	left.SetFixedWidth(150);
