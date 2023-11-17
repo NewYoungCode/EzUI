@@ -9,7 +9,7 @@ MainFrm::MainFrm() :BorderlessWindow(1020, 690), ntfi(WM_NOTIFYICON1)
 }
 void MainFrm::InitForm() {
 	this->Zoom = true;
-	umg.LoadXml("xml/main.htm");
+	umg.LoadXmlFile("xml/main.htm");
 	umg.SetupUI(this);
 	cfg = new ConfigIni(Path::StartPath() + "\\list.ini");
 	//findControl
