@@ -8,7 +8,7 @@ LocalItem::~LocalItem() {
 }
 void LocalItem::OnChildPaint(PaintEventArgs& args) {
 	__super::OnChildPaint(args);
-	//ÖÃ¶¥ »æÖÆÉ¾³ıÏß
+	//ç½®é¡¶ ç»˜åˆ¶åˆ é™¤çº¿
 	//args.Graphics.SetColor(Color::Red);
 	//args.Graphics.FillRectangle(Rect(0,17, 308, 2),0);
 }
@@ -29,7 +29,7 @@ LocalItem::LocalItem(const EString& _songName, const EString& _songTime) {
 
 	songName.Name = "autosz";
 	songName.SetText(_songName);
-	songName.Ellipsis = "...";//ÎÄ±¾³¬³öÈİÆ÷Ö®Íâ²ÉÓÃÊ¡ÂÔºÅ
+	songName.Ellipsis = "...";//æ–‡æœ¬è¶…å‡ºå®¹å™¨ä¹‹å¤–é‡‡ç”¨çœç•¥å·
 	songName.TextAlign = TextAlign::MiddleLeft;
 	songName.SetTips("child_" + _songName);
 	songName.EventPassThrough = time.EventPassThrough = Event::OnHover | Event::OnActive | Event::OnMouseDoubleClick;
@@ -191,7 +191,7 @@ namespace global {
 		HttpGet(url, resp);
 		JObject json(resp);
 		if (json["status"].asInt() != 200 || json["candidates"].size() == 0) {
-			return EString(L"[00:00.00]ÎŞ¸è´Ê");
+			return EString(L"[00:00.00]æ— æ­Œè¯");
 		}
 		EString id = (*json["candidates"].begin())["id"].asString();
 		EString accesskey = (*json["candidates"].begin())["accesskey"].asString();

@@ -111,7 +111,7 @@ namespace EzUI {
 	{
 		if (vlc_player) {
 			//https://forum.videolan.org/viewtopic.php?f=32&t=147724&p=484850&hilit=libvlc_media_player_stop+bug#p484835
-			libvlc_media_player_stop(vlc_player);//Èç¹ûÍ£Ö¹²¥·ÅÊÓÆµÄÇÃ´ vlc»á±ÀÀ£ ÎŞ·¨±ÜÃâ
+			libvlc_media_player_stop(vlc_player);//å¦‚æœåœæ­¢æ’­æ”¾è§†é¢‘é‚£ä¹ˆ vlcä¼šå´©æºƒ æ— æ³•é¿å…
 			libvlc_media_player_release(vlc_player);//
 			vlc_player = nullptr;
 		}

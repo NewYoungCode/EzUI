@@ -1,10 +1,10 @@
 #include "mainFrom.h"
 
 MainFrm::MainFrm(const EString& cmdLine) :Window(500, 300) {
-	this->SetText(L"EzUI×ÊÔ´´ò°üÆ÷");
+	this->SetText(L"EzUIèµ„æºæ‰“åŒ…å™¨");
 	this->SetLayout(&layout);
 
-	tips.SetText(L"ÇëÉèÖÃÊä³öÎÄ¼şÃû");
+	tips.SetText(L"è¯·è®¾ç½®è¾“å‡ºæ–‡ä»¶å");
 	tips.SetFixedHeight(35);
 	tips.Style.ForeColor = Color::Gray;
 	tips.SetParent(&layout);
@@ -23,7 +23,7 @@ MainFrm::MainFrm(const EString& cmdLine) :Window(500, 300) {
 	btn.ActiveStyle.BackColor = Color::White;
 
 	btn.SetFixedSize({ 100,30 });
-	btn.SetText(L"È·ÈÏ");
+	btn.SetText(L"ç¡®è®¤");
 	btn.SetParent(&layout);
 
 	layout.Add(new Spacer);
@@ -85,12 +85,12 @@ bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 			this->resFile = edit.GetText();
 
 			if (task && !task->IsStopped()) {
-				::MessageBoxW(Hwnd(), L"ÇëµÈ´ıÉÏ´ÎÈÎÎñÍê³É!", L"Ê§°Ü", 0);
+				::MessageBoxW(Hwnd(), L"è¯·ç­‰å¾…ä¸Šæ¬¡ä»»åŠ¡å®Œæˆ!", L"å¤±è´¥", 0);
 				break;
 			}
 
 			if (FileExists(resFile) && ::DeleteFileW(resFile.unicode().c_str()) == FALSE) {
-				::MessageBoxW(Hwnd(), L"ÎÄ¼şÒÑ´æÔÚÇÒÎŞ·¨¸²¸Ç!", L"Ê§°Ü", 0);
+				::MessageBoxW(Hwnd(), L"æ–‡ä»¶å·²å­˜åœ¨ä¸”æ— æ³•è¦†ç›–!", L"å¤±è´¥", 0);
 				break;
 			}
 
@@ -99,7 +99,7 @@ bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 				task = NULL;
 			}
 
-			tips2.SetText(L"ÕıÔÚ¼ÆËã...");
+			tips2.SetText(L"æ­£åœ¨è®¡ç®—...");
 			tips2.Invalidate();
 
 			task = new Task([this]() {
@@ -110,16 +110,16 @@ bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 						bar.SetFixedWidth(width);
 						bottom.Invalidate();
 
-						tips2.SetText(EString(L"ÕıÔÚ´ò°ü\"") + file + "\"");
+						tips2.SetText(EString(L"æ­£åœ¨æ‰“åŒ…\"") + file + "\"");
 						tips2.Invalidate();
 						});
 					Sleep(2);
 					});
 
 				this->Invoke([&]() {
-					tips2.SetText(L"´ò°ü³É¹¦!");
+					tips2.SetText(L"æ‰“åŒ…æˆåŠŸ!");
 					tips2.Invalidate();
-					::MessageBoxW(Hwnd(), L"´ò°ü³É¹¦!", L"³É¹¦", 0);
+					::MessageBoxW(Hwnd(), L"æ‰“åŒ…æˆåŠŸ!", L"æˆåŠŸ", 0);
 					});
 				});
 

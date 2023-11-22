@@ -9,7 +9,7 @@ class MainFrm :
 private:
 	std::vector<Song> songs;
 	LayeredWindow* deskTopWnd;
-	//no new ²»ĞèÒªÊÍ·Å
+	//no new ä¸éœ€è¦é‡Šæ”¾
 	NotifyIcon ntfi;
 	UIManager umg;
 	VlcPlayer player;
@@ -21,7 +21,7 @@ private:
 	Label* time, * singer;
 	TabLayout* tabCtrl, * control;
 	Control* main, * center, * centerLeft, * tools, * playerBar, * playerBar2;
-	//need new ĞèÒªÊÍ·Å
+	//need new éœ€è¦é‡Šæ”¾
 	ThreadTimer* timer = NULL;
 	ConfigIni* cfg = NULL;
 	Image* bkImg = NULL, * headImg = NULL;

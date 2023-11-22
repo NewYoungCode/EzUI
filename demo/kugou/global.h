@@ -31,24 +31,24 @@
 #pragma comment(lib,"CommonD.lib")
 #endif
 
-//×Ô¶¨ÒåÍ¨ÖªÀ¸ÏûÏ¢
+//è‡ªå®šä¹‰é€šçŸ¥æ æ¶ˆæ¯
 #define WM_NOTIFYICON1 WM_APP+1
 
 using namespace EzUI;
 
 struct Song {
-	EString hash;//¸èÇú¹şÏ£Öµ
-	EString SongName;//¸èÇúÃû³Æ
-	EString SingerName;//¸èÊÖÃû³Æ
-	EString MvHash;//mv¹şÏ£Öµ
-	int Duration;//ÒôÀÖÊ±³¤ µ¥Î»:Ãë
+	EString hash;//æ­Œæ›²å“ˆå¸Œå€¼
+	EString SongName;//æ­Œæ›²åç§°
+	EString SingerName;//æ­Œæ‰‹åç§°
+	EString MvHash;//mvå“ˆå¸Œå€¼
+	int Duration;//éŸ³ä¹æ—¶é•¿ å•ä½:ç§’
 	EString AlbumID;//
 	EString AlbumName;//
-	int QualityLevel;//¸èÇúÈÈ¶È
+	int QualityLevel;//æ­Œæ›²çƒ­åº¦
 };
 
 /// <summary>
-/// ×ó²à±¾µØ¸èÇúÁĞ±íÖĞµÄItem
+/// å·¦ä¾§æœ¬åœ°æ­Œæ›²åˆ—è¡¨ä¸­çš„Item
 /// </summary>
 class LocalItem :public HBox {
 public:
@@ -60,7 +60,7 @@ public:
 	LocalItem(const EString& _songName, const EString& _songTime = "03:56");
 };
 /// <summary>
-/// ËÑË÷ÁĞ±íÖĞµÄItem
+/// æœç´¢åˆ—è¡¨ä¸­çš„Item
 /// </summary>
 class SearchItem :public HBox {
 	Label songName;
@@ -80,14 +80,14 @@ namespace global {
 	extern bool nextPage;
 	extern HWND _workerw;
 
-	//¸èÇú³¤¶È×ª×Ö·û´®ÏÔÊ¾
+	//æ­Œæ›²é•¿åº¦è½¬å­—ç¬¦ä¸²æ˜¾ç¤º
 	extern EString toTimeStr(long dur);
-	//http¶Ô¿á¹·apiµÄÇëÇó
+	//httpå¯¹é…·ç‹—apiçš„è¯·æ±‚
 	extern int HttpGet(const EString& url, EString& resp);
-	//¸ù¾İ¹Ø¼ü×Ö½øĞĞ¸èÇúËÑË÷
+	//æ ¹æ®å…³é”®å­—è¿›è¡Œæ­Œæ›²æœç´¢
 	extern std::vector<Song> SearchSongs(const EString& keyword);
-	//Ê¹ÓÃ¸èÇúµÄAlbumIdÑ°ÕÒ²éÕÒ¶ÔÓ¦µÄ¸è´Ê
+	//ä½¿ç”¨æ­Œæ›²çš„AlbumIdå¯»æ‰¾æŸ¥æ‰¾å¯¹åº”çš„æ­Œè¯
 	extern EString GetSongLrc(const EString& hash, const EString& AlbumID = "");
-	//»ñÈ¡×ÀÃæ¾ä±ú ÓÃÓÚ×ÀÃæ¸è´ÊÏÔÊ¾
+	//è·å–æ¡Œé¢å¥æŸ„ ç”¨äºæ¡Œé¢æ­Œè¯æ˜¾ç¤º
 	extern HWND GetWorkerW();
 };

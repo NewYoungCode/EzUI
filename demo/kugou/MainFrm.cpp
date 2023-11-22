@@ -2,9 +2,9 @@
 MainFrm::MainFrm() :BorderlessWindow(1020, 690), ntfi(WM_NOTIFYICON1)
 {
 	InitForm();
-	//ÍĞÅÌ
-	ntfi.SetText(L"¿á¹·ÒôÀÖ");
-	ntfi.SetIcon(nullptr);//ÍĞÅÌÍ¼±ê
+	//æ‰˜ç›˜
+	ntfi.SetText(L"é…·ç‹—éŸ³ä¹");
+	ntfi.SetIcon(nullptr);//æ‰˜ç›˜å›¾æ ‡
 	this->SetMiniSize({ 800,600 });
 }
 void MainFrm::InitForm() {
@@ -14,7 +14,7 @@ void MainFrm::InitForm() {
 	cfg = new ConfigIni(Path::StartPath() + "\\list.ini");
 	//findControl
 	main = FindControl("main");
-	//µÚÒ»´Î²»ÏÔÊ¾±³¾°Í¼ ²âÊÔÎŞÍ¼»æÖÆµÄĞÔÄÜ
+	//ç¬¬ä¸€æ¬¡ä¸æ˜¾ç¤ºèƒŒæ™¯å›¾ æµ‹è¯•æ— å›¾ç»˜åˆ¶çš„æ€§èƒ½
 
 
 	tools = FindControl("tools");
@@ -34,7 +34,7 @@ void MainFrm::InitForm() {
 
 	player.Name = "player";
 	this->FindControl("vlcDock")->Add(&player);
-	this->FindControl("lrcView2")->Add(&lrcCtl);//Ìí¼Ó¸è´Ê¿Ø¼ş
+	this->FindControl("lrcView2")->Add(&lrcCtl);//æ·»åŠ æ­Œè¯æ§ä»¶
 
 	std::list<MonitorInfo> monitorInfo;
 	GetMonitor(&monitorInfo);
@@ -53,25 +53,25 @@ void MainFrm::InitForm() {
 	::SetParent(deskTopWnd->Hwnd(), pWnd);
 	//deskTopWnd->Show();
 
-	//¸øÄ¬ÈÏ±³¾°Í¼Æ¬ÉèÖÃËõ·ÅÊôĞÔ
+	//ç»™é»˜è®¤èƒŒæ™¯å›¾ç‰‡è®¾ç½®ç¼©æ”¾å±æ€§
 	if (main->Style.BackImage) {
 		main->Style.BackImage->SizeMode = ImageSizeMode::CenterImage;
 	}
 
 	int scrollBarWidth = 9 * this->GetScale() + 0.5;
-	////ÃÀ»¯×ó²à±¾µØÁĞ±íµÄ¹ö¶¯Ìõ
+	////ç¾åŒ–å·¦ä¾§æœ¬åœ°åˆ—è¡¨çš„æ»šåŠ¨æ¡
 	localList->GetScrollBar()->SetWidth(scrollBarWidth);
 	localList->GetScrollBar()->Style.Border.Radius = scrollBarWidth;
-	//ÃÀ»¯ËÑË÷ÁĞ±íµÄ¹ö¶¯Ìõ
+	//ç¾åŒ–æœç´¢åˆ—è¡¨çš„æ»šåŠ¨æ¡
 	searchList->GetScrollBar()->SetWidth(scrollBarWidth);
 	searchList->GetScrollBar()->Style.Border.Radius = scrollBarWidth;
 	searchList->GetScrollBar()->Style.BackColor = Color(200, 200, 200, 50);
-	//¼¯ÌåÉèÖÃÓÒÉÏ½ÇµÄ×î´ó»¯ ×îĞ¡»¯ ¹Ø±Õ°´Å¥ µÄĞü¸¡Ğ§¹û
+	//é›†ä½“è®¾ç½®å³ä¸Šè§’çš„æœ€å¤§åŒ– æœ€å°åŒ– å…³é—­æŒ‰é’® çš„æ‚¬æµ®æ•ˆæœ
 	$(this->FindControl("btns")->GetControls()).CssHover("color:#ffffff;");
 	int pos = 0;
 	for (size_t i = 0; i < 1; i++)
 	{
-		//¼ÓÔØ×ó²à²¥·Å¹ıµÄÒôÀÖ
+		//åŠ è½½å·¦ä¾§æ’­æ”¾è¿‡çš„éŸ³ä¹
 		for (auto&& _it : cfg->GetSections()) {
 
 			EString name = cfg->ReadString("name", "", _it);
@@ -94,21 +94,21 @@ void MainFrm::InitForm() {
 		}
 	}
 
-	//¹ö¶¯Ìõ¹ö¶¯ÊÂ¼ş ¹ö¶¯Ìõ¹ö¶¯µ½µ×²¿¼ÓÔØÊ£ÓàÒôÀÖ
+	//æ»šåŠ¨æ¡æ»šåŠ¨äº‹ä»¶ æ»šåŠ¨æ¡æ»šåŠ¨åˆ°åº•éƒ¨åŠ è½½å‰©ä½™éŸ³ä¹
 	searchList->GetScrollBar()->Scroll = [=](ScrollBar* sb, float pos, Event type)->void {
 		if (type == Event::OnMouseWheel) {
 			NextPage(pos);
 		}
 		};
-	//¿É´©Í¸¸¸¿Ø¼ş
+	//å¯ç©¿é€çˆ¶æ§ä»¶
 	playerBar2->EventPassThrough = Event::OnHover | Event::OnActive | Event::OnMouseClick;
-	//´´½¨Æô¶¯Ò»¸öÊµÊ±»ñÈ¡¸èÇú½ø¶ÈÒÔ¼°×´Ì¬
+	//åˆ›å»ºå¯åŠ¨ä¸€ä¸ªå®æ—¶è·å–æ­Œæ›²è¿›åº¦ä»¥åŠçŠ¶æ€
 	timer = new ThreadTimer;
 	timer->Interval = 10;
 	timer->Tick = [=](ThreadTimer*) {
 		TimerTick();
 		};
-	//Ìí¼ÓÒ»Ğ©ÊÂ¼şµ½´°¿ÚÖĞµÄOnNotifyº¯Êı½øĞĞÀ¹½Ø
+	//æ·»åŠ ä¸€äº›äº‹ä»¶åˆ°çª—å£ä¸­çš„OnNotifyå‡½æ•°è¿›è¡Œæ‹¦æˆª
 	player.Tag = main;
 
 
@@ -116,13 +116,13 @@ void MainFrm::InitForm() {
 	main->EventNotify = main->EventNotify | Event::OnPaint;
 
 	OpenSongView();//
-	//ÉèÖÃÒõÓ°
+	//è®¾ç½®é˜´å½±
 	//this->SetShadow(20);
    // main->Style.Border.Radius = 40;
 	main->Style.BackImage->Visible = false;
 	//main->Style.Border = 1;
 	main->Style.Border.Color = Color(100, 100, 100, 100);
-	//¹Ø±Õ´°¿ÚÒõÓ°
+	//å…³é—­çª—å£é˜´å½±
 	//this->CloseShadow();
 	//WM_TIMER
 }
@@ -157,20 +157,20 @@ MainFrm::~MainFrm()
 	}
 }
 void MainFrm::OnClose(bool& cal) {
-	//¹Ø±Õ´°¿ÚÊ± ÍË³öÏûÏ¢Ñ­»· ³ÌĞò½áÊø
+	//å…³é—­çª—å£æ—¶ é€€å‡ºæ¶ˆæ¯å¾ªç¯ ç¨‹åºç»“æŸ
 	Application::Exit(0);
 }
 void MainFrm::OnPaint(PaintEventArgs& _arg) {
 	__super::OnPaint(_arg);
 
 
-	/*Font font(L"ËÎÌå", 20);
-	TextLayout text(L"ÄãºÃhello word!", font);
+	/*Font font(L"å®‹ä½“", 20);
+	TextLayout text(L"ä½ å¥½hello word!", font);
 	Size box = text.GetFontBox();
 	_arg.Graphics.SetFont(font);
 	_arg.Graphics.SetColor(Color::Black);
 	_arg.Graphics.DrawString(text, { 500,200 });
-	TextLayout text2(L"ÄãºÃhello word!", font, box);
+	TextLayout text2(L"ä½ å¥½hello word!", font, box);
 	_arg.Graphics.DrawString(text2, { 500,300 });*/
 
 	//{
@@ -201,7 +201,7 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 {
 	auto  SingerName = _SingerName.Split(",")[0];
 	std::string headFileData;
-	//ÏÂÔØ¸èÊÖÍ·Ïñ ¿á¹·µÄ½Ó¿Ú
+	//ä¸‹è½½æ­Œæ‰‹å¤´åƒ é…·ç‹—çš„æ¥å£
 	{
 		headImg = NULL;
 		WebClient wc2;
@@ -211,7 +211,7 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 			headImg->SizeMode = ImageSizeMode::CenterImage;
 		}
 	}
-	//ÏÂÔØ¸èÊÖĞ´Õæ ¿áÎÒµÄ½Ó¿Ú
+	//ä¸‹è½½æ­Œæ‰‹å†™çœŸ é…·æˆ‘çš„æ¥å£
 	{
 		bkImg = NULL;
 		auto rect = GetClientRect();
@@ -221,7 +221,7 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 		wc.HttpGet(imageUrl, resp, 5);
 		JObject json(resp);
 		EString bkurl;
-		//Ê¹ÓÃ×îÇåÎúµÄÍ¼Æ¬
+		//ä½¿ç”¨æœ€æ¸…æ™°çš„å›¾ç‰‡
 		if (bkurl.empty()) {
 			for (auto&& it : json["array"]) {
 				if (!it["bkurl"].isNull()) {
@@ -246,7 +246,7 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 			}
 		}
 		else {
-			//Èç¹ûÃ»ÏÂÔØµ½¸èÊÖĞ´Õæ¾ÍÊ¹ÓÃÍ·Ïñ
+			//å¦‚æœæ²¡ä¸‹è½½åˆ°æ­Œæ‰‹å†™çœŸå°±ä½¿ç”¨å¤´åƒ
 			//bkImg = new Image(headFileData.c_str(), headFileData.size());
 			//bkImg->SizeMode = ImageSizeMode::CenterImage;
 		}
@@ -323,7 +323,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			JObject json(resp);
 
 			if (json["errcode"].asInt() != 0) {
-				::MessageBoxW(Hwnd(), EString(json["error"].asString()).unicode().c_str(), L"ÒôÀÖAPI´íÎó", 0);
+				::MessageBoxW(Hwnd(), EString(json["error"].asString()).unicode().c_str(), L"éŸ³ä¹APIé”™è¯¯", 0);
 				return 0;
 			}
 
@@ -384,13 +384,13 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 
 				this->SetText(json["fileName"].asString());
 				((Label*)FindControl("songName"))->SetText(json["fileName"].asString());
-				ntfi.ShowBalloonTip(L"²¥·ÅÒôÀÖ", EString(json["fileName"].asString()), 2000);
+				ntfi.ShowBalloonTip(L"æ’­æ”¾éŸ³ä¹", EString(json["fileName"].asString()), 2000);
 				player.OpenUrl(playUrl);
 				player.SetDuration(dur);
 				player.Play();
 			}
 			else {
-				::MessageBoxW(Hwnd(), L"¸èÇúÊÕ·Ñ", L"ERROR", 0);
+				::MessageBoxW(Hwnd(), L"æ­Œæ›²æ”¶è´¹", L"ERROR", 0);
 				return 0;
 			}
 			EString lrcData = global::GetSongLrc(hash);
@@ -462,7 +462,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			control->Invalidate();
 			return false;
 		}
-		if (sender->Name == "dellocal") {//É¾³ı±¾µØ
+		if (sender->Name == "dellocal") {//åˆ é™¤æœ¬åœ°
 			LocalItem* songItem = (LocalItem*)sender->Parent;
 			localList->Remove(songItem);
 
@@ -568,7 +568,7 @@ void MainFrm::TimerTick() {
 }
 
 void MainFrm::NextPage(float scrollPos) {
-	//Debug::Info(L"¹ö¶¯Ìõµ±Ç°Î»ÖÃ:%d ¿É¹ö¶¯¾àÀë:%d", a, b);
+	//Debug::Info(L"æ»šåŠ¨æ¡å½“å‰ä½ç½®:%d å¯æ»šåŠ¨è·ç¦»:%d", a, b);
 	if (scrollPos >= 1.0f && global::nextPage) {
 		global::page++;
 		EString keyword = searchEdit->GetText();
@@ -581,7 +581,7 @@ void MainFrm::NextPage(float scrollPos) {
 			Label* end = new Label;
 			end->SetFixedHeight(35);
 			end->Style.BackColor = Color(254, 249, 229);
-			end->SetText(L"ÒÑ¾­Ã»ÓĞ¸ü¶àÊı¾İ");
+			end->SetText(L"å·²ç»æ²¡æœ‰æ›´å¤šæ•°æ®");
 			searchList->Add(end);
 		}
 		searchList->Invalidate();

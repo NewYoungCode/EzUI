@@ -7,7 +7,7 @@
 #pragma comment(lib,"libvlc.lib")
 #pragma comment(lib,"libvlccore.lib")
 namespace EzUI {
-	//·â×°ÓÃÓÚ²¥·ÅÊÓÆµµÄ¿Ø¼ş
+	//å°è£…ç”¨äºæ’­æ”¾è§†é¢‘çš„æ§ä»¶
 	class VlcPlayer :public Control
 	{
 	private:

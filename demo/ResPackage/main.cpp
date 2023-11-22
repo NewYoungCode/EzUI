@@ -1,13 +1,13 @@
 #include "mainFrom.h"
 
 void AddContextMenu() {
-	// ´ò¿ª×¢²á±íÏî
+	// æ‰“å¼€æ³¨å†Œè¡¨é¡¹
 	HKEY hKey;
 	RegCreateKeyExW(HKEY_CLASSES_ROOT, L"Directory\\shell\\EzUI_ResPackage", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL);
-	// ÉèÖÃÓÒ¼ü²Ëµ¥ÏÔÊ¾µÄÃû³Æ
-	std::wstring menuName(L"´ò°ü³ÉEzUI×ÊÔ´");
+	// è®¾ç½®å³é”®èœå•æ˜¾ç¤ºçš„åç§°
+	std::wstring menuName(L"æ‰“åŒ…æˆEzUIèµ„æº");
 	RegSetValueExW(hKey, NULL, 0, REG_SZ, (BYTE*)menuName.c_str(), menuName.size() * 2);
-	// ÉèÖÃ²Ëµ¥µã»÷ºóÖ´ĞĞµÄÃüÁî
+	// è®¾ç½®èœå•ç‚¹å‡»åæ‰§è¡Œçš„å‘½ä»¤
 	RegCreateKeyExW(hKey, L"command", 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hKey, NULL);
 	std::wstring cmdLine;
 	{
@@ -16,8 +16,8 @@ void AddContextMenu() {
 		cmdLine = buf;
 		cmdLine = L"\"" + cmdLine + L"\" \"%1\"";
 	}
-	RegSetValueExW(hKey, NULL, 0, REG_SZ, (BYTE*)cmdLine.c_str(), cmdLine.size() * 2); // %1 ´ú±íÑ¡ÖĞµÄÎÄ¼ş¼ĞÂ·¾¶
-	// ¹Ø±Õ×¢²á±íÏî
+	RegSetValueExW(hKey, NULL, 0, REG_SZ, (BYTE*)cmdLine.c_str(), cmdLine.size() * 2); // %1 ä»£è¡¨é€‰ä¸­çš„æ–‡ä»¶å¤¹è·¯å¾„
+	// å…³é—­æ³¨å†Œè¡¨é¡¹
 	RegCloseKey(hKey);
 }
 
@@ -26,11 +26,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ LPWSTR    lpCmdLine,
 	_In_ int       nCmdShow)
 {
-	//ĞèÒª¹ÜÀíÔ±È¨ÏŞ
+	//éœ€è¦ç®¡ç†å‘˜æƒé™
 	AddContextMenu();
 
-	//ÈçĞèÈ¡ÏûÓÒ¼ü²Ëµ¥ µ½×¢²á±í´ËÂ·¾¶ÏÂÉ¾³ı¼´¿É
-	//¼ÆËã»ú\HKEY_CLASSES_ROOT\Directory\shell\EzUI_ResPackage
+	//å¦‚éœ€å–æ¶ˆå³é”®èœå• åˆ°æ³¨å†Œè¡¨æ­¤è·¯å¾„ä¸‹åˆ é™¤å³å¯
+	//è®¡ç®—æœº\HKEY_CLASSES_ROOT\Directory\shell\EzUI_ResPackage
 
 	Application app;
 	app.EnableHighDpi();

@@ -13,24 +13,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	FILE* fp = NULL;
 	freopen_s(&fp, "CONOUT$", "w+t", stdout);
 #endif
-	printf("福来day");
+	printf("hello world");
 
 	Curl_Global_Init();
-
-	//if(0){
-	//	EzUI::Application app;//指定资源文件
-	//	//打包资源文件
-	//	Resource::Package(Path::StartPath()+"/res","d:/res.bin");
-	//}
-
-	EzUI::Application app("res.bin");//指定资源文件
+	
+	EzUI::Application app("res.bin");
 	app.EnableHighDpi();
-
-	//while (true)
-	//{
-	//	UIManager umg;
-	//	umg.LoadXml("xml/main.htm");
-	//}
 
 	MainFrm frm;
 	frm.Show();
