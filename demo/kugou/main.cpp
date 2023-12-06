@@ -1,6 +1,5 @@
 #include "global.h"
 #include "MainFrm.h"
-//#include "EzUI/FileSystem.h"
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -8,17 +7,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_ int       nCmdShow)
 {
 
-#ifdef _DEBUG
-	AllocConsole();
-	FILE* fp = NULL;
-	freopen_s(&fp, "CONOUT$", "w+t", stdout);
-#endif
-	printf("hello world");
+//#ifdef _DEBUG
+//	AllocConsole();
+//	FILE* fp = NULL;
+//	freopen_s(&fp, "CONOUT$", "w+t", stdout);
+//#endif
+//	printf("hello EzUI !");
 
-	Curl_Global_Init();
-	
+
+	Curl_Global_Init();//初始化curl
+
 	EzUI::Application app("res.bin");
-	app.EnableHighDpi();
+	app.EnableHighDpi();//启用高dpi适配
 
 	MainFrm frm;
 	frm.Show();
