@@ -93,7 +93,9 @@ namespace EzUI {
 				ok = true;
 				break;
 			}
-			ok = EzUI::__EzUI__Resource->GetFile(filename, out);
+			if (__EzUI__Resource) {
+				ok = EzUI::__EzUI__Resource->GetFile(filename, out);
+			}
 		} while (false);
 		return ok;
 	}

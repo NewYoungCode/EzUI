@@ -10,14 +10,6 @@ add_executable(helloWorld WIN32 ${src})
 target_include_directories(helloWorld PRIVATE  ${include})
 target_link_libraries(helloWorld PRIVATE EzUI)
 
-#Designer设计器
-project(designer)
-file(GLOB src ./designer/*.*)
-add_executable(designer WIN32 ${src} )
-target_include_directories(designer PRIVATE  ${include})
-target_link_libraries(designer PRIVATE EzUI)
-
-
 #资源打包器
 project(ResPackage)
 file(GLOB src ./ResPackage/*.*)

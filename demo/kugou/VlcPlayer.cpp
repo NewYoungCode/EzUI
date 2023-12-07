@@ -96,7 +96,7 @@ namespace EzUI {
 	void VlcPlayer::Play()
 	{
 		if (vlc_player) {
-			int volume = 60;
+			int volume = 80;
 			libvlc_audio_set_volume(vlc_player, volume);
 			libvlc_media_player_play(vlc_player);
 		}
