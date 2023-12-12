@@ -47,7 +47,6 @@ css普通进行修饰控件外观  模仿前端的继承样式 hover,active,chec
 Tips:
     Debug模式运行程序按下F11可查看当前布局信息 每个控件将高亮显示边框
 
-学习&技术支持 QQ:718987717 //qq群:758485934 //email:19980103ly@gmail.com 
+学习&技术支持 QQ:718987717 //qq群:758485934 //email:19980103ly@gmail.com //微信:
 
-//微信:
-<img src="https://github.com/NewYoungCode/EzUI/blob/master/wx.jpg?raw=true" width=200 height=250>
+<img src="https://github.com/NewYoungCode/EzUI/blob/master/wx.jpg?raw=true" width=500 height=705/>
