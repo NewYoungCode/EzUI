@@ -50,4 +50,4 @@ Tips:
 学习&技术支持 QQ:718987717 //qq群:758485934 //email:19980103ly@gmail.com 
 
 //微信:
-<img src="wx.jpg" width=200 height=250>
+<img src="/NewYoungCode/EzUI/wx.jpg" width=200 height=250>
