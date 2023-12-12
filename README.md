@@ -52,4 +52,4 @@ Tips:
 
 QQ:718987717 //qq群:758485934 //email:19980103ly@gmail.com //微信:
 
-<img src="https://github.com/NewYoungCode/EzUI/blob/master/wx.jpg?raw=true" width=400 height=565 />
+<img src="https://github.com/NewYoungCode/EzUI/blob/master/wx.jpg?raw=true" width=400 height=565/>
