@@ -189,12 +189,13 @@ namespace EzUI {
 		OnKeyDown = 512,
 		OnKeyUp = 1024,
 		OnPaint = 2048,
-		OnKillFocus = 4096,
-		OnKeyChar = 8192,
-		OnLocation = 16384,
-		OnSize = 32768,
-		OnRect = 65536,
-		OnDpiChange = 131072,
+		OnFocus= 4096,
+		OnKillFocus = 8192,
+		OnKeyChar = 16384,
+		OnLocation = 32768,
+		OnSize = 65536,
+		OnRect = 131072,
+		OnDpiChange = 262144,
 		OnActive = OnMouseDown | OnMouseUp,
 		OnHover = OnMouseEnter | OnMouseLeave,
 		OnMouseDrag = OnMouseDown | OnMouseMove,
@@ -317,6 +318,15 @@ namespace EzUI {
 			this->lParam = lParam;
 		}
 		virtual ~KeyboardEventArgs() {}
+	};
+	//获取焦点
+	class UI_EXPORT FocusEventArgs :public EventArgs {
+	public:
+		Control* Control;
+		FocusEventArgs(EzUI::Control* ctl) :EventArgs(Event::OnFocus) {
+			this->Control = ctl;
+		}
+		virtual ~FocusEventArgs() {}
 	};
 	//失去焦点
 	class UI_EXPORT KillFocusEventArgs :public EventArgs {

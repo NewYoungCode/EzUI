@@ -48,7 +48,8 @@ namespace EzUI {
 		virtual void OnKeyChar(WPARAM wParam, LPARAM lParam);//字符消息
 		virtual void OnKeyDown(WPARAM wParam, LPARAM lParam);//键盘按下
 		virtual void OnKeyUp(WPARAM wParam, LPARAM lParam);//键盘抬起
-		virtual void OnKillFocus(HWND hWnd);//失去焦点时发生
+		virtual void OnFocus(HWND hWnd);//获得输入焦点时发生
+		virtual void OnKillFocus(HWND hWnd);//失去输入焦点时发生
 		//鼠标 键盘 重绘 会进入此函数,返回true将不再派发给sender控件处理 注意:尽量不要在此函数内部删除自身控件(鼠标和键盘事件内可以删除) 相当于QT的eventFilter
 		//return true将会拦截后续的处理逻辑 请谨慎使用
 		virtual bool OnNotify(Control* sender, EventArgs& args);
@@ -98,5 +99,6 @@ namespace EzUI {
 		void Refresh();//立即更新所有无效区域(立即刷新)
 		void CenterToScreen();//居中到屏幕
 		void CenterToWindow(HWND wnd = NULL);//参考某个窗口进行居中
+		void SetFocus(Control* ctl);//给指定控件为焦点控件
 	};
 };

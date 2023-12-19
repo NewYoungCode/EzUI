@@ -57,6 +57,7 @@ namespace EzUI {
 		virtual void OnMouseWheel(const MouseEventArgs& arg)override;
 		virtual void OnMouseMove(const MouseEventArgs& arg) override;
 		virtual void OnMouseUp(const MouseEventArgs& arg)override;
+		virtual void OnFocus(const FocusEventArgs& arg) override;
 		virtual void OnKillFocus(const KillFocusEventArgs& arg) override;
 		virtual void OnLayout();
 		void Offset(int moveY);

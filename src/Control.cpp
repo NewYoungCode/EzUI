@@ -665,6 +665,10 @@ namespace EzUI {
 				this->OnKeyBoardEvent((KeyboardEventArgs&)arg);
 				break;
 			}
+			if (arg.EventType == Event::OnFocus) {
+				this->OnFocus((FocusEventArgs&)arg);
+				break;
+			}
 			if (arg.EventType == Event::OnKillFocus) {
 				this->OnKillFocus((KillFocusEventArgs&)arg);
 				break;
@@ -1325,6 +1329,9 @@ namespace EzUI {
 	void Control::OnKeyDown(const KeyboardEventArgs& args) {
 	}
 	void Control::OnKeyUp(const KeyboardEventArgs& args) {
+	}
+	void Control::OnFocus(const FocusEventArgs& _args)
+	{
 	}
 	void Control::OnKillFocus(const KillFocusEventArgs& arg)
 	{

@@ -101,6 +101,16 @@ namespace EzUI {
 			}
 			break;
 		}
+		case WM_KILLFOCUS: {
+			HWND wnd = (HWND)wParam;
+			if (this->GetShadowBox() && wnd != this->GetShadowBox()->Hwnd()) {
+				this->OnKillFocus(wnd);
+			}
+			else if (this->GetShadowBox() == NULL) {
+				this->OnKillFocus(wnd);
+			}
+			return 0;
+		}
 		default:
 			break;
 		}

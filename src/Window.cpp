@@ -415,18 +415,38 @@ namespace EzUI {
 		}
 	}
 
-
+	void Window::SetFocus(Control* ctl)
+	{
+		if (ctl == NULL) {
+			return;
+		}
+		if (_inputControl) {
+			KillFocusEventArgs args(ctl);
+			_inputControl->DispatchEvent(args);
+		}
+		FocusEventArgs args(_inputControl);
+		ctl->DispatchEvent(args);
+		_inputControl = ctl;
+		_focusControl = ctl;
+	}
 
 	LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		//if (uMsg == WM_QUIT) {
-		//	int pause = 0;
-		//}
 		//if (WM_COMMAND == uMsg) {
 		//	//windows子控件消息
 		//}
 		switch (uMsg)
 		{
+		case WM_SETFOCUS:
+		{
+			this->OnFocus((HWND)wParam);
+			break;
+		}
+		case WM_KILLFOCUS:
+		{
+			this->OnKillFocus((HWND)wParam);
+			break;
+		}
 		case WM_MOVE: {
 			int xPos = (int)(short)LOWORD(lParam);   // horizontal position 
 			int yPos = (int)(short)HIWORD(lParam);   // vertical position 
@@ -727,7 +747,7 @@ namespace EzUI {
 		}
 		}
 		return ::DefWindowProc(Hwnd(), uMsg, wParam, lParam);
-	}
+		}
 
 	void Window::DoPaint(HDC winHDC, const Rect& rePaintRect) {
 #define COUNT_ONPAINT 0
@@ -922,11 +942,7 @@ namespace EzUI {
 		Control* outCtl = this->FindControl(point, &relativePoint);
 		//如果单机的不是上一个 那么上一个触发失去焦点事件
 		if (_inputControl != outCtl) {
-			if (_inputControl) {
-				KillFocusEventArgs arg(outCtl);
-				_inputControl->DispatchEvent(arg);//给上一个输入焦点触发失去焦点的事件
-			}
-			_inputControl = outCtl;
+			this->SetFocus(outCtl);//设置焦点
 		}
 		//给命中的控件触发鼠标按下事件
 		if (_inputControl) {
@@ -1036,6 +1052,9 @@ namespace EzUI {
 			return;
 		}
 	}
+	void Window::OnFocus(HWND hWnd)
+	{
+	}
 	void Window::OnLocation(const Point& point) {
 	}
 	void Window::OnKillFocus(HWND hWnd)
@@ -1126,5 +1145,4 @@ namespace EzUI {
 		}
 		return false;
 	}
-
-};
+		};

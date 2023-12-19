@@ -9,19 +9,6 @@ namespace EzUI {
 		this->_ownerCtl = ownerCtl;
 		this->Zoom = false;
 	}
-	LRESULT PopupWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
-	{
-		if (uMsg == WM_KILLFOCUS) {
-			HWND wnd = (HWND)wParam;
-			if (this->GetShadowBox() && wnd != this->GetShadowBox()->Hwnd()) {
-				this->OnKillFocus(wnd);
-			}
-			else if (this->GetShadowBox() == NULL) {
-				this->OnKillFocus(wnd);
-			}
-		}
-		return __super::WndProc(uMsg, wParam, lParam);
-	}
 	void PopupWindow::Show()
 	{
 		int x, y, width, height;

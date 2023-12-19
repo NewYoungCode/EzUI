@@ -350,12 +350,8 @@ namespace EzUI {
 	}
 	void TextBox::OnMouseDown(const MouseEventArgs& arg) {
 		__super::OnMouseDown(arg);
-		_focus = true;
 		_lastX = 0;
 		_lastY = 0;
-		_careShow = true;
-		_timer.Start();
-
 		auto mbtn = arg.Button;
 		auto point = arg.Location;
 
@@ -483,6 +479,14 @@ namespace EzUI {
 		_down = false;
 		_lastX = 0;
 		_lastY = 0;
+		Invalidate();
+	}
+	void TextBox::OnFocus(const FocusEventArgs& arg)
+	{
+		__super::OnFocus(arg);
+		_focus = true;
+		_careShow = true;
+		_timer.Start();
 		Invalidate();
 	}
 	void TextBox::OnKillFocus(const KillFocusEventArgs& arg)

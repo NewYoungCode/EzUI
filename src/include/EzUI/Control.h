@@ -74,7 +74,8 @@ namespace EzUI {
 		virtual void OnKeyChar(const KeyboardEventArgs& _args);//WM_CAHR消息
 		virtual void OnKeyDown(const KeyboardEventArgs& _args);//WM_CAHR消息
 		virtual void OnKeyUp(const KeyboardEventArgs& _args);//键盘弹起
-		//失去焦点
+		
+		virtual void OnFocus(const FocusEventArgs& _args);//获得焦点
 		virtual void OnKillFocus(const KillFocusEventArgs& _args);//失去焦点的时候发生
 		virtual void OnRemove();//被移除该做的事情
 	public:
