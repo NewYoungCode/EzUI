@@ -1,6 +1,6 @@
 #include "EString.h"
 namespace EzUI {
-	size_t EString::length() const {
+	size_t EString::Length() const {
 		auto* p = this->c_str();
 		size_t pos = 0, count = 0;
 		while (p[pos] && pos < this->size()) {

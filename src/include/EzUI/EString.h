@@ -8,8 +8,8 @@ namespace EzUI {
 	/// </summary>
 	class  UI_EXPORT EString :public std::string {
 	public:
-		//the utf8 length
-		size_t length() const;
+		//the utf8 Length
+		size_t Length() const;
 		EString();
 		EString(const std::string& str)noexcept;
 		EString(const char* szbuf)noexcept;
