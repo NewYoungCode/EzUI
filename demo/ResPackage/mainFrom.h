@@ -26,5 +26,6 @@ public:
 	void OnClose(bool& close)  override;
 	bool FileExists(const EString& fileName);
 	bool OnNotify(Control* sd, EventArgs& args)override;
+	virtual LRESULT WndProc(UINT msg, WPARAM wp, LPARAM lp);
 	virtual ~MainFrm();
 };

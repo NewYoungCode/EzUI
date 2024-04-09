@@ -73,6 +73,11 @@ namespace EzUI {
 		FindClose(findHandle);
 	}
 	void  Resource::Package(const EString& dir, const EString& outFile, const std::function<void(const EString&, int, int)>& packCallback) {
+
+		if (dir.empty()) {
+			ASSERT(!"DirName is Empty !");
+		}
+
 		std::list<Entry> items;
 		std::list<std::wstring> files;
 		__Resource__FindFilesRecursively(dir.unicode(), &files);

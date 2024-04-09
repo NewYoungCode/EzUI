@@ -99,8 +99,32 @@ bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 				task = NULL;
 			}
 
+			if (this->resFile.empty()) {
+				::MessageBoxW(Hwnd(), L"打包文件路径不正确!", L"失败", 0);
+				break;
+			}
+
 			tips2.SetText(L"正在计算...");
 			tips2.Invalidate();
+
+			//处理路径问题
+			EString dir = edit.GetText();
+			EString::Replace(&dir, "\"", "");
+			EString::Replace(&dir, "\\", "/");
+			EString::Replace(&dir, "//", "/");
+			if (dir[dir.size() - 1] == '/') {
+				dir.erase(dir.size() - 1, 1);
+			}
+			resDir = dir;
+			//处理路径问题
+			EString rootDir;
+			size_t pos = dir.rfind('/');
+			EString dirName;
+			if (pos != size_t(-1)) {
+				rootDir = dir.substr(0, pos);
+				dirName = dir.substr(pos + 1);
+			}
+			resFile = rootDir + "/" + dirName + ".bin";
 
 			task = new Task([this]() {
 				Resource::Package(resDir, resFile, [=](const EString& file, int index, int count) {
@@ -126,6 +150,18 @@ bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 		} while (false);
 	}
 	return __super::OnNotify(sd, args);
+}
+LRESULT MainFrm::WndProc(UINT msg, WPARAM wp, LPARAM lp) {
+	//准备做一个解压的功能
+	if (msg == WM_DROPFILES) {
+		HDROP hDrop = (HDROP)wp;
+		UINT numFiles = ::DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0);  //  获取拖入的文件数量
+		TCHAR szFilePath[MAX_PATH] = { 0 };
+		::DragQueryFile(hDrop, 0, szFilePath, sizeof(szFilePath));  //  获取第一个文件路径
+		EString file = szFilePath;
+		int a = 0;
+	}
+	return __super::WndProc(msg, wp, lp);
 }
 MainFrm::~MainFrm() {
 	if (task) {
