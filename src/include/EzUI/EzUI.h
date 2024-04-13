@@ -79,8 +79,17 @@ namespace EzUI {
 				g = std::stoi(rgbList.at(1));
 				b = std::stoi(rgbList.at(2));
 				unsigned char a = 255;
-				if (colorStr.find("rgba") == 0) {
-					a = std::stoi(rgbList.at(3));
+				//考虑到rgba
+				if (rgbList.size() > 3) {
+					std::string aStr = rgbList.at(3);
+					if (aStr.find(".") != std::string::npos) {
+						//浮点型0~1
+						a = 255 * std::atof(aStr.c_str()) + 0.5;
+					}
+					else {
+						//整数型0~255
+						a = std::stoi(aStr.c_str());
+					}
 				}
 				return Color(r, g, b, a);
 			}
@@ -189,7 +198,7 @@ namespace EzUI {
 		OnKeyDown = 512,
 		OnKeyUp = 1024,
 		OnPaint = 2048,
-		OnFocus= 4096,
+		OnFocus = 4096,
 		OnKillFocus = 8192,
 		OnKeyChar = 16384,
 		OnLocation = 32768,

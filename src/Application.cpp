@@ -101,6 +101,7 @@ namespace EzUI {
 			::FreeLibrary(hModNtdll);
 		}
 	}
+
 	Application::Application(int resID, const EString& custResType) {
 		Init();
 		HINSTANCE hInst = EzUI::__EzUI__HINSTANCE;
@@ -148,6 +149,27 @@ namespace EzUI {
 			::DispatchMessage(&msg);
 		}
 		return (int)msg.wParam;
+	}
+
+	void Application::Exit(int exitCode) {
+		::PostQuitMessage(exitCode);
+	}
+
+	bool Application::GetResource(int resId, const EString& resType, std::string* outData) {
+#ifdef UNICODE
+		HRSRC hRsrc = ::FindResource(EzUI::__EzUI__HINSTANCE, MAKEINTRESOURCE(resId), resType.unicode().c_str());
+#else
+		HRSRC hRsrc = ::FindResource(EzUI::__EzUI__HINSTANCE, MAKEINTRESOURCE(resID), resType.c_str());
+#endif
+		if (hRsrc) {
+			auto hModule = ::GetModuleHandle(NULL);
+			char* ptr = (char*)::LoadResource(hModule, hRsrc);
+			auto count = ::SizeofResource(hModule, hRsrc);
+			outData->resize(count);
+			::memcpy((void*)outData->c_str(), ptr, count);
+			return true;
+		}
+		return false;
 	}
 
 };

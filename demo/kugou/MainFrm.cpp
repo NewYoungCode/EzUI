@@ -16,7 +16,6 @@ void MainFrm::InitForm() {
 	main = FindControl("main");
 	//第一次不显示背景图 测试无图绘制的性能
 
-
 	tools = FindControl("tools");
 	center = FindControl("center");
 	centerLeft = FindControl("centerLeft");
@@ -29,8 +28,6 @@ void MainFrm::InitForm() {
 	localList = (VList*)this->FindControl("playList");
 	searchList = (VList*)this->FindControl("searchList");
 	searchEdit = (TextBox*)this->FindControl("searchEdit");
-
-	auto aaa = $(this->GetLayout(), "#centerLeft label");
 
 	player.Name = "player";
 	this->FindControl("vlcDock")->Add(&player);
@@ -162,30 +159,6 @@ void MainFrm::OnClose(bool& cal) {
 }
 void MainFrm::OnPaint(PaintEventArgs& _arg) {
 	__super::OnPaint(_arg);
-
-
-	/*Font font(L"宋体", 20);
-	TextLayout text(L"你好hello word!", font);
-	Size box = text.GetFontBox();
-	_arg.Graphics.SetFont(font);
-	_arg.Graphics.SetColor(Color::Black);
-	_arg.Graphics.DrawString(text, { 500,200 });
-	TextLayout text2(L"你好hello word!", font, box);
-	_arg.Graphics.DrawString(text2, { 500,300 });*/
-
-	//{
-	//	Rect rect2({ 100,100,100,30 });
-	//	D2D_RECT_F rect{ (FLOAT)rect2.X,(FLOAT)rect2.Y,(FLOAT)rect2.GetRight(),(FLOAT)rect2.GetBottom() };
-	//	_arg.Graphics.SetColor(Color::Black);
-	//	_arg.Graphics.SetStrokeStyle(StrokeStyle::Dash, 3);
-	//	_arg.Graphics.FillRectangle(rect2);
-	//}
-
-	/*Rect rect2({ 100,100,100,30 });
-	D2D_RECT_F rect{ (FLOAT)rect2.X,(FLOAT)rect2.Y,(FLOAT)rect2.GetRight(),(FLOAT)rect2.GetBottom() };
-	_arg.Graphics.SetColor(Color::Red);
-	_arg.Graphics.SetStrokeStyle(StrokeStyle::Dash, 3);
-	_arg.Graphics.FillRectangle(rect2);*/
 }
 size_t MainFrm::FindLocalSong(const EString& hash)
 {
@@ -245,11 +218,6 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 				bkImg->SizeMode = ImageSizeMode::CenterImage;
 			}
 		}
-		else {
-			//如果没下载到歌手写真就使用头像
-			//bkImg = new Image(headFileData.c_str(), headFileData.size());
-			//bkImg->SizeMode = ImageSizeMode::CenterImage;
-		}
 	}
 
 	this->BeginInvoke([=]() {
@@ -275,6 +243,7 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 }
 void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 {
+	//回车搜索歌曲
 	if (wparam == 13) {
 		global::page = 1;
 		global::nextPage = true;
@@ -332,6 +301,21 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 
 			if (!playUrl.empty()) {
 				EString SingerName = sender->GetAttribute("SingerName");
+				auto w = SingerName.unicode();
+				auto singers = SingerName.Split("、");
+				if (!singers.empty()) {
+					//多个歌手的情况下 随机选择一个歌手的名称进行下载头像和写真
+					// 设置随机数生成器
+					std::random_device rd;  // 获取随机设备种子
+					std::mt19937 gen(rd()); // 使用 Mersenne Twister 算法生成随机数
+					// 定义随机数范围
+					int lower_bound = 0; // 下限
+					int upper_bound = singers.size() - 1; // 上限
+					// 生成随机数
+					std::uniform_int_distribution<> dis(lower_bound, upper_bound);
+					int random_num = dis(gen);
+					SingerName = singers.at(random_num);
+				}
 
 				if (downloadTask) {
 					delete downloadTask;
@@ -404,13 +388,6 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 		if (sender->Name == "login") {
 			this->ShowFullScreen();
 			return false;
-		}
-		if (sender->Name == "singer") {
-			/*MainFrm* m = new MainFrm();
-			m->SetSize({ 800,600 });
-			m->Show();*/
-			player.OpenPath("C:\\Users\\ly\\Videos\\TubeGet\\[4K60FPS] Girls' Generation - The Boys.webm");
-			player.Play();
 		}
 		if (sender->Name == "next") {
 			int pos = this->FindLocalSong(this->nowSong);

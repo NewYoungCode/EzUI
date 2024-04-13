@@ -1,59 +1,59 @@
 #include "mainFrom.h"
+#include "EzUI/FileSystem.h"
 
-MainFrm::MainFrm(const EString& cmdLine) :Window(500, 300) {
+const WCHAR* xml = L"<vbox id=\"main\"> <hbox height=\"40\">  <radiobutton class=\"btnTab\" tablayout=\"tab\" checked=\"true\" text=\"打包\" width=\"100\"></radiobutton>  <radiobutton class=\"btnTab\" tablayout=\"tab\" text=\"解包\" width=\"100\"></radiobutton> </hbox> <tablayout id=\"tab\">  <hbox id=\"page1\">   <spacer width=\"10\"></spacer>   <vbox>    <spacer height=\"10\"></spacer>    <label height=\"30\" halign=\"left\" text=\"请选择你要打包的目录 :\"></label>    <hbox height=\"30\">  <textbox class=\"edit\" id=\"editPackDir\"></textbox> <spacer width=\"10\"></spacer><button class=\"btn\" id=\"btnBrowserDir\" width=\"100\" text=\"浏览\"></button>   </hbox>    <label halign=\"left\" style=\"color:#ff0000\" id=\"labelTipsErr\" height=\"20\"></label>    <spacer></spacer>    <label height=\"30\" halign=\"left\" text=\"请选择输出目录 :\"></label>    <hbox height=\"30\">  <textbox class=\"edit\" id=\"editPackName\"></textbox> <spacer width=\"10\"></spacer><button class=\"btn\" id=\"btnSatrtPackage\" width=\"100\" text=\"开始打包\"></button>   </hbox>    <spacer></spacer>    <!-- <hbox height=\"30\">  <spacer></spacer> <button class=\"btn\" id=\"btnSatrtPackage\" width=\"100\" text=\"开始\"></button> <spacer></spacer></hbox>-->    <spacer height=\"10\"></spacer>   </vbox>   <spacer width=\"10\"></spacer>  </hbox>  <hbox id=\"page2\">   <spacer width=\"10\"></spacer>   <vbox>    <spacer height=\"10\"></spacer>    <label height=\"30\" halign=\"left\" text=\"请选择你要预览的文件 :\"></label>    <hbox height=\"30\">  <textbox class=\"edit\" readonly=\"true\" id=\"editResFile\"></textbox> <spacer width=\"10\"></spacer><button class=\"btn\" id=\"btnBrowserFile\" width=\"100\" text=\"浏览\"></button><spacer width=\"10\"></spacer><button class=\"btn\" height=\"30\" id=\"btnUnPackage\" width=\"100\" text=\"解压至...\"></button>   </hbox>    <spacer height=\"10\"></spacer>    <vlist id=\"listFiles\" scrollbar=\"fileScrollbar\" style=\"background-color:rgba(175, 106, 106, 0.5)\"></vlist>   </vbox>   <spacer width=\"10\"></spacer>  </hbox> </tablayout> <hbox margin=\"0,10\" height=\"30\">  <label id=\"labelTips\" text=\"技术支持 718987717@qq.com/19980103ly@gmail.com\"></label> </hbox></vbox><style> .btn {  border-radius: 5;  border: 1;  border-color: #D0D0D0;  background-color: #FDFDFD;  font-size: 13; }  .btn:hover {   border-color: #0078D4;   background-color: #E0EEF9;  }  .btn:active {   font-size: 14;  } .edit {  border: 1;  border-radius: 2;  border-color: #808080; } #tab {  background-color: #F0F0F0; } .btnTab:checked {  background-color: #F0F0F0; } .btnTab:hover {  cursor: pointer; } #fileScrollbar {  border-radius: 5;  background-color: rgba(50,50,50,0.5);  fore-color: rgba(200,200,200,0.5); } #fileScrollbar:active {  fore-color: rgba(200,200,200,0.8); }</style>";
+
+void MainFrm::Init() {
 	this->SetText(L"EzUI资源打包器");
-	this->SetLayout(&layout);
+	//ui.LoadXmlFile("main.html");
+	ui.LoadXml(xml);
+	ui.SetupUI(this);
+	//第一页的控件
+	this->tab = (TabLayout*)this->FindControl("tab");
+	this->editPackDir = (TextBox*)this->FindControl("editPackDir");
+	this->editPackName = (TextBox*)this->FindControl("editPackName");
+	this->btnSatrtPackage = (Button*)this->FindControl("btnSatrtPackage");
+	this->labelTipsErr = (Label*)this->FindControl("labelTipsErr");
+	this->labelTips = (Label*)this->FindControl("labelTips");
+	this->editPackDir->TextChanged = [=](const EString text)->void {
+		this->OnPackDirChange();
+		};
 
-	tips.SetText(L"请设置输出文件名");
-	tips.SetFixedHeight(35);
-	tips.Style.ForeColor = Color::Gray;
-	tips.SetParent(&layout);
+	//第二页的控件
+	this->editResFile = (TextBox*)this->FindControl("editResFile");
+	this->btnBrowserFile = (Button*)this->FindControl("btnBrowserFile");
+	this->listFiles = (VList*)this->FindControl("listFiles");
+	this->btnUnPackage = (Button*)this->FindControl("btnUnPackage");
+}
 
-	edit.Style.Border = 1;
-	edit.Style.Border.Color = Color::Gray;
-	edit.SetFixedHeight(35);
-	edit.SetParent(&layout);
+MainFrm::MainFrm(const EString& cmdLine) :Window(600, 400) {
+	Init();
+	editPackDir->SetText(cmdLine);
+	OnPackDirChange();
+}
 
-	layout.Add(new Spacer);
-
-	btn.Style.Border.Radius = 4;
-	btn.Style.Border = 1;
-	btn.Style.Border.Color = Color::Gray;
-	btn.HoverStyle.BackColor = Color(100, 100, 100, 100);
-	btn.ActiveStyle.BackColor = Color::White;
-
-	btn.SetFixedSize({ 100,30 });
-	btn.SetText(L"确认");
-	btn.SetParent(&layout);
-
-	layout.Add(new Spacer);
-
-	tips2.SetFixedHeight(40);
-	tips2.TextAlign = TextAlign::MiddleCenter;
-	tips2.SetParent(&layout);
-
-	bottom.SetFixedHeight(10);
-	bottom.SetParent(&layout);
-
-	bar.SetFixedWidth(1);
-	bar.Style.BackColor = Color::Blue;
-	bar.SetParent(&bottom);
-
-	bottom.Add(new Spacer);
-
-	EString dir = cmdLine;
-	if (dir.empty()) {
+void MainFrm::OnPackDirChange()
+{
+	EString dir = editPackDir->GetText();
+	if (dir.empty() || !PathExist(dir)) {
+		editPackName->SetText("");
+		editPackName->Invalidate();
+		labelTipsErr->SetText(L"打包目录无效!");
+		labelTipsErr->Invalidate();
 		return;
 	}
+	else {
+		labelTipsErr->SetText("");
+		labelTipsErr->Invalidate();
+	}
+
 	EString::Replace(&dir, "\"", "");
 	EString::Replace(&dir, "\\", "/");
 	EString::Replace(&dir, "//", "/");
 	if (dir[dir.size() - 1] == '/') {
 		dir.erase(dir.size() - 1, 1);
 	}
-
-	resDir = dir;
-
+	EString resDir = dir;
 	EString rootDir;
 	size_t pos = dir.rfind('/');
 	EString dirName;
@@ -61,9 +61,9 @@ MainFrm::MainFrm(const EString& cmdLine) :Window(500, 300) {
 		rootDir = dir.substr(0, pos);
 		dirName = dir.substr(pos + 1);
 	}
-
-	resFile = rootDir + "/" + dirName + ".bin";
-	edit.SetText(resFile);
+	EString resFile = rootDir + "/" + dirName + ".bin";
+	editPackName->SetText(resFile);
+	editPackName->Invalidate();
 }
 void MainFrm::OnClose(bool& close) {
 	Application::Exit(0);
@@ -79,92 +79,143 @@ bool MainFrm::FileExists(const EString& fileName) {
 	return false;
 }
 bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
-	if (args.EventType == Event::OnMouseClick && sd == &btn) {
-		do
-		{
-			this->resFile = edit.GetText();
-
-			if (task && !task->IsStopped()) {
-				::MessageBoxW(Hwnd(), L"请等待上次任务完成!", L"失败", 0);
-				break;
+	if (args.EventType == Event::OnMouseClick) {
+		if (sd->Name == "btnBrowserDir") {
+			EString dir = ShowFolderDialog(Hwnd(), "", "");
+			if (!dir.empty()) {
+				this->editPackDir->SetText(dir);
+				this->editPackDir->Invalidate();
+				this->OnPackDirChange();
 			}
+		}
+		if (sd->Name == "btnSatrtPackage") {
+			do
+			{
+				EString resDir = editPackDir->GetText();
+				EString resFile = editPackName->GetText();
 
-			if (FileExists(resFile) && ::DeleteFileW(resFile.unicode().c_str()) == FALSE) {
-				::MessageBoxW(Hwnd(), L"文件已存在且无法覆盖!", L"失败", 0);
-				break;
-			}
+				if (task && !task->IsStopped()) {
+					::MessageBoxW(Hwnd(), L"请等待上次任务完成!", L"失败", 0);
+					break;
+				}
 
-			if (task) {
-				delete task;
-				task = NULL;
-			}
+				if (FileExists(resFile) && ::DeleteFileW(resFile.unicode().c_str()) == FALSE) {
+					::MessageBoxW(Hwnd(), L"文件已存在且无法覆盖!", L"失败", 0);
+					break;
+				}
 
-			if (this->resFile.empty()) {
-				::MessageBoxW(Hwnd(), L"打包文件路径不正确!", L"失败", 0);
-				break;
-			}
+				if (task) {
+					delete task;
+					task = NULL;
+				}
 
-			tips2.SetText(L"正在计算...");
-			tips2.Invalidate();
+				if (resFile.empty()) {
+					::MessageBoxW(Hwnd(), L"打包文件路径不正确!", L"失败", 0);
+					break;
+				}
 
-			//处理路径问题
-			EString dir = edit.GetText();
-			EString::Replace(&dir, "\"", "");
-			EString::Replace(&dir, "\\", "/");
-			EString::Replace(&dir, "//", "/");
-			if (dir[dir.size() - 1] == '/') {
-				dir.erase(dir.size() - 1, 1);
-			}
-			resDir = dir;
-			//处理路径问题
-			EString rootDir;
-			size_t pos = dir.rfind('/');
-			EString dirName;
-			if (pos != size_t(-1)) {
-				rootDir = dir.substr(0, pos);
-				dirName = dir.substr(pos + 1);
-			}
-			resFile = rootDir + "/" + dirName + ".bin";
+				labelTips->SetText(L"正在计算...");
+				labelTips->Invalidate();
 
-			task = new Task([this]() {
-				Resource::Package(resDir, resFile, [=](const EString& file, int index, int count) {
-					this->Invoke([&]() {
-						float rate = (index + 1) * 1.0f / count;
-						int width = bottom.Width() * rate + 0.5;
-						bar.SetFixedWidth(width);
-						bottom.Invalidate();
-
-						tips2.SetText(EString(L"正在打包\"") + file + "\"");
-						tips2.Invalidate();
+				task = new Task([resDir, resFile, this]() {
+					Resource::Package(resDir, resFile, [=](const EString& file, int index, int count) {
+						this->Invoke([&]() {
+							int rate = (index + 1) * 1.0f / count * 100 + 0.5;
+							labelTips->SetText(EString("(" + std::to_string(rate) + "%)") + EString(L"正在打包\"") + file + "\"");
+							labelTips->Invalidate();
+							});
+						Sleep(2);
 						});
-					Sleep(2);
+
+					this->Invoke([&]() {
+						labelTips->SetText(L"打包成功!");
+						labelTips->Invalidate();
+						::MessageBoxW(Hwnd(), L"打包成功!", L"成功", 0);
+						});
 					});
 
-				this->Invoke([&]() {
-					tips2.SetText(L"打包成功!");
-					tips2.Invalidate();
-					::MessageBoxW(Hwnd(), L"打包成功!", L"成功", 0);
-					});
-				});
-
-		} while (false);
+			} while (false);
+		}
+		if (sd->Name == "btnBrowserFile") {
+			EString resFile = ShowFileDialog(Hwnd());
+			OnResFileChange(resFile);
+		}
+		if (sd->Name == "btnUnPackage") {
+			EString resDir = ShowFolderDialog(Hwnd());
+			if (!resDir.empty() && PathExist(resDir)) {
+				for (auto& it : this->res->Items) {
+					EString fileName = resDir + "/" + it.name;
+					Directory::Create(Path::GetDirectoryName(fileName));
+					File::Delete(fileName);
+					EString data;
+					this->res->GetFile(it, &data);
+					File::Write(data.c_str(), data.size(), fileName);
+				}
+				::MessageBoxW(Hwnd(), L"解压完成!", L"", 0);
+			}
+		}
 	}
 	return __super::OnNotify(sd, args);
+}
+void MainFrm::OnResFileChange(EzUI::EString& resFile)
+{
+	do
+	{
+		if (FileExists(resFile)) {
+			Resource* newRes = new Resource(resFile);
+			if (!newRes->IsGood) {
+				::MessageBoxW(Hwnd(), L"不是标准的资源文件", L"错误", 0);
+				delete newRes;
+				break;
+			}
+			if (res) {
+				delete res;
+				res = NULL;
+			}
+			res = newRes;
+
+			listFiles->Clear(true);
+			for (auto& item : res->Items) {
+				FileItem* fileItem = new FileItem(item.name, item.size);
+				listFiles->Add(fileItem);
+			}
+			listFiles->Invalidate();
+			this->editResFile->SetText(resFile);
+			this->editResFile->Invalidate();
+		}
+	} while (false);
 }
 LRESULT MainFrm::WndProc(UINT msg, WPARAM wp, LPARAM lp) {
 	//准备做一个解压的功能
 	if (msg == WM_DROPFILES) {
 		HDROP hDrop = (HDROP)wp;
-		UINT numFiles = ::DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0);  //  获取拖入的文件数量
-		TCHAR szFilePath[MAX_PATH] = { 0 };
-		::DragQueryFile(hDrop, 0, szFilePath, sizeof(szFilePath));  //  获取第一个文件路径
+		UINT numFiles = ::DragQueryFileW(hDrop, 0xFFFFFFFF, NULL, 0);  //  获取拖入的文件数量
+		TCHAR szFilePath[MAX_PATH]{ 0 };
+		::DragQueryFileW(hDrop, 0, szFilePath, sizeof(szFilePath));  //  获取第一个文件路径
 		EString file = szFilePath;
-		int a = 0;
+
+		if (tab->GetPageIndex() == 0) {
+			//打包
+			if (PathExist(file)) {
+				this->editPackDir->SetText(file);
+				this->editPackDir->Invalidate();
+				this->OnPackDirChange();
+			}
+		}
+		else if (tab->GetPageIndex() == 1) {
+			//解包
+			if (FileExists(file)) {
+				this->OnResFileChange(file);
+			}
+		}
 	}
 	return __super::WndProc(msg, wp, lp);
 }
 MainFrm::~MainFrm() {
 	if (task) {
 		delete task;
+	}
+	if (res) {
+		delete res;
 	}
 }

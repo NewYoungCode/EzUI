@@ -143,6 +143,7 @@ namespace EzUI {
 	}
 
 	void Resource::UnPackage() {
+		*(bool*)&IsGood = false;
 		std::list<Entry>& items = (std::list<Entry>&)this->Items;
 		auto& ifs = *(this->rStream);
 		if (ifs.size() < 8) {
@@ -163,6 +164,7 @@ namespace EzUI {
 			ASSERT(!"error resource");
 			return;
 		}
+		*(bool*)&IsGood = true;
 		//开始读取文件剩余条目
 		ifs.seekg(headOffset);
 		size_t endPos = ifs.size() - 4;
@@ -216,6 +218,11 @@ namespace EzUI {
 			}
 		}
 		return false;
+	}
+	void Resource::GetFile(const Entry& item, std::string* out) {
+		out->resize(item.size);
+		rStream->seekg(item.offset);
+		rStream->read((char*)out->c_str(), item.size);
 	}
 };
 

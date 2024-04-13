@@ -5,7 +5,7 @@
 
 namespace EzUI {
 	//去除空格或者其他符号 双引号内的空格不会去除
-	void TrimStyle(EString& str, CHAR _char = ' ') {
+	inline void TrimStyle(EString& str, CHAR _char = ' ') {
 		CHAR* bufStr = new CHAR[str.size() + 1]{ 0 };
 		size_t pos = 0;
 		char count = 0;
@@ -23,7 +23,7 @@ namespace EzUI {
 		str = bufStr;
 		delete bufStr;
 	}
-	EString Attribute(TiXmlElement* node, const char* szstr) {
+	inline EString Attribute(TiXmlElement* node, const char* szstr) {
 		auto str = node->Attribute(szstr);
 		if (str == NULL) return "";
 		return str;
@@ -159,7 +159,7 @@ namespace EzUI {
 		}
 		return ctl;
 	}
-	void __ApplayStyle(Control* ctl, const EString& selectorName, const std::list<UIManager::Selector>& selectors, const std::function<void(Image*)>& BuildImageCallback)
+	inline void __ApplayStyle(Control* ctl, const EString& selectorName, const std::list<UIManager::Selector>& selectors, const std::function<void(Image*)>& BuildImageCallback)
 	{
 		for (auto& it : selectors) {
 			if (it.selectorName == selectorName) {
@@ -210,9 +210,9 @@ namespace EzUI {
 		//为滚动条设置样式 xml控件中设置 scrollbar属性即可单独为滚动条设置样式
 		ScrollBar* sb = ctl->GetScrollBar();
 		if (sb && !sb->Name.empty()) {
-			__ApplayStyle(ctl, "#" + sb->Name, selectors, BuildImageCallback);
-			__ApplayStyle(ctl, "#" + sb->Name + ":active", selectors, BuildImageCallback);
-			__ApplayStyle(ctl, "#" + sb->Name + ":hover", selectors, BuildImageCallback);
+			__ApplayStyle(sb, "#" + sb->Name, selectors, BuildImageCallback);
+			__ApplayStyle(sb, "#" + sb->Name + ":active", selectors, BuildImageCallback);
+			__ApplayStyle(sb, "#" + sb->Name + ":hover", selectors, BuildImageCallback);
 		}
 	}
 
@@ -247,7 +247,6 @@ namespace EzUI {
 			this->controls.emplace_front(ctl, tagNamee);
 		}
 	}
-
 
 	void UIManager::AnalysisStyle(const EString& styleStr, std::list<UIManager::Selector>* out) {
 		EString style = styleStr;
@@ -313,7 +312,6 @@ namespace EzUI {
 			}
 		}
 	}
-
 
 	Control* UIManager::OnBuildControl(const EString& nodeName) {
 

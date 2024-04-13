@@ -33,9 +33,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//计算机\HKEY_CLASSES_ROOT\Directory\shell\EzUI_ResPackage
 
 	Application app;
+
 	app.EnableHighDpi();
 
 	MainFrm frm(lpCmdLine);
+
 	frm.Show();
 
 	return app.Exec();

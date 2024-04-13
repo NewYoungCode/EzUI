@@ -215,4 +215,10 @@ namespace EzUI {
 			}
 		}
 	}
+
+	EString EString::ToString(double number, int keepBitSize) {
+		std::ostringstream oss;
+		oss << std::fixed << std::setprecision(keepBitSize) << number;
+		return oss.str();
+	}
 };

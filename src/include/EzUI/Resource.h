@@ -2,7 +2,7 @@
 #include "EString.h"
 namespace EzUI {
 	/// <summary>
-	/// 资源类
+	/// 框架中的资源类
 	/// </summary>
 	class UI_EXPORT Resource {
 	public:
@@ -31,6 +31,7 @@ namespace EzUI {
 		void UnPackage();
 	public:
 		const std::list<Entry> Items;
+		const bool IsGood = false;
 		//对资源目录进行打包
 		UI_EXPORT static void Package(const EString& dir, const EString& outFile, const std::function<void(const EString&, int, int)>& packCallback = NULL);
 	public:
@@ -41,5 +42,7 @@ namespace EzUI {
 		Resource(HRSRC hRsrc);
 		//寻找资源中的文件
 		bool GetFile(const EString& fileName, std::string* out);
+		//传入item直接返回数据
+		void GetFile(const Entry& item, std::string* out);
 	};
 };

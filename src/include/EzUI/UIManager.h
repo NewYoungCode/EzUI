@@ -88,7 +88,7 @@ namespace EzUI {
 		};
 	};
 
-	//选择器
+	//选择器(多功能选择器暂时未完善)
 	class UI_EXPORT _Selector
 	{
 	private:

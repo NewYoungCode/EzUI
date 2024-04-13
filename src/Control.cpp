@@ -1,21 +1,21 @@
 #include "Control.h"
 namespace EzUI {
-	bool __IsValid(const int& value) {
+	inline bool __IsValid(const int& value) {
 		return value != 0;
 	}
-	bool __IsValid(const float& value) {
+	inline bool __IsValid(const float& value) {
 		return value != 0;
 	}
-	bool __IsValid(const Image* value) {
+	inline bool __IsValid(const Image* value) {
 		return value != NULL;
 	}
-	bool __IsValid(const Color& value) {
+	inline bool __IsValid(const Color& value) {
 		return value.GetValue() != 0;
 	}
-	bool __IsValid(const EString& value) {
+	inline bool __IsValid(const EString& value) {
 		return !value.empty();
 	}
-	bool __IsValid(const std::wstring& value) {
+	inline bool __IsValid(const std::wstring& value) {
 		return !value.empty();
 	}
 
