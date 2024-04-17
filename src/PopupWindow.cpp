@@ -55,6 +55,10 @@ namespace EzUI {
 		return __super::ShowModal(disableOnwer);
 	}
 
+	PopupWindow::~PopupWindow()
+	{
+	}
+
 	void PopupWindow::OnKillFocus(HWND hWnd)
 	{
 		::DestroyWindow(Hwnd());

@@ -25,5 +25,6 @@ namespace EzUI {
 		PopupWindow(int width, int height, Control* ownerCtl = NULL);
 		virtual void Show()override;
 		virtual int ShowModal(bool disableOnwer = false)override;
+		virtual ~PopupWindow();
 	};
 };

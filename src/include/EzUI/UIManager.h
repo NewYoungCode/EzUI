@@ -15,6 +15,7 @@
 #include "TabLayout.h"
 #include "PictureBox.h"
 #include "Window.h"
+#include "ComBox.h"
 namespace EzUI {
 	class IFrame;
 	class UI_EXPORT UIManager {

@@ -39,8 +39,8 @@ namespace EzUI {
 		EString::Tolower(&tagName);
 		do
 		{
-			if (tagName == "control") {
-				ctl = new Control();
+			if (tagName == "control" || tagName == "layout" || tagName == "box") {
+				ctl = new Control;
 				break;
 			}
 			if (tagName == "vlist") {
@@ -57,10 +57,6 @@ namespace EzUI {
 			}
 			if (tagName == "hlayout" || tagName == "hbox") {
 				ctl = new HLayout;
-				break;
-			}
-			if (tagName == "layout" || tagName == "box") {
-				ctl = new Control;
 				break;
 			}
 			if (tagName == "tilelist") {
@@ -99,6 +95,10 @@ namespace EzUI {
 				ctl = new CheckBox;
 				break;
 			}
+			if (tagName == "combox") {
+				ctl = new ComBox;
+				break;
+			}
 			if (tagName == "edit" || tagName == "textbox") {
 				ctl = new TextBox;
 				break;
@@ -111,15 +111,16 @@ namespace EzUI {
 				ctl = new IFrame;
 				break;
 			}
-			if (ctl == NULL) {
-				ctl = this->OnBuildControl(tagName);
-			}
-			if (ctl == NULL) {
-				::MessageBoxA(NULL, EString("UnKnow Element \"" + tagName + "\"").c_str(), "UIManager Erro", NULL);
-				ctl = new Control;
-			}
+
 		} while (false);
 
+		if (ctl == NULL) {
+			ctl = this->OnBuildControl(tagName);
+		}
+		if (ctl == NULL) {
+			::MessageBoxA(NULL, EString("UnKnow Element \"" + tagName + "\"").c_str(), "UIManager Erro", NULL);
+			ctl = new Control;
+		}
 		//设置控件属性
 		TiXmlAttribute* attr = node->FirstAttribute();
 		do
