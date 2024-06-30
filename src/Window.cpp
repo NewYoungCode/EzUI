@@ -747,7 +747,7 @@ namespace EzUI {
 		}
 		}
 		return ::DefWindowProc(Hwnd(), uMsg, wParam, lParam);
-		}
+	}
 
 	void Window::DoPaint(HDC winHDC, const Rect& rePaintRect) {
 #define COUNT_ONPAINT 0
@@ -1097,7 +1097,7 @@ namespace EzUI {
 			return false;
 		}
 		if (args.EventType == Event::OnMouseDown) {
-			if (sender->Action == ControlAction::MoveWindow || sender == _layout) {
+			if (sender->Action == ControlAction::MoveWindow/* || sender == _layout*/) {
 				MoveWindow();
 				return false;
 			}
@@ -1145,4 +1145,4 @@ namespace EzUI {
 		}
 		return false;
 	}
-		};
+};
