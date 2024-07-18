@@ -809,12 +809,12 @@ namespace EzUI {
 			}
 		}
 
-		const std::list<Control*>* pTemp;
+		const Controls* pTemp;
 		if (outCtl->GetViewControls().size() > 0) {
 			pTemp = &outCtl->GetViewControls();
 		}
 		else {
-			pTemp = (std::list<Control*>*)(&(outCtl->GetControls()));
+			pTemp = (Controls*)(&(outCtl->GetControls()));
 		}
 
 		for (auto itor = pTemp->rbegin(); itor != pTemp->rend(); ++itor) {

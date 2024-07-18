@@ -8,7 +8,7 @@ namespace EzUI {
 	private:
 		Size _bufSize;
 		EBitmap* _bufBitmap = NULL;
-		Rect clipRect;
+		Rect _clipRect;
 		HWND _hWnd = NULL;
 	private:
 		void setA(const int& x,const int& y,const BYTE& A);

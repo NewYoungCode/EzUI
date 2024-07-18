@@ -193,7 +193,7 @@ namespace EzUI {
 		{//加载样式 使用类选择器  
 			EString _class = ctl->GetAttribute("class");
 			EString::Replace(&_class, "  ", " ");
-			auto classs = _class.Split(" ");
+			auto classs = _class.split(" ");
 			for (auto& className : classs) {
 				__ApplayStyle(ctl, "." + className, selectors, BuildImageCallback);
 				__ApplayStyle(ctl, "." + className + ":checked", selectors, BuildImageCallback);
@@ -291,7 +291,7 @@ namespace EzUI {
 				style_type = name.substr(pos4 + 1);
 			}
 			//考虑到多个选择器
-			auto names = name.Split(",");
+			auto names = name.split(",");
 			for (auto& name : names) {
 				//添加至集合
 				UIManager::Selector selector;
@@ -451,7 +451,7 @@ namespace EzUI {
 	_Selector::_Selector(Control* ct, const EString& _mathStr)
 	{
 		EString mathStr = _mathStr;
-		mathStr.Replace("  ", " ");
+		mathStr.replace("  ", " ");
 		//模仿jquery进行元素匹配
 	}
 	_Selector::~_Selector()

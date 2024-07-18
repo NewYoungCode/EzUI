@@ -76,9 +76,9 @@ inline bool CreatePath(const EString& path) {
 	//创建多级目录
 	if (path.find(":") != size_t(-1)) {
 		EString dir = path + "/";
-		dir = dir.Replace("\\", "/");
-		dir = dir.Replace("//", "/");
-		std::vector<std::string> arr = dir.Split("/");
+		dir = dir.replace("\\", "/");
+		dir = dir.replace("//", "/");
+		std::vector<std::string> arr = dir.split("/");
 		EString root;
 		if (arr.size() > 0) {
 			root += arr[0] + "/";

@@ -8,7 +8,7 @@ namespace EzUI {
 		UpdateShadowBox();
 		PublicData->InvalidateRect = [this](const Rect& rect) ->void {
 			{
-				std::unique_lock<std::mutex> autoLock(mtx);
+				std::unique_lock<std::mutex> autoLock(_mtx);
 				//标记无效区域
 				this->InvalidateRect(rect);
 			}
@@ -20,7 +20,7 @@ namespace EzUI {
 
 		PublicData->UpdateWindow = [this]()->void {
 			//实时绘制
-			if (IsVisible() && !_InvalidateRect.IsEmptyArea()) {
+			if (IsVisible() && !_invalidateRect.IsEmptyArea()) {
 				this->Paint();
 			}
 			};
@@ -29,12 +29,12 @@ namespace EzUI {
 			while (true)
 			{
 				{
-					std::unique_lock<std::mutex> autoLock(mtx);
+					std::unique_lock<std::mutex> autoLock(_mtx);
 					condv.wait(autoLock, [this]()->bool {
 						if (this->PublicData->HANDLE == NULL) {
 							this->_bStop = true;
 						}
-						return (this->_bStop || !_InvalidateRect.IsEmptyArea());
+						return (this->_bStop || !_invalidateRect.IsEmptyArea());
 						});
 					if (this->_bStop) {
 						break;
@@ -51,7 +51,7 @@ namespace EzUI {
 
 	LayeredWindow::~LayeredWindow() {
 		{
-			std::unique_lock<std::mutex> autoLock(mtx);
+			std::unique_lock<std::mutex> autoLock(_mtx);
 			_bStop = true;
 		}
 		condv.notify_all();
@@ -80,7 +80,7 @@ namespace EzUI {
 		if (rect.GetRight() > Width) {
 			rect.Width = Width - rect.X;
 		} //这段代码是保证重绘区域一定是在窗口内
-		Rect::Union(_InvalidateRect, _InvalidateRect, rect);
+		Rect::Union(_invalidateRect, _invalidateRect, rect);
 		//闪烁问题找到了 如果永远重绘整个客户端将不会闪烁
 		//_InvalidateRect = clientRect;
 	}
@@ -94,12 +94,12 @@ namespace EzUI {
 
 	void LayeredWindow::Paint()
 	{
-		if (_winBitmap && !_InvalidateRect.IsEmptyArea()) {
-			_winBitmap->Earse(_InvalidateRect);//清除背景
+		if (_winBitmap && !_invalidateRect.IsEmptyArea()) {
+			_winBitmap->Earse(_invalidateRect);//清除背景
 			HDC winHDC = _winBitmap->GetHDC();
-			DoPaint(winHDC, _InvalidateRect);
+			DoPaint(winHDC, _invalidateRect);
 			PushDC(winHDC);//updatelaredwindow 更新窗口
-			_InvalidateRect = Rect();//重置区域
+			_invalidateRect = Rect();//重置区域
 		}
 	}
 

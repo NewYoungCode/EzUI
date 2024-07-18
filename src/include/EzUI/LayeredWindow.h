@@ -10,11 +10,11 @@ namespace EzUI {
 	{
 	private:
 		void PushDC(HDC hdc);
-		Rect _InvalidateRect;
+		Rect _invalidateRect;
 		EBitmap* _winBitmap = NULL;
 		bool _bStop = false;
 		Task* _paintTask = NULL;
-		std::mutex mtx;
+		std::mutex _mtx;
 		std::condition_variable condv;
 		void Paint();
 	protected:

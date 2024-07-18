@@ -75,7 +75,7 @@ namespace EzUI {
 	}
 
 	void ShadowBox::setA(const int& x, const int& y, const BYTE& a) {
-		if (clipRect.Contains(x, y)) { //不允许绘制在OWner窗口区域
+		if (_clipRect.Contains(x, y)) { //不允许绘制在OWner窗口区域
 			return;
 		}
 		DWORD* point = (DWORD*)_bufBitmap->GetPixel() + (x + y * _bufBitmap->Width);//起始地址+坐标偏移
@@ -96,7 +96,7 @@ namespace EzUI {
 		BOOL empty = ::GetWindowRect(OwnerWnd, &Orect);
 		Size paintSize{ Orect.right - Orect.left,Orect.bottom - Orect.top };//父控件作图大小
 
-		clipRect = Rect({ _shadowWidth ,_shadowWidth }, paintSize);//裁剪区域
+		_clipRect = Rect({ _shadowWidth ,_shadowWidth }, paintSize);//裁剪区域
 		int x = 0;
 		int y = 0;
 		int width = paintSize.Width + _shadowWidth * 2;

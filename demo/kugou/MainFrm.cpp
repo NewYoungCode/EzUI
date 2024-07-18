@@ -184,13 +184,13 @@ size_t MainFrm::FindLocalSong(const EString& hash)
 }
 void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 {
-	auto  SingerName = _SingerName.Split(",")[0];
+	auto  SingerName = _SingerName.split(",")[0];
 	std::string headFileData;
 	//下载歌手头像 酷狗的接口
 	{
 		headImg = NULL;
 		WebClient wc2;
-		auto code = wc2.HttpGet(headImageUrl.Replace("{size}", "400"), headFileData, 5);
+		auto code = wc2.HttpGet(headImageUrl.replace("{size}", "400"), headFileData, 5);
 		if (code == 200) {
 			headImg = new Image(headFileData.c_str(), headFileData.size());
 			headImg->SizeMode = ImageSizeMode::CenterImage;
@@ -314,7 +314,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			if (!playUrl.empty()) {
 				EString SingerName = sender->GetAttribute("SingerName");
 				auto w = SingerName.unicode();
-				auto singers = SingerName.Split("、");
+				auto singers = SingerName.split("、");
 				if (!singers.empty()) {
 					//多个歌手的情况下 随机选择一个歌手的名称进行下载头像和写真
 					// 设置随机数生成器

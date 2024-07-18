@@ -7,8 +7,8 @@ namespace EzUI {
 		bool* _isRemove = NULL;//控件是否已经被移除或释放
 		bool _visible = true;//控件是否可见 此标志为true的时候 可能实际中并不会可见 
 		float _scale = 1.0f;//当前控件的dpi缩放
-		std::list<Control*> _controls;//子控件
-		std::list<Control*> _spacers;//存储弹簧控件
+		Controls _controls;//子控件
+		Controls _spacers;//存储弹簧控件
 		//布局状态AddControl丶InsertControl丶RemoveControl丶OnSize时候此标志为挂起 调用ResumeLayout标志为布局中 当调用OnLayout()之后此标志为None
 		EzUI::LayoutState _layoutState = EzUI::LayoutState::None;
 		EString _tipsText;//鼠标悬浮的提示文字
@@ -26,7 +26,7 @@ namespace EzUI {
 		Control& operator=(const Control&) = delete;
 		void ComputeClipRect();//计算基于父控件的裁剪区域
 	protected:
-		std::list<Control*> ViewControls;//基于控件中的可见控件
+		Controls ViewControls;//基于控件中的可见控件
 	public:
 		Distance Margin;//外边距 让容器独占一行 或 一列的情况下 设置边距会使控件变小 不可设置为负数
 		//添加到主窗口通知函数中可拦截
@@ -147,16 +147,16 @@ namespace EzUI {
 		bool DispatchEvent(const EventArgs& arg);//派发失去焦点事件
 		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::Static);//设置样式类似qt那样
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性
-		const std::list<Control*>& GetViewControls();//获取当前可见控件
-		const std::list<Control*>& GetControls();//获取当前所有子控件 const修饰是因为不建议直接修改子控件内容
+		const Controls& GetViewControls();//获取当前可见控件
+		const Controls& GetControls();//获取当前所有子控件 const修饰是因为不建议直接修改子控件内容
 		Control* GetControl(size_t pos);//使用下标获取控件 会自动过滤spacer(弹簧)这类的控件
 		bool Contains(Control* ctl);//会递归循全部包含的控件是否存在
 		size_t IndexOf(Control* childCtl);//获取子控件在此容器中的索引
 		Control* FindControl(const EString& ctlName);//使用name寻找容器中控件,包括自身
-		std::vector<Control*> FindControl(const EString& attrName, const EString& attrValue);//使用属性寻找容器中符合条件的控件,包括自身
+		Controls FindControl(const EString& attrName, const EString& attrValue);//使用属性寻找容器中符合条件的控件,包括自身
 		Control* FindSingleControl(const EString& attrName, const EString& attrValue);//使用属性寻找容器中第一个符合条件的控件,包括自身
 		Control* FindChild(const EString& ctlName);//寻找控件,仅限子集
-		std::vector<Control*> FindChild(const EString& attrName, const EString& attrValue);//寻找控件,仅限子集
+		Controls FindChild(const EString& attrName, const EString& attrValue);//寻找控件,仅限子集
 		Control* FindSingleChild(const EString& attrName, const EString& attrValue);//寻找控件,仅限子集
 		virtual bool SwapChild(Control* childCtl, Control* childCt2);//对子控件的两个控件进行位置交换
 		virtual void Insert(size_t pos, Control* childCtl);//选择性插入控件

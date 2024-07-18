@@ -144,7 +144,7 @@ bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 			EString resDir = ShowFolderDialog(Hwnd());
 			if (!resDir.empty() && PathExist(resDir)) {
 				for (auto& it : this->res->Items) {
-					EString fileName = resDir + "/" + it.name;
+					EString fileName = resDir + "/" + it.Name;
 					Directory::Create(Path::GetDirectoryName(fileName));
 					File::Delete(fileName);
 					EString data;
@@ -176,7 +176,7 @@ void MainFrm::OnResFileChange(EzUI::EString& resFile)
 
 			listFiles->Clear(true);
 			for (auto& item : res->Items) {
-				FileItem* fileItem = new FileItem(item.name, item.size);
+				FileItem* fileItem = new FileItem(item.Name, item.Size);
 				listFiles->Add(fileItem);
 			}
 			listFiles->Invalidate();

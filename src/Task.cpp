@@ -1,23 +1,23 @@
 #include "Task.h"
 namespace EzUI {
 	void Task::Wait() {
-		if (!bJoin)
+		if (!_bJoin)
 		{
-			bJoin = true;
-			std::unique_lock<std::mutex> autoLock(mtx);
-			codv.wait(autoLock, [this]() ->bool {
-				return bStop;
+			_bJoin = true;
+			std::unique_lock<std::mutex> autoLock(_mtx);
+			_codv.wait(autoLock, [this]() ->bool {
+				return _bStop;
 				});
-			task->join();
+			_task->join();
 		}
 	}
 	bool Task::IsStopped() {
-		std::unique_lock<std::mutex> autoLock(mtx);
-		return bStop;
+		std::unique_lock<std::mutex> autoLock(_mtx);
+		return _bStop;
 	}
 	Task::~Task() {
 		Wait();
-		delete task;
+		delete _task;
 	}
 
 	TaskFactory::TaskFactory(int maxTaskCount) {

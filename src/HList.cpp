@@ -32,7 +32,7 @@ namespace EzUI {
 
 	ScrollBar* HList::GetScrollBar()
 	{
-		return &hScrollBar;
+		return &_hScrollBar;
 	}
 	void HList::Offset(int offset) {
 		int _contentHeight = 0;

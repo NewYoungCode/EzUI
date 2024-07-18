@@ -6,8 +6,8 @@ namespace EzUI {
 		public List
 	{
 	private:
-		VScrollBar vScrollBar;
-		bool AutoHeight = false;//根据内容的高度自动变化
+		VScrollBar _vScrollBar;
+		bool _autoHeight = false;//根据内容的高度自动变化
 		void Init();
 		void Offset(int offset);
 	protected:

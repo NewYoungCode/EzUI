@@ -2,49 +2,49 @@
 namespace EzUI {
 	Resource::ReadStream::ReadStream(HRSRC hRsrc) {
 		auto hModule = ::GetModuleHandle(NULL);
-		this->ptr = (char*)::LoadResource(hModule, hRsrc);
-		this->count = ::SizeofResource(hModule, hRsrc);
+		this->_ptr = (char*)::LoadResource(hModule, hRsrc);
+		this->_count = ::SizeofResource(hModule, hRsrc);
 	}
 	Resource::ReadStream::ReadStream(const EString& fileName) {
-		this->ifs = new std::ifstream(fileName.unicode(), std::ios::binary);
-		this->ifs->seekg(0, std::ios::end);
-		this->count = ifs->tellg();
-		this->ifs->seekg(0);
+		this->_ifs = new std::ifstream(fileName.unicode(), std::ios::binary);
+		this->_ifs->seekg(0, std::ios::end);
+		this->_count = _ifs->tellg();
+		this->_ifs->seekg(0);
 	}
 	void Resource::ReadStream::seekg(size_t pos) {
-		if (ifs) {
-			ifs->seekg(pos);
+		if (_ifs) {
+			_ifs->seekg(pos);
 		}
 		else {
-			this->pos = pos;
+			this->_pos = pos;
 		}
 	}
 	void Resource::ReadStream::read(char* buf, size_t count) {
-		if (ifs) {
-			ifs->read(buf, count);
+		if (_ifs) {
+			_ifs->read(buf, count);
 		}
 		else {
-			::memcpy(buf, ptr + pos, count);
-			this->pos += count;
+			::memcpy(buf, _ptr + _pos, count);
+			this->_pos += count;
 		}
 	}
 	size_t Resource::ReadStream::tellg() {
-		if (ifs) {
-			return ifs->tellg();
+		if (_ifs) {
+			return _ifs->tellg();
 		}
 		else {
-			return pos;
+			return _pos;
 		}
 	}
 	const size_t& Resource::ReadStream::size() {
-		return this->count;
+		return this->_count;
 	}
 	Resource::ReadStream::~ReadStream() {
-		if (ifs) {
-			delete ifs;
+		if (_ifs) {
+			delete _ifs;
 		}
-		if (ptr) {
-			::FreeResource((HGLOBAL)ptr);
+		if (_ptr) {
+			::FreeResource((HGLOBAL)_ptr);
 		}
 	}
 
@@ -96,9 +96,9 @@ namespace EzUI {
 			ifs.read((char*)data.c_str(), size);
 			//记录文件名称,偏移,大小
 			Entry item;
-			item.name = file;
-			item.size = size;
-			item.offset = headOffset;
+			item.Name = file;
+			item.Size = size;
+			item.Offset = headOffset;
 			ofs.write(data.c_str(), data.size());
 			headOffset += data.size();
 			items.push_back(item);
@@ -110,8 +110,8 @@ namespace EzUI {
 		ofs.seekp(headOffset);
 		//处理路径
 		EString root = dir + "/";
-		root = root.Replace("\\", "/");
-		root = root.Replace("//", "/");
+		root = root.replace("\\", "/");
+		root = root.replace("//", "/");
 		if (root[root.size() - 1] = '/') {
 			root.erase(root.size() - 1, 1);
 		}
@@ -122,14 +122,14 @@ namespace EzUI {
 		int index = 0;
 		for (auto& item : items) {
 			//写入文件偏移位置
-			ofs.write((char*)(&item.offset), 4);
+			ofs.write((char*)(&item.Offset), 4);
 			//写入文件大小
-			ofs.write((char*)(&item.size), 4);
+			ofs.write((char*)(&item.Size), 4);
 			//文件路径名称
-			EString name = item.name;
-			name = name.Replace("\\", "/");
-			name = name.Replace("//", "/");
-			name = name.Replace(root, "", false);
+			EString name = item.Name;
+			name = name.replace("\\", "/");
+			name = name.replace("//", "/");
+			name = name.replace(root, "", false);
 			ofs.write(name.c_str(), name.size() + 1);
 			if (packCallback) {
 				packCallback(name, index, items.size());
@@ -145,7 +145,7 @@ namespace EzUI {
 	void Resource::UnPackage() {
 		*(bool*)&IsGood = false;
 		std::list<Entry>& items = (std::list<Entry>&)this->Items;
-		auto& ifs = *(this->rStream);
+		auto& ifs = *(this->_rStream);
 		if (ifs.size() < 8) {
 			//不是标准的资源文件 不执行解析
 			ASSERT(!"error resource");
@@ -188,41 +188,41 @@ namespace EzUI {
 				}
 			}
 			Entry item;
-			item.offset = fileOffset;
-			item.size = fileSize;
-			item.name = buf;
+			item.Offset = fileOffset;
+			item.Size = fileSize;
+			item.Name = buf;
 			items.push_back(item);
 		}
 	}
 
 	Resource::Resource(const EString& resFile) {
-		this->rStream = new ReadStream(resFile);
+		this->_rStream = new ReadStream(resFile);
 		this->UnPackage();
 	}
 	Resource::Resource(HRSRC hRsrc) {
-		this->rStream = new ReadStream(hRsrc);
+		this->_rStream = new ReadStream(hRsrc);
 		this->UnPackage();
 	}
 	Resource:: ~Resource() {
-		if (rStream) {
-			delete rStream;
+		if (_rStream) {
+			delete _rStream;
 		}
 	}
 	bool Resource::GetFile(const EString& fileName, std::string* out) {
 		for (const auto& it : this->Items) {
-			if (it.name == fileName) {
-				out->resize(it.size);
-				rStream->seekg(it.offset);
-				rStream->read((char*)out->c_str(), it.size);
+			if (it.Name == fileName) {
+				out->resize(it.Size);
+				_rStream->seekg(it.Offset);
+				_rStream->read((char*)out->c_str(), it.Size);
 				return true;
 			}
 		}
 		return false;
 	}
 	void Resource::GetFile(const Entry& item, std::string* out) {
-		out->resize(item.size);
-		rStream->seekg(item.offset);
-		rStream->read((char*)out->c_str(), item.size);
+		out->resize(item.Size);
+		_rStream->seekg(item.Offset);
+		_rStream->read((char*)out->c_str(), item.Size);
 	}
 };
 

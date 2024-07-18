@@ -1,6 +1,6 @@
 #include "EString.h"
 namespace EzUI {
-	size_t EString::Length() const {
+	size_t EString::length() const {
 		auto* p = this->c_str();
 		size_t pos = 0, count = 0;
 		while (p[pos] && pos < this->size()) {
@@ -12,6 +12,9 @@ namespace EzUI {
 		return count;
 	}
 	EString::EString() {}
+	EString::~EString()
+	{
+	}
 	EString::EString(const std::string& str)noexcept :std::string(str) {}
 	EString::EString(const char* szbuf)noexcept :std::string(szbuf) {}
 	EString::EString(const wchar_t* szbuf)noexcept {
@@ -21,31 +24,38 @@ namespace EzUI {
 	EString::EString(const std::wstring& wstr)noexcept {
 		EString::UnicodeToUTF8(wstr, this);
 	}
-
-	//常用函数
-	EString EString::Erase(const char& _char)const {
-		EString newStr(*this);
-		EString::Erase(&newStr, _char);
-		return newStr;
-	}
-	std::vector<std::string> EString::Split(const EString& ch_)const {
+	std::vector<std::string> EString::split(const EString& ch_)const {
 		std::vector<std::string> arr;
 		EString::Split(*this, ch_, &arr);
 		return arr;
 	}
-	EString EString::Replace(const EString& oldText, const EString& newText, bool replaceAll) const
+	void EString::erase(char _ch)
+	{
+		EString::Erase(this, _ch);
+	}
+	void EString::erase(size_t pos, size_t count)
+	{
+		__super::erase(pos, count);
+	}
+	EString EString::replace(char oldChar, char newChar)
 	{
 		EString newStr = *this;
-		EString::Replace(&newStr, oldText, newText, replaceAll);
+		EString::Replace(&newStr, oldChar, newChar);
 		return newStr;
 	}
-	EString EString::Tolower() const
+	EString EString::replace(const EString& oldText, const EString& newText, bool allReplace) const
+	{
+		EString newStr = *this;
+		EString::Replace(&newStr, oldText, newText, allReplace);
+		return newStr;
+	}
+	EString EString::toLower() const
 	{
 		EString str(*this);
 		EString::Tolower(&str);
 		return str;
 	}
-	EString EString::Toupper() const
+	EString EString::toUpper() const
 	{
 		EString str(*this);
 		EString::Toupper(&str);
@@ -186,6 +196,15 @@ namespace EzUI {
 			pos = newStr.find(oldText);
 			if (!replaceAll) {
 				break;
+			}
+		}
+	}
+	void EString::Replace(std::string* str_in_out, char oldChar, char newChar)
+	{
+		for (auto& it : *str_in_out) {
+		
+			if (it == oldChar) {
+				it = newChar;
 			}
 		}
 	}

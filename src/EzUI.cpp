@@ -191,7 +191,7 @@ namespace EzUI {
 	}
 	void ControlStyle::SetStyleSheet(const EString& styleStr, const std::function<void(Image*)>& callback)
 	{
-		auto attrs = styleStr.Split(";");
+		auto attrs = styleStr.split(";");
 		for (auto& it : attrs) {
 			size_t pos = it.find(":");
 			if (pos == -1)continue;
@@ -232,7 +232,7 @@ namespace EzUI {
 				break;
 			}
 			if (key == "background-image") {
-				value = value.Erase('"');//删除双引号;
+				value = value.replace("\"", "");//删除双引号;
 				style->BackImage = Image::Make(value);
 				if (callback) {
 					callback(style->BackImage);
@@ -240,7 +240,7 @@ namespace EzUI {
 				break;
 			}
 			if (key == "fore-image") {
-				value = value.Erase('"');//删除双引号;
+				value = value.replace("\"", "");//删除双引号;
 				style->ForeImage = Image::Make(value);
 				if (callback) {
 					callback(style->ForeImage);
@@ -280,7 +280,7 @@ namespace EzUI {
 				break;
 			}
 			if (key == "font-family") {
-				value = value.Erase('"');//删除双引号;
+				value = value.replace("\"", "");//删除双引号;
 				style->FontFamily = value.unicode();
 				break;
 			}

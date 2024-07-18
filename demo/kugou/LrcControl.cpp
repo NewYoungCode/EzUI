@@ -119,7 +119,7 @@ LrcControl::LrcControl()
 void LrcControl::LoadLrc(const EString& lrcData)
 {
 	Clear();
-	auto lrc = lrcData.Split("\n");
+	auto lrc = lrcData.split("\n");
 	auto gbk = lrcData.ansi();
 	for (auto&& it : lrc) {
 		if (it.empty()) continue;

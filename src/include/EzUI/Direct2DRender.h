@@ -33,9 +33,9 @@ namespace EzUI {
 	class UI_EXPORT Font {
 	private:
 		Font() = delete;
-		std::wstring fontFamily;
-		float fontSize = 0;
-		IDWriteTextFormat* value = NULL;
+		std::wstring _fontFamily;
+		float _fontSize = 0;
+		IDWriteTextFormat* _value = NULL;
 		void Copy(const Font& _copy);
 	public:
 		bool Ref = false;
@@ -79,7 +79,7 @@ namespace EzUI {
 		void SetTextAlign(TextAlign textAlign);
 		std::wstring fontFamily;
 		DWRITE_TEXT_METRICS textMetrics{ 0 };
-		float fontSize = 0;
+		float _fontSize = 0;
 	public:
 		void GetMetrics();
 		TextLayout(const std::wstring& text, const Font& font, const SizeF &maxSize = SizeF{ __MAXFLOAT,__MAXFLOAT }, TextAlign textAlgin = TextAlign::TopLeft);
@@ -161,25 +161,25 @@ namespace EzUI {
 
 	class UI_EXPORT DXPath {
 	private:
-		ID2D1GeometrySink* pSink = NULL;
-		ID2D1PathGeometry* pathGeometry = NULL;
-		bool isBegin = false;
+		ID2D1GeometrySink* _pSink = NULL;
+		ID2D1PathGeometry* _pathGeometry = NULL;
+		bool _isBegin = false;
 	public:
 		DXPath() {
-			D2D::g_Direct2dFactory->CreatePathGeometry(&pathGeometry);
-			pathGeometry->Open(&pSink);
+			D2D::g_Direct2dFactory->CreatePathGeometry(&_pathGeometry);
+			_pathGeometry->Open(&_pSink);
 		}
 		void AddRectangle(const Rect& rect) {
-			if (!isBegin) {
-				pSink->BeginFigure({ (float)rect.GetLeft(),(float)rect.GetTop() }, D2D1_FIGURE_BEGIN_FILLED);
-				isBegin = true;
+			if (!_isBegin) {
+				_pSink->BeginFigure({ (float)rect.GetLeft(),(float)rect.GetTop() }, D2D1_FIGURE_BEGIN_FILLED);
+				_isBegin = true;
 			}
 			else {
-				pSink->AddLine({ (float)rect.GetLeft(),(float)rect.GetTop() });
+				_pSink->AddLine({ (float)rect.GetLeft(),(float)rect.GetTop() });
 			}
-			pSink->AddLine({ (float)rect.GetRight(),(float)rect.GetTop() });
-			pSink->AddLine({ (float)rect.GetRight(),(float)rect.GetBottom() });
-			pSink->AddLine({ (float)rect.GetLeft(),(float)rect.GetBottom() });
+			_pSink->AddLine({ (float)rect.GetRight(),(float)rect.GetTop() });
+			_pSink->AddLine({ (float)rect.GetRight(),(float)rect.GetBottom() });
+			_pSink->AddLine({ (float)rect.GetLeft(),(float)rect.GetBottom() });
 		}
 		void AddArc(const Rect& rect, int startAngle, int sweepAngle) {
 
@@ -188,37 +188,37 @@ namespace EzUI {
 
 		}
 		void CloseFigure() {
-			pSink->EndFigure(D2D1_FIGURE_END_OPEN);
-			pSink->Close();
+			_pSink->EndFigure(D2D1_FIGURE_END_OPEN);
+			_pSink->Close();
 		}
 		virtual ~DXPath() {
-			if (pathGeometry) {
-				pathGeometry->Release();
+			if (_pathGeometry) {
+				_pathGeometry->Release();
 			}
-			if (pSink) {
-				pSink->Release();
+			if (_pSink) {
+				_pSink->Release();
 			}
 		}
 		ID2D1PathGeometry* Get()const {
-			return pathGeometry;
+			return _pathGeometry;
 		}
 		ID2D1GeometrySink* operator ->() {
-			return pSink;
+			return _pSink;
 		}
 		ID2D1PathGeometry* operator *() {
-			return pathGeometry;
+			return _pathGeometry;
 		}
 	};
 
 	class UI_EXPORT DXImage : public IImage {
 	protected:
-		IWICBitmapDecoder* bitmapdecoder = NULL;
-		IWICBitmapFrameDecode* pframe = NULL;
-		IWICFormatConverter* fmtcovter = NULL;//从文件加载
-		IWICBitmap* bitMap = NULL;//从HBITMAP中加载
-		int Width = 0;
-		int Height = 0;
-		ID2D1Bitmap* d2dBitmap = NULL;
+		IWICBitmapDecoder* _bitmapdecoder = NULL;
+		IWICBitmapFrameDecode* _pframe = NULL;
+		IWICFormatConverter* _fmtcovter = NULL;//从文件加载
+		IWICBitmap* _bitMap = NULL;//从HBITMAP中加载
+		int _width = 0;
+		int _height = 0;
+		ID2D1Bitmap* _d2dBitmap = NULL;
 	private:
 		void CreateFormStream(IStream* istram);
 		void CreateFromFile(const std::wstring& file);
@@ -259,13 +259,13 @@ namespace EzUI {
 
 	class UI_EXPORT DXRender {
 	private:
-		ID2D1DCRenderTarget* render = NULL;
-		ID2D1SolidColorBrush* brush = NULL;
-		Font* font = NULL;
-		ID2D1StrokeStyle* pStrokeStyle = NULL;
-		Point Offset;
-		PointF RotatePoint;
-		float Angle = 0;
+		ID2D1DCRenderTarget* _render = NULL;
+		ID2D1SolidColorBrush* _brush = NULL;
+		Font* _font = NULL;
+		ID2D1StrokeStyle* _pStrokeStyle = NULL;
+		Point _offset;
+		PointF _rotatePoint;
+		float _angle = 0;
 	public:
 		ID2D1SolidColorBrush* GetBrush();
 		ID2D1StrokeStyle* GetStrokeStyle();

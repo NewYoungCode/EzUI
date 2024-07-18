@@ -1,24 +1,24 @@
 #include "List.h"
 namespace EzUI {
 
-	void List::SetPageInfo(const std::vector<Control*>& items, int pageSize)
+	void List::SetPageInfo(const Controls& items, int pageSize)
 	{
-		this->pageIndex = 0;
-		this->pageSize = pageSize;
-		this->pageTotal = items.size() / pageSize + (items.size() % pageSize == 0 ? 0 : 1);
-		this->items = items;
+		this->_pageIndex = 0;
+		this->_pageSize = pageSize;
+		this->_pageTotal = items.size() / pageSize + (items.size() % pageSize == 0 ? 0 : 1);
+		this->_items = items;
 		this->NextPage();
 	}
 
-	void List::GetPage(int pageIndex, std::vector<Control*>* outCtls)
+	void List::GetPage(int pageIndex, Controls* outCtls)
 	{
 		if (outCtls) {
 			outCtls->clear();
-			size_t beginIndex = (pageIndex - 1) * pageSize;
+			size_t beginIndex = (pageIndex - 1) * _pageSize;
 			size_t count = 0;
-			for (size_t i = beginIndex; count < pageSize && i < items.size(); ++i)
+			for (size_t i = beginIndex; count < _pageSize && i < _items.size(); ++i)
 			{
-				outCtls->push_back(items[i]);
+				outCtls->push_back(_items[i]);
 				++count;
 			}
 		}
@@ -30,21 +30,21 @@ namespace EzUI {
 
 	void List::Clear(bool freeChilds) {
 		__super::Clear(freeChilds);
-		this->items.clear();
-		this->pageIndex = 0;
-		this->pageTotal = 0;
+		this->_items.clear();
+		this->_pageIndex = 0;
+		this->_pageTotal = 0;
 	}
 
 	void List::NextPage()
 	{
-		if (items.size() <= 0)return;
-		if ((pageIndex + 1) > pageTotal)return;
-		if (NextPaging && NextPaging(this, (pageIndex + 1)) == false) {
+		if (_items.size() <= 0)return;
+		if ((_pageIndex + 1) > _pageTotal)return;
+		if (NextPaging && NextPaging(this, (_pageIndex + 1)) == false) {
 			return;
 		}
-		++pageIndex;
+		++_pageIndex;
 		std::vector<Control*> ctls;
-		this->GetPage(pageIndex, &ctls);
+		this->GetPage(_pageIndex, &ctls);
 		for (auto& it : ctls) {
 			this->Add(it);
 		}

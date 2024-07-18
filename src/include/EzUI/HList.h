@@ -6,7 +6,7 @@ namespace EzUI {
 		public List
 	{
 	private:
-		HScrollBar hScrollBar;
+		HScrollBar _hScrollBar;
 		void Init();
 		void Offset(int offset);
 	protected:

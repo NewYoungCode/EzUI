@@ -32,7 +32,7 @@ namespace EzUI {
 
 	ScrollBar* VList::GetScrollBar()
 	{
-		return &vScrollBar;
+		return &_vScrollBar;
 	}
 
 	void VList::Offset(int offset)

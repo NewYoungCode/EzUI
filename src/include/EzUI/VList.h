@@ -6,7 +6,7 @@ namespace EzUI {
 		public List
 	{
 	private:
-		VScrollBar vScrollBar;
+		VScrollBar _vScrollBar;
 		void Init();
 		//对控件进行偏移
 		void Offset(int offset);

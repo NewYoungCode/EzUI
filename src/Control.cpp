@@ -237,21 +237,21 @@ namespace EzUI {
 				break;
 			}
 			if (attrName == "point" || attrName == "location") {
-				auto arr = attrValue.Split(",");
+				auto arr = attrValue.split(",");
 				int x = std::stoi(arr[0]);
 				int y = std::stoi(arr[1]);
 				this->SetLocation(Point(x, y));
 				break;
 			}
 			if (attrName == "size") {
-				auto arr = attrValue.Split(",");
+				auto arr = attrValue.split(",");
 				int width = std::stoi(arr[0]);
 				int height = std::stoi(arr[1]);
 				this->SetFixedSize(Size(width, height));
 				break;
 			}
 			if (attrName == "rect" && !attrValue.empty()) {
-				auto rectStr = attrValue.Split(",");
+				auto rectStr = attrValue.split(",");
 				Rect rect;
 				rect.X = std::stoi(rectStr.at(0));
 				rect.Y = std::stoi(rectStr.at(1));
@@ -277,7 +277,7 @@ namespace EzUI {
 				break;
 			}
 			if (attrName == "margin") {//遵循web前端的规则
-				auto strs = attrValue.Split(",");
+				auto strs = attrValue.split(",");
 				if (strs.size() == 1) {
 					this->Margin = std::stoi(strs[0]);
 					break;
@@ -383,7 +383,7 @@ namespace EzUI {
 			}
 		} while (false);
 	}
-	const std::list<Control*>& Control::GetViewControls()
+	const Controls& Control::GetViewControls()
 	{
 		return this->ViewControls;
 	}
@@ -954,7 +954,7 @@ namespace EzUI {
 			_spacers.push_back(ctl);
 		}
 		size_t i = 0;
-		std::list<Control*>::iterator itor = _controls.begin();
+		auto itor = _controls.begin();
 		for (; itor != _controls.end(); ++itor) {
 			if (i == pos) {
 				break;
@@ -1225,7 +1225,7 @@ namespace EzUI {
 			ClipRectRef = this->GetClientRect();
 		}
 	}
-	const std::list<Control*>& Control::GetControls()
+	const Controls& Control::GetControls()
 	{
 		return _controls;
 	}
@@ -1260,7 +1260,7 @@ namespace EzUI {
 
 	void Control::Clear(bool freeChilds)
 	{
-		std::list<Control*> temp = _controls;
+		auto temp = _controls;
 		for (auto itor = temp.begin(); itor != temp.end(); ++itor)
 		{
 			Control* it = *itor;

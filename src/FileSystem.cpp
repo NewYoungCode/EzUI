@@ -146,7 +146,7 @@ namespace EzUI {
 			if (path.find(":") != size_t(-1)) {
 				EString dir = path + "/";
 				Path::Format(&dir);
-				auto  arr = dir.Split("/");
+				auto  arr = dir.split("/");
 				EString root;
 				if (!arr.empty()) {
 					root += arr[0] + "/";
@@ -172,7 +172,7 @@ namespace EzUI {
 			Directory::Find(srcPath, &result);
 			for (auto& it : result) {
 				auto fileName = it.Name;
-				fileName = fileName.Replace(basePath, "");
+				fileName = fileName.replace(basePath, "");
 				if (it.IsDirectory()) {
 					Directory::Create(desPath + "/" + fileName);
 				}

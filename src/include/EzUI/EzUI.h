@@ -15,6 +15,7 @@ namespace EzUI {
 	class Spacer;
 	class ScrollBar;
 	enum class Cursor :ULONG_PTR;
+	typedef std::vector<Control*> Controls;
 
 	//全局资源句柄
 	extern UI_VAR_EXPORT WCHAR __EzUI__WindowClassName[];//窗口类名
@@ -73,7 +74,7 @@ namespace EzUI {
 				int pos1 = colorStr.find("(");
 				int pos2 = colorStr.rfind(")");
 				EString rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
-				auto rgbList = rgbStr.Split(",");
+				auto rgbList = rgbStr.split(",");
 				unsigned char r, g, b;
 				r = std::stoi(rgbList.at(0));
 				g = std::stoi(rgbList.at(1));
@@ -478,5 +479,4 @@ namespace EzUI {
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//设置属性
 		virtual EString GetAttribute(const EString& attrName);//获取属性
 	};
-
 };

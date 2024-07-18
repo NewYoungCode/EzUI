@@ -5,11 +5,11 @@ namespace EzUI {
 
 	//使用线程的计时器 不与主进程同步(启动的时候就直接开始执行回调函数)
 	class UI_EXPORT ThreadTimer :public IControl {
-		bool bExit = false;
-		bool bStop = true;
-		Task* task = NULL;
-		std::mutex mtx;
-		std::condition_variable condv;
+		bool _bExit = false;
+		bool _bStop = true;
+		Task* _task = NULL;
+		std::mutex _mtx;
+		std::condition_variable _condv;
 	public:
 		std::function<void(ThreadTimer*)> Tick = NULL;
 		size_t Interval = -1;

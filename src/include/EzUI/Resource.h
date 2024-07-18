@@ -7,16 +7,16 @@ namespace EzUI {
 	class UI_EXPORT Resource {
 	public:
 		struct Entry {
-			size_t offset = 0;
-			size_t size = 0;
-			EString name;
+			size_t Offset = 0;//偏移
+			size_t Size = 0;//大小
+			EString Name;//名称
 		};
 		//资源文件读取流
 		class UI_EXPORT ReadStream {
-			size_t pos = 0;
-			size_t count = 0;
-			const char* ptr = NULL;
-			std::ifstream* ifs = NULL;
+			size_t _pos = 0;
+			size_t _count = 0;
+			const char* _ptr = NULL;
+			std::ifstream* _ifs = NULL;
 		public:
 			ReadStream(HRSRC hRsrc);
 			ReadStream(const EString& fileName);
@@ -27,7 +27,7 @@ namespace EzUI {
 			virtual ~ReadStream();
 		};
 	private:
-		ReadStream* rStream = NULL;
+		ReadStream* _rStream = NULL;
 		void UnPackage();
 	public:
 		const std::list<Entry> Items;

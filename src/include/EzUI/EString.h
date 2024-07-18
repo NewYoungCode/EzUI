@@ -9,20 +9,22 @@ namespace EzUI {
 	/// </summary>
 	class  UI_EXPORT EString :public std::string {
 	public:
-		//the utf8 Length
-		size_t Length() const;
 		EString();
+		virtual ~EString();
 		EString(const std::string& str)noexcept;
 		EString(const char* szbuf)noexcept;
 		EString(const wchar_t* szbuf)noexcept;
 		EString(const std::wstring& wstr)noexcept;
+		size_t length() const;//the utf8 Length
 		std::wstring unicode() const;
 		std::string ansi() const;
-		EString Erase(const char& _char)const;
-		std::vector<std::string> Split(const EString& ch_)const;
-		EString Replace(const EString& oldText, const EString& newText, bool replaceAll = true)const;
-		EString Tolower()const;
-		EString Toupper()const;
+		std::vector<std::string> split(const EString& ch_)const;
+		void erase(char _ch);
+		void erase(size_t pos,size_t count);
+		EString replace(char oldChar, char newChar);
+		EString replace(const EString& oldText, const EString& newText, bool allReplace = true)const;
+		EString toLower()const;
+		EString toUpper()const;
 		bool operator==(const wchar_t* szbuf)const;
 		bool operator==(const std::wstring& wStr)const;
 	public:
@@ -42,6 +44,7 @@ namespace EzUI {
 		static void Tolower(std::string* str_in_out);
 		static void Toupper(std::string* str_in_out);
 		static void Erase(std::string* str_in_out, const char& ch);
+		static void Replace(std::string* str_in_out, char oldChar, char newChar);
 		static void Replace(std::string* str_in_out, const std::string& oldText, const std::string& newText, bool replaceAll = true);
 		static void Split(const std::string& str_in, const std::string& ch, std::vector<std::string>* strs_out);
 		//

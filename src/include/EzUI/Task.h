@@ -3,25 +3,25 @@
 #include <condition_variable>
 namespace EzUI {
 	class UI_EXPORT Task {
-		bool bStop = false;
-		std::thread* task = NULL;
-		bool bJoin = false;
-		std::mutex mtx;
-		std::condition_variable codv;
+		bool _bStop = false;
+		std::thread* _task = NULL;
+		bool _bJoin = false;
+		std::mutex _mtx;
+		std::condition_variable _codv;
 	private:
 		Task(const Task&) = delete;
 	public:
 		template<class Func, class... Args>
 		Task(Func&& f, Args&& ...args) {
 			std::function<void()>* func = new std::function<void()>(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
-			task = new std::thread([this, func]() mutable {
+			_task = new std::thread([this, func]() mutable {
 				(*func)();
 				delete func;
 				{
-					std::unique_lock<std::mutex> autoLock(mtx);
-					bStop = true;
+					std::unique_lock<std::mutex> autoLock(_mtx);
+					_bStop = true;
 				}
-				codv.notify_all();
+				_codv.notify_all();
 				});
 		}
 		void Wait();

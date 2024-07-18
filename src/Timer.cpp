@@ -1,15 +1,15 @@
 #include "Timer.h"
 namespace EzUI {
 	ThreadTimer::ThreadTimer() {
-		task = new Task([this]() {
+		_task = new Task([this]() {
 			while (true)
 			{
 				{
-					std::unique_lock<std::mutex> autoLock(mtx);
-					condv.wait(autoLock, [this]() {
-						return  this->bExit || !this->bStop;
+					std::unique_lock<std::mutex> autoLock(_mtx);
+					_condv.wait(autoLock, [this]() {
+						return  this->_bExit || !this->_bStop;
 						});
-					if (this->bExit) {
+					if (this->_bExit) {
 						break;
 					}
 				}
@@ -21,22 +21,22 @@ namespace EzUI {
 			});
 	}
 	void ThreadTimer::Start() {
-		std::unique_lock<std::mutex> autoLock(mtx);
-		bStop = false;
-		condv.notify_one();
+		std::unique_lock<std::mutex> autoLock(_mtx);
+		_bStop = false;
+		_condv.notify_one();
 	}
 	void ThreadTimer::Stop() {
-		std::unique_lock<std::mutex> autoLock(mtx);
-		bStop = true;
-		condv.notify_one();
+		std::unique_lock<std::mutex> autoLock(_mtx);
+		_bStop = true;
+		_condv.notify_one();
 	}
 	ThreadTimer::~ThreadTimer() {
 		{
-			std::unique_lock<std::mutex> autoLock(mtx);
-			bExit = true;
-			condv.notify_one();
+			std::unique_lock<std::mutex> autoLock(_mtx);
+			_bExit = true;
+			_condv.notify_one();
 		}
-		delete task;
+		delete _task;
 	}
 
 	std::map<UINT_PTR, UINT_PTR>  __EzUI__Timers;

@@ -23,7 +23,7 @@ namespace EzUI {
 	}
 	ScrollBar* TileList::GetScrollBar()
 	{
-		return &vScrollBar;
+		return &_vScrollBar;
 	}
 	void TileList::OnChildPaint(PaintEventArgs& args)
 	{
@@ -48,7 +48,7 @@ namespace EzUI {
 	void TileList::OnLayout()
 	{
 		this->Offset(0);
-		if (AutoHeight) {
+		if (_autoHeight) {
 			this->SetFixedHeight(this->GetContentSize().Height);
 			this->GetScrollBar()->SetVisible(false);
 		}
