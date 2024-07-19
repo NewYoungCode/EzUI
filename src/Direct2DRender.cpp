@@ -28,7 +28,7 @@ namespace EzUI {
 	}
 
 	//TextFormat
-	Font::Font(const std::wstring& fontFamily, const float& fontSize) {
+	Font::Font(const std::wstring& fontFamily, float fontSize) {
 		ASSERT(!(fontSize == 0));
 		this->_fontFamily = fontFamily;
 		this->_fontSize = fontSize;

@@ -1,7 +1,6 @@
 #pragma once
 #include "Menu.h"
 namespace EzUI {
-	extern bool __Init__RegeditClass__;
 	class UI_EXPORT  NotifyIcon
 	{
 	public:

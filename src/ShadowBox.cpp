@@ -112,7 +112,7 @@ namespace EzUI {
 			delete _bufBitmap;
 			_bufBitmap = NULL;
 		}
-		_bufBitmap = new EBitmap(width, height, EBitmap::PixelFormat::PixelFormatARGB);//32位透明图
+		_bufBitmap = new Bitmap(width, height, Bitmap::PixelFormat::PixelFormatARGB);//32位透明图
 		Rect rect{ 0,0,width, height };
 		SetShadow(rect.Width, rect.Height, _shadowWidth);
 		/*	{

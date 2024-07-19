@@ -40,7 +40,7 @@ namespace EzUI {
 	public:
 		bool Ref = false;
 		Font(const Font& _copy);
-		Font(const std::wstring& fontFamily, const float& fontSize);
+		Font(const std::wstring& fontFamily, float fontSize);
 		const float& GetFontSize()const;
 		const std::wstring& GetFontFamily()const;
 		IDWriteTextFormat* Get() const;

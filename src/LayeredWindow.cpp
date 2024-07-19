@@ -88,7 +88,7 @@ namespace EzUI {
 		if (_winBitmap) {
 			delete _winBitmap;
 		}
-		_winBitmap = new EBitmap(sz.Width, sz.Height, EBitmap::PixelFormat::PixelFormatARGB);
+		_winBitmap = new Bitmap(sz.Width, sz.Height, Bitmap::PixelFormat::PixelFormatARGB);
 		__super::OnSize(sz);
 	}
 

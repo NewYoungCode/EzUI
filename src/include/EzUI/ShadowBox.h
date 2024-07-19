@@ -1,13 +1,13 @@
 #pragma once
 #include "Window.h"
-#include "EBitmap.h"
+#include "Bitmap.h"
 
 namespace EzUI {
 	class UI_EXPORT ShadowBox
 	{
 	private:
 		Size _bufSize;
-		EBitmap* _bufBitmap = NULL;
+		Bitmap* _bufBitmap = NULL;
 		Rect _clipRect;
 		HWND _hWnd = NULL;
 	private:

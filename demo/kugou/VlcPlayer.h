@@ -19,7 +19,7 @@ namespace EzUI {
 		std::mutex mtx;
 		unsigned int IMG_WIDTH = 0;
 		unsigned int IMG_HEIGHT = 0;
-		EBitmap* BuffBitmap = NULL;
+		Bitmap* BuffBitmap = NULL;
 	protected:
 		void SetConfig();
 		virtual void OnBackgroundPaint(PaintEventArgs& pArg) override;

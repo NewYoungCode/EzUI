@@ -1,14 +1,14 @@
-#include "EBitmap.h"
+#include "Bitmap.h"
 namespace EzUI {
 
-	EBitmap::EBitmap(int width, int height, PixelFormat piexlFormat) {
+	Bitmap::Bitmap(int width, int height, PixelFormat piexlFormat) {
 		Create(width, height, piexlFormat);
 	}
-	EBitmap::EBitmap(HDC dc, const Rect& rect, PixelFormat piexlFormat) {
+	Bitmap::Bitmap(HDC dc, const Rect& rect, PixelFormat piexlFormat) {
 		Create(rect.Width, rect.Height, piexlFormat);
 		::BitBlt(this->GetHDC(), 0, 0, rect.Width, rect.Height, dc, rect.X, rect.Y, SRCCOPY);
 	}
-	void EBitmap::Create(int width, int height, PixelFormat piexlFormat) {
+	void Bitmap::Create(int width, int height, PixelFormat piexlFormat) {
 		(int)Width = width;
 		(int)Height = height;
 		memset(&_bmpInfo, 0, sizeof(_bmpInfo));
@@ -23,7 +23,7 @@ namespace EzUI {
 		_bmp = ::CreateDIBSection(NULL, &_bmpInfo, DIB_RGB_COLORS, (void**)&point, NULL, 0);
 		this->GetHDC();
 	}
-	void EBitmap::SetPixel(int x, int y, const Color& color) {
+	void Bitmap::SetPixel(int x, int y, const Color& color) {
 		DWORD* point = (DWORD*)this->point + (x + y * this->Width);//起始地址+坐标偏移	
 		if (_bmpInfo.bmiHeader.biBitCount == 32) { //argb
 			((BYTE*)point)[3] = color.GetA();//修改A通道数值
@@ -33,7 +33,7 @@ namespace EzUI {
 		((BYTE*)point)[0] = color.GetB();//修改B通道数值
 	}
 
-	Color EBitmap::GetPixel(int x, int y) {
+	Color Bitmap::GetPixel(int x, int y) {
 		DWORD* point = (DWORD*)this->point + (x + y * this->Width);//起始地址+坐标偏移
 		BYTE a = 255, r, g, b;
 		if (_bmpInfo.bmiHeader.biBitCount == 32) { //argb
@@ -44,11 +44,11 @@ namespace EzUI {
 		b = ((BYTE*)point)[0];//修改B通道数值
 		return Color(r, g, b, a);
 	}
-	byte* EBitmap::GetPixel()
+	byte* Bitmap::GetPixel()
 	{
 		return (byte*)this->point;
 	}
-	void EBitmap::Earse(const Rect& _rect) {
+	void Bitmap::Earse(const Rect& _rect) {
 		Rect rect = _rect;
 		if (rect.X < 0) {
 			rect.X = 0;
@@ -70,18 +70,18 @@ namespace EzUI {
 			::memset(point, 0, rect.Width * 4);//抹除
 		}
 	}
-	HBITMAP EBitmap::GetHBITMAP()
+	HBITMAP Bitmap::GetHBITMAP()
 	{
 		return this->_bmp;
 	}
-	HDC& EBitmap::GetHDC() {
+	HDC Bitmap::GetHDC() {
 		if (!_hdc) {
 			_hdc = ::CreateCompatibleDC(NULL);
 			::SelectObject(_hdc, _bmp);
 		}
 		return _hdc;
 	}
-	void EBitmap::Save(const EString& fileName)
+	void Bitmap::Save(const EString& fileName)
 	{
 		// 保存位图为BMP文件
 		BITMAPINFOHEADER& bi = _bmpInfo.bmiHeader;
@@ -105,7 +105,7 @@ namespace EzUI {
 		ofs.close();
 		delete[] buffer;
 	}
-	EBitmap::~EBitmap() {
+	Bitmap::~Bitmap() {
 		if (_hdc) {
 			::DeleteDC(_hdc);
 			::DeleteBitmap(_bmp);

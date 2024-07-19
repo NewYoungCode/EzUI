@@ -1,6 +1,6 @@
 #pragma once
 #include "BorderlessWindow.h"
-#include "EBitmap.h"
+#include "Bitmap.h"
 #include "Task.h"
 namespace EzUI {
 	/// <summary>
@@ -11,7 +11,7 @@ namespace EzUI {
 	private:
 		void PushDC(HDC hdc);
 		Rect _invalidateRect;
-		EBitmap* _winBitmap = NULL;
+		Bitmap* _winBitmap = NULL;
 		bool _bStop = false;
 		Task* _paintTask = NULL;
 		std::mutex _mtx;

@@ -35,7 +35,7 @@ namespace EzUI {
 		if (vp->BuffBitmap != NULL) {
 			delete vp->BuffBitmap;
 		}
-		vp->BuffBitmap = new EBitmap(w, h, EBitmap::PixelFormat::PixelFormatARGB);
+		vp->BuffBitmap = new Bitmap(w, h, Bitmap::PixelFormat::PixelFormatARGB);
 		memcpy(chroma, "RV32", 4);
 		*pitches = w * 4;
 		*lines = h;
