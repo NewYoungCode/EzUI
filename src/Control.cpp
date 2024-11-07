@@ -614,9 +614,9 @@ namespace EzUI {
 	}
 	bool Control::DispatchEvent(const EventArgs& arg)
 	{
-		return this->OnEvent(arg);
+		return this->OnEvent((EventArgs&)arg);
 	}
-	bool Control::OnEvent(const EventArgs& arg)
+	bool Control::OnEvent(EventArgs& arg)
 	{
 		bool isRemove = false;
 		this->_isRemove = &isRemove;

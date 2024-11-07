@@ -10,14 +10,12 @@ MainFrm::MainFrm() :BorderlessWindow(1020, 690), ntfi(WM_NOTIFYICON1)
 	ComBox* combox = (ComBox*)FindControl("combox");
 	if (combox) {
 		combox->AddItem(L"-请选择-");
-		combox->AddItem(L"-你好-");
-		combox->AddItem(L"-你好择-");
-		combox->AddItem(L"-你好你好择-");
-		combox->AddItem(L"-请选择-");
-		combox->AddItem(L"-你好-");
-		combox->AddItem(L"-你好择-");
-		combox->AddItem(L"-你好你好择-");
+		combox->AddItem(L"你好");
+		combox->AddItem(L"你好择");
+		combox->AddItem(L"你好你好择");
+		combox->SetCheck(2);
 	}
+
 }
 void MainFrm::InitForm() {
 	this->Zoom = true;

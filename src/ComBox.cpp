@@ -5,6 +5,54 @@ namespace EzUI {
 	{
 		this->_textBox.ReadOnly = true;
 		this->Add(&_textBox);
+		this->Add(&_UpDown);
+
+		_UpDown.EventHandler = [&](Control* sd, EventArgs& arg)->void {
+			if (arg.EventType == Event::OnPaint) {
+				//绘制
+				auto& args = (PaintEventArgs&)arg;
+
+				auto fSzie = sd->GetFontSize() * 0.5f;
+				int width = fSzie * 1.5f;
+
+				Rect rect(0, 0, width, fSzie);
+				rect.Y = (sd->Height() - fSzie) / 2.0f;
+				rect.X += (sd->Height() - width) / 2.0f;
+
+				//args.Graphics.SetColor(Color::Red);
+				//args.Graphics.DrawRectangle(rect);
+
+				PointF p1(rect.GetLeft(), rect.Y);
+				PointF p2(rect.GetRight(), rect.Y);
+				PointF p3(rect.GetLeft() + width / 2.0f, rect.GetBottom());
+
+				args.Graphics.SetColor(this->GetForeColor());
+				args.Graphics.DrawLine(p1, p3);
+				args.Graphics.DrawLine(p2, p3);
+			}
+			else if (arg.EventType == Event::OnMouseClick/*&& args.Button == MouseButton::Left*/) {
+				//单击
+				if (_menuWnd == NULL) {
+					_menuWnd = new MenuContent(this, &_UpDown);
+					_list.Style.BackColor = Color::White;
+					_menuWnd->SetLayout(&_list);
+				}
+				for (auto& it : _list.GetControls()) {
+					it->SetFixedHeight(Height());
+				}
+				int height = this->Height() * _list.GetControls().size();
+				if (height == 0) {
+					height = Height();
+				}
+				if (!_menuWnd->IsVisible()) {
+					::SetWindowPos(_menuWnd->Hwnd(), NULL, 0, 0, Width(), height, SWP_NOZORDER | SWP_NOACTIVATE);
+					_menuWnd->Show();
+				}
+				else {
+					_menuWnd->Hide();
+				}
+			}
+			};
 	}
 	ComBox::ComBox()
 	{
@@ -14,10 +62,21 @@ namespace EzUI {
 	{
 		return this->_textBox.GetText();
 	}
-	int ComBox::SelectedIndex()
+	int ComBox::GetCheck()
 	{
 		return this->_index;
 	}
+	bool ComBox::SetCheck(int pos)
+	{
+		auto item = _list.GetControl(pos);
+		if (item) {
+			_textBox.SetText(((Label*)item)->GetText());
+			_index = pos;
+			return true;
+		}
+		return false;
+	}
+
 	ComBox::~ComBox()
 	{
 		_list.Clear(true);
@@ -27,8 +86,8 @@ namespace EzUI {
 			//滚动条同理 也需要置零公共数据
 			_list.GetScrollBar()->PublicData = NULL;
 		}
-		if (_wnd) {
-			delete _wnd;
+		if (_menuWnd) {
+			delete _menuWnd;
 		}
 	}
 	int ComBox::AddItem(const EString& text)
@@ -37,6 +96,18 @@ namespace EzUI {
 		lb->SetDockStyle(DockStyle::Horizontal);
 		lb->SetText(text);
 		_list.Add(lb);
+		lb->HoverStyle.BackColor = Color::Gray;
+		lb->HoverStyle.ForeColor = Color::White;
+
+		lb->EventHandler = [&](Control* sd, const EventArgs& args) ->void {
+			if (args.EventType == Event::OnMouseClick) {
+				_index = sd->Parent->IndexOf(sd);
+				_textBox.SetText(((Label*)sd)->GetText());
+				_textBox.Invalidate();
+				_menuWnd->Hide();
+			}
+			};
+
 		return _list.GetControls().size() - 1;
 	}
 	void ComBox::RemoveItem(int index)
@@ -46,72 +117,31 @@ namespace EzUI {
 		delete lb;
 	}
 	void ComBox::OnLayout() {
-		_hittestRect = Rect(Width() - Height(), 0, Height(), Height());
-		Rect rect(Point(1 * this->GetScale() + 0.5, 0), Size(Width() - Height(), Height()));
-		this->_textBox.SetRect(rect);
+		this->_UpDown.SetFixedSize(Size(Height(), Height()));
 		__super::OnLayout();
 	}
-	void ComBox::OnMouseClick(const MouseEventArgs& args)
-	{
-		__super::OnMouseClick(args);
-		if (args.Button == MouseButton::Left && _hittestRect.Contains(args.Location)) {
-			if (_wnd == NULL) {
-				_wnd = new MenuContent(this);
-				_list.Style.BackColor = Color::White;
-				_wnd->SetLayout(&_list);
-			}
 
-			for (auto& it : _list.GetControls()) {
-				it->SetFixedHeight(Height());
-			}
-
-			int height = this->Height() * _list.GetControls().size();
-			if (height == 0) {
-				height = Height();
-			}
-
-			::SetWindowPos(_wnd->Hwnd(), NULL, 0, 0, Width(), height, SWP_NOZORDER | SWP_NOACTIVATE);
-
-			if (!_wnd->IsVisible() ) {
-				_wnd->Show();
-			}
-			else {
-				_wnd->Hide();
-			}
-		}
-	}
-	void ComBox::OnPaint(PaintEventArgs& args)
-	{
-		auto fSzie = this->_textBox.GetFontSize() * 0.5f;
-		int width = fSzie * 1.5f;
-
-		Rect rect(Width() - Height(), 0, width, fSzie);
-		rect.Y = (Height() - fSzie) / 2.0f;
-		rect.X += (Height() - width) / 2.0f;
-
-		args.Graphics.SetColor(Color::Red);
-		//args.Graphics.DrawRectangle(rect);
-
-		PointF p1(rect.GetLeft(), rect.Y);
-		PointF p2(rect.GetRight(), rect.Y);
-
-		PointF p3(rect.GetLeft() + width / 2.0f, rect.GetBottom());
-
-		args.Graphics.SetColor(this->GetForeColor());
-		args.Graphics.DrawLine(p1, p3);
-		args.Graphics.DrawLine(p2, p3);
-
-		__super::OnPaint(args);
-	}
-	ComBox::MenuContent::MenuContent(Control* ownerCtl) :PopupWindow(0, 0, ownerCtl)
+	ComBox::MenuContent::MenuContent(Control* ownerCtl, Control* hittestCtl) :PopupWindow(0, 0, ownerCtl), _hittestCtl(hittestCtl)
 	{
 	}
 	void ComBox::MenuContent::OnKillFocus(HWND wnd)
 	{
 		if (::GetWindowOwner(Hwnd()) == wnd) {
-			//return;
+			POINT pt;
+			::GetCursorPos(&pt);
+			// 将鼠标屏幕坐标转换为客户端坐标
+			::ScreenToClient(::GetWindowOwner(Hwnd()), &pt);
+			Rect _hittestRect = _hittestCtl->GetClientRect();
+			if (_hittestRect.Contains(pt.x, pt.y)) {
+				return;
+			}
+			else {
+				this->Hide();
+			}
 		}
-		this->Hide();
+		else {
+			this->Hide();
+		}
 	}
 	ComBox::MenuContent::~MenuContent()
 	{

@@ -40,13 +40,13 @@ namespace EzUI {
 		ControlStyle HoverStyle;//鼠标悬浮样式
 		ControlStyle ActiveStyle;//鼠标按下样式
 		Control* Parent = NULL;//父控件
-		std::function<void(Control*, const EventArgs&)> EventHandler = NULL;//事件处理器
+		std::function<void(Control*, EventArgs&)> EventHandler = NULL;//事件处理器
 	protected:
 		//仅限子类使用
 		virtual void SetContentWidth(const int& width);//
 		virtual void SetContentHeight(const int& height);//
 		virtual void SetContentSize(const Size& size);//
-		virtual bool OnEvent(const EventArgs& arg);//所有事件先进这里
+		virtual bool OnEvent(EventArgs& arg);//所有事件先进这里
 		virtual void OnPaintBefore(PaintEventArgs& args, bool paintSelf = true);//绘制之前
 		virtual void OnPaint(PaintEventArgs& args);//绘制 
 		virtual void OnChildPaint(PaintEventArgs& args);//子控件绘制 可以重载此函数优化鼠标操作性能
@@ -74,7 +74,7 @@ namespace EzUI {
 		virtual void OnKeyChar(const KeyboardEventArgs& _args);//WM_CAHR消息
 		virtual void OnKeyDown(const KeyboardEventArgs& _args);//WM_CAHR消息
 		virtual void OnKeyUp(const KeyboardEventArgs& _args);//键盘弹起
-		
+
 		virtual void OnFocus(const FocusEventArgs& _args);//获得焦点
 		virtual void OnKillFocus(const KillFocusEventArgs& _args);//失去焦点的时候发生
 		virtual void OnRemove();//被移除该做的事情

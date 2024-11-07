@@ -3,31 +3,38 @@
 #include "Label.h"
 #include "VList.h"
 #include "PopupWindow.h"
+#include "HLayout.h"
 
 namespace EzUI {
-	class UI_EXPORT ComBox :public Control {
+	//简易的下拉列表框
+	class UI_EXPORT ComBox :public HLayout {
 	private:
+		//下拉菜单选项
 		class MenuContent :public PopupWindow {
 		public:
-			MenuContent(Control* ownerCtl);
+			Control* _hittestCtl;
+			MenuContent(Control* ownerCtl, Control* hittestCtl);
 			virtual void OnKillFocus(HWND wnd) override;
 			virtual ~MenuContent();
 		};
 	private:
+		//下拉菜单窗口
+		MenuContent* _menuWnd = NULL;
+		//选择之后显示的文本框
+		TextBox _textBox;
+		//展开菜单的按钮
+		Label _UpDown;
+
 		VList _list;
 		int _index = -1;
-		TextBox _textBox;
-		MenuContent* _wnd = NULL;
-		Rect _hittestRect;
 		void Init();
 	protected:
-		virtual void OnPaint(PaintEventArgs& args) override;
 		virtual void OnLayout()override;
-		virtual void OnMouseClick(const MouseEventArgs& args) override;
 	public:
 		ComBox();
 		EString GetText();
-		int SelectedIndex();
+		int GetCheck();
+		bool SetCheck(int pos);
 		virtual ~ComBox();
 		int AddItem(const EString& text);
 		void RemoveItem(int index);
