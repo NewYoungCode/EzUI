@@ -105,10 +105,10 @@ namespace EzUI {
 		virtual ~Control();
 		void DestroySpacers();//销毁控件内所有弹簧
 		//以下函数请保证在父控件布局已完成的情况下使用 使用ResumeLayout()执行布局
-		const int& X();
-		const int& Y();
-		const int& Width();
-		const int& Height();
+		int X();
+		int Y();
+		int Width();
+		int Height();
 		void SetX(const int& X);
 		void SetY(const int& Y);
 		void SetLocation(const Point& pt);//移动相对与父控件的位置
@@ -119,8 +119,8 @@ namespace EzUI {
 		void SetFixedWidth(const int& fixedWidth);//设置绝对宽度
 		void SetFixedHeight(const int& fixedHeight);//设置绝对高度
 		const Rect& SetRect(const Rect& rect);//设置相对父控件矩形 返回实际的rect
-		const int& GetFixedWidth();//获取绝对宽度
-		const int& GetFixedHeight();//获取绝对高度
+		int GetFixedWidth();//获取绝对宽度
+		int GetFixedHeight();//获取绝对高度
 		virtual Rect GetCareRect();//获取光标位置
 		virtual bool IsAutoWidth();//是否自动高度
 		virtual bool IsAutoHeight();//是否自动高度
@@ -133,9 +133,9 @@ namespace EzUI {
 		virtual const Rect& GetRect();//获取相对与父控件矩形 布局计算后
 		Rect GetClientRect();//获取基于客户端的区域
 		const Rect& GetViewRect();//获取基于窗口中的可视区域
-		const DockStyle& GetDockStyle();//获取dock标志
+		DockStyle GetDockStyle();//获取dock标志
 		void SetDockStyle(const DockStyle& dockStyle);
-		const float& GetScale();
+		float GetScale();
 		bool IsPendLayout();//是否含有挂起的布局
 		const LayoutState& TryPendLayout();//尝试挂起布局 返回当前布局状态
 		const LayoutState& GetLayoutState();//获取当前布局状态

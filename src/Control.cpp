@@ -387,7 +387,7 @@ namespace EzUI {
 	{
 		return this->ViewControls;
 	}
-	const float& Control::GetScale()
+	float Control::GetScale()
 	{
 		return this->_scale;
 	}
@@ -400,19 +400,19 @@ namespace EzUI {
 		}
 		return NULL;
 	}
-	const int& Control::X()
+	int Control::X()
 	{
 		return _rect.X;
 	}
-	const int& Control::Y()
+	int Control::Y()
 	{
 		return _rect.Y;
 	}
-	const int& Control::Width()
+	int Control::Width()
 	{
 		return _rect.Width;
 	}
-	const int& Control::Height()
+	int Control::Height()
 	{
 		return _rect.Height;
 	}
@@ -463,11 +463,11 @@ namespace EzUI {
 		_fixedSize.Height = size.Height;
 		SetRect({ _rect.X,_rect.Y,size.Width,size.Height });
 	}
-	const int& Control::GetFixedWidth()
+	int Control::GetFixedWidth()
 	{
 		return _fixedSize.Width;
 	}
-	const int& Control::GetFixedHeight()
+	int Control::GetFixedHeight()
 	{
 		return _fixedSize.Height;
 	}
@@ -503,7 +503,7 @@ namespace EzUI {
 	{
 		return this->_viewRect;
 	}
-	const DockStyle& Control::GetDockStyle()
+	DockStyle Control::GetDockStyle()
 	{
 		return this->_dock;
 	}
