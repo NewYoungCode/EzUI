@@ -15,7 +15,6 @@ MainFrm::MainFrm() :BorderlessWindow(1020, 690), ntfi(WM_NOTIFYICON1)
 		combox->AddItem(L"你好你好择");
 		combox->SetCheck(2);
 	}
-
 }
 void MainFrm::InitForm() {
 	this->Zoom = true;
@@ -38,27 +37,14 @@ void MainFrm::InitForm() {
 	localList = (VList*)this->FindControl("playList");
 	searchList = (VList*)this->FindControl("searchList");
 	searchEdit = (TextBox*)this->FindControl("searchEdit");
+	labelDeskLrc = (CheckBox*)this->FindControl("deskLrc");
 
 	player.Name = "player";
 	this->FindControl("vlcDock")->Add(&player);
 	this->FindControl("lrcView2")->Add(&lrcCtl);//添加歌词控件
 
-	std::list<MonitorInfo> monitorInfo;
-	GetMonitor(&monitorInfo);
-	const MonitorInfo& def = *monitorInfo.begin();
-	deskTopWnd = new LayeredWindow(def.Rect.Width, def.Rect.Height);
-	deskTopWnd->CloseShadowBox();
-	deskTopLrc = new LrcControl();
-	deskTopLrc->Style.FontSize = 20;
-	deskTopLrc->Style.ForeColor = Color::White;
-	//deskTopLrc->Style.BackColor = Color::Black;
-	deskTopWnd->SetLayout(deskTopLrc);
-
-	//HWND pWnd = ::FindWindow(L"CvChartWindow", L"");
-	HWND pWnd = global::GetWorkerW();
-
-	::SetParent(deskTopWnd->Hwnd(), pWnd);
-	//deskTopWnd->Show();
+	//创建桌面歌词视频窗口
+	deskTopWnd = new DesktopLrcFrm(&player);
 
 	//给默认背景图片设置缩放属性
 	if (main->Style.BackImage) {
@@ -118,9 +104,16 @@ void MainFrm::InitForm() {
 	//添加一些事件到窗口中的OnNotify函数进行拦截
 	player.Tag = main;
 
-
 	player.EventNotify = player.EventNotify | Event::OnPaint;
 	main->EventNotify = main->EventNotify | Event::OnPaint;
+
+	player.PlayingCallback = [&](Bitmap* bitmap)->void {
+		this->BeginInvoke([&]() {
+			this->Invalidate();
+			this->deskTopWnd->GetLayout()->Style.BackImage = NULL;
+			this->deskTopWnd->Invalidate();
+			});
+		};
 
 	OpenSongView();//
 	//设置阴影
@@ -155,9 +148,6 @@ MainFrm::~MainFrm()
 	}
 	if (localList) {
 		localList->Clear(true);
-	}
-	if (deskTopLrc) {
-		delete deskTopLrc;
 	}
 	if (deskTopWnd) {
 		delete deskTopWnd;
@@ -285,6 +275,9 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				arg.Graphics.DrawImage(&img, main->GetRect());
 				return true;
 			}
+			else if (labelDeskLrc->GetCheck() == 1) {
+				deskTopWnd->Invalidate();
+			}
 			return false;
 		}
 		return false;
@@ -389,16 +382,12 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			}
 			EString lrcData = global::GetSongLrc(hash);
 			lrcCtl.LoadLrc(lrcData);
-			deskTopLrc->LoadLrc(lrcData);
+			deskTopWnd->LoadLrc(lrcData);
 			timer->Start();
 		}
 	}
 
 	if (args.EventType == Event::OnMouseClick) {
-		if (sender->Name == "login") {
-			this->ShowFullScreen();
-			return false;
-		}
 		if (sender->Name == "next") {
 			int pos = this->FindLocalSong(this->nowSong);
 			pos++;
@@ -499,7 +488,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			EString filehash = sender->Parent->GetAttribute("FileHash");
 			EString lrcData = global::GetSongLrc(filehash);
 			lrcCtl.LoadLrc(lrcData);
-			deskTopLrc->LoadLrc(lrcData);
+			deskTopWnd->LoadLrc(lrcData);
 			timer->Start();
 		}
 		if (sender == playerBar) {
@@ -519,11 +508,9 @@ void MainFrm::TimerTick() {
 			double rate = position / (player.Duration() * 1000.0);
 			int w = playerBar->Width() * rate;
 
+			lrcCtl.ChangePostion(position);
 			if (deskTopWnd->IsVisible()) {
-				deskTopLrc->ChangePostion(position);
-			}
-			else {
-				lrcCtl.ChangePostion(position);
+				deskTopWnd->ChangePostion(position);
 			}
 
 			EString f1 = global::toTimeStr(position / 1000);

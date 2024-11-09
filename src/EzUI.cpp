@@ -106,6 +106,7 @@ namespace EzUI {
 		MONITORINFOEX infoEx;
 		infoEx.cbSize = sizeof(infoEx);
 		::GetMonitorInfoW(hMonitor, &infoEx);
+		mt.Monitor = hMonitor;
 		//逻辑宽高
 		mt.Rect.X = infoEx.rcMonitor.left;
 		mt.Rect.Y = infoEx.rcMonitor.top;

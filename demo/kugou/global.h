@@ -78,7 +78,6 @@ namespace global {
 	extern int pageSize;
 	extern int page;
 	extern bool nextPage;
-	extern HWND _workerw;
 
 	//歌曲长度转字符串显示
 	extern EString toTimeStr(long dur);
@@ -88,6 +87,4 @@ namespace global {
 	extern std::vector<Song> SearchSongs(const EString& keyword);
 	//使用歌曲的AlbumId寻找查找对应的歌词
 	extern EString GetSongLrc(const EString& hash, const EString& AlbumID = "");
-	//获取桌面句柄 用于桌面歌词显示
-	extern HWND GetWorkerW();
 };

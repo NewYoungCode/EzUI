@@ -20,6 +20,7 @@ namespace EzUI {
 		unsigned int IMG_WIDTH = 0;
 		unsigned int IMG_HEIGHT = 0;
 		Bitmap* BuffBitmap = NULL;
+		std::function<void(Bitmap* bitmap)> PlayingCallback;
 	protected:
 		void SetConfig();
 		virtual void OnBackgroundPaint(PaintEventArgs& pArg) override;

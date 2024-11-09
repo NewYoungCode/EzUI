@@ -132,6 +132,7 @@ namespace EzUI {
 #endif
 	// 定义用于保存显示器信息的结构体
 	struct MonitorInfo {
+		HMONITOR Monitor = NULL;
 		//显示器的位置 多显示器下Y轴可能出现负数或者大于0的时候代表显示器在设置里面显示器是错位的(多显示器没有平行);
 		EzUI::Rect Rect;//逻辑宽高
 		EzUI::Rect WorkRect;//工作区域
