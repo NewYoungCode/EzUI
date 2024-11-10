@@ -38,12 +38,12 @@ protected:
 	void OpenLrcView();
 	void InitForm();
 	void DownLoadImage(EString SingerName, EString headImageUrl);
+	bool PlayForHash(const EString& hash, Song& info);
 public:
 	void NextPage(float scrollPos);
 	MainFrm();
 	virtual ~MainFrm();
 	void OnClose(bool& b) override;
-	void OnPaint(PaintEventArgs& arg)override;
 	size_t FindLocalSong(const EString& hash);
 };
 

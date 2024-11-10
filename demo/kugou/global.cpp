@@ -204,4 +204,78 @@ namespace global {
 		auto gbkLrc = Text::UTF8ToANSI(base64Text);
 		return base64Text;
 	}
+	bool GetSongInfo(const EString& hash, EString& errorInfo, Song& info)
+	{
+		EString url = "http://m.kugou.com/app/i/getSongInfo.php?hash={hash}&cmd=playInfo";
+		EString::Replace(&url, "{hash}", hash);
+		EString resp;
+		global::HttpGet(url, resp);
+		auto w = resp.unicode();
+		JObject json(resp);
+		if (json["errcode"].asInt() != 0) {
+			errorInfo = EString(json["error"].asString());
+			return false;
+		}
+		int dur = json["timeLength"].asInt();
+		EString playUrl = json["url"].asCString();
+		EString SingerName = json["author_name"].asCString();
+
+		info.fileName = json["fileName"].asString();
+		info.Duration = dur;
+		info.url = playUrl;
+		info.SingerName = SingerName;
+		info.imgUrl = json["imgUrl"].asCString();
+
+		if (playUrl.empty()) {
+			errorInfo = L"歌曲收费";
+			return false;
+		}
+		return true;
+	}
+
+	bool GetMvInfo(const EString& mvhash, Song& info) {
+		EString resp;
+		WebClient wc;
+		wc.HttpGet("http://m.kugou.com/app/i/mv.php?cmd=100&hash=" + mvhash + "&ismp3=1&ext=mp4", resp);
+		auto w = resp.unicode();
+		JObject json(resp);
+		std::vector<EString> urls;
+		urls.reserve(6);
+		for (auto& it : json["mvdata"]) {
+			EString url = it["downurl"].asString();
+			if (!url.empty()) {
+				urls.push_back(url);
+			}
+		}
+
+		info.Duration = json["timelength"].asInt();
+		info.SongName = json["songname"].asString();
+		info.url = urls[urls.size() - 1];
+		return true;
+	}
+
+	EString GetSingerBackground(const EString& SingerName) {
+		EString imageUrl = "https://artistpicserver.kuwo.cn/pic.web?type=big_artist_pic&pictype=url&content=list&&id=0&name=" + HttpUtility::UrlEncode(SingerName) + "&from=pc&json=1&version=1&width=" + std::to_string(1920) + "&height=" + std::to_string(1080);
+		EString resp;
+		WebClient wc;
+		wc.HttpGet(imageUrl, resp, 5);
+		JObject json(resp);
+		EString bkurl;
+		//使用最清晰的图片
+		if (bkurl.empty()) {
+			for (auto&& it : json["array"]) {
+				if (!it["bkurl"].isNull()) {
+					bkurl = it["bkurl"].asString();
+					break;
+				}
+			}
+		}
+		for (auto&& it : json["array"]) {
+			if (!it["wpurl"].isNull()) {
+				bkurl = it["wpurl"].asString();
+				break;
+			}
+		}
+		return bkurl;
+	}
 }

@@ -27,7 +27,7 @@ DesktopLrcFrm::DesktopLrcFrm(VlcPlayer* player) :_player(player), LayeredWindow(
 	//获取桌面的窗口句柄
 	HWND workWnd = GetDeskTopWnd();
 	::SetParent(Hwnd(), workWnd);
-	::SetWindowPos(Hwnd(), NULL, def.Rect.X, def.Rect.Y, def.Rect.Width, def.Rect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
+	this->SetRect(def.Rect);
 	//设置窗口布局
 	_lrc.Style.FontSize = 20;
 	_lrc.Style.ForeColor = Color::White;

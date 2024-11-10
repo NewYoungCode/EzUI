@@ -45,6 +45,9 @@ struct Song {
 	EString AlbumID;//
 	EString AlbumName;//
 	int QualityLevel;//歌曲热度
+	EString url;
+	EString imgUrl;
+	EString fileName;
 };
 
 /// <summary>
@@ -87,4 +90,10 @@ namespace global {
 	extern std::vector<Song> SearchSongs(const EString& keyword);
 	//使用歌曲的AlbumId寻找查找对应的歌词
 	extern EString GetSongLrc(const EString& hash, const EString& AlbumID = "");
+	//获取歌曲信息
+	extern bool GetSongInfo(const EString& hash, EString& errorInfo, Song& info);
+	//获取mv信息
+	extern bool GetMvInfo(const EString& mvhash, Song& info);
+	//获取歌手写真(酷我的接口)
+	extern EString GetSingerBackground(const EString& SingerName);
 };

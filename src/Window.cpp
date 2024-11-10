@@ -209,16 +209,8 @@ namespace EzUI {
 		this->SetRect(Rect(pt.X, pt.Y, rect.Width, rect.Height));
 	}
 	void Window::SetRect(const Rect& rect)
-	{
-		//int newX = rect.X;
-		//int newY = rect.Y;
-		//int newWidth = rect.Width;
-		//int newHeight = rect.Height;
-		int newX = PublicData->Scale * rect.X + 0.5;
-		int newY = PublicData->Scale * rect.Y + 0.5;
-		int newWidth = PublicData->Scale * rect.Width + 0.5;
-		int newHeight = PublicData->Scale * rect.Height + 0.5;
-		::SetWindowPos(Hwnd(), NULL, newX, newY, newWidth, newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
+	{	
+		::SetWindowPos(Hwnd(), NULL, rect.X, rect.Y, rect.Width, rect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
 	}
 	void Window::SetMiniSize(const Size& size)
 	{
@@ -379,8 +371,8 @@ namespace EzUI {
 		int sh = monitorInfo.WorkRect.Height;//当前工作区域的高
 
 		Rect _rect = this->GetWindowRect();
-		const int& width = _rect.Width;
-		const int& height = _rect.Height;
+		int width = _rect.Width;
+		int height = _rect.Height;
 		//基于屏幕的中心点
 		_rect.X = x + (sw - width) / 2.0f + 0.5;//保证左右居中
 		_rect.Y = y + (sh - height) / 2.0f + 0.5;//保证上下居中

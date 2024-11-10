@@ -2,29 +2,18 @@
 MainFrm::MainFrm() :BorderlessWindow(1020, 690), ntfi(WM_NOTIFYICON1)
 {
 	InitForm();
-	//托盘
-	ntfi.SetText(L"酷狗音乐");
+	//托盘初始化
+	ntfi.SetText(L"酷苟音乐");
 	ntfi.SetIcon(nullptr);//托盘图标
 	this->SetMiniSize({ 800,600 });
-
-	ComBox* combox = (ComBox*)FindControl("combox");
-	if (combox) {
-		combox->AddItem(L"-请选择-");
-		combox->AddItem(L"你好");
-		combox->AddItem(L"你好择");
-		combox->AddItem(L"你好你好择");
-		combox->SetCheck(2);
-	}
 }
 void MainFrm::InitForm() {
 	this->Zoom = true;
 	umg.LoadXmlFile("xml/main.htm");
 	umg.SetupUI(this);
 	cfg = new ConfigIni(Path::StartPath() + "\\list.ini");
-	//findControl
+	//找到每一个控件先
 	main = FindControl("main");
-	//第一次不显示背景图 测试无图绘制的性能
-
 	tools = FindControl("tools");
 	center = FindControl("center");
 	centerLeft = FindControl("centerLeft");
@@ -61,32 +50,27 @@ void MainFrm::InitForm() {
 	searchList->GetScrollBar()->Style.BackColor = Color(200, 200, 200, 50);
 	//集体设置右上角的最大化 最小化 关闭按钮 的悬浮效果
 	$(this->FindControl("btns")->GetControls()).CssHover("color:#ffffff;");
-	int pos = 0;
-	for (size_t i = 0; i < 1; i++)
-	{
-		//加载左侧播放过的音乐
-		for (auto&& _it : cfg->GetSections()) {
 
-			EString name = cfg->ReadString("name", "", _it);
-			int  dur = cfg->ReadInt("dur", 0, _it);
-			EString  singer = cfg->ReadString("singer", "", _it);
-			LocalItem* it = new LocalItem(name, global::toTimeStr(dur));
-			it->SetAttribute("FileHash", _it);
-			it->SetAttribute("SingerName", singer);
-			it->SetTips(name);
+	//加载左侧播放过的音乐
+	for (auto& _it : cfg->GetSections()) {
 
-			Song s;
-			s.SongName = cfg->ReadString("name", "", _it);
-			s.hash = _it;
-			s.Duration = cfg->ReadInt("dur", 0, _it);
-			s.SingerName = cfg->ReadString("singer", "", _it);
-			songs.push_back(s);
+		EString name = cfg->ReadString("name", "", _it);
+		int  dur = cfg->ReadInt("dur", 0, _it);
+		EString  singer = cfg->ReadString("singer", "", _it);
+		LocalItem* it = new LocalItem(name, global::toTimeStr(dur));
+		it->SetAttribute("FileHash", _it);
+		it->SetAttribute("SingerName", singer);
+		it->SetTips(name);
 
-			localList->Add(it);
-			pos++;
-		}
+		Song s;
+		s.SongName = cfg->ReadString("name", "", _it);
+		s.hash = _it;
+		s.Duration = cfg->ReadInt("dur", 0, _it);
+		s.SingerName = cfg->ReadString("singer", "", _it);
+		songs.push_back(s);
+
+		localList->Add(it);
 	}
-
 	//滚动条滚动事件 滚动条滚动到底部加载剩余音乐
 	searchList->GetScrollBar()->Scroll = [=](ScrollBar* sb, float pos, Event type)->void {
 		if (type == Event::OnMouseWheel) {
@@ -102,29 +86,20 @@ void MainFrm::InitForm() {
 		TimerTick();
 		};
 	//添加一些事件到窗口中的OnNotify函数进行拦截
-	player.Tag = main;
-
 	player.EventNotify = player.EventNotify | Event::OnPaint;
 	main->EventNotify = main->EventNotify | Event::OnPaint;
-
+	//播放视频的时候每一帧的回调
 	player.PlayingCallback = [&](Bitmap* bitmap)->void {
 		this->BeginInvoke([&]() {
 			this->Invalidate();
-			this->deskTopWnd->GetLayout()->Style.BackImage = NULL;
-			this->deskTopWnd->Invalidate();
+			if (deskTopWnd->IsVisible()) {
+				this->deskTopWnd->GetLayout()->Style.BackImage = NULL;
+				this->deskTopWnd->Invalidate();
+			}
 			});
 		};
-
-	OpenSongView();//
-	//设置阴影
-	//this->SetShadow(20);
-   // main->Style.Border.Radius = 40;
-	main->Style.BackImage->Visible = false;
-	//main->Style.Border = 1;
-	main->Style.Border.Color = Color(100, 100, 100, 100);
-	//关闭窗口阴影
-	//this->CloseShadow();
-	//WM_TIMER
+	//打开默认显示界面
+	OpenSongView();
 }
 MainFrm::~MainFrm()
 {
@@ -157,9 +132,7 @@ void MainFrm::OnClose(bool& cal) {
 	//关闭窗口时 退出消息循环 程序结束
 	Application::Exit(0);
 }
-void MainFrm::OnPaint(PaintEventArgs& _arg) {
-	__super::OnPaint(_arg);
-}
+
 size_t MainFrm::FindLocalSong(const EString& hash)
 {
 	for (size_t i = 0; i < songs.size(); i++)
@@ -184,31 +157,12 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 			headImg->SizeMode = ImageSizeMode::CenterImage;
 		}
 	}
-	//下载歌手写真 酷我的接口
+
+	//下载歌手写真
 	{
 		bkImg = NULL;
 		auto rect = GetClientRect();
-		EString imageUrl = "https://artistpicserver.kuwo.cn/pic.web?type=big_artist_pic&pictype=url&content=list&&id=0&name=" + HttpUtility::UrlEncode(SingerName) + "&from=pc&json=1&version=1&width=" + std::to_string(1920) + "&height=" + std::to_string(1080);
-		EString resp;
-		WebClient wc;
-		wc.HttpGet(imageUrl, resp, 5);
-		JObject json(resp);
-		EString bkurl;
-		//使用最清晰的图片
-		if (bkurl.empty()) {
-			for (auto&& it : json["array"]) {
-				if (!it["bkurl"].isNull()) {
-					bkurl = it["bkurl"].asString();
-					break;
-				}
-			}
-		}
-		for (auto&& it : json["array"]) {
-			if (!it["wpurl"].isNull()) {
-				bkurl = it["wpurl"].asString();
-				break;
-			}
-		}
+		EString bkurl = global::GetSingerBackground(_SingerName);
 		if (!bkurl.empty()) {
 			std::string fileData;
 			WebClient wc2;
@@ -241,17 +195,79 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 		});
 
 }
+
+
+
+bool MainFrm::PlayForHash(const EString& hash, Song& info)
+{
+	timer->Stop();
+
+	EString errStr;
+	bool ret = global::GetSongInfo(hash, errStr, info);
+	if (!ret) {
+		::MessageBoxW(Hwnd(), errStr.unicode().c_str(), L"错误", 0);
+		return false;
+	}
+
+	EString singerName = info.SingerName;
+	auto singers = singerName.split("、");
+	if (!singers.empty()) {
+		singerName = singers[0];
+	}
+
+	if (downloadTask) {
+		delete downloadTask;
+	}
+
+	if (headImg) {
+		delete headImg;
+		singer->Style.ForeImage = NULL;
+		headImg = NULL;
+		singer->Invalidate();
+	}
+	if (bkImg) {
+		delete bkImg;
+		main->Style.ForeImage = NULL;
+		deskTopWnd->GetLayout()->Style.BackImage = NULL;
+		bkImg = NULL;
+		main->Invalidate();
+	}
+
+	FindControl("lrcView")->DispatchEvent(Event::OnMouseClick);
+
+	downloadTask = new Task([this](EString singname, EString imgUrl) {
+		this->DownLoadImage(singname, imgUrl);
+		}, singerName, info.imgUrl);
+
+	this->nowSong = hash;
+	auto it = localList->FindSingleChild("FileHash", hash);
+	$(localList->GetControls()).Css("background-color:rgba(0,0,0,0)").Not(it);
+	$(it).Css("background-color:rgba(255,255,255,100)");
+
+	this->SetText(info.fileName);
+	((Label*)FindControl("songName"))->SetText(info.fileName);
+	ntfi.ShowBalloonTip(L"播放音乐", info.fileName, 2000);
+	player.OpenUrl(info.url);
+	player.SetDuration(info.Duration);
+	player.Play();
+	EString lrcData = global::GetSongLrc(hash);
+	lrcCtl.LoadLrc(lrcData);
+	deskTopWnd->LoadLrc(lrcData);
+	timer->Start();
+	return 1;
+
+}
 void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 {
 	//回车搜索歌曲
-	if (wparam == 13) {
+	if (wparam == VK_RETURN) {
 		global::page = 1;
 		global::nextPage = true;
 		FindControl("songView")->DispatchEvent(MouseEventArgs(Event::OnMouseClick));
 		EString keyword = searchEdit->GetText();
 		std::vector<Song> songs = global::SearchSongs(keyword);
 		searchList->Clear(true);
-		for (auto&& it : songs) {
+		for (auto& it : songs) {
 			SearchItem* sit = new SearchItem(it);
 			searchList->Add(sit);
 		}
@@ -275,7 +291,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				arg.Graphics.DrawImage(&img, main->GetRect());
 				return true;
 			}
-			else if (labelDeskLrc->GetCheck() == 1) {
+			else if (deskTopWnd->IsVisible()) {
 				deskTopWnd->Invalidate();
 			}
 			return false;
@@ -285,105 +301,28 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 	if (args.EventType == Event::OnMouseDoubleClick) {
 		if (!sender->GetAttribute("FileHash").empty()) {
 			EString hash = sender->GetAttribute("FileHash");
-			EString url = "http://m.kugou.com/app/i/getSongInfo.php?hash={hash}&cmd=playInfo";
-			EString::Replace(&url, "{hash}", hash);
-			EString resp;
-			//{"errcode":30001,"status":0,"error":"data not found"}
-			global::HttpGet(url, resp);
-			//resp = resp.ansi();
-			timer->Stop();
-			JObject json(resp);
 
-			if (json["errcode"].asInt() != 0) {
-				::MessageBoxW(Hwnd(), EString(json["error"].asString()).unicode().c_str(), L"音乐API错误", 0);
-				return 0;
-			}
-
-			int dur = json["timeLength"].asInt();
-			EString playUrl = json["url"].asCString();
-
-			if (!playUrl.empty()) {
-				EString SingerName = sender->GetAttribute("SingerName");
-				auto w = SingerName.unicode();
-				auto singers = SingerName.split("、");
-				if (!singers.empty()) {
-					//多个歌手的情况下 随机选择一个歌手的名称进行下载头像和写真
-					// 设置随机数生成器
-					std::random_device rd;  // 获取随机设备种子
-					std::mt19937 gen(rd()); // 使用 Mersenne Twister 算法生成随机数
-					// 定义随机数范围
-					int lower_bound = 0; // 下限
-					int upper_bound = singers.size() - 1; // 上限
-					// 生成随机数
-					std::uniform_int_distribution<> dis(lower_bound, upper_bound);
-					int random_num = dis(gen);
-					SingerName = singers.at(random_num);
-				}
-
-				if (downloadTask) {
-					delete downloadTask;
-				}
-
-				if (headImg) {
-					delete headImg;
-					singer->Style.ForeImage = NULL;
-					headImg = NULL;
-					singer->Invalidate();
-				}
-				if (bkImg) {
-					delete bkImg;
-					main->Style.ForeImage = NULL;
-					deskTopWnd->GetLayout()->Style.BackImage = NULL;
-					bkImg = NULL;
-					main->Invalidate();
-				}
-
-				FindControl("lrcView")->DispatchEvent(Event::OnMouseClick);
-
-				downloadTask = new Task([this](EString singname, EString imgUrl) {
-					this->DownLoadImage(singname, imgUrl);
-					}, SingerName, json["imgUrl"].asString());
-
+			Song info;
+			bool ret = this->PlayForHash(hash, info);
+			if (ret) {
 				if (dynamic_cast<SearchItem*>(sender)) {
+					//将播放的歌曲记录到本地文件中
 					Song* tag = (Song*)sender->Tag;
 					if (this->FindLocalSong(tag->hash) == size_t(-1)) {
 						songs.push_back(*tag);
-						LocalItem* it = new LocalItem(tag->SongName, global::toTimeStr(dur));
+						LocalItem* it = new LocalItem(tag->SongName, global::toTimeStr(info.Duration));
 						it->SetAttribute("FileHash", hash);
-						it->SetAttribute("SingerName", SingerName);
+						it->SetAttribute("SingerName", info.SingerName);
 						localList->Add(it);
 						localList->RefreshLayout();
-
 						localList->GetScrollBar()->ScrollTo(it);
-						//localList->GetScrollBar()->Move(localList->GetContentSize().Height);
 						localList->Invalidate();
-
 						cfg->WriteValue("name", tag->SongName, hash);
 						cfg->WriteValue("singer", tag->SingerName, hash);
-						cfg->WriteValue("dur", std::to_string(dur), hash);
+						cfg->WriteValue("dur", std::to_string(info.Duration), hash);
 					}
 				}
-
-				this->nowSong = hash;
-				auto it = localList->FindSingleChild("FileHash", hash);
-				$(localList->GetControls()).Css("background-color:rgba(0,0,0,0)").Not(it);
-				$(it).Css("background-color:rgba(255,255,255,100)");
-
-				this->SetText(json["fileName"].asString());
-				((Label*)FindControl("songName"))->SetText(json["fileName"].asString());
-				ntfi.ShowBalloonTip(L"播放音乐", EString(json["fileName"].asString()), 2000);
-				player.OpenUrl(playUrl);
-				player.SetDuration(dur);
-				player.Play();
 			}
-			else {
-				::MessageBoxW(Hwnd(), L"歌曲收费", L"ERROR", 0);
-				return 0;
-			}
-			EString lrcData = global::GetSongLrc(hash);
-			lrcCtl.LoadLrc(lrcData);
-			deskTopWnd->LoadLrc(lrcData);
-			timer->Start();
 		}
 	}
 
@@ -464,29 +403,25 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 		}
 		if (!sender->GetAttribute("mvhash").empty()) {
 			timer->Stop();
-			EString resp;
-			WebClient wc;
-			wc.HttpGet("http://m.kugou.com/app/i/mv.php?cmd=100&hash=" + sender->GetAttribute("mvhash") + "&ismp3=1&ext=mp4", resp);
-			JObject json(resp);
-			std::vector<EString> urls;
-			urls.reserve(6);
-			for (auto&& it : json["mvdata"]) {
-				EString url = it["downurl"].asString();
-				if (!url.empty()) {
-					urls.push_back(url);
-				}
-			}
+			EString mvhash = sender->GetAttribute("mvhash");
+
+			Song info;
+			global::GetMvInfo(mvhash, info);
+
 			FindControl("mvView")->DispatchEvent(Event::OnMouseClick);
-			player.OpenUrl(urls[urls.size() - 1]);
-			player.Play();
-			this->SetText(json["songname"].asString());
-			((Label*)FindControl("songName"))->SetText(json["songname"].asString());
+
+			this->SetText(info.SongName);
+			((Label*)FindControl("songName"))->SetText(info.SongName);
 			((Label*)FindControl("songName"))->Invalidate();
 
-			player.SetDuration(json["timelength"].asInt() / 1000);
 
 			EString filehash = sender->Parent->GetAttribute("FileHash");
 			EString lrcData = global::GetSongLrc(filehash);
+
+			player.OpenUrl(info.url);
+			player.Play();
+			player.SetDuration(info.Duration / 1000);
+
 			lrcCtl.LoadLrc(lrcData);
 			deskTopWnd->LoadLrc(lrcData);
 			timer->Start();
@@ -505,7 +440,8 @@ void MainFrm::TimerTick() {
 	this->Invoke([=]() {
 		if (player.GetState() == libvlc_state_t::libvlc_Playing) {
 			long long position = player.Position();
-			double rate = position / (player.Duration() * 1000.0);
+			auto duration = player.Duration();
+			double rate = position / (duration * 1000.0);
 			int w = playerBar->Width() * rate;
 
 			lrcCtl.ChangePostion(position);
@@ -514,7 +450,7 @@ void MainFrm::TimerTick() {
 			}
 
 			EString f1 = global::toTimeStr(position / 1000);
-			EString f2 = global::toTimeStr(player.Duration());
+			EString f2 = global::toTimeStr(duration);
 			EString fen = f1 + "/" + f2;
 
 			if (control->GetPageIndex() != 1) {
@@ -547,7 +483,7 @@ void MainFrm::NextPage(float scrollPos) {
 		global::page++;
 		EString keyword = searchEdit->GetText();
 		std::vector<Song> songs = global::SearchSongs(keyword);
-		for (auto&& it : songs) {
+		for (auto& it : songs) {
 			SearchItem* sit = new SearchItem(it);
 			searchList->Add(sit);
 		}
