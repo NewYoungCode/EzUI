@@ -11,6 +11,10 @@ namespace EzUI {
 	public:
 		EString();
 		virtual ~EString();
+		EString(const EString& _right)noexcept;
+		EString(EString&& _right)noexcept;
+		EString& operator=(const EString& _right)noexcept;
+		EString& operator=(EString&& _right)noexcept;
 		EString(const std::string& str)noexcept;
 		EString(const char* szbuf)noexcept;
 		EString(const wchar_t* szbuf)noexcept;
@@ -20,7 +24,7 @@ namespace EzUI {
 		std::string ansi() const;
 		std::vector<std::string> split(const EString& ch_)const;
 		void erase(char _ch);
-		void erase(size_t pos,size_t count);
+		void erase(size_t pos, size_t count);
 		EString replace(char oldChar, char newChar);
 		EString replace(const EString& oldText, const EString& newText, bool allReplace = true)const;
 		EString toLower()const;

@@ -12,8 +12,18 @@ namespace EzUI {
 		return count;
 	}
 	EString::EString() {}
-	EString::~EString()
+	EString::~EString() {}
+	EString::EString(const EString& _right)noexcept :std::string(_right) {}
+	EString::EString(EString&& _right) noexcept :std::string(std::move(_right)) {}
+	EString& EString::operator=(const EString& _right) noexcept
 	{
+		(std::string&)*this = _right;
+		return *this;
+	}
+	EString& EString::operator=(EString&& _right) noexcept
+	{
+		std::string::operator=(std::move(_right));
+		return *this;
 	}
 	EString::EString(const std::string& str)noexcept :std::string(str) {}
 	EString::EString(const char* szbuf)noexcept :std::string(szbuf) {}
@@ -202,7 +212,7 @@ namespace EzUI {
 	void EString::Replace(std::string* str_in_out, char oldChar, char newChar)
 	{
 		for (auto& it : *str_in_out) {
-		
+
 			if (it == oldChar) {
 				it = newChar;
 			}

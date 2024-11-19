@@ -266,6 +266,10 @@ namespace EzUI {
 		Point _offset;
 		PointF _rotatePoint;
 		float _angle = 0;
+	private:
+		DXRender() = delete;
+		DXRender(const DXRender& _right) = delete;
+		DXRender& operator=(const DXRender&) = delete;
 	public:
 		ID2D1SolidColorBrush* GetBrush();
 		ID2D1StrokeStyle* GetStrokeStyle();
