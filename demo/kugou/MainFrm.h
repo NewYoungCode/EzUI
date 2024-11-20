@@ -5,8 +5,10 @@
 
 #include "DesktopLrcFrm.h"
 
+using Form = BorderlessWindow;
+
 class MainFrm :
-	public BorderlessWindow
+	public Form
 {
 private:
 	std::vector<Song> songs;

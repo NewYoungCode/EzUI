@@ -1,5 +1,5 @@
 #include "MainFrm.h"
-MainFrm::MainFrm() :BorderlessWindow(1020, 690), ntfi(WM_NOTIFYICON1)
+MainFrm::MainFrm() :Form(1020, 690), ntfi(WM_NOTIFYICON1)
 {
 	InitForm();
 	//托盘初始化

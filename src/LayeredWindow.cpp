@@ -40,10 +40,10 @@ namespace EzUI {
 						break;
 					}
 				}
-				//1000/5=200帧封顶
 				this->Invoke([this]() {
 					this->Paint();
 					});
+				//1000/5=200帧封顶
 				Sleep(5);
 			}
 			});
@@ -81,8 +81,6 @@ namespace EzUI {
 			rect.Width = Width - rect.X;
 		} //这段代码是保证重绘区域一定是在窗口内
 		Rect::Union(_invalidateRect, _invalidateRect, rect);
-		//闪烁问题找到了 如果永远重绘整个客户端将不会闪烁
-		//_InvalidateRect = clientRect;
 	}
 	void LayeredWindow::OnSize(const Size& sz) {
 		if (_winBitmap) {
@@ -97,7 +95,15 @@ namespace EzUI {
 		if (_winBitmap && !_invalidateRect.IsEmptyArea()) {
 			_winBitmap->Earse(_invalidateRect);//清除背景
 			HDC winHDC = _winBitmap->GetHDC();
-			DoPaint(winHDC, _invalidateRect);
+			//使用双缓冲
+			Bitmap doubleBuff(_winBitmap->Width, _winBitmap->Height, Bitmap::PixelFormat::PixelFormatARGB);
+			DoPaint(doubleBuff.GetHDC(), _invalidateRect);
+			//使用BitBlt函数进行复制到winHDC
+			::BitBlt(winHDC, _invalidateRect.X, _invalidateRect.Y,
+				_invalidateRect.Width, _invalidateRect.Height,
+				doubleBuff.GetHDC(), _invalidateRect.X, _invalidateRect.Y,
+				SRCCOPY);
+
 			PushDC(winHDC);//updatelaredwindow 更新窗口
 			_invalidateRect = Rect();//重置区域
 		}
