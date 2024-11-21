@@ -1,7 +1,6 @@
 #include "DesktopLrcFrm.h"
 
 HWND DesktopLrcFrm::GetDeskTopWnd() {
-	int result;
 	HWND windowHandle = ::FindWindowW(L"Progman", L"Program Manager");
 	::SendMessageW(windowHandle, 0x052c, 0, 0);
 	::EnumWindows([](HWND tophandle, LPARAM lParam)->BOOL {
@@ -9,12 +8,19 @@ HWND DesktopLrcFrm::GetDeskTopWnd() {
 		if (defview != NULL)
 		{
 			HWND workerw = ::FindWindowExW(0, tophandle, L"WorkerW", 0);
-			//workerw = (HWND)0X000C08D2;
-			::ShowWindow(workerw, SW_HIDE);
+			if (workerw == NULL) {
+				workerw = ::FindWindowExW(tophandle, 0, L"WorkerW", 0);
+				*((HWND*)lParam) = workerw;
+				::ShowWindow(workerw, SW_SHOW);
+			}
+			else
+			{
+				::ShowWindow(workerw, SW_HIDE);
+			}
 			return FALSE;
 		}
 		return TRUE;
-		}, NULL);
+		}, (LPARAM)&windowHandle);
 	return windowHandle;
 }
 
