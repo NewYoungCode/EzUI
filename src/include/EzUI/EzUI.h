@@ -1,3 +1,8 @@
+/*/
+Author:yang
+Email:19980103ly@gmail.com/718987717@qq.com
+*/
+
 #pragma once
 #include "UIDef.h"
 #include "EString.h"
