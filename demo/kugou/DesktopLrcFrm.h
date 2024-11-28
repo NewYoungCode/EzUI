@@ -1,9 +1,9 @@
 #include "global.h"
 #include "LrcControl.h"
 #include "VlcPlayer.h"
+
 //桌面视频和歌词窗口
 class DesktopLrcFrm :public LayeredWindow {
-	HWND GetDeskTopWnd();
 private:
 	VlcPlayer* _player;
 	LrcControl _lrc;

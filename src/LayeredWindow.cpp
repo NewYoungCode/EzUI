@@ -95,15 +95,20 @@ namespace EzUI {
 		if (_winBitmap && !_invalidateRect.IsEmptyArea()) {
 			_winBitmap->Earse(_invalidateRect);//清除背景
 			HDC winHDC = _winBitmap->GetHDC();
+
+#if 0
+			//不使用双缓冲
+			DoPaint(winHDC, _invalidateRect);
+#else
 			//使用双缓冲
 			Bitmap doubleBuff(_winBitmap->Width, _winBitmap->Height, Bitmap::PixelFormat::PixelFormatARGB);
 			DoPaint(doubleBuff.GetHDC(), _invalidateRect);
-			//使用BitBlt函数进行复制到winHDC
+			//使用BitBlt函数进行复制到winHDC  //如果窗体不规则 不适用于BitBlt进行复制
 			::BitBlt(winHDC, _invalidateRect.X, _invalidateRect.Y,
 				_invalidateRect.Width, _invalidateRect.Height,
 				doubleBuff.GetHDC(), _invalidateRect.X, _invalidateRect.Y,
 				SRCCOPY);
-
+#endif
 			PushDC(winHDC);//updatelaredwindow 更新窗口
 			_invalidateRect = Rect();//重置区域
 		}

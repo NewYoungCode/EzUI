@@ -625,20 +625,20 @@ namespace EzUI {
 			if (arg.EventType == Event::OnPaint && !IsVisible()) {
 				break;
 			}
-			if ((this->EventNotify & arg.EventType) == arg.EventType) {
-				if (PublicData && PublicData->Notify(this, (EventArgs&)arg)) {
-					if (arg.EventType == Event::OnPaint) {
-						//如果处理了OnPaint那么只是不绘制自己 但是子控件还是需要继续绘制的
-						this->OnPaintBefore((PaintEventArgs&)arg, false);
+			if (PublicData && ((this->EventNotify & arg.EventType) == arg.EventType)) {
+				if (arg.EventType != Event::OnPaint) {
+					bool isProc = PublicData->Notify(this, (EventArgs&)arg);
+					if (isProc) {
+						//如果处理过了则不需要继续往下派发
+						break;
 					}
-					break;
-				}
-				if (isRemove) {
-					break;
+					if (isRemove) {
+						break;
+					}
 				}
 			}
 			if (arg.EventType == Event::OnPaint) {
-				this->OnPaintBefore((PaintEventArgs&)arg, true);
+				this->OnPaintBefore((PaintEventArgs&)arg);
 				break;
 			}
 			if (arg.EventType == Event::OnLocation) {
@@ -675,8 +675,8 @@ namespace EzUI {
 			}
 		} while (false);
 		if (!isRemove) {
-			//绘制函数比较特殊
-			if (this->EventHandler && arg.EventType != Event::OnPaint) {
+			//绘制函数比较特殊(在其他地方处理)
+			if (this->EventHandler && (arg.EventType != Event::OnPaint)) {
 				this->EventHandler(this, arg);
 			}
 			if (!isRemove) {
@@ -767,7 +767,7 @@ namespace EzUI {
 			this->Parent->DispatchEvent(copy_args);//如果设置了穿透就发送给上一层控件
 		}
 	}
-	void Control::OnPaintBefore(PaintEventArgs& args, bool paintSelf) {
+	void Control::OnPaintBefore(PaintEventArgs& args) {
 		this->PublicData = args.PublicData;
 		if (this->IsPendLayout()) {//绘制的时候会检查时候有挂起的布局 如果有 立即让布局生效并重置布局标志
 			this->RefreshLayout();
@@ -781,6 +781,7 @@ namespace EzUI {
 		if (!Rect::Intersect(_ClipRect, this->_viewRect, invalidRect)) {//和重绘区域进行裁剪
 			return;
 		}
+
 		//绘制数量+1
 		++args.PublicData->PaintCount;
 		//设置绘制偏移 以及旋转
@@ -816,10 +817,11 @@ namespace EzUI {
 			args.PushLayer(Rect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height));
 		}
 #endif 
-		//绘制基本上下文
-		if (paintSelf) {
+		//调用公共函数,如果那边不拦截,就开始绘制自身基本上下文
+		if (!PublicData->Notify(this, args)) {
 			this->OnPaint(args);
 		}
+
 		//绘制子控件
 		this->OnChildPaint(args);
 		//绘制滚动条

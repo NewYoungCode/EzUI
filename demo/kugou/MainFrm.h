@@ -1,11 +1,11 @@
 #pragma once
 #include "global.h"
-#include "VlcPlayer.h"
-#include "LrcControl.h"
+#include "widgets.h"
+#include "vlcPlayer.h"
+#include "lrcControl.h"
+#include "desktopLrcFrm.h"
 
-#include "DesktopLrcFrm.h"
-
-using Form = BorderlessWindow;
+using Form = LayeredWindow;
 
 class MainFrm :
 	public Form

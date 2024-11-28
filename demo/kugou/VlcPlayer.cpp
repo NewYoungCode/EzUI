@@ -1,4 +1,4 @@
-#include "VlcPlayer.h"
+#include "vlcPlayer.h"
 namespace EzUI {
 	void* lock(void* opaque, void** planes)
 	{

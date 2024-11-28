@@ -47,7 +47,7 @@ namespace EzUI {
 		virtual void SetContentHeight(const int& height);//
 		virtual void SetContentSize(const Size& size);//
 		virtual bool OnEvent(EventArgs& arg);//所有事件先进这里
-		virtual void OnPaintBefore(PaintEventArgs& args, bool paintSelf = true);//绘制之前
+		virtual void OnPaintBefore(PaintEventArgs& args);//绘制之前
 		virtual void OnPaint(PaintEventArgs& args);//绘制 
 		virtual void OnChildPaint(PaintEventArgs& args);//子控件绘制 可以重载此函数优化鼠标操作性能
 		virtual void OnBackgroundPaint(PaintEventArgs& painter);//背景绘制

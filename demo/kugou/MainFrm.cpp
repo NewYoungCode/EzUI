@@ -1,4 +1,4 @@
-#include "MainFrm.h"
+#include "mainFrm.h"
 MainFrm::MainFrm() :Form(1020, 690), ntfi(WM_NOTIFYICON1)
 {
 	InitForm();
@@ -11,6 +11,10 @@ void MainFrm::InitForm() {
 	this->Zoom = true;
 	umg.LoadXmlFile("xml/main.htm");
 	umg.SetupUI(this);
+
+	//this->GetLayout()->Style.Border.Radius = 350;//圆角窗口
+	//this->CloseShadowBox();//关闭阴影
+
 	cfg = new ConfigIni(Path::StartPath() + "\\list.ini");
 	//找到每一个控件先
 	main = FindControl("main");

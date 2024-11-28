@@ -1,6 +1,6 @@
-#include "DesktopLrcFrm.h"
+#include "desktopLrcFrm.h"
 
-HWND DesktopLrcFrm::GetDeskTopWnd() {
+HWND GetDeskTopWnd() {
 	HWND windowHandle = ::FindWindowW(L"Progman", L"Program Manager");
 	::SendMessageW(windowHandle, 0x052c, 0, 0);
 	::EnumWindows([](HWND tophandle, LPARAM lParam)->BOOL {

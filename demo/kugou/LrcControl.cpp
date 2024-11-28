@@ -1,4 +1,4 @@
-#include "LrcControl.h"
+#include "lrcControl.h"
 void LrcControl::ChangePostion(int postion)
 {
 	for (auto _it = LrcList.rbegin(); _it != LrcList.rend(); _it++)
