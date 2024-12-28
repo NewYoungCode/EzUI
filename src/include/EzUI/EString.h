@@ -3,56 +3,64 @@
 #include <codecvt>
 #include <iomanip>
 
-namespace EzUI {
+#ifndef __TEXT__STRING
+#define __EZUI__STRING
+//----------------------------------------------------------------
+namespace Text {
 	/// <summary>
 	/// utf8字符串
 	/// </summary>
-	class  UI_EXPORT EString :public std::string {
+	class UI_EXPORT String :public std::string {
 	public:
-		EString();
-		virtual ~EString();
-		EString(const EString& _right)noexcept;
-		EString(EString&& _right)noexcept;
-		EString& operator=(const EString& _right)noexcept;
-		EString& operator=(EString&& _right)noexcept;
-		EString(const std::string& str)noexcept;
-		EString(const char* szbuf)noexcept;
-		EString(const wchar_t* szbuf)noexcept;
-		EString(const std::wstring& wstr)noexcept;
-		size_t length() const;//the utf8 Length
+		String();
+		virtual ~String();
+		String(const String& _right)noexcept;
+		String(String&& _right)noexcept;
+		String& operator=(const String& _right)noexcept;
+		String& operator=(String&& _right)noexcept;
+		String(const std::string& str)noexcept;
+		String(const char* szbuf)noexcept;
+		String(const wchar_t* szbuf)noexcept;
+		String(const std::wstring& wstr)noexcept;
+		//the utf8 Length
+		virtual size_t length() const final;
 		std::wstring unicode() const;
 		std::string ansi() const;
-		std::vector<std::string> split(const EString& ch_)const;
 		void erase(char _ch);
 		void erase(size_t pos, size_t count);
-		EString replace(char oldChar, char newChar);
-		EString replace(const EString& oldText, const EString& newText, bool allReplace = true)const;
-		EString toLower()const;
-		EString toUpper()const;
+		String replace(char oldChar, char newChar);
+		String replace(const String& oldText, const String& newText, bool allReplace = true)const;
+		String toLower()const;
+		String toUpper()const;
+		std::vector<String> split(const String& ch)const;
 		bool operator==(const wchar_t* szbuf)const;
 		bool operator==(const std::wstring& wStr)const;
-	public:
-		//base convert
-		static void AnyToUnicode(const std::string& src_str, UINT codePage, std::wstring* out_wstr);
-		static void UnicodeToAny(const std::wstring& unicode_wstr, UINT codePage, std::string* out_str);
-		//
-		static void GBKToUTF8(const std::string& str, std::string* outStr);
-		static void UTF8ToGBK(const std::string& str, std::string* outStr);
-		static void ANSIToUniCode(const std::string& str, std::wstring* outStr);
-		static void ANSIToUTF8(const std::string& str, std::string* outStr);
-		static void UnicodeToANSI(const std::wstring& wstr, std::string* outStr);
-		static void UnicodeToUTF8(const std::wstring& wstr, std::string* outStr);
-		static void UTF8ToANSI(const std::string& str, std::string* outStr);
-		static void UTF8ToUnicode(const std::string& str, std::wstring* outStr);
-		//
-		static void Tolower(std::string* str_in_out);
-		static void Toupper(std::string* str_in_out);
-		static void Erase(std::string* str_in_out, const char& ch);
-		static void Replace(std::string* str_in_out, char oldChar, char newChar);
-		static void Replace(std::string* str_in_out, const std::string& oldText, const std::string& newText, bool replaceAll = true);
-		static void Split(const std::string& str_in, const std::string& ch, std::vector<std::string>* strs_out);
-		//
-		static EString ToString(double number, int keepBitSize);
 	};
-#define utf8(text) EString(L##text)
+
+	//base convert
+	UI_EXPORT void AnyToUnicode(const std::string& src_str, UINT codePage, std::wstring* out_wstr);
+	UI_EXPORT void UnicodeToAny(const std::wstring& unicode_wstr, UINT codePage, std::string* out_str);
+	//
+	UI_EXPORT void GBKToUTF8(const std::string& str, std::string* outStr);
+	UI_EXPORT void UTF8ToGBK(const std::string& str, std::string* outStr);
+	UI_EXPORT void ANSIToUniCode(const std::string& str, std::wstring* outStr);
+	UI_EXPORT void ANSIToUTF8(const std::string& str, std::string* outStr);
+	UI_EXPORT void UnicodeToANSI(const std::wstring& wstr, std::string* outStr);
+	UI_EXPORT void UnicodeToUTF8(const std::wstring& wstr, std::string* outStr);
+	UI_EXPORT void UTF8ToANSI(const std::string& str, std::string* outStr);
+	UI_EXPORT void UTF8ToUnicode(const std::string& str, std::wstring* outStr);
+	//
+	UI_EXPORT void Tolower(std::string* str_in_out);
+	UI_EXPORT void Toupper(std::string* str_in_out);
+	UI_EXPORT void Erase(std::string* str_in_out, char ch);
+	UI_EXPORT void Replace(std::string* str_in_out, char oldChar, char newChar);
+	UI_EXPORT void Replace(std::string* str_in_out, const std::string& oldText, const std::string& newText, bool replaceAll = true);
+	UI_EXPORT void Split(const std::string& str_in, const std::string& ch, std::vector<std::string>* strs_out);
+	//
+	UI_EXPORT String ToString(double number, int keepBitSize);
+};
+//----------------------------------------------------------------
+#endif // !__TEXT__STRING
+namespace EzUI {
+	using EString = ::Text::String;
 };

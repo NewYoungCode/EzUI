@@ -1,6 +1,9 @@
 #include "EString.h"
-namespace EzUI {
-	size_t EString::length() const {
+
+#ifdef __EZUI__STRING
+//----------------------------------------------------------------
+namespace Text {
+	size_t String::length() const {
 		auto* p = this->c_str();
 		size_t pos = 0, count = 0;
 		while (p[pos] && pos < this->size()) {
@@ -11,96 +14,91 @@ namespace EzUI {
 		}
 		return count;
 	}
-	EString::EString() {}
-	EString::~EString() {}
-	EString::EString(const EString& _right)noexcept :std::string(_right) {}
-	EString::EString(EString&& _right) noexcept :std::string(std::move(_right)) {}
-	EString& EString::operator=(const EString& _right) noexcept
+	String::String() {}
+	String::~String() {}
+	String::String(const String& _right)noexcept :std::string(_right) {}
+	String::String(String&& _right) noexcept :std::string(std::move(_right)) {}
+	String& String::operator=(const String& _right) noexcept
 	{
 		(std::string&)*this = _right;
 		return *this;
 	}
-	EString& EString::operator=(EString&& _right) noexcept
+	String& String::operator=(String&& _right) noexcept
 	{
 		std::string::operator=(std::move(_right));
 		return *this;
 	}
-	EString::EString(const std::string& str)noexcept :std::string(str) {}
-	EString::EString(const char* szbuf)noexcept :std::string(szbuf) {}
-	EString::EString(const wchar_t* szbuf)noexcept {
+	String::String(const std::string& str)noexcept :std::string(str) {}
+	String::String(const char* szbuf)noexcept :std::string(szbuf) {}
+	String::String(const wchar_t* szbuf)noexcept {
 		if (szbuf == NULL)return;
-		EString::UnicodeToUTF8(szbuf, this);
+		UnicodeToUTF8(szbuf, this);
 	}
-	EString::EString(const std::wstring& wstr)noexcept {
-		EString::UnicodeToUTF8(wstr, this);
+	String::String(const std::wstring& wstr)noexcept {
+		UnicodeToUTF8(wstr, this);
 	}
-	std::vector<std::string> EString::split(const EString& ch_)const {
-		std::vector<std::string> arr;
-		EString::Split(*this, ch_, &arr);
-		return arr;
-	}
-	void EString::erase(char _ch)
+	void String::erase(char _ch)
 	{
-		EString::Erase(this, _ch);
+		Erase(this, _ch);
 	}
-	void EString::erase(size_t pos, size_t count)
+	void String::erase(size_t pos, size_t count)
 	{
 		__super::erase(pos, count);
 	}
-	EString EString::replace(char oldChar, char newChar)
+	String String::replace(char oldChar, char newChar)
 	{
-		EString newStr = *this;
-		EString::Replace(&newStr, oldChar, newChar);
+		String newStr = *this;
+		Replace(&newStr, oldChar, newChar);
 		return newStr;
 	}
-	EString EString::replace(const EString& oldText, const EString& newText, bool allReplace) const
+	String String::replace(const String& oldText, const String& newText, bool allReplace) const
 	{
-		EString newStr = *this;
-		EString::Replace(&newStr, oldText, newText, allReplace);
+		String newStr = *this;
+		Replace(&newStr, oldText, newText, allReplace);
 		return newStr;
 	}
-	EString EString::toLower() const
+	String String::toLower() const
 	{
-		EString str(*this);
-		EString::Tolower(&str);
+		String str(*this);
+		Tolower(&str);
 		return str;
 	}
-	EString EString::toUpper() const
+	String String::toUpper() const
 	{
-		EString str(*this);
-		EString::Toupper(&str);
+		String str(*this);
+		Toupper(&str);
 		return str;
 	}
-	bool EString::operator==(const wchar_t* szbuf)const
+	bool String::operator==(const wchar_t* szbuf)const
 	{
 		std::string u8str;
-		EString::UnicodeToUTF8(szbuf, &u8str);
+		UnicodeToUTF8(szbuf, &u8str);
 		return (*this == u8str);
 	}
-	bool EString::operator==(const std::wstring& wStr)const
+	bool String::operator==(const std::wstring& wStr)const
 	{
 		std::string u8str;
-		EString::UnicodeToUTF8(wStr, &u8str);
+		UnicodeToUTF8(wStr, &u8str);
 		return (*this == u8str);
 	}
-	std::wstring EString::unicode() const {
+	std::wstring String::unicode() const {
 		std::wstring wstr;
-		EString::UTF8ToUnicode(*this, &wstr);
+		UTF8ToUnicode(*this, &wstr);
 		return wstr;
 	}
-	std::string EString::ansi() const {
+	std::string String::ansi() const {
 		std::string str;
-		EString::UTF8ToANSI(*this, &str);
+		UTF8ToANSI(*this, &str);
 		return str;
 	}
 
-	void EString::AnyToUnicode(const std::string& src_str, UINT codePage, std::wstring* out_wstr) {
+	void AnyToUnicode(const std::string& src_str, UINT codePage, std::wstring* out_wstr) {
 		std::wstring& wstrCmd = *out_wstr;
 		int bytes = ::MultiByteToWideChar(codePage, 0, src_str.c_str(), src_str.size(), NULL, 0);
 		wstrCmd.resize(bytes);
 		bytes = ::MultiByteToWideChar(codePage, 0, src_str.c_str(), src_str.size(), const_cast<wchar_t*>(wstrCmd.c_str()), wstrCmd.size());
 	}
-	void EString::UnicodeToAny(const std::wstring& wstr, UINT codePage, std::string* out_str) {
+	void UnicodeToAny(const std::wstring& wstr, UINT codePage, std::string* out_str) {
 		std::string& strCmd = *out_str;
 		int bytes = ::WideCharToMultiByte(codePage, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
 		strCmd.resize(bytes);
@@ -108,30 +106,30 @@ namespace EzUI {
 	}
 
 	//以下是静态函数
-	void EString::ANSIToUniCode(const std::string& str, std::wstring* outStr)
+	void ANSIToUniCode(const std::string& str, std::wstring* outStr)
 	{
 		AnyToUnicode(str, ::GetACP(), outStr);
 	}
-	void EString::UnicodeToANSI(const std::wstring& wstr, std::string* outStr)
+	void UnicodeToANSI(const std::wstring& wstr, std::string* outStr)
 	{
 		UnicodeToAny(wstr, ::GetACP(), outStr);
 	}
 
-	void EString::GBKToUTF8(const std::string& str, std::string* outStr) {
+	void GBKToUTF8(const std::string& str, std::string* outStr) {
 		const int gbkCodePage = 936;
 		std::wstring wstr;
 		AnyToUnicode(str, gbkCodePage, &wstr);
 		UnicodeToUTF8(wstr, outStr);
 	}
 
-	void EString::UTF8ToGBK(const std::string& str, std::string* outStr) {
+	void UTF8ToGBK(const std::string& str, std::string* outStr) {
 		const int gbkCodePage = 936;
 		std::wstring wstr;
 		UTF8ToUnicode(str, &wstr);
 		UnicodeToAny(wstr, gbkCodePage, outStr);
 	}
 
-	void EString::ANSIToUTF8(const std::string& str, std::string* outStr)
+	void ANSIToUTF8(const std::string& str, std::string* outStr)
 	{
 		UINT codePage = ::GetACP();
 		if (codePage == CP_UTF8) {
@@ -142,7 +140,7 @@ namespace EzUI {
 		AnyToUnicode(str, codePage, &wstr);
 		UnicodeToUTF8(wstr, outStr);
 	}
-	void EString::UTF8ToANSI(const std::string& str, std::string* outStr) {
+	void UTF8ToANSI(const std::string& str, std::string* outStr) {
 		UINT codePage = ::GetACP();
 		if (codePage == CP_UTF8) {
 			*outStr = str;//如果本身就是utf8则不需要转换
@@ -152,16 +150,15 @@ namespace EzUI {
 		UTF8ToUnicode(str, &wstr);
 		UnicodeToAny(wstr, codePage, outStr);
 	}
-	void EString::UnicodeToUTF8(const std::wstring& wstr, std::string* outStr)
+	void UnicodeToUTF8(const std::wstring& wstr, std::string* outStr)
 	{
 		UnicodeToAny(wstr, CP_UTF8, outStr);
 	}
-	void EString::UTF8ToUnicode(const std::string& str, std::wstring* outStr) {
+	void UTF8ToUnicode(const std::string& str, std::wstring* outStr) {
 		AnyToUnicode(str, CP_UTF8, outStr);
 	}
 
-
-	void EString::Tolower(std::string* str_in_out)
+	void Tolower(std::string* str_in_out)
 	{
 		std::string& str = *str_in_out;
 		for (size_t i = 0; i < str.size(); ++i)
@@ -172,7 +169,7 @@ namespace EzUI {
 			}
 		}
 	}
-	void EString::Toupper(std::string* str_in_out)
+	void Toupper(std::string* str_in_out)
 	{
 		std::string& str = *str_in_out;
 		for (size_t i = 0; i < str.size(); ++i)
@@ -183,8 +180,8 @@ namespace EzUI {
 			}
 		}
 	}
-	void EString::Erase(std::string* str_in_out, const char& _char) {
-		const EString& self = *str_in_out;
+	void Erase(std::string* str_in_out, char _char) {
+		const String& self = *str_in_out;
 		char* bufStr = new char[self.size() + 1] { 0 };
 		size_t pos = 0;
 		for (auto& it : self) {
@@ -195,7 +192,7 @@ namespace EzUI {
 		*str_in_out = bufStr;
 		delete[] bufStr;
 	}
-	void EString::Replace(std::string* str_in_out, const std::string& oldText, const std::string& newText, bool replaceAll)
+	void Replace(std::string* str_in_out, const std::string& oldText, const std::string& newText, bool replaceAll)
 	{
 		std::string& newStr = *str_in_out;
 		size_t pos;
@@ -209,7 +206,7 @@ namespace EzUI {
 			}
 		}
 	}
-	void EString::Replace(std::string* str_in_out, char oldChar, char newChar)
+	void Replace(std::string* str_in_out, char oldChar, char newChar)
 	{
 		for (auto& it : *str_in_out) {
 
@@ -218,9 +215,10 @@ namespace EzUI {
 			}
 		}
 	}
-	void EString::Split(const std::string& str_in, const std::string& ch_, std::vector<std::string>* strs_out) {
 
-		std::vector<std::string>& arr = *strs_out;
+	template<typename T>
+	void __Split(const std::string& str_in, const std::string& ch_, std::vector<T>* strs_out) {
+		std::vector<T>& arr = *strs_out;
 		arr.clear();
 		if (str_in.empty()) return;
 
@@ -245,9 +243,23 @@ namespace EzUI {
 		}
 	}
 
-	EString EString::ToString(double number, int keepBitSize) {
+	std::vector<String> String::split(const String& ch)const
+	{
+		std::vector<String> strs;
+		__Split<String>(*this, ch, &strs);
+		return strs;
+	}
+
+	void Split(const std::string& str_in, const std::string& ch_, std::vector<std::string>* strs_out) {
+
+		__Split<std::string>(str_in, ch_, strs_out);
+	}
+
+	String ToString(double number, int keepBitSize) {
 		std::ostringstream oss;
 		oss << std::fixed << std::setprecision(keepBitSize) << number;
 		return oss.str();
 	}
 };
+//----------------------------------------------------------------
+#endif // __EZUI__STRING

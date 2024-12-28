@@ -215,8 +215,8 @@ namespace EzUI {
 		EString u8Str(wBuf);
 		if (!_multiLine) {
 			//行编辑框不允许有换行符
-			EString::Replace(&u8Str, "\r", "");
-			EString::Replace(&u8Str, "\n", "");
+			Text::Replace(&u8Str, "\r", "");
+			Text::Replace(&u8Str, "\n", "");
 		}
 		_Insert(u8Str.unicode());//插入新的字符
 		return bRet;

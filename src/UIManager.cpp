@@ -36,7 +36,7 @@ namespace EzUI {
 		TiXmlElement* node = (TiXmlElement*)_node;
 		Control* ctl = NULL;
 		std::string tagName(node->ValueTStr().c_str());
-		EString::Tolower(&tagName);
+		Text::Tolower(&tagName);
 		do
 		{
 			if (tagName == "control" || tagName == "layout" || tagName == "box") {
@@ -192,7 +192,7 @@ namespace EzUI {
 		}
 		{//加载样式 使用类选择器  
 			EString _class = ctl->GetAttribute("class");
-			EString::Replace(&_class, "  ", " ");
+			Text::Replace(&_class, "  ", " ");
 			auto classs = _class.split(" ");
 			for (auto& className : classs) {
 				__ApplayStyle(ctl, "." + className, selectors, BuildImageCallback);

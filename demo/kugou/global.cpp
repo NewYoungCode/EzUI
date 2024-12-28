@@ -85,7 +85,7 @@ namespace global {
 	bool GetSongInfo(const EString& hash, EString& errorInfo, Song& info)
 	{
 		EString url = "http://m.kugou.com/app/i/getSongInfo.php?hash={hash}&cmd=playInfo";
-		EString::Replace(&url, "{hash}", hash);
+		Text::Replace(&url, "{hash}", hash);
 		EString resp;
 		global::HttpGet(url, resp);
 		auto w = resp.unicode();
