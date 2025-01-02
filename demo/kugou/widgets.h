@@ -1,7 +1,7 @@
 #pragma once
 #include "global.h"
 /// <summary>
-/// 左侧本地歌曲列表中的Item
+/// 宸︿晶鏈湴姝屾洸鍒楄〃涓殑Item
 /// </summary>
 class LocalItem :public HBox {
 public:
@@ -13,7 +13,7 @@ public:
 	LocalItem(const EString& _songName, const EString& _songTime = "03:56");
 };
 /// <summary>
-/// 搜索列表中的Item
+/// 鎼滅储鍒楄〃涓殑Item
 /// </summary>
 class SearchItem :public HBox {
 	Label songName;

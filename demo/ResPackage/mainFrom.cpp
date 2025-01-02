@@ -47,9 +47,9 @@ void MainFrm::OnPackDirChange()
 		labelTipsErr->Invalidate();
 	}
 
-	EString::Replace(&dir, "\"", "");
-	EString::Replace(&dir, "\\", "/");
-	EString::Replace(&dir, "//", "/");
+	Text::Replace(&dir, "\"", "");
+	Text::Replace(&dir, "\\", "/");
+	Text::Replace(&dir, "//", "/");
 	if (dir[dir.size() - 1] == '/') {
 		dir.erase(dir.size() - 1, 1);
 	}

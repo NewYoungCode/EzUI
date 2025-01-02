@@ -2,7 +2,6 @@
 #include "LrcControl.h"
 #include "VlcPlayer.h"
 
-//桌面视频和歌词窗口
 class DesktopLrcFrm :public LayeredWindow {
 private:
 	VlcPlayer* _player;

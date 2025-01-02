@@ -25,18 +25,18 @@ HWND GetDeskTopWnd() {
 }
 
 DesktopLrcFrm::DesktopLrcFrm(VlcPlayer* player) :_player(player), LayeredWindow(0, 0) {
-	//¹Ø±ÕÄ¬ÈÏµÄ´°¿ÚÒõÓ°
+	//å…³é—­é»˜è®¤çš„çª—å£é˜´å½±
 	this->CloseShadowBox();
-	//»ñÈ¡µ±Ç°ÆÁÄ»µÄ´óĞ¡
+	//è·å–å½“å‰å±å¹•çš„å¤§å°
 	std::list<MonitorInfo> monitorInfo;
 	GetMonitor(&monitorInfo);
 	const MonitorInfo& def = *monitorInfo.begin();
 	this->SetRect(def.Rect);
-	//»ñÈ¡×ÀÃæµÄ´°¿Ú¾ä±ú
+	//è·å–æ¡Œé¢çš„çª—å£å¥æŸ„
 	HWND workWnd = GetDeskTopWnd();
 	::SetParent(Hwnd(), workWnd);
 	this->SetRect(def.Rect);
-	//ÉèÖÃ´°¿Ú²¼¾Ö
+	//è®¾ç½®çª—å£å¸ƒå±€
 	_lrc.Style.FontSize = 20;
 	_lrc.Style.ForeColor = Color::White;
 	this->SetLayout(&_lrc);
@@ -50,7 +50,7 @@ void DesktopLrcFrm::ChangePostion(int postion) {
 }
 
 void DesktopLrcFrm::OnPaint(PaintEventArgs& arg) {
-	//»æÖÆÊÓÆµµÄÖ¡Í¼Ïñµ½´°¿ÚÉÏ
+	//ç»˜åˆ¶è§†é¢‘çš„å¸§å›¾åƒåˆ°çª—å£ä¸Š
 	if (_player->BuffBitmap) {
 		Image img(_player->BuffBitmap->GetHBITMAP());
 		img.SizeMode = ImageSizeMode::CenterImage;

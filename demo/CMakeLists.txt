@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 #gui库的包含目录位置
-set(include ../src/include)
+set(include ../include)
 
 #一个简单的helloworld
 project(helloWorld)

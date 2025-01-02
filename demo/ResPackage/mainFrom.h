@@ -12,27 +12,27 @@ using namespace EzUI;
 class MainFrm :public Window {
 	Task* task = NULL;
 	UIManager ui;
-	//Ñ¡Ïî¿¨
+	//é€‰é¡¹å¡
 	TabLayout* tab;
 
-	//µÚÒ»Ò³µÄ¿Ø¼ş
-	//Òª´ò°üµÄÄ¿Â¼
+	//ç¬¬ä¸€é¡µçš„æ§ä»¶
+	//è¦æ‰“åŒ…çš„ç›®å½•
 	TextBox* editPackDir;
-	//´ò°üÖ®ºóÒªÊä³öµÄÎÄ¼şÃû
+	//æ‰“åŒ…ä¹‹åè¦è¾“å‡ºçš„æ–‡ä»¶å
 	TextBox* editPackName;
-	//¿ªÊ¼´ò°üµÄ°´Å¥
+	//å¼€å§‹æ‰“åŒ…çš„æŒ‰é’®
 	Button* btnSatrtPackage;
-	//ÌáÊ¾ÎÄ±¾
+	//æç¤ºæ–‡æœ¬
 	Label* labelTips;
 	Label* labelTipsErr;
 
-	//µÚ¶şÒ³µÄ¿Ø¼ş
+	//ç¬¬äºŒé¡µçš„æ§ä»¶
 	TextBox* editResFile;
 	Button* btnBrowserFile;
 	VList* listFiles;
 	Button* btnUnPackage;
 
-	//×ÊÔ´Ö¸Õë
+	//èµ„æºæŒ‡é’ˆ
 	Resource* res = NULL;
 public:
 	void Init();
@@ -73,12 +73,12 @@ inline bool CreatePath(const EString& path) {
 	if (PathExist(path)) {
 		return true;
 	}
-	//´´½¨¶à¼¶Ä¿Â¼
+	//åˆ›å»ºå¤šçº§ç›®å½•
 	if (path.find(":") != size_t(-1)) {
 		EString dir = path + "/";
 		dir = dir.replace("\\", "/");
 		dir = dir.replace("//", "/");
-		std::vector<std::string> arr = dir.split("/");
+		auto arr = dir.split("/");
 		EString root;
 		if (arr.size() > 0) {
 			root += arr[0] + "/";
@@ -98,9 +98,9 @@ inline bool CreatePath(const EString& path) {
 }
 
 inline EString ShowFileDialog(HWND ownerWnd, const EString& defaultPath = "", const EString& title = "") {
-	OPENFILENAMEW ofn;       // ´ò¿ªÎÄ¼ş¶Ô»°¿ò½á¹¹Ìå
-	WCHAR szFile[512]{ 0 };       // Ñ¡ÔñµÄÎÄ¼şÃû
-	// ³õÊ¼»¯OPENFILENAME½á¹¹Ìå
+	OPENFILENAMEW ofn;       // æ‰“å¼€æ–‡ä»¶å¯¹è¯æ¡†ç»“æ„ä½“
+	WCHAR szFile[512]{ 0 };       // é€‰æ‹©çš„æ–‡ä»¶å
+	// åˆå§‹åŒ–OPENFILENAMEç»“æ„ä½“
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
 	ofn.lpstrFile = szFile;
@@ -113,7 +113,7 @@ inline EString ShowFileDialog(HWND ownerWnd, const EString& defaultPath = "", co
 	ofn.nMaxFileTitle = 0;
 	ofn.lpstrInitialDir = NULL;
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-	// ÏÔÊ¾ÎÄ¼ş¶Ô»°¿ò
+	// æ˜¾ç¤ºæ–‡ä»¶å¯¹è¯æ¡†
 	if (GetOpenFileNameW(&ofn) == TRUE) {
 		return szFile;
 	}
@@ -127,15 +127,15 @@ inline EString ShowFolderDialog(HWND ownerWnd, const EString& defaultPath = "", 
 	browseInfo.pszDisplayName = selectedPath;
 	auto wTitle = title.unicode();
 	browseInfo.lpszTitle = wTitle.c_str();
-	//ÉèÖÃ¸ùÄ¿Â¼
+	//è®¾ç½®æ ¹ç›®å½•
 	LPITEMIDLIST pidlRoot;
 	::SHParseDisplayName(defaultPath.unicode().c_str(), NULL, &pidlRoot, 0, NULL);
 	browseInfo.pidlRoot = pidlRoot;
 	browseInfo.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
 	LPITEMIDLIST itemIdList = SHBrowseForFolderW(&browseInfo);
 	if (itemIdList != nullptr) {
-		SHGetPathFromIDListW(itemIdList, selectedPath);//ÉèÖÃÂ·¾¶
-		CoTaskMemFree(itemIdList);//ÇåÀí
+		SHGetPathFromIDListW(itemIdList, selectedPath);//è®¾ç½®è·¯å¾„
+		CoTaskMemFree(itemIdList);//æ¸…ç†
 		return selectedPath;
 	}
 	return selectedPath;
@@ -159,7 +159,7 @@ inline std::string GetFileSize(__int64 _KEY_FILE_SIZE) {
 	else {
 		ext = "BT";
 	}
-	disp_size = EString::ToString(KEY_FILE_SIZE, 2) + " " + ext;
+	disp_size = Text::ToString(KEY_FILE_SIZE, 2) + " " + ext;
 	return disp_size;
 }
 
