@@ -143,8 +143,8 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	btn.SetFixedSize({ 150,40 });
 	btn.EventHandler = [&text](Control* sd, const EventArgs& arg)->void {
 		if (arg.EventType == Event::OnMouseClick) {
-			/*text.SetMultiLine(!text.IsMultiLine());
-			text.Invalidate();*/
+			text.SetMultiLine(!text.IsMultiLine());
+			text.Invalidate();
 		}
 		};
 

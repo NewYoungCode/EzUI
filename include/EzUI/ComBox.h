@@ -6,10 +6,10 @@
 #include "HLayout.h"
 
 namespace EzUI {
-	//¼òÒ×µÄÏÂÀ­ÁĞ±í¿ò
+	//ç®€æ˜“çš„ä¸‹æ‹‰åˆ—è¡¨æ¡†
 	class UI_EXPORT ComBox :public HLayout {
 	private:
-		//ÏÂÀ­²Ëµ¥Ñ¡Ïî
+		//ä¸‹æ‹‰èœå•é€‰é¡¹
 		class MenuContent :public PopupWindow {
 		public:
 			Control* _hittestCtl;
@@ -18,11 +18,11 @@ namespace EzUI {
 			virtual ~MenuContent();
 		};
 	private:
-		//ÏÂÀ­²Ëµ¥´°¿Ú
+		//ä¸‹æ‹‰èœå•çª—å£
 		MenuContent* _menuWnd = NULL;
-		//Ñ¡ÔñÖ®ºóÏÔÊ¾µÄÎÄ±¾¿ò
+		//é€‰æ‹©ä¹‹åæ˜¾ç¤ºçš„æ–‡æœ¬æ¡†
 		TextBox _textBox;
-		//Õ¹¿ª²Ëµ¥µÄ°´Å¥
+		//å±•å¼€èœå•çš„æŒ‰é’®
 		Label _UpDown;
 
 		VList _list;
