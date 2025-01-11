@@ -3,7 +3,7 @@ MainFrm::MainFrm(const EString& cmdLine) :Window(600, 400) {
 	ui.LoadXmlFile(L"xml/mainForm.htm");
 	ui.SetupUI(this);
 	this->SetText(L"Android-tools");
-
+	Path::Create(Path::StartPath() + "/Temp");
 	rate_bar = (Label*)this->FindControl("rate_bar");
 }
 bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
@@ -34,7 +34,7 @@ bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 
 				::MessageBoxW(Hwnd(), L"下载已完成!", L"", 0);
 				});
-			
+
 		}
 		//ADB命令
 		if (sd->Name == "btn_adb_reboot") {
@@ -62,6 +62,10 @@ bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 		if (sd->Name == "btn_fb_flash_boot") {
 			::MessageBoxW(Hwnd(), L"刷入boot!", L"", 0);
 			WinTool::ExecuteCmdLine("platform-tools/fastboot.exe flash boot ??");
+		}
+		if (sd->Name == "btn_done") {
+			Path::Delete(Path::StartPath() + "/Temp");
+			::MessageBoxW(Hwnd(), L"done", L"信息", 0);
 		}
 	}
 	return __super::OnNotify(sd, args);
