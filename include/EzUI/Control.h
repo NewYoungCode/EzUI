@@ -161,7 +161,7 @@ namespace EzUI {
 		virtual bool SwapChild(Control* childCtl, Control* childCt2);//对子控件的两个控件进行位置交换
 		virtual void Insert(size_t pos, Control* childCtl);//选择性插入控件
 		virtual void Add(Control* childCtl);//添加控件到末尾
-		virtual void Remove(Control* childCtl);//删除控件 返回下一个迭代器
+		virtual void Remove(Control* childCtl);//删除控件
 		virtual void SetParent(Control* parentCtl);//设置父控件
 		virtual void Clear();//清空当前所有子控件
 		virtual void Clear(bool freeChilds);//清空当前所有子控件, freeControls是否释放所有子控件
