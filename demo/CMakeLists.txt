@@ -48,7 +48,6 @@ target_compile_definitions(kugou PRIVATE WIN32_LEAN_AND_MEAN)
 #target_sources(kugou PRIVATE ./kugouDemo/kugouDemo.rc)
 
 
-
 set(commonInclude D:/C++/Common/include)
 set(commonLib D:/C++/Common/lib)
 #Android-tools
@@ -58,9 +57,13 @@ add_executable(Android-tools WIN32 ${src} )
 target_include_directories(Android-tools PRIVATE  ${include} ${commonInclude})
 target_link_libraries(Android-tools PRIVATE EzUI)
 set_target_properties(Android-tools PROPERTIES RUNTIME_OUTPUT_DIRECTORY ../${tag})
+set_target_properties(Android-tools PROPERTIES
+    LINK_FLAGS "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\""
+)
 target_link_directories(Android-tools PRIVATE ${commonLib})
 target_link_libraries(Android-tools PRIVATE
     $<$<CONFIG:Debug>:D:/C++/Common/build/Debug/Common.lib>
     $<$<CONFIG:Release>:D:/C++/Common/build/Release/Common.lib>
 )
+
 
