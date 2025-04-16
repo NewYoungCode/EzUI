@@ -3,13 +3,13 @@
 namespace Text {
 	DWORD IPStringToDWORD(const std::string&ipStr);
 	std::string IPDWORDToString(DWORD&ip);
-	//Ñ°ÕÒ×Ö·û´®ÀïÃæ×Ö·û¸öÊı
+	//å¯»æ‰¾å­—ç¬¦ä¸²é‡Œé¢å­—ç¬¦ä¸ªæ•°
 	size_t FindCount(const std::string&str, const std::string&ch_);
-	//È¥³ıÇ°ºó¿Õ¸ñ
+	//å»é™¤å‰åç©ºæ ¼
 	void Trim(std::string &str);
-	//°üº¬´óĞ´µÄ×ÖÄ¸×ªĞ¡Ğ´
+	//åŒ…å«å¤§å†™çš„å­—æ¯è½¬å°å†™
 	std::string ToLower(const std::string&str);
-	//°üº¬Ğ¡Ğ´µÄ×ÖÄ¸×ª´óĞ´
+	//åŒ…å«å°å†™çš„å­—æ¯è½¬å¤§å†™
 	std::string ToUpper(const std::string&str);
 	//ANSIToUniCode
 	std::wstring ANSIToUniCode(const std::string &wstr);
@@ -21,17 +21,17 @@ namespace Text {
 	std::string ANSIToUTF8(const std::string &str);
 	//UTF8ToANSI
 	std::string UTF8ToANSI(const std::string &str);
-	//½ØÈ¡×Ö·û´®(¿í×Ö·û)
+	//æˆªå–å­—ç¬¦ä¸²(å®½å­—ç¬¦)
 	std::wstring Substr(const std::wstring &str, size_t starIndex, size_t count = std::string::npos);
-	//½ØÈ¡×Ö·û´®(Õ­×Ö·û)
+	//æˆªå–å­—ç¬¦ä¸²(çª„å­—ç¬¦)
 	std::string Substr(const std::string &str, size_t starIndex, size_t count = std::string::npos);
-	//Ö±½ÓÌæ»»×Ö·û²¢ÇÒ·µ»ØĞŞ¸Ä¸öÊı
+	//ç›´æ¥æ›¿æ¢å­—ç¬¦å¹¶ä¸”è¿”å›ä¿®æ”¹ä¸ªæ•°
 	size_t Replace(std::string &str, const std::string &oldText, const std::string & newText);
-	//Ö±½ÓÌæ»»×Ö·û²¢ÇÒ·µ»ØĞŞ¸ÄÖ®ºóµÄ×Ö·û´®
+	//ç›´æ¥æ›¿æ¢å­—ç¬¦å¹¶ä¸”è¿”å›ä¿®æ”¹ä¹‹åçš„å­—ç¬¦ä¸²
 	std::string ReplaceAll(const std::string &str, const std::string & oldText, const std::string & newText);
-	//×Ö·û´®·Ö¸î
+	//å­—ç¬¦ä¸²åˆ†å‰²
 	std::vector<std::string> Split(const std::string& str, const std::string& ch);
-	//É¾³ı×Ö·û´®
+	//åˆ é™¤å­—ç¬¦ä¸²
 	bool EraseString(std::string &out_in_str, const std::string& in_oldStr);
 	template<typename ...T>
 	inline void Format(LPTSTR buf, size_t strCount, LPCTSTR formatStr, T...args) {
@@ -60,37 +60,4 @@ namespace Text {
 	}
 }
 
-#ifdef UNICODE
-#define TOUNICODE(str) str
-#define TOANSI(str) Text::UnicodeToANSI(str).c_str()
-#define BASESTRING std::wstring 
-#else
-#define TOANSI(str) str
-#define TOUNICODE(str) Text::ANSIToUniCode(str).c_str()
-#define BASESTRING std::string 
-#endif
 
-#ifdef  UNICODE
-//the TString is UNICODE
-struct TString :public BASESTRING {
-#else
-//the TString is ANSI 
-struct TString :public BASESTRING {
-#endif
-public:
-	TString() :BASESTRING() {}
-#ifdef UNICODE
-	TString(const std::string&str) : BASESTRING(Text::ANSIToUniCode(str)) {}
-	TString(const std::wstring&str) :BASESTRING(str) {}
-
-	TString(const char*str) :BASESTRING(Text::ANSIToUniCode(str)) {}
-	TString(const wchar_t* str) :BASESTRING(str) {}
-#else
-	TString(const std::wstring&str) : BASESTRING(Text::UnicodeToANSI(str)) {}
-	TString(const std::string&str) :BASESTRING(str) {}
-
-	TString(const wchar_t*str) : BASESTRING(Text::UnicodeToANSI(str)) {}
-	TString(const char* str) :BASESTRING(str) {}
-#endif
-#undef BASESTRING
-};

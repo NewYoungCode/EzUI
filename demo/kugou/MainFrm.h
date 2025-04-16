@@ -5,7 +5,7 @@
 #include "lrcControl.h"
 #include "desktopLrcFrm.h"
 
-using Form = LayeredWindow;
+using Form = BorderlessWindow;
 
 class MainFrm :
 	public Form

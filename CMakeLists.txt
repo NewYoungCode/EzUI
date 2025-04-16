@@ -23,7 +23,7 @@ else()
 endif()
 target_include_directories(EzUI PRIVATE ./include/EzUI)
 set_target_properties(EzUI PROPERTIES LINKER_LANGUAGE CXX)
-set_target_properties(EzUI PROPERTIES DEBUG_POSTFIX "_D")
+#set_target_properties(EzUI PROPERTIES DEBUG_POSTFIX "_D")
 
 #添加子项目
 add_subdirectory(./demo)
