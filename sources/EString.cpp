@@ -192,19 +192,21 @@ namespace Text {
 		*str_in_out = bufStr;
 		delete[] bufStr;
 	}
-	void Replace(std::string* str_in_out, const std::string& oldText, const std::string& newText, bool replaceAll)
+	size_t Replace(std::string* str_in_out, const std::string& oldText, const std::string& newText, bool replaceAll)
 	{
-		std::string& newStr = *str_in_out;
-		size_t pos;
-		pos = newStr.find(oldText);
-		while (pos != std::string::npos)
+		if (!str_in_out || oldText.empty()) return 0;
+		size_t count = 0;
+		std::string& str = *str_in_out;
+		size_t pos = 0;
+		while ((pos = str.find(oldText, pos)) != std::string::npos)
 		{
-			newStr.replace(pos, oldText.size(), newText);
-			pos = newStr.find(oldText);
+			str.replace(pos, oldText.size(), newText);
+			++count;
 			if (!replaceAll) {
 				break;
 			}
 		}
+		return count;
 	}
 	void Replace(std::string* str_in_out, char oldChar, char newChar)
 	{

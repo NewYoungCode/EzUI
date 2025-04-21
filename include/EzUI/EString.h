@@ -54,7 +54,7 @@ namespace Text {
 	UI_EXPORT void Toupper(std::string* str_in_out);
 	UI_EXPORT void Erase(std::string* str_in_out, char ch);
 	UI_EXPORT void Replace(std::string* str_in_out, char oldChar, char newChar);
-	UI_EXPORT void Replace(std::string* str_in_out, const std::string& oldText, const std::string& newText, bool replaceAll = true);
+	UI_EXPORT size_t Replace(std::string* str_in_out, const std::string& oldText, const std::string& newText, bool replaceAll = true);
 	UI_EXPORT void Split(const std::string& str_in, const std::string& ch, std::vector<std::string>* strs_out);
 	//
 	UI_EXPORT String ToString(double number, int keepBitSize);
