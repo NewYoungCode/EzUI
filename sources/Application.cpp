@@ -85,15 +85,15 @@ namespace EzUI {
 		//bool b = SetProcessDPIAware();
 		//SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
 		//会进入WM_DPICHANGED消息可进行自行控制缩放
-		typedef void (WINAPI* DisableAutoDpi)(DWORD);
 		HMODULE hModNtdll = NULL;
 		if (hModNtdll = ::LoadLibraryW(L"User32.dll")) {
-			DisableAutoDpi pfRtlGetNtVersionNumbers;
-			pfRtlGetNtVersionNumbers = (DisableAutoDpi)::GetProcAddress(hModNtdll, "SetProcessDpiAwarenessContext");
-			if (pfRtlGetNtVersionNumbers)
+			typedef void (WINAPI* Func_SetProcessDpiAwarenessContext)(void*);
+			Func_SetProcessDpiAwarenessContext  setProcessDpiAwarenessContext;
+			setProcessDpiAwarenessContext = (Func_SetProcessDpiAwarenessContext)::GetProcAddress(hModNtdll, "SetProcessDpiAwarenessContext");
+			if (setProcessDpiAwarenessContext)
 			{
-				//SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
-				pfRtlGetNtVersionNumbers(-4);
+				//SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);//高版本sdk直接用
+				setProcessDpiAwarenessContext((void*)-4);//函数指针方式是为了兼容win7
 			}
 			else {
 				::SetProcessDPIAware();

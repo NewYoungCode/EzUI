@@ -59,7 +59,7 @@ namespace Text {
 	//
 	UI_EXPORT String ToString(double number, int keepBitSize);
 };
-using TString = ::Text::String;
+using u8String = ::Text::String;
 //----------------------------------------------------------------
 #endif // !__TEXT__STRING
 namespace EzUI {

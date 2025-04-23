@@ -1,5 +1,6 @@
 #pragma once
-#include "EString.h"
+#include "EzUI/EzUI.h"
+#include "EzUI/EString.h"
 namespace EzUI {
 	struct FileInfo final {
 		EString Name;

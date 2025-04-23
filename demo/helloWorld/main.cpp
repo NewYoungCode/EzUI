@@ -14,6 +14,7 @@
 #include "EzUI/VLayout.h"
 #include "EzUI/Application.h"
 #include "EzUI/TextBox.h"
+#include "EzUI/ComBox.h"
 
 using namespace EzUI;
 
@@ -121,6 +122,17 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 			};
 		list.Add(lb);
 	}
+
+	ComBox cbox;
+	cbox.Style.Border = 1;
+	cbox.Style.Border.Color = Color::Red;
+
+	cbox.SetFixedSize({ 100,30 });
+	cbox.SetParent(&mainLayout);
+	cbox.AddItem(L"-请选择-");
+	cbox.AddItem(L"青菜");
+	cbox.AddItem(L"牛肉");
+	cbox.AddItem(L"猪肉");
 
 	TextBox text;
 	text.SetParent(&mainLayout);
