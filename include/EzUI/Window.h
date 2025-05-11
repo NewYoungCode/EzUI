@@ -67,7 +67,7 @@ namespace EzUI {
 		/// <returns>返回命中的控件指针</returns>
 		Control* FindControl(const Point clientPoint, Point* outPoint);//根据坐标获取控件
 		Control* FindControl(const EString& objectName);//使用id寻找控件
-		const HWND& Hwnd();//获取窗口句柄
+		HWND Hwnd();//获取窗口句柄
 		const Rect& GetWindowRect();//获取窗口基于显示器的矩形
 		const Rect& GetClientRect();//获取客户区矩形
 		const float& GetScale();//获取当前窗口dpi缩放

@@ -156,7 +156,7 @@ namespace EzUI {
 		return this->_layout->FindControl(objectName);
 	}
 
-	const HWND& Window::Hwnd()
+	HWND Window::Hwnd()
 	{
 		return PublicData->HANDLE;
 	}
@@ -209,7 +209,7 @@ namespace EzUI {
 		this->SetRect(Rect(pt.X, pt.Y, rect.Width, rect.Height));
 	}
 	void Window::SetRect(const Rect& rect)
-	{	
+	{
 		::SetWindowPos(Hwnd(), NULL, rect.X, rect.Y, rect.Width, rect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
 	}
 	void Window::SetMiniSize(const Size& size)

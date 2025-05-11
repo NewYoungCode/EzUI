@@ -50,7 +50,7 @@ namespace EzUI {
 	}
 	void BorderlessWindow::UpdateShadowBox() {
 		if (_shadowBox) {
-			_shadowBox->Update(_shadowWeight);
+			_shadowBox->Update(_shadowWeight, this->GetLayout() ? this->GetLayout()->Style.Border.TopLeftRadius : 0);
 		}
 	}
 	void BorderlessWindow::CloseShadowBox()

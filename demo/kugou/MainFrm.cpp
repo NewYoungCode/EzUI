@@ -12,6 +12,7 @@ void MainFrm::InitForm() {
 	umg.LoadXmlFile("xml/main.htm");
 	umg.SetupUI(this);
 
+	this->GetLayout()->Style.Border.Radius =20;
 	//this->GetLayout()->Style.Border.Radius = 350;//圆角窗口
 	//this->CloseShadowBox();//关闭阴影
 
