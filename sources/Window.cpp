@@ -929,6 +929,11 @@ namespace EzUI {
 	{
 		::SetCapture(Hwnd());
 		_mouseDown = true;
+
+		//记录鼠标按下的时间
+		auto _time = std::chrono::system_clock::now();
+		//_lastDownTime = _time;
+
 		//寻早控件
 		Point relativePoint;
 		Control* outCtl = this->FindControl(point, &relativePoint);
@@ -944,7 +949,6 @@ namespace EzUI {
 			_inputControl->DispatchEvent(args);
 		}
 		//做双击消息处理
-		auto _time = std::chrono::system_clock::now();
 		auto diff = _time - _lastDownTime;
 		auto timeOffset = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//
 		if (timeOffset < 300 && _lastBtn == mbtn) {//300毫秒之内同一个按钮按下两次算双击消息
@@ -974,6 +978,12 @@ namespace EzUI {
 			}
 			//触发单击事件 如果焦点还在并且鼠标未移出控件内 
 			if (_inputControl && mbtn == _lastBtn && ctlRect.Contains(point)) {
+				//auto _time = std::chrono::system_clock::now();
+				//auto diff = _time - _lastDownTime;
+				//auto timeOffset = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//
+				//if (timeOffset < 100) {//鼠标按住超过200毫秒则不触发单机事件
+				//	
+				//}
 				args.EventType = Event::OnMouseClick;
 				_inputControl->DispatchEvent(args);
 			}
@@ -1076,7 +1086,7 @@ namespace EzUI {
 	}
 	bool Window::OnNotify(Control* sender, EventArgs& args) {
 		if (args.EventType == Event::OnMouseDoubleClick) {
-			if (sender->Action == ControlAction::MoveWindow || sender == _layout) {
+			if (sender->Action == ControlAction::TitleBar) {
 				if (this->Zoom) {
 					if (::IsZoomed(Hwnd())) {
 						this->ShowNormal();
@@ -1089,7 +1099,7 @@ namespace EzUI {
 			return false;
 		}
 		if (args.EventType == Event::OnMouseDown) {
-			if (sender->Action == ControlAction::MoveWindow/* || sender == _layout*/) {
+			if (sender->Action == ControlAction::TitleBar || sender->Action == ControlAction::MoveWindow) {
 				MoveWindow();
 				return false;
 			}

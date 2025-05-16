@@ -48,7 +48,7 @@ namespace EzUI {
 	extern UI_EXPORT size_t GetMonitor(std::list<MonitorInfo>* outMonitorInfo);
 	//获取用户当前所在的显示器
 	extern UI_EXPORT void GetMontior(MonitorInfo* outInfo, HWND hWnd = NULL);
-	//获取用户当前所在的显示器
+	//使用窗口的矩形位置获取所在的显示器
 	extern UI_EXPORT void GetMontior(MonitorInfo* outInfo, const Rect& rect);
 	//加载光标
 	extern UI_EXPORT HCURSOR LoadCursor(Cursor cursorType);
@@ -223,8 +223,10 @@ namespace EzUI {
 	{
 		return static_cast<Event>(static_cast<long long>(left) | static_cast<long long>(right));
 	}
+	//控件行为
 	enum class ControlAction {
 		None,
+		TitleBar,//具有移动窗口 双击最大化窗口的行为
 		MoveWindow,//移动窗口
 		Mini,//最小化
 		Max,//最大化|恢复

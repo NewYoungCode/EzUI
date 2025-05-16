@@ -78,6 +78,17 @@ namespace EzUI {
 			}*/
 		case WM_NCHITTEST:
 		{
+			//判断是否全屏
+			MonitorInfo monitorInfo;
+			EzUI::GetMontior(&monitorInfo, Hwnd());
+			auto rect = this->GetWindowRect();
+			bool isFullScreen = monitorInfo.Rect.X == rect.X && monitorInfo.Rect.Y == rect.Y && monitorInfo.Rect.Width == rect.Width && monitorInfo.Rect.Height == rect.Height;
+			if (isFullScreen/* && ::GetForegroundWindow() == Hwnd()*/)
+			{
+				//全屏状态下不可调整窗口大小 所以break;
+				break;
+			}
+
 			if (!::IsZoomed(Hwnd()) && Zoom) {
 				RECT rc;
 				::GetWindowRect(Hwnd(), &rc);
