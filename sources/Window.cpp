@@ -318,15 +318,15 @@ namespace EzUI {
 		if (_oWnerWnd) {
 			::EnableWindow(_oWnerWnd, FALSE);
 		}
-		Show();
+		this->Show();
 		::MSG msg{ 0 };
 		while (Hwnd() && ::GetMessage(&msg, NULL, 0, 0))
 		{
 			::TranslateMessage(&msg);
 			::DispatchMessage(&msg);
 		}
-		if (_oWnerWnd) {
-			::SetFocus(_oWnerWnd);
+		if (_oWnerWnd && ::IsWindow(_oWnerWnd)) {
+			::SetActiveWindow(_oWnerWnd);
 			_oWnerWnd = NULL;
 		}
 		return _closeCode;
@@ -838,6 +838,20 @@ namespace EzUI {
 
 	void Window::OnMouseMove(const Point& point)
 	{
+		//对窗口进行移动
+		if (_moveWindow && _mouseDown) {
+			POINT ptNow;
+			::GetCursorPos(&ptNow);
+			int dx = ptNow.x - g_ptDragStart.x;
+			int dy = ptNow.y - g_ptDragStart.y;
+			HWND hWnd = Hwnd();
+			RECT rect;
+			::GetWindowRect(hWnd, &rect);
+			this->SetRect(Rect(rect.left + dx, rect.top + dy, rect.right - rect.left, rect.bottom - rect.top));
+			g_ptDragStart = ptNow; // 更新起点
+			return;
+		}
+
 		if (_inputControl && _mouseDown) { //按住移动的控件
 			auto ctlRect = _inputControl->GetClientRect();
 			MouseEventArgs args(Event::OnMouseMove, { point.X - ctlRect.X ,point.Y - ctlRect.Y });
@@ -929,11 +943,6 @@ namespace EzUI {
 	{
 		::SetCapture(Hwnd());
 		_mouseDown = true;
-
-		//记录鼠标按下的时间
-		auto _time = std::chrono::system_clock::now();
-		//_lastDownTime = _time;
-
 		//寻早控件
 		Point relativePoint;
 		Control* outCtl = this->FindControl(point, &relativePoint);
@@ -948,11 +957,12 @@ namespace EzUI {
 			args.Location = relativePoint;
 			_inputControl->DispatchEvent(args);
 		}
+		//记录鼠标按下的时间
+		auto _time = ::GetTickCount64();
 		//做双击消息处理
 		auto diff = _time - _lastDownTime;
-		auto timeOffset = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//
-		if (timeOffset < 300 && _lastBtn == mbtn) {//300毫秒之内同一个按钮按下两次算双击消息
-			_lastDownTime = std::chrono::system_clock::from_time_t(0);
+		if (diff < 300 && _lastBtn == mbtn) {//300毫秒之内同一个按钮按下两次算双击消息
+			_lastDownTime = ::GetTickCount64();
 			OnMouseDoubleClick(mbtn, point);
 		}
 		_lastBtn = mbtn;
@@ -960,6 +970,7 @@ namespace EzUI {
 	}
 	void Window::OnMouseUp(MouseButton mbtn, const Point& point)
 	{
+		_moveWindow = false;
 		::ReleaseCapture();
 		if (_mouseDown == false) {
 			return;
@@ -978,14 +989,12 @@ namespace EzUI {
 			}
 			//触发单击事件 如果焦点还在并且鼠标未移出控件内 
 			if (_inputControl && mbtn == _lastBtn && ctlRect.Contains(point)) {
-				//auto _time = std::chrono::system_clock::now();
-				//auto diff = _time - _lastDownTime;
-				//auto timeOffset = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//
-				//if (timeOffset < 100) {//鼠标按住超过200毫秒则不触发单机事件
-				//	
-				//}
-				args.EventType = Event::OnMouseClick;
-				_inputControl->DispatchEvent(args);
+				auto _time = ::GetTickCount64();
+				auto diff = _time - _lastDownTime;
+				if (diff < 200) {//鼠标按住超过200毫秒则不触发单机事件
+					args.EventType = Event::OnMouseClick;
+					_inputControl->DispatchEvent(args);
+				}
 			}
 			if (_inputControl) {
 				POINT p1{ 0 };
@@ -1065,8 +1074,7 @@ namespace EzUI {
 
 	void Window::MoveWindow() {
 		::ReleaseCapture();
-		SendMessage(Hwnd(), WM_NCLBUTTONDOWN, HTCAPTION, NULL);//模拟鼠标按住标题栏移动窗口
-		SendMessage(Hwnd(), WM_LBUTTONUP, NULL, NULL);//松开
+		SendMessage(Hwnd(), WM_NCLBUTTONDOWN, HTCAPTION, NULL);//模拟鼠标按住标题栏移动窗口,会吃掉鼠标左键的弹起消息,手动触发也无惧于事
 	}
 
 	void Window::OnDpiChange(const float& systemScale, const Rect& newRect)
@@ -1099,8 +1107,13 @@ namespace EzUI {
 			return false;
 		}
 		if (args.EventType == Event::OnMouseDown) {
-			if (sender->Action == ControlAction::TitleBar || sender->Action == ControlAction::MoveWindow) {
-				MoveWindow();
+			if (sender->Action == ControlAction::MoveWindow) {
+				GetCursorPos(&g_ptDragStart); // 获取屏幕坐标
+				_moveWindow = true;
+				return false;
+			}
+			if (sender->Action == ControlAction::TitleBar) {
+				//MoveWindow();
 				return false;
 			}
 			if (sender->Action == ControlAction::Mini) {
