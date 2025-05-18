@@ -359,6 +359,9 @@ namespace EzUI {
 				if (attrValue == "max") {
 					this->Action = ControlAction::Max; break;
 				}
+				if (attrValue == "titlebar") {
+					this->Action = ControlAction::TitleBar; break;
+				}
 				if (attrValue == "move" || attrValue == "movewindow") {
 					this->Action = ControlAction::MoveWindow; break;
 				}

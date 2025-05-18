@@ -16,6 +16,12 @@ namespace EzUI {
 	std::list<HWND> __EzUI__WNDS;
 	const std::list<EzUI::MonitorInfo> __EzUI__MonitorInfos;
 
+	float __ToFloat(EString numStr) {
+		//去掉px字样
+		Text::Replace(&numStr, "px", "", true);
+		return std::stof(numStr.c_str());
+	}
+
 	void InstallFont(const EString& fontFileName) {
 		auto ret = ::AddFontResourceW(fontFileName.unicode().c_str());
 		::SystemParametersInfoW(SPI_SETNONCLIENTMETRICS, 0, nullptr, SPIF_SENDCHANGE);//刷新
@@ -257,27 +263,27 @@ namespace EzUI {
 				break;
 			}
 			if (key == "border-radius") {
-				style->Border.Radius = std::stoi(value);
+				style->Border.Radius = __ToFloat(value);
 				break;
 			}
 			if (key == "border-top-left-radius") {
-				style->Border.TopLeftRadius = std::stoi(value);
+				style->Border.TopLeftRadius = __ToFloat(value);
 				break;
 			}
 			if (key == "border-top-right-radius") {
-				style->Border.TopRightRadius = std::stoi(value);
+				style->Border.TopRightRadius = __ToFloat(value);
 				break;
 			}
 			if (key == "border-bottom-right-radius") {
-				style->Border.BottomRightRadius = std::stoi(value);
+				style->Border.BottomRightRadius = __ToFloat(value);
 				break;
 			}
 			if (key == "border-bottom-left-radius") {
-				style->Border.BottomLeftRadius = std::stoi(value);
+				style->Border.BottomLeftRadius = __ToFloat(value);
 				break;
 			}
 			if (key == "font-size") {
-				style->FontSize = std::stoi(value);
+				style->FontSize = __ToFloat(value);
 				break;
 			}
 			if (key == "font-family") {
@@ -286,7 +292,7 @@ namespace EzUI {
 				break;
 			}
 			if (key == "border") {
-				auto width = std::stoi(value);
+				auto width = __ToFloat(value);
 				style->Border.Left = width;
 				style->Border.Top = width;
 				style->Border.Right = width;
@@ -294,19 +300,19 @@ namespace EzUI {
 				break;
 			}
 			if (key == "border-left") {
-				style->Border.Left = std::stoi(value);
+				style->Border.Left = __ToFloat(value);
 				break;
 			}
 			if (key == "border-top") {
-				style->Border.Top = std::stoi(value);
+				style->Border.Top = __ToFloat(value);
 				break;
 			}
 			if (key == "border-right") {
-				style->Border.Right = std::stoi(value);
+				style->Border.Right = __ToFloat(value);
 				break;
 			}
 			if (key == "border-bottom") {
-				style->Border.Bottom = std::stoi(value);
+				style->Border.Bottom = __ToFloat(value);
 				break;
 			}
 		} while (false);
