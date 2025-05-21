@@ -226,7 +226,7 @@ namespace EzUI {
 	//控件行为
 	enum class ControlAction {
 		None,
-		TitleBar,//具有移动窗口 双击最大化窗口的行为
+		Title,//具有移动窗口 双击最大化窗口的行为
 		MoveWindow,//移动窗口
 		Mini,//最小化
 		Max,//最大化|恢复

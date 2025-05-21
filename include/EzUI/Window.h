@@ -31,7 +31,7 @@ namespace EzUI {
 		Window& operator=(const Window&) = delete;
 		bool IsInWindow(Control& pControl, Control& it);
 	protected:
-		void MoveWindow();//鼠标按下移动窗口
+		void TitleMoveWindow();//鼠标按下以标题栏方式移动窗口
 		virtual void OnDpiChange(const float& systemScale, const Rect& newRect);//当dpi发生更改时
 		virtual void OnMouseMove(const Point& point);//鼠标移动时发生
 		virtual void OnMouseLeave();//鼠标离开时发生

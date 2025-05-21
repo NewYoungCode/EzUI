@@ -359,8 +359,8 @@ namespace EzUI {
 				if (attrValue == "max") {
 					this->Action = ControlAction::Max; break;
 				}
-				if (attrValue == "titlebar") {
-					this->Action = ControlAction::TitleBar; break;
+				if (attrValue == "title") {
+					this->Action = ControlAction::Title; break;
 				}
 				if (attrValue == "move" || attrValue == "movewindow") {
 					this->Action = ControlAction::MoveWindow; break;
@@ -678,7 +678,7 @@ namespace EzUI {
 			}
 		} while (false);
 		if (!isRemove) {
-			//绘制函数比较特殊(在其他地方处理)
+			//通用事件处理 ps:绘制函数比较特殊(在其他地方处理)
 			if (this->EventHandler && (arg.EventType != Event::OnPaint)) {
 				this->EventHandler(this, arg);
 			}

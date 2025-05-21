@@ -171,6 +171,15 @@ namespace EzUI {
 		virtual void Refresh();//使当前控件区域为无效区域并且立即更新全部的无效区域(更新时会对正在挂起的布局立即生效,直到无效区域更新完毕)
 	};
 
+	//内联页面Interface类
+	class UI_EXPORT IIFrame :public Control {
+	public:
+		IIFrame() {};
+		virtual ~IIFrame() {};
+		//此函数不为NULL的时候 可以拦截子控件的各种事件 return true将不会进入窗口的OnNotify函数
+		std::function<bool(Control*, EventArgs& args)> NotifyEventHandler = NULL;//事件处理器;
+	};
+
 	//添加弹簧无需用户手动释放,
 	class UI_EXPORT Spacer :public Control {
 	public:

@@ -145,6 +145,23 @@ namespace EzUI {
 			}
 			};
 		PublicData->Notify = [this](Control* sender, EventArgs& args)->bool {
+			IIFrame* frame = NULL;
+			Control* parent = sender;
+			//依次往上父控件看看有没有当前控件是否在内联页面中
+			while (parent)
+			{
+				if (frame = dynamic_cast<IIFrame*>(parent)) {
+					break;
+				}
+				parent = parent->Parent;
+			}
+			//如果当前控件存在与内联界面且事件通知处理器不为NULL的时候
+			if (frame && frame->NotifyEventHandler) {
+				bool isProc = frame->NotifyEventHandler(sender, args);
+				if (isProc) {
+					return isProc;
+				}
+			}
 			return OnNotify(sender, args);
 			};
 		UI_SET_USERDATA(Hwnd(), this->PublicData);
@@ -944,7 +961,15 @@ namespace EzUI {
 	void Window::OnMouseDown(MouseButton mbtn, const Point& point)
 	{
 		::SetCapture(Hwnd());
-		_mouseDown = true;
+		_mouseDown = true;//标记为按下
+		//获取按下按钮和按下的时差
+		auto time_now = ::GetTickCount64();//记录鼠标按下的当前时间
+		auto offset = time_now - _lastDownTime;//本次与上次按下按钮的时间差
+		MouseButton tempLastBtn = _lastBtn;
+		//及时记录
+		_lastDownTime = time_now;
+		_lastBtn = mbtn;
+
 		//寻早控件
 		Point relativePoint;
 		Control* outCtl = this->FindControl(point, &relativePoint);
@@ -959,16 +984,10 @@ namespace EzUI {
 			args.Location = relativePoint;
 			__INPUT_CONTROL->DispatchEvent(args);
 		}
-		//记录鼠标按下的时间
-		auto _time = ::GetTickCount64();
-		//做双击消息处理
-		auto diff = _time - _lastDownTime;
-		if (diff < 300 && _lastBtn == mbtn) {//300毫秒之内同一个按钮按下两次算双击消息
-			_lastDownTime = ::GetTickCount64();
+		//300毫秒之内同一个按钮按下两次算双击消息
+		if (offset < 300 && tempLastBtn == mbtn) {
 			OnMouseDoubleClick(mbtn, point);
 		}
-		_lastBtn = mbtn;
-		_lastDownTime = _time;
 	}
 	void Window::OnMouseUp(MouseButton mbtn, const Point& point)
 	{
@@ -1074,9 +1093,10 @@ namespace EzUI {
 	{
 	}
 
-	void Window::MoveWindow() {
+	void Window::TitleMoveWindow() {
 		::ReleaseCapture();
-		SendMessage(Hwnd(), WM_NCLBUTTONDOWN, HTCAPTION, NULL);//模拟鼠标按住标题栏移动窗口,会吃掉鼠标左键的弹起消息,手动触发也无惧于事
+		::SendMessage(Hwnd(), WM_NCLBUTTONDOWN, HTCAPTION, NULL);//模拟鼠标按住标题栏移动窗口,会吃掉鼠标左键的弹起消息,手动触发也无惧于事
+		::SendMessage(Hwnd(), WM_LBUTTONUP, NULL, NULL);//松开 不调发送此消息会导致一些消息问题
 	}
 
 	void Window::OnDpiChange(const float& systemScale, const Rect& newRect)
@@ -1096,7 +1116,7 @@ namespace EzUI {
 	}
 	bool Window::OnNotify(Control* sender, EventArgs& args) {
 		if (args.EventType == Event::OnMouseDoubleClick) {
-			if (sender->Action == ControlAction::TitleBar) {
+			if (sender->Action == ControlAction::Title) {
 				if (this->Zoom) {
 					if (::IsZoomed(Hwnd())) {
 						this->ShowNormal();
@@ -1114,8 +1134,8 @@ namespace EzUI {
 				_moveWindow = true;
 				return false;
 			}
-			if (sender->Action == ControlAction::TitleBar) {
-				//MoveWindow();
+			if (sender->Action == ControlAction::Title) {
+				TitleMoveWindow();
 				return false;
 			}
 			if (sender->Action == ControlAction::Mini) {

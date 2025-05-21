@@ -17,7 +17,8 @@
 #include "Window.h"
 #include "ComBox.h"
 namespace EzUI {
-	class IFrame;
+	//主窗口中的内联页面类
+	class UI_EXPORT IFrame;
 	class UI_EXPORT UIManager {
 	public:
 		enum class Style {
@@ -71,7 +72,7 @@ namespace EzUI {
 		void Free(Image** img);
 	};
 
-	class IFrame :public Control {
+	class IFrame :public IIFrame {
 		UIManager umg;
 	public:
 		IFrame() {}
