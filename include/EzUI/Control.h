@@ -160,8 +160,8 @@ namespace EzUI {
 		Control* FindSingleChild(const EString& attrName, const EString& attrValue);//寻找控件,仅限子集
 		virtual bool SwapChild(Control* childCtl, Control* childCt2);//对子控件的两个控件进行位置交换
 		virtual void Insert(size_t pos, Control* childCtl);//选择性插入控件
-		virtual void Add(Control* childCtl);//添加控件到末尾
-		virtual void Remove(Control* childCtl);//删除控件
+		virtual Control* Add(Control* childCtl);//添加控件到末尾 如果参数是弹簧 在控件被释放的时候弹簧会自动释放
+		virtual void Remove(Control* childCtl, bool freeCtrl=false);//移除控件 freeCtrl标记是否释放控件
 		virtual void SetParent(Control* parentCtl);//设置父控件
 		virtual void Clear();//清空当前所有子控件
 		virtual void Clear(bool freeChilds);//清空当前所有子控件, freeControls是否释放所有子控件

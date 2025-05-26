@@ -13,7 +13,7 @@ namespace EzUI {
 	public:
 		TabLayout();
 		virtual ~TabLayout();
-		virtual void Remove(Control* ctl)override;
+		virtual void Remove(Control* ctl, bool freeCtl = false)override;
 		void SetPageIndex(int index);
 		void SetPage(Control* ctl);
 		Control* GetPage();

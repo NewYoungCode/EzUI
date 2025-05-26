@@ -902,11 +902,11 @@ namespace EzUI {
 	}
 	void Control::DestroySpacers() {
 		//控件释放的时候自动释放弹簧
-		for (auto& it : _spacers) {
-			this->Remove(it);
-			delete it;
+		auto spacersCopy = _spacers;  // 复制一份避免迭代器错误
+		for (auto& it : spacersCopy) {
+			this->Remove(it, true);//移除且释放控件
 		}
-		_spacers.clear();
+		_spacers.clear(); // 如果需要的话，清空原列表
 	}
 	size_t Control::IndexOf(Control* childCtl)
 	{
@@ -924,7 +924,7 @@ namespace EzUI {
 		}
 		return size_t(-1);
 	}
-	void Control::Add(Control* ctl) {
+	Control* Control::Add(Control* ctl) {
 #ifdef _DEBUG
 		auto itor = std::find(_controls.begin(), _controls.end(), ctl);
 		if (itor != _controls.end()) {
@@ -944,6 +944,7 @@ namespace EzUI {
 
 		ctl->TryPendLayout();
 		this->TryPendLayout();//添加控件需要将布局重新挂起
+		return ctl;
 	}
 	void Control::Insert(size_t pos, Control* ctl)
 	{
@@ -984,8 +985,9 @@ namespace EzUI {
 	{
 		parentCtl->Add(this);
 	}
-	void Control::Remove(Control* ctl)
+	void Control::Remove(Control* ctl, bool freeCtrl)
 	{
+		//寻找控件看是否包含
 		auto itor = ::std::find(_controls.begin(), _controls.end(), ctl);
 		if (itor != _controls.end()) {
 			ctl->OnRemove();
@@ -995,6 +997,14 @@ namespace EzUI {
 			if (itor2 != ViewControls.end()) {
 				ViewControls.erase(itor2);
 			}
+			if (freeCtrl) {
+				delete ctl;
+			}
+		}
+		//如果是弹簧控件 顺便把弹簧容器中的item也移除
+		auto itorSpacer = ::std::find(_spacers.begin(), _spacers.end(), ctl);
+		if (itorSpacer != _spacers.end()) {
+			_spacers.erase(itorSpacer);
 		}
 	}
 	void Control::OnRemove()

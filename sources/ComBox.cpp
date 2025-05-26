@@ -113,8 +113,7 @@ namespace EzUI {
 	void ComBox::RemoveItem(int index)
 	{
 		Control* lb = _list.GetControl(index);
-		_list.Remove(lb);
-		delete lb;
+		_list.Remove(lb,true);
 	}
 	void ComBox::OnLayout() {
 		this->_UpDown.SetFixedSize(Size(Height(), Height()));

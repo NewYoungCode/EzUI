@@ -7,10 +7,10 @@ namespace EzUI {
 	TabLayout::~TabLayout()
 	{
 	}
-	void TabLayout::Remove(Control* ctl)
+	void TabLayout::Remove(Control* ctl, bool freeCtl)
 	{
 		size_t index = this->IndexOf(ctl);
-		__super::Remove(ctl);
+		__super::Remove(ctl, freeCtl);
 		int newIndex = this->GetControls().size() - 1;
 		newIndex = newIndex < 0 ? 0 : newIndex;
 		this->SetPageIndex(newIndex);
