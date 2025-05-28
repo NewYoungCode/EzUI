@@ -95,7 +95,7 @@ void MainFrm::InitForm() {
 	main->EventNotify = main->EventNotify | Event::OnPaint;
 	//播放视频的时候每一帧的回调
 	player.PlayingCallback = [&](Bitmap* bitmap)->void {
-		this->BeginInvoke([&]() {
+		BeginInvoke([&]() {
 			this->Invalidate();
 			if (deskTopWnd->IsVisible()) {
 				this->deskTopWnd->GetLayout()->Style.BackImage = NULL;
@@ -179,7 +179,7 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 		}
 	}
 
-	this->BeginInvoke([=]() {
+	BeginInvoke([=]() {
 		if (headImg) {
 			singer->Style.ForeImage = headImg;
 			singer->Style.BackImage->Visible = false;
@@ -442,7 +442,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 }
 void MainFrm::TimerTick() {
 
-	this->Invoke([=]() {
+	Invoke([=]() {
 		if (player.GetState() == libvlc_state_t::libvlc_Playing) {
 			long long position = player.Position();
 			auto duration = player.Duration();

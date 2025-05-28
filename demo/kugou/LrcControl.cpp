@@ -51,7 +51,7 @@ void LrcControl::Task()
 	}
 
 	if (this->PublicData) {
-		this->PublicData->Window->BeginInvoke([=]() {
+		BeginInvoke([=]() {
 			Invalidate();
 			});
 	}

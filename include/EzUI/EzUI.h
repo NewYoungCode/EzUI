@@ -437,54 +437,53 @@ namespace EzUI {
 		IControl();
 		virtual ~IControl();
 	public:
-		//原理采用PostMessage(请确保当前UI线程中至少存在一个窗口)
-		template<class Func, class... Args>
-		bool BeginInvoke(Func&& f, Args&& ...args) {
-			HWND hWnd = NULL;
-			//如果是窗口(必须使用自身窗口) 或者 (或者控件有能获取到自己所在的窗口句柄)
-			if (this->IsWindow || (this->PublicData && this->PublicData)) {
-				hWnd = this->PublicData->HANDLE;
-			}
-			else if (!__EzUI__WNDS.empty()) {
-				//从全局窗口中获取
-				hWnd = *__EzUI__WNDS.begin();
-			}
-			else {
-				return false;
-			}
-			std::function<void()>* func = new std::function<void()>(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
-			if (::PostMessage(hWnd, WM_GUI_SYSTEM, WM_GUI_BEGININVOKE, (LPARAM)func) == LRESULT(0)) {
-				delete func;
-				return false;
-			}
-			return true;
-		}
-		//原理采用SendMessage(请确保当前UI线程中至少存在一个窗口)
-		template<class Func, class... Args>
-		bool Invoke(Func&& f, Args&& ...args) {
-			std::function<void()> func(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
-			if (::GetCurrentThreadId() == EzUI::__EzUI__ThreadId) {
-				func();
-				return true;
-			}
-			HWND hWnd = NULL;
-			//如果是窗口(必须使用自身窗口) 或者 (控件有能获取到自己所在的窗口句柄)
-			if (this->IsWindow || (this->PublicData && this->PublicData)) {
-				hWnd = this->PublicData->HANDLE;
-			}
-			else if (!__EzUI__WNDS.empty()) {
-				//从全局窗口中获取
-				hWnd = *__EzUI__WNDS.begin();
-			}
-			else {
-				return false;
-			}
-			if (::SendMessage(hWnd, WM_GUI_SYSTEM, WM_GUI_INVOKE, (LPARAM)&func) == LRESULT(-1)) {
-				return false;
-			}
-			return true;
-		}
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//设置属性
 		virtual EString GetAttribute(const EString& attrName);//获取属性
 	};
+
+	//原理采用PostMessage(请确保当前UI线程中至少存在一个窗口)
+	template<class Func, class... Args>
+	bool BeginInvoke(Func&& f, Args&& ...args) {
+		HWND hWnd = NULL;
+		if (!__EzUI__WNDS.empty()) {
+			//从全局窗口中获取
+			hWnd = *__EzUI__WNDS.begin();
+		}
+		else {
+			return false;
+		}
+		if (hWnd == NULL) {
+			return false;
+		}
+		std::function<void()>* func = new std::function<void()>(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
+		if (::PostMessage(hWnd, WM_GUI_SYSTEM, WM_GUI_BEGININVOKE, (LPARAM)func) == LRESULT(0)) {
+			delete func;
+			return false;
+		}
+		return true;
+	}
+	//原理采用SendMessage(请确保当前UI线程中至少存在一个窗口)
+	template<class Func, class... Args>
+	bool Invoke(Func&& f, Args&& ...args) {
+		std::function<void()> func(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
+		if (::GetCurrentThreadId() == EzUI::__EzUI__ThreadId) {
+			func();
+			return true;
+		}
+		HWND hWnd = NULL;
+		if (!__EzUI__WNDS.empty()) {
+			//从全局窗口中获取
+			hWnd = *__EzUI__WNDS.begin();
+		}
+		else {
+			return false;
+		}
+		if (hWnd == NULL) {
+			return false;
+		}
+		if (::SendMessage(hWnd, WM_GUI_SYSTEM, WM_GUI_INVOKE, (LPARAM)&func) == LRESULT(-1)) {
+			return false;
+		}
+		return true;
+	}
 };

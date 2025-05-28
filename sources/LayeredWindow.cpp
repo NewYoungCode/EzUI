@@ -2,13 +2,54 @@
 
 namespace EzUI {
 
+	std::vector<LayeredWindow*> windows;
+	Task* task = NULL;
+	std::mutex mtx;
+	std::condition_variable condv;
+
+	void __QueuePaint(LayeredWindow* window) {
+		{
+			std::unique_lock<std::mutex> autoLock(mtx);
+			windows.push_back(window);
+		}
+		if (task == NULL) {
+			task = new Task([]() {
+				while (true)
+				{
+					{
+						std::unique_lock<std::mutex> autoLock(mtx);
+						condv.wait(autoLock, []()->bool {
+							bool ok = false;
+							for (auto& it : windows) {
+								if (it->GetUpdateRect().IsEmptyArea() == false) {
+									ok = true;
+								}
+							}
+							return ok || windows.empty();
+							});
+						if (windows.empty()) {
+							break;
+						}
+					}
+					EzUI::Invoke([]() {
+						for (auto& it : windows) {
+							it->PublicData->UpdateWindow();
+						}
+						});
+					Sleep(5);
+				}
+				});
+		}
+	}
+
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
 	LayeredWindow::LayeredWindow(int width, int height, HWND owner) :BorderlessWindow(width, height, owner, WS_EX_LAYERED)
 	{
 		UpdateShadowBox();
+		__QueuePaint(this);//加入绘制列队
 		PublicData->InvalidateRect = [this](const Rect& rect) ->void {
 			{
-				std::unique_lock<std::mutex> autoLock(_mtx);
+				std::unique_lock<std::mutex> autoLock(mtx);
 				//标记无效区域
 				this->InvalidateRect(rect);
 			}
@@ -17,50 +58,42 @@ namespace EzUI {
 				condv.notify_one();
 			}
 			};
-
 		PublicData->UpdateWindow = [this]()->void {
 			//实时绘制
 			if (IsVisible() && !_invalidateRect.IsEmptyArea()) {
 				this->Paint();
 			}
 			};
-
-		_paintTask = new Task([this]() {
-			while (true)
-			{
-				{
-					std::unique_lock<std::mutex> autoLock(_mtx);
-					condv.wait(autoLock, [this]()->bool {
-						if (this->PublicData->HANDLE == NULL) {
-							this->_bStop = true;
-						}
-						return (this->_bStop || !_invalidateRect.IsEmptyArea());
-						});
-					if (this->_bStop) {
-						break;
-					}
-				}
-				this->Invoke([this]() {
-					this->Paint();
-					});
-				//1000/5=200帧封顶
-				Sleep(5);
-			}
-			});
 	}
 
 	LayeredWindow::~LayeredWindow() {
 		{
-			std::unique_lock<std::mutex> autoLock(_mtx);
-			_bStop = true;
+			std::unique_lock<std::mutex> autoLock(mtx);
+			//清理绘制相关
+			auto itor = std::find(windows.begin(), windows.end(), this);
+			if (itor != windows.end()) {
+				windows.erase(itor);
+			}
 		}
+		//通知已经移除了一个窗口了
 		condv.notify_all();
-		delete _paintTask;
+		bool isEmpty = false;
+		{
+			std::unique_lock<std::mutex> autoLock(mtx);
+			isEmpty = windows.empty();
+		}
+		if (isEmpty && task) {
+			delete task;
+			task = NULL;
+		}
 		if (_winBitmap) {
 			delete _winBitmap;
 		}
 	}
-
+	Rect LayeredWindow::GetUpdateRect()
+	{
+		return _invalidateRect;
+	}
 	void LayeredWindow::InvalidateRect(const Rect& _rect) {
 		const Rect& clientRect = GetClientRect();
 		int Width = clientRect.Width;

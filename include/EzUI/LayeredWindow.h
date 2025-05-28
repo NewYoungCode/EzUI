@@ -12,15 +12,12 @@ namespace EzUI {
 		void PushDC(HDC hdc);
 		Rect _invalidateRect;
 		Bitmap* _winBitmap = NULL;
-		bool _bStop = false;
-		Task* _paintTask = NULL;
-		std::mutex _mtx;
-		std::condition_variable condv;
 		void Paint();
 	protected:
 		virtual void OnSize(const Size& sz)override;
 		void InvalidateRect(const Rect& rect);
 	public:
+		Rect GetUpdateRect();
 		LayeredWindow(int width, int height, HWND owner = NULL);
 		virtual ~LayeredWindow();
 	};
