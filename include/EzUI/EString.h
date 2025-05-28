@@ -32,6 +32,8 @@ namespace Text {
 		String replace(const String& oldText, const String& newText, bool allReplace = true)const;
 		String toLower()const;
 		String toUpper()const;
+		//find value count
+		size_t count(const String& value);
 		std::vector<String> split(const String& ch)const;
 		bool operator==(const wchar_t* szbuf)const;
 		bool operator==(const std::wstring& wStr)const;

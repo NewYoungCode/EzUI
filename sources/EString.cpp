@@ -69,6 +69,17 @@ namespace Text {
 		Toupper(&str);
 		return str;
 	}
+	size_t String::count(const String& value)
+	{
+		size_t count = 0;
+		size_t pos = 0;
+		while ((pos = this->find(value, pos)) != std::string::npos)
+		{
+			++count;
+			pos += value.size();
+		}
+		return count;
+	}
 	bool String::operator==(const wchar_t* szbuf)const
 	{
 		std::string u8str;
