@@ -15,6 +15,7 @@ namespace EzUI {
 		bool _mouseDown = false;//鼠标是否已经按下
 		bool _moveWindow = false;//窗口移动
 		POINT _dragPoint;//记录鼠标坐标
+		Point _downPoint;//记录鼠标按下的坐标
 		ULONGLONG _lastDownTime = 0;//上一次鼠标按下的时间
 		Size _lastSize;//上一次客户端大小的信息
 		Point _lastPoint;//上一次移动的坐标

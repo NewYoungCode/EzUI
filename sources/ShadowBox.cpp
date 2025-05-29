@@ -24,7 +24,7 @@ namespace EzUI {
 		iSize = (int)iSize < max_size ? iSize : max_size;
 		double piAngle = 3.1415926;
 		int iSizeB = 4 * iSize;
-		double fN = piAngle / iSize / 4;//设置四条边外模糊度
+		double fN = piAngle / iSize / 6;//设置四条边外模糊度
 		double lN = 1.0 / iSize;
 		int iAplpha = 0;
 		int Left = iSize + radius,

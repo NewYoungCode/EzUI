@@ -24,6 +24,23 @@ namespace EzUI {
 			Width = width;
 			Height = height;
 		}
+
+		bool operator!=(const __EzUI__Size& _right) const
+		{
+			return !(Width == _right.Width && Height == _right.Height);
+		}
+		void Scale(const float& scale) {
+			Width = (Width * scale) + 0.5;
+			Height = (Height * scale) + 0.5;
+		}
+		bool Equals(const __EzUI__Size& sz) const
+		{
+			return (Width == sz.Width) && (Height == sz.Height);
+		}
+		bool Empty() const
+		{
+			return (Width == 0 && Height == 0);
+		}
 		__EzUI__Size operator+(const __EzUI__Size& sz) const
 		{
 			return __EzUI__Size(Width + sz.Width,
@@ -37,24 +54,7 @@ namespace EzUI {
 
 		bool operator==(const __EzUI__Size& _right) const
 		{
-			return (Width == _right.Width && Height == _right.Height);
-		}
-		bool operator!=(const __EzUI__Size& _right) const
-		{
-			return !(Width == _right.Width && Height == _right.Height);
-		}
-		void Scale(const float& scale) {
-			Width = (Width * scale) + 0.5;
-			Height = (Height * scale) + 0.5;
-		}
-		bool Equals(const __EzUI__Size& sz) const
-		{
-			return (Width == sz.Width) && (Height == sz.Height);
-		}
-
-		bool Empty() const
-		{
-			return (Width == 0 && Height == 0);
+			return Equals(_right);
 		}
 	};
 
@@ -88,25 +88,27 @@ namespace EzUI {
 			X = x;
 			Y = y;
 		}
-
+		void Scale(const float& scale) {
+			X = (X * scale) + 0.5;
+			Y = (Y * scale) + 0.5;
+		}
+		bool Equals(const __EzUI__Point& __Point)const
+		{
+			return (X == __Point.X) && (Y == __Point.Y);
+		}
 		__EzUI__Point operator+(const __EzUI__Point& __Point) const
 		{
 			return __Point(X + __Point.X,
 				Y + __Point.Y);
 		}
-
 		__EzUI__Point operator-(const __EzUI__Point& __Point) const
 		{
 			return __Point(X - __Point.X,
 				Y - __Point.Y);
 		}
-		void Scale(const float& scale) {
-			X = (X * scale) + 0.5;
-			Y = (Y * scale) + 0.5;
-		}
-		bool Equals(const __EzUI__Point& __Point)
+		bool operator==(const __EzUI__Point& __Point) const
 		{
-			return (X == __Point.X) && (Y == __Point.Y);
+			return Equals(__Point);
 		}
 
 	};

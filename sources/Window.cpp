@@ -962,14 +962,6 @@ namespace EzUI {
 	{
 		::SetCapture(Hwnd());
 		_mouseDown = true;//标记为按下
-		//获取按下按钮和按下的时差
-		auto time_now = ::GetTickCount64();//记录鼠标按下的当前时间
-		auto offset = time_now - _lastDownTime;//本次与上次按下按钮的时间差
-		MouseButton tempLastBtn = _lastBtn;
-		//及时记录
-		_lastDownTime = time_now;
-		_lastBtn = mbtn;
-
 		//寻早控件
 		Point relativePoint;
 		Control* outCtl = this->FindControl(point, &relativePoint);
@@ -984,10 +976,16 @@ namespace EzUI {
 			args.Location = relativePoint;
 			__INPUT_CONTROL->DispatchEvent(args);
 		}
+		//获取按下按钮和按下的时差
+		auto time_now = ::GetTickCount64();//记录鼠标按下的当前时间
+		auto offset = time_now - _lastDownTime;//本次与上次按下按钮的时间差
 		//300毫秒之内同一个按钮按下两次算双击消息
-		if (offset < 300 && tempLastBtn == mbtn) {
+		if (offset < 300 && _lastBtn == mbtn && _downPoint == point) {
 			OnMouseDoubleClick(mbtn, point);
 		}
+		_lastDownTime = ::GetTickCount64();
+		_lastBtn = mbtn;
+		_downPoint = point;
 	}
 	void Window::OnMouseUp(MouseButton mbtn, const Point& point)
 	{
