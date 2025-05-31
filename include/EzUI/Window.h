@@ -8,18 +8,10 @@ namespace EzUI {
 	class UI_EXPORT Window :public IControl
 	{
 	private:
-		Rect _downRect;//上次按下的区域
 		Size _miniSize;//窗口最小尺寸
 		Size _maxSize;//窗口最大尺寸
-		bool _mouseIn = false;//鼠标是否在里面
-		bool _mouseDown = false;//鼠标是否已经按下
-		bool _moveWindow = false;//窗口移动
-		POINT _dragPoint;//记录鼠标坐标
-		Point _downPoint;//记录鼠标按下的坐标
-		ULONGLONG _lastDownTime = 0;//上一次鼠标按下的时间
 		Size _lastSize;//上一次客户端大小的信息
 		Point _lastPoint;//上一次移动的坐标
-		MouseButton _lastBtn = MouseButton::None;//上一次鼠标按下的按钮
 		int _closeCode = 0;//当窗口关闭的时候退出代码
 		Rect _rect;//基于桌面的坐标
 		Rect _rectClient;//客户绘图区域

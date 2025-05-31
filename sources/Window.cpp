@@ -7,6 +7,14 @@ namespace EzUI {
 //具有输入焦点的控件
 #define __INPUT_CONTROL PublicData->InputControl
 
+	bool _mouseIn = false;//鼠标是否在里面
+	bool _mouseDown = false;//鼠标是否已经按下
+	bool _moveWindow = false;//窗口移动
+	POINT _dragPoint;//记录鼠标坐标
+	Point _downPoint;//记录鼠标按下的坐标
+	ULONGLONG _lastDownTime = 0;//上一次鼠标按下的时间
+	MouseButton _lastBtn = MouseButton::None;//上一次鼠标按下的按钮
+
 	Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 	{
 		InitWindow(width, height, owner, dStyle, ExStyle);//设置基本数据
@@ -1168,7 +1176,7 @@ namespace EzUI {
 					for (auto& it : ctls)
 					{
 						if (it == sender) {
-							tabLayout->SetPageIndex(pos);
+							tabLayout->SlideToPage(pos);
 							tabLayout->Invalidate();
 							break;
 						}

@@ -119,7 +119,7 @@ bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 
 				task = new Task([resDir, resFile, this]() {
 					Resource::Package(resDir, resFile, [=](const EString& file, int index, int count) {
-						this->Invoke([&]() {
+						Invoke([&]() {
 							int rate = (index + 1) * 1.0f / count * 100 + 0.5;
 							labelTips->SetText(EString("(" + std::to_string(rate) + "%)") + EString(L"正在打包\"") + file + "\"");
 							labelTips->Invalidate();
@@ -127,7 +127,7 @@ bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 						Sleep(2);
 						});
 
-					this->Invoke([&]() {
+					Invoke([&]() {
 						labelTips->SetText(L"打包成功!");
 						labelTips->Invalidate();
 						::MessageBoxW(Hwnd(), L"打包成功!", L"成功", 0);

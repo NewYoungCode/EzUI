@@ -40,7 +40,7 @@ namespace EzUI {
 		::EmptyClipboard();
 		//为剪切板申请内存
 		HGLOBAL clip = ::GlobalAlloc(GMEM_DDESHARE, size);
-		memcpy((void*)clip, pData, size);
+		::memcpy((void*)clip, pData, size);
 		//解锁
 		ret = ::GlobalUnlock(clip);
 		ret = ::SetClipboardData(uFormat, clip);

@@ -1,5 +1,6 @@
 #pragma once
 #include "Control.h"
+#include "Timer.h"
 
 namespace EzUI {
 
@@ -7,14 +8,20 @@ namespace EzUI {
 		public Control
 	{
 	private:
-		int _index = 0;
+		int _pageIndex = 0;
+		ThreadTimer timer;
+		int offset = 0;
+		int nowOffset = 0;
+		void Sort();
 	protected:
 		virtual void OnLayout()override;
+		virtual Control* Add(Control* childCtl)override;
 	public:
 		TabLayout();
 		virtual ~TabLayout();
 		virtual void Remove(Control* ctl, bool freeCtl = false)override;
 		void SetPageIndex(int index);
+		void SlideToPage(int index);
 		void SetPage(Control* ctl);
 		Control* GetPage();
 		int GetPageIndex();
