@@ -1,9 +1,9 @@
 #include "Resource.h"
+#include "ezui.h"
 namespace EzUI {
 	Resource::ReadStream::ReadStream(HRSRC hRsrc) {
-		auto hModule = ::GetModuleHandle(NULL);
-		this->_ptr = (char*)::LoadResource(hModule, hRsrc);
-		this->_count = ::SizeofResource(hModule, hRsrc);
+		this->_ptr = (char*)::LoadResource(EzUI::__EzUI__HINSTANCE, hRsrc);
+		this->_count = ::SizeofResource(EzUI::__EzUI__HINSTANCE, hRsrc);
 	}
 	Resource::ReadStream::ReadStream(const EString& fileName) {
 		this->_ifs = new std::ifstream(fileName.unicode(), std::ios::binary);
@@ -140,6 +140,35 @@ namespace EzUI {
 		ofs.write((char*)(&headOffset), 4);
 		ofs.flush();
 		ofs.close();
+	}
+
+
+	// 内部使用：枚举名称时的上下文
+	struct ResourceContext {
+		EString rcIDName;
+		HRSRC hResource = NULL;
+		EString rcType;
+	};
+	// 回调：枚举资源名称
+	BOOL CALLBACK EnumNamesProc(HMODULE hModule, LPCWSTR lpszType, LPWSTR lpszName, LONG_PTR lParam) {
+		ResourceContext* ctx = (ResourceContext*)(lParam);
+		if (!IS_INTRESOURCE(lpszName) && ctx->rcIDName == lpszName) {
+			ctx->hResource = FindResourceW(hModule, lpszName, lpszType);
+			ctx->rcType = (wchar_t*)lpszType;
+			return FALSE; // 找到就停止
+		}
+		return TRUE; // 继续
+	}
+	//通过资源中的ID名称查找资源
+	HRSRC Resource::FindRC(const EString& rcIDName)
+	{
+		HMODULE hModule = EzUI::__EzUI__HINSTANCE;
+		ResourceContext ctx;
+		ctx.rcIDName = rcIDName;
+		EnumResourceTypesW(hModule, [](HMODULE hModule, LPWSTR lpszType, LONG_PTR lParam)->BOOL {
+			return EnumResourceNamesW(hModule, lpszType, EnumNamesProc, lParam);
+			}, (LONG_PTR)&ctx);
+		return ctx.hResource;
 	}
 
 	void Resource::UnPackage() {

@@ -329,7 +329,12 @@ namespace EzUI {
 	}
 	void UIManager::SetupUI(Window* window)
 	{
-		window->SetLayout(GetRoot());
+		Control* root = GetRoot();
+		if (root && !root->GetSize().Empty()) {
+			window->SetSize(root->GetSize());
+			window->CenterToScreen();
+		}
+		window->SetLayout(root);
 	}
 	void UIManager::SetupUI(Control* parentCtl)
 	{

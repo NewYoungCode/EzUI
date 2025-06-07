@@ -102,31 +102,34 @@ namespace EzUI {
 		}
 	}
 
-	Application::Application(int resID, const EString& custResType) {
-		Init();
-		HINSTANCE hInst = EzUI::__EzUI__HINSTANCE;
-#ifdef UNICODE
-		HRSRC hRsrc = ::FindResource(hInst, MAKEINTRESOURCE(resID), custResType.unicode().c_str());
-#else
-		HRSRC hRsrc = ::FindResource(hInst, MAKEINTRESOURCE(resID), custResType.c_str());
-#endif
-		if (!hRsrc)return;
-		EzUI::__EzUI__Resource = new Resource(hRsrc);
-	}
-	//使用本地文件名称加载资源包
-	Application::Application(const EString& fileName) {
-		Init();
-		//本地文件中获取
-		std::wstring wstr = fileName.unicode();
-		DWORD dwAttr = GetFileAttributesW(wstr.c_str());
-		if (dwAttr && (dwAttr != -1) && (dwAttr & FILE_ATTRIBUTE_ARCHIVE)) {
-			EzUI::__EzUI__Resource = new Resource(fileName);
+	bool Application::SetResource(const EString& localOrResName) {
+		//只允许有一个资源文件
+		if (EzUI::__EzUI__Resource) {
+			delete EzUI::__EzUI__Resource;
+			EzUI::__EzUI__Resource = NULL;
+		}
+		//先从vs中的资源里面查找
+		bool found = false;
+		HRSRC hRsrc = Resource::FindRC(localOrResName);
+		if (hRsrc) {
+			EzUI::__EzUI__Resource = new Resource(hRsrc);
+			found = true;
+		}
+		else {
+			//本地文件中获取
+			std::wstring wstr = localOrResName.unicode();
+			DWORD dwAttr = GetFileAttributesW(wstr.c_str());
+			if (dwAttr && (dwAttr != -1) && (dwAttr & FILE_ATTRIBUTE_ARCHIVE)) {
+				EzUI::__EzUI__Resource = new Resource(localOrResName);
+				found = true;
+			}
 		}
 #ifdef _DEBUG
-		else {
-			::MessageBoxW(NULL, fileName.unicode().c_str(), L"Failed to open Resource", MB_OK | MB_ICONINFORMATION);
+		if (!found) {
+			::MessageBoxW(NULL, localOrResName.unicode().c_str(), L"Failed to open Resource", MB_OK | MB_ICONINFORMATION);
 		}
 #endif
+		return found;
 	}
 	Application::Application() {
 		Init();
@@ -153,23 +156,6 @@ namespace EzUI {
 
 	void Application::Exit(int exitCode) {
 		::PostQuitMessage(exitCode);
-	}
-
-	bool Application::GetResource(int resId, const EString& resType, std::string* outData) {
-#ifdef UNICODE
-		HRSRC hRsrc = ::FindResource(EzUI::__EzUI__HINSTANCE, MAKEINTRESOURCE(resId), resType.unicode().c_str());
-#else
-		HRSRC hRsrc = ::FindResource(EzUI::__EzUI__HINSTANCE, MAKEINTRESOURCE(resID), resType.c_str());
-#endif
-		if (hRsrc) {
-			auto hModule = ::GetModuleHandle(NULL);
-			char* ptr = (char*)::LoadResource(hModule, hRsrc);
-			auto count = ::SizeofResource(hModule, hRsrc);
-			outData->resize(count);
-			::memcpy((void*)outData->c_str(), ptr, count);
-			return true;
-		}
-		return false;
 	}
 
 };

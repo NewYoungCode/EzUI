@@ -1018,7 +1018,7 @@ namespace EzUI {
 			if (__INPUT_CONTROL && mbtn == _lastBtn && ctlRect.Contains(point)) {
 				auto _time = ::GetTickCount64();
 				auto diff = _time - _lastDownTime;
-				if (diff < 200) {//鼠标按住超过200毫秒则不触发单机事件
+				if (diff < 500) {//鼠标按住超过200毫秒则不触发单机事件
 					args.EventType = Event::OnMouseClick;
 					__INPUT_CONTROL->DispatchEvent(args);
 				}

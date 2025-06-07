@@ -30,10 +30,11 @@ namespace EzUI {
 		ReadStream* _rStream = NULL;
 		void UnPackage();
 	public:
-		const std::list<Entry> Items;
+		const std::list<Entry> Items; 
 		const bool IsGood = false;
 		//对资源目录进行打包
 		UI_EXPORT static void Package(const EString& dir, const EString& outFile, const std::function<void(const EString&, int, int)>& packCallback = NULL);
+		UI_EXPORT static HRSRC FindRC(const EString& rcIDName);
 	public:
 		virtual ~Resource();
 		//从本地文件创建对象

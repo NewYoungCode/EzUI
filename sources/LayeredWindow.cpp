@@ -125,7 +125,9 @@ namespace EzUI {
 
 	void LayeredWindow::Paint()
 	{
+		_invalidateRect = Rect(0, 0, this->GetClientRect().Width, this->GetClientRect().Height);
 		if (_winBitmap && !_invalidateRect.IsEmptyArea()) {
+
 			_winBitmap->Earse(_invalidateRect);//清除背景
 			HDC winHDC = _winBitmap->GetHDC();
 

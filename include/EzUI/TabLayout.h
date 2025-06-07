@@ -16,6 +16,7 @@ namespace EzUI {
 	protected:
 		virtual void OnLayout()override;
 		virtual Control* Add(Control* childCtl)override;
+		virtual void SetAttribute(const EString& key, const EString& value)override;
 	public:
 		TabLayout();
 		virtual ~TabLayout();
