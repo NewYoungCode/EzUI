@@ -1,14 +1,21 @@
 #include "LayeredWindow.h"
 
 namespace EzUI {
-	std::map<HWND, Rect*> __LayeredInvalidateRect;
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
 	LayeredWindow::LayeredWindow(int_t width, int_t height, HWND owner) :BorderlessWindow(width, height, owner, WS_EX_LAYERED)
 	{
 		UpdateShadowBox();
 		this->PublicData->InvalidateRect = [this](const Rect& rect) ->void {
 			this->InvalidateRect(rect);
-			__LayeredInvalidateRect.insert(std::pair<HWND, Rect*>(Hwnd(), &this->_invalidateRect));
+			bool exist = false;
+			MSG msg;
+			// 先把所有 WM_PAINT 的消息都移除（避免堆积多条）
+			while (PeekMessage(&msg, Hwnd(), WM_PAINT, WM_PAINT, PM_REMOVE)) {
+				// 这里可以处理消息，或者什么都不做，直接移除
+				int pause = 0;
+				exist = true;
+			}
+			::PostMessage(Hwnd(), WM_PAINT, 0, 0);
 			};
 		this->PublicData->UpdateWindow = [this]()->void {
 			//实时绘制
