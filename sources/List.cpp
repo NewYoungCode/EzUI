@@ -1,7 +1,7 @@
 #include "List.h"
 namespace EzUI {
 
-	void List::SetPageInfo(const Controls& items, int pageSize)
+	void List::SetPageInfo(const Controls& items, int_t pageSize)
 	{
 		this->_pageIndex = 0;
 		this->_pageSize = pageSize;
@@ -10,13 +10,13 @@ namespace EzUI {
 		this->NextPage();
 	}
 
-	void List::GetPage(int pageIndex, Controls* outCtls)
+	void List::GetPage(int_t pageIndex, Controls* outCtls)
 	{
 		if (outCtls) {
 			outCtls->clear();
-			size_t beginIndex = (pageIndex - 1) * _pageSize;
-			size_t count = 0;
-			for (size_t i = beginIndex; count < _pageSize && i < _items.size(); ++i)
+			int_t beginIndex = (pageIndex - 1) * _pageSize;
+			int_t count = 0;
+			for (int_t i = beginIndex; count < _pageSize && i < _items.size(); ++i)
 			{
 				outCtls->push_back(_items[i]);
 				++count;

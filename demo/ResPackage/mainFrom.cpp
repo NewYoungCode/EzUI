@@ -163,7 +163,7 @@ void MainFrm::OnResFileChange(EzUI::EString& resFile)
 	{
 		if (FileExists(resFile)) {
 			Resource* newRes = new Resource(resFile);
-			if (!newRes->IsGood) {
+			if (!newRes->IsGood()) {
 				::MessageBoxW(Hwnd(), L"不是标准的资源文件", L"错误", 0);
 				delete newRes;
 				break;

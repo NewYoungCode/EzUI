@@ -14,7 +14,7 @@ namespace EzUI {
 				return;
 			}
 			//出现在顶部
-			int offset = this->_offset - ctlRect.Y;
+			int_t offset = this->_offset - ctlRect.Y;
 			if (ctlRect.Y > 0) {
 				//出现在底部
 				offset += this->_viewLength - ctlRect.Height;
@@ -26,7 +26,7 @@ namespace EzUI {
 	Rect VScrollBar::GetSliderRect() {
 		Rect sliderRect;
 		sliderRect.X = 0;
-		sliderRect.Y = (INT)_sliderPos;
+		sliderRect.Y = _sliderPos;
 		sliderRect.Width = Width();
 		sliderRect.Height = _sliderLength;
 		if (this->Scrollable() && sliderRect.Height <= 0) {
@@ -34,7 +34,7 @@ namespace EzUI {
 		}
 		return sliderRect;
 	}
-	void VScrollBar::GetInfo(int* viewLength, int* contentLength, int* scrollBarLength)
+	void VScrollBar::GetInfo(int_t* viewLength, int_t* contentLength, int_t* scrollBarLength)
 	{
 		*viewLength = this->Parent->Height();
 		*contentLength = this->Parent->GetContentSize().Height;
@@ -58,10 +58,10 @@ namespace EzUI {
 		__super::OnMouseMove(arg);
 		if (_mouseDown) {
 			auto point = arg.Location;
-			int offsetY = point.Y - this->_lastPoint;
+			int_t offsetY = point.Y - this->_lastPoint;
 			_sliderPos += offsetY;
 			_lastPoint = point.Y;
-			int offset = _sliderPos * this->_rollRate + 0.5;
+			int_t offset = _sliderPos * this->_rollRate + 0.5;
 			__super::ScrollTo(-offset, Event::OnMouseDrag);
 		}
 	}

@@ -1,6 +1,6 @@
 #include "BorderlessWindow.h"
 namespace EzUI {
-	BorderlessWindow::BorderlessWindow(int width, int height, HWND owner, DWORD exStyle) : Window(width, height, owner, /*WS_THICKFRAME |*/ WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP, exStyle)
+	BorderlessWindow::BorderlessWindow(int_t width, int_t height, HWND owner, DWORD exStyle) : Window(width, height, owner, /*WS_THICKFRAME |*/ WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP, exStyle)
 	{
 		_shadowBox = new ShadowBox(width, height, Hwnd());
 		UpdateShadowBox();
@@ -12,7 +12,7 @@ namespace EzUI {
 	{
 		return _shadowBox;
 	}
-	void BorderlessWindow::SetShadow(int padding)
+	void BorderlessWindow::SetShadow(int_t padding)
 	{
 		_shadowWeight = padding;
 		UpdateShadowBox();
@@ -31,7 +31,7 @@ namespace EzUI {
 			UpdateShadowBox();
 		}
 	}
-	void BorderlessWindow::OnDpiChange(const float& systemScale, const Rect& newRect)
+	void BorderlessWindow::OnDpiChange(float systemScale, const Rect& newRect)
 	{
 		if (_shadowBox) {
 			if (this->_shadowScale != systemScale) {
@@ -93,7 +93,7 @@ namespace EzUI {
 				RECT rc;
 				::GetWindowRect(Hwnd(), &rc);
 				POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
-				int x = 4;//
+				int_t x = 4;//
 				if (pt.x < rc.left + x)
 				{
 					if (pt.y < rc.top + x)return HTTOPLEFT;//

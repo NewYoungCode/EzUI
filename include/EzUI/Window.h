@@ -12,23 +12,23 @@ namespace EzUI {
 		Size _maxSize;//窗口最大尺寸
 		Size _lastSize;//上一次客户端大小的信息
 		Point _lastPoint;//上一次移动的坐标
-		int _closeCode = 0;//当窗口关闭的时候退出代码
+		int_t _closeCode = 0;//当窗口关闭的时候退出代码
 		Rect _rect;//基于桌面的坐标
 		Rect _rectClient;//客户绘图区域
 		HWND _oWnerWnd = NULL;//所属窗口句柄
 		Control* _layout = NULL;//窗口布局
 		HWND _hWndTips = NULL;
-		void InitWindow(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
+		void InitWindow(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
 	private:
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
 		bool IsInWindow(Control& pControl, Control& it);
 	protected:
 		void TitleMoveWindow();//鼠标按下以标题栏方式移动窗口
-		virtual void OnDpiChange(const float& systemScale, const Rect& newRect);//当dpi发生更改时
+		virtual void OnDpiChange( float systemScale, const Rect& newRect);//当dpi发生更改时
 		virtual void OnMouseMove(const Point& point);//鼠标移动时发生
 		virtual void OnMouseLeave();//鼠标离开时发生
-		virtual void OnMouseWheel(int zDelta, const Point& point);//鼠标滚动发生
+		virtual void OnMouseWheel(int_t zDelta, const Point& point);//鼠标滚动发生
 		virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point);//鼠标双击是发生
 		virtual void OnMouseDown(MouseButton mbtn, const Point& point);//鼠标按下时发生
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point);//鼠标弹起时发生
@@ -52,7 +52,7 @@ namespace EzUI {
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);//处理消息队列的
 	public:
 		bool Zoom = true;//是否支持缩放
-		Window(int width, int height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
+		Window(int_t width, int_t height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
 		virtual ~Window();
 		/// <summary>
 		/// 在窗口中寻找命中的控件
@@ -65,7 +65,7 @@ namespace EzUI {
 		HWND Hwnd();//获取窗口句柄
 		const Rect& GetWindowRect();//获取窗口基于显示器的矩形
 		const Rect& GetClientRect();//获取客户区矩形
-		const float& GetScale();//获取当前窗口dpi缩放
+		 float GetScale();//获取当前窗口dpi缩放
 		void SetSize(const Size& size);//设置窗口size
 		void SetLocation(const Point& pt);//设置窗口位置
 		void SetRect(const Rect& rect);//设置窗口矩形
@@ -80,11 +80,11 @@ namespace EzUI {
 		void SetTopMost(bool top);//设置与取消窗口置顶
 		bool IsTopMost();//窗口是否置顶
 		virtual void Show();//操作窗口的显示
-		void Show(int cmdShow);//
+		void Show(int_t cmdShow);//
 		virtual void Hide();//隐藏窗口
 		void ShowNormal();//正常显示窗口
-		void Close(int exitCode = 0);//关闭窗口 exitCode为退出代码
-		virtual int ShowModal(bool disableOnwer = true);//会阻塞
+		void Close(int_t exitCode = 0);//关闭窗口 exitCode为退出代码
+		virtual int_t ShowModal(bool disableOnwer = true);//会阻塞
 		void ShowMinimized();//最小化窗口
 		void ShowMaximized();//最大化窗口
 		void ShowFullScreen();//让窗口占满当前屏幕

@@ -15,7 +15,7 @@ namespace EzUI {
 	ULONGLONG _lastDownTime = 0;//上一次鼠标按下的时间
 	MouseButton _lastBtn = MouseButton::None;//上一次鼠标按下的按钮
 
-	Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
+	Window::Window(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 	{
 		InitWindow(width, height, owner, dStyle, ExStyle);//设置基本数据
 	}
@@ -33,7 +33,7 @@ namespace EzUI {
 		}
 	}
 
-	void Window::InitWindow(int width, int height, HWND owner, DWORD dStyle, DWORD  exStyle)
+	void Window::InitWindow(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  exStyle)
 	{
 		this->PublicData = new WindowData;
 		(bool&)this->IsWindow = true;
@@ -107,8 +107,8 @@ namespace EzUI {
 		PublicData->SetTips = [this](Control* ctl, const std::wstring& text)->void {
 
 			// 枚举并删除每个提示项
-			int toolCount = SendMessage(_hWndTips, TTM_GETTOOLCOUNT, 0, 0);
-			for (int i = 0; i < toolCount; ++i) {
+			int_t toolCount = SendMessage(_hWndTips, TTM_GETTOOLCOUNT, 0, 0);
+			for (int_t i = 0; i < toolCount; ++i) {
 				TOOLINFO toolInfo{ 0 };
 				toolInfo.cbSize = sizeof(TOOLINFO);
 				toolInfo.hwnd = Hwnd();
@@ -300,7 +300,7 @@ namespace EzUI {
 	{
 		return this->_layout;
 	}
-	void Window::Close(int code) {
+	void Window::Close(int_t code) {
 		_closeCode = code;
 		::SendMessage(Hwnd(), WM_CLOSE, 0, 0);
 	}
@@ -310,7 +310,7 @@ namespace EzUI {
 		::ShowWindow(Hwnd(), SW_SHOW);
 		_layout->Refresh();
 	}
-	void Window::Show(int cmdShow)
+	void Window::Show(int_t cmdShow)
 	{
 		::ShowWindow(Hwnd(), cmdShow);
 		if (IsVisible()) {
@@ -336,7 +336,7 @@ namespace EzUI {
 		::SetWindowPos(Hwnd(), HWND_TOP, monitorInfo.Rect.X, monitorInfo.Rect.Y, monitorInfo.Rect.Width, monitorInfo.Rect.Height, NULL);
 		::ShowWindow(Hwnd(), SW_SHOW);
 	}
-	int Window::ShowModal(bool disableOnwer)
+	int_t Window::ShowModal(bool disableOnwer)
 	{
 		//此处代码不能随意更改 解决关闭窗口时,owner窗口闪烁问题
 		if (disableOnwer) {
@@ -392,14 +392,14 @@ namespace EzUI {
 		MonitorInfo monitorInfo;
 		EzUI::GetMontior(&monitorInfo);
 
-		int x = monitorInfo.WorkRect.X;
-		int y = monitorInfo.WorkRect.Y;
-		int sw = monitorInfo.WorkRect.Width;//当前工作区域的宽
-		int sh = monitorInfo.WorkRect.Height;//当前工作区域的高
+		int_t x = monitorInfo.WorkRect.X;
+		int_t y = monitorInfo.WorkRect.Y;
+		int_t sw = monitorInfo.WorkRect.Width;//当前工作区域的宽
+		int_t sh = monitorInfo.WorkRect.Height;//当前工作区域的高
 
 		Rect _rect = this->GetWindowRect();
-		int width = _rect.Width;
-		int height = _rect.Height;
+		int_t width = _rect.Width;
+		int_t height = _rect.Height;
 		//基于屏幕的中心点
 		_rect.X = x + (sw - width) / 2.0f + 0.5;//保证左右居中
 		_rect.Y = y + (sh - height) / 2.0f + 0.5;//保证上下居中
@@ -419,13 +419,13 @@ namespace EzUI {
 			return;
 		}
 		Rect _rect = this->GetWindowRect();
-		const int& width = _rect.Width;
-		const int& height = _rect.Height;
+		const int_t& width = _rect.Width;
+		const int_t& height = _rect.Height;
 		//基于父窗口的中心点
 		RECT ownerRECT;
 		::GetWindowRect(wnd, &ownerRECT);
-		int onwerWidth = ownerRECT.right - ownerRECT.left;
-		int onwerHeight = ownerRECT.bottom - ownerRECT.top;
+		int_t onwerWidth = ownerRECT.right - ownerRECT.left;
+		int_t onwerHeight = ownerRECT.bottom - ownerRECT.top;
 		if (width > 0 && height > 0 && onwerWidth > 0 && onwerHeight > 0) {
 			_rect.X = ownerRECT.left + (onwerWidth - width) / 2.0f + 0.5;
 			_rect.Y = ownerRECT.top + (onwerHeight - height) / 2.0f + 0.5;
@@ -467,15 +467,13 @@ namespace EzUI {
 			break;
 		}
 		case WM_MOVE: {
-			int xPos = (int)(short)LOWORD(lParam);   // horizontal position 
-			int yPos = (int)(short)HIWORD(lParam);   // vertical position 
-			int p = 0;
+			int_t xPos = (int_t)(short)LOWORD(lParam);   // horizontal position 
+			int_t yPos = (int_t)(short)HIWORD(lParam);   // vertical position 
 			break;
 		}
 		case WM_SIZE: {
 			UINT width = LOWORD(lParam);
 			UINT height = HIWORD(lParam);
-			int p = 0;
 			break;
 		}
 		case WM_GETMINMAXINFO:
@@ -525,8 +523,8 @@ namespace EzUI {
 				cpf.dwStyle = CFS_POINT;
 				Control* input = __INPUT_CONTROL;
 				Rect rect = input->GetCareRect();
-				int	x = input->GetClientRect().X + rect.X;
-				int y = input->GetClientRect().Y + rect.Y + rect.Height;
+				int_t	x = input->GetClientRect().X + rect.X;
+				int_t y = input->GetClientRect().Y + rect.Y + rect.Height;
 				if (y == _rectClient.Height) {
 					y -= 1;//神奇!如果输入位置和等于窗口的高 那么输入法就会跑到左上角去
 				}
@@ -559,14 +557,14 @@ namespace EzUI {
 		}
 		case WM_DPICHANGED:
 		{
-			int dpi = HIWORD(wParam);
+			int_t dpi = HIWORD(wParam);
 			//新的缩放比
 			FLOAT systemScale = (float)dpi / USER_DEFAULT_SCREEN_DPI;
 			RECT* const prcNewWindow = (RECT*)lParam;
-			int newX = prcNewWindow->left;
-			int newY = prcNewWindow->top;
-			int newWidth = prcNewWindow->right - prcNewWindow->left;
-			int newHeight = prcNewWindow->bottom - prcNewWindow->top;
+			int_t newX = prcNewWindow->left;
+			int_t newY = prcNewWindow->top;
+			int_t newWidth = prcNewWindow->right - prcNewWindow->left;
+			int_t newHeight = prcNewWindow->bottom - prcNewWindow->top;
 			this->OnDpiChange(systemScale, Rect(newX, newY, newWidth, newHeight));
 			return 0;
 		}
@@ -869,8 +867,8 @@ namespace EzUI {
 		if (_moveWindow && _mouseDown) {
 			POINT ptNow;
 			::GetCursorPos(&ptNow);
-			int dx = ptNow.x - _dragPoint.x;
-			int dy = ptNow.y - _dragPoint.y;
+			int_t dx = ptNow.x - _dragPoint.x;
+			int_t dy = ptNow.y - _dragPoint.y;
 			HWND hWnd = Hwnd();
 			RECT rect;
 			::GetWindowRect(hWnd, &rect);
@@ -925,7 +923,7 @@ namespace EzUI {
 		_mouseDown = false;
 	}
 
-	void Window::OnMouseWheel(int zDelta, const Point& point)
+	void Window::OnMouseWheel(int_t zDelta, const Point& point)
 	{
 		if (__FOCUS_CONTROL == NULL) return;
 		if (__FOCUS_CONTROL) {
@@ -1042,7 +1040,7 @@ namespace EzUI {
 
 	}
 
-	const float& Window::GetScale() {
+	float Window::GetScale() {
 		return this->PublicData->Scale;
 	}
 
@@ -1105,7 +1103,7 @@ namespace EzUI {
 		::SendMessage(Hwnd(), WM_LBUTTONUP, NULL, NULL);//松开 不调发送此消息会导致一些消息问题
 	}
 
-	void Window::OnDpiChange(const float& systemScale, const Rect& newRect)
+	void Window::OnDpiChange(float systemScale, const Rect& newRect)
 	{
 		//新的缩放比
 		float newScale = systemScale / PublicData->Scale;
@@ -1172,7 +1170,7 @@ namespace EzUI {
 				auto ctls = sender->Parent->FindControl("tablayout", ctlName);
 				TabLayout* tabLayout = dynamic_cast<TabLayout*>(FindControl(ctlName));
 				if (tabLayout && sender->Parent) {
-					size_t pos = 0;
+					int_t pos = 0;
 					for (auto& it : ctls)
 					{
 						if (it == sender) {

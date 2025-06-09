@@ -2,29 +2,29 @@
 
 namespace EzUI {
 
-	ShadowBox::ShadowBox(int width, int height, HWND hwnd)
+	ShadowBox::ShadowBox(int_t width, int_t height, HWND hwnd)
 	{
 		DWORD dwFlags = WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT;
 		_hWnd = CreateWindowExW(dwFlags, EzUI::__EzUI__WindowClassName, L"ShadowBox", WS_POPUP, 0, 0, width, height, hwnd, NULL, EzUI::__EzUI__HINSTANCE, NULL);
 		ASSERT(_hWnd);
 	}
 
-	bool ShadowBox::SetShadow(int m_Width, int m_Height, size_t iSize, float _radius) {
+	bool ShadowBox::SetShadow(int_t m_Width, int_t m_Height, int_t iSize, float _radius) {
 		float radius = _radius;
 		if (radius == 0) {//判断窗口是不是有圆角
 			//如果没有圆角就让窗口阴影加点弧度显得更和谐一点
 			radius = iSize / 2.0f;//半径
 		}
 		int width = m_Width < m_Height ? m_Width : m_Height;
-		int max_size = width / 2 - radius;
+		int max_size = width / 2.0f - radius;
 		if (max_size <= 0) {
 			radius = 0;
-			max_size = width / 2;
+			max_size = width / 2.0f;
 		}
 		iSize = (int)iSize < max_size ? iSize : max_size;
 		double piAngle = 3.1415926;
 		int iSizeB = 4 * iSize;
-		double fN = piAngle / iSize / 6;//设置四条边外模糊度
+		double fN = piAngle / iSize / 6.0f;//设置四条边外模糊度
 		double lN = 1.0 / iSize;
 		int iAplpha = 0;
 		int Left = iSize + radius,
@@ -78,18 +78,18 @@ namespace EzUI {
 		return true;
 	}
 
-	void ShadowBox::setA(int x, int y, BYTE a, float radius) {
+	void ShadowBox::setA(int_t x, int_t y, BYTE a, float radius) {
 		//如果窗口没有圆角 则不允许圆角绘制到窗口内部去造成遮挡影响观感
 		if (radius == 0 && _clipRect.Contains(x, y)) { //不允许绘制在OWner窗口区域
 			return;
 		}
-		DWORD* point = (DWORD*)_bufBitmap->GetPixel() + (x + y * _bufBitmap->Width);//起始地址+坐标偏移
+		DWORD* point = (DWORD*)_bufBitmap->GetPixel() + (x + y * _bufBitmap->Width());//起始地址+坐标偏移
 		((BYTE*)point)[3] = a;//修改A通道数值
 		//((BYTE*)point)[2] = 0;//修改R通道数值
 		//((BYTE*)point)[1] = 0;//修改G通道数值
 		//((BYTE*)point)[0] = 0;//修改B通道数值
 	}
-	void ShadowBox::Update(int _shadowWidth, float radius) {
+	void ShadowBox::Update(int_t _shadowWidth, float radius) {
 		HWND OwnerWnd = ::GetWindowOwner(_hWnd);
 		if (!::IsWindowVisible(OwnerWnd)) {
 			::ShowWindow(_hWnd, SW_HIDE);
@@ -102,10 +102,10 @@ namespace EzUI {
 		Size paintSize{ Orect.right - Orect.left,Orect.bottom - Orect.top };//父控件作图大小
 
 		_clipRect = Rect({ _shadowWidth ,_shadowWidth }, paintSize);//裁剪区域
-		int x = 0;
-		int y = 0;
-		int width = paintSize.Width + _shadowWidth * 2;
-		int height = paintSize.Height + _shadowWidth * 2;
+		int_t x = 0;
+		int_t y = 0;
+		int_t width = paintSize.Width + _shadowWidth * 2;
+		int_t height = paintSize.Height + _shadowWidth * 2;
 		//移动阴影窗口
 		::MoveWindow(_hWnd, Orect.left - _shadowWidth, Orect.top - _shadowWidth, width, height, FALSE);
 		//只有在大小发生改变的时候才回去重新生成layered窗口

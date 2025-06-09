@@ -13,8 +13,8 @@ namespace EzUI {
 	{
 		__super::OnForePaint(args);
 		if (!_wstr.empty()) {
-			int maxWidth = Width() - this->TextMargin.GetHSpace();
-			int maxHeight = Height() - this->TextMargin.GetVSpace();
+			int_t maxWidth = Width() - this->TextMargin.GetHSpace();
+			int_t maxHeight = Height() - this->TextMargin.GetVSpace();
 			std::wstring drawText(_wstr);
 			std::wstring fontFamily = GetFontFamily();
 			auto fontSize = GetFontSize();
@@ -32,9 +32,9 @@ namespace EzUI {
 				TextLayout textLayout(_wstr, font);
 
 				if (textLayout.GetFontBox().Width > maxWidth) {//当文字显示超出的时候 宽度
-					int pos = 0;
+					int_t pos = 0;
 					BOOL isTrailingHit;
-					int fontHeight;
+					int_t fontHeight;
 					textLayout.HitTestPoint({ maxWidth,0 }, &pos, &isTrailingHit, &fontHeight);//对文字进行命中测试
 					drawText.erase(pos);
 					while (drawText.size() > 0)
@@ -62,9 +62,9 @@ namespace EzUI {
 		do
 		{
 			if (key == "valign") {
-				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)VAlign::Top);
-				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)VAlign::Mid);
-				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)VAlign::Bottom);
+				this->TextAlign = EzUI::TextAlign((int_t)this->TextAlign & ~(int_t)VAlign::Top);
+				this->TextAlign = EzUI::TextAlign((int_t)this->TextAlign & ~(int_t)VAlign::Mid);
+				this->TextAlign = EzUI::TextAlign((int_t)this->TextAlign & ~(int_t)VAlign::Bottom);
 				VAlign v = VAlign::Mid;
 				if (value == "top") {
 					v = VAlign::Top;
@@ -72,7 +72,7 @@ namespace EzUI {
 				else if (value == "bottom") {
 					v = VAlign::Bottom;
 				}
-				this->TextAlign = EzUI::TextAlign((int)this->TextAlign | (int)v);
+				this->TextAlign = EzUI::TextAlign((int_t)this->TextAlign | (int_t)v);
 				break;
 			}
 			if (key == "ellipsis") {
@@ -80,9 +80,9 @@ namespace EzUI {
 				break;
 			}
 			if (key == "halign") {
-				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)HAlign::Left);
-				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)HAlign::Center);
-				this->TextAlign = EzUI::TextAlign((int)this->TextAlign & ~(int)HAlign::Right);
+				this->TextAlign = EzUI::TextAlign((int_t)this->TextAlign & ~(int_t)HAlign::Left);
+				this->TextAlign = EzUI::TextAlign((int_t)this->TextAlign & ~(int_t)HAlign::Center);
+				this->TextAlign = EzUI::TextAlign((int_t)this->TextAlign & ~(int_t)HAlign::Right);
 				HAlign h = HAlign::Center;
 				if (value == "left") {
 					h = HAlign::Left;
@@ -90,7 +90,7 @@ namespace EzUI {
 				else if (value == "right") {
 					h = HAlign::Right;
 				}
-				this->TextAlign = EzUI::TextAlign((int)this->TextAlign | (int)h);
+				this->TextAlign = EzUI::TextAlign((int_t)this->TextAlign | (int_t)h);
 				break;
 			}
 			if (key == "text") {
@@ -120,8 +120,8 @@ namespace EzUI {
 			if (fontSize == 0)return;
 			Font font(GetFontFamily(), fontSize);
 
-			int maxWidth = IsAutoWidth() ? __MAXFLOAT : Width() - this->TextMargin.GetHSpace();
-			int maxHeight = IsAutoHeight() ? __MAXFLOAT : Height() - this->TextMargin.GetVSpace();
+			int_t maxWidth = IsAutoWidth() ? __MAXFLOAT : Width() - this->TextMargin.GetHSpace();
+			int_t maxHeight = IsAutoHeight() ? __MAXFLOAT : Height() - this->TextMargin.GetVSpace();
 
 			TextLayout text(this->_wstr, font, SizeF(maxWidth, maxHeight));
 			Size box = text.GetFontBox();

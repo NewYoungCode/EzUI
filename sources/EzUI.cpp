@@ -32,7 +32,7 @@ namespace EzUI {
 		::SystemParametersInfoW(SPI_SETNONCLIENTMETRICS, 0, nullptr, SPIF_SENDCHANGE);//刷新
 	}
 
-	bool CopyToClipboard(int uFormat, void* pData, size_t size, HWND hWnd) {
+	bool CopyToClipboard(int_t uFormat, void* pData, size_t size, HWND hWnd) {
 		//打开剪贴板
 		bool ret = ::OpenClipboard(hWnd);
 		if (!ret)return ret;
@@ -48,7 +48,7 @@ namespace EzUI {
 		return ret;
 	}
 
-	bool GetClipboardData(int uFormat, std::function<void(void*, size_t)> Callback, HWND hWnd) {
+	bool GetClipboardData(int_t uFormat, std::function<void(void*, size_t)> Callback, HWND hWnd) {
 		//只接收当前类型
 		bool ret = ::IsClipboardFormatAvailable(uFormat);
 		if (!ret)return ret;
@@ -191,7 +191,7 @@ namespace EzUI {
 		::DestroyCursor(hCursor);
 	}
 
-	void ControlStyle::Scale(const float& scale)
+	void ControlStyle::Scale(float scale)
 	{
 		this->FontSize = this->FontSize * scale + 0.5;
 		this->Border.Scale(scale);

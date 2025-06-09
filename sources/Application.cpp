@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "LayeredWindow.h"
 #include <functional>
 namespace EzUI {
 	LRESULT CALLBACK __EzUI__WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -66,8 +67,8 @@ namespace EzUI {
 		::InitCommonControlsEx(&icex);
 		//设置路径
 		wchar_t wPath[MAX_PATH]{ 0 };
-		size_t count = ::GetModuleFileNameW(NULL, wPath, MAX_PATH);
-		for (int i = count - 1; i > -1; i--)
+		DWORD count = ::GetModuleFileNameW(NULL, wPath, MAX_PATH);
+		for (int_t i = count - 1; i > -1; i--)
 		{
 			if (wPath[i] == L'\\') {
 				wPath[i] = 0;
@@ -143,18 +144,55 @@ namespace EzUI {
 		UnregisterClassW(EzUI::__EzUI__WindowClassName, EzUI::__EzUI__HINSTANCE);
 	}
 
-	int Application::Exec()
+	int_t Application::Exec()
 	{
-		::MSG msg{ 0 };
-		while (::GetMessage(&msg, NULL, 0, 0))
-		{
+		MSG msg;
+		while (::GetMessage(&msg, NULL, 0, 0)){
 			::TranslateMessage(&msg);
 			::DispatchMessage(&msg);
 		}
-		return (int)msg.wParam;
+		return msg.wParam;
+
+		//std::vector<MSG> messageQueue;
+		//while (true) {
+		//	MSG msg;
+		//	while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+		//		if (msg.message == WM_QUIT) {
+		//			return msg.wParam;
+		//		}
+		//		messageQueue.push_back(msg);
+		//	}
+		//	for (const MSG& m : messageQueue) {
+		//		::TranslateMessage(&m);
+		//		::DispatchMessage(&m);
+		//	}
+		//	//当消息队列为空
+		//	//if (messageQueue.empty()) {
+		//		//取出全局存储的窗口无效区域
+		//	for (auto& it : __LayeredInvalidateRect) {
+		//		if (!it.second->IsEmptyArea()) {
+		//			//直接进入消息过程进行绘制
+		//			::SendMessage(it.first, WM_PAINT, 0, 0);
+		//		}
+		//	}
+		//	//}
+		//	messageQueue.clear();
+		//	{
+		//		//防止CPU空转
+		//		if (::GetMessage(&msg, NULL, 0, 0)) {
+		//			::TranslateMessage(&msg);
+		//			::DispatchMessage(&msg);
+		//		}
+		//		else {
+		//			//退出消息循环
+		//			return msg.wParam;
+		//		}
+		//	}
+		//}
+		//return 0;
 	}
 
-	void Application::Exit(int exitCode) {
+	void Application::Exit(int_t exitCode) {
 		::PostQuitMessage(exitCode);
 	}
 

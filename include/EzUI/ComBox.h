@@ -26,17 +26,17 @@ namespace EzUI {
 		Label _UpDown;
 
 		VList _list;
-		int _index = -1;
+		int_t _index = -1;
 		void Init();
 	protected:
 		virtual void OnLayout()override;
 	public:
 		ComBox();
 		EString GetText();
-		int GetCheck();
-		bool SetCheck(int pos);
+		int_t GetCheck();
+		bool SetCheck(int_t pos);
 		virtual ~ComBox();
-		int AddItem(const EString& text);
-		void RemoveItem(int index);
+		int_t AddItem(const EString& text);
+		void RemoveItem(int_t index);
 	};
 };

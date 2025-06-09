@@ -59,7 +59,7 @@ namespace Text {
 	UI_EXPORT size_t Replace(std::string* str_in_out, const std::string& oldText, const std::string& newText, bool replaceAll = true);
 	UI_EXPORT void Split(const std::string& str_in, const std::string& ch, std::vector<std::string>* strs_out);
 	//
-	UI_EXPORT String ToString(double number, int keepBitSize);
+	UI_EXPORT String ToString(double number, size_t keepBitSize);
 };
 using u8String = ::Text::String;
 //----------------------------------------------------------------

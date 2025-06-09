@@ -8,7 +8,7 @@ namespace EzUI {
 	private:
 		HScrollBar _hScrollBar;
 		void Init();
-		void Offset(int offset);
+		void Offset(int_t offset);
 	protected:
 		virtual void OnLayout()override;
 		virtual void OnChildPaint(PaintEventArgs& args)override;

@@ -7,7 +7,7 @@ namespace EzUI {
 		void Init();
 	public:
 		//退出消息循环
-		static void Exit(int exitCode = 0);
+		static void Exit(int_t exitCode = 0);
 	public:
 		Application();
 		//使用本地文件名称或者资源中的名称加载资源包
@@ -16,6 +16,6 @@ namespace EzUI {
 		//启用高DPI适配
 		void EnableHighDpi();
 		virtual ~Application();
-		int Exec();
+		int_t Exec();
 	};
 };

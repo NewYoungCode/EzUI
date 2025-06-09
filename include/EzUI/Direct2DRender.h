@@ -41,7 +41,7 @@ namespace EzUI {
 		bool Ref = false;
 		Font(const Font& _copy);
 		Font(const std::wstring& fontFamily, float fontSize);
-		const float& GetFontSize()const;
+		float GetFontSize()const;
 		const std::wstring& GetFontFamily()const;
 		IDWriteTextFormat* Get() const;
 		Font& operator=(const Font& _copy);
@@ -63,10 +63,10 @@ namespace EzUI {
 				x += FontBox.Width;
 			}
 			float y = FontBox.Y;
-			return Rect((int)x, (int)y, 1, (int)(FontBox.Height + 0.5));
+			return Rect(x, y, 1, (FontBox.Height + 0.5));
 		}
-		int GetFontHeight() {
-			return (int)(FontBox.Height + 0.5);
+		int_t GetFontHeight() {
+			return FontBox.Height + 0.5;
 		}
 	};
 
@@ -83,17 +83,17 @@ namespace EzUI {
 	public:
 		void GetMetrics();
 		TextLayout(const std::wstring& text, const Font& font, const SizeF &maxSize = SizeF{ __MAXFLOAT,__MAXFLOAT }, TextAlign textAlgin = TextAlign::TopLeft);
-		Point HitTestPoint(const Point& pt, int* outTextPos, BOOL* outIsTrailingHit, int* fontHeight);
+		Point HitTestPoint(const Point& pt, int_t* outTextPos, BOOL* outIsTrailingHit, int_t* fontHeight);
 		void HitTestPoint(const Point& pt, HitTestMetrics* hitTestMetrics);//根据坐标执行命中测试
-		Point HitTestTextPosition(int textPos, BOOL isTrailingHit);//根据文字下标执行命中测试
+		Point HitTestTextPosition(int_t textPos, BOOL isTrailingHit);//根据文字下标执行命中测试
 		const std::wstring& GetFontFamily();
-		const float& GetFontSize();
-		int Width();
-		int Height();
+		float GetFontSize();
+		int_t Width();
+		int_t Height();
 		Size GetFontBox();//获取文字绘制的时候占用多少行
-		Rect GetLineBox(int lineIndex);
-		int GetFontHeight();//获取字体高度
-		int GetLineCount();//获取一共有多少行
+		Rect GetLineBox(int_t lineIndex);
+		int_t GetFontHeight();//获取字体高度
+		int_t GetLineCount();//获取一共有多少行
 		IDWriteTextLayout* Get() const;
 		void SetUnderline(size_t pos = 0, size_t count = 0);
 		virtual ~TextLayout();
@@ -117,9 +117,9 @@ namespace EzUI {
 			Copy(_right);
 			return *this;
 		}
-		Geometry(int x, int y, int width, int height);
-		Geometry(int x, int y, int width, int height, int _radius);
-		Geometry(const Rect& _rect, int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius);
+		Geometry(int_t x, int_t y, int_t width, int_t height);
+		Geometry(int_t x, int_t y, int_t width, int_t height, int_t _radius);
+		Geometry(const Rect& _rect, int_t topLeftRadius, int_t topRightRadius, int_t bottomRightRadius, int_t bottomLeftRadius);
 		ID2D1Geometry* Get() const {
 			return rgn;
 		}
@@ -181,7 +181,7 @@ namespace EzUI {
 			_pSink->AddLine({ (float)rect.GetRight(),(float)rect.GetBottom() });
 			_pSink->AddLine({ (float)rect.GetLeft(),(float)rect.GetBottom() });
 		}
-		void AddArc(const Rect& rect, int startAngle, int sweepAngle) {
+		void AddArc(const Rect& rect, int_t startAngle, int_t sweepAngle) {
 
 		}
 		void AddLine(const Rect& rect) {
@@ -216,8 +216,8 @@ namespace EzUI {
 		IWICBitmapFrameDecode* _pframe = NULL;
 		IWICFormatConverter* _fmtcovter = NULL;//从文件加载
 		IWICBitmap* _bitMap = NULL;//从HBITMAP中加载
-		int _width = 0;
-		int _height = 0;
+		int_t _width = 0;
+		int_t _height = 0;
 		ID2D1Bitmap* _d2dBitmap = NULL;
 	private:
 		void CreateFormStream(IStream* istram);
@@ -229,12 +229,12 @@ namespace EzUI {
 		DXImage(HBITMAP hBitmap);
 		DXImage(IStream* istram);
 		DXImage(const std::wstring& file);
-		DXImage(int width, int height);
+		DXImage(int_t width, int_t height);
 		DXImage(const void* data, size_t count);
 		ID2D1Bitmap* Get();
 		IWICBitmap* GetIWICBitmap();
-		int GetWidth();
-		int GetHeight();
+		int_t GetWidth();
+		int_t GetHeight();
 		virtual size_t NextFrame()override;
 		DXImage* Clone();
 		DXImage() {}
@@ -275,9 +275,9 @@ namespace EzUI {
 		ID2D1StrokeStyle* GetStrokeStyle();
 	public:
 		DXRender(DXImage* dxImage);
-		DXRender(HDC dc, int x, int y, int width, int height);//创建dx绘图对象
+		DXRender(HDC dc, int_t x, int_t y, int_t width, int_t height);//创建dx绘图对象
 		virtual ~DXRender();
-		void SetFont(const std::wstring& fontFamily, const float& fontSize);//必须先调用
+		void SetFont(const std::wstring& fontFamily,float fontSize);//必须先调用
 		void SetFont(const Font& _copy_font);//必须先调用
 		void SetColor(const __EzUI__Color& color);//会之前必须调用
 		void SetStrokeStyle(StrokeStyle strokeStyle = StrokeStyle::Solid, float dashWidth = 3);//设置样式 虚线/实线

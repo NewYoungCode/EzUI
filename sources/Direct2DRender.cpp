@@ -39,7 +39,7 @@ namespace EzUI {
 			SafeRelease(&_value);
 		}
 	}
-	const float& Font::GetFontSize()const {
+	 float Font::GetFontSize()const {
 		return _fontSize;
 	}
 	const std::wstring& Font::GetFontFamily()const {
@@ -84,8 +84,8 @@ namespace EzUI {
 	IDWriteTextLayout* TextLayout::Get() const {
 		return value;
 	}
-	Point TextLayout::HitTestPoint(const Point& pt, int* _textPos, BOOL* _isTrailingHit, int* fontHeight) {
-		int& textPos = *_textPos;
+	Point TextLayout::HitTestPoint(const Point& pt, int_t* _textPos, BOOL* _isTrailingHit, int_t* fontHeight) {
+		int_t& textPos = *_textPos;
 		BOOL& isTrailingHit = *_isTrailingHit;
 		DWRITE_HIT_TEST_METRICS hitTestMetrics;
 		BOOL isInside;
@@ -99,13 +99,13 @@ namespace EzUI {
 				&hitTestMetrics
 			);
 		}
-		int posX = (int)(hitTestMetrics.left + 0.5);
+		int_t posX = (int_t)(hitTestMetrics.left + 0.5);
 		if (isTrailingHit) {//判断前侧还是尾侧
-			posX += (int)(hitTestMetrics.width + 0.5);
+			posX += (int_t)(hitTestMetrics.width + 0.5);
 		}
-		*fontHeight = (int)(hitTestMetrics.height + 0.5);
+		*fontHeight = (int_t)(hitTestMetrics.height + 0.5);
 		textPos = hitTestMetrics.textPosition;
-		return Point{ posX,(int)(hitTestMetrics.top + 0.5) };//返回光标所在的位置
+		return Point{ posX,(int_t)(hitTestMetrics.top + 0.5) };//返回光标所在的位置
 	}
 
 	void TextLayout::HitTestPoint(const Point& pt, HitTestMetrics* outHitTestMetrics) {
@@ -131,12 +131,12 @@ namespace EzUI {
 		outHitTestMetrics->FontBox.Height = hitTestMetrics.height;
 	}
 
-	Point TextLayout::HitTestTextPosition(int textPos, BOOL isTrailingHit) {
+	Point TextLayout::HitTestTextPosition(int_t textPos, BOOL isTrailingHit) {
 		if (value == NULL)return Point{ 0,0 };
 		DWRITE_HIT_TEST_METRICS hitTestMetrics;
 		FLOAT X, Y;
 		value->HitTestTextPosition(textPos, isTrailingHit, &X, &Y, &hitTestMetrics);
-		return Point((int)(X + 0.5), (int)(Y + 0.5));
+		return Point((int_t)(X + 0.5), (int_t)(Y + 0.5));
 	}
 	const std::wstring& TextLayout::GetFontFamily()
 	{
@@ -146,33 +146,33 @@ namespace EzUI {
 		this->GetMetrics();
 		FLOAT width = textMetrics.widthIncludingTrailingWhitespace;
 		FLOAT height = textMetrics.height;
-		return  Size{ (int)(width + 1) ,(int)(height + 1) };
+		return  Size{ (int_t)(width + 1) ,(int_t)(height + 1) };
 	}
-	const float& TextLayout::GetFontSize()
+	 float TextLayout::GetFontSize()
 	{
 		return this->_fontSize;
 	}
-	int TextLayout::Width() {
+	 int_t TextLayout::Width() {
 		this->GetMetrics();
 		FLOAT width = textMetrics.widthIncludingTrailingWhitespace;
-		return (int)(width + 1);
+		return (int_t)(width + 1);
 	}
-	int TextLayout::Height() {
+	 int_t TextLayout::Height() {
 		this->GetMetrics();
 		FLOAT width = textMetrics.height;
-		return (int)(width + 1);
+		return (width + 1);
 	}
-	int TextLayout::GetFontHeight() {
+	 int_t TextLayout::GetFontHeight() {
 		this->GetMetrics();
 		FLOAT height = textMetrics.height;
-		return  (int)((height / textMetrics.lineCount) + 0.5);
+		return  ((height / textMetrics.lineCount) + 0.5);
 	}
-	int TextLayout::GetLineCount() {
+	 int_t TextLayout::GetLineCount() {
 		this->GetMetrics();
 		return textMetrics.lineCount;
 	}
 
-	Rect TextLayout::GetLineBox(int lineIndex) {
+	Rect TextLayout::GetLineBox(int_t lineIndex) {
 		UINT lineCount = GetLineCount();
 		//// 获取每一行的宽高
 		DWRITE_LINE_METRICS* hitTestMetrics = new DWRITE_LINE_METRICS[lineCount]{ 0 };
@@ -183,7 +183,6 @@ namespace EzUI {
 		for (UINT32 i = 0; i < lineCount; i++)
 		{
 			auto it = hitTestMetrics[i];
-			int pause = 0;
 		}
 		delete[] hitTestMetrics;
 		return Rect();
@@ -198,23 +197,23 @@ namespace EzUI {
 #define __Center DWRITE_TEXT_ALIGNMENT_CENTER
 		if (value == NULL)return;
 		//垂直对其方式
-		if (((int)textAlign & (int)VAlign::Top) == (int)VAlign::Top) {
+		if (((int_t)textAlign & (int_t)VAlign::Top) == (int_t)VAlign::Top) {
 			value->SetParagraphAlignment(__Top);
 		}
-		if (((int)textAlign & (int)VAlign::Mid) == (int)VAlign::Mid) {
+		if (((int_t)textAlign & (int_t)VAlign::Mid) == (int_t)VAlign::Mid) {
 			value->SetParagraphAlignment(__Middle);
 		}
-		if (((int)textAlign & (int)VAlign::Bottom) == (int)VAlign::Bottom) {
+		if (((int_t)textAlign & (int_t)VAlign::Bottom) == (int_t)VAlign::Bottom) {
 			value->SetParagraphAlignment(__Bottom);
 		}
 		//水平对其方式
-		if (((int)textAlign & (int)HAlign::Left) == (int)HAlign::Left) {
+		if (((int_t)textAlign & (int_t)HAlign::Left) == (int_t)HAlign::Left) {
 			value->SetTextAlignment(__Left);
 		}
-		if (((int)textAlign & (int)HAlign::Center) == (int)HAlign::Center) {
+		if (((int_t)textAlign & (int_t)HAlign::Center) == (int_t)HAlign::Center) {
 			value->SetTextAlignment(__Center);
 		}
-		if (((int)textAlign & (int)HAlign::Right) == (int)HAlign::Right) {
+		if (((int_t)textAlign & (int_t)HAlign::Right) == (int_t)HAlign::Right) {
 			value->SetTextAlignment(__Right);
 		}
 #undef __Top 
@@ -250,10 +249,10 @@ namespace EzUI {
 			hr = render->CreateBitmapFromWicBitmap(_bitMap, &_d2dBitmap);
 		}
 	}
-	int DXImage::GetWidth() {
+	int_t DXImage::GetWidth() {
 		return _width;
 	}
-	int DXImage::GetHeight() {
+	int_t DXImage::GetHeight() {
 		return _height;
 	}
 	void DXImage::CreateFormStream(IStream* istram) {
@@ -334,7 +333,7 @@ namespace EzUI {
 	DXImage::DXImage(const std::wstring& file) {
 		CreateFromFile(file);
 	}
-	DXImage::DXImage(int width, int height)
+	DXImage::DXImage(int_t width, int_t height)
 	{
 		this->_width = width;
 		this->_height = height;
@@ -380,16 +379,16 @@ namespace EzUI {
 			SafeRelease(&_bitMap);
 		}
 	}
-	Geometry::Geometry(int x, int y, int width, int height) {
+	Geometry::Geometry(int_t x, int_t y, int_t width, int_t height) {
 		D2D_RECT_F rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) };
 		D2D::g_Direct2dFactory->CreateRectangleGeometry(rectF, (ID2D1RectangleGeometry**)&rgn);
 	}
-	Geometry::Geometry(int x, int y, int width, int height, int _radius) {
+	Geometry::Geometry(int_t x, int_t y, int_t width, int_t height, int_t _radius) {
 		float radius = GetMaxRadius(width, height, _radius);
 		D2D1_ROUNDED_RECT rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) ,radius ,radius };
 		D2D::g_Direct2dFactory->CreateRoundedRectangleGeometry(rectF, (ID2D1RoundedRectangleGeometry**)&rgn);
 	}
-	Geometry::Geometry(const Rect& _rect, int topLeftRadius, int topRightRadius, int bottomRightRadius, int bottomLeftRadius)
+	Geometry::Geometry(const Rect& _rect, int_t topLeftRadius, int_t topRightRadius, int_t bottomRightRadius, int_t bottomLeftRadius)
 	{
 		ID2D1PathGeometry* pPathGeometry = NULL;
 		D2D1_RECT_F rect = __To_D2D_RectF(_rect);
@@ -535,7 +534,7 @@ namespace EzUI {
 		}
 		return  radius;
 	}
-	DXRender::DXRender(HDC dc, int x, int y, int width, int height) {
+	DXRender::DXRender(HDC dc, int_t x, int_t y, int_t width, int_t height) {
 		D2D1_RENDER_TARGET_PROPERTIES defaultOption = D2D1::RenderTargetProperties(
 			D2D1_RENDER_TARGET_TYPE_DEFAULT,
 			D2D1::PixelFormat(
@@ -587,7 +586,7 @@ namespace EzUI {
 	ID2D1StrokeStyle* DXRender::GetStrokeStyle() {
 		return _pStrokeStyle;
 	}
-	void DXRender::SetFont(const std::wstring& fontFamily, const float& fontSize) {
+	void DXRender::SetFont(const std::wstring& fontFamily,float fontSize) {
 		if (_font != NULL) {
 			if (_font->GetFontFamily() == fontFamily && _font->GetFontSize() == fontSize) {
 				return;
@@ -620,7 +619,7 @@ namespace EzUI {
 		}
 		if (strokeStyle == StrokeStyle::Dash) {
 			float* dashes = new float[2] { (FLOAT)dashWidth, (FLOAT)dashWidth };
-			const int count = 2;
+			const int_t count = 2;
 			D2D::g_Direct2dFactory->CreateStrokeStyle(D2D1::StrokeStyleProperties(
 				D2D1_CAP_STYLE_FLAT, D2D1_CAP_STYLE_FLAT, D2D1_CAP_STYLE_ROUND,
 				D2D1_LINE_JOIN_ROUND, 10.0f, D2D1_DASH_STYLE_CUSTOM, 0.0f),

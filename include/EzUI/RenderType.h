@@ -1,7 +1,11 @@
 #pragma once
 #include <Windows.h>
 namespace EzUI {
-
+#ifdef _WIN64
+	typedef __int64  int_t;
+#else
+	typedef int      int_t;
+#endif
 	template<typename T>
 	class __EzUI__Size
 	{
@@ -29,7 +33,7 @@ namespace EzUI {
 		{
 			return !(Width == _right.Width && Height == _right.Height);
 		}
-		void Scale(const float& scale) {
+		void Scale(float scale) {
 			Width = (Width * scale) + 0.5;
 			Height = (Height * scale) + 0.5;
 		}
@@ -88,7 +92,7 @@ namespace EzUI {
 			X = x;
 			Y = y;
 		}
-		void Scale(const float& scale) {
+		void Scale(float scale) {
 			X = (X * scale) + 0.5;
 			Y = (Y * scale) + 0.5;
 		}
@@ -164,7 +168,7 @@ namespace EzUI {
 		}
 
 		RECT ToRECT() const {
-			return RECT{ GetLeft(),GetTop(),GetRight(),GetBottom() };
+			return RECT{ (LONG)GetLeft(), (LONG)GetTop(), (LONG)GetRight(), (LONG)GetBottom() };
 		}
 
 		T GetLeft() const
@@ -189,11 +193,11 @@ namespace EzUI {
 			return (Width <= 0) || (Height <= 0);
 		}
 
-		virtual const __EzUI__Rect& Scale(const float& scale) {
-			X = (X * scale) + 0.5;
-			Y = (Y * scale) + 0.5;
-			Width = (Width * scale) + 0.5;
-			Height = (Height * scale) + 0.5;
+		virtual const __EzUI__Rect& Scale(float scale) {
+			X = T((X * scale) + 0.5);
+			Y = T((Y * scale) + 0.5);
+			Width = T((Width * scale) + 0.5);
+			Height = T((Height * scale) + 0.5);
 			return *this;
 		}
 
@@ -300,8 +304,8 @@ namespace EzUI {
 		{
 			Offset(point.X, point.Y);
 		}
-		void Offset(const T& dx,
-			const T& dy)
+		void Offset(T dx,
+			T dy)
 		{
 			X += dx;
 			Y += dy;
@@ -326,28 +330,28 @@ namespace EzUI {
 			((BYTE*)&RGBA)[2] = b;
 			((BYTE*)&RGBA)[3] = a;
 		}
-		__EzUI__Color(const DWORD& argb)
+		__EzUI__Color(DWORD argb)
 		{
 			RGBA = argb;
 		}
 		virtual ~__EzUI__Color() {}
-		const BYTE& GetR() const
+		BYTE GetR() const
 		{
 			return ((BYTE*)&RGBA)[0];
 		}
-		const BYTE& GetG() const
+		BYTE GetG() const
 		{
 			return ((BYTE*)&RGBA)[1];
 		}
-		const BYTE& GetB() const
+		BYTE GetB() const
 		{
 			return ((BYTE*)&RGBA)[2];
 		}
-		const BYTE& GetA() const
+		BYTE GetA() const
 		{
 			return ((BYTE*)&RGBA)[3];
 		}
-		const DWORD& GetValue() const
+		DWORD GetValue() const
 		{
 			return RGBA;
 		}
@@ -355,16 +359,16 @@ namespace EzUI {
 		{
 			RGBA = argb;
 		}
-		void SetR(const BYTE& value) {
+		void SetR(BYTE value) {
 			((BYTE*)&RGBA)[0] = value;
 		}
-		void SetG(const BYTE& value) {
+		void SetG(BYTE value) {
 			((BYTE*)&RGBA)[1] = value;
 		}
-		void SetB(const BYTE& value) {
+		void SetB(BYTE value) {
 			((BYTE*)&RGBA)[2] = value;
 		}
-		void SetA(const BYTE& value) {
+		void SetA(BYTE value) {
 			((BYTE*)&RGBA)[3] = value;
 		}
 	public:
@@ -399,13 +403,13 @@ namespace EzUI {
 		}
 	};
 
-	typedef  __EzUI__Point<int> Point;
+	typedef  __EzUI__Point<int_t> Point;
 	typedef  __EzUI__Point<float> PointF;
-	typedef  __EzUI__Line<int> Line;
+	typedef  __EzUI__Line<int_t> Line;
 	typedef  __EzUI__Line<float> LineF;
-	typedef  __EzUI__Size<int> Size;
+	typedef  __EzUI__Size<int_t> Size;
 	typedef  __EzUI__Size<float> SizeF;
-	typedef  __EzUI__Rect<int> Rect;
+	typedef  __EzUI__Rect<int_t> Rect;
 
 	class RectF :public __EzUI__Rect<float> {
 	public:
@@ -417,9 +421,9 @@ namespace EzUI {
 		}
 		RectF(const Rect& rect) {
 			this->X = rect.X;
-			this->Y = rect.Y;
+			this->Y =rect.Y;
 			this->Width = rect.Width;
-			this->Height = rect.Height;
+			this->Height =rect.Height;
 		}
 		RectF(const RectF& rect) {
 			this->X = rect.X;
@@ -433,7 +437,7 @@ namespace EzUI {
 			this->Width = width;
 			this->Height = height;
 		}
-		virtual const RectF& Scale(const float& scale) {
+		virtual const RectF& Scale(float scale) {
 			X = (X * scale);
 			Y = (Y * scale);
 			Width = (Width * scale);
@@ -445,29 +449,29 @@ namespace EzUI {
 
 	struct Distance {
 	public:
-		size_t Left, Top, Right, Bottom;
+		int_t Left, Top, Right, Bottom;
 		Distance() {
 			Left = Top = Right = Bottom = 0;
 		}
-		Distance(const size_t& distanceAll) {
+		Distance(int_t distanceAll) {
 			Left = Top = Right = Bottom = distanceAll;
 		}
-		Distance& operator=(const size_t& distanceAll) {
+		Distance& operator=(int_t distanceAll) {
 			Left = Top = Right = Bottom = distanceAll;
 			return *this;
 		}
-		void Scale(const float& scale) {
+		void Scale(float scale) {
 			Top = Top * scale + 0.5;
 			Bottom = Bottom * scale + 0.5;
 			Left = Left * scale + 0.5;
 			Right = Right * scale + 0.5;
 		}
 		//获取垂直所占空间
-		size_t GetVSpace() {
+		int_t GetVSpace() {
 			return Top + Bottom;
 		}
 		//获取水平所占空间
-		size_t GetHSpace() {
+		int_t GetHSpace() {
 			return Left + Right;
 		}
 	};
@@ -492,14 +496,14 @@ namespace EzUI {
 	/// </summary>
 	class  Border {
 	public:
-		int Left = 0;//左边边框大小
-		int Top = 0;//顶部边框大小
-		int Right = 0;//右边边框大小
-		int Bottom = 0;//底部边框大小
-		int TopLeftRadius = 0;
-		int TopRightRadius = 0;
-		int BottomRightRadius = 0;
-		int BottomLeftRadius = 0;
+		int_t Left = 0;//左边边框大小
+		int_t Top = 0;//顶部边框大小
+		int_t Right = 0;//右边边框大小
+		int_t Bottom = 0;//底部边框大小
+		int_t TopLeftRadius = 0;
+		int_t TopRightRadius = 0;
+		int_t BottomRightRadius = 0;
+		int_t BottomLeftRadius = 0;
 		__EzUI__Color Color;
 	public:
 		class Radius {
@@ -507,7 +511,7 @@ namespace EzUI {
 		public:
 			Radius(EzUI::Border& bd) :Border(bd) {}
 			//对四个角度同时设置半径大小
-			Radius& operator=(const int& radius) {
+			Radius& operator=(int_t radius) {
 				Border.TopLeftRadius = radius;
 				Border.TopRightRadius = radius;
 				Border.BottomRightRadius = radius;
@@ -520,22 +524,22 @@ namespace EzUI {
 	public:
 		Border() {}
 		//对四个边设置大小
-		Border& operator=(const int& borderWidth) {
+		Border& operator=(int_t borderWidth) {
 			Left = borderWidth;
 			Top = borderWidth;
 			Right = borderWidth;
 			Bottom = borderWidth;
 			return *this;
 		}
-		void Scale(const float& scale) {
-			Left = Left * scale + 0.5;
-			Top = Top * scale + 0.5;
-			Right = Right * scale + 0.5;
-			Bottom = Bottom * scale + 0.5;
-			TopLeftRadius = TopLeftRadius * scale + 0.5;
-			TopRightRadius = TopRightRadius * scale + 0.5;
-			BottomRightRadius = BottomRightRadius * scale + 0.5;
-			BottomLeftRadius = BottomLeftRadius * scale + 0.5;
+		void Scale(float scale) {
+			Left = int_t(Left * scale + 0.5);
+			Top = int_t(Top * scale + 0.5);
+			Right = int_t(Right * scale + 0.5);
+			Bottom = int_t(Bottom * scale + 0.5);
+			TopLeftRadius = int_t(TopLeftRadius * scale + 0.5);
+			TopRightRadius = int_t(TopRightRadius * scale + 0.5);
+			BottomRightRadius = int_t(BottomRightRadius * scale + 0.5);
+			BottomLeftRadius = int_t(BottomLeftRadius * scale + 0.5);
 		}
 	};
 #if 1
@@ -556,7 +560,7 @@ namespace EzUI {
 	/// <summary>
 	/// 水平状态下的对其方式
 	/// </summary>
-	enum class HAlign :int
+	enum class HAlign :int_t
 	{
 		Left = Align_Left,
 		Center = Align_Center,
@@ -565,55 +569,55 @@ namespace EzUI {
 	/// <summary>
 	/// 垂直状态下的对其方式
 	/// </summary>
-	enum class VAlign :int
+	enum class VAlign :int_t
 	{
 		Top = Align_Top,
 		Mid = Align_Mid,
 		Bottom = Align_Bottom
 	};
 
-	enum class __Align :int {
+	enum class __Align :int_t {
 		//
 		// 摘要: 
 		//     内容在垂直方向上顶部对齐，在水平方向上左边对齐。
-		TopLeft = (int)VAlign::Top | (int)HAlign::Left,
+		TopLeft = (int_t)VAlign::Top | (int_t)HAlign::Left,
 		//
 		// 摘要: 
 		//     内容在垂直方向上顶部对齐，在水平方向上居中对齐。
-		TopCenter = (int)VAlign::Top | (int)HAlign::Center,
+		TopCenter = (int_t)VAlign::Top | (int_t)HAlign::Center,
 		//
 		// 摘要: 
 		//     内容在垂直方向上顶部对齐，在水平方向上右边对齐。
-		TopRight = (int)VAlign::Top | (int)HAlign::Right,
+		TopRight = (int_t)VAlign::Top | (int_t)HAlign::Right,
 		//
 		// 摘要: 
 		//     内容在垂直方向上中间对齐，在水平方向上左边对齐。
-		MiddleLeft = (int)VAlign::Mid | (int)HAlign::Left,
+		MiddleLeft = (int_t)VAlign::Mid | (int_t)HAlign::Left,
 		//
 		// 摘要: 
 		//     内容在垂直方向上中间对齐，在水平方向上居中对齐。
-		MiddleCenter = (int)VAlign::Mid | (int)HAlign::Center,
+		MiddleCenter = (int_t)VAlign::Mid | (int_t)HAlign::Center,
 		//
 		// 摘要: 
 		//     内容在垂直方向上中间对齐，在水平方向上右边对齐。
-		MiddleRight = (int)VAlign::Mid | (int)HAlign::Right,
+		MiddleRight = (int_t)VAlign::Mid | (int_t)HAlign::Right,
 		//
 		// 摘要: 
 		//     内容在垂直方向上底边对齐，在水平方向上左边对齐。
-		BottomLeft = (int)VAlign::Bottom | (int)HAlign::Left,
+		BottomLeft = (int_t)VAlign::Bottom | (int_t)HAlign::Left,
 		//
 		// 摘要: 
 		//     内容在垂直方向上底边对齐，在水平方向上居中对齐。
-		BottomCenter = (int)VAlign::Bottom | (int)HAlign::Center,
+		BottomCenter = (int_t)VAlign::Bottom | (int_t)HAlign::Center,
 		//
 		// 摘要: 
 		//     内容在垂直方向上底边对齐，在水平方向上右边对齐。
-		BottomRight = (int)VAlign::Bottom | (int)HAlign::Right
+		BottomRight = (int_t)VAlign::Bottom | (int_t)HAlign::Right
 	};
 
 	typedef __Align TextAlign;
 
-	enum class FontStyle :int {
+	enum class FontStyle :int_t {
 		NORMAL = 0
 		/* DWRITE_FONT_STYLE_NORMAL
 		字体样式 ：正常。
@@ -625,14 +629,14 @@ namespace EzUI {
 
 	class IImage {
 	protected:
-		size_t _frameCount = 0;//总帧数
-		size_t _framePos = 0;//当前帧率索引
+		int_t _frameCount = 0;//总帧数
+		int_t _framePos = 0;//当前帧率索引
 	public:
 		Rect Offset;//取出图像部分区域进行绘制
 		ImageSizeMode SizeMode = ImageSizeMode::Zoom;// 图像显示模式
 	public:
 		virtual ~IImage() {}
-		size_t FrameCount() {
+		int_t FrameCount() {
 			return _frameCount;
 		}
 		//跳转到下一帧 并且获取下一帧的延迟
@@ -664,12 +668,12 @@ namespace EzUI {
 			if (clientRate < imgRate) {
 				float zoomHeight = clientWidth / imgWidth * imgHeight + 0.5f;
 				float y = (clientHeight - zoomHeight) / 2.0f + rect.Y;
-				return Rect(rect.X, y, clientWidth, zoomHeight);
+				return Rect(rect.X, (int_t)y, (int_t)clientWidth, (int_t)zoomHeight);
 			}
 			else {
 				float zoomWidth = clientHeight / imgHeight * imgWidth + 0.5f;
 				float x = (clientWidth - zoomWidth) / 2.0f + rect.X;
-				return Rect(x, rect.Y, zoomWidth, clientHeight);
+				return Rect((int_t)x, rect.Y, (int_t)zoomWidth, (int_t)clientHeight);
 			}
 		}
 		if (imageSizeMode == ImageSizeMode::CenterImage) {
@@ -679,7 +683,7 @@ namespace EzUI {
 				//2233 670     缩放后的图片大小 
 				float zoomWidth = clientHeight / imgHeight * imgWidth + 0.5f;//图片应该这么宽才对
 				float x = (zoomWidth - clientWidth) / 2.0f + 0.5f;
-				return Rect((rect.X - x), rect.Y, zoomWidth, clientHeight);
+				return Rect((int_t)(rect.X - x), rect.Y, (int_t)zoomWidth, (int_t)clientHeight);
 			}
 			else {
 				//1000 600 客户端
@@ -687,7 +691,7 @@ namespace EzUI {
 				//1000 1500     缩放后的图片大小 
 				float zoomHeight = clientWidth / imgWidth * imgHeight + 0.5f;//图片应该这么高才对
 				float y = (zoomHeight - clientHeight) / 2.0f + 0.5f;
-				return Rect(rect.X, (rect.Y - y), clientWidth, zoomHeight);
+				return Rect(rect.X, (int_t)(rect.Y - y), (int_t)clientWidth, (int_t)zoomHeight);
 			}
 		}
 		return rect;

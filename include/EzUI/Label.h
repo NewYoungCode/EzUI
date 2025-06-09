@@ -7,8 +7,8 @@ namespace EzUI {
 	{
 	private:
 		std::wstring _wstr;
-		size_t _underlinePos = size_t(-1);
-		size_t _underlineCount = 0;
+		int_t _underlinePos = int_t(-1);
+		int_t _underlineCount = 0;
 	protected:
 		virtual void OnForePaint(PaintEventArgs& args) override;
 		virtual void OnDpiChange(const DpiChangeEventArgs& args)override;

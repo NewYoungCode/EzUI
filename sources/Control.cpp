@@ -1,9 +1,9 @@
 #include "Control.h"
 namespace EzUI {
-	inline bool __IsValid(const int& value) {
+	inline bool __IsValid( int_t value) {
 		return value != 0;
 	}
-	inline bool __IsValid(const float& value) {
+	inline bool __IsValid( float value) {
 		return value != 0;
 	}
 	inline bool __IsValid(const Image* value) {
@@ -93,14 +93,14 @@ return  defaultStyle .##_filed1.##_filed;\
 };
 namespace EzUI {
 
-	UI_BORDER_BINDFUNC(int, Border, TopLeftRadius);
-	UI_BORDER_BINDFUNC(int, Border, TopRightRadius);
-	UI_BORDER_BINDFUNC(int, Border, BottomRightRadius);
-	UI_BORDER_BINDFUNC(int, Border, BottomLeftRadius);
-	UI_BORDER_BINDFUNC(int, Border, Left);
-	UI_BORDER_BINDFUNC(int, Border, Top);
-	UI_BORDER_BINDFUNC(int, Border, Right);
-	UI_BORDER_BINDFUNC(int, Border, Bottom);
+	UI_BORDER_BINDFUNC(int_t, Border, TopLeftRadius);
+	UI_BORDER_BINDFUNC(int_t, Border, TopRightRadius);
+	UI_BORDER_BINDFUNC(int_t, Border, BottomRightRadius);
+	UI_BORDER_BINDFUNC(int_t, Border, BottomLeftRadius);
+	UI_BORDER_BINDFUNC(int_t, Border, Left);
+	UI_BORDER_BINDFUNC(int_t, Border, Top);
+	UI_BORDER_BINDFUNC(int_t, Border, Right);
+	UI_BORDER_BINDFUNC(int_t, Border, Bottom);
 	UI_BORDER_BINDFUNC(Color, Border, Color);
 
 	UI_STYLE_BINDFUNC(Color, BackColor);
@@ -108,7 +108,7 @@ namespace EzUI {
 	UI_STYLE_BINDFUNC(Image*, BackImage);
 	UI_STYLE_BINDFUNC(float, Angle);
 
-	UI_SUPER_STYLE_BINDFUNC(int, FontSize);
+	UI_SUPER_STYLE_BINDFUNC(int_t, FontSize);
 	UI_SUPER_STYLE_BINDFUNC(Color, ForeColor);
 	UI_SUPER_STYLE_BINDFUNC(std::wstring, FontFamily);
 
@@ -153,14 +153,14 @@ namespace EzUI {
 	{
 		const Color& borderColor = border.Color;
 		if (borderColor.GetValue() == 0) return;//边框无效颜色不绘制
-		const int& borderLeft = border.Left;
-		const int& borderTop = border.Top;
-		const int& borderRight = border.Right;
-		const int& borderBottom = border.Bottom;
-		const int& topLeftRadius = border.TopLeftRadius;
-		const int& topRightRadius = border.TopRightRadius;
-		const int& bottomRightRadius = border.BottomRightRadius;
-		const int& bottomLeftRadius = border.BottomLeftRadius;
+		int_t borderLeft = border.Left;
+		int_t borderTop = border.Top;
+		int_t borderRight = border.Right;
+		int_t borderBottom = border.Bottom;
+		int_t topLeftRadius = border.TopLeftRadius;
+		int_t topRightRadius = border.TopRightRadius;
+		int_t bottomRightRadius = border.BottomRightRadius;
+		int_t bottomLeftRadius = border.BottomLeftRadius;
 
 		//规则的矩形
 		if (topLeftRadius == 0 && topRightRadius == 0 && bottomLeftRadius == 0 && bottomRightRadius == 0) {
@@ -185,9 +185,9 @@ namespace EzUI {
 			}
 		}
 		else {
-			int value1 = borderLeft > borderTop ? borderLeft : borderTop;
-			int value2 = borderRight > borderBottom ? borderRight : borderBottom;
-			int maxBorder = value1 > value2 ? value1 : value2;
+			int_t value1 = borderLeft > borderTop ? borderLeft : borderTop;
+			int_t value2 = borderRight > borderBottom ? borderRight : borderBottom;
+			int_t maxBorder = value1 > value2 ? value1 : value2;
 			e.Graphics.SetColor(borderColor);
 			Geometry rr(Rect(0, 0, Width(), Height()), topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
 			e.Graphics.DrawGeometry(rr.Get(), maxBorder);
@@ -238,15 +238,15 @@ namespace EzUI {
 			}
 			if (attrName == "point" || attrName == "location") {
 				auto arr = attrValue.split(",");
-				int x = std::stoi(arr[0]);
-				int y = std::stoi(arr[1]);
+				int_t x = std::stoi(arr[0]);
+				int_t y = std::stoi(arr[1]);
 				this->SetLocation(Point(x, y));
 				break;
 			}
 			if (attrName == "size") {
 				auto arr = attrValue.split(",");
-				int width = std::stoi(arr[0]);
-				int height = std::stoi(arr[1]);
+				int_t width = std::stoi(arr[0]);
+				int_t height = std::stoi(arr[1]);
 				this->SetFixedSize(Size(width, height));
 				break;
 			}
@@ -403,35 +403,35 @@ namespace EzUI {
 		}
 		return NULL;
 	}
-	int Control::X()
+	int_t Control::X()
 	{
 		return _rect.X;
 	}
-	int Control::Y()
+	int_t Control::Y()
 	{
 		return _rect.Y;
 	}
-	int Control::Width()
+	int_t Control::Width()
 	{
 		return _rect.Width;
 	}
-	int Control::Height()
+	int_t Control::Height()
 	{
 		return _rect.Height;
 	}
-	void Control::SetX(const int& X) {
+	void Control::SetX(int_t X) {
 		SetLocation({ X,_rect.Y });
 	}
-	void Control::SetY(const int& Y) {
+	void Control::SetY(int_t Y) {
 		SetLocation({ _rect.X,Y });
 	}
 	void Control::SetLocation(const Point& pt) {
 		SetRect(Rect(pt.X, pt.Y, _rect.Width, _rect.Height));
 	}
-	void Control::SetWidth(const int& width) {
+	void Control::SetWidth(int_t width) {
 		SetSize({ width,_rect.Height });
 	}
-	void Control::SetHeight(const int& height) {
+	void Control::SetHeight(int_t height) {
 		SetSize({ _rect.Width,height });
 	}
 	void Control::SetSize(const Size& size)
@@ -450,12 +450,12 @@ namespace EzUI {
 	{
 		return _rect;
 	}
-	void Control::SetFixedWidth(const int& fixedWidth)
+	void Control::SetFixedWidth(int_t fixedWidth)
 	{
 		_fixedSize.Width = fixedWidth;
 		SetRect({ _rect.X,_rect.Y,fixedWidth,_rect.Height });
 	}
-	void Control::SetFixedHeight(const int& fixedHeight)
+	void Control::SetFixedHeight(int_t fixedHeight)
 	{
 		_fixedSize.Height = fixedHeight;
 		SetRect({ _rect.X,_rect.Y,_rect.Width,fixedHeight });
@@ -466,11 +466,11 @@ namespace EzUI {
 		_fixedSize.Height = size.Height;
 		SetRect({ _rect.X,_rect.Y,size.Width,size.Height });
 	}
-	int Control::GetFixedWidth()
+	int_t Control::GetFixedWidth()
 	{
 		return _fixedSize.Width;
 	}
-	int Control::GetFixedHeight()
+	int_t Control::GetFixedHeight()
 	{
 		return _fixedSize.Height;
 	}
@@ -493,8 +493,8 @@ namespace EzUI {
 	Rect Control::GetClientRect() {
 		Control* pCtrl = this;
 		const Rect& rect = GetRect();
-		int x = rect.X;
-		int y = rect.Y;
+		int_t x = rect.X;
+		int_t y = rect.Y;
 		while ((pCtrl = pCtrl->Parent))
 		{
 			x += pCtrl->X();
@@ -590,8 +590,8 @@ namespace EzUI {
 	void Control::OnLayout() {
 		_contentSize.Width = 0;
 		_contentSize.Height = 0;
-		int _width;
-		int _height;
+		int_t _width;
+		int_t _height;
 		for (auto& it : GetControls()) {
 
 			if (it->GetDockStyle() == DockStyle::Fill) {
@@ -860,8 +860,8 @@ namespace EzUI {
 		bool needScale = false;
 		if (scale != 1.0f) {
 			needScale = true;
-			int fw = this->GetFixedWidth() * scale + 0.5;
-			int fh = this->GetFixedHeight() * scale + 0.5;
+			int_t fw = this->GetFixedWidth() * scale + 0.5;
+			int_t fh = this->GetFixedHeight() * scale + 0.5;
 
 			if (fw && fh) {
 				this->SetFixedSize(Size(fw, fh));
@@ -908,10 +908,10 @@ namespace EzUI {
 		}
 		_spacers.clear(); // 如果需要的话，清空原列表
 	}
-	size_t Control::IndexOf(Control* childCtl)
+	int_t Control::IndexOf(Control* childCtl)
 	{
 		const auto& pControls = this->GetControls();
-		size_t pos = 0;
+		int_t pos = 0;
 		for (auto itor = pControls.begin(); itor != pControls.end(); ++itor)
 		{
 			if (dynamic_cast<Spacer*>(*itor)) {
@@ -946,7 +946,7 @@ namespace EzUI {
 		this->TryPendLayout();//添加控件需要将布局重新挂起
 		return ctl;
 	}
-	void Control::Insert(size_t pos, Control* ctl)
+	void Control::Insert(int_t pos, Control* ctl)
 	{
 #ifdef _DEBUG
 		{
@@ -1101,7 +1101,7 @@ namespace EzUI {
 
 	bool Control::SwapChild(Control* ct1, Control* ct2)
 	{
-		int swapCount = 0;
+		int_t swapCount = 0;
 		for (auto& it : this->_controls) {
 			if (swapCount == 2) {
 				break;
@@ -1217,11 +1217,11 @@ namespace EzUI {
 		}
 		this->_autoHeight = flag;
 	}
-	void Control::SetContentWidth(const int& width)
+	void Control::SetContentWidth(int_t width)
 	{
 		this->_contentSize.Width = width;
 	}
-	void Control::SetContentHeight(const int& height)
+	void Control::SetContentHeight(int_t height)
 	{
 		this->_contentSize.Height = height;
 	}
@@ -1244,9 +1244,9 @@ namespace EzUI {
 	{
 		return _controls;
 	}
-	Control* Control::GetControl(size_t pos)
+	Control* Control::GetControl(int_t pos)
 	{
-		size_t _pos = 0;
+		int_t _pos = 0;
 		for (auto& it : _controls) {
 			if (_pos == pos) {
 				return it;
@@ -1427,12 +1427,12 @@ namespace EzUI {
 		}
 	}
 
-	void ScrollBar::ScrollTo(const float& scrollRate) {
+	void ScrollBar::ScrollTo(float scrollRate) {
 		if (Parent == NULL) return;
 		if (Parent->IsPendLayout()) {
 			Parent->RefreshLayout();
 		}
-		int offset = scrollRate * this->_overflowLength;
+		int_t offset = scrollRate * this->_overflowLength;
 		ScrollTo(-offset, Event::None);
 	}
 
@@ -1442,7 +1442,7 @@ namespace EzUI {
 		return std::abs(this->_offset) * 1.0f / this->_overflowLength;
 	}
 
-	void ScrollBar::ScrollTo(int offset, const Event& type) {
+	void ScrollBar::ScrollTo(int_t offset, const Event& type) {
 		if (Parent == NULL) return;
 		if (Parent->IsPendLayout()) {
 			Parent->RefreshLayout();
@@ -1450,9 +1450,9 @@ namespace EzUI {
 		//if (!Scrollable()) {
 		//	return;
 		//}
-		int viewLength;
-		int contentLength;
-		int scrollBarLength;
+		int_t viewLength;
+		int_t contentLength;
+		int_t scrollBarLength;
 		this->GetInfo(&viewLength, &contentLength, &scrollBarLength);
 		if (offset > 0) {
 			//滚动条在顶部
@@ -1486,7 +1486,7 @@ namespace EzUI {
 		if (Parent->IsPendLayout()) {
 			Parent->RefreshLayout();
 		}
-		int scrollBarLength;
+		int_t scrollBarLength;
 		this->GetInfo(&this->_viewLength, &this->_contentLength, &scrollBarLength);
 		this->_overflowLength = this->_contentLength - this->_viewLength;//超出容器的内容长度
 		if (_overflowLength > 0) {

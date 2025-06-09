@@ -43,8 +43,8 @@ namespace EzUI {
 		std::function<void(Control*, EventArgs&)> EventHandler = NULL;//事件处理器
 	protected:
 		//仅限子类使用
-		virtual void SetContentWidth(const int& width);//
-		virtual void SetContentHeight(const int& height);//
+		virtual void SetContentWidth(int_t width);//
+		virtual void SetContentHeight(int_t height);//
 		virtual void SetContentSize(const Size& size);//
 		virtual bool OnEvent(EventArgs& arg);//所有事件先进这里
 		virtual void OnPaintBefore(PaintEventArgs& args);//绘制之前
@@ -82,14 +82,14 @@ namespace EzUI {
 		virtual ControlStyle& GetStyle(const ControlState& _state);//获取当前控件状态下的样式信息
 		virtual ControlStyle& GetDefaultStyle();//用于获取不同控件当前默认的
 		//普通样式
-		int GetBorderTopLeftRadius(ControlState _state = ControlState::None);
-		int GetBorderTopRightRadius(ControlState _state = ControlState::None);
-		int GetBorderBottomRightRadius(ControlState _state = ControlState::None);
-		int GetBorderBottomLeftRadius(ControlState _state = ControlState::None);
-		int GetBorderLeft(ControlState _state = ControlState::None);
-		int GetBorderTop(ControlState _state = ControlState::None);
-		int GetBorderRight(ControlState _state = ControlState::None);
-		int GetBorderBottom(ControlState _state = ControlState::None);
+		int_t GetBorderTopLeftRadius(ControlState _state = ControlState::None);
+		int_t GetBorderTopRightRadius(ControlState _state = ControlState::None);
+		int_t GetBorderBottomRightRadius(ControlState _state = ControlState::None);
+		int_t GetBorderBottomLeftRadius(ControlState _state = ControlState::None);
+		int_t GetBorderLeft(ControlState _state = ControlState::None);
+		int_t GetBorderTop(ControlState _state = ControlState::None);
+		int_t GetBorderRight(ControlState _state = ControlState::None);
+		int_t GetBorderBottom(ControlState _state = ControlState::None);
 		Color GetBorderColor(ControlState _state = ControlState::None);
 		Image* GetForeImage(ControlState _state = ControlState::None);
 		Image* GetBackImage(ControlState _state = ControlState::None);
@@ -99,28 +99,28 @@ namespace EzUI {
 		virtual HCURSOR GetHCursor();
 		Color GetForeColor(ControlState _state = ControlState::None);//获取默认控件状态下前景色
 		std::wstring GetFontFamily(ControlState _state = ControlState::None);//获取默认控件状态下字体Family
-		int GetFontSize(ControlState _state = ControlState::None);//获取默认控件状态下字体大小样式
+		int_t GetFontSize(ControlState _state = ControlState::None);//获取默认控件状态下字体大小样式
 	public:
 		Control();
 		virtual ~Control();
 		void DestroySpacers();//销毁控件内所有弹簧
 		//以下函数请保证在父控件布局已完成的情况下使用 使用ResumeLayout()执行布局
-		int X();
-		int Y();
-		int Width();
-		int Height();
-		void SetX(const int& X);
-		void SetY(const int& Y);
+		int_t X();
+		int_t Y();
+		int_t Width();
+		int_t Height();
+		void SetX(int_t X);
+		void SetY(int_t Y);
 		void SetLocation(const Point& pt);//移动相对与父控件的位置
 		void SetSize(const Size& size); //当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
 		void SetFixedSize(const Size& size); //设置绝对宽高
-		void SetWidth(const int& width);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
-		void SetHeight(const int& height);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
-		void SetFixedWidth(const int& fixedWidth);//设置绝对宽度
-		void SetFixedHeight(const int& fixedHeight);//设置绝对高度
+		void SetWidth(int_t width);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
+		void SetHeight(int_t height);//当重绘控件时不建议多次使用 影响性能(会调用SetRect函数)
+		void SetFixedWidth(int_t fixedWidth);//设置绝对宽度
+		void SetFixedHeight(int_t fixedHeight);//设置绝对高度
 		const Rect& SetRect(const Rect& rect);//设置相对父控件矩形 返回实际的rect
-		int GetFixedWidth();//获取绝对宽度
-		int GetFixedHeight();//获取绝对高度
+		int_t GetFixedWidth();//获取绝对宽度
+		int_t GetFixedHeight();//获取绝对高度
 		virtual Rect GetCareRect();//获取光标位置
 		virtual bool IsAutoWidth();//是否自动高度
 		virtual bool IsAutoHeight();//是否自动高度
@@ -149,9 +149,9 @@ namespace EzUI {
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//基础控件设置属性
 		const Controls& GetViewControls();//获取当前可见控件
 		const Controls& GetControls();//获取当前所有子控件 const修饰是因为不建议直接修改子控件内容
-		Control* GetControl(size_t pos);//使用下标获取控件 会自动过滤spacer(弹簧)这类的控件
+		Control* GetControl(int_t pos);//使用下标获取控件 会自动过滤spacer(弹簧)这类的控件
 		bool Contains(Control* ctl);//会递归循全部包含的控件是否存在
-		size_t IndexOf(Control* childCtl);//获取子控件在此容器中的索引
+		int_t IndexOf(Control* childCtl);//获取子控件在此容器中的索引
 		Control* FindControl(const EString& ctlName);//使用name寻找容器中控件,包括自身
 		Controls FindControl(const EString& attrName, const EString& attrValue);//使用属性寻找容器中符合条件的控件,包括自身
 		Control* FindSingleControl(const EString& attrName, const EString& attrValue);//使用属性寻找容器中第一个符合条件的控件,包括自身
@@ -159,9 +159,9 @@ namespace EzUI {
 		Controls FindChild(const EString& attrName, const EString& attrValue);//寻找控件,仅限子集
 		Control* FindSingleChild(const EString& attrName, const EString& attrValue);//寻找控件,仅限子集
 		virtual bool SwapChild(Control* childCtl, Control* childCt2);//对子控件的两个控件进行位置交换
-		virtual void Insert(size_t pos, Control* childCtl);//选择性插入控件
+		virtual void Insert(int_t pos, Control* childCtl);//选择性插入控件
 		virtual Control* Add(Control* childCtl);//添加控件到末尾 如果参数是弹簧 在控件被释放的时候弹簧会自动释放
-		virtual void Remove(Control* childCtl, bool freeCtrl=false);//移除控件 freeCtrl标记是否释放控件
+		virtual void Remove(Control* childCtl, bool freeCtrl = false);//移除控件 freeCtrl标记是否释放控件
 		virtual void SetParent(Control* parentCtl);//设置父控件
 		virtual void Clear();//清空当前所有子控件
 		virtual void Clear(bool freeChilds);//清空当前所有子控件, freeControls是否释放所有子控件
@@ -191,7 +191,7 @@ namespace EzUI {
 		VSpacer() {};
 	public:
 		virtual ~VSpacer() {};
-		VSpacer(int fixedHeight) {
+		VSpacer(int_t fixedHeight) {
 			SetFixedHeight(fixedHeight);
 		}
 	};
@@ -201,7 +201,7 @@ namespace EzUI {
 		HSpacer() {};
 	public:
 		virtual ~HSpacer() {};
-		HSpacer(int fixedWidth) {
+		HSpacer(int_t fixedWidth) {
 			SetFixedWidth(fixedWidth);
 		}
 	};
@@ -211,28 +211,28 @@ namespace EzUI {
 		//鼠标是否已经按下
 		bool _mouseDown = false;
 		//上一次鼠标命中的坐标
-		int _lastPoint = 0;
+		int_t _lastPoint = 0;
 		//滚动条当前的坐标
 		double _sliderPos = 0;
 		//滚动条的长度
-		int _sliderLength = 0;
+		int_t _sliderLength = 0;
 		//滚动条每滚动一次的比率
 		double _rollRate = 0;
 		//父容器内的坐标偏移
-		int _offset = 0;
+		int_t _offset = 0;
 		//父容器的内容长度
-		int _contentLength = 0;
+		int_t _contentLength = 0;
 		//父容器可见长度(容器自身长度)
-		int _viewLength = 0;
+		int_t _viewLength = 0;
 		//溢出容器的长度
-		int _overflowLength = 0;
+		int_t _overflowLength = 0;
 
-		//int _old_viewLength = 0;
-		//int _old_contentLength = 0;
-		//int _old_offset = 0;
+		//int_t _old_viewLength = 0;
+		//int_t _old_contentLength = 0;
+		//int_t _old_offset = 0;
 	public:
 		//滚动条计算出偏移之后的回调函数
-		std::function<void(int)> OffsetCallback = NULL;
+		std::function<void(int_t)> OffsetCallback = NULL;
 		//滚动事件 arg1:发送者 arg2:滚动百分比 arg3:滚动类型
 		std::function<void(ScrollBar*, float, Event)> Scroll = NULL;
 	protected:
@@ -241,14 +241,14 @@ namespace EzUI {
 		virtual void OnMouseUp(const MouseEventArgs& arg)override;
 		virtual void OnMouseLeave(const MouseEventArgs& arg) override;
 		virtual void OnMouseWheel(const MouseEventArgs& arg)override;
-		virtual void GetInfo(int* viewLength, int* contentLength, int* scrollBarLength) = 0;
-		void ScrollTo(int offset, const Event& type);
+		virtual void GetInfo(int_t* viewLength, int_t* contentLength, int_t* scrollBarLength) = 0;
+		void ScrollTo(int_t offset, const Event& type);
 		void SyncInfo();
 	public:
 		//滚动到指定控件可见位置
 		virtual void ScrollTo(Control* ctl) = 0;
 		//按照百分比滚动 0.0f~1.0f
-		void ScrollTo(const float& scrollRate);
+		void ScrollTo(float scrollRate);
 		//获取当前滚动到的位置 进度的百分比
 		float ScrollPos();
 		//获取滑块的矩形

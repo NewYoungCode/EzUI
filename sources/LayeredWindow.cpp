@@ -1,64 +1,16 @@
 #include "LayeredWindow.h"
 
 namespace EzUI {
-
-	std::vector<LayeredWindow*> windows;
-	Task* task = NULL;
-	std::mutex mtx;
-	std::condition_variable condv;
-
-	void __QueuePaint(LayeredWindow* window) {
-		{
-			std::unique_lock<std::mutex> autoLock(mtx);
-			windows.push_back(window);
-		}
-		if (task == NULL) {
-			task = new Task([]() {
-				while (true)
-				{
-					{
-						std::unique_lock<std::mutex> autoLock(mtx);
-						condv.wait(autoLock, []()->bool {
-							bool ok = false;
-							for (auto& it : windows) {
-								if (it->GetUpdateRect().IsEmptyArea() == false) {
-									ok = true;
-								}
-							}
-							return ok || windows.empty();
-							});
-						if (windows.empty()) {
-							break;
-						}
-					}
-					EzUI::Invoke([]() {
-						for (auto& it : windows) {
-							it->PublicData->UpdateWindow();
-						}
-						});
-					Sleep(5);
-				}
-				});
-		}
-	}
-
+	std::map<HWND, Rect*> __LayeredInvalidateRect;
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
-	LayeredWindow::LayeredWindow(int width, int height, HWND owner) :BorderlessWindow(width, height, owner, WS_EX_LAYERED)
+	LayeredWindow::LayeredWindow(int_t width, int_t height, HWND owner) :BorderlessWindow(width, height, owner, WS_EX_LAYERED)
 	{
 		UpdateShadowBox();
-		__QueuePaint(this);//加入绘制列队
-		PublicData->InvalidateRect = [this](const Rect& rect) ->void {
-			{
-				std::unique_lock<std::mutex> autoLock(mtx);
-				//标记无效区域
-				this->InvalidateRect(rect);
-			}
-			if (IsVisible()) {
-				//通知线程绘制
-				condv.notify_one();
-			}
+		this->PublicData->InvalidateRect = [this](const Rect& rect) ->void {
+			this->InvalidateRect(rect);
+			__LayeredInvalidateRect.insert(std::pair<HWND, Rect*>(Hwnd(), &this->_invalidateRect));
 			};
-		PublicData->UpdateWindow = [this]()->void {
+		this->PublicData->UpdateWindow = [this]()->void {
 			//实时绘制
 			if (IsVisible() && !_invalidateRect.IsEmptyArea()) {
 				this->Paint();
@@ -67,25 +19,6 @@ namespace EzUI {
 	}
 
 	LayeredWindow::~LayeredWindow() {
-		{
-			std::unique_lock<std::mutex> autoLock(mtx);
-			//清理绘制相关
-			auto itor = std::find(windows.begin(), windows.end(), this);
-			if (itor != windows.end()) {
-				windows.erase(itor);
-			}
-		}
-		//通知已经移除了一个窗口了
-		condv.notify_all();
-		bool isEmpty = false;
-		{
-			std::unique_lock<std::mutex> autoLock(mtx);
-			isEmpty = windows.empty();
-		}
-		if (isEmpty && task) {
-			delete task;
-			task = NULL;
-		}
 		if (_winBitmap) {
 			delete _winBitmap;
 		}
@@ -96,8 +29,8 @@ namespace EzUI {
 	}
 	void LayeredWindow::InvalidateRect(const Rect& _rect) {
 		const Rect& clientRect = GetClientRect();
-		int Width = clientRect.Width;
-		int Height = clientRect.Height;
+		int_t Width = clientRect.Width;
+		int_t Height = clientRect.Height;
 		Rect rect = _rect;
 		if (rect.X < 0) {
 			rect.X = 0;
@@ -115,6 +48,15 @@ namespace EzUI {
 		} //这段代码是保证重绘区域一定是在窗口内
 		Rect::Union(_invalidateRect, _invalidateRect, rect);
 	}
+	LRESULT LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+		if (uMsg == WM_PAINT) {
+			//处理分层窗口的绘制
+			this->Paint();
+			return TRUE;
+		}
+		return __super::WndProc(uMsg, wParam, lParam);
+	}
 	void LayeredWindow::OnSize(const Size& sz) {
 		if (_winBitmap) {
 			delete _winBitmap;
@@ -125,7 +67,7 @@ namespace EzUI {
 
 	void LayeredWindow::Paint()
 	{
-		_invalidateRect = Rect(0, 0, this->GetClientRect().Width, this->GetClientRect().Height);
+		//_invalidateRect = Rect(0, 0, this->GetClientRect().Width, this->GetClientRect().Height);
 		if (_winBitmap && !_invalidateRect.IsEmptyArea()) {
 
 			_winBitmap->Earse(_invalidateRect);//清除背景
@@ -136,7 +78,7 @@ namespace EzUI {
 			DoPaint(winHDC, _invalidateRect);
 #else
 			//使用双缓冲
-			Bitmap doubleBuff(_winBitmap->Width, _winBitmap->Height, Bitmap::PixelFormat::PixelFormatARGB);
+			Bitmap doubleBuff(_winBitmap->Width(), _winBitmap->Height(), Bitmap::PixelFormat::PixelFormatARGB);
 			DoPaint(doubleBuff.GetHDC(), _invalidateRect);
 			//使用BitBlt函数进行复制到winHDC  //如果窗体不规则 不适用于BitBlt进行复制
 			::BitBlt(winHDC, _invalidateRect.X, _invalidateRect.Y,

@@ -81,7 +81,7 @@ namespace EzUI {
 		Shell_NotifyIconW(NIM_MODIFY, &_nid);
 	}
 
-	void NotifyIcon::ShowBalloonTip(const EString& title, const EString& msg, int timeOut) {
+	void NotifyIcon::ShowBalloonTip(const EString& title, const EString& msg, int_t timeOut) {
 		_nid.uTimeout = timeOut;
 		_nid.uFlags = NIF_INFO;
 		_nid.dwInfoFlags = NIIF_INFO;

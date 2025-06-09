@@ -12,7 +12,7 @@ namespace EzUI {
 		std::condition_variable _condv;
 	public:
 		std::function<void(ThreadTimer*)> Tick = NULL;
-		size_t Interval = -1;
+		int_t Interval = -1;
 	public:
 		ThreadTimer();
 		void Start();
@@ -24,7 +24,7 @@ namespace EzUI {
 	class UI_EXPORT Timer :public IControl {
 	public:
 		std::function<void(Timer*)> Tick = NULL;
-		size_t Interval = -1;
+		int_t Interval = -1;
 		UINT_PTR TimerId = NULL;
 	public:
 		void Stop();

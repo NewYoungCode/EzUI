@@ -21,10 +21,10 @@ namespace EzUI {
 	protected:
 		virtual void OnKillFocus(HWND hWnd) override;
 	public:
-		PopupWindow(int width, int height, HWND ownerHwnd);
-		PopupWindow(int width, int height, Control* ownerCtl = NULL);
+		PopupWindow(int_t width, int_t height, HWND ownerHwnd);
+		PopupWindow(int_t width, int_t height, Control* ownerCtl = NULL);
 		virtual void Show()override;
-		virtual int ShowModal(bool disableOnwer = false)override;
+		virtual int_t ShowModal(bool disableOnwer = false)override;
 		virtual ~PopupWindow();
 	};
 };

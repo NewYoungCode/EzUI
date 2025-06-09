@@ -11,17 +11,17 @@ namespace EzUI {
 	{
 		size_t index = this->IndexOf(ctl);
 		__super::Remove(ctl, freeCtl);
-		int newIndex = this->GetControls().size() - 1;
+		int_t newIndex = this->GetControls().size() - 1;
 		newIndex = newIndex < 0 ? 0 : newIndex;
 		this->SetPageIndex(newIndex);
 		TryPendLayout();
 	}
 	void TabLayout::Sort()
 	{
-		int pos = 0;
+		int_t pos = 0;
 		for (auto itor = GetControls().begin(); itor != GetControls().end(); ++itor)
 		{
-			int x = Width() * (pos - _pageIndex);//子控件索引-当前所在页索引
+			int_t x = Width() * (pos - _pageIndex);//子控件索引-当前所在页索引
 			(*itor)->SetRect(Rect(x, 0, Width(), Height()));
 			(*itor)->SetVisible(true);
 			++pos;
@@ -47,26 +47,26 @@ namespace EzUI {
 		return ret;
 	}
 
-	void TabLayout::SetPageIndex(int index)
+	void TabLayout::SetPageIndex(int_t index)
 	{
 		this->_pageIndex = index;
 		this->TryPendLayout();
 	}
 
 
-	void TabLayout::SlideToPage(int index)
+	void TabLayout::SlideToPage(int_t index)
 	{
 		Sort();//先直接归位
-		int pageWidth = Width();
-		int offsetTotal = (index - _pageIndex) * pageWidth;
+		int_t pageWidth = Width();
+		int_t offsetTotal = (index - _pageIndex) * pageWidth;
 		if (offsetTotal == 0) {
 			return;
 		}
 
 		// 记录初始坐标
-		int controlCount = GetControls().size();
-		std::vector<int> initialX(controlCount);
-		for (int i = 0; i < controlCount; ++i) {
+		int_t controlCount = GetControls().size();
+		std::vector<int_t> initialX(controlCount);
+		for (int_t i = 0; i < controlCount; ++i) {
 			initialX[i] = GetControls()[i]->X();
 		}
 
@@ -74,9 +74,9 @@ namespace EzUI {
 		offset = offsetTotal;
 		_pageIndex = index;
 
-		int ANIMATION_DURATION_MS = 200;
-		int FRAME_INTERVAL_MS = 16;
-		int totalFrames = ANIMATION_DURATION_MS / FRAME_INTERVAL_MS;
+		int_t ANIMATION_DURATION_MS = 200;
+		int_t FRAME_INTERVAL_MS = 16;
+		int_t totalFrames = ANIMATION_DURATION_MS / FRAME_INTERVAL_MS;
 		if (totalFrames <= 0) {
 			totalFrames = 1;
 		}
@@ -88,7 +88,7 @@ namespace EzUI {
 
 		timer.Tick = [=, stepAcc = 0.0](ThreadTimer* sender) mutable {
 			stepAcc += stepPerFrame;
-			int stepMove = stepAcc;
+			int_t stepMove = stepAcc;
 			stepAcc -= stepMove;
 			nowOffset += stepMove;
 
@@ -129,7 +129,7 @@ namespace EzUI {
 	}
 
 	Control* TabLayout::GetPage() {
-		int pos = 0;
+		int_t pos = 0;
 		for (auto& it : GetControls()) {
 			if (pos == this->_pageIndex) {
 				return it;
@@ -138,7 +138,7 @@ namespace EzUI {
 		}
 		return NULL;
 	}
-	int TabLayout::GetPageIndex()
+	int_t TabLayout::GetPageIndex()
 	{
 		return _pageIndex;
 	}

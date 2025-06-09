@@ -8,10 +8,10 @@ namespace EzUI {
 		public Control
 	{
 	private:
-		int _pageIndex = 0;
+		int_t _pageIndex = 0;
 		ThreadTimer timer;
-		int offset = 0;
-		int nowOffset = 0;
+		int_t offset = 0;
+		int_t nowOffset = 0;
 		void Sort();
 	protected:
 		virtual void OnLayout()override;
@@ -21,10 +21,10 @@ namespace EzUI {
 		TabLayout();
 		virtual ~TabLayout();
 		virtual void Remove(Control* ctl, bool freeCtl = false)override;
-		void SetPageIndex(int index);
-		void SlideToPage(int index);
+		void SetPageIndex(int_t index);
+		void SlideToPage(int_t index);
 		void SetPage(Control* ctl);
 		Control* GetPage();
-		int GetPageIndex();
+		int_t GetPageIndex();
 	};
 };

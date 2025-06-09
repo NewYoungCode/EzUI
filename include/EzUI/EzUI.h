@@ -35,9 +35,9 @@ namespace EzUI {
 	//卸载字体
 	extern UI_EXPORT void UnstallFont(const EString& fontFileName);
 	//复制内容到剪切板
-	extern UI_EXPORT bool CopyToClipboard(int uFormat, void* pData, size_t size, HWND hWnd = NULL);
+	extern UI_EXPORT bool CopyToClipboard(int_t uFormat, void* pData, size_t size, HWND hWnd = NULL);
 	//打开剪切板
-	extern UI_EXPORT bool GetClipboardData(int uFormat, std::function<void(void*, size_t)> Callback, HWND hWnd = NULL);
+	extern UI_EXPORT bool GetClipboardData(int_t uFormat, std::function<void(void*, size_t)> Callback, HWND hWnd = NULL);
 	//复制unicode文字
 	extern UI_EXPORT bool CopyToClipboard(const std::wstring& str, HWND hWnd = NULL);
 	//粘贴unicode文字
@@ -68,29 +68,29 @@ namespace EzUI {
 				auto rStr = colorStr.substr(1, 2);
 				auto gStr = colorStr.substr(3, 2);
 				auto bStr = colorStr.substr(5, 2);
-				unsigned int r, g, b;
+				DWORD r, g, b;
 				sscanf_s(rStr.c_str(), "%x", &r);
 				sscanf_s(gStr.c_str(), "%x", &g);
 				sscanf_s(bStr.c_str(), "%x", &b);
 				//Argb = MakeARGB(255, r, g, b);
-				return Color(r, g, b);
+				return Color((BYTE)r, (BYTE)g, (BYTE)b);
 			}
 			if (colorStr.find("rgb") == 0) { //"rgb(255,100,2,3)"
-				int pos1 = colorStr.find("(");
-				int pos2 = colorStr.rfind(")");
+				size_t pos1 = colorStr.find("(");
+				size_t pos2 = colorStr.rfind(")");
 				EString rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
 				auto rgbList = rgbStr.split(",");
-				unsigned char r, g, b;
+				BYTE r, g, b;
 				r = std::stoi(rgbList.at(0));
 				g = std::stoi(rgbList.at(1));
 				b = std::stoi(rgbList.at(2));
-				unsigned char a = 255;
+				BYTE a = 255;
 				//考虑到rgba
 				if (rgbList.size() > 3) {
 					std::string aStr = rgbList.at(3);
 					if (aStr.find(".") != std::string::npos) {
 						//浮点型0~1
-						a = 255 * std::atof(aStr.c_str()) + 0.5;
+						a = (BYTE)(255 * std::atof(aStr.c_str()) + 0.5);
 					}
 					else {
 						//整数型0~255
@@ -108,7 +108,7 @@ namespace EzUI {
 	class UI_EXPORT Image :public DXImage {
 	public:
 		virtual ~Image() {}
-		Image(UINT width, UINT height) :DXImage(width, height) {}
+		Image(int_t width, int_t height) :DXImage(width, height) {}
 		Image(HBITMAP hBitmap) :DXImage(hBitmap) {}
 		Image(IStream* iStream) :DXImage(iStream) {}
 		Image(const std::wstring& fileName) :DXImage(fileName) {}
@@ -150,10 +150,10 @@ namespace EzUI {
 		float Scale = 1.0f;//缩放率
 		Control* FocusControl = NULL;//具有焦点的控件
 		Control* InputControl = NULL;//输入框
-		size_t PaintCount = 0;
+		int_t PaintCount = 0;
 #ifdef _DEBUG
 		bool Debug = false;//是否开启debug模式
-		int ColorIndex = 0;//调试模式下的特有字段
+		int_t ColorIndex = 0;//调试模式下的特有字段
 		Color DebugColor;
 		std::vector<Color> DebugColors{ Color::Red,Color::Green,Color::Blue,Color::Black,Color::White };
 #endif
@@ -303,7 +303,7 @@ namespace EzUI {
 	class UI_EXPORT EventArgs {
 	public:
 		Event EventType = Event::None;
-		EventArgs(const Event& eventType) {
+		EventArgs(Event eventType) {
 			this->EventType = eventType;
 		}
 		virtual ~EventArgs() {};
@@ -312,10 +312,10 @@ namespace EzUI {
 	class UI_EXPORT MouseEventArgs :public EventArgs {
 	public:
 		MouseButton Button = MouseButton::None;
-		int ZDelta = 0;//方向
+		int_t ZDelta = 0;//方向
 		Point Location;
 	public:
-		MouseEventArgs(const Event& eventType, const Point& location = Point(0, 0), const MouseButton& mouseButton = MouseButton::None, const int& ZDelta = 0) :EventArgs(eventType) {
+		MouseEventArgs(Event eventType, const Point& location = Point(0, 0), MouseButton mouseButton = MouseButton::None, int_t ZDelta = 0) :EventArgs(eventType) {
 			this->Button = mouseButton;
 			this->Location = location;
 			this->ZDelta = ZDelta;
@@ -331,7 +331,7 @@ namespace EzUI {
 		/// </summary>
 		WPARAM wParam;
 		LPARAM lParam;
-		KeyboardEventArgs(const Event& eventType, WPARAM wParam, LPARAM lParam) :EventArgs(eventType) {
+		KeyboardEventArgs(Event eventType, WPARAM wParam, LPARAM lParam) :EventArgs(eventType) {
 			this->wParam = wParam;
 			this->lParam = lParam;
 		}
@@ -376,10 +376,11 @@ namespace EzUI {
 		RectEventArgs(const EzUI::Rect& rect) :EventArgs(Event::OnRect), Rect(rect) {}
 		virtual ~RectEventArgs() {}
 	};
+	//dpi发生变化
 	class UI_EXPORT DpiChangeEventArgs :public EventArgs {
 	public:
 		float Scale = 1;
-		DpiChangeEventArgs(const float& scale) :EventArgs(Event::OnDpiChange), Scale(scale) {}
+		DpiChangeEventArgs(float scale) :EventArgs(Event::OnDpiChange), Scale(scale) {}
 		virtual ~DpiChangeEventArgs() {}
 	};
 	// 为 OnPaint 事件提供数据。
@@ -411,7 +412,7 @@ namespace EzUI {
 		Image* BackImage = NULL;//背景图片 如果指定的图片被删除 请必须将此置零
 		Image* ForeImage = NULL;//前景图片 如果指定的图片被删除 请必须将此置零
 		std::wstring FontFamily;//字体名称 具有继承性
-		int FontSize = 0;//字体大小 具有继承性 此处采用int
+		int_t FontSize = 0;//字体大小 具有继承性 此处采用int
 		Color ForeColor;//前景颜色  具有继承性
 		HCURSOR Cursor = NULL;//鼠标样式
 		float Angle = 0;//旋转范围 0~360
@@ -421,7 +422,7 @@ namespace EzUI {
 	public:
 		ControlStyle() {}
 		virtual ~ControlStyle() {}
-		void Scale(const float& scale);
+		void Scale(float scale);
 		void SetStyleSheet(const EString& styleStr, const std::function<void(Image*)>& callback = NULL);
 		void SetStyle(const EString& key, const EString& value, const std::function<void(Image*)>& callback = NULL);
 	};

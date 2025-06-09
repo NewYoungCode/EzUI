@@ -9,7 +9,7 @@ namespace EzUI {
 		VScrollBar _vScrollBar;
 		void Init();
 		//对控件进行偏移
-		void Offset(int offset);
+		void Offset(int_t offset);
 	protected:
 		virtual void OnLayout()override;
 		virtual void OnChildPaint(PaintEventArgs& args)override;

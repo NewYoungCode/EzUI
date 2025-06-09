@@ -105,13 +105,13 @@ namespace Text {
 
 	void AnyToUnicode(const std::string& src_str, UINT codePage, std::wstring* out_wstr) {
 		std::wstring& wstrCmd = *out_wstr;
-		int bytes = ::MultiByteToWideChar(codePage, 0, src_str.c_str(), src_str.size(), NULL, 0);
+		auto bytes = ::MultiByteToWideChar(codePage, 0, src_str.c_str(), src_str.size(), NULL, 0);
 		wstrCmd.resize(bytes);
 		bytes = ::MultiByteToWideChar(codePage, 0, src_str.c_str(), src_str.size(), const_cast<wchar_t*>(wstrCmd.c_str()), wstrCmd.size());
 	}
 	void UnicodeToAny(const std::wstring& wstr, UINT codePage, std::string* out_str) {
 		std::string& strCmd = *out_str;
-		int bytes = ::WideCharToMultiByte(codePage, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
+		auto bytes = ::WideCharToMultiByte(codePage, 0, wstr.c_str(), wstr.size(), NULL, 0, NULL, NULL);
 		strCmd.resize(bytes);
 		bytes = ::WideCharToMultiByte(codePage, 0, wstr.c_str(), wstr.size(), const_cast<char*>(strCmd.c_str()), strCmd.size(), NULL, NULL);
 	}
@@ -127,14 +127,14 @@ namespace Text {
 	}
 
 	void GBKToUTF8(const std::string& str, std::string* outStr) {
-		const int gbkCodePage = 936;
+		UINT gbkCodePage = 936;
 		std::wstring wstr;
 		AnyToUnicode(str, gbkCodePage, &wstr);
 		UnicodeToUTF8(wstr, outStr);
 	}
 
 	void UTF8ToGBK(const std::string& str, std::string* outStr) {
-		const int gbkCodePage = 936;
+		UINT gbkCodePage = 936;
 		std::wstring wstr;
 		UTF8ToUnicode(str, &wstr);
 		UnicodeToAny(wstr, gbkCodePage, outStr);
@@ -268,7 +268,7 @@ namespace Text {
 		__Split<std::string>(str_in, ch_, strs_out);
 	}
 
-	String ToString(double number, int keepBitSize) {
+	String ToString(double number, size_t keepBitSize) {
 		std::ostringstream oss;
 		oss << std::fixed << std::setprecision(keepBitSize) << number;
 		return oss.str();
