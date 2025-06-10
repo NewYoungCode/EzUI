@@ -1,6 +1,11 @@
 #include "PictureBox.h"
 namespace EzUI {
-	PictureBox::PictureBox() {}
+	PictureBox::PictureBox() {
+		_timer.Tick = [this](Timer* timer) {
+			timer->Stop();
+			this->Invalidate();
+			};
+	}
 	PictureBox::~PictureBox() {
 		_timer.Stop();
 		if (_srcImg) {
@@ -19,10 +24,6 @@ namespace EzUI {
 			arg.Graphics.DrawImage(_img, RectF(0, 0, (float)Width(), (float)Height()));
 			if (_img->FrameCount() > 1) {
 				_timer.Interval = _img->NextFrame();
-				_timer.Tick = [this](Timer* timer) {
-					timer->Stop();
-					this->Invalidate();
-					};
 				_timer.Start();
 			}
 			else {

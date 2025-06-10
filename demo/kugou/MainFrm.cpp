@@ -9,7 +9,7 @@ MainFrm::MainFrm() :Form(1020, 690), ntfi(WM_NOTIFYICON1)
 }
 void MainFrm::InitForm() {
 	this->Zoom = true;
-	umg.LoadXmlFile("xml/main.htm");
+	umg.LoadXmlFile("res/xml/main.htm");
 	umg.SetupUI(this);
 
 	this->GetLayout()->Style.Border.Radius = 15;//圆角窗口

@@ -12,6 +12,9 @@ namespace EzUI {
 		ThreadTimer timer;
 		int_t offset = 0;
 		int_t nowOffset = 0;
+		std::vector<int_t> initialX;
+		float stepAcc = 0;
+		float stepPerFrame = 0;
 		void Sort();
 	protected:
 		virtual void OnLayout()override;

@@ -2,6 +2,7 @@
 #include "BorderlessWindow.h"
 #include "Bitmap.h"
 #include "Task.h"
+#include "Timer.h"
 namespace EzUI {
 	/// <summary>
 	/// //LayeredWindow	  //无边框  带阴影 窗口透明异形 窗口大小发生改变重绘
@@ -9,16 +10,17 @@ namespace EzUI {
 	class  UI_EXPORT LayeredWindow :public BorderlessWindow
 	{
 	private:
-		void PushDC(HDC hdc);
-		Rect _invalidateRect;
+		ThreadTimer _timer;
+		std::vector<Rect> _invalidateRect;
 		Bitmap* _winBitmap = NULL;
-		void Paint();
+		void UpdateLayeredWindow(HDC hdc);
+		void BeginPaint(Rect* rect);
+		void EndPaint();
 	protected:
 		virtual void OnSize(const Size& sz)override;
 		void InvalidateRect(const Rect& rect);
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
 	public:
-		Rect GetUpdateRect();
 		LayeredWindow(int_t width, int_t height, HWND owner = NULL);
 		virtual ~LayeredWindow();
 	};
