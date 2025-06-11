@@ -16,6 +16,7 @@ namespace EzUI {
 		//启用高DPI适配
 		void EnableHighDpi();
 		virtual ~Application();
+		//执行消息循环
 		int_t Exec();
 	};
 };

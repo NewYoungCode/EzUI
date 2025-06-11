@@ -20,6 +20,9 @@ namespace EzUI {
 			}
 			});
 	}
+	bool ThreadTimer::IsStopped() {
+		return _bStop;
+	}
 	void ThreadTimer::Start() {
 		std::unique_lock<std::mutex> autoLock(_mtx);
 		_bStop = false;

@@ -43,7 +43,7 @@ namespace EzUI {
 			return;
 		}
 		++_pageIndex;
-		std::vector<Control*> ctls;
+		Controls ctls;
 		this->GetPage(_pageIndex, &ctls);
 		for (auto& it : ctls) {
 			this->Add(it);

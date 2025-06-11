@@ -2,12 +2,12 @@
 namespace EzUI {
 	PopupWindow::PopupWindow(int_t width, int_t height, HWND owner) :LayeredWindow(width, height, owner)
 	{
-		this->Zoom = false;
+		this->SetResizable(false);
 	}
 	PopupWindow::PopupWindow(int_t width, int_t height, Control* ownerCtl) :LayeredWindow(width, height, ownerCtl->PublicData->HANDLE)
 	{
 		this->_ownerCtl = ownerCtl;
-		this->Zoom = false;
+		this->SetResizable(false);
 	}
 	void PopupWindow::Show()
 	{

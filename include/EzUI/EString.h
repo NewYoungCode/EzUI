@@ -37,6 +37,16 @@ namespace Text {
 		std::vector<String> split(const String& ch)const;
 		bool operator==(const wchar_t* szbuf)const;
 		bool operator==(const std::wstring& wStr)const;
+
+		template<typename ...T>
+		inline String format(const T &...args) {
+			auto bufSize = ::snprintf(nullptr, 0, this->c_str(), std::forward<const T&>(args)...) + 1;  // +1是为了'结束符\0'
+			char* buf = new char[bufSize] {0};
+			auto count = ::sprintf_s(buf, bufSize, this->c_str(), std::forward<const T&>(args)...);
+			String ret(buf);
+			delete[] buf;
+			return ret;
+		}
 	};
 
 	//base convert

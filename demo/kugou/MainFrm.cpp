@@ -8,7 +8,9 @@ MainFrm::MainFrm() :Form(1020, 690), ntfi(WM_NOTIFYICON1)
 	this->SetMiniSize({ 800,600 });
 }
 void MainFrm::InitForm() {
-	this->Zoom = true;
+	this->SetResizable(true);
+	this->SetText(L"酷苟音乐");
+
 	umg.LoadXmlFile("res/xml/main.htm");
 	umg.SetupUI(this);
 
@@ -237,7 +239,7 @@ bool MainFrm::PlayForHash(const EString& hash, Song& info)
 		main->Invalidate();
 	}
 
-	FindControl("lrcView")->DispatchEvent(Event::OnMouseClick);
+	FindControl("lrcView")->SendNotify(Event::OnMouseClick);
 
 	downloadTask = new Task([this](EString singname, EString imgUrl) {
 		this->DownLoadImage(singname, imgUrl);
@@ -267,7 +269,7 @@ void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 	if (wparam == VK_RETURN) {
 		global::page = 1;
 		global::nextPage = true;
-		FindControl("songView")->DispatchEvent(MouseEventArgs(Event::OnMouseClick));
+		FindControl("songView")->SendNotify(MouseEventArgs(Event::OnMouseClick));
 		EString keyword = searchEdit->GetText();
 		std::vector<Song> songs = global::SearchSongs(keyword);
 		searchList->Clear(true);
@@ -279,13 +281,14 @@ void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 	}
 	__super::OnKeyDown(wparam, lParam);
 }
-bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
+void MainFrm::OnNotify(Control* sender, EventArgs& args, bool& bHandle) {
 	if (args.EventType == Event::OnPaint) {
 		if (sender == &player) {
 			if (tabCtrl->GetPageIndex() == 2) {
-				return false;
+				return;
 			}
-			return true;
+			bHandle = true;
+			return;
 		}
 		if (sender == main && player.BuffBitmap) {
 			if (tabCtrl->GetPageIndex() == 1) {
@@ -293,14 +296,15 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				Image img(player.BuffBitmap->GetHBITMAP());
 				img.SizeMode = ImageSizeMode::CenterImage;
 				arg.Graphics.DrawImage(&img, main->GetRect());
-				return true;
+				bHandle = true;
+				return;
 			}
 			else if (deskTopWnd->IsVisible()) {
 				deskTopWnd->Invalidate();
 			}
-			return false;
+			return;
 		}
-		return false;
+		return;
 	}
 	if (args.EventType == Event::OnMouseDoubleClick) {
 		if (!sender->GetAttribute("FileHash").empty()) {
@@ -343,7 +347,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			}
 			auto it = localList->FindSingleChild("FileHash", hash);
 			localList->GetScrollBar()->ScrollTo(it);
-			it->DispatchEvent(MouseEventArgs(Event::OnMouseDoubleClick));
+			it->SendNotify(MouseEventArgs(Event::OnMouseDoubleClick));
 		}
 		if (sender->Name == "up") {
 			int pos = this->FindLocalSong(this->nowSong);
@@ -357,7 +361,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			}
 			auto it = localList->FindSingleChild("FileHash", hash);
 			localList->GetScrollBar()->ScrollTo(it);
-			it->DispatchEvent(MouseEventArgs(Event::OnMouseDoubleClick));
+			it->SendNotify(MouseEventArgs(Event::OnMouseDoubleClick));
 		}
 		if (sender->Name == "deskLrc") {
 			if (deskTopWnd->IsVisible()) {
@@ -373,13 +377,13 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			player.Play();
 			control->SetPageIndex(1);
 			control->Invalidate();
-			return false;
+			return;
 		}
 		if (sender->Name == "pause") {
 			player.Pause();
 			control->SetPageIndex(0);
 			control->Invalidate();
-			return false;
+			return;
 		}
 		if (sender->Name == "dellocal") {//删除本地
 			LocalItem* songItem = (LocalItem*)sender->Parent;
@@ -391,7 +395,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			}
 			delete songItem;
 			localList->Invalidate();
-			return false;
+			return;
 		}
 		if (sender->GetAttribute("tablayout") == "rightView") {
 			size_t pos = sender->Parent->IndexOf(sender);
@@ -412,7 +416,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			Song info;
 			global::GetMvInfo(mvhash, info);
 
-			FindControl("mvView")->DispatchEvent(Event::OnMouseClick);
+			FindControl("mvView")->SendNotify(Event::OnMouseClick);
 
 			this->SetText(info.SongName);
 			((Label*)FindControl("songName"))->SetText(info.SongName);
@@ -437,7 +441,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			player.Play();
 		}
 	}
-	return __super::OnNotify(sender, args);
+	__super::OnNotify(sender, args, bHandle);
 }
 void MainFrm::TimerTick() {
 

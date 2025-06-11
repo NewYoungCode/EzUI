@@ -24,7 +24,9 @@ namespace EzUI {
 		TabLayout();
 		virtual ~TabLayout();
 		virtual void Remove(Control* ctl, bool freeCtl = false)override;
+		//设置当前显示页
 		void SetPageIndex(int_t index);
+		//动画方式滑动到某一页
 		void SlideToPage(int_t index);
 		void SetPage(Control* ctl);
 		Control* GetPage();

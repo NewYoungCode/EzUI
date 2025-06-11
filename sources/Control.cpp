@@ -1,9 +1,9 @@
 #include "Control.h"
 namespace EzUI {
-	inline bool __IsValid( int_t value) {
+	inline bool __IsValid(int_t value) {
 		return value != 0;
 	}
-	inline bool __IsValid( float value) {
+	inline bool __IsValid(float value) {
 		return value != 0;
 	}
 	inline bool __IsValid(const Image* value) {
@@ -122,7 +122,7 @@ namespace EzUI {
 			if (rect.IntersectsWith(it->GetRect())) {
 				ViewControls.push_back(it);
 			}
-			it->DispatchEvent(args);
+			it->SendNotify(args);
 		}
 	}
 	void Control::OnPaint(PaintEventArgs& args)
@@ -477,13 +477,13 @@ namespace EzUI {
 	bool Control::IsPendLayout() {
 		return this->_layoutState == LayoutState::Pend;
 	}
-	const LayoutState& Control::TryPendLayout() {
+	const LayoutState Control::TryPendLayout() {
 		if (this->_layoutState == LayoutState::None) {
 			this->_layoutState = LayoutState::Pend;
 		}
 		return this->_layoutState;
 	}
-	const LayoutState& Control::GetLayoutState()
+	const LayoutState Control::GetLayoutState()
 	{
 		return this->_layoutState;
 	}
@@ -533,17 +533,17 @@ namespace EzUI {
 
 		bool onRect = false;
 		if (!_lastLocation.Equals(newLocation)) {
-			this->DispatchEvent(LocationEventArgs(newLocation));
+			this->SendNotify(LocationEventArgs(newLocation));
 			_lastLocation = newLocation;
 			onRect = true;
 		}
 		if (!newSize.Equals(_lastSize)) {
-			this->DispatchEvent(SizeEventArgs(newSize));
+			this->SendNotify(SizeEventArgs(newSize));
 			_lastSize = newSize;
 			onRect = true;
 		}
 		if (onRect) {
-			this->DispatchEvent(RectEventArgs(_rect));
+			this->SendNotify(RectEventArgs(_rect));
 		}
 		return this->_rect;
 	}
@@ -615,7 +615,7 @@ namespace EzUI {
 		}
 		this->EndLayout();
 	}
-	bool Control::DispatchEvent(const EventArgs& arg)
+	bool Control::SendNotify(const EventArgs& arg)
 	{
 		return this->OnEvent((EventArgs&)arg);
 	}
@@ -630,8 +630,9 @@ namespace EzUI {
 			}
 			if (PublicData && ((this->EventNotify & arg.EventType) == arg.EventType)) {
 				if (arg.EventType != Event::OnPaint) {
-					bool isProc = PublicData->Notify(this, (EventArgs&)arg);
-					if (isProc) {
+					bool bHandle = false;
+					PublicData->SendNotify(this, (EventArgs&)arg, bHandle);
+					if (bHandle) {
 						//如果处理过了则不需要继续往下派发
 						break;
 					}
@@ -679,8 +680,9 @@ namespace EzUI {
 		} while (false);
 		if (!isRemove) {
 			//通用事件处理 ps:绘制函数比较特殊(在其他地方处理)
-			if (this->EventHandler && (arg.EventType != Event::OnPaint)) {
-				this->EventHandler(this, arg);
+			if (this->Notify && (arg.EventType != Event::OnPaint)) {
+				bool bHandle = false;
+				this->Notify(this, arg, bHandle);
 			}
 			if (!isRemove) {
 				this->_isRemove = NULL;
@@ -698,7 +700,7 @@ namespace EzUI {
 			KeyboardEventArgs& args = (KeyboardEventArgs&)_args;
 			if ((this->EventPassThrough & args.EventType) == args.EventType && this->Parent) {//检查鼠标穿透
 				KeyboardEventArgs copy_args = args;
-				this->Parent->DispatchEvent(copy_args);//如果设置了穿透就直接发送给上一层控件
+				this->Parent->SendNotify(copy_args);//如果设置了穿透就直接发送给上一层控件
 			}
 			switch (args.EventType)
 			{
@@ -767,7 +769,7 @@ namespace EzUI {
 			MouseEventArgs copy_args = args;
 			copy_args.Location.X += this->X();
 			copy_args.Location.Y += this->Y();
-			this->Parent->DispatchEvent(copy_args);//如果设置了穿透就发送给上一层控件
+			this->Parent->SendNotify(copy_args);//如果设置了穿透就发送给上一层控件
 		}
 	}
 	void Control::OnPaintBefore(PaintEventArgs& args) {
@@ -821,7 +823,9 @@ namespace EzUI {
 		}
 #endif 
 		//调用公共函数,如果那边不拦截,就开始绘制自身基本上下文
-		if (!PublicData->Notify(this, args)) {
+		bool bHandle = false;
+		PublicData->SendNotify(this, args, bHandle);
+		if (!bHandle) {
 			this->OnPaint(args);
 		}
 
@@ -831,7 +835,7 @@ namespace EzUI {
 		EzUI::ScrollBar* scrollbar = NULL;
 		if (scrollbar = this->GetScrollBar()) {
 			scrollbar->PublicData = args.PublicData;
-			scrollbar->DispatchEvent(args);
+			scrollbar->SendNotify(args);
 		}
 		//绘制边框
 		border.Color = GetBorderColor();
@@ -843,8 +847,9 @@ namespace EzUI {
 			pt.DrawRectangle(RectF(0, 0, clientRect.Width, clientRect.Height), 0, width);
 		}
 #endif
-		if (this->EventHandler) {
-			this->EventHandler(this, args);
+		if (this->Notify) {
+			bool bHandle=false;
+			this->Notify(this, args, bHandle);
 		}
 		args.PopLayer();//弹出纹理层
 		args.PopOffset();//弹出偏移
@@ -883,11 +888,11 @@ namespace EzUI {
 		}
 
 		for (auto& it : GetControls()) {
-			it->DispatchEvent(arg);
+			it->SendNotify(arg);
 		}
 
 		if (needScale && this->GetScrollBar()) {
-			this->GetScrollBar()->DispatchEvent(arg);
+			this->GetScrollBar()->SendNotify(arg);
 		}
 
 	}
@@ -939,7 +944,7 @@ namespace EzUI {
 		ctl->Parent = this;
 
 		if (ctl->GetScale() != this->GetScale()) {
-			ctl->DispatchEvent(DpiChangeEventArgs(this->GetScale()));
+			ctl->SendNotify(DpiChangeEventArgs(this->GetScale()));
 		}
 
 		ctl->TryPendLayout();
@@ -976,7 +981,7 @@ namespace EzUI {
 		ctl->PublicData = this->PublicData;
 		ctl->Parent = this;
 		if (ctl->GetScale() != this->GetScale()) {
-			ctl->DispatchEvent(DpiChangeEventArgs(this->GetScale()));
+			ctl->SendNotify(DpiChangeEventArgs(this->GetScale()));
 		}
 		ctl->TryPendLayout();
 		this->TryPendLayout();//添加控件需要将布局重新挂起
@@ -1038,9 +1043,9 @@ namespace EzUI {
 		}
 		return NULL;
 	}
-	std::vector<Control*> Control::FindControl(const EString& attrName, const EString& attrValue)
+	Controls Control::FindControl(const EString& attrName, const EString& attrValue)
 	{
-		std::vector<Control*> ctls;
+		Controls ctls;
 		if (attrName.empty() || attrValue.empty()) {
 			return ctls;
 		}
@@ -1077,9 +1082,9 @@ namespace EzUI {
 		}
 		return NULL;
 	}
-	std::vector<Control*> Control::FindChild(const EString& attrName, const EString& attrValue)
+	Controls Control::FindChild(const EString& attrName, const EString& attrValue)
 	{
-		std::vector<Control*> ctls;
+		Controls ctls;
 		if (attrName.empty() || attrValue.empty()) {
 			return ctls;
 		}

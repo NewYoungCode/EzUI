@@ -20,7 +20,26 @@ namespace EzUI {
 	class Spacer;
 	class ScrollBar;
 	enum class Cursor :ULONG_PTR;
+
+#if 1
 	typedef std::vector<Control*> Controls;
+#else
+	class UI_EXPORT Controls :public std::list<Control*> {
+	public:
+		//不要频繁使用此函数
+		inline	Control* operator[](int_t right_pos)const
+		{
+			int_t pos = 0;
+			for (auto& it : *this) {
+				if (pos == right_pos) {
+					return it;
+				}
+				++pos;
+			}
+			return NULL;
+		}
+	};
+#endif
 
 	//全局资源句柄
 	extern UI_VAR_EXPORT WCHAR __EzUI__WindowClassName[];//窗口类名
@@ -139,32 +158,52 @@ namespace EzUI {
 	struct MonitorInfo {
 		HMONITOR Monitor = NULL;
 		//显示器的位置 多显示器下Y轴可能出现负数或者大于0的时候代表显示器在设置里面显示器是错位的(多显示器没有平行);
-		EzUI::Rect Rect;//逻辑宽高
-		EzUI::Rect WorkRect;//工作区域
-		Size Physical;//显示器物理宽高
-		float Scale = 1.0f;//显示器缩放比例
-		float FPS = 60;//显示器帧率
-		bool Primary = false;//是否为主显示器
+		//逻辑宽高
+		EzUI::Rect Rect;
+		//工作区域
+		EzUI::Rect WorkRect;
+		//显示器物理宽高
+		Size Physical;
+		//显示器缩放比例
+		float Scale = 1.0f;
+		//显示器帧率
+		float FPS = 60;
+		//是否为主显示器
+		bool Primary = false;
 	};
 	struct WindowData {
-		float Scale = 1.0f;//缩放率
-		Control* FocusControl = NULL;//具有焦点的控件
-		Control* InputControl = NULL;//输入框
+		//缩放率
+		float Scale = 1.0f;
+		//具有焦点的控件
+		Control* FocusControl = NULL;
+		//输入框
+		Control* InputControl = NULL;
+		//单次绘图数量
 		int_t PaintCount = 0;
 #ifdef _DEBUG
-		bool Debug = false;//是否开启debug模式
-		int_t ColorIndex = 0;//调试模式下的特有字段
+		//是否开启debug模式
+		bool Debug = false;
+		//调试模式下的特有字段
+		int_t ColorIndex = 0;
 		Color DebugColor;
 		std::vector<Color> DebugColors{ Color::Red,Color::Green,Color::Blue,Color::Black,Color::White };
 #endif
-		EzUI::Window* Window = NULL;//主窗类的实例
-		HWND HANDLE = NULL;//窗口句柄
-		std::function<void(const Rect&)> InvalidateRect = NULL;//使一个区域无效
-		std::function<void()> UpdateWindow = NULL;//立即更新全部无效区域
-		std::function<bool(Control*, EventArgs&)> Notify = NULL;//
-		std::function<void(Control*)> RemoveControl = NULL;//清空控件标记等等...
-		std::function<void(Control*, const std::wstring&)> SetTips = NULL;//设置tips文字
-		std::function<void(Control*)> DelTips = NULL;//删除tips文字
+		//主窗类的实例
+		EzUI::Window* Window = NULL;
+		//窗口句柄
+		HWND HANDLE = NULL;
+		//使一个区域无效
+		std::function<void(const Rect&)> InvalidateRect = NULL;
+		//立即更新全部无效区域
+		std::function<void()> UpdateWindow = NULL;
+		//通知函数
+		std::function<void(Control*, EventArgs&,bool&)> SendNotify = NULL;//
+		//清空控件标记等等...
+		std::function<void(Control*)> RemoveControl = NULL;
+		//设置tips文字
+		std::function<void(Control*, const std::wstring&)> SetTips = NULL;
+		//删除tips文字
+		std::function<void(Control*)> DelTips = NULL;
 	};
 
 	class UI_EXPORT StopWatch {
@@ -186,11 +225,13 @@ namespace EzUI {
 		}
 	};
 
-
 	enum class LayoutState :byte {
-		None = 1, //无状态 (无需布局)
-		Pend = 2,//挂起中
-		Layouting = 4//布局中
+		//无状态 (无需布局)
+		None = 1,
+		//挂起中
+		Pend = 2,
+		//布局中
+		Layouting = 4
 	};
 	enum Event :long long {
 		None = 1,
@@ -397,25 +438,40 @@ namespace EzUI {
 		Rect InvalidRectangle;//WM_PAINT里面的无效区域
 		PaintEventArgs(EzUI::DXRender& _painter) : EventArgs(Event::OnPaint), Graphics(_painter) {}
 		virtual ~PaintEventArgs() {}
-		void PushLayer(const Rect& rectBounds);//速度较快
-		void PushLayer(const Geometry& dxGeometry);//比较耗性能,但是可以异形抗锯齿裁剪
-		void PopLayer();//弹出最后一个裁剪
+		//添加裁剪(速度较快)
+		void PushLayer(const Rect& rectBounds);
+		//添加异形裁剪 比较耗性能,但是可以异形抗锯齿裁剪
+		void PushLayer(const Geometry& dxGeometry);
+		//弹出最后一个裁剪
+		void PopLayer();
+		//放入一个偏移
 		void PushOffset(const Point& offset);
-		void PopOffset();//弹出最后一个偏移
+		//弹出最后一个偏移
+		void PopOffset();
 	};
 	// 为控件样式提供数据。
 	class UI_EXPORT ControlStyle {
 	public:
-		EzUI::Border Border;//边框信息
-		//UI_Float Opacity;//整体不透明度
-		Color BackColor = 0;//背景颜色
-		Image* BackImage = NULL;//背景图片 如果指定的图片被删除 请必须将此置零
-		Image* ForeImage = NULL;//前景图片 如果指定的图片被删除 请必须将此置零
-		std::wstring FontFamily;//字体名称 具有继承性
-		int_t FontSize = 0;//字体大小 具有继承性 此处采用int
-		Color ForeColor;//前景颜色  具有继承性
-		HCURSOR Cursor = NULL;//鼠标样式
-		float Angle = 0;//旋转范围 0~360
+		//边框信息
+		EzUI::Border Border;
+		//整体不透明度
+		//UI_Float Opacity;
+		//背景颜色
+		Color BackColor = 0;
+		//背景图片 如果指定的图片被删除 请必须将此置零
+		Image* BackImage = NULL;
+		//前景图片 如果指定的图片被删除 请必须将此置零
+		Image* ForeImage = NULL;
+		//字体名称 具有继承性
+		std::wstring FontFamily;
+		//字体大小 具有继承性
+		int_t FontSize = 0;
+		//前景颜色  具有继承性
+		Color ForeColor;
+		//鼠标样式
+		HCURSOR Cursor = NULL;
+		//旋转范围 0~360
+		float Angle = 0;
 	private:
 		void operator=(const ControlStyle& right) {} //禁止直接赋值 因为这样会导致 Color执行拷贝使得Color变得不合法的有效
 		ControlStyle(const ControlStyle& right) {} //禁止拷贝 
@@ -432,14 +488,18 @@ namespace EzUI {
 		std::map<EString, EString> _attrs;
 	public:
 		const bool IsWindow = false;
-		void* Tag = NULL;
-		WindowData* PublicData = NULL;//公共数据
+		//用户自定义数据
+		int_t Tag = NULL;
+		//公共数据 请不要改动此变量
+		WindowData* PublicData = NULL;
 	public:
 		IControl();
 		virtual ~IControl();
 	public:
-		virtual void SetAttribute(const EString& attrName, const EString& attrValue);//设置属性
-		virtual EString GetAttribute(const EString& attrName);//获取属性
+		//设置属性
+		virtual void SetAttribute(const EString& attrName, const EString& attrValue);
+		//获取属性
+		virtual EString GetAttribute(const EString& attrName);
 	};
 
 	//原理采用PostMessage(请确保当前UI线程中至少存在一个窗口)

@@ -89,7 +89,7 @@ namespace EzUI {
 				break;
 			}
 
-			if (!::IsZoomed(Hwnd()) && Zoom) {
+			if (!::IsZoomed(Hwnd()) && this->IsResizable()) {
 				RECT rc;
 				::GetWindowRect(Hwnd(), &rc);
 				POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };

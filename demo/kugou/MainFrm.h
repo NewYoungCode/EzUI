@@ -34,7 +34,7 @@ private:
 	EString nowSong;
 protected:
 	virtual void OnKeyDown(WPARAM wparam, LPARAM lParam)override;
-	bool OnNotify(Control* sender, EventArgs& args)override;
+	void OnNotify(Control* sender, EventArgs& args,bool&bHandle)override;
 	void OpenSongView();
 	void TimerTick();
 	void OpenLrcView();

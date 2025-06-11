@@ -15,6 +15,7 @@ namespace EzUI {
 		int_t Interval = -1;
 	public:
 		ThreadTimer();
+		bool IsStopped();
 		void Start();
 		void Stop();
 		virtual ~ThreadTimer();

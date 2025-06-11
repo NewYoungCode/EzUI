@@ -2,12 +2,11 @@
 
 LocalItem::LocalItem(const EString& _songName, const EString& _songTime) {
 
-	Style.FontSize = 12;
+	//this->Style.FontSize = 12;
 	//this->Style.Angle = 5;
-	//this->HoverStyle.Angle =6;
-	//time.HoverStyle.Angle = 180;
-	//this->ShadowWidth = 5;
-	del.Style.ForeImage = Image::Make(L"imgs/del.png");
+	//this->HoverStyle.Angle = 6;
+
+	del.Style.ForeImage = Image::Make(L"res/imgs/del.png");
 	del.SetFixedSize({ 20,20 });
 	del.Style.Cursor = LoadCursor(Cursor::HAND);
 	del.Name = "dellocal";
@@ -20,6 +19,7 @@ LocalItem::LocalItem(const EString& _songName, const EString& _songTime) {
 	songName.Ellipsis = "...";//文本超出容器之外采用省略号
 	songName.TextAlign = TextAlign::MiddleLeft;
 	songName.SetTips("child_" + _songName);
+	//穿透事件
 	songName.EventPassThrough = time.EventPassThrough = Event::OnHover | Event::OnActive | Event::OnMouseDoubleClick;
 	songName.HoverStyle.FontSize = 15;
 
@@ -27,10 +27,10 @@ LocalItem::LocalItem(const EString& _songName, const EString& _songTime) {
 		songName.SetAutoHeight(true);
 		songName.SetUnderline(0,5);*/
 
+	time.HoverStyle.Angle = 180;
 	time.SetFixedWidth(50);
 	time.SetText(_songTime);
 	time.TextAlign = TextAlign::MiddleRight;
-	time.HoverStyle.FontSize = 20;
 
 	this->SetFixedHeight(33);
 	HoverStyle.BackColor = Color(230, 230, 230, 100);
@@ -66,7 +66,7 @@ SearchItem::~SearchItem() {
 }
 SearchItem::SearchItem(const Song& s) {
 	song = s;
-	this->Tag = &song;
+	this->Tag = (int_t)&song;
 	SetAttribute("FileHash", s.hash);
 	SetAttribute("SingerName", s.SingerName);
 
@@ -92,7 +92,7 @@ SearchItem::SearchItem(const Song& s) {
 	mv.EventPassThrough = Event::OnHover;
 	if (!s.MvHash.empty()) {
 		mv.SetAttribute("mvhash", s.MvHash);
-		mv.Style.ForeImage = Image::Make(L"imgs/mvicon.png");;
+		mv.Style.ForeImage = Image::Make(L"res/imgs/mvicon.png");;
 		mv.Margin = 8;
 		mv.Style.Cursor = LoadCursor(Cursor::HAND);
 	}
@@ -108,7 +108,7 @@ SearchItem::SearchItem(const Song& s) {
 
 	del.SetFixedWidth(33);
 
-	EString fileName = "imgs/" + std::to_string(s.QualityLevel) + ".png";
+	EString fileName = "res/imgs/" + std::to_string(s.QualityLevel) + ".png";
 	Image* img = Image::Make(fileName.unicode());
 	del.Style.BackImage = img;
 	del.Margin = 8;

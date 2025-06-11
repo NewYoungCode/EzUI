@@ -18,10 +18,13 @@ namespace EzUI {
 		virtual void DoPaint(HDC winHDC, const Rect& rePaintRect)override;
 		void UpdateShadowBox();
 	public:
+		//设置阴影宽度
 		void SetShadow(int_t weight);
 		BorderlessWindow(int_t width, int_t height, HWND owner = NULL, DWORD exStyle = NULL);
 		virtual ~BorderlessWindow();
+		//获取阴影窗口
 		ShadowBox* GetShadowBox();
+		//关闭窗口阴影
 		void CloseShadowBox();
 		void Hide();
 	};

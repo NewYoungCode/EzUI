@@ -72,12 +72,17 @@ namespace EzUI {
 		virtual ~TextBox();
 		virtual void SetAttribute(const EString& key, const EString& value)override;
 		virtual Rect GetCareRect()override;
-		void Analysis();//分析字符串
-		void Insert(const EString& str);//在当前光标中插入文字
+		//分析字符串
+		void Analysis();
+		//在当前光标中插入文字
+		void Insert(const EString& str);
 		const EString GetText();
+		//获取滚动条
 		virtual ScrollBar* GetScrollBar()override;
 		void SetText(const EString& text);
+		//是否多行显示
 		bool IsMultiLine();
+		//设置是否多行显示
 		void SetMultiLine(bool multiLine);
 	};
 };

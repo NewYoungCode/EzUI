@@ -32,8 +32,11 @@ namespace EzUI {
 		virtual void OnLayout()override;
 	public:
 		ComBox();
+		//获取选中的文字
 		EString GetText();
+		//获取选中的下标
 		int_t GetCheck();
+		//选中某个下标
 		bool SetCheck(int_t pos);
 		virtual ~ComBox();
 		int_t AddItem(const EString& text);

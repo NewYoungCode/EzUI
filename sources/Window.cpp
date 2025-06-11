@@ -152,7 +152,7 @@ namespace EzUI {
 				__INPUT_CONTROL = NULL;
 			}
 			};
-		PublicData->Notify = [this](Control* sender, EventArgs& args)->bool {
+		PublicData->SendNotify = [this](Control* sender, EventArgs& args, bool& bHandle)->void {
 			IIFrame* frame = NULL;
 			Control* parent = sender;
 			//依次往上父控件看看有没有当前控件是否在内联页面中
@@ -164,13 +164,11 @@ namespace EzUI {
 				parent = parent->Parent;
 			}
 			//如果当前控件存在与内联界面且事件通知处理器不为NULL的时候
-			if (frame && frame->NotifyEventHandler) {
-				bool isProc = frame->NotifyEventHandler(sender, args);
-				if (isProc) {
-					return isProc;
-				}
+			if (frame && frame->Notify) {
+				frame->Notify(sender, args, bHandle);
+				if (bHandle)return;
 			}
-			return OnNotify(sender, args);
+			this->OnNotify(sender, args, bHandle);
 			};
 		UI_SET_USERDATA(Hwnd(), this->PublicData);
 	}
@@ -226,6 +224,12 @@ namespace EzUI {
 		LONG_PTR exStyle = ::GetWindowLongPtr(Hwnd(), GWL_EXSTYLE);
 		bool isTop = ((exStyle & WS_EX_TOPMOST) == WS_EX_TOPMOST);
 		return isTop;
+	}
+	void Window::SetResizable(bool resize) {
+		this->_resize = resize;
+	}
+	bool Window::IsResizable() {
+		return this->_resize;
 	}
 	void Window::SetSize(const Size& size) {
 		const Rect& rect = GetWindowRect();
@@ -291,7 +295,7 @@ namespace EzUI {
 			}
 		}
 		if (_layout->GetScale() != this->GetScale()) {
-			_layout->DispatchEvent(DpiChangeEventArgs(this->GetScale()));
+			_layout->SendNotify(DpiChangeEventArgs(this->GetScale()));
 		}
 		_layout->SetRect(this->GetClientRect());
 	}
@@ -441,10 +445,10 @@ namespace EzUI {
 		}
 		if (__INPUT_CONTROL) {
 			KillFocusEventArgs args(ctl);
-			__INPUT_CONTROL->DispatchEvent(args);
+			__INPUT_CONTROL->SendNotify(args);
 		}
 		FocusEventArgs args(__INPUT_CONTROL);
-		ctl->DispatchEvent(args);
+		ctl->SendNotify(args);
 		__INPUT_CONTROL = ctl;
 		__FOCUS_CONTROL = ctl;
 	}
@@ -791,7 +795,7 @@ namespace EzUI {
 	void Window::OnPaint(PaintEventArgs& arg)
 	{
 		if (_layout) {
-			_layout->DispatchEvent(arg);//
+			_layout->SendNotify(arg);//
 		}
 	}
 
@@ -880,7 +884,7 @@ namespace EzUI {
 		if (__INPUT_CONTROL && _mouseDown) { //按住移动的控件
 			auto ctlRect = __INPUT_CONTROL->GetClientRect();
 			MouseEventArgs args(Event::OnMouseMove, { point.X - ctlRect.X ,point.Y - ctlRect.Y });
-			__INPUT_CONTROL->DispatchEvent(args);
+			__INPUT_CONTROL->SendNotify(args);
 			return;
 		}
 
@@ -897,11 +901,11 @@ namespace EzUI {
 				auto rect = __FOCUS_CONTROL->GetClientRect();
 				args.Location.X = point.X - rect.X;
 				args.Location.Y = point.Y - rect.Y;
-				ok = __FOCUS_CONTROL->DispatchEvent(args);
+				ok = __FOCUS_CONTROL->SendNotify(args);
 			}
 			//触发MouseEnter
 			args.EventType = Event::OnMouseEnter;
-			ok = newCtl->DispatchEvent(args);
+			ok = newCtl->SendNotify(args);
 			if (ok) {
 				__FOCUS_CONTROL = newCtl;
 			}
@@ -909,7 +913,7 @@ namespace EzUI {
 		//触发命中的MouseMove
 		if (__FOCUS_CONTROL) {
 			args.EventType = Event::OnMouseMove;
-			__FOCUS_CONTROL->DispatchEvent(args);
+			__FOCUS_CONTROL->SendNotify(args);
 		}
 
 	}
@@ -917,7 +921,7 @@ namespace EzUI {
 	{
 		if (__FOCUS_CONTROL) {
 			MouseEventArgs args(Event::OnMouseLeave);
-			__FOCUS_CONTROL->DispatchEvent(args);
+			__FOCUS_CONTROL->SendNotify(args);
 		}
 		__FOCUS_CONTROL = NULL;
 		_mouseDown = false;
@@ -930,7 +934,7 @@ namespace EzUI {
 			MouseEventArgs args(Event::OnMouseWheel);
 			args.Location = point;
 			args.ZDelta = zDelta;
-			__FOCUS_CONTROL->DispatchEvent(args);
+			__FOCUS_CONTROL->SendNotify(args);
 		}
 		ScrollBar* scrollBar = NULL;
 		if (__FOCUS_CONTROL && __FOCUS_CONTROL->GetScrollBar() && __FOCUS_CONTROL->GetScrollBar()->Scrollable()) {
@@ -949,7 +953,7 @@ namespace EzUI {
 			MouseEventArgs args(Event::OnMouseWheel);
 			args.Location = point;
 			args.ZDelta = zDelta;
-			scrollBar->DispatchEvent(args);
+			scrollBar->SendNotify(args);
 		}
 	}
 	void Window::OnMouseDoubleClick(MouseButton mbtn, const Point& point)
@@ -960,7 +964,7 @@ namespace EzUI {
 			MouseEventArgs args(Event::OnMouseDoubleClick);
 			args.Button = mbtn;
 			args.Location = relativePoint;
-			outCtl->DispatchEvent(args);
+			outCtl->SendNotify(args);
 		}
 	}
 
@@ -980,7 +984,7 @@ namespace EzUI {
 			MouseEventArgs args(Event::OnMouseDown);
 			args.Button = mbtn;
 			args.Location = relativePoint;
-			__INPUT_CONTROL->DispatchEvent(args);
+			__INPUT_CONTROL->SendNotify(args);
 		}
 		//获取按下按钮和按下的时差
 		auto time_now = ::GetTickCount64();//记录鼠标按下的当前时间
@@ -1009,7 +1013,7 @@ namespace EzUI {
 			//触发抬起事件
 			{
 				args.EventType = Event::OnMouseUp;
-				__INPUT_CONTROL->DispatchEvent(args);
+				__INPUT_CONTROL->SendNotify(args);
 
 			}
 			//触发单击事件 如果焦点还在并且鼠标未移出控件内 
@@ -1018,7 +1022,7 @@ namespace EzUI {
 				auto diff = _time - _lastDownTime;
 				if (diff < 500) {//鼠标按住超过200毫秒则不触发单机事件
 					args.EventType = Event::OnMouseClick;
-					__INPUT_CONTROL->DispatchEvent(args);
+					__INPUT_CONTROL->SendNotify(args);
 				}
 			}
 			if (__INPUT_CONTROL) {
@@ -1031,7 +1035,7 @@ namespace EzUI {
 				else {
 					args.EventType = Event::OnMouseLeave;//触发鼠标离开事件
 				}
-				__INPUT_CONTROL->DispatchEvent(args);
+				__INPUT_CONTROL->SendNotify(args);
 			}
 		}
 	}
@@ -1070,21 +1074,21 @@ namespace EzUI {
 	{
 		if (__INPUT_CONTROL) { //
 			KeyboardEventArgs args(Event::OnKeyChar, wParam, lParam);
-			__INPUT_CONTROL->DispatchEvent(args);
+			__INPUT_CONTROL->SendNotify(args);
 			return;
 		}
 	}
 	void Window::OnKeyDown(WPARAM wParam, LPARAM lParam) {
 		if (__INPUT_CONTROL) { //
 			KeyboardEventArgs args(Event::OnKeyDown, wParam, lParam);
-			__INPUT_CONTROL->DispatchEvent(args);
+			__INPUT_CONTROL->SendNotify(args);
 			return;
 		}
 	}
 	void Window::OnKeyUp(WPARAM wParam, LPARAM lParam) {
 		if (__INPUT_CONTROL) { //
 			KeyboardEventArgs args(Event::OnKeyUp, wParam, lParam);
-			__INPUT_CONTROL->DispatchEvent(args);
+			__INPUT_CONTROL->SendNotify(args);
 			return;
 		}
 	}
@@ -1112,16 +1116,16 @@ namespace EzUI {
 		this->_maxSize.Scale(newScale);
 		DpiChangeEventArgs arg(systemScale);
 		if (_layout) {
-			_layout->DispatchEvent(arg);
+			_layout->SendNotify(arg);
 		}
 		if (!newRect.IsEmptyArea()) {
 			SetWindowPos(Hwnd(), NULL, newRect.X, newRect.Y, newRect.Width, newRect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
 		}
 	}
-	bool Window::OnNotify(Control* sender, EventArgs& args) {
+	void Window::OnNotify(Control* sender, EventArgs& args, bool& bHandle) {
 		if (args.EventType == Event::OnMouseDoubleClick) {
 			if (sender->Action == ControlAction::Title) {
-				if (this->Zoom) {
+				if (this->_resize) {
 					if (::IsZoomed(Hwnd())) {
 						this->ShowNormal();
 					}
@@ -1130,21 +1134,21 @@ namespace EzUI {
 					}
 				}
 			}
-			return false;
+			return;
 		}
 		if (args.EventType == Event::OnMouseDown) {
 			if (sender->Action == ControlAction::MoveWindow) {
 				GetCursorPos(&_dragPoint); // 获取屏幕坐标
 				_moveWindow = true;
-				return false;
+				return;
 			}
 			if (sender->Action == ControlAction::Title) {
 				TitleMoveWindow();
-				return false;
+				return;
 			}
 			if (sender->Action == ControlAction::Mini) {
 				this->ShowMinimized();
-				return false;
+				return;
 			}
 			if (sender->Action == ControlAction::Max) {
 				if (!IsZoomed(Hwnd())) {
@@ -1153,18 +1157,18 @@ namespace EzUI {
 				else {
 					this->ShowNormal();
 				}
-				return false;
+				return;
 			}
 			if (sender->Action == ControlAction::Close) {
 				MouseEventArgs args(Event::OnMouseLeave);
-				sender->DispatchEvent(args);
+				sender->SendNotify(args);
 				this->Close();
-				return false;
+				return;
 			}
 		}
 		if (args.EventType == Event::OnMouseClick) {
 			//鼠标左侧按钮单击
-			//if (args.EventType == Event::OnMouseClick && ((MouseEventArgs&)(args)).Button == MouseButton::Left) {
+			//if (args.EventType == Event::OnMouseClick) {
 			EString  ctlName = sender->GetAttribute("tablayout");
 			if (!ctlName.empty()) {
 				auto ctls = sender->Parent->FindControl("tablayout", ctlName);
@@ -1184,6 +1188,5 @@ namespace EzUI {
 			}
 
 		}
-		return false;
 	}
 };

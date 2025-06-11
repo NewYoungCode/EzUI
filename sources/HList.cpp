@@ -84,7 +84,7 @@ namespace EzUI {
 				}
 			}
 			else {
-				it->DispatchEvent(args);
+				it->SendNotify(args);
 			}
 		}
 	}

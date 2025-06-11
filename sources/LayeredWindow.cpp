@@ -5,9 +5,10 @@ namespace EzUI {
 	LayeredWindow::LayeredWindow(int_t width, int_t height, HWND owner) :BorderlessWindow(width, height, owner, WS_EX_LAYERED)
 	{
 		UpdateShadowBox();
-		_timer.Tick = [=](ThreadTimer* t) {
+		_timeOut.Interval = 0;
+		_timeOut.Tick = [this](ThreadTimer* t) {
 			t->Stop();
-			Sleep(5);
+			Sleep(5);//延迟5ms之后再去绘制
 			::SendMessage(Hwnd(), WM_PAINT, 0, 0);
 			};
 		this->PublicData->InvalidateRect = [this](const Rect& rect) ->void {
@@ -27,16 +28,15 @@ namespace EzUI {
 	void LayeredWindow::InvalidateRect(const Rect& _rect) {
 		//将此区域添加到无效区域
 		_invalidateRect.push_back(_rect);
-		//延迟5ms之后再去绘制
-		_timer.Stop();
-		_timer.Interval = 0;
-		_timer.Start();
+		//timer延迟绘制
+		_timeOut.Start();
 	}
 	void LayeredWindow::BeginPaint(Rect* out_rect)
 	{
 		const Rect& clientRect = GetClientRect();
 		int_t Width = clientRect.Width;
 		int_t Height = clientRect.Height;
+		//将所有无效区域并集
 		for (auto& it : _invalidateRect) {
 			Rect rect = it;
 			//这段代码是保证重绘区域一定是在窗口内
