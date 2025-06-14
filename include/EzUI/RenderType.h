@@ -491,6 +491,14 @@ namespace EzUI {
 		//     图像大小按其原有的大小比例被增加或减小。
 		Zoom = 4
 	};
+
+	//描边样式
+	enum class StrokeStyle
+	{
+		Solid,//实线
+		Dash//虚线
+	};
+
 	/// <summary>
 	/// 描述边框的一些信息
 	/// </summary>
@@ -505,6 +513,7 @@ namespace EzUI {
 		int_t BottomRightRadius = 0;
 		int_t BottomLeftRadius = 0;
 		__EzUI__Color Color;
+		StrokeStyle BorderStyle = StrokeStyle::Solid;
 	public:
 		class Radius {
 			Border& Border;

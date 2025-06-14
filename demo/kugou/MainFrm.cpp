@@ -46,14 +46,6 @@ void MainFrm::InitForm() {
 		main->Style.BackImage->SizeMode = ImageSizeMode::CenterImage;
 	}
 
-	int scrollBarWidth = 9 * this->GetScale() + 0.5;
-	////美化左侧本地列表的滚动条
-	localList->GetScrollBar()->SetWidth(scrollBarWidth);
-	localList->GetScrollBar()->Style.Border.Radius = scrollBarWidth;
-	//美化搜索列表的滚动条
-	searchList->GetScrollBar()->SetWidth(scrollBarWidth);
-	searchList->GetScrollBar()->Style.Border.Radius = scrollBarWidth;
-	searchList->GetScrollBar()->Style.BackColor = Color(200, 200, 200, 50);
 	//集体设置右上角的最大化 最小化 关闭按钮 的悬浮效果
 	$(this->FindControl("btns")->GetControls()).CssHover("color:#ffffff;");
 

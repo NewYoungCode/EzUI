@@ -62,7 +62,7 @@ namespace EzUI {
 			codv.notify_one();
 		}
 
-		//等待所有任务完成
+		//等待所有任务被取走
 		void WaitAll();
 		virtual ~TaskFactory();
 	};

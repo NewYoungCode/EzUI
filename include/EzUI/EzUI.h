@@ -197,32 +197,13 @@ namespace EzUI {
 		//立即更新全部无效区域
 		std::function<void()> UpdateWindow = NULL;
 		//通知函数
-		std::function<void(Control*, EventArgs&,bool&)> SendNotify = NULL;//
+		std::function<void(Control*, EventArgs&, bool&)> SendNotify = NULL;//
 		//清空控件标记等等...
 		std::function<void(Control*)> RemoveControl = NULL;
 		//设置tips文字
 		std::function<void(Control*, const std::wstring&)> SetTips = NULL;
 		//删除tips文字
 		std::function<void(Control*)> DelTips = NULL;
-	};
-
-	class UI_EXPORT StopWatch {
-	private:
-		std::chrono::system_clock::time_point beg_t;
-	public:
-		StopWatch() {
-			beg_t = std::chrono::system_clock::now();    //
-		}
-		static time_t Now() {
-			auto nowTime = std::chrono::system_clock::now();    //
-			return std::chrono::system_clock::to_time_t(nowTime);
-		}
-		time_t ElapsedMilliseconds() {
-			auto end_t = std::chrono::system_clock::now();    //
-			std::chrono::duration<double> diff = end_t - beg_t;//
-			beg_t = end_t;
-			return std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();//
-		}
 	};
 
 	enum class LayoutState :byte {
@@ -452,6 +433,13 @@ namespace EzUI {
 	// 为控件样式提供数据。
 	class UI_EXPORT ControlStyle {
 	public:
+		enum class Type {
+			Static,
+			Checked,
+			Hover,
+			Active
+		};
+	public:
 		//边框信息
 		EzUI::Border Border;
 		//整体不透明度
@@ -479,8 +467,6 @@ namespace EzUI {
 		ControlStyle() {}
 		virtual ~ControlStyle() {}
 		void Scale(float scale);
-		void SetStyleSheet(const EString& styleStr, const std::function<void(Image*)>& callback = NULL);
-		void SetStyle(const EString& key, const EString& value, const std::function<void(Image*)>& callback = NULL);
 	};
 
 	class UI_EXPORT IControl {
@@ -500,6 +486,10 @@ namespace EzUI {
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);
 		//获取属性
 		virtual EString GetAttribute(const EString& attrName);
+		//获取全部属性
+		virtual const std::map<EString, EString>& IControl::GetAttributes();
+		//移除某个属性
+		virtual void RemoveAttribute(const EString& attrName);
 	};
 
 	//原理采用PostMessage(请确保当前UI线程中至少存在一个窗口)

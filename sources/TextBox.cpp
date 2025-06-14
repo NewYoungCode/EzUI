@@ -542,7 +542,7 @@ namespace EzUI {
 				this->Placeholder = value;
 				break;
 			}
-			if (key == "text") {
+			if (key == "text" || key == "value") {
 				this->SetText(value);
 				break;
 			}

@@ -16,20 +16,15 @@
 #include "PictureBox.h"
 #include "Window.h"
 #include "ComBox.h"
+#include "Selector.h"
 namespace EzUI {
 	//主窗口中的内联页面类
 	class UI_EXPORT IFrame;
 	class UI_EXPORT UIManager {
 	public:
-		enum class Style {
-			Static,
-			Checked,
-			Hover,
-			Active
-		};
 		struct Selector
 		{
-			UIManager::Style styleType;
+			ControlStyle::Type styleType;
 			EString selectorName;
 			EString styleStr;
 		};
@@ -43,14 +38,15 @@ namespace EzUI {
 		std::function<void(Image*)> BuildImageCallback;
 		std::list<Image*> freeImages;
 		std::list<XmlNode> controls;
+		std::list<UIManager::Selector> _styles;
 		void LoadControl(void* node, Control* control);
 		Control* BuildControl(void* node);//内部函数
 		void RecordControl(Control* ctl, const EString& tagNamee);//记录xml中的控件
 		void AnalysisStyle(const EString& styleStr, std::list<UIManager::Selector>* out);//分析样式
-		void ApplayStyle(Control* ctl, const std::list<UIManager::Selector>& selectors, const EString& tagName);//应用样式(为控件应用所有样式)
+		void ApplayStyle(Control* ctl, const std::list<UIManager::Selector>& selectors, const EString& tagName);
+		//应用样式(为控件应用所有样式)
 	protected:
 		virtual Control* OnBuildControl(const EString& nodeName);//当解析到一个节点的时候发生
-		virtual void OnSetAttribute(Control* ctl, const EString& attrName, const EString& attrValue);//当控件设置属性的时候发生
 	public:
 		UIManager();
 		virtual ~UIManager();
@@ -90,27 +86,4 @@ namespace EzUI {
 		};
 	};
 
-	//选择器(多功能选择器暂时未完善)
-	class UI_EXPORT _Selector
-	{
-	private:
-		Control* ctl = NULL;
-		Control* notCtl = NULL;
-		std::vector<Control*> ctls;
-		_Selector& NextName(const EString& key) { return *this; };
-		_Selector& NextId(const EString& key) { return *this; };
-	public:
-		_Selector(const std::vector<Control*>& controls);
-		_Selector(const std::list<Control*>& controls);
-		_Selector(Control* control);
-		_Selector(Control* control, const EString& mathStr);
-		virtual ~_Selector();
-		_Selector& Css(const EString& styleStr);
-		_Selector& CssHover(const EString& styleStr);
-		_Selector& CssActive(const EString& styleStr);
-		_Selector& Attr(const EString& key, const EString& value);
-		_Selector& Refresh();
-		_Selector& Not(Control* fiterCtl);
-	};
-#define $ _Selector
 };

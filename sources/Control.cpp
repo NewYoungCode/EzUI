@@ -162,6 +162,8 @@ namespace EzUI {
 		int_t bottomRightRadius = border.BottomRightRadius;
 		int_t bottomLeftRadius = border.BottomLeftRadius;
 
+		//决定绘制虚线还是实线
+		e.Graphics.SetStrokeStyle(border.BorderStyle);
 		//规则的矩形
 		if (topLeftRadius == 0 && topRightRadius == 0 && bottomLeftRadius == 0 && bottomRightRadius == 0) {
 			bool hasBorder = borderLeft || borderTop || borderRight || borderBottom;
@@ -208,25 +210,7 @@ namespace EzUI {
 	ControlStyle& Control::GetDefaultStyle() {
 		return this->Style;
 	}
-	void Control::SetStyleSheet(const EString& styleStr, ControlState _state)
-	{
-		do
-		{
-			if (_state == ControlState::Static) {
-				this->Style.SetStyleSheet(styleStr);//默认样式
-				break;
-			}
-			if (_state == ControlState::Hover) {
-				this->HoverStyle.SetStyleSheet(styleStr);//悬浮样式
-				break;
-			}
-			if (_state == ControlState::Active) {
-				this->ActiveStyle.SetStyleSheet(styleStr);//鼠标按下样式
-				break;
-			}
-		} while (false);
 
-	}
 	void Control::SetAttribute(const EString& attrName, const EString& attrValue)
 	{
 		__super::SetAttribute(attrName, attrValue);
@@ -376,6 +360,10 @@ namespace EzUI {
 					this->Enable = false;
 					break;
 				}
+			}
+			if (attrName == "disabled") {
+				this->Enable = false;
+				break;
 			}
 			if (attrName == "scrollbar") {
 				ScrollBar* sb = this->GetScrollBar();
@@ -848,7 +836,7 @@ namespace EzUI {
 		}
 #endif
 		if (this->Notify) {
-			bool bHandle=false;
+			bool bHandle = false;
 			this->Notify(this, args, bHandle);
 		}
 		args.PopLayer();//弹出纹理层

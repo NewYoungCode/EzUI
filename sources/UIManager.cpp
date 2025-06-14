@@ -5,10 +5,10 @@
 
 namespace EzUI {
 	//去除空格或者其他符号 双引号内的空格不会去除
-	inline void TrimStyle(EString& str, CHAR _char = ' ') {
-		CHAR* bufStr = new CHAR[str.size() + 1]{ 0 };
+	inline void EraseChar(EString& str, char _char = ' ') {
+		char* bufStr = new char[str.size() + 1] { 0 };
 		size_t pos = 0;
-		char count = 0;
+		size_t count = 0;
 		for (auto& it : str) {
 			if (it == '"') {
 				++count;
@@ -21,22 +21,356 @@ namespace EzUI {
 			++pos;
 		}
 		str = bufStr;
-		delete bufStr;
+		delete[] bufStr;
 	}
 	inline EString Attribute(TiXmlElement* node, const char* szstr) {
 		auto str = node->Attribute(szstr);
 		if (str == NULL) return "";
 		return str;
 	}
+	inline float __ToFloat(EString numStr) {
+		//去掉px字样
+		Text::Replace(&numStr, "px", "", true);
+		return std::stof(numStr.c_str());
+	}
 };
 
 namespace EzUI {
 
+	void SetStyle(Control* ctl, ControlStyle* style, ControlStyle::Type styleType, const EString& key, EString value, const std::function<void(Image*)>& callback)
+	{
+		do
+		{
+			if (styleType == ControlStyle::Type::Static) {
+				if (key == "width") {
+					ctl->SetFixedWidth(__ToFloat(value));
+					break;
+				}
+				if (key == "height") {
+					ctl->SetFixedHeight(__ToFloat(value));
+					break;
+				}
+			}
+
+			if (key == "cursor") {
+				if (value == "pointer") {
+					style->Cursor = LoadCursor(EzUI::Cursor::HAND);
+				}
+				else if (value == "help") {
+					style->Cursor = LoadCursor(EzUI::Cursor::HELP);
+				}
+				else if (value == "n-resize") {
+					//南北箭头 纵向
+					style->Cursor = LoadCursor(EzUI::Cursor::SIZENS);
+				}
+				else if (value == "e-resize") {
+					//东西箭头 水平
+					style->Cursor = LoadCursor(EzUI::Cursor::SIZEWE);
+				}
+				else if (value == "move") {
+					//四个方向的箭头都有
+					style->Cursor = LoadCursor(EzUI::Cursor::SIZEALL);
+				}
+				break;
+			}
+			if (key == "background-color") {
+				style->BackColor = Color::Make(value);
+				break;
+			}
+			if (key == "background-image") {
+				value = value.replace("\"", "");//删除双引号;
+				style->BackImage = Image::Make(value);
+				if (callback) {
+					callback(style->BackImage);
+				}
+				break;
+			}
+			if (key == "fore-image") {
+				value = value.replace("\"", "");//删除双引号;
+				style->ForeImage = Image::Make(value);
+				if (callback) {
+					callback(style->ForeImage);
+				}
+				break;
+			}
+			if (key == "color" || key == "fore-color") {
+				style->ForeColor = Color::Make(value);
+				break;
+			}
+			if (key == "border-color") {
+				style->Border.Color = Color::Make(value);
+				break;
+			}
+			if (key == "border-style") {
+				if (value == "solid") {
+					style->Border.BorderStyle = StrokeStyle::Solid;
+				}
+				else if (value == "dashed") {
+					style->Border.BorderStyle = StrokeStyle::Dash;
+				}
+				break;
+			}
+			if (key == "border-radius") {
+				style->Border.Radius = __ToFloat(value);
+				break;
+			}
+			if (key == "border-top-left-radius") {
+				style->Border.TopLeftRadius = __ToFloat(value);
+				break;
+			}
+			if (key == "border-top-right-radius") {
+				style->Border.TopRightRadius = __ToFloat(value);
+				break;
+			}
+			if (key == "border-bottom-right-radius") {
+				style->Border.BottomRightRadius = __ToFloat(value);
+				break;
+			}
+			if (key == "border-bottom-left-radius") {
+				style->Border.BottomLeftRadius = __ToFloat(value);
+				break;
+			}
+			if (key == "font-size") {
+				style->FontSize = __ToFloat(value);
+				break;
+			}
+			if (key == "font-family") {
+				value = value.replace("\"", "");//删除双引号;
+				style->FontFamily = value.unicode();
+				break;
+			}
+			if (key == "border") {
+				auto width = __ToFloat(value);
+				style->Border.Left = width;
+				style->Border.Top = width;
+				style->Border.Right = width;
+				style->Border.Bottom = width;
+				break;
+			}
+			if (key == "border-left") {
+				style->Border.Left = __ToFloat(value);
+				break;
+			}
+			if (key == "border-top") {
+				style->Border.Top = __ToFloat(value);
+				break;
+			}
+			if (key == "border-right") {
+				style->Border.Right = __ToFloat(value);
+				break;
+			}
+			if (key == "border-bottom") {
+				style->Border.Bottom = __ToFloat(value);
+				break;
+			}
+		} while (false);
+	}
+	void SetStyleSheet(Control* ctl, ControlStyle::Type styleType, const EString& styleStr, const std::function<void(Image*)>& callback)
+	{
+		//确定每一个样式的类型
+		ControlStyle* cSytle = NULL;
+		if (styleType == ControlStyle::Type::Static)cSytle = &ctl->Style;
+		if (styleType == ControlStyle::Type::Hover)cSytle = &ctl->HoverStyle;
+		if (styleType == ControlStyle::Type::Active)cSytle = &ctl->ActiveStyle;
+		if (styleType == ControlStyle::Type::Checked) {
+			auto* ckBox = dynamic_cast<CheckBox*>(ctl);
+			if (ckBox) {
+				cSytle = &ckBox->CheckedStyle;
+			}
+		}
+		//分割每一行样式
+		auto attrs = styleStr.split(";");
+		for (auto& it : attrs) {
+			size_t pos = it.find(":");
+			if (pos == -1)continue;
+			EString key = it.substr(0, pos);
+			EString value = it.substr(pos + 1);
+			SetStyle(ctl, cSytle, styleType, key, value, callback);//去应用每一行样式
+		}
+	}
+	int_t MathStyle(Control* ctl, const EString& selectorName, const std::list<UIManager::Selector>& selectors, const std::function<void(Image*)>& BuildImageCallback)
+	{
+		int_t mathCount = 0;
+		for (auto& it : selectors) {
+			if (it.selectorName == selectorName) {
+				++mathCount;
+				auto& styleType = it.styleType;
+				auto& styleStr = it.styleStr;
+				SetStyleSheet(ctl, styleType, styleStr, BuildImageCallback);
+			}
+		}
+		//返回匹配成功的个数
+		return mathCount;
+	}
+	void ApplayStyle(Control* ctl, const  EString& selectName, const std::list<UIManager::Selector>& selectors, const std::function<void(Image*)>& BuildImageCallback)
+	{
+		MathStyle(ctl, selectName, selectors, BuildImageCallback);
+		MathStyle(ctl, selectName + ":checked", selectors, BuildImageCallback);
+		MathStyle(ctl, selectName + ":active", selectors, BuildImageCallback);
+		MathStyle(ctl, selectName + ":hover", selectors, BuildImageCallback);
+		//是否有滚动条 有滚动条则应用滚动条样式
+		ScrollBar* scrollBar = ctl->GetScrollBar();
+		if (scrollBar) {
+			EString scrollBarSelectName = EString("%s::-webkit-scrollbar").format(selectName.c_str());
+			MathStyle(scrollBar, scrollBarSelectName, selectors, BuildImageCallback);
+			MathStyle(scrollBar, scrollBarSelectName + ":active", selectors, BuildImageCallback);
+			MathStyle(scrollBar, scrollBarSelectName + ":hover", selectors, BuildImageCallback);
+		}
+	}
+	void UIManager::ApplayStyle(Control* ctl, const std::list<UIManager::Selector>& selectors, const EString& tagName) {
+		{//加载样式 使用标签选择器
+			if (!tagName.empty()) {
+				EString selectName = tagName;
+				EzUI::ApplayStyle(ctl, selectName, selectors, this->BuildImageCallback);
+			}
+		}
+		{//加载样式 使用属性选择器
+			for (auto& attr : ctl->GetAttributes()) {
+				EString selectName = EString("[%s=%s]").format(attr.first.c_str(), attr.second.c_str());
+				EzUI::ApplayStyle(ctl, selectName, selectors, BuildImageCallback);
+			}
+		}
+		{//加载样式 使用类选择器  
+			EString classStr = ctl->GetAttribute("class");
+			Text::Replace(&classStr, " ", ",");//去除所有空格转换为逗号
+			auto classes = classStr.split(",");//分割类选择器
+			for (const auto& className : classes) { //一个控件可能有多个类名
+				EString selectName = EString(".%s").format(className.c_str());
+				EzUI::ApplayStyle(ctl, selectName, selectors, BuildImageCallback);
+			}
+		}
+		//加载样式 使用ID/name选择器 
+		if (!(ctl->Name.empty())) {
+			EString selectName = EString("#%s").format(ctl->Name.c_str());
+			EzUI::ApplayStyle(ctl, selectName, selectors, BuildImageCallback);
+		}
+		{//加载内联样式 优先级最高
+			EString sytle_static = ctl->GetAttribute("style");//内联样式语法
+			if (!sytle_static.empty()) { //内联样式只允许描述静态效果
+				EraseChar(sytle_static, ' ');//去除空格
+				EzUI::SetStyleSheet(ctl, ControlStyle::Type::Static, sytle_static, BuildImageCallback);
+			}
+		}
+	}
+
+	void UIManager::AnalysisStyle(const EString& styleStr, std::list<UIManager::Selector>* out) {
+		EString style = styleStr;
+		//处理空格 双引号内的空格不处理
+		EraseChar(style);
+		while (true)
+		{
+			//处理css的注释
+			auto pos1 = style.find("/*");
+			auto pos2 = style.find("*/", pos1 + 2);
+			if (pos1 != size_t(-1) && pos2 != size_t(-1)) {
+				style.erase(pos1, pos2 - pos1 + 2);
+			}
+			else {
+				break;
+			}
+		}
+		//分离每个样式
+		std::list<EString> strs;
+		while (true)
+		{
+			auto pos1 = style.find("}");
+			if (pos1 != size_t(-1)) {
+				strs.push_back(style.substr(0, pos1 + 1));
+				style.erase(0, pos1 + 1);
+			}
+			else {
+				break;
+			}
+		}
+		//解析样式类型
+		for (auto& style : strs) {
+			size_t pos2 = style.find("}");
+			if (pos2 == -1)break;
+			size_t pos3 = style.find("{");
+			EString name = style.substr(0, pos3);
+			size_t pos4 = name.find(":");
+			EString style_type;
+			EString str = style.substr(pos3 + 1, pos2 - pos3 - 1);
+			if (pos4 != size_t(-1)) {
+				style_type = name.substr(pos4 + 1);
+			}
+			//考虑到多个选择器
+			auto names = name.split(",");
+			for (auto& name : names) {
+				//添加至集合
+				UIManager::Selector selector;
+				selector.selectorName = name;
+				selector.styleStr = str;
+				if (style_type == "hover") {
+					selector.styleType = ControlStyle::Type::Hover;
+				}
+				else if (style_type == "active") {
+					selector.styleType = ControlStyle::Type::Active;
+				}
+				else if (style_type == "checked") {
+					selector.styleType = ControlStyle::Type::Checked;
+				}
+				else {
+					selector.styleType = ControlStyle::Type::Static;
+				}
+				out->push_back(selector);
+			}
+		}
+	}
 	Control* UIManager::BuildControl(void* _node) {
 		TiXmlElement* node = (TiXmlElement*)_node;
 		Control* ctl = NULL;
 		std::string tagName(node->ValueTStr().c_str());
 		Text::Tolower(&tagName);
+		ctl = this->OnBuildControl(tagName);
+		if (ctl == NULL) {
+			EString text = EString("unknow element \"%s\"").format(tagName.c_str());
+			::MessageBoxA(NULL, text.c_str(), "UIManager Erro", MB_OK);
+			ctl = new Control;
+		}
+		//设置控件属性
+		TiXmlAttribute* attr = node->FirstAttribute();
+		do
+		{
+			if (!attr)break;
+			EString attrName = attr->Name();
+			EString attrValue(attr->Value());
+			ctl->SetAttribute(attrName, attrValue);
+		} while ((attr = attr->Next()));
+		return ctl;
+	}
+	void UIManager::LoadControl(void* _node, Control* control) {
+		TiXmlElement* node = (TiXmlElement*)_node;
+
+		TiXmlElement* fristChild = NULL;
+		if ((fristChild = node->FirstChildElement()))//先寻找子控件
+		{
+			EString tagName = fristChild->Value();
+			Control* ctl = BuildControl(fristChild);
+			this->RecordControl(ctl, tagName);
+			LoadControl(fristChild, ctl);
+			control->Add(ctl);
+			TiXmlElement* nextChild = fristChild->NextSiblingElement();
+			while (nextChild)//然后寻找兄弟
+			{
+				EString tagName = nextChild->Value();
+				Control* ctl2 = BuildControl(nextChild);
+				this->RecordControl(ctl2, tagName);
+				LoadControl(nextChild, ctl2);
+				control->Add(ctl2);
+				nextChild = nextChild->NextSiblingElement();
+			}
+		}
+	}
+	void UIManager::RecordControl(Control* ctl, const EString& tagNamee)
+	{
+		//弹簧需要交给控件自行处理
+		if (dynamic_cast<Spacer*>(ctl) == NULL) {
+			this->controls.emplace_front(ctl, tagNamee);
+		}
+	}
+	Control* UIManager::OnBuildControl(const EString& tagName) {
+		Control* ctl = NULL;
 		do
 		{
 			if (tagName == "control" || tagName == "layout" || tagName == "box") {
@@ -99,7 +433,7 @@ namespace EzUI {
 				ctl = new ComBox;
 				break;
 			}
-			if (tagName == "edit" || tagName == "textbox") {
+			if (tagName == "edit" || tagName == "textbox" || tagName == "input") {
 				ctl = new TextBox;
 				break;
 			}
@@ -114,212 +448,7 @@ namespace EzUI {
 
 		} while (false);
 
-		if (ctl == NULL) {
-			ctl = this->OnBuildControl(tagName);
-		}
-		if (ctl == NULL) {
-			::MessageBoxA(NULL, EString("UnKnow Element \"" + tagName + "\"").c_str(), "UIManager Erro", NULL);
-			ctl = new Control;
-		}
-		//设置控件属性
-		TiXmlAttribute* attr = node->FirstAttribute();
-		do
-		{
-			if (!attr)break;
-			EString attrName = attr->Name();
-			EString attrValue(attr->Value());
-			ctl->SetAttribute(attrName, attrValue);
-			this->OnSetAttribute(ctl, attrName, attrValue);
-		} while ((attr = attr->Next()));
-
-		{//内联样式 等级最低
-			EString sytle_static = ctl->GetAttribute("style");//内联样式语法
-			EString style_hover = ctl->GetAttribute("style:hover");//内联样式语法
-			EString style_active = ctl->GetAttribute("style:active");//内联样式语法
-			EString style_checked = ctl->GetAttribute("style:checked");//内联样式语法
-
-			if (!sytle_static.empty()) {
-				TrimStyle(sytle_static);
-				ctl->Style.SetStyleSheet(sytle_static, BuildImageCallback);
-			}
-			if (!style_hover.empty()) {
-				TrimStyle(style_hover);
-				ctl->HoverStyle.SetStyleSheet(style_hover, BuildImageCallback);
-			}
-			if (!style_active.empty()) {
-				TrimStyle(style_active);
-				ctl->ActiveStyle.SetStyleSheet(style_active, BuildImageCallback);
-			}
-			if (!style_checked.empty()) {
-				auto* ckBox = dynamic_cast<CheckBox*>(ctl);
-				if (ckBox) {
-					TrimStyle(style_checked);
-					ckBox->CheckedStyle.SetStyleSheet(style_checked, BuildImageCallback);
-				}
-			}
-		}
 		return ctl;
-	}
-	inline void __ApplayStyle(Control* ctl, const EString& selectorName, const std::list<UIManager::Selector>& selectors, const std::function<void(Image*)>& BuildImageCallback)
-	{
-		for (auto& it : selectors) {
-			if (it.selectorName == selectorName) {
-				if (it.styleType == UIManager::Style::Static) {
-					ctl->Style.SetStyleSheet(it.styleStr, BuildImageCallback);
-				}
-				if (it.styleType == UIManager::Style::Hover) {
-					ctl->HoverStyle.SetStyleSheet(it.styleStr, BuildImageCallback);
-				}
-				if (it.styleType == UIManager::Style::Active) {
-					ctl->ActiveStyle.SetStyleSheet(it.styleStr, BuildImageCallback);
-				}
-				if (it.styleType == UIManager::Style::Checked) {
-					auto* ckBox = dynamic_cast<CheckBox*>(ctl);
-					if (ckBox) {
-						ckBox->CheckedStyle.SetStyleSheet(it.styleStr, BuildImageCallback);
-					}
-				}
-			}
-		}
-	}
-	void UIManager::ApplayStyle(Control* ctl, const std::list<UIManager::Selector>& selectors, const EString& tagName) {
-		//加载样式 使用标签选择器
-		if (!tagName.empty()) {
-			__ApplayStyle(ctl, tagName, selectors, BuildImageCallback);
-			__ApplayStyle(ctl, tagName + ":checked", selectors, BuildImageCallback);
-			__ApplayStyle(ctl, tagName + ":active", selectors, BuildImageCallback);
-			__ApplayStyle(ctl, tagName + ":hover", selectors, BuildImageCallback);
-		}
-		{//加载样式 使用类选择器  
-			EString _class = ctl->GetAttribute("class");
-			Text::Replace(&_class, "  ", " ");
-			auto classs = _class.split(" ");
-			for (auto& className : classs) {
-				__ApplayStyle(ctl, "." + className, selectors, BuildImageCallback);
-				__ApplayStyle(ctl, "." + className + ":checked", selectors, BuildImageCallback);
-				__ApplayStyle(ctl, "." + className + ":active", selectors, BuildImageCallback);
-				__ApplayStyle(ctl, "." + className + ":hover", selectors, BuildImageCallback);
-			}
-		}
-		//加载样式 使用ID选择器 
-		if (!(ctl->Name.empty())) {
-			__ApplayStyle(ctl, "#" + ctl->Name, selectors, BuildImageCallback);
-			__ApplayStyle(ctl, "#" + ctl->Name + ":checked", selectors, BuildImageCallback);
-			__ApplayStyle(ctl, "#" + ctl->Name + ":active", selectors, BuildImageCallback);
-			__ApplayStyle(ctl, "#" + ctl->Name + ":hover", selectors, BuildImageCallback);
-		}
-		//为滚动条设置样式 xml控件中设置 scrollbar属性即可单独为滚动条设置样式
-		ScrollBar* sb = ctl->GetScrollBar();
-		if (sb && !sb->Name.empty()) {
-			__ApplayStyle(sb, "#" + sb->Name, selectors, BuildImageCallback);
-			__ApplayStyle(sb, "#" + sb->Name + ":active", selectors, BuildImageCallback);
-			__ApplayStyle(sb, "#" + sb->Name + ":hover", selectors, BuildImageCallback);
-		}
-	}
-
-	void UIManager::LoadControl(void* _node, Control* control) {
-		TiXmlElement* node = (TiXmlElement*)_node;
-
-		TiXmlElement* fristChild = NULL;
-		if ((fristChild = node->FirstChildElement()))//先寻找子控件
-		{
-			EString tagName = fristChild->Value();
-			Control* ctl = BuildControl(fristChild);
-			this->RecordControl(ctl, tagName);
-			LoadControl(fristChild, ctl);
-			control->Add(ctl);
-			TiXmlElement* nextChild = fristChild->NextSiblingElement();
-			while (nextChild)//然后寻找兄弟
-			{
-				EString tagName = fristChild->Value();
-				Control* ctl2 = BuildControl(nextChild);
-				this->RecordControl(ctl2, tagName);
-				LoadControl(nextChild, ctl2);
-				control->Add(ctl2);
-				nextChild = nextChild->NextSiblingElement();
-			}
-		}
-	}
-
-	void UIManager::RecordControl(Control* ctl, const EString& tagNamee)
-	{
-		//弹簧需要交给控件自行处理
-		if (dynamic_cast<Spacer*>(ctl) == NULL) {
-			this->controls.emplace_front(ctl, tagNamee);
-		}
-	}
-
-	void UIManager::AnalysisStyle(const EString& styleStr, std::list<UIManager::Selector>* out) {
-		EString style = styleStr;
-		//处理空格 双引号内的空格不处理
-		TrimStyle(style);
-		while (true)
-		{
-			//处理css的注释
-			auto pos1 = style.find("/*");
-			auto pos2 = style.find("*/", pos1 + 2);
-			if (pos1 != size_t(-1) && pos2 != size_t(-1)) {
-				style.erase(pos1, pos2 - pos1 + 2);
-			}
-			else {
-				break;
-			}
-		}
-		//分离每个样式
-		std::list<EString> strs;
-		while (true)
-		{
-			auto pos1 = style.find("}");
-			if (pos1 != size_t(-1)) {
-				strs.push_back(style.substr(0, pos1 + 1));
-				style.erase(0, pos1 + 1);
-			}
-			else {
-				break;
-			}
-		}
-		//解析样式类型
-		for (auto& style : strs) {
-			size_t pos2 = style.find("}");
-			if (pos2 == -1)break;
-			size_t pos3 = style.find("{");
-			EString name = style.substr(0, pos3);
-			size_t pos4 = name.find(":");
-			EString style_type;
-			EString str = style.substr(pos3 + 1, pos2 - pos3 - 1);
-			if (pos4 != size_t(-1)) {
-				style_type = name.substr(pos4 + 1);
-			}
-			//考虑到多个选择器
-			auto names = name.split(",");
-			for (auto& name : names) {
-				//添加至集合
-				UIManager::Selector selector;
-				selector.selectorName = name;
-				selector.styleStr = str;
-				if (style_type == "hover") {
-					selector.styleType = UIManager::Style::Hover;
-				}
-				else if (style_type == "active") {
-					selector.styleType = UIManager::Style::Active;
-				}
-				else if (style_type == "checked") {
-					selector.styleType = UIManager::Style::Checked;
-				}
-				else {
-					selector.styleType = UIManager::Style::Static;
-				}
-				out->push_back(selector);
-			}
-		}
-	}
-
-	Control* UIManager::OnBuildControl(const EString& nodeName) {
-
-		return NULL;
-	}
-	void UIManager::OnSetAttribute(Control* ctl, const EString& attrName, const EString& attrValue) {
-
 	}
 	UIManager::UIManager()
 	{
@@ -389,11 +518,14 @@ namespace EzUI {
 	{
 		EString data = styleContent;
 		std::list<UIManager::Selector> styles;
+		//分析出样式
 		this->AnalysisStyle(data, &styles);
-		if (!styles.empty()) {
-			for (auto& it : controls) {
-				//应用样式
-				this->ApplayStyle(it.ctl, styles, it.tagName);
+		//保存样式到全局
+		this->_styles.splice(this->_styles.end(), styles);  // 把 styles 的所有元素移动到 this->_styles 末尾
+		if (!this->_styles.empty()) {
+			for (auto& it : this->controls) {
+				//对所有加载进来的控件应用样式
+				this->ApplayStyle(it.ctl, this->_styles, it.tagName);
 			}
 		}
 	}
@@ -418,7 +550,7 @@ namespace EzUI {
 		}
 		else
 		{
-			delete* img;
+			delete(*img);
 		}
 		*img = NULL;
 	}
@@ -430,7 +562,6 @@ namespace EzUI {
 			delete it;
 		}
 	}
-
 	Control* UIManager::GetRoot() {
 		if (!controls.empty()) {
 			return controls.rbegin()->ctl;
@@ -438,91 +569,4 @@ namespace EzUI {
 		return NULL;
 	}
 
-	_Selector::_Selector(const std::vector<Control*>& controls)
-	{
-		this->ctls = controls;
-	}
-	_Selector::_Selector(const std::list<Control*>& controls)
-	{
-		this->ctls.resize(controls.size());
-		for (auto& it : controls) {
-			this->ctls.push_back(it);
-		}
-	}
-	_Selector::_Selector(Control* ctl)
-	{
-		this->ctl = ctl;
-	}
-	_Selector::_Selector(Control* ct, const EString& _mathStr)
-	{
-		EString mathStr = _mathStr;
-		mathStr.replace("  ", " ");
-		//模仿jquery进行元素匹配
-	}
-	_Selector::~_Selector()
-	{
-	}
-	_Selector& _Selector::Css(const EString& styleStr)
-	{
-		for (auto& it : this->ctls) {
-			if (notCtl == it)continue;
-			it->SetStyleSheet(styleStr);
-		}
-		if (ctl) {
-			if (notCtl == ctl)return *this;
-			ctl->SetStyleSheet(styleStr);
-		}
-		return *this;
-	}
-	_Selector& _Selector::CssHover(const EString& styleStr)
-	{
-		for (auto& it : this->ctls) {
-			if (notCtl == it)continue;
-			it->SetStyleSheet(styleStr, ControlState::Hover);
-		}
-		if (ctl) {
-			if (notCtl == ctl)return *this;
-			ctl->SetStyleSheet(styleStr, ControlState::Hover);
-		}
-		return *this;
-	}
-	_Selector& _Selector::CssActive(const EString& styleStr)
-	{
-		for (auto& it : this->ctls) {
-			if (notCtl == it)continue;
-			it->SetStyleSheet(styleStr, ControlState::Active);
-		}
-		if (ctl) {
-			if (notCtl == ctl)return *this;
-			ctl->SetStyleSheet(styleStr, ControlState::Active);
-		}
-		return *this;
-	}
-	_Selector& _Selector::Attr(const EString& key, const EString& value)
-	{
-		for (auto& it : this->ctls) {
-			if (notCtl == it)continue;
-			it->SetAttribute(key, value);
-		}
-		if (ctl) {
-			if (notCtl == ctl)return *this;
-			ctl->SetAttribute(key, value);
-		}
-		return *this;
-	}
-	_Selector& _Selector::Refresh()
-	{
-		for (auto& it : this->ctls) {
-			it->Invalidate();
-		}
-		if (ctl) {
-			ctl->Invalidate();
-		}
-		return *this;
-	}
-	_Selector& _Selector::Not(Control* fiterCtl) {
-
-		this->notCtl = fiterCtl;
-		return *this;
-	}
 };

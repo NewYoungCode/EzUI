@@ -251,12 +251,6 @@ namespace EzUI {
 
 namespace EzUI {
 
-	enum class StrokeStyle
-	{
-		Solid,//实线
-		Dash//虚线
-	};
-
 	class UI_EXPORT DXRender {
 	private:
 		ID2D1DCRenderTarget* _render = NULL;

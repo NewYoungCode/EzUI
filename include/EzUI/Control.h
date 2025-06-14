@@ -389,9 +389,6 @@ namespace EzUI {
 		// 派发事件（如鼠标单击事件等...）
 		bool SendNotify(const EventArgs& arg);
 
-		// 设置控件样式（类似 Qt 的样式表）
-		virtual void SetStyleSheet(const EString& styleStr, ControlState _state = ControlState::Static);
-
 		// 设置控件属性
 		virtual void SetAttribute(const EString& attrName, const EString& attrValue);
 

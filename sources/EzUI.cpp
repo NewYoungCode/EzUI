@@ -16,12 +16,6 @@ namespace EzUI {
 	std::list<HWND> __EzUI__WNDS;
 	const std::list<EzUI::MonitorInfo> __EzUI__MonitorInfos;
 
-	float __ToFloat(EString numStr) {
-		//去掉px字样
-		Text::Replace(&numStr, "px", "", true);
-		return std::stof(numStr.c_str());
-	}
-
 	void InstallFont(const EString& fontFileName) {
 		auto ret = ::AddFontResourceW(fontFileName.unicode().c_str());
 		::SystemParametersInfoW(SPI_SETNONCLIENTMETRICS, 0, nullptr, SPIF_SENDCHANGE);//刷新
@@ -196,127 +190,6 @@ namespace EzUI {
 		this->FontSize = this->FontSize * scale + 0.5;
 		this->Border.Scale(scale);
 	}
-	void ControlStyle::SetStyleSheet(const EString& styleStr, const std::function<void(Image*)>& callback)
-	{
-		auto attrs = styleStr.split(";");
-		for (auto& it : attrs) {
-			size_t pos = it.find(":");
-			if (pos == -1)continue;
-			EString key = it.substr(0, pos);
-			EString value = it.substr(pos + 1);
-			this->SetStyle(key, value, callback);
-		}
-	}
-	void ControlStyle::SetStyle(const EString& key, const EString& _value, const std::function<void(Image*)>& callback)
-	{
-		EString& value = (EString&)_value;
-		ControlStyle* style = this;
-		do
-		{
-			if (key == "cursor") {
-				if (value == "pointer") {
-					style->Cursor = LoadCursor(EzUI::Cursor::HAND);
-				}
-				else if (value == "help") {
-					style->Cursor = LoadCursor(EzUI::Cursor::HELP);
-				}
-				else if (value == "n-resize") {
-					//南北箭头 纵向
-					style->Cursor = LoadCursor(EzUI::Cursor::SIZENS);
-				}
-				else if (value == "e-resize") {
-					//东西箭头 水平
-					style->Cursor = LoadCursor(EzUI::Cursor::SIZEWE);
-				}
-				else if (value == "move") {
-					//四个方向的箭头都有
-					style->Cursor = LoadCursor(EzUI::Cursor::SIZEALL);
-				}
-				break;
-			}
-			if (key == "background-color") {
-				style->BackColor = Color::Make(value);
-				break;
-			}
-			if (key == "background-image") {
-				value = value.replace("\"", "");//删除双引号;
-				style->BackImage = Image::Make(value);
-				if (callback) {
-					callback(style->BackImage);
-				}
-				break;
-			}
-			if (key == "fore-image") {
-				value = value.replace("\"", "");//删除双引号;
-				style->ForeImage = Image::Make(value);
-				if (callback) {
-					callback(style->ForeImage);
-				}
-				break;
-			}
-			if (key == "border-color") {
-				style->Border.Color = Color::Make(value);
-				break;
-			}
-			if (key == "color" || key == "fore-color") {
-				style->ForeColor = Color::Make(value);
-				break;
-			}
-			if (key == "border-radius") {
-				style->Border.Radius = __ToFloat(value);
-				break;
-			}
-			if (key == "border-top-left-radius") {
-				style->Border.TopLeftRadius = __ToFloat(value);
-				break;
-			}
-			if (key == "border-top-right-radius") {
-				style->Border.TopRightRadius = __ToFloat(value);
-				break;
-			}
-			if (key == "border-bottom-right-radius") {
-				style->Border.BottomRightRadius = __ToFloat(value);
-				break;
-			}
-			if (key == "border-bottom-left-radius") {
-				style->Border.BottomLeftRadius = __ToFloat(value);
-				break;
-			}
-			if (key == "font-size") {
-				style->FontSize = __ToFloat(value);
-				break;
-			}
-			if (key == "font-family") {
-				value = value.replace("\"", "");//删除双引号;
-				style->FontFamily = value.unicode();
-				break;
-			}
-			if (key == "border") {
-				auto width = __ToFloat(value);
-				style->Border.Left = width;
-				style->Border.Top = width;
-				style->Border.Right = width;
-				style->Border.Bottom = width;
-				break;
-			}
-			if (key == "border-left") {
-				style->Border.Left = __ToFloat(value);
-				break;
-			}
-			if (key == "border-top") {
-				style->Border.Top = __ToFloat(value);
-				break;
-			}
-			if (key == "border-right") {
-				style->Border.Right = __ToFloat(value);
-				break;
-			}
-			if (key == "border-bottom") {
-				style->Border.Bottom = __ToFloat(value);
-				break;
-			}
-		} while (false);
-	}
 
 	IControl::IControl() {}
 	IControl::~IControl() {}
@@ -337,6 +210,18 @@ namespace EzUI {
 			return (*itor).second;
 		}
 		return "";
+	}
+
+	const std::map<EString, EString>& IControl::GetAttributes() {
+		return _attrs;
+	}
+
+	void IControl::RemoveAttribute(const EString& attrName)
+	{
+		auto itor = _attrs.find(attrName);
+		if (itor != _attrs.end()) {
+			_attrs.erase(itor);
+		}
 	}
 
 	void PaintEventArgs::PushLayer(const Geometry& dxGeometry) {
