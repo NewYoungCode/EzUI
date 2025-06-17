@@ -16,8 +16,7 @@
 #include "EzUI/LayeredWindow.h"
 #include "EzUI/UIManager.h"
 #include "EzUI/Task.h"
-
-#include "resource.h"
+#include "EzUI/Selector.h"
 
 #include "WebClient.h"
 #include "JsonCpp.h"

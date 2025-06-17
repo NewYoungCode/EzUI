@@ -440,9 +440,6 @@ namespace EzUI {
 		// 设置控件的父控件
 		virtual void SetParent(Control* parentCtl);
 
-		//为该控件设置样式表 只针对当前控件有效 {样式...} hover{样式...}
-		virtual void SetStyleSheet(const EString& strSheet);
-
 		// 清空所有子控件
 		virtual void Clear();
 

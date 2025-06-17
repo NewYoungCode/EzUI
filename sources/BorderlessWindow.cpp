@@ -1,7 +1,12 @@
 #include "BorderlessWindow.h"
 namespace EzUI {
-	BorderlessWindow::BorderlessWindow(int_t width, int_t height, HWND owner, DWORD exStyle) : Window(width, height, owner, /*WS_THICKFRAME |*/ WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP, exStyle)
+	BorderlessWindow::BorderlessWindow(int_t width, int_t height, HWND owner, DWORD exStyle) : Window(width, height, owner, WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP, exStyle)
 	{
+		//无边框
+		auto style = ::GetWindowLong(Hwnd(), GWL_STYLE);
+		style |= WS_THICKFRAME;
+		::SetWindowLong(Hwnd(), GWL_STYLE, style);
+
 		_shadowBox = new ShadowBox(width, height, Hwnd());
 		UpdateShadowBox();
 	}
@@ -63,19 +68,24 @@ namespace EzUI {
 	LRESULT  BorderlessWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
 		switch (uMsg)
 		{
-			/*case WM_NCPAINT:
-			{
+		case WM_NCCALCSIZE:
+		{
+			if (wParam == TRUE) {
 				return 0;
 			}
-			case WM_NCCALCSIZE:
-			{
-				return 0;
+			break;
+		}
+		case WM_NCPAINT:
+		{
+			return 0;
+		}
+		case WM_NCACTIVATE:
+		{
+			if (IsMinimized()) {
+				break;
 			}
-			case WM_NCACTIVATE:
-			{
-				if (::IsIconic(Hwnd())) break;
-				return (wParam == 0) ? TRUE : FALSE;
-			}*/
+			return (wParam == FALSE ? TRUE : FALSE);
+		}
 		case WM_NCHITTEST:
 		{
 			//非全屏状态下/非最大化状态下/当调整大小的标志为true 的情况下才允许调整大小;

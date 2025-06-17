@@ -16,7 +16,6 @@
 #include "PictureBox.h"
 #include "Window.h"
 #include "ComBox.h"
-#include "Selector.h"
 namespace EzUI {
 	//主窗口中的内联页面类
 	class UI_EXPORT IFrame;
@@ -41,12 +40,14 @@ namespace EzUI {
 		std::list<UIManager::Selector> _styles;
 		void LoadControl(void* node, Control* control);
 		Control* BuildControl(void* node);//内部函数
-		void RecordControl(Control* ctl, const EString& tagNamee);//记录xml中的控件
+		//记录XML中的控件到管理器 管理器释放的时候 由管理器加载的控件将自动释放
+		void RegisterControl(Control* ctl, const EString& tagNamee);
 		void AnalysisStyle(const EString& styleStr, std::list<UIManager::Selector>* out);//分析样式
-		void ApplayStyle(Control* ctl, const std::list<UIManager::Selector>& selectors, const EString& tagName);
+		void ApplyStyle(Control* ctl, const std::list<UIManager::Selector>& selectors, const EString& tagName);
 		//应用样式(为控件应用所有样式)
 	protected:
-		virtual Control* OnBuildControl(const EString& nodeName);//当解析到一个节点的时候发生
+		//当解析到一个节点的时候发生
+		virtual Control* OnBuildControl(const EString& nodeName);
 	public:
 		UIManager();
 		virtual ~UIManager();
@@ -56,8 +57,8 @@ namespace EzUI {
 		void LoadXmlFile(const EString& fileName);
 		//从字符串中加载布局
 		void LoadXml(const EString& xmlContent);
-		//从字符串中加载样式
-		void LoadStyle(const EString& styleContent);
+		//设置样式表
+		void SetStyleSheet(const EString& styleContent);
 		//从文件中加载样式
 		void LoadStyleFile(const EString& fileName);
 		//获取根节点控件
@@ -84,6 +85,8 @@ namespace EzUI {
 			}
 			__super::SetAttribute(attrName, attrValue);
 		};
+		//获取UI管理器
+		UIManager* GetUIManager();
 	};
 
 };

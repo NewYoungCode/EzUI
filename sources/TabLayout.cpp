@@ -4,31 +4,29 @@ namespace EzUI {
 	TabLayout::TabLayout()
 	{
 		timer.Tick = [this](ThreadTimer* sender) {
-			stepAcc += stepPerFrame;
-			int_t stepMove = stepAcc;
-			stepAcc -= stepMove;
-			nowOffset += stepMove;
 
-			// 检查是否到达终点
-			if ((offset > 0 && nowOffset >= offset) ||
-				(offset < 0 && nowOffset <= offset)) {
-				nowOffset = offset;
-				sender->Stop();
+			Invoke([this, sender]() {
+				stepAcc += stepPerFrame;
+				int_t stepMove = stepAcc;
+				stepAcc -= stepMove;
+				nowOffset += stepMove;
 
-				Invoke([this]() {
+				// 检查是否到达终点
+				if ((offset > 0 && nowOffset >= offset) ||
+					(offset < 0 && nowOffset <= offset)) {
+					nowOffset = offset;
+					sender->Stop();
 					this->Sort(); // 对齐页面
 					this->Invalidate();
-					});
-				return;
-			}
-
-			Invoke([this]() {
+					return;
+				}
 				for (size_t i = 0; i < GetControls().size(); ++i) {
 					Control* ctl = GetControls()[i];
 					ctl->SetRect(Rect(initialX[i] - nowOffset, 0, Width(), Height()));
 				}
 				this->Invalidate();
 				});
+
 			};
 	}
 	TabLayout::~TabLayout()
