@@ -978,6 +978,10 @@ namespace EzUI {
 	{
 		parentCtl->Add(this);
 	}
+	void Control::SetStyleSheet(const EString& strSheet)
+	{
+
+	}
 	void Control::Remove(Control* ctl, bool freeCtrl)
 	{
 		//寻找控件看是否包含

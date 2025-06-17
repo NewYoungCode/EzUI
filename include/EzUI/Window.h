@@ -1,6 +1,10 @@
 #pragma once
 #include "Control.h"
 
+#undef IsMinimized
+#undef IsMaximized
+#undef IsRestored
+
 namespace EzUI {
 	/// <summary>
 	/// Window //经典带边框带系统菜单WIN32窗口样式
@@ -78,7 +82,7 @@ namespace EzUI {
 		//失去输入焦点时发生
 		virtual void OnKillFocus(HWND hWnd);
 		//鼠标 键盘 重绘 会进入此函数,bHandle如果设置位true将不再派发给sender控件处理
-		virtual void OnNotify(Control* sender, EventArgs& args,bool& bHandle);
+		virtual void OnNotify(Control* sender, EventArgs& args, bool& bHandle);
 	public:
 		//处理消息队列的
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -145,6 +149,15 @@ namespace EzUI {
 
 		//是否支持调整大小
 		bool IsResizable();
+
+		//是否全屏
+		bool IsFullScreen();
+
+		//是否最小化
+		bool IsMinimized();
+
+		//窗口是否最大化
+		bool IsMaximized();
 
 		//窗口是否置顶
 		bool IsTopMost();

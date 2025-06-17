@@ -105,7 +105,7 @@ namespace EzUI {
 		Control* Parent = NULL;
 
 		// 事件处理器
-		std::function<void(Control*, EventArgs&,bool&)> Notify = NULL;
+		std::function<void(Control*, EventArgs&, bool&)> Notify = NULL;
 
 	protected:
 		// 设置内容宽度，仅限子类使用
@@ -439,6 +439,9 @@ namespace EzUI {
 
 		// 设置控件的父控件
 		virtual void SetParent(Control* parentCtl);
+
+		//为该控件设置样式表 只针对当前控件有效 {样式...} hover{样式...}
+		virtual void SetStyleSheet(const EString& strSheet);
 
 		// 清空所有子控件
 		virtual void Clear();

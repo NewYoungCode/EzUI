@@ -231,6 +231,27 @@ namespace EzUI {
 	bool Window::IsResizable() {
 		return this->_resize;
 	}
+	bool Window::IsFullScreen() {
+		//判断是否全屏
+		MonitorInfo monitorInfo;
+		EzUI::GetMontior(&monitorInfo, Hwnd());//获取窗口所在的监视器位置
+		auto rect = this->GetWindowRect();
+		bool isFullScreen = (monitorInfo.Rect.X == rect.X && monitorInfo.Rect.Y == rect.Y && monitorInfo.Rect.Width == rect.Width && monitorInfo.Rect.Height == rect.Height);
+		if (isFullScreen)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	bool Window::IsMinimized()
+	{
+		return ::IsIconic(Hwnd());
+	}
+	bool Window::IsMaximized() {
+		return ::IsZoomed(Hwnd());
+	}
+
 	void Window::SetSize(const Size& size) {
 		const Rect& rect = GetWindowRect();
 		this->SetRect(Rect(rect.X, rect.Y, size.Width, size.Height));
@@ -1151,7 +1172,7 @@ namespace EzUI {
 				return;
 			}
 			if (sender->Action == ControlAction::Max) {
-				if (!IsZoomed(Hwnd())) {
+				if (!IsMaximized()) {
 					this->ShowMaximized();
 				}
 				else {
