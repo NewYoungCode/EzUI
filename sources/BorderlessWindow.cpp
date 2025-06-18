@@ -55,7 +55,7 @@ namespace EzUI {
 	}
 	void BorderlessWindow::OnDpiChange(float systemScale, const Rect& newRect)
 	{
-		if (_shadowBox) {
+		if (_shadowBox) {//对窗口阴影进行新DPI适配
 			if (this->_shadowScale != systemScale) {
 				this->_shadowWeight *= systemScale / _shadowScale;
 				this->_shadowScale = systemScale;
@@ -64,6 +64,9 @@ namespace EzUI {
 				}
 			}
 		}
+		//对边框进行新DPI适配
+		float newScale = systemScale / PublicData->Scale;
+		this->Border.Scale(newScale);
 		__super::OnDpiChange(systemScale, newRect);
 	}
 	void BorderlessWindow::Hide() {

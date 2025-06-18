@@ -235,7 +235,7 @@ namespace EzUI {
 		IWICBitmap* GetIWICBitmap();
 		int_t GetWidth();
 		int_t GetHeight();
-		virtual size_t NextFrame()override;
+		virtual WORD NextFrame()override;
 		DXImage* Clone();
 		DXImage() {}
 		virtual ~DXImage();

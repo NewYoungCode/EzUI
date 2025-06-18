@@ -296,7 +296,7 @@ namespace EzUI {
 			_frameCount = fCount;
 		}
 	}
-	size_t DXImage::NextFrame() {
+	WORD DXImage::NextFrame() {
 		if (_framePos >= _frameCount) {
 			_framePos = 0;
 		}

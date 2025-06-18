@@ -3,6 +3,12 @@ namespace EzUI {
 	inline bool __IsValid(int_t value) {
 		return value != 0;
 	}
+	inline bool __IsValid(WORD value) {
+		return value != 0;
+	}
+	inline bool __IsValid(BYTE value) {
+		return value != 0;
+	}
 	inline bool __IsValid(float value) {
 		return value != 0;
 	}

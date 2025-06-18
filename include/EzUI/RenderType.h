@@ -449,14 +449,14 @@ namespace EzUI {
 
 	struct Distance {
 	public:
-		int_t Left, Top, Right, Bottom;
+		WORD Left, Top, Right, Bottom;
 		Distance() {
 			Left = Top = Right = Bottom = 0;
 		}
-		Distance(int_t distanceAll) {
+		Distance(WORD distanceAll) {
 			Left = Top = Right = Bottom = distanceAll;
 		}
-		Distance& operator=(int_t distanceAll) {
+		Distance& operator=(WORD distanceAll) {
 			Left = Top = Right = Bottom = distanceAll;
 			return *this;
 		}
@@ -467,11 +467,11 @@ namespace EzUI {
 			Right = Right * scale + 0.5;
 		}
 		//获取垂直所占空间
-		int_t GetVSpace() {
+		WORD GetVSpace() {
 			return Top + Bottom;
 		}
 		//获取水平所占空间
-		int_t GetHSpace() {
+		WORD GetHSpace() {
 			return Left + Right;
 		}
 	};
@@ -504,14 +504,14 @@ namespace EzUI {
 	/// </summary>
 	class  Border {
 	public:
-		BYTE Left = 0;//左边边框大小
-		BYTE Top = 0;//顶部边框大小
-		BYTE Right = 0;//右边边框大小
-		BYTE Bottom = 0;//底部边框大小
-		BYTE TopLeftRadius = 0;
-		BYTE TopRightRadius = 0;
-		BYTE BottomRightRadius = 0;
-		BYTE BottomLeftRadius = 0;
+		WORD Left = 0;//左边边框大小
+		WORD Top = 0;//顶部边框大小
+		WORD Right = 0;//右边边框大小
+		WORD Bottom = 0;//底部边框大小
+		WORD TopLeftRadius = 0;
+		WORD TopRightRadius = 0;
+		WORD BottomRightRadius = 0;
+		WORD BottomLeftRadius = 0;
 		__EzUI__Color Color;
 		StrokeStyle BorderStyle = StrokeStyle::Solid;
 	public:
@@ -520,7 +520,7 @@ namespace EzUI {
 		public:
 			Radius(EzUI::Border& bd) :Border(bd) {}
 			//对四个角度同时设置半径大小
-			Radius& operator=(BYTE radius) {
+			Radius& operator=(WORD radius) {
 				Border.TopLeftRadius = radius;
 				Border.TopRightRadius = radius;
 				Border.BottomRightRadius = radius;
@@ -533,7 +533,7 @@ namespace EzUI {
 	public:
 		Border() {}
 		//对四个边设置大小
-		Border& operator=(BYTE borderWidth) {
+		Border& operator=(WORD borderWidth) {
 			Left = borderWidth;
 			Top = borderWidth;
 			Right = borderWidth;
@@ -541,14 +541,14 @@ namespace EzUI {
 			return *this;
 		}
 		void Scale(float scale) {
-			Left = BYTE(Left * scale + 0.5);
-			Top = BYTE(Top * scale + 0.5);
-			Right = BYTE(Right * scale + 0.5);
-			Bottom = BYTE(Bottom * scale + 0.5);
-			TopLeftRadius = BYTE(TopLeftRadius * scale + 0.5);
-			TopRightRadius = BYTE(TopRightRadius * scale + 0.5);
-			BottomRightRadius = BYTE(BottomRightRadius * scale + 0.5);
-			BottomLeftRadius = BYTE(BottomLeftRadius * scale + 0.5);
+			Left = Left * scale + 0.5;
+			Top = Top * scale + 0.5;
+			Right = Right * scale + 0.5;
+			Bottom = Bottom * scale + 0.5;
+			TopLeftRadius = TopLeftRadius * scale + 0.5;
+			TopRightRadius = TopRightRadius * scale + 0.5;
+			BottomRightRadius = BottomRightRadius * scale + 0.5;
+			BottomLeftRadius = BottomLeftRadius * scale + 0.5;
 		}
 	};
 #if 1
@@ -638,18 +638,18 @@ namespace EzUI {
 
 	class IImage {
 	protected:
-		int_t _frameCount = 0;//总帧数
-		int_t _framePos = 0;//当前帧率索引
+		WORD _frameCount = 0;//总帧数
+		WORD _framePos = 0;//当前帧率索引
 	public:
 		Rect Offset;//取出图像部分区域进行绘制
 		ImageSizeMode SizeMode = ImageSizeMode::Zoom;// 图像显示模式
 	public:
 		virtual ~IImage() {}
-		int_t FrameCount() {
+		WORD FrameCount() {
 			return _frameCount;
 		}
 		//跳转到下一帧 并且获取下一帧的延迟
-		virtual size_t NextFrame() {
+		virtual WORD NextFrame() {
 			if (_framePos >= _frameCount) {
 				_framePos = 0;
 			}
