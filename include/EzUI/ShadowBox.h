@@ -17,7 +17,7 @@ namespace EzUI {
 		ShadowBox(int_t width, int_t height, HWND OwnerWnd);//构造函数
 		virtual ~ShadowBox();
 		//在父窗口发生改变的时候更新阴影区域
-		virtual void Update(int_t _marginWidth, float radius);
+		virtual void Update(int_t _marginWidth, const Border& border);
 		const HWND Hwnd();
 	};
 };

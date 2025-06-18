@@ -14,7 +14,10 @@ void MainFrm::InitForm() {
 	umg.LoadXmlFile("res/xml/main.htm");
 	umg.SetupUI(this);
 
-	this->GetLayout()->Style.Border.Radius = 15;//圆角窗口
+	this->Border.Radius = 15;
+	this->Border.Color = Color(128, 128, 128, 100);
+	this->Border = 1;
+
 	//this->CloseShadowBox();//关闭阴影
 
 	cfg = new ConfigIni(Path::StartPath() + "\\list.ini");

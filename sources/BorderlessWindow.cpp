@@ -29,6 +29,23 @@ namespace EzUI {
 			UpdateShadowBox();
 		}
 	}
+
+	void BorderlessWindow::OnPaint(PaintEventArgs& args) {
+		const auto& border = this->Border;
+		const auto& rect = this->GetClientRect();
+		bool hasRadius = border.TopLeftRadius || border.TopRightRadius || border.BottomRightRadius || border.BottomLeftRadius;
+		if (hasRadius) {
+			//处理圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分) 带抗锯齿
+			Geometry roundRect(rect, border.TopLeftRadius, border.TopRightRadius, border.BottomRightRadius, border.BottomLeftRadius);
+			args.PushLayer(roundRect);
+		}
+		else {
+			args.PushLayer(rect);
+		}
+		__super::OnPaint(args);
+		args.PopLayer();
+	}
+
 	void BorderlessWindow::OnRect(const Rect& rect) {
 		__super::OnRect(rect);
 		if (!_firstPaint) {
@@ -55,7 +72,7 @@ namespace EzUI {
 	}
 	void BorderlessWindow::UpdateShadowBox() {
 		if (_shadowBox) {
-			_shadowBox->Update(_shadowWeight * this->GetScale(), this->GetLayout() ? this->GetLayout()->Style.Border.TopLeftRadius : 0);
+			_shadowBox->Update(_shadowWeight * this->GetScale(), this->Border);
 		}
 	}
 	void BorderlessWindow::CloseShadowBox()

@@ -421,9 +421,9 @@ namespace EzUI {
 		}
 		RectF(const Rect& rect) {
 			this->X = rect.X;
-			this->Y =rect.Y;
+			this->Y = rect.Y;
 			this->Width = rect.Width;
-			this->Height =rect.Height;
+			this->Height = rect.Height;
 		}
 		RectF(const RectF& rect) {
 			this->X = rect.X;
@@ -504,14 +504,14 @@ namespace EzUI {
 	/// </summary>
 	class  Border {
 	public:
-		int_t Left = 0;//左边边框大小
-		int_t Top = 0;//顶部边框大小
-		int_t Right = 0;//右边边框大小
-		int_t Bottom = 0;//底部边框大小
-		int_t TopLeftRadius = 0;
-		int_t TopRightRadius = 0;
-		int_t BottomRightRadius = 0;
-		int_t BottomLeftRadius = 0;
+		BYTE Left = 0;//左边边框大小
+		BYTE Top = 0;//顶部边框大小
+		BYTE Right = 0;//右边边框大小
+		BYTE Bottom = 0;//底部边框大小
+		BYTE TopLeftRadius = 0;
+		BYTE TopRightRadius = 0;
+		BYTE BottomRightRadius = 0;
+		BYTE BottomLeftRadius = 0;
 		__EzUI__Color Color;
 		StrokeStyle BorderStyle = StrokeStyle::Solid;
 	public:
@@ -520,7 +520,7 @@ namespace EzUI {
 		public:
 			Radius(EzUI::Border& bd) :Border(bd) {}
 			//对四个角度同时设置半径大小
-			Radius& operator=(int_t radius) {
+			Radius& operator=(BYTE radius) {
 				Border.TopLeftRadius = radius;
 				Border.TopRightRadius = radius;
 				Border.BottomRightRadius = radius;
@@ -533,7 +533,7 @@ namespace EzUI {
 	public:
 		Border() {}
 		//对四个边设置大小
-		Border& operator=(int_t borderWidth) {
+		Border& operator=(BYTE borderWidth) {
 			Left = borderWidth;
 			Top = borderWidth;
 			Right = borderWidth;
@@ -541,14 +541,14 @@ namespace EzUI {
 			return *this;
 		}
 		void Scale(float scale) {
-			Left = int_t(Left * scale + 0.5);
-			Top = int_t(Top * scale + 0.5);
-			Right = int_t(Right * scale + 0.5);
-			Bottom = int_t(Bottom * scale + 0.5);
-			TopLeftRadius = int_t(TopLeftRadius * scale + 0.5);
-			TopRightRadius = int_t(TopRightRadius * scale + 0.5);
-			BottomRightRadius = int_t(BottomRightRadius * scale + 0.5);
-			BottomLeftRadius = int_t(BottomLeftRadius * scale + 0.5);
+			Left = BYTE(Left * scale + 0.5);
+			Top = BYTE(Top * scale + 0.5);
+			Right = BYTE(Right * scale + 0.5);
+			Bottom = BYTE(Bottom * scale + 0.5);
+			TopLeftRadius = BYTE(TopLeftRadius * scale + 0.5);
+			TopRightRadius = BYTE(TopRightRadius * scale + 0.5);
+			BottomRightRadius = BYTE(BottomRightRadius * scale + 0.5);
+			BottomLeftRadius = BYTE(BottomLeftRadius * scale + 0.5);
 		}
 	};
 #if 1

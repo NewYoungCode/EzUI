@@ -24,7 +24,7 @@ namespace EzUI {
 		iSize = (int)iSize < max_size ? iSize : max_size;
 		double piAngle = 3.1415926;
 		int iSizeB = 4 * iSize;
-		double fN = piAngle / iSize / 6.0f;//设置四条边外模糊度
+		double fN = piAngle / iSize / 6.0f;//设置四条边外模糊度 值越小越黑
 		double lN = 1.0 / iSize;
 		int iAplpha = 0;
 		int Left = iSize + radius,
@@ -89,7 +89,7 @@ namespace EzUI {
 		//((BYTE*)point)[1] = 0;//修改G通道数值
 		//((BYTE*)point)[0] = 0;//修改B通道数值
 	}
-	void ShadowBox::Update(int_t _shadowWidth, float radius) {
+	void ShadowBox::Update(int_t _shadowWidth, const Border& border) {
 		HWND OwnerWnd = ::GetWindowOwner(_hWnd);
 		if (!::IsWindowVisible(OwnerWnd)) {
 			::ShowWindow(_hWnd, SW_HIDE);
@@ -119,7 +119,7 @@ namespace EzUI {
 		}
 		_bufBitmap = new Bitmap(width, height, Bitmap::PixelFormat::PixelFormatARGB);//32位透明图
 		Rect rect{ 0,0,width, height };
-		SetShadow(rect.Width, rect.Height, _shadowWidth, radius);
+		SetShadow(rect.Width, rect.Height, _shadowWidth, border.TopLeftRadius);
 		/*	{
 				Rect clientRect(rect.X + _shadowWidth, rect.Y + _shadowWidth, rect.Width - _shadowWidth * 2, rect.Height - _shadowWidth * 2);
 				DXRender render(_bufBitmap->GetDC(), clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height);
@@ -133,6 +133,72 @@ namespace EzUI {
 		blend.BlendFlags = 0;
 		blend.AlphaFormat = AC_SRC_ALPHA;
 		blend.SourceConstantAlpha = 255;
+
+#if 1
+		{
+			int_t roundWidth = _bufBitmap->Width() - _shadowWidth * 2;
+			int_t roundHeight = _bufBitmap->Height() - _shadowWidth * 2;
+
+			//绘制边框
+			DXRender* render = NULL;
+
+			//规则的矩形
+			int_t borderLeft = border.Left;
+			int_t borderTop = border.Top;
+			int_t borderRight = border.Right;
+			int_t borderBottom = border.Bottom;
+			int_t topLeftRadius = border.TopLeftRadius;
+			int_t topRightRadius = border.TopRightRadius;
+			int_t bottomRightRadius = border.BottomRightRadius;
+			int_t bottomLeftRadius = border.BottomLeftRadius;
+			if (topLeftRadius == 0 && topRightRadius == 0 && bottomLeftRadius == 0 && bottomRightRadius == 0) {
+				bool hasBorder = borderLeft || borderTop || borderRight || borderBottom;
+				if (hasBorder) {
+
+					render = new DXRender(_bufBitmap->GetHDC(), 0, 0, width, height);
+					render->SetTransform(_shadowWidth, _shadowWidth);
+					render->SetStrokeStyle(border.BorderStyle);
+					render->SetColor(border.Color);
+
+					if (borderLeft > 0) {
+						RectF rect(0, 0, (float)borderLeft, (float)roundHeight);
+						render->FillRectangle(rect);
+					}
+					if (borderTop > 0) {
+						RectF rect(0, 0, (float)roundWidth, (float)borderTop);
+						render->FillRectangle(rect);
+					}
+					if (borderRight > 0) {
+						RectF rect((float)(roundWidth - borderRight), 0, (float)borderRight, (float)roundHeight);
+						render->FillRectangle(rect);
+					}
+					if (borderBottom > 0) {
+						RectF rect(0, (float)(roundHeight - borderBottom), (float)roundWidth, (float)borderBottom);
+						render->FillRectangle(rect);
+					}
+					render->SetTransform(0, 0);
+				}
+			}
+			else {
+				render = new DXRender(_bufBitmap->GetHDC(), 0, 0, width, height);
+				render->SetTransform(_shadowWidth, _shadowWidth);
+				render->SetStrokeStyle(border.BorderStyle);
+				render->SetColor(border.Color);
+
+				int_t value1 = borderLeft > borderTop ? borderLeft : borderTop;
+				int_t value2 = borderRight > borderBottom ? borderRight : borderBottom;
+				int_t maxBorder = value1 > value2 ? value1 : value2;
+				Geometry rr(Rect(0, 0, roundWidth, roundHeight), topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
+				render->DrawGeometry(rr.Get(), maxBorder);
+				render->SetTransform(0, 0);
+			}
+
+			if (render) {
+				delete render;
+			}
+		}
+#endif
+
 		::UpdateLayeredWindow(_hWnd, NULL, NULL, &size, _bufBitmap->GetHDC(), &point, 0, &blend, ULW_ALPHA);//。。。。。。更新分层窗口
 	}
 	const HWND ShadowBox::Hwnd()
