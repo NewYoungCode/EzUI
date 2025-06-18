@@ -101,9 +101,6 @@ namespace EzUI {
 		}
 		case WM_NCACTIVATE:
 		{
-			if (IsMinimized()) {
-				break;
-			}
 			return (wParam == FALSE ? TRUE : FALSE);
 		}
 		case WM_NCHITTEST:
