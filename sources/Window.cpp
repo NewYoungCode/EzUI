@@ -630,6 +630,14 @@ namespace EzUI {
 				//_rect = { 0,0,0,0 };
 				return TRUE;
 			}
+			if (rePaint) {
+				//丢弃工作区的整个内容。 如果未指定此标志，则会在调整或重新定位窗口后保存并复制回工作区的有效内容。
+				Invalidate();
+			}
+			if (IsMinimized()) {
+				//窗口最小化的时候不做处理
+				break;
+			}
 			_rect = Rect{ wPos->x,wPos->y,wPos->cx,wPos->cy };
 			_rectClient = Rect{ clientPoint,clientSize };
 			//触发
@@ -637,11 +645,6 @@ namespace EzUI {
 			if (!_lastSize.Equals(clientSize)) {
 				_lastSize = clientSize;
 				OnSize(clientSize);
-			}
-			if (rePaint) {
-				//Debug::Log("SWP_NOCOPYBITS!");
-				//丢弃工作区的整个内容。 如果未指定此标志，则会在调整或重新定位窗口后保存并复制回工作区的有效内容。
-				Invalidate();
 			}
 			Point point = _rect.GetLocation();
 			if (!_lastPoint.Equals(point)) {
