@@ -8,7 +8,6 @@ namespace EzUI {
 	class UI_EXPORT BorderlessWindow :public Window {
 	private:
 		int_t _shadowWeight = 20;
-		bool _firstPaint = true;
 		ShadowBox* _shadowBox = NULL;
 		float _shadowScale = 1.0f;
 	public:

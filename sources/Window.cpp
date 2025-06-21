@@ -55,6 +55,11 @@ namespace EzUI {
 
 		_rect.Scale(this->PublicData->Scale);
 
+		//绑定消息过程
+		PublicData->WndProc = [this](HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) ->LRESULT {
+			return this->WndProc(uMsg, wParam, lParam);
+			};
+		//创建窗口
 		PublicData->HANDLE = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, EzUI::__EzUI__WindowClassName, EzUI::__EzUI__WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
 			_rect.X, _rect.Y, _rect.Width, _rect.Height, owner, NULL, EzUI::__EzUI__HINSTANCE, NULL);
 		PublicData->Window = this;
@@ -187,20 +192,16 @@ namespace EzUI {
 	}
 	const Rect& Window::GetWindowRect()
 	{
-		if (_rect.IsEmptyArea()) {
-			RECT rect;
-			::GetWindowRect(Hwnd(), &rect);
-			_rect = { rect.left,rect.top,rect.right - rect.left,rect.bottom - rect.top };
-		}
+		RECT rect;
+		::GetWindowRect(Hwnd(), &rect);
+		_rect = { rect.left,rect.top,rect.right - rect.left,rect.bottom - rect.top };
 		return _rect;
 	}
 	const Rect& Window::GetClientRect()
 	{
-		if (_rectClient.IsEmptyArea()) {
-			RECT rect;
-			::GetClientRect(Hwnd(), &rect);
-			_rectClient = { rect.left,rect.top,rect.right - rect.left,rect.bottom - rect.top };
-		}
+		RECT rect;
+		::GetClientRect(Hwnd(), &rect);
+		_rectClient = { rect.left,rect.top,rect.right - rect.left,rect.bottom - rect.top };
 		return _rectClient;
 	}
 
@@ -333,15 +334,10 @@ namespace EzUI {
 	{
 		ASSERT(_layout);
 		::ShowWindow(Hwnd(), SW_SHOW);
-		_layout->Refresh();
 	}
 	void Window::Show(int_t cmdShow)
 	{
 		::ShowWindow(Hwnd(), cmdShow);
-		if (IsVisible()) {
-			ASSERT(_layout);
-			_layout->Refresh();
-		}
 	}
 	void Window::ShowNormal()
 	{
@@ -491,16 +487,6 @@ namespace EzUI {
 			this->OnKillFocus((HWND)wParam);
 			break;
 		}
-		case WM_MOVE: {
-			int_t xPos = (int_t)(short)LOWORD(lParam);   // horizontal position 
-			int_t yPos = (int_t)(short)HIWORD(lParam);   // vertical position 
-			break;
-		}
-		case WM_SIZE: {
-			UINT width = LOWORD(lParam);
-			UINT height = HIWORD(lParam);
-			break;
-		}
 		case WM_GETMINMAXINFO:
 		{
 			MINMAXINFO* pMMInfo = (MINMAXINFO*)lParam;
@@ -613,44 +599,49 @@ namespace EzUI {
 			//}
 			break;
 		}
-
 		case WM_WINDOWPOSCHANGED: {
-			bool rePaint = false;
 			WINDOWPOS* wPos = (WINDOWPOS*)(void*)lParam;
 			if ((wPos->flags & SWP_NOCOPYBITS) == SWP_NOCOPYBITS) {
-				rePaint = true;
-			}
-			//获取客户区的矩形
-			RECT rect;
-			::GetClientRect(Hwnd(), &rect);
-			Point clientPoint{ rect.left,rect.top };
-			Size clientSize{ rect.right - rect.left,rect.bottom - rect.top };
-			//客户区矩形无效的时候
-			if (clientSize.Width == 0 && clientSize.Height == 0) {
-				//_rect = { 0,0,0,0 };
-				return TRUE;
-			}
-			if (rePaint) {
 				//丢弃工作区的整个内容。 如果未指定此标志，则会在调整或重新定位窗口后保存并复制回工作区的有效内容。
 				Invalidate();
 			}
+			break;
+		}
+		case WM_MOVE: {
 			if (IsMinimized()) {
 				//窗口最小化的时候不做处理
 				break;
 			}
-			_rect = Rect{ wPos->x,wPos->y,wPos->cx,wPos->cy };
-			_rectClient = Rect{ clientPoint,clientSize };
-			//触发
+			int_t xPos = (int_t)(short)LOWORD(lParam);   // horizontal position 
+			int_t yPos = (int_t)(short)HIWORD(lParam);   // vertical position 
+			_rect.X = xPos;
+			_rect.Y = yPos;
+
 			OnRect(_rect);
-			if (!_lastSize.Equals(clientSize)) {
-				_lastSize = clientSize;
-				OnSize(clientSize);
+			OnLocation(_rect.GetLocation());
+			break;
+		}
+		case WM_SIZE: {
+			if (IsMinimized()) {
+				//窗口最小化的时候不做处理
+				break;
 			}
-			Point point = _rect.GetLocation();
-			if (!_lastPoint.Equals(point)) {
-				_lastPoint = point;
-				OnLocation(point);
-			}
+			UINT width = LOWORD(lParam);
+			UINT height = HIWORD(lParam);
+			_rect.Width = width;
+			_rect.Height = height;
+
+			//获取客户区的矩形
+			RECT rect;
+			::GetClientRect(Hwnd(), &rect);
+
+			_rectClient.X = rect.left;
+			_rectClient.Y = rect.top;
+			_rectClient.Width = rect.right - rect.left;
+			_rectClient.Height = rect.bottom - rect.top;
+
+			OnRect(_rect);
+			OnSize(_rect.GetSize());
 			break;
 		}
 		case WM_CLOSE:

@@ -19,6 +19,9 @@ namespace EzUI {
 			//立即更新窗口中的无效区域
 			::SendMessage(Hwnd(), WM_PAINT, 0, 0);
 			};
+		//获取客户区大小 创建一个位图给窗口绘制
+		Size sz = GetClientRect().GetSize();
+		_winBitmap = new Bitmap(sz.Width, sz.Height, Bitmap::PixelFormat::PixelFormatARGB);
 	}
 	LayeredWindow::~LayeredWindow() {
 		if (_winBitmap) {
@@ -68,7 +71,19 @@ namespace EzUI {
 	}
 	LRESULT LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		if (uMsg == WM_PAINT) {
+		switch (uMsg)
+		{
+		case WM_SHOWWINDOW: {
+			//初次显示手动刷新窗口
+			if (wParam == TRUE) {
+				if (_firstPaint) {
+					this->Invalidate();
+					this->_firstPaint = false;
+				}
+			}
+			break;
+		}
+		case WM_PAINT: {
 			Rect invalidateRect;
 			BeginPaint(&invalidateRect);
 			if (_winBitmap && IsVisible() && !invalidateRect.IsEmptyArea()) {
@@ -91,6 +106,9 @@ namespace EzUI {
 			}
 			EndPaint();
 			return TRUE;
+		}
+		default:
+			break;
 		}
 		return __super::WndProc(uMsg, wParam, lParam);
 	}

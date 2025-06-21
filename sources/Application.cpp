@@ -36,10 +36,12 @@ namespace EzUI {
 			return 0;
 		}
 		else if (message == WM_GUI_APP) {
+			//框架保留消息
 			return 0;
 		}
-		if (wndData) {
-			return  ((Window*)wndData->Window)->WndProc(message, wParam, lParam);
+		//执行消息过程
+		if (wndData && wndData->WndProc) {
+			return wndData->WndProc(hWnd, message, wParam, lParam);
 		}
 		return ::DefWindowProcW(hWnd, message, wParam, lParam);
 	}

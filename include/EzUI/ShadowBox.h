@@ -10,9 +10,15 @@ namespace EzUI {
 		Bitmap* _bufBitmap = NULL;
 		Rect _clipRect;
 		HWND _hWnd = NULL;
+		HWND _ownerHwnd = NULL;
 	private:
 		void setA(int_t x, int_t y, BYTE a, float radius);
 		bool SetShadow(int_t m_Width, int_t m_Height, int_t iSize, float radius);
+	protected:
+		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
+	public:
+		//公共数据 请不要改动此变量
+		WindowData* PublicData = NULL;
 	public:
 		ShadowBox(int_t width, int_t height, HWND OwnerWnd);//构造函数
 		virtual ~ShadowBox();

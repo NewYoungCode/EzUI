@@ -4,11 +4,26 @@ namespace EzUI {
 
 	ShadowBox::ShadowBox(int_t width, int_t height, HWND hwnd)
 	{
+		_ownerHwnd = hwnd;
 		DWORD dwFlags = WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT;
-		_hWnd = CreateWindowExW(dwFlags, EzUI::__EzUI__WindowClassName, L"ShadowBox", WS_POPUP, 0, 0, width, height, hwnd, NULL, EzUI::__EzUI__HINSTANCE, NULL);
+		_hWnd = CreateWindowExW(dwFlags, EzUI::__EzUI__WindowClassName, L"ShadowBox", WS_POPUP, 0, 0, width, height, NULL, NULL, EzUI::__EzUI__HINSTANCE, NULL);
 		ASSERT(_hWnd);
+		this->PublicData = new WindowData;
+		//绑定消息过程
+		PublicData->WndProc = [this](HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) ->LRESULT {
+			return this->WndProc(uMsg, wParam, lParam);
+			};
+		UI_SET_USERDATA(Hwnd(), this->PublicData);
 	}
 
+	LRESULT ShadowBox::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
+		switch (uMsg) {
+			break;
+		default:
+			break;
+		}
+		return ::DefWindowProcW(Hwnd(), uMsg, wParam, lParam);
+	}
 	bool ShadowBox::SetShadow(int_t m_Width, int_t m_Height, int_t iSize, float _radius) {
 		float radius = _radius;
 		if (radius == 0) {//判断窗口是不是有圆角
@@ -90,15 +105,13 @@ namespace EzUI {
 		//((BYTE*)point)[0] = 0;//修改B通道数值
 	}
 	void ShadowBox::Update(int_t _shadowWidth, const Border& border) {
-		HWND OwnerWnd = ::GetWindowOwner(_hWnd);
-		if (!::IsWindowVisible(OwnerWnd)) {
+		if (!::IsWindowVisible(_ownerHwnd) || ::IsIconic(_ownerHwnd)) {
 			::ShowWindow(_hWnd, SW_HIDE);
 			return;
 		}
 		::ShowWindow(_hWnd, SW_SHOW);
-
 		RECT Orect;
-		BOOL empty = ::GetWindowRect(OwnerWnd, &Orect);
+		BOOL empty = ::GetWindowRect(_ownerHwnd, &Orect);
 		Size paintSize{ Orect.right - Orect.left,Orect.bottom - Orect.top };//父控件作图大小
 
 		_clipRect = Rect({ _shadowWidth ,_shadowWidth }, paintSize);//裁剪区域
@@ -106,8 +119,8 @@ namespace EzUI {
 		int_t y = 0;
 		int_t width = paintSize.Width + _shadowWidth * 2;
 		int_t height = paintSize.Height + _shadowWidth * 2;
-		//移动阴影窗口
-		::MoveWindow(_hWnd, Orect.left - _shadowWidth, Orect.top - _shadowWidth, width, height, FALSE);
+		//移动阴影窗口并且设置阴影窗口Z轴
+		::SetWindowPos(Hwnd(), _ownerHwnd, Orect.left - _shadowWidth, Orect.top - _shadowWidth, width, height, SWP_NOACTIVATE);
 		//只有在大小发生改变的时候才回去重新生成layered窗口
 		if (paintSize.Equals(_bufSize)) {
 			return;
@@ -120,12 +133,6 @@ namespace EzUI {
 		_bufBitmap = new Bitmap(width, height, Bitmap::PixelFormat::PixelFormatARGB);//32位透明图
 		Rect rect{ 0,0,width, height };
 		SetShadow(rect.Width, rect.Height, _shadowWidth, border.TopLeftRadius);
-		/*	{
-				Rect clientRect(rect.X + _shadowWidth, rect.Y + _shadowWidth, rect.Width - _shadowWidth * 2, rect.Height - _shadowWidth * 2);
-				DXRender render(_bufBitmap->GetDC(), clientRect.X, clientRect.Y, clientRect.Width, clientRect.Height);
-				render.SetColor(Color(128, 128, 128, 128));
-				render.DrawRectangle(Rect(0, 0, clientRect.Width, clientRect.Height), 0, 1);
-			}*/
 		POINT point{ 0,0 };
 		SIZE size{ rect.Width,  rect.Height };
 		BLENDFUNCTION blend{ 0 };
@@ -133,71 +140,6 @@ namespace EzUI {
 		blend.BlendFlags = 0;
 		blend.AlphaFormat = AC_SRC_ALPHA;
 		blend.SourceConstantAlpha = 255;
-
-#if 1
-		{
-			int_t roundWidth = _bufBitmap->Width() - _shadowWidth * 2;
-			int_t roundHeight = _bufBitmap->Height() - _shadowWidth * 2;
-
-			//绘制边框
-			DXRender* render = NULL;
-
-			//规则的矩形
-			int_t borderLeft = border.Left;
-			int_t borderTop = border.Top;
-			int_t borderRight = border.Right;
-			int_t borderBottom = border.Bottom;
-			int_t topLeftRadius = border.TopLeftRadius;
-			int_t topRightRadius = border.TopRightRadius;
-			int_t bottomRightRadius = border.BottomRightRadius;
-			int_t bottomLeftRadius = border.BottomLeftRadius;
-			if (topLeftRadius == 0 && topRightRadius == 0 && bottomLeftRadius == 0 && bottomRightRadius == 0) {
-				bool hasBorder = borderLeft || borderTop || borderRight || borderBottom;
-				if (hasBorder) {
-
-					render = new DXRender(_bufBitmap->GetHDC(), 0, 0, width, height);
-					render->SetTransform(_shadowWidth, _shadowWidth);
-					render->SetStrokeStyle(border.BorderStyle);
-					render->SetColor(border.Color);
-
-					if (borderLeft > 0) {
-						RectF rect(0, 0, (float)borderLeft, (float)roundHeight);
-						render->FillRectangle(rect);
-					}
-					if (borderTop > 0) {
-						RectF rect(0, 0, (float)roundWidth, (float)borderTop);
-						render->FillRectangle(rect);
-					}
-					if (borderRight > 0) {
-						RectF rect((float)(roundWidth - borderRight), 0, (float)borderRight, (float)roundHeight);
-						render->FillRectangle(rect);
-					}
-					if (borderBottom > 0) {
-						RectF rect(0, (float)(roundHeight - borderBottom), (float)roundWidth, (float)borderBottom);
-						render->FillRectangle(rect);
-					}
-					render->SetTransform(0, 0);
-				}
-			}
-			else {
-				render = new DXRender(_bufBitmap->GetHDC(), 0, 0, width, height);
-				render->SetTransform(_shadowWidth, _shadowWidth);
-				render->SetStrokeStyle(border.BorderStyle);
-				render->SetColor(border.Color);
-
-				int_t value1 = borderLeft > borderTop ? borderLeft : borderTop;
-				int_t value2 = borderRight > borderBottom ? borderRight : borderBottom;
-				int_t maxBorder = value1 > value2 ? value1 : value2;
-				Geometry rr(Rect(0, 0, roundWidth, roundHeight), topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
-				render->DrawGeometry(rr.Get(), maxBorder);
-				render->SetTransform(0, 0);
-			}
-
-			if (render) {
-				delete render;
-			}
-		}
-#endif
 
 		::UpdateLayeredWindow(_hWnd, NULL, NULL, &size, _bufBitmap->GetHDC(), &point, 0, &blend, ULW_ALPHA);//。。。。。。更新分层窗口
 	}
@@ -207,9 +149,14 @@ namespace EzUI {
 	}
 	ShadowBox::~ShadowBox()
 	{
-		::SendMessage(_hWnd, WM_DESTROY, 0, 0);
+		if (Hwnd()) {
+			::DestroyWindow(Hwnd());
+		}
 		if (_bufBitmap) {
 			delete _bufBitmap;
+		}
+		if (PublicData) {
+			delete PublicData;
 		}
 	}
 };

@@ -16,10 +16,6 @@ namespace EzUI {
 		Size _miniSize;
 		//窗口最大尺寸
 		Size _maxSize;
-		//上一次客户端大小的信息
-		Size _lastSize;
-		//上一次移动的坐标
-		Point _lastPoint;
 		//当窗口关闭的时候退出代码
 		int_t _closeCode = 0;
 		//基于桌面的坐标
@@ -30,9 +26,11 @@ namespace EzUI {
 		HWND _oWnerWnd = NULL;
 		//窗口布局
 		Control* _layout = NULL;
+		//用于提示的窗口句柄
 		HWND _hWndTips = NULL;
 		//是否支持缩放
 		bool _resize = false;
+		//初始化窗口
 		void InitWindow(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
 	private:
 		Window(const Window&) = delete;
@@ -83,7 +81,6 @@ namespace EzUI {
 		virtual void OnKillFocus(HWND hWnd);
 		//鼠标 键盘 重绘 会进入此函数,bHandle如果设置位true将不再派发给sender控件处理
 		virtual void OnNotify(Control* sender, EventArgs& args, bool& bHandle);
-	public:
 		//处理消息队列的
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	public:

@@ -204,6 +204,8 @@ namespace EzUI {
 		std::function<void(Control*, const std::wstring&)> SetTips = NULL;
 		//删除tips文字
 		std::function<void(Control*)> DelTips = NULL;
+		//处理消息过程的回调函数
+		std::function<LRESULT(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)> WndProc = NULL;
 	};
 
 	enum class LayoutState :byte {

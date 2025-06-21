@@ -8,7 +8,6 @@ namespace EzUI {
 		::SetWindowLong(Hwnd(), GWL_STYLE, style);
 
 		_shadowBox = new ShadowBox(width, height, Hwnd());
-		UpdateShadowBox();
 	}
 	BorderlessWindow::~BorderlessWindow() {
 		CloseShadowBox();
@@ -24,10 +23,6 @@ namespace EzUI {
 	}
 	void BorderlessWindow::DoPaint(HDC winHDC, const Rect& rePaintRect) {
 		__super::DoPaint(winHDC, rePaintRect);
-		if (_firstPaint) {
-			_firstPaint = false;
-			UpdateShadowBox();
-		}
 	}
 
 	void BorderlessWindow::OnPaint(PaintEventArgs& args) {
@@ -48,10 +43,6 @@ namespace EzUI {
 
 	void BorderlessWindow::OnRect(const Rect& rect) {
 		__super::OnRect(rect);
-		if (!_firstPaint) {
-			//避免先显示阴影再显示窗口的问题
-			UpdateShadowBox();
-		}
 	}
 	void BorderlessWindow::OnDpiChange(float systemScale, const Rect& newRect)
 	{
@@ -59,9 +50,7 @@ namespace EzUI {
 			if (this->_shadowScale != systemScale) {
 				this->_shadowWeight *= systemScale / _shadowScale;
 				this->_shadowScale = systemScale;
-				if (!_firstPaint) {
-					UpdateShadowBox();
-				}
+				this->UpdateShadowBox();//刷新窗口阴影
 			}
 		}
 		//对边框进行新DPI适配
@@ -71,7 +60,6 @@ namespace EzUI {
 	}
 	void BorderlessWindow::Hide() {
 		__super::Hide();
-		UpdateShadowBox();
 	}
 	void BorderlessWindow::UpdateShadowBox() {
 		if (_shadowBox) {
@@ -102,6 +90,11 @@ namespace EzUI {
 		case WM_NCACTIVATE:
 		{
 			return (wParam == FALSE ? TRUE : FALSE);
+		}
+		case WM_WINDOWPOSCHANGED: {
+			//刷新窗口阴影
+			this->UpdateShadowBox();
+			break;
 		}
 		case WM_NCHITTEST:
 		{
