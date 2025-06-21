@@ -10,7 +10,6 @@ namespace EzUI {
 		Bitmap* _bufBitmap = NULL;
 		Rect _clipRect;
 		HWND _hWnd = NULL;
-		HWND _ownerHwnd = NULL;
 	private:
 		void setA(int_t x, int_t y, BYTE a, float radius);
 		bool SetShadow(int_t m_Width, int_t m_Height, int_t iSize, float radius);

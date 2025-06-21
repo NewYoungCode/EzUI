@@ -10,6 +10,7 @@ namespace EzUI {
 		int_t _shadowWeight = 20;
 		ShadowBox* _shadowBox = NULL;
 		float _shadowScale = 1.0f;
+		bool _firstPaint = true;
 	public:
 		//窗口的边框信息
 		EzUI::Border Border;

@@ -73,38 +73,32 @@ namespace EzUI {
 	{
 		switch (uMsg)
 		{
-		case WM_SHOWWINDOW: {
-			//初次显示手动刷新窗口
-			if (wParam == TRUE) {
-				if (_firstPaint) {
-					this->Invalidate();
-					this->_firstPaint = false;
+		case WM_PAINT: {
+			//如果是第一帧直接渲染到窗口DC中
+			if (IsVisible() || IsFirstFrame()) {
+				Rect invalidateRect;
+				BeginPaint(&invalidateRect);
+				if ((_winBitmap && !invalidateRect.IsEmptyArea())) {
+					_winBitmap->Earse(invalidateRect);//清除背景
+					HDC winHDC = _winBitmap->GetHDC();
+#if 1
+					//不使用双缓冲
+					DoPaint(winHDC, invalidateRect);
+#else
+					//使用双缓冲
+					Bitmap doubleBuff(_winBitmap->Width(), _winBitmap->Height(), Bitmap::PixelFormat::PixelFormatARGB);
+					DoPaint(doubleBuff.GetHDC(), invalidateRect);
+					//使用BitBlt函数进行复制到winHDC  //如果窗体不规则 不适用于BitBlt进行复制
+					::BitBlt(winHDC, invalidateRect.X, invalidateRect.Y,
+						invalidateRect.Width, invalidateRect.Height,
+						doubleBuff.GetHDC(), invalidateRect.X, invalidateRect.Y,
+						SRCCOPY);
+#endif
+					UpdateLayeredWindow(winHDC);//updatelaredwindow 更新窗口
+					EndPaint();
 				}
 			}
-			break;
-		}
-		case WM_PAINT: {
-			Rect invalidateRect;
-			BeginPaint(&invalidateRect);
-			if (_winBitmap && IsVisible() && !invalidateRect.IsEmptyArea()) {
-				_winBitmap->Earse(invalidateRect);//清除背景
-				HDC winHDC = _winBitmap->GetHDC();
-#if 1
-				//不使用双缓冲
-				DoPaint(winHDC, invalidateRect);
-#else
-				//使用双缓冲
-				Bitmap doubleBuff(_winBitmap->Width(), _winBitmap->Height(), Bitmap::PixelFormat::PixelFormatARGB);
-				DoPaint(doubleBuff.GetHDC(), invalidateRect);
-				//使用BitBlt函数进行复制到winHDC  //如果窗体不规则 不适用于BitBlt进行复制
-				::BitBlt(winHDC, invalidateRect.X, invalidateRect.Y,
-					invalidateRect.Width, invalidateRect.Height,
-					doubleBuff.GetHDC(), invalidateRect.X, invalidateRect.Y,
-					SRCCOPY);
-#endif
-				UpdateLayeredWindow(winHDC);//updatelaredwindow 更新窗口
-			}
-			EndPaint();
+			
 			return TRUE;
 		}
 		default:

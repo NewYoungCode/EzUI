@@ -13,8 +13,6 @@ namespace EzUI {
 		ThreadTimer _timeOut;
 		std::list<Rect> _invalidateRect;
 		Bitmap* _winBitmap = NULL;
-		//第一次绘制
-		bool _firstPaint = true;
 		void UpdateLayeredWindow(HDC hdc);
 		void BeginPaint(Rect* rect);
 		void EndPaint();

@@ -599,6 +599,15 @@ namespace EzUI {
 			//}
 			break;
 		}
+		case WM_SHOWWINDOW: {
+			//初次显示手动刷新窗口
+			if (wParam == TRUE) {
+				this->_isFirstFrame = true;
+				this->Refresh();
+				this->_isFirstFrame = false;
+			}
+			break;
+		}
 		case WM_WINDOWPOSCHANGED: {
 			WINDOWPOS* wPos = (WINDOWPOS*)(void*)lParam;
 			if ((wPos->flags & SWP_NOCOPYBITS) == SWP_NOCOPYBITS) {
@@ -828,6 +837,11 @@ namespace EzUI {
 			return false;
 		}
 		return true;
+	}
+
+	bool Window::IsFirstFrame()
+	{
+		return _isFirstFrame;
 	}
 
 	Control* Window::FindControl(const Point clientPoint, Point* outPoint) {

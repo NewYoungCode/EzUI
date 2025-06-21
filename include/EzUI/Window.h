@@ -30,6 +30,8 @@ namespace EzUI {
 		HWND _hWndTips = NULL;
 		//是否支持缩放
 		bool _resize = false;
+		//是否是显示之后的第一帧
+		bool _isFirstFrame = true;
 		//初始化窗口
 		void InitWindow(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
 	private:
@@ -37,6 +39,8 @@ namespace EzUI {
 		Window& operator=(const Window&) = delete;
 		bool IsInWindow(Control& pControl, Control& it);
 	protected:
+		//是否为第一帧
+		bool IsFirstFrame();
 		//鼠标按下以标题栏方式移动窗口
 		void TitleMoveWindow();
 		//当dpi发生更改时

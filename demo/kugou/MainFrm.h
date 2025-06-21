@@ -5,7 +5,10 @@
 #include "lrcControl.h"
 #include "desktopLrcFrm.h"
 
-using Form = LayeredWindow;
+
+//using Form = Window; //经典win32窗口样式
+//using Form = BorderlessWindow; //无边框窗口 带windows吸附效果
+using Form = LayeredWindow;  //分层窗口 支持异形 圆角
 
 class MainFrm :
 	public Form
