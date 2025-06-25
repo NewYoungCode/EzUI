@@ -28,10 +28,6 @@ namespace EzUI {
 		Control* _layout = NULL;
 		//用于提示的窗口句柄
 		HWND _hWndTips = NULL;
-		//是否支持缩放
-		bool _resize = false;
-		//是否是显示之后的第一帧
-		bool _isFirstFrame = true;
 		//初始化窗口
 		void InitWindow(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
 	private:
@@ -39,8 +35,6 @@ namespace EzUI {
 		Window& operator=(const Window&) = delete;
 		bool IsInWindow(Control& pControl, Control& it);
 	protected:
-		//是否为第一帧
-		bool IsFirstFrame();
 		//鼠标按下以标题栏方式移动窗口
 		void TitleMoveWindow();
 		//当dpi发生更改时
@@ -64,11 +58,9 @@ namespace EzUI {
 		//渲染中
 		virtual void OnPaint(PaintEventArgs& arg);
 		//位置发生改变时发生
-		virtual void OnLocation(const Point& point);
+		virtual void OnMove(const Point& point);
 		//大小发生改变时发生
 		virtual void OnSize(const Size& sz);
-		//当窗口矩形区域发生改变时发生
-		virtual void OnRect(const Rect& rect);
 		//当窗口收到WM_CLOSE消息时发生 
 		virtual void OnClose(bool& bClose);
 		//当窗口销毁时发生
@@ -144,12 +136,6 @@ namespace EzUI {
 
 		//设置与取消窗口置顶
 		void SetTopMost(bool top);
-
-		//设置窗口缩放支持
-		void SetResizable(bool resize);
-
-		//是否支持调整大小
-		bool IsResizable();
 
 		//是否全屏
 		bool IsFullScreen();

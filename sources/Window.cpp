@@ -175,7 +175,13 @@ namespace EzUI {
 			}
 			this->OnNotify(sender, args, bHandle);
 			};
+
+		//绑定窗口的数据
 		UI_SET_USERDATA(Hwnd(), this->PublicData);
+
+		//触发一些逻辑
+		::SendMessage(Hwnd(), WM_MOVE, NULL, MAKELPARAM(_rect.X, _rect.Y));
+		::SendMessage(Hwnd(), WM_SIZE, NULL, MAKELPARAM(_rect.Width, _rect.Height));
 	}
 
 	Control* Window::FindControl(const EString& objectName)
@@ -225,12 +231,6 @@ namespace EzUI {
 		LONG_PTR exStyle = ::GetWindowLongPtr(Hwnd(), GWL_EXSTYLE);
 		bool isTop = ((exStyle & WS_EX_TOPMOST) == WS_EX_TOPMOST);
 		return isTop;
-	}
-	void Window::SetResizable(bool resize) {
-		this->_resize = resize;
-	}
-	bool Window::IsResizable() {
-		return this->_resize;
 	}
 	bool Window::IsFullScreen() {
 		//判断是否全屏
@@ -600,19 +600,16 @@ namespace EzUI {
 			break;
 		}
 		case WM_SHOWWINDOW: {
-			//初次显示手动刷新窗口
-			if (wParam == TRUE) {
-				this->_isFirstFrame = true;
-				this->Refresh();
-				this->_isFirstFrame = false;
-			}
 			break;
 		}
 		case WM_WINDOWPOSCHANGED: {
 			WINDOWPOS* wPos = (WINDOWPOS*)(void*)lParam;
 			if ((wPos->flags & SWP_NOCOPYBITS) == SWP_NOCOPYBITS) {
 				//丢弃工作区的整个内容。 如果未指定此标志，则会在调整或重新定位窗口后保存并复制回工作区的有效内容。
-				Invalidate();
+				this->Invalidate();
+			}
+			if ((wPos->flags & SWP_SHOWWINDOW) == SWP_SHOWWINDOW) {
+				this->Invalidate();
 			}
 			break;
 		}
@@ -626,8 +623,7 @@ namespace EzUI {
 			_rect.X = xPos;
 			_rect.Y = yPos;
 
-			OnRect(_rect);
-			OnLocation(_rect.GetLocation());
+			OnMove(_rect.GetLocation());
 			break;
 		}
 		case WM_SIZE: {
@@ -649,7 +645,6 @@ namespace EzUI {
 			_rectClient.Width = rect.right - rect.left;
 			_rectClient.Height = rect.bottom - rect.top;
 
-			OnRect(_rect);
 			OnSize(_rect.GetSize());
 			break;
 		}
@@ -837,11 +832,6 @@ namespace EzUI {
 			return false;
 		}
 		return true;
-	}
-
-	bool Window::IsFirstFrame()
-	{
-		return _isFirstFrame;
 	}
 
 	Control* Window::FindControl(const Point clientPoint, Point* outPoint) {
@@ -1089,11 +1079,9 @@ namespace EzUI {
 		_layout->Invalidate();
 	}
 
-	void Window::OnRect(const Rect& rect)
-	{
-	}
 	void Window::OnClose(bool& bClose)
 	{
+
 	}
 	void Window::OnDestroy()
 	{
@@ -1124,7 +1112,7 @@ namespace EzUI {
 	void Window::OnFocus(HWND hWnd)
 	{
 	}
-	void Window::OnLocation(const Point& point) {
+	void Window::OnMove(const Point& point) {
 	}
 	void Window::OnKillFocus(HWND hWnd)
 	{
@@ -1154,13 +1142,11 @@ namespace EzUI {
 	void Window::OnNotify(Control* sender, EventArgs& args, bool& bHandle) {
 		if (args.EventType == Event::OnMouseDoubleClick) {
 			if (sender->Action == ControlAction::Title) {
-				if (this->_resize) {
-					if (::IsZoomed(Hwnd())) {
-						this->ShowNormal();
-					}
-					else {
-						this->ShowMaximized();
-					}
+				if (::IsZoomed(Hwnd())) {
+					this->ShowNormal();
+				}
+				else {
+					this->ShowMaximized();
 				}
 			}
 			return;

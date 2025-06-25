@@ -22,14 +22,6 @@ namespace EzUI {
 		_shadowWeight = padding;
 		UpdateShadowBox();
 	}
-	void BorderlessWindow::DoPaint(HDC winHDC, const Rect& rePaintRect) {
-		__super::DoPaint(winHDC, rePaintRect);
-		if (_firstPaint) {
-			_firstPaint = false;
-			UpdateShadowBox();
-		}
-	}
-
 	void BorderlessWindow::OnPaint(PaintEventArgs& args) {
 		const auto& border = this->Border;
 		const auto& rect = this->GetClientRect();
@@ -46,22 +38,13 @@ namespace EzUI {
 		args.PopLayer();
 	}
 
-	void BorderlessWindow::OnRect(const Rect& rect) {
-		__super::OnRect(rect);
-		if (!_firstPaint) {
-			//避免先显示阴影再显示窗口的问题
-			UpdateShadowBox();
-		}
-	}
 	void BorderlessWindow::OnDpiChange(float systemScale, const Rect& newRect)
 	{
 		if (_shadowBox) {//对窗口阴影进行新DPI适配
 			if (this->_shadowScale != systemScale) {
 				this->_shadowWeight *= systemScale / _shadowScale;
 				this->_shadowScale = systemScale;
-				if (!_firstPaint) {
-					UpdateShadowBox();
-				}
+				UpdateShadowBox();
 			}
 		}
 		//对边框进行新DPI适配
@@ -69,10 +52,15 @@ namespace EzUI {
 		this->Border.Scale(newScale);
 		__super::OnDpiChange(systemScale, newRect);
 	}
-	void BorderlessWindow::Hide() {
-		__super::Hide();
-		UpdateShadowBox();
+
+	void BorderlessWindow::SetResizable(bool resize) {
+		this->_resize = resize;
 	}
+
+	bool BorderlessWindow::IsResizable() {
+		return this->_resize;
+	}
+
 	void BorderlessWindow::UpdateShadowBox() {
 		if (_shadowBox) {
 			_shadowBox->Update(_shadowWeight * this->GetScale(), this->Border);
@@ -102,6 +90,25 @@ namespace EzUI {
 		case WM_NCACTIVATE:
 		{
 			return (wParam == FALSE ? TRUE : FALSE);
+		}
+		case WM_WINDOWPOSCHANGED:
+		{
+			WINDOWPOS* pPos = (WINDOWPOS*)lParam;
+			//在窗口显示/隐藏的时候更新阴影窗口
+			if ((pPos->flags & SWP_SHOWWINDOW) || (pPos->flags & SWP_HIDEWINDOW)) {
+				this->UpdateShadowBox();
+			}
+			break;
+		}
+		case WM_SHOWWINDOW: {
+			//窗口的可见状态标志未被设置
+			if (wParam == TRUE) {
+				//SHOW WINDOWS
+			}
+			else {
+				//HIDE WINDOWS
+			}
+			break;
 		}
 		case WM_NCHITTEST:
 		{
@@ -143,5 +150,15 @@ namespace EzUI {
 			break;
 		}
 		return __super::WndProc(uMsg, wParam, lParam);
+	}
+	void BorderlessWindow::OnMove(const Point& location)
+	{
+		__super::OnMove(location);
+		UpdateShadowBox();
+	}
+	void BorderlessWindow::OnSize(const Size& sz)
+	{
+		__super::OnSize(sz);//避免先显示阴影再显示窗口的问题
+		UpdateShadowBox();
 	}
 }

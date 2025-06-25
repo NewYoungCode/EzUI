@@ -525,19 +525,13 @@ namespace EzUI {
 		Point newLocation = _rect.GetLocation();
 		Size newSize = _rect.GetSize();
 
-		bool onRect = false;
 		if (!_lastLocation.Equals(newLocation)) {
-			this->SendNotify(LocationEventArgs(newLocation));
+			this->SendNotify(MoveEventArgs(newLocation));
 			_lastLocation = newLocation;
-			onRect = true;
 		}
 		if (!newSize.Equals(_lastSize)) {
 			this->SendNotify(SizeEventArgs(newSize));
 			_lastSize = newSize;
-			onRect = true;
-		}
-		if (onRect) {
-			this->SendNotify(RectEventArgs(_rect));
 		}
 		return this->_rect;
 	}
@@ -639,16 +633,12 @@ namespace EzUI {
 				this->OnPaintBefore((PaintEventArgs&)arg);
 				break;
 			}
-			if (arg.EventType == Event::OnLocation) {
-				this->OnLocation((LocationEventArgs&)arg);
+			if (arg.EventType == Event::OnMove) {
+				this->OnMove((MoveEventArgs&)arg);
 				break;
 			}
 			if (arg.EventType == Event::OnSize) {
 				this->OnSize((SizeEventArgs&)arg);
-				break;
-			}
-			if (arg.EventType == Event::OnRect) {
-				this->OnRect((RectEventArgs&)arg);
 				break;
 			}
 			if (arg.EventType == Event::OnDpiChange) {
@@ -1351,7 +1341,7 @@ namespace EzUI {
 	void Control::OnKillFocus(const KillFocusEventArgs& arg)
 	{
 	}
-	void Control::OnLocation(const LocationEventArgs& arg)
+	void Control::OnMove(const MoveEventArgs& arg)
 	{
 	}
 	void Control::OnSize(const SizeEventArgs& arg)
@@ -1360,9 +1350,6 @@ namespace EzUI {
 		if (Parent) {
 			Parent->TryPendLayout();//将父控件挂起
 		}
-	}
-	void Control::OnRect(const RectEventArgs& arg)
-	{
 	}
 	ScrollBar* Control::GetScrollBar()
 	{

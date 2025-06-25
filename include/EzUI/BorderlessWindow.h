@@ -10,15 +10,16 @@ namespace EzUI {
 		int_t _shadowWeight = 20;
 		ShadowBox* _shadowBox = NULL;
 		float _shadowScale = 1.0f;
-		bool _firstPaint = true;
+		//是否支持缩放
+		bool _resize = false;
 	public:
 		//窗口的边框信息
 		EzUI::Border Border;
 	protected:
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
-		virtual void OnRect(const Rect& rect) override;
+		virtual void OnMove(const Point& location) override;
+		virtual void OnSize(const Size& sz) override;
 		virtual void OnDpiChange(float systemScale, const Rect& newRect);//当dpi发生更改时
-		virtual void DoPaint(HDC winHDC, const Rect& rePaintRect)override;
 		virtual void OnPaint(PaintEventArgs& args)override;
 	public:
 		//设置阴影宽度
@@ -31,6 +32,9 @@ namespace EzUI {
 		ShadowBox* GetShadowBox();
 		//关闭窗口阴影 关掉阴影窗口 已有的边框也会随之消失
 		void CloseShadowBox();
-		void Hide();
+		//设置窗口缩放支持
+		void SetResizable(bool resize);
+		//是否支持调整大小
+		bool IsResizable();
 	};
 };

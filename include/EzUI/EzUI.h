@@ -232,7 +232,7 @@ namespace EzUI {
 		OnFocus = 4096,
 		OnKillFocus = 8192,
 		OnKeyChar = 16384,
-		OnLocation = 32768,
+		OnMove = 32768,
 		OnSize = 65536,
 		OnRect = 131072,
 		OnDpiChange = 262144,
@@ -380,11 +380,11 @@ namespace EzUI {
 		virtual ~KillFocusEventArgs() {}
 	};
 	//坐标发生改变
-	class UI_EXPORT LocationEventArgs :public EventArgs {
+	class UI_EXPORT MoveEventArgs :public EventArgs {
 	public:
 		const EzUI::Point& Location;
-		LocationEventArgs(const EzUI::Point& location) :EventArgs(Event::OnLocation), Location(location) {}
-		virtual ~LocationEventArgs() {}
+		MoveEventArgs(const EzUI::Point& location) :EventArgs(Event::OnMove), Location(location) {}
+		virtual ~MoveEventArgs() {}
 	};
 	//大小发生改变
 	class UI_EXPORT SizeEventArgs :public EventArgs {
@@ -392,13 +392,6 @@ namespace EzUI {
 		const EzUI::Size& Size;
 		SizeEventArgs(const EzUI::Size& size) :EventArgs(Event::OnSize), Size(size) {}
 		virtual ~SizeEventArgs() {}
-	};
-	//矩形发生改变
-	class UI_EXPORT RectEventArgs :public EventArgs {
-	public:
-		const EzUI::Rect& Rect;
-		RectEventArgs(const EzUI::Rect& rect) :EventArgs(Event::OnRect), Rect(rect) {}
-		virtual ~RectEventArgs() {}
 	};
 	//dpi发生变化
 	class UI_EXPORT DpiChangeEventArgs :public EventArgs {

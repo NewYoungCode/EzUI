@@ -4,7 +4,6 @@ namespace EzUI {
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
 	LayeredWindow::LayeredWindow(int_t width, int_t height, HWND owner) :BorderlessWindow(width, height, owner, WS_EX_LAYERED)
 	{
-		UpdateShadowBox();
 		_timeOut.Interval = 0;
 		_timeOut.Tick = [this](ThreadTimer* t) {
 			t->Stop();
@@ -75,7 +74,7 @@ namespace EzUI {
 		{
 		case WM_PAINT: {
 			//如果是第一帧直接渲染到窗口DC中
-			if (IsVisible() || IsFirstFrame()) {
+			if (IsVisible()) {
 				Rect invalidateRect;
 				BeginPaint(&invalidateRect);
 				if ((_winBitmap && !invalidateRect.IsEmptyArea())) {
@@ -98,7 +97,7 @@ namespace EzUI {
 					EndPaint();
 				}
 			}
-			
+
 			return TRUE;
 		}
 		default:

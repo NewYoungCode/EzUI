@@ -139,13 +139,10 @@ namespace EzUI {
 		virtual void OnBorderPaint(PaintEventArgs& painter, const Border& border);
 
 		// 坐标发生改变
-		virtual void OnLocation(const LocationEventArgs& arg);
+		virtual void OnMove(const MoveEventArgs& arg);
 
 		// 大小发生改变
 		virtual void OnSize(const SizeEventArgs& arg);
-
-		// 矩形发生改变
-		virtual void OnRect(const RectEventArgs& arg);
 
 		// DPI 发生改变
 		virtual void OnDpiChange(const DpiChangeEventArgs& arg);
