@@ -16,12 +16,12 @@ namespace EzUI {
 		//}
 		WindowData* wndData = (WindowData*)UI_GET_USERDATA(hWnd);
 		if (message == WM_CREATE) {
-			__EzUI__WNDS.push_back(hWnd);
+			__EzUI__Wnds.push_back(hWnd);
 		}
 		else if (message == WM_DESTROY) {
-			auto itor = std::find(__EzUI__WNDS.begin(), __EzUI__WNDS.end(), hWnd);
-			if (itor != __EzUI__WNDS.end()) {
-				__EzUI__WNDS.erase(itor);
+			auto itor = std::find(__EzUI__Wnds.begin(), __EzUI__Wnds.end(), hWnd);
+			if (itor != __EzUI__Wnds.end()) {
+				__EzUI__Wnds.erase(itor);
 			}
 		}
 		else if (message == WM_GUI_SYSTEM) {
@@ -46,6 +46,36 @@ namespace EzUI {
 		return ::DefWindowProcW(hWnd, message, wParam, lParam);
 	}
 
+	const wchar_t* __EzUI__HiddenMessageWindowClass = L"__EzUI__HiddenMessageWindowClass";
+	void RegMessageWnd() {
+		WNDCLASS wc = {};
+		wc.lpfnWndProc = [](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) -> LRESULT {
+			if (msg == WM_GUI_SYSTEM) {
+				if (wParam == WM_GUI_BEGININVOKE || wParam == WM_GUI_INVOKE) {
+					using Func = std::function<void()>;
+					Func* callback = (Func*)lParam;
+					(*callback)();
+					if (wParam == WM_GUI_BEGININVOKE) {
+						delete callback;
+					}
+				}
+				return 0;
+			}
+			return ::DefWindowProc(hwnd, msg, wParam, lParam);
+			};
+		wc.hInstance = EzUI::__EzUI__HINSTANCE;
+		wc.lpszClassName = __EzUI__HiddenMessageWindowClass;
+		RegisterClassW(&wc);
+		EzUI::__EzUI_MessageWnd = CreateWindowEx(
+			0,                 // 无特殊扩展样式
+			__EzUI__HiddenMessageWindowClass,         // 上面注册的类名
+			L"",               // 窗口名（无用）
+			0,                 // 样式设为 0（无 WS_VISIBLE）
+			0, 0, 0, 0,        // 尺寸全为 0
+			nullptr, nullptr, EzUI::__EzUI__HINSTANCE, nullptr
+		);
+	}
+
 	void Application::Init() {
 		//存入全局实例
 		EzUI::__EzUI__HINSTANCE = ::GetModuleHandleW(NULL);
@@ -62,6 +92,10 @@ namespace EzUI {
 				wc.lpszClassName, MB_ICONERROR);
 			return;
 		}
+
+		//注册一个窗口类并创建隐形窗口用于UI通讯
+		RegMessageWnd();
+
 		//初始化公共控件库
 		INITCOMMONCONTROLSEX icex;
 		icex.dwSize = sizeof(icex);
@@ -143,13 +177,14 @@ namespace EzUI {
 		if (EzUI::__EzUI__Resource) {
 			delete EzUI::__EzUI__Resource;
 		}
+		UnregisterClassW(EzUI::__EzUI__HiddenMessageWindowClass, EzUI::__EzUI__HINSTANCE);
 		UnregisterClassW(EzUI::__EzUI__WindowClassName, EzUI::__EzUI__HINSTANCE);
 	}
 
 	int_t Application::Exec()
 	{
 		MSG msg;
-		while (::GetMessage(&msg, NULL, 0, 0)){
+		while (::GetMessage(&msg, NULL, 0, 0)) {
 			::TranslateMessage(&msg);
 			::DispatchMessage(&msg);
 		}
@@ -157,6 +192,19 @@ namespace EzUI {
 	}
 
 	void Application::Exit(int_t exitCode) {
+		//销毁通讯窗口
+		::DestroyWindow(EzUI::__EzUI_MessageWnd);
+		//退出循环前 销毁所有窗口
+		while (EzUI::__EzUI__Wnds.size() > 0)
+		{
+			auto itor = EzUI::__EzUI__Wnds.begin();
+			if (itor != EzUI::__EzUI__Wnds.end()) {
+				HWND hwnd = *itor;
+				__EzUI__Wnds.erase(itor);
+				::DestroyWindow(hwnd);
+			}
+		}
+		//退出消息循环
 		::PostQuitMessage(exitCode);
 	}
 

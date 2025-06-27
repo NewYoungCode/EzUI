@@ -4,12 +4,11 @@ namespace EzUI {
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
 	LayeredWindow::LayeredWindow(int_t width, int_t height, HWND owner) :BorderlessWindow(width, height, owner, WS_EX_LAYERED)
 	{
-		_timeOut = new ThreadTimer;
-		_timeOut->Interval = 1;
-		_timeOut->Tick = [this](ThreadTimer* t) {
+		_timeOut.Interval = 0;
+		_timeOut.Tick = [this](ThreadTimer* t) {
+			t->Stop();//停止
 			Sleep(5);//延迟5ms之后再去绘制
-			Invoke([this,t]() {
-				t->Stop();
+			Invoke([this]() {
 				this->Paint();
 				});
 			};
@@ -31,16 +30,12 @@ namespace EzUI {
 		if (_winBitmap) {
 			delete _winBitmap;
 		}
-		if (_timeOut) {
-			_timeOut->Stop();
-			delete _timeOut;
-		}
 	}
 	void LayeredWindow::InvalidateRect(const Rect& _rect) {
 		//将此区域添加到无效区域
 		_invalidateRect.push_back(_rect);
 		//timer延迟绘制
-		_timeOut->Start();
+		_timeOut.Start();
 	}
 	void LayeredWindow::BeginPaint(Rect* out_rect)
 	{

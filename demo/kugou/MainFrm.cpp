@@ -328,6 +328,9 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 	}
 
 	if (args.EventType == Event::OnMouseClick) {
+		if (sender->Name == "login") {
+			Application::Exit();
+		}
 		if (sender->Name == "next") {
 			int pos = this->FindLocalSong(this->nowSong);
 			pos++;

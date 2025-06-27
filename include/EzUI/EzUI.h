@@ -46,9 +46,9 @@ namespace EzUI {
 	extern UI_VAR_EXPORT HMODULE __EzUI__HINSTANCE;//全局实例
 	extern UI_VAR_EXPORT Resource* __EzUI__Resource;//文件中的全局资源句柄
 	extern UI_VAR_EXPORT DWORD __EzUI__ThreadId;//UI的线程Id
-	extern UI_VAR_EXPORT std::list<HWND> __EzUI__WNDS;//存储所有使用本框架产生的窗口句柄
+	extern UI_VAR_EXPORT std::list<HWND> __EzUI__Wnds;//存储所有使用本框架产生的窗口句柄
+	extern UI_VAR_EXPORT HWND __EzUI_MessageWnd;//用于UI通讯的隐形窗口
 	extern UI_VAR_EXPORT const std::list<EzUI::MonitorInfo> __EzUI__MonitorInfos;//所有监视器信息
-
 	//装载字体
 	extern UI_EXPORT void InstallFont(const EString& fontFileName);
 	//卸载字体
@@ -490,15 +490,8 @@ namespace EzUI {
 	//原理采用PostMessage(请确保当前UI线程中至少存在一个窗口)
 	template<class Func, class... Args>
 	bool BeginInvoke(Func&& f, Args&& ...args) {
-		HWND hWnd = NULL;
-		if (!__EzUI__WNDS.empty()) {
-			//从全局窗口中获取
-			hWnd = *__EzUI__WNDS.begin();
-		}
-		else {
-			return false;
-		}
-		if (hWnd == NULL) {
+		HWND hWnd = EzUI::__EzUI_MessageWnd;
+		if (hWnd == NULL || !::IsWindow(hWnd)) {
 			return false;
 		}
 		std::function<void()>* func = new std::function<void()>(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
@@ -516,15 +509,8 @@ namespace EzUI {
 			func();
 			return true;
 		}
-		HWND hWnd = NULL;
-		if (!__EzUI__WNDS.empty()) {
-			//从全局窗口中获取
-			hWnd = *__EzUI__WNDS.begin();
-		}
-		else {
-			return false;
-		}
-		if (hWnd == NULL) {
+		HWND hWnd = EzUI::__EzUI_MessageWnd;
+		if (hWnd == NULL || !::IsWindow(hWnd)) {
 			return false;
 		}
 		if (::SendMessage(hWnd, WM_GUI_SYSTEM, WM_GUI_INVOKE, (LPARAM)&func) == LRESULT(-1)) {
