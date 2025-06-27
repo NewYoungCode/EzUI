@@ -78,7 +78,7 @@ bool MainFrm::FileExists(const EString& fileName) {
 	}
 	return false;
 }
-void MainFrm::OnNotify(Control* sd, EventArgs& args, bool& bHandle) {
+bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 	if (args.EventType == Event::OnMouseClick) {
 		if (sd->Name == "btnBrowserDir") {
 			EString dir = ShowFolderDialog(Hwnd(), "", "");
@@ -155,7 +155,7 @@ void MainFrm::OnNotify(Control* sd, EventArgs& args, bool& bHandle) {
 			}
 		}
 	}
-	__super::OnNotify(sd, args, bHandle);
+	return __super::OnNotify(sd, args);
 }
 void MainFrm::OnResFileChange(EzUI::EString& resFile)
 {

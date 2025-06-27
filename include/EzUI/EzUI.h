@@ -197,7 +197,7 @@ namespace EzUI {
 		//立即更新全部无效区域
 		std::function<void()> UpdateWindow = NULL;
 		//通知函数
-		std::function<void(Control*, EventArgs&, bool&)> SendNotify = NULL;//
+		std::function<bool(Control*, EventArgs&)> SendNotify = NULL;//
 		//清空控件标记等等...
 		std::function<void(Control*)> RemoveControl = NULL;
 		//设置tips文字

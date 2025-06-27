@@ -26,18 +26,19 @@ namespace EzUI {
 	void ThreadTimer::Start() {
 		std::unique_lock<std::mutex> autoLock(_mtx);
 		_bStop = false;
-		_condv.notify_one();
+		_condv.notify_all();
 	}
 	void ThreadTimer::Stop() {
 		std::unique_lock<std::mutex> autoLock(_mtx);
 		_bStop = true;
-		_condv.notify_one();
+		_condv.notify_all();
 	}
 	ThreadTimer::~ThreadTimer() {
 		{
 			std::unique_lock<std::mutex> autoLock(_mtx);
+			this->Tick = NULL;
 			_bExit = true;
-			_condv.notify_one();
+			_condv.notify_all();
 		}
 		delete _task;
 	}

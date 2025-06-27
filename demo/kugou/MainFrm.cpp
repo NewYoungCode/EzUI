@@ -276,14 +276,13 @@ void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 	}
 	__super::OnKeyDown(wparam, lParam);
 }
-void MainFrm::OnNotify(Control* sender, EventArgs& args, bool& bHandle) {
+bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 	if (args.EventType == Event::OnPaint) {
 		if (sender == &player) {
 			if (tabCtrl->GetPageIndex() == 2) {
-				return;
+				return false;
 			}
-			bHandle = true;
-			return;
+			return true;
 		}
 		if (sender == main && player.BuffBitmap) {
 			if (tabCtrl->GetPageIndex() == 1) {
@@ -291,15 +290,14 @@ void MainFrm::OnNotify(Control* sender, EventArgs& args, bool& bHandle) {
 				Image img(player.BuffBitmap->GetHBITMAP());
 				img.SizeMode = ImageSizeMode::CenterImage;
 				arg.Graphics.DrawImage(&img, main->GetRect());
-				bHandle = true;
-				return;
+				return true;
 			}
 			else if (deskTopWnd->IsVisible()) {
 				deskTopWnd->Invalidate();
 			}
-			return;
+			return false;
 		}
-		return;
+		return false;
 	}
 	if (args.EventType == Event::OnMouseDoubleClick) {
 		if (!sender->GetAttribute("FileHash").empty()) {
@@ -372,13 +370,13 @@ void MainFrm::OnNotify(Control* sender, EventArgs& args, bool& bHandle) {
 			player.Play();
 			control->SetPageIndex(1);
 			control->Invalidate();
-			return;
+			return false;
 		}
 		if (sender->Name == "pause") {
 			player.Pause();
 			control->SetPageIndex(0);
 			control->Invalidate();
-			return;
+			return false;
 		}
 		if (sender->Name == "dellocal") {//删除本地
 			LocalItem* songItem = (LocalItem*)sender->Parent;
@@ -390,7 +388,7 @@ void MainFrm::OnNotify(Control* sender, EventArgs& args, bool& bHandle) {
 			}
 			delete songItem;
 			localList->Invalidate();
-			return;
+			return false;
 		}
 		if (sender->GetAttribute("tablayout") == "rightView") {
 			size_t pos = sender->Parent->IndexOf(sender);
@@ -436,7 +434,7 @@ void MainFrm::OnNotify(Control* sender, EventArgs& args, bool& bHandle) {
 			player.Play();
 		}
 	}
-	__super::OnNotify(sender, args, bHandle);
+	return __super::OnNotify(sender, args);
 }
 void MainFrm::TimerTick() {
 

@@ -10,12 +10,13 @@ namespace EzUI {
 	class  UI_EXPORT LayeredWindow :public BorderlessWindow
 	{
 	private:
-		ThreadTimer _timeOut;
+		ThreadTimer* _timeOut = NULL;
 		std::list<Rect> _invalidateRect;
 		Bitmap* _winBitmap = NULL;
 		void UpdateLayeredWindow(HDC hdc);
 		void BeginPaint(Rect* rect);
 		void EndPaint();
+		void Paint();
 	protected:
 		virtual void OnSize(const Size& sz)override;
 		void InvalidateRect(const Rect& rect);

@@ -40,7 +40,7 @@ public:
 	void OnPackDirChange();
 	void OnClose(bool& close)  override;
 	bool FileExists(const EString& fileName);
-	void OnNotify(Control* sender, EventArgs& args, bool& bHandle)override;
+	bool OnNotify(Control* sender, EventArgs& args)override;
 	void OnResFileChange(EzUI::EString& resFile);
 	virtual LRESULT WndProc(UINT msg, WPARAM wp, LPARAM lp);
 	virtual ~MainFrm();

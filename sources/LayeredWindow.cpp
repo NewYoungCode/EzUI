@@ -4,11 +4,14 @@ namespace EzUI {
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
 	LayeredWindow::LayeredWindow(int_t width, int_t height, HWND owner) :BorderlessWindow(width, height, owner, WS_EX_LAYERED)
 	{
-		_timeOut.Interval = 0;
-		_timeOut.Tick = [this](ThreadTimer* t) {
-			t->Stop();
+		_timeOut = new ThreadTimer;
+		_timeOut->Interval = 1;
+		_timeOut->Tick = [this](ThreadTimer* t) {
 			Sleep(5);//延迟5ms之后再去绘制
-			::SendMessage(Hwnd(), WM_PAINT, 0, 0);
+			Invoke([this,t]() {
+				t->Stop();
+				this->Paint();
+				});
 			};
 		this->PublicData->InvalidateRect = [this](const Rect& rect) ->void {
 			//标记窗口无效区域
@@ -16,7 +19,9 @@ namespace EzUI {
 			};
 		this->PublicData->UpdateWindow = [this]()->void {
 			//立即更新窗口中的无效区域
-			::SendMessage(Hwnd(), WM_PAINT, 0, 0);
+			Invoke([this]() {
+				this->Paint();
+				});
 			};
 		//获取客户区大小 创建一个位图给窗口绘制
 		Size sz = GetClientRect().GetSize();
@@ -26,12 +31,16 @@ namespace EzUI {
 		if (_winBitmap) {
 			delete _winBitmap;
 		}
+		if (_timeOut) {
+			_timeOut->Stop();
+			delete _timeOut;
+		}
 	}
 	void LayeredWindow::InvalidateRect(const Rect& _rect) {
 		//将此区域添加到无效区域
 		_invalidateRect.push_back(_rect);
 		//timer延迟绘制
-		_timeOut.Start();
+		_timeOut->Start();
 	}
 	void LayeredWindow::BeginPaint(Rect* out_rect)
 	{
@@ -68,36 +77,37 @@ namespace EzUI {
 	{
 		_invalidateRect.clear();
 	}
+	void LayeredWindow::Paint()
+	{
+		if (IsVisible()) {
+			Rect invalidateRect;
+			BeginPaint(&invalidateRect);
+			if ((_winBitmap && !invalidateRect.IsEmptyArea())) {
+				_winBitmap->Earse(invalidateRect);//清除背景
+				HDC winHDC = _winBitmap->GetHDC();
+#if 1
+				//不使用双缓冲
+				DoPaint(winHDC, invalidateRect);
+#else
+				//使用双缓冲
+				Bitmap doubleBuff(_winBitmap->Width(), _winBitmap->Height(), Bitmap::PixelFormat::PixelFormatARGB);
+				DoPaint(doubleBuff.GetHDC(), invalidateRect);
+				//使用BitBlt函数进行复制到winHDC  //如果窗体不规则 不适用于BitBlt进行复制
+				::BitBlt(winHDC, invalidateRect.X, invalidateRect.Y,
+					invalidateRect.Width, invalidateRect.Height,
+					doubleBuff.GetHDC(), invalidateRect.X, invalidateRect.Y,
+					SRCCOPY);
+#endif
+				UpdateLayeredWindow(winHDC);//updatelaredwindow 更新窗口
+				EndPaint();
+			}
+		}
+	}
 	LRESULT LayeredWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		switch (uMsg)
 		{
 		case WM_PAINT: {
-			//如果是第一帧直接渲染到窗口DC中
-			if (IsVisible()) {
-				Rect invalidateRect;
-				BeginPaint(&invalidateRect);
-				if ((_winBitmap && !invalidateRect.IsEmptyArea())) {
-					_winBitmap->Earse(invalidateRect);//清除背景
-					HDC winHDC = _winBitmap->GetHDC();
-#if 1
-					//不使用双缓冲
-					DoPaint(winHDC, invalidateRect);
-#else
-					//使用双缓冲
-					Bitmap doubleBuff(_winBitmap->Width(), _winBitmap->Height(), Bitmap::PixelFormat::PixelFormatARGB);
-					DoPaint(doubleBuff.GetHDC(), invalidateRect);
-					//使用BitBlt函数进行复制到winHDC  //如果窗体不规则 不适用于BitBlt进行复制
-					::BitBlt(winHDC, invalidateRect.X, invalidateRect.Y,
-						invalidateRect.Width, invalidateRect.Height,
-						doubleBuff.GetHDC(), invalidateRect.X, invalidateRect.Y,
-						SRCCOPY);
-#endif
-					UpdateLayeredWindow(winHDC);//updatelaredwindow 更新窗口
-					EndPaint();
-				}
-			}
-
 			return TRUE;
 		}
 		default:

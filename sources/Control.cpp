@@ -605,9 +605,9 @@ namespace EzUI {
 	}
 	bool Control::SendNotify(const EventArgs& arg)
 	{
-		return this->OnEvent((EventArgs&)arg);
+		return this->OnNotify((EventArgs&)arg);
 	}
-	bool Control::OnEvent(EventArgs& arg)
+	bool Control::OnNotify(EventArgs& arg)
 	{
 		bool isRemove = false;
 		this->_isRemove = &isRemove;
@@ -618,8 +618,7 @@ namespace EzUI {
 			}
 			if (PublicData && ((this->EventNotify & arg.EventType) == arg.EventType)) {
 				if (arg.EventType != Event::OnPaint) {
-					bool bHandle = false;
-					PublicData->SendNotify(this, (EventArgs&)arg, bHandle);
+					bool bHandle = PublicData->SendNotify(this, (EventArgs&)arg);
 					if (bHandle) {
 						//如果处理过了则不需要继续往下派发
 						break;
@@ -665,8 +664,7 @@ namespace EzUI {
 		if (!isRemove) {
 			//通用事件处理 ps:绘制函数比较特殊(在其他地方处理)
 			if (this->Notify && (arg.EventType != Event::OnPaint)) {
-				bool bHandle = false;
-				this->Notify(this, arg, bHandle);
+				this->Notify(this, arg);
 			}
 			if (!isRemove) {
 				this->_isRemove = NULL;
@@ -807,8 +805,7 @@ namespace EzUI {
 		}
 #endif 
 		//调用公共函数,如果那边不拦截,就开始绘制自身基本上下文
-		bool bHandle = false;
-		PublicData->SendNotify(this, args, bHandle);
+		bool bHandle = PublicData->SendNotify(this, args);
 		if (!bHandle) {
 			this->OnPaint(args);
 		}
@@ -832,8 +829,7 @@ namespace EzUI {
 		}
 #endif
 		if (this->Notify) {
-			bool bHandle = false;
-			this->Notify(this, args, bHandle);
+			this->Notify(this, args);
 		}
 		args.PopLayer();//弹出纹理层
 		args.PopOffset();//弹出偏移

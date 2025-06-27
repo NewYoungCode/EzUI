@@ -157,7 +157,7 @@ namespace EzUI {
 				__INPUT_CONTROL = NULL;
 			}
 			};
-		PublicData->SendNotify = [this](Control* sender, EventArgs& args, bool& bHandle)->void {
+		PublicData->SendNotify = [this](Control* sender, EventArgs& args)->bool {
 			IIFrame* frame = NULL;
 			Control* parent = sender;
 			//依次往上父控件看看有没有当前控件是否在内联页面中
@@ -170,10 +170,10 @@ namespace EzUI {
 			}
 			//如果当前控件存在与内联界面且事件通知处理器不为NULL的时候
 			if (frame && frame->Notify) {
-				frame->Notify(sender, args, bHandle);
-				if (bHandle)return;
+				frame->Notify(sender, args);
+				return true;
 			}
-			this->OnNotify(sender, args, bHandle);
+			return this->OnNotify(sender, args);
 			};
 
 		//绑定窗口的数据
@@ -1139,8 +1139,11 @@ namespace EzUI {
 			SetWindowPos(Hwnd(), NULL, newRect.X, newRect.Y, newRect.Width, newRect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
 		}
 	}
-	void Window::OnNotify(Control* sender, EventArgs& args, bool& bHandle) {
-		if (args.EventType == Event::OnMouseDoubleClick) {
+	bool Window::OnNotify(Control* sender, EventArgs& args) {
+
+		switch (args.EventType)
+		{
+		case Event::OnMouseDoubleClick: {
 			if (sender->Action == ControlAction::Title) {
 				if (::IsZoomed(Hwnd())) {
 					this->ShowNormal();
@@ -1149,21 +1152,21 @@ namespace EzUI {
 					this->ShowMaximized();
 				}
 			}
-			return;
+			break;
 		}
-		if (args.EventType == Event::OnMouseDown) {
+		case Event::OnMouseDown: {
 			if (sender->Action == ControlAction::MoveWindow) {
 				GetCursorPos(&_dragPoint); // 获取屏幕坐标
 				_moveWindow = true;
-				return;
+				break;
 			}
 			if (sender->Action == ControlAction::Title) {
 				TitleMoveWindow();
-				return;
+				break;
 			}
 			if (sender->Action == ControlAction::Mini) {
 				this->ShowMinimized();
-				return;
+				break;
 			}
 			if (sender->Action == ControlAction::Max) {
 				if (!IsMaximized()) {
@@ -1172,18 +1175,19 @@ namespace EzUI {
 				else {
 					this->ShowNormal();
 				}
-				return;
+				break;
 			}
 			if (sender->Action == ControlAction::Close) {
 				MouseEventArgs args(Event::OnMouseLeave);
 				sender->SendNotify(args);
 				this->Close();
-				return;
+				break;
 			}
+			break;
 		}
-		if (args.EventType == Event::OnMouseClick) {
+		case Event::OnMouseClick: {
 			//鼠标左侧按钮单击
-			//if (args.EventType == Event::OnMouseClick) {
+				//if (args.EventType == Event::OnMouseClick) {
 			EString  ctlName = sender->GetAttribute("tablayout");
 			if (!ctlName.empty()) {
 				auto ctls = sender->Parent->FindControl("tablayout", ctlName);
@@ -1201,7 +1205,11 @@ namespace EzUI {
 					}
 				}
 			}
-
+			break;
 		}
+		default:
+			break;
+		}
+		return false;
 	}
 };

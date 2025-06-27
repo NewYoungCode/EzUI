@@ -105,7 +105,7 @@ namespace EzUI {
 		Control* Parent = NULL;
 
 		// 事件处理器
-		std::function<void(Control*, EventArgs&, bool&)> Notify = NULL;
+		std::function<void(Control*, EventArgs&)> Notify = NULL;
 
 	protected:
 		// 设置内容宽度，仅限子类使用
@@ -118,7 +118,7 @@ namespace EzUI {
 		virtual void SetContentSize(const Size& size);
 
 		// 所有事件优先进入此函数
-		virtual bool OnEvent(EventArgs& arg);
+		virtual bool OnNotify(EventArgs& arg);
 
 		// 绘制之前
 		virtual void OnPaintBefore(PaintEventArgs& args);
@@ -383,7 +383,7 @@ namespace EzUI {
 		// 获取控件的滚动条对象
 		virtual ScrollBar* GetScrollBar();
 
-		// 派发事件（如鼠标单击事件等...）
+		// 派发事件（如鼠标单击事件等...）返回true则事件成功派发 返回false代表当前控件对象已被释放
 		bool SendNotify(const EventArgs& arg);
 
 		// 设置控件属性
