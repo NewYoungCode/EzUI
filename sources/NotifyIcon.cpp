@@ -9,9 +9,9 @@ namespace EzUI {
 		do
 		{
 			if (ntfi == NULL)break;
-			if (message == ntfi->_msgId) {
-				if (ntfi->_messageCallback) {
-					ntfi->_messageCallback(lParam);
+			if (message == WM_USER+1) {
+				if (ntfi->MessageCallback) {
+					ntfi->MessageCallback(lParam);
 				}
 				if (lParam == WM_RBUTTONDOWN && ntfi->_menu && ntfi->_menu->_hMenu) {
 					POINT           point;
@@ -23,18 +23,17 @@ namespace EzUI {
 			}
 			if (message == WM_COMMAND) {
 				auto id = LOWORD(wParam);
-				if (ntfi->_menu && ntfi->_menu->_callback) {
-					ntfi->_menu->_callback(id);
+				if (ntfi->_menu && ntfi->_menu->Callback) {
+					ntfi->_menu->Callback(id);
 				}
 				break;
 			}
 		} while (false);
-		return DefWindowProc(hwnd, message, wParam, lParam);
+		return ::DefWindowProc(hwnd, message, wParam, lParam);
 	}
 
-	NotifyIcon::NotifyIcon(UINT customMsg)
+	NotifyIcon::NotifyIcon()
 	{
-		this->_msgId = customMsg;
 		::HINSTANCE hInstance = EzUI::__EzUI__HINSTANCE;
 
 		if (!__Init__RegeditClass__) {
@@ -53,7 +52,7 @@ namespace EzUI {
 		UI_SET_USERDATA(_hwnd, this);
 		_nid.cbSize = sizeof(_nid);//结构体长度
 		_nid.hWnd = _hwnd;//窗口句柄
-		_nid.uCallbackMessage = this->_msgId;//消息处理，这里很重要，处理鼠标点击
+		_nid.uCallbackMessage = WM_USER + 1;//消息处理，这里很重要，处理鼠标点击
 		_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 		Shell_NotifyIconW(NIM_ADD, &_nid);
 	}
@@ -71,13 +70,12 @@ namespace EzUI {
 	}
 
 	void NotifyIcon::SetMenu(Menu* menu) {
-
 		this->_menu = menu;
 	}
 
-	void NotifyIcon::SetText(const WCHAR* text)
+	void NotifyIcon::SetText(const EString& text)
 	{
-		wcscpy_s(_nid.szTip, text);
+		wcscpy_s(_nid.szTip, text.unicode().c_str());
 		Shell_NotifyIconW(NIM_MODIFY, &_nid);
 	}
 
@@ -90,14 +88,10 @@ namespace EzUI {
 		Shell_NotifyIconW(NIM_MODIFY, &_nid);
 	}
 
-	void NotifyIcon::SetMessageProc(const std::function<bool(UINT)>& messageCallback) {
-		_messageCallback = messageCallback;
-	}
-
 	NotifyIcon::~NotifyIcon()
 	{
 		if (::IsWindow(_hwnd)) {
-			::SendMessage(_hwnd, WM_DESTROY, NULL, NULL);
+			::DestroyWindow(_hwnd);
 		}
 	}
 };

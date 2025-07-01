@@ -5,10 +5,10 @@ namespace EzUI {
 	class UI_EXPORT Menu
 	{
 	public:
-		std::function<void(UINT_PTR)> _callback = NULL;
 		HMENU _hMenu;
 		EString _text;
 		std::vector<UINT_PTR> _list;
+		std::function<void(UINT_PTR)> Callback = NULL;
 	public:
 		Menu();
 		virtual ~Menu();
@@ -18,7 +18,6 @@ namespace EzUI {
 		void Remove(UINT_PTR id);
 		void Clear();
 		void SetText(const EString& text);
-		void SetClickCallBack(const std::function<void(UINT_PTR)>& callback);
 	};
 
 };

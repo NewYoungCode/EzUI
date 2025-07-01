@@ -1,10 +1,22 @@
 #include "mainFrm.h"
-MainFrm::MainFrm() :Form(1020, 690), ntfi(WM_NOTIFYICON1)
+MainFrm::MainFrm() :Form(1020, 690)
 {
 	InitForm();
 	//托盘初始化
 	ntfi.SetText(L"酷苟音乐");
 	ntfi.SetIcon(nullptr);//托盘图标
+
+	Menu* exitMenu = new Menu(L"退出");
+	exitMenu->Append(new Menu(L"打开主程序"));
+
+	ntfi.SetMenu(exitMenu);
+
+	ntfi.MessageCallback = [=](UINT menId)->bool {
+		
+		int pause = 0;
+		return true;
+		};
+
 	this->SetMiniSize({ 800,600 });
 }
 void MainFrm::InitForm() {

@@ -52,7 +52,4 @@ namespace EzUI {
 		_text = text;
 	}
 
-	void Menu::SetClickCallBack(const std::function<void(UINT_PTR)>& callback) {
-		_callback = callback;
-	}
 };
