@@ -616,7 +616,7 @@ namespace EzUI {
 			if (arg.EventType == Event::OnPaint && !IsVisible()) {
 				break;
 			}
-			if (PublicData && ((this->EventNotify & arg.EventType) == arg.EventType)) {
+			if (PublicData && ((this->EventFilter & arg.EventType) == arg.EventType)) {
 				if (arg.EventType != Event::OnPaint) {
 					bool bHandle = PublicData->SendNotify(this, (EventArgs&)arg);
 					if (bHandle) {
@@ -663,8 +663,8 @@ namespace EzUI {
 		} while (false);
 		if (!isRemove) {
 			//通用事件处理 ps:绘制函数比较特殊(在其他地方处理)
-			if (this->Notify && (arg.EventType != Event::OnPaint)) {
-				this->Notify(this, arg);
+			if (this->EventHandler && (arg.EventType != Event::OnPaint)) {
+				this->EventHandler(this, arg);
 			}
 			if (!isRemove) {
 				this->_isRemove = NULL;
@@ -828,8 +828,8 @@ namespace EzUI {
 			pt.DrawRectangle(RectF(0, 0, clientRect.Width, clientRect.Height), 0, width);
 		}
 #endif
-		if (this->Notify) {
-			this->Notify(this, args);
+		if (this->EventHandler) {
+			this->EventHandler(this, args);
 		}
 		args.PopLayer();//弹出纹理层
 		args.PopOffset();//弹出偏移

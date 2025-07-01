@@ -169,8 +169,8 @@ namespace EzUI {
 				parent = parent->Parent;
 			}
 			//如果当前控件存在与内联界面且事件通知处理器不为NULL的时候
-			if (frame && frame->Notify) {
-				frame->Notify(sender, args);
+			if (frame && frame->EventHandler) {
+				frame->EventHandler(sender, args);
 				return true;
 			}
 			return this->OnNotify(sender, args);

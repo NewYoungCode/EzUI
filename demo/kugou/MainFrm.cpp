@@ -14,11 +14,13 @@ void MainFrm::InitForm() {
 	umg.LoadXmlFile("res/xml/main.htm");
 	umg.SetupUI(this);
 
+	//设置窗口边框样式
 	this->Border.Radius = 15;
 	this->Border.Color = Color(128, 128, 128, 100);
 	this->Border = 1;
 
-	//this->CloseShadowBox();//关闭阴影
+	//关闭阴影
+	//this->CloseShadowBox();
 
 	cfg = new ConfigIni(Path::StartPath() + "\\list.ini");
 	//找到每一个控件先
@@ -87,8 +89,8 @@ void MainFrm::InitForm() {
 		TimerTick();
 		};
 	//添加一些事件到窗口中的OnNotify函数进行拦截
-	player.EventNotify = player.EventNotify | Event::OnPaint;
-	main->EventNotify = main->EventNotify | Event::OnPaint;
+	player.EventFilter = player.EventFilter | Event::OnPaint;
+	main->EventFilter = main->EventFilter | Event::OnPaint;
 	//播放视频的时候每一帧的回调
 	player.PlayingCallback = [&](Bitmap* bitmap)->void {
 		BeginInvoke([&]() {
@@ -175,7 +177,8 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 		}
 	}
 
-	BeginInvoke([=]() {
+	//回到主线程去设置歌手头像 歌手背景图
+	Invoke([=]() {
 		if (headImg) {
 			singer->Style.ForeImage = headImg;
 			singer->Style.BackImage->Visible = false;
@@ -206,7 +209,7 @@ bool MainFrm::PlayForHash(const EString& hash, Song& info)
 	EString errStr;
 	bool ret = global::GetSongInfo(hash, errStr, info);
 	if (!ret) {
-		::MessageBoxW(Hwnd(), errStr.unicode().c_str(), L"错误", 0);
+		::MessageBoxW(Hwnd(), errStr.unicode().c_str(), L"无法播放", MB_OK);
 		return false;
 	}
 
@@ -242,12 +245,16 @@ bool MainFrm::PlayForHash(const EString& hash, Song& info)
 
 	this->nowSong = hash;
 	auto it = localList->FindSingleChild("FileHash", hash);
-	$(localList->GetControls()).Css("background-color:rgba(0,0,0,0)").Not(it);
-	$(it).Css("background-color:rgba(255,255,255,100)");
+
+	//暂时取消这样子设置样式
+	//$(localList->GetControls()).Css("background-color:rgba(0,0,0,0)").Not(it);
+	//$(it).Css("background-color:rgba(255,255,255,100)");
 
 	this->SetText(info.fileName);
 	((Label*)FindControl("songName"))->SetText(info.fileName);
+	//系统托盘处弹出正在播放音乐的提示
 	ntfi.ShowBalloonTip(L"播放音乐", info.fileName, 2000);
+	//打开URL 准备开始播放音乐
 	player.OpenUrl(info.url);
 	player.SetDuration(info.Duration);
 	player.Play();
@@ -501,7 +508,7 @@ void MainFrm::NextPage(float scrollPos) {
 		searchList->Invalidate();
 	}
 }
-void  MainFrm::OpenSongView() {
+void MainFrm::OpenSongView() {
 	centerLeft->Style.BackColor = Color::Transparent;
 	tools->Style.Border.Bottom = 1;
 	tools->Style.Border.Color = Color(238, 238, 238);
@@ -512,7 +519,7 @@ void  MainFrm::OpenSongView() {
 	center->Style.ForeColor = Color::Black;
 	Invalidate();
 }
-void  MainFrm::OpenLrcView() {
+void MainFrm::OpenLrcView() {
 	centerLeft->Style.BackColor = Color(200, 200, 200, 100);
 	tools->Style.Border.Bottom = 1;
 	tools->Style.Border.Color = Color(238, 238, 238);

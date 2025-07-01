@@ -7,7 +7,7 @@ namespace EzUI {
 		this->Add(&_textBox);
 		this->Add(&_UpDown);
 
-		_UpDown.Notify = [&](Control* sd, EventArgs& arg)->void {
+		_UpDown.EventHandler = [&](Control* sd, EventArgs& arg)->void {
 			if (arg.EventType == Event::OnPaint) {
 				//绘制
 				auto& args = (PaintEventArgs&)arg;
@@ -99,7 +99,7 @@ namespace EzUI {
 		lb->HoverStyle.BackColor = Color::Gray;
 		lb->HoverStyle.ForeColor = Color::White;
 
-		lb->Notify = [&](Control* sd, const EventArgs& args) ->void {
+		lb->EventHandler = [&](Control* sd, const EventArgs& args) ->void {
 			if (args.EventType == Event::OnMouseClick) {
 				_index = sd->Parent->IndexOf(sd);
 				_textBox.SetText(((Label*)sd)->GetText());

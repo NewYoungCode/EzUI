@@ -74,15 +74,6 @@ namespace EzUI {
 		// 让容器独占一行或一列时，设置边距会使控件变小，不可设置为负数
 		Distance Margin;
 
-		// 添加到主窗口通知函数中可拦截的事件
-		Event EventNotify = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnKeyChar | Event::OnKeyDown | Event::OnKeyUp;
-
-		// 控件可被穿透的事件
-		Event EventPassThrough = Event::None;
-
-		// 控件是否启用，禁止状态下鼠标键盘消息将不可用
-		bool Enable = true;
-
 		// 控件的 ObjectName ID
 		EString Name;
 
@@ -104,8 +95,17 @@ namespace EzUI {
 		// 父控件指针
 		Control* Parent = NULL;
 
+		// 控件是否启用，禁止状态下鼠标键盘消息将不可用
+		bool Enable = true;
+
+		// 添加到主窗口通知函数中可拦截的事件
+		Event EventFilter = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnKeyChar | Event::OnKeyDown | Event::OnKeyUp;
+
+		// 控件可被穿透的事件
+		Event EventPassThrough = Event::None;
+
 		// 事件处理器
-		std::function<void(Control*, EventArgs&)> Notify = NULL;
+		std::function<void(Control*, EventArgs&)> EventHandler = NULL;
 
 	protected:
 		// 设置内容宽度，仅限子类使用
