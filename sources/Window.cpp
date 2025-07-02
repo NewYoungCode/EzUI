@@ -184,7 +184,7 @@ namespace EzUI {
 		::SendMessage(Hwnd(), WM_SIZE, NULL, MAKELPARAM(_rect.Width, _rect.Height));
 	}
 
-	Control* Window::FindControl(const EString& objectName)
+	Control* Window::FindControl(const UIString& objectName)
 	{
 		if (!_layout) {
 			return NULL;
@@ -211,12 +211,12 @@ namespace EzUI {
 		return _rectClient;
 	}
 
-	void Window::SetText(const EString& text)
+	void Window::SetText(const UIString& text)
 	{
 		::SetWindowTextW(Hwnd(), text.unicode().c_str());
 	}
 
-	EString Window::GetText() {
+	UIString Window::GetText() {
 		WCHAR buf[513]{ 0 };
 		::GetWindowTextW(Hwnd(), buf, 512);
 		return buf;
@@ -838,7 +838,7 @@ namespace EzUI {
 		*outPoint = clientPoint;
 		Control* outCtl = _layout;
 	Find_Loop:
-		ScrollBar* scrollBar = outCtl->GetScrollBar();
+		IScrollBar* scrollBar = outCtl->GetScrollBar();
 		if (scrollBar && scrollBar->GetClientRect().Contains(clientPoint)) {
 			if (scrollBar->IsDraw()) {
 				auto barRect = scrollBar->GetClientRect();
@@ -955,15 +955,15 @@ namespace EzUI {
 			args.ZDelta = zDelta;
 			__FOCUS_CONTROL->SendNotify(args);
 		}
-		ScrollBar* scrollBar = NULL;
+		IScrollBar* scrollBar = NULL;
 		if (__FOCUS_CONTROL && __FOCUS_CONTROL->GetScrollBar() && __FOCUS_CONTROL->GetScrollBar()->Scrollable()) {
-			scrollBar = dynamic_cast<ScrollBar*>(__FOCUS_CONTROL->GetScrollBar());
+			scrollBar = dynamic_cast<IScrollBar*>(__FOCUS_CONTROL->GetScrollBar());
 		}
 		Control* pControl = __FOCUS_CONTROL;
 		while (scrollBar == NULL && pControl)
 		{
 			if (pControl->GetScrollBar() && pControl->GetScrollBar()->Scrollable()) {
-				scrollBar = dynamic_cast<ScrollBar*>(pControl->GetScrollBar());
+				scrollBar = dynamic_cast<IScrollBar*>(pControl->GetScrollBar());
 				break;
 			}
 			pControl = pControl->Parent;
@@ -1188,7 +1188,7 @@ namespace EzUI {
 		case Event::OnMouseClick: {
 			//鼠标左侧按钮单击
 				//if (args.EventType == Event::OnMouseClick) {
-			EString  ctlName = sender->GetAttribute("tablayout");
+			UIString  ctlName = sender->GetAttribute("tablayout");
 			if (!ctlName.empty()) {
 				auto ctls = sender->Parent->FindControl("tablayout", ctlName);
 				TabLayout* tabLayout = dynamic_cast<TabLayout*>(FindControl(ctlName));

@@ -1,8 +1,8 @@
-#include "TileList.h"
+#include "TileListView.h"
 
 namespace EzUI {
 
-	void TileList::Init()
+	void TileListView::Init()
 	{
 		this->GetScrollBar()->SetHeight(Height());
 		this->GetScrollBar()->Parent = this;
@@ -14,18 +14,18 @@ namespace EzUI {
 			};
 	}
 
-	TileList::TileList()
+	TileListView::TileListView()
 	{
 		Init();
 	}
-	TileList::~TileList()
+	TileListView::~TileListView()
 	{
 	}
-	ScrollBar* TileList::GetScrollBar()
+	IScrollBar* TileListView::GetScrollBar()
 	{
 		return &_vScrollBar;
 	}
-	void TileList::OnChildPaint(PaintEventArgs& args)
+	void TileListView::OnChildPaint(PaintEventArgs& args)
 	{
 		ViewControls.clear();
 		//绘制子控件
@@ -45,7 +45,7 @@ namespace EzUI {
 			}
 		}
 	}
-	void TileList::OnLayout()
+	void TileListView::OnLayout()
 	{
 		this->Offset(0);
 		if (_autoHeight) {
@@ -57,7 +57,7 @@ namespace EzUI {
 		}
 		this->GetScrollBar()->RefreshScroll();
 	}
-	void TileList::Offset(int_t offset) {
+	void TileListView::Offset(int_t offset) {
 		int_t _contentWidth = 0;
 		int_t _contentHeight = 0;
 		const int_t& maxWith = this->Width();

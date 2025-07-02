@@ -1,9 +1,9 @@
 #pragma once
-#include "List.h"
+#include "PagedListView.h"
 #include "VScrollBar.h"
 namespace EzUI {
-	class UI_EXPORT  TileList :
-		public List
+	class UI_EXPORT  TileListView :
+		public PagedListView
 	{
 	private:
 		VScrollBar _vScrollBar;
@@ -14,8 +14,8 @@ namespace EzUI {
 		virtual void OnChildPaint(PaintEventArgs& args)override;
 		virtual void OnLayout()override;
 	public:
-		TileList();
-		virtual ~TileList();
-		virtual ScrollBar* GetScrollBar()override;
+		TileListView();
+		virtual ~TileListView();
+		virtual IScrollBar* GetScrollBar()override;
 	};
 };

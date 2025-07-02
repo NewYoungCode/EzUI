@@ -10,7 +10,7 @@ public:
 	Label del;
 	virtual ~LocalItem();
 	virtual void OnChildPaint(PaintEventArgs& args)override;
-	LocalItem(const EString& _songName, const EString& _songTime = "03:56");
+	LocalItem(const UIString& _songName, const UIString& _songTime = "03:56");
 };
 /// <summary>
 /// 搜索列表中的Item

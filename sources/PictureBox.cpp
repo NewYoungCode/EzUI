@@ -32,7 +32,7 @@ namespace EzUI {
 		}
 		__super::OnForePaint(arg);
 	}
-	void PictureBox::SetAttribute(const EString& key, const EString& value) {
+	void PictureBox::SetAttribute(const UIString& key, const UIString& value) {
 		__super::SetAttribute(key, value);
 		if (key == "src" || key == "img") {
 			if (_srcImg)delete _srcImg;

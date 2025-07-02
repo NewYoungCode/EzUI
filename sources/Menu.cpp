@@ -11,7 +11,7 @@ namespace EzUI {
 	{
 	}
 
-	Menu::Menu(const EString& text) {
+	Menu::Menu(const UIString& text) {
 		_hMenu = ::CreatePopupMenu();
 		_text = text;
 	}
@@ -23,7 +23,7 @@ namespace EzUI {
 	}
 
 
-	UINT_PTR Menu::Append(const EString& text) {
+	UINT_PTR Menu::Append(const UIString& text) {
 		::AppendMenuW(_hMenu, MF_POPUP, _dui_menu_index, text.unicode().c_str());
 		_list.push_back(_dui_menu_index);
 		auto temp = _dui_menu_index;
@@ -47,7 +47,7 @@ namespace EzUI {
 		}
 	}
 
-	void Menu::SetText(const EString& text)
+	void Menu::SetText(const UIString& text)
 	{
 		_text = text;
 	}

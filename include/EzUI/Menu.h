@@ -6,18 +6,18 @@ namespace EzUI {
 	{
 	public:
 		HMENU _hMenu;
-		EString _text;
+		UIString _text;
 		std::vector<UINT_PTR> _list;
 		std::function<void(UINT_PTR)> Callback = NULL;
 	public:
 		Menu();
 		virtual ~Menu();
-		Menu(const EString& text);
+		Menu(const UIString& text);
 		void Append(Menu* menu);
-		UINT_PTR Append(const EString& text);
+		UINT_PTR Append(const UIString& text);
 		void Remove(UINT_PTR id);
 		void Clear();
-		void SetText(const EString& text);
+		void SetText(const UIString& text);
 	};
 
 };

@@ -27,8 +27,8 @@ namespace EzUI {
 	public:
 		VlcPlayer();
 		virtual ~VlcPlayer();
-		void OpenPath(const EString& file);
-		void OpenUrl(const EString& url);
+		void OpenPath(const UIString& file);
+		void OpenUrl(const UIString& url);
 		void Play();
 		void Pause();
 		void Stop();

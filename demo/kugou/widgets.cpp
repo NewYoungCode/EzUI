@@ -1,6 +1,6 @@
 #include "widgets.h"
 
-LocalItem::LocalItem(const EString& _songName, const EString& _songTime) {
+LocalItem::LocalItem(const UIString& _songName, const UIString& _songTime) {
 
 	//this->Style.FontSize = 12;
 	//this->Style.Angle = 5;
@@ -108,7 +108,7 @@ SearchItem::SearchItem(const Song& s) {
 
 	del.SetFixedWidth(33);
 
-	EString fileName = "res/imgs/" + std::to_string(s.QualityLevel) + ".png";
+	UIString fileName = "res/imgs/" + std::to_string(s.QualityLevel) + ".png";
 	Image* img = Image::Make(fileName.unicode());
 	del.Style.BackImage = img;
 	del.Margin = 8;

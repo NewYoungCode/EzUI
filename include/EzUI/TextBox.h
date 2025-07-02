@@ -63,23 +63,23 @@ namespace EzUI {
 		void Offset(int_t moveY);
 	public:
 		int_t MaxCount = -1;//最大文字数量
-		EString Placeholder;//placeholder懂得都懂 (在没有文字的情况下显示的文字)
+		UIString Placeholder;//placeholder懂得都懂 (在没有文字的情况下显示的文字)
 		std::wstring PasswordChar;
 		bool ReadOnly = false;//是否只读
-		std::function<void(const EString&)> TextChanged = NULL;
+		std::function<void(const UIString&)> TextChanged = NULL;
 	public:
 		TextBox();
 		virtual ~TextBox();
-		virtual void SetAttribute(const EString& key, const EString& value)override;
+		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 		virtual Rect GetCareRect()override;
 		//分析字符串
 		void Analysis();
 		//在当前光标中插入文字
-		void Insert(const EString& str);
-		const EString GetText();
+		void Insert(const UIString& str);
+		const UIString GetText();
 		//获取滚动条
-		virtual ScrollBar* GetScrollBar()override;
-		void SetText(const EString& text);
+		virtual IScrollBar* GetScrollBar()override;
+		void SetText(const UIString& text);
 		//是否多行显示
 		bool IsMultiLine();
 		//设置是否多行显示

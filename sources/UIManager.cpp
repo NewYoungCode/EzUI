@@ -5,7 +5,7 @@
 
 namespace EzUI {
 	//去除空格或者其他符号 双引号内的空格不会去除
-	inline void __EraseChar(EString& str, char _char) {
+	inline void __EraseChar(UIString& str, char _char) {
 		char* bufStr = new char[str.size() + 1] { 0 };
 		size_t pos = 0;
 		size_t count = 0;
@@ -23,21 +23,21 @@ namespace EzUI {
 		str = bufStr;
 		delete[] bufStr;
 	}
-	inline EString __Attribute(TiXmlElement* node, const char* szstr) {
+	inline UIString __Attribute(TiXmlElement* node, const char* szstr) {
 		auto str = node->Attribute(szstr);
 		if (str == NULL) return "";
 		return str;
 	}
-	inline float __ToFloat(EString numStr) {
+	inline float __ToFloat(UIString numStr) {
 		//去掉px字样
-		Text::Replace(&numStr, "px", "", true);
+		UI_Text::Replace(&numStr, "px", "", true);
 		return std::stof(numStr.c_str());
 	}
 };
 
 namespace EzUI {
 
-	void SetStyle(Control* ctl, ControlStyle* style, ControlStyle::Type styleType, const EString& key, EString value, const std::function<void(Image*)>& callback)
+	void SetStyle(Control* ctl, ControlStyle* style, ControlStyle::Type styleType, const UIString& key, UIString value, const std::function<void(Image*)>& callback)
 	{
 		do
 		{
@@ -165,7 +165,7 @@ namespace EzUI {
 			}
 		} while (false);
 	}
-	void SetStyleSheet(Control* ctl, ControlStyle::Type styleType, const EString& styleStr, const std::function<void(Image*)>& callback)
+	void SetStyleSheet(Control* ctl, ControlStyle::Type styleType, const UIString& styleStr, const std::function<void(Image*)>& callback)
 	{
 		//确定每一个样式的类型
 		ControlStyle* cSytle = NULL;
@@ -183,12 +183,12 @@ namespace EzUI {
 		for (auto& it : attrs) {
 			size_t pos = it.find(":");
 			if (pos == -1)continue;
-			EString key = it.substr(0, pos);
-			EString value = it.substr(pos + 1);
+			UIString key = it.substr(0, pos);
+			UIString value = it.substr(pos + 1);
 			SetStyle(ctl, cSytle, styleType, key, value, callback);//去应用每一行样式
 		}
 	}
-	int_t MathStyle(Control* ctl, const EString& selectorName, const std::list<UIManager::Selector>& selectors, const std::function<void(Image*)>& BuildImageCallback)
+	int_t MathStyle(Control* ctl, const UIString& selectorName, const std::list<UIManager::Selector>& selectors, const std::function<void(Image*)>& BuildImageCallback)
 	{
 		int_t mathCount = 0;
 		for (auto& it : selectors) {
@@ -202,50 +202,50 @@ namespace EzUI {
 		//返回匹配成功的个数
 		return mathCount;
 	}
-	void ApplyStyle(Control* ctl, const  EString& selectName, const std::list<UIManager::Selector>& selectors, const std::function<void(Image*)>& BuildImageCallback)
+	void ApplyStyle(Control* ctl, const  UIString& selectName, const std::list<UIManager::Selector>& selectors, const std::function<void(Image*)>& BuildImageCallback)
 	{
 		MathStyle(ctl, selectName, selectors, BuildImageCallback);
 		MathStyle(ctl, selectName + ":checked", selectors, BuildImageCallback);
 		MathStyle(ctl, selectName + ":active", selectors, BuildImageCallback);
 		MathStyle(ctl, selectName + ":hover", selectors, BuildImageCallback);
 		//是否有滚动条 有滚动条则应用滚动条样式
-		ScrollBar* scrollBar = ctl->GetScrollBar();
+		IScrollBar* scrollBar = ctl->GetScrollBar();
 		if (scrollBar) {
-			EString scrollBarSelectName = EString("%s::-webkit-scrollbar").format(selectName.c_str());
+			UIString scrollBarSelectName = UIString("%s::-webkit-scrollbar").format(selectName.c_str());
 			MathStyle(scrollBar, scrollBarSelectName, selectors, BuildImageCallback);
 			MathStyle(scrollBar, scrollBarSelectName + ":active", selectors, BuildImageCallback);
 			MathStyle(scrollBar, scrollBarSelectName + ":hover", selectors, BuildImageCallback);
 		}
 	}
-	void UIManager::ApplyStyle(Control* ctl, const std::list<UIManager::Selector>& selectors, const EString& tagName) {
+	void UIManager::ApplyStyle(Control* ctl, const std::list<UIManager::Selector>& selectors, const UIString& tagName) {
 		{//加载样式 使用标签选择器
 			if (!tagName.empty()) {
-				EString selectName = tagName;
+				UIString selectName = tagName;
 				EzUI::ApplyStyle(ctl, selectName, selectors, this->BuildImageCallback);
 			}
 		}
 		{//加载样式 使用属性选择器
 			for (auto& attr : ctl->GetAttributes()) {
-				EString selectName = EString("[%s=%s]").format(attr.first.c_str(), attr.second.c_str());
+				UIString selectName = UIString("[%s=%s]").format(attr.first.c_str(), attr.second.c_str());
 				EzUI::ApplyStyle(ctl, selectName, selectors, BuildImageCallback);
 			}
 		}
 		{//加载样式 使用类选择器  
-			EString classStr = ctl->GetAttribute("class");
-			Text::Replace(&classStr, " ", ",");//去除所有空格转换为逗号
+			UIString classStr = ctl->GetAttribute("class");
+			UI_Text::Replace(&classStr, " ", ",");//去除所有空格转换为逗号
 			auto classes = classStr.split(",");//分割类选择器
 			for (const auto& className : classes) { //一个控件可能有多个类名
-				EString selectName = EString(".%s").format(className.c_str());
+				UIString selectName = UIString(".%s").format(className.c_str());
 				EzUI::ApplyStyle(ctl, selectName, selectors, BuildImageCallback);
 			}
 		}
 		//加载样式 使用ID/name选择器 
 		if (!(ctl->Name.empty())) {
-			EString selectName = EString("#%s").format(ctl->Name.c_str());
+			UIString selectName = UIString("#%s").format(ctl->Name.c_str());
 			EzUI::ApplyStyle(ctl, selectName, selectors, BuildImageCallback);
 		}
 		{//加载内联样式 优先级最高
-			EString sytle_static = ctl->GetAttribute("style");//内联样式语法
+			UIString sytle_static = ctl->GetAttribute("style");//内联样式语法
 			if (!sytle_static.empty()) { //内联样式只允许描述静态效果
 				__EraseChar(sytle_static, ' ');//去除空格
 				EzUI::SetStyleSheet(ctl, ControlStyle::Type::Static, sytle_static, BuildImageCallback);
@@ -253,8 +253,8 @@ namespace EzUI {
 		}
 	}
 
-	void UIManager::AnalysisStyle(const EString& styleStr, std::list<UIManager::Selector>* out) {
-		EString style = styleStr;
+	void UIManager::AnalysisStyle(const UIString& styleStr, std::list<UIManager::Selector>* out) {
+		UIString style = styleStr;
 		//处理空格 双引号内的空格不处理
 		__EraseChar(style, ' ');
 		while (true)
@@ -270,7 +270,7 @@ namespace EzUI {
 			}
 		}
 		//分离每个样式
-		std::list<EString> strs;
+		std::list<UIString> strs;
 		while (true)
 		{
 			auto pos1 = style.find("}");
@@ -287,10 +287,10 @@ namespace EzUI {
 			size_t pos2 = style.find("}");
 			if (pos2 == -1)break;
 			size_t pos3 = style.find("{");
-			EString name = style.substr(0, pos3);
+			UIString name = style.substr(0, pos3);
 			size_t pos4 = name.find(":");
-			EString style_type;
-			EString str = style.substr(pos3 + 1, pos2 - pos3 - 1);
+			UIString style_type;
+			UIString str = style.substr(pos3 + 1, pos2 - pos3 - 1);
 			if (pos4 != size_t(-1)) {
 				style_type = name.substr(pos4 + 1);
 			}
@@ -321,10 +321,10 @@ namespace EzUI {
 		TiXmlElement* node = (TiXmlElement*)_node;
 		Control* ctl = NULL;
 		std::string tagName(node->ValueTStr().c_str());
-		Text::Tolower(&tagName);
+		UI_Text::Tolower(&tagName);
 		ctl = this->OnBuildControl(tagName);
 		if (ctl == NULL) {
-			EString text = EString("unknow element \"%s\"").format(tagName.c_str());
+			UIString text = UIString("unknow element \"%s\"").format(tagName.c_str());
 			::MessageBoxA(NULL, text.c_str(), "UIManager Erro", MB_OK);
 			ctl = new Control;
 		}
@@ -333,8 +333,8 @@ namespace EzUI {
 		do
 		{
 			if (!attr)break;
-			EString attrName = attr->Name();
-			EString attrValue(attr->Value());
+			UIString attrName = attr->Name();
+			UIString attrValue(attr->Value());
 			ctl->SetAttribute(attrName, attrValue);
 		} while ((attr = attr->Next()));
 		return ctl;
@@ -345,7 +345,7 @@ namespace EzUI {
 		TiXmlElement* fristChild = NULL;
 		if ((fristChild = node->FirstChildElement()))//先寻找子控件
 		{
-			EString tagName = fristChild->Value();
+			UIString tagName = fristChild->Value();
 			Control* ctl = BuildControl(fristChild);
 			this->RegisterControl(ctl, tagName);
 			LoadControl(fristChild, ctl);
@@ -353,7 +353,7 @@ namespace EzUI {
 			TiXmlElement* nextChild = fristChild->NextSiblingElement();
 			while (nextChild)//然后寻找兄弟
 			{
-				EString tagName = nextChild->Value();
+				UIString tagName = nextChild->Value();
 				Control* ctl2 = BuildControl(nextChild);
 				this->RegisterControl(ctl2, tagName);
 				LoadControl(nextChild, ctl2);
@@ -362,14 +362,14 @@ namespace EzUI {
 			}
 		}
 	}
-	void UIManager::RegisterControl(Control* ctl, const EString& tagNamee)
+	void UIManager::RegisterControl(Control* ctl, const UIString& tagNamee)
 	{
 		//弹簧需要交给控件自行处理
 		if (dynamic_cast<Spacer*>(ctl) == NULL) {
 			this->controls.emplace_front(ctl, tagNamee);
 		}
 	}
-	Control* UIManager::OnBuildControl(const EString& tagName) {
+	Control* UIManager::OnBuildControl(const UIString& tagName) {
 		Control* ctl = NULL;
 		do
 		{
@@ -377,12 +377,12 @@ namespace EzUI {
 				ctl = new Control;
 				break;
 			}
-			if (tagName == "vlist") {
-				ctl = new VList;
+			if (tagName == "vlist" || tagName == "vlistview") {
+				ctl = new VListView;
 				break;
 			}
-			if (tagName == "hlist") {
-				ctl = new HList;
+			if (tagName == "hlist" || tagName == "hlistview") {
+				ctl = new HListView;
 				break;
 			}
 			if (tagName == "vlayout" || tagName == "vbox") {
@@ -393,8 +393,8 @@ namespace EzUI {
 				ctl = new HLayout;
 				break;
 			}
-			if (tagName == "tilelist") {
-				ctl = new TileList;
+			if (tagName == "tilelist" || tagName == "tilelistview") {
+				ctl = new TileListView;
 				break;
 			}
 			if (tagName == "tablayout") {
@@ -430,7 +430,7 @@ namespace EzUI {
 				break;
 			}
 			if (tagName == "combox") {
-				ctl = new ComBox;
+				ctl = new ComboBox;
 				break;
 			}
 			if (tagName == "edit" || tagName == "textbox" || tagName == "input") {
@@ -470,13 +470,13 @@ namespace EzUI {
 		parentCtl->Add(GetRoot());
 	}
 
-	void UIManager::LoadXmlFile(const EString& fileName) {
+	void UIManager::LoadXmlFile(const UIString& fileName) {
 		std::string data;
 		if (GetResource(fileName, &data)) {
 			LoadXml(data);
 		}
 	}
-	void UIManager::LoadXml(const EString& xmlContent)
+	void UIManager::LoadXml(const UIString& xmlContent)
 	{
 		TiXmlDocument doc;
 		auto result = doc.Parse(xmlContent.c_str(), NULL, TiXmlEncoding::TIXML_ENCODING_UTF8);
@@ -484,7 +484,7 @@ namespace EzUI {
 		TiXmlElement* element = doc.FirstChildElement();//read frist element
 		std::list<TiXmlElement*> controlNodes;
 		//存储样式
-		EString styleStr;
+		UIString styleStr;
 		//先处理样式
 		do
 		{
@@ -498,7 +498,7 @@ namespace EzUI {
 		} while ((element = element->NextSiblingElement()));
 		//然后处理控件
 		for (auto& element : controlNodes) {
-			EString tagName = element->Value();
+			UIString tagName = element->Value();
 			Control* control = BuildControl(element);//先加载根节点
 			this->RegisterControl(control, tagName);
 			LoadControl(element, control);//加载子节点
@@ -506,7 +506,7 @@ namespace EzUI {
 		//加载样式
 		this->SetStyleSheet(styleStr);
 	}
-	void UIManager::LoadStyleFile(const EString& fileName)
+	void UIManager::LoadStyleFile(const UIString& fileName)
 	{
 		std::string data;
 		if (!GetResource(fileName, &data)) {
@@ -514,9 +514,9 @@ namespace EzUI {
 		}
 		this->SetStyleSheet(data);
 	}
-	void UIManager::SetStyleSheet(const EString& styleContent)
+	void UIManager::SetStyleSheet(const UIString& styleContent)
 	{
-		EString data = styleContent;
+		UIString data = styleContent;
 		std::list<UIManager::Selector> styles;
 		//分析出样式
 		this->AnalysisStyle(data, &styles);

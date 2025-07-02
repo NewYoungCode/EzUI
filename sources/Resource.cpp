@@ -5,7 +5,7 @@ namespace EzUI {
 		this->_ptr = (char*)::LoadResource(EzUI::__EzUI__HINSTANCE, hRsrc);
 		this->_count = ::SizeofResource(EzUI::__EzUI__HINSTANCE, hRsrc);
 	}
-	Resource::ReadStream::ReadStream(const EString& fileName) {
+	Resource::ReadStream::ReadStream(const UIString& fileName) {
 		this->_ifs = new std::ifstream(fileName.unicode(), std::ios::binary);
 		this->_ifs->seekg(0, std::ios::end);
 		this->_count = _ifs->tellg();
@@ -72,7 +72,7 @@ namespace EzUI {
 		} while (FindNextFileW(findHandle, &findData));
 		FindClose(findHandle);
 	}
-	void  Resource::Package(const EString& dir, const EString& outFile, const std::function<void(const EString&, int, int)>& packCallback) {
+	void  Resource::Package(const UIString& dir, const UIString& outFile, const std::function<void(const UIString&, int, int)>& packCallback) {
 
 		if (dir.empty()) {
 			ASSERT(!"DirName is Empty !");
@@ -90,7 +90,7 @@ namespace EzUI {
 			ifs.seekg(0, std::ios::end);
 			auto size = ifs.tellg();
 			//读取文件
-			EString data;
+			UIString data;
 			data.resize(size);
 			ifs.seekg(0);
 			ifs.read((char*)data.c_str(), size);
@@ -109,7 +109,7 @@ namespace EzUI {
 		//设置到文件条目位置
 		ofs.seekp(headOffset);
 		//处理路径
-		EString root = dir + "/";
+		UIString root = dir + "/";
 		root = root.replace("\\", "/");
 		root = root.replace("//", "/");
 		if (root[root.size() - 1] = '/') {
@@ -126,7 +126,7 @@ namespace EzUI {
 			//写入文件大小
 			ofs.write((char*)(&item.Size), 4);
 			//文件路径名称
-			EString name = item.Name;
+			UIString name = item.Name;
 			name = name.replace("\\", "/");
 			name = name.replace("//", "/");
 			name = name.replace(root, "", false);
@@ -145,9 +145,9 @@ namespace EzUI {
 
 	// 内部使用：枚举名称时的上下文
 	struct ResourceContext {
-		EString rcIDName;
+		UIString rcIDName;
 		HRSRC hResource = NULL;
-		EString rcType;
+		UIString rcType;
 	};
 	// 回调：枚举资源名称
 	BOOL CALLBACK EnumNamesProc(HMODULE hModule, LPCWSTR lpszType, LPWSTR lpszName, LONG_PTR lParam) {
@@ -160,7 +160,7 @@ namespace EzUI {
 		return TRUE; // 继续
 	}
 	//通过资源中的ID名称查找资源
-	HRSRC Resource::FindRC(const EString& rcIDName)
+	HRSRC Resource::FindRC(const UIString& rcIDName)
 	{
 		HMODULE hModule = EzUI::__EzUI__HINSTANCE;
 		ResourceContext ctx;
@@ -224,7 +224,7 @@ namespace EzUI {
 		}
 	}
 
-	Resource::Resource(const EString& resFile) {
+	Resource::Resource(const UIString& resFile) {
 		this->_rStream = new ReadStream(resFile);
 		this->UnPackage();
 	}
@@ -237,7 +237,7 @@ namespace EzUI {
 			delete _rStream;
 		}
 	}
-	bool Resource::GetFile(const EString& fileName, std::string* out) {
+	bool Resource::GetFile(const UIString& fileName, std::string* out) {
 		for (const auto& it : this->Items) {
 			if (it.Name == fileName) {
 				out->resize(it.Size);

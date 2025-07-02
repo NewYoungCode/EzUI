@@ -41,7 +41,7 @@ DesktopLrcFrm::DesktopLrcFrm(VlcPlayer* player) :_player(player), LayeredWindow(
 	_lrc.Style.ForeColor = Color::White;
 	this->SetLayout(&_lrc);
 }
-void DesktopLrcFrm::LoadLrc(const EString& lrcData) {
+void DesktopLrcFrm::LoadLrc(const UIString& lrcData) {
 	_lrc.LoadLrc(lrcData);
 }
 

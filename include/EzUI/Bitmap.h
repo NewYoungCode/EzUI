@@ -30,7 +30,7 @@ namespace EzUI {
 		void Earse(const Rect& rect);//抹除矩形内容
 		HBITMAP GetHBITMAP();
 		HDC GetHDC();
-		void Save(const EString& fileName);
+		void Save(const UIString& fileName);
 		virtual ~Bitmap();
 	};
 };

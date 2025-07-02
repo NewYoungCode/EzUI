@@ -17,12 +17,12 @@ namespace EzUI {
 	HWND __EzUI_MessageWnd = NULL;
 	const std::list<EzUI::MonitorInfo> __EzUI__MonitorInfos;
 
-	void InstallFont(const EString& fontFileName) {
+	void InstallFont(const UIString& fontFileName) {
 		auto ret = ::AddFontResourceW(fontFileName.unicode().c_str());
 		::SystemParametersInfoW(SPI_SETNONCLIENTMETRICS, 0, nullptr, SPIF_SENDCHANGE);//刷新
 	}
 
-	void UnstallFont(const EString& fontFileName) {
+	void UnstallFont(const UIString& fontFileName) {
 		auto ret = ::RemoveFontResourceW(fontFileName.unicode().c_str());
 		::SystemParametersInfoW(SPI_SETNONCLIENTMETRICS, 0, nullptr, SPIF_SENDCHANGE);//刷新
 	}
@@ -76,7 +76,7 @@ namespace EzUI {
 		return ret;
 	}
 
-	bool GetResource(const EString& filename, std::string* out) {
+	bool GetResource(const UIString& filename, std::string* out) {
 		bool ok = false;
 		do
 		{
@@ -177,7 +177,7 @@ namespace EzUI {
 	{
 		return ::LoadCursorW(NULL, (LPTSTR)cursorType);
 	}
-	HCURSOR LoadCursor(const EString& fileName)
+	HCURSOR LoadCursor(const UIString& fileName)
 	{
 		return ::LoadCursorFromFileW(fileName.unicode().c_str());
 	}
@@ -195,17 +195,17 @@ namespace EzUI {
 	IControl::IControl() {}
 	IControl::~IControl() {}
 
-	void IControl::SetAttribute(const EString& attrName, const EString& attrValue) {
+	void IControl::SetAttribute(const UIString& attrName, const UIString& attrValue) {
 		auto itor = _attrs.find(attrName);
 		if (itor != _attrs.end()) {
 			(*itor).second = attrValue;
 		}
 		else {
-			_attrs.insert(std::pair<EString, EString>(attrName, attrValue));
+			_attrs.insert(std::pair<UIString, UIString>(attrName, attrValue));
 		}
 	}
 
-	EString IControl::GetAttribute(const EString& attrName) {
+	UIString IControl::GetAttribute(const UIString& attrName) {
 		auto itor = _attrs.find(attrName);
 		if (itor != _attrs.end()) {
 			return (*itor).second;
@@ -213,11 +213,11 @@ namespace EzUI {
 		return "";
 	}
 
-	const std::map<EString, EString>& IControl::GetAttributes() {
+	const std::map<UIString, UIString>& IControl::GetAttributes() {
 		return _attrs;
 	}
 
-	void IControl::RemoveAttribute(const EString& attrName)
+	void IControl::RemoveAttribute(const UIString& attrName)
 	{
 		auto itor = _attrs.find(attrName);
 		if (itor != _attrs.end()) {

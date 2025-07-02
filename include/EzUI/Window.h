@@ -1,5 +1,7 @@
 #pragma once
 #include "Control.h"
+#include "ScrollBar.h"
+#include "Spacer.h"
 
 #undef IsMinimized
 #undef IsMaximized
@@ -87,7 +89,7 @@ namespace EzUI {
 		Control* FindControl(const Point clientPoint, Point* outPoint);
 
 		//使用id寻找控件
-		Control* FindControl(const EString& objectName);
+		Control* FindControl(const UIString& objectName);
 
 		//获取窗口句柄
 		HWND Hwnd();
@@ -129,10 +131,10 @@ namespace EzUI {
 		Control* GetLayout();
 
 		//设置窗口标题
-		void SetText(const EString& text);
+		void SetText(const UIString& text);
 
 		//获取窗口标题
-		EString GetText();
+		UIString GetText();
 
 		//设置与取消窗口置顶
 		void SetTopMost(bool top);

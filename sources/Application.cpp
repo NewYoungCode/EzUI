@@ -139,7 +139,7 @@ namespace EzUI {
 		}
 	}
 
-	bool Application::SetResource(const EString& localOrResName) {
+	bool Application::SetResource(const UIString& localOrResName) {
 		//只允许有一个资源文件
 		if (EzUI::__EzUI__Resource) {
 			delete EzUI::__EzUI__Resource;

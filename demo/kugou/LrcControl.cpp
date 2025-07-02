@@ -64,7 +64,7 @@ void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
 	{
 		Lrc& lrc = *item;
 		Rect rectangle(lrc.point.X, lrc.point.Y, Width(), (int)FontHeight);
-		auto w = EString(lrc.text).unicode();
+		auto w = UIString(lrc.text).unicode();
 		Rect drawRec(GetRect());
 		if (drawRec.Contains(rectangle))
 		{
@@ -116,7 +116,7 @@ LrcControl::LrcControl()
 	};
 }
 
-void LrcControl::LoadLrc(const EString& lrcData)
+void LrcControl::LoadLrc(const UIString& lrcData)
 {
 	Clear();
 	auto lrc = lrcData.split("\n");
@@ -129,7 +129,7 @@ void LrcControl::LoadLrc(const EString& lrcData)
 		else {
 			continue;
 		}
-		EString text = it.substr(pos2 + 1);
+		UIString text = it.substr(pos2 + 1);
 		auto gbk2 = Text::UTF8ToANSI(it);
 		int fen = std::atoi(it.substr(1, 2).c_str());
 		float miao = std::atof(it.substr(4, 5).c_str());

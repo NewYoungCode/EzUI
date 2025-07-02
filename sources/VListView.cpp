@@ -1,6 +1,6 @@
-#include "VList.h"
+#include "VListView.h"
 namespace EzUI {
-	void VList::Init()
+	void VListView::Init()
 	{
 		this->GetScrollBar()->SetHeight(Height());//滚动条宽度
 		this->GetScrollBar()->Parent = this;
@@ -11,14 +11,14 @@ namespace EzUI {
 			this->Offset(offsetValue);
 			};
 	}
-	VList::VList()
+	VListView::VListView()
 	{
 		Init();
 	}
-	VList::~VList()
+	VListView::~VListView()
 	{
 	}
-	void VList::OnLayout() {
+	void VListView::OnLayout() {
 		this->Offset(0);
 		if (IsAutoHeight()) {
 			this->GetScrollBar()->SetVisible(false);
@@ -30,12 +30,12 @@ namespace EzUI {
 		this->EndLayout();
 	}
 
-	ScrollBar* VList::GetScrollBar()
+	IScrollBar* VListView::GetScrollBar()
 	{
 		return &_vScrollBar;
 	}
 
-	void VList::Offset(int_t offset)
+	void VListView::Offset(int_t offset)
 	{
 		int_t contentWidth = 0;
 		int_t	_maxBottom = offset;
@@ -71,7 +71,7 @@ namespace EzUI {
 		this->SetContentSize({ contentWidth, _maxBottom - offset });
 	}
 
-	void VList::OnChildPaint(PaintEventArgs& args) {
+	void VListView::OnChildPaint(PaintEventArgs& args) {
 		ViewControls.clear();
 		//绘制子控件
 		auto rect = Rect(0, 0, Width(), Height());

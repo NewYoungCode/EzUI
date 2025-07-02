@@ -1,7 +1,7 @@
 #include "FileSystem.h"
 namespace EzUI {
 	namespace File {
-		bool Exists(const EString& filenNme) {
+		bool Exists(const UIString& filenNme) {
 			DWORD dwAttr = GetFileAttributesW(filenNme.unicode().c_str());
 			if (dwAttr == DWORD(-1)) {
 				return false;
@@ -11,20 +11,20 @@ namespace EzUI {
 			}
 			return false;
 		}
-		bool Copy(const EString& src, const EString& desc) {
+		bool Copy(const UIString& src, const UIString& desc) {
 			return ::CopyFileW(src.unicode().c_str(), desc.unicode().c_str(), FALSE);
 		}
-		bool Delete(const EString& file) {
+		bool Delete(const UIString& file) {
 			return ::DeleteFileW(file.unicode().c_str());
 		}
-		bool Move(const EString& oldName, const EString& newName) {
+		bool Move(const UIString& oldName, const UIString& newName) {
 			return ::MoveFileExW(oldName.unicode().c_str(), newName.unicode().c_str(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_COPY_ALLOWED);
 		}
-		bool Create(const EString& fileName) {
+		bool Create(const UIString& fileName) {
 			std::ofstream ofs(fileName.unicode(), std::ios::out | std::ios::binary);
 			return ofs.is_open();
 		}
-		bool Write(const char* fileData, size_t fileSize, const EString& outFileName) {
+		bool Write(const char* fileData, size_t fileSize, const UIString& outFileName) {
 			std::ofstream ofs(outFileName.unicode(), std::ios::binary | std::ios::app);
 			if (ofs.is_open()) {
 				ofs.write(fileData, fileSize);
@@ -32,7 +32,7 @@ namespace EzUI {
 			}
 			return false;
 		}
-		size_t Read(const EString& fileName, std::string* data) {
+		size_t Read(const UIString& fileName, std::string* data) {
 			std::ifstream ifs(fileName.unicode(), std::ios::binary);
 			ifs.seekg(0, std::ios::end);
 			size_t size = ifs.tellg();
@@ -81,25 +81,25 @@ namespace EzUI {
 			str.append(buf, size);
 			delete[] buf; // 释放内存
 		}
-		EString GetFileNameWithoutExtension(const EString& _filename) {
-			EString newStr = _filename;
+		UIString GetFileNameWithoutExtension(const UIString& _filename) {
+			UIString newStr = _filename;
 			Path::Format(&newStr);
 			int bPos = newStr.rfind("/");
 			int ePos = newStr.rfind(".");
 			newStr = newStr.substr(bPos + 1, ePos - bPos - 1);
 			return newStr;
 		}
-		EString GetDirectoryName(const EString& _filename) {
-			EString newStr = _filename;
+		UIString GetDirectoryName(const UIString& _filename) {
+			UIString newStr = _filename;
 			Path::Format(&newStr);
 			int pos = newStr.rfind("/");
 			return _filename.substr(0, pos);
 		}
-		EString GetExtension(const EString& _filename) {
+		UIString GetExtension(const UIString& _filename) {
 			size_t pos = _filename.rfind(".");
 			return pos == size_t(-1) ? "" : _filename.substr(pos);
 		}
-		EString GetFileName(const EString& filename) {
+		UIString GetFileName(const UIString& filename) {
 			return Path::GetFileNameWithoutExtension(filename) + Path::GetExtension(filename);
 		}
 	}
@@ -126,7 +126,7 @@ namespace EzUI {
 			} while (FindNextFileW(findHandle, &findData));
 			FindClose(findHandle);
 		}
-		bool Exists(const EString& directoryNme) {
+		bool Exists(const UIString& directoryNme) {
 			DWORD dwAttr = GetFileAttributesW(directoryNme.unicode().c_str());
 			if (dwAttr == DWORD(-1)) {
 				return false;
@@ -137,17 +137,17 @@ namespace EzUI {
 			}
 			return false;
 		}
-		bool Create(const EString& path) {
+		bool Create(const UIString& path) {
 			::CreateDirectoryW(path.unicode().c_str(), NULL);
 			if (Exists(path)) {
 				return true;
 			}
 			//创建多级目录
 			if (path.find(":") != size_t(-1)) {
-				EString dir = path + "/";
+				UIString dir = path + "/";
 				Path::Format(&dir);
 				auto  arr = dir.split("/");
-				EString root;
+				UIString root;
 				if (!arr.empty()) {
 					root += arr[0] + "/";
 					for (size_t i = 1; i < arr.size(); i++)
@@ -164,9 +164,9 @@ namespace EzUI {
 			}
 			return Exists(path);
 		}
-		void Copy(const EString& srcPath, const EString& desPath)
+		void Copy(const UIString& srcPath, const UIString& desPath)
 		{
-			EString basePath = srcPath;
+			UIString basePath = srcPath;
 			Path::Format(&basePath);
 			std::vector<FileInfo> result;
 			Directory::Find(srcPath, &result);
@@ -181,7 +181,7 @@ namespace EzUI {
 				}
 			}
 		}
-		void Find(const EString& directory, std::vector<FileInfo>* result, const EString& pattern, bool loopDir)
+		void Find(const UIString& directory, std::vector<FileInfo>* result, const UIString& pattern, bool loopDir)
 		{
 			__Find(directory.unicode(), result, pattern.unicode(), loopDir);
 		}

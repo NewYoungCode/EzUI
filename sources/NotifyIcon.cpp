@@ -73,13 +73,13 @@ namespace EzUI {
 		this->_menu = menu;
 	}
 
-	void NotifyIcon::SetText(const EString& text)
+	void NotifyIcon::SetText(const UIString& text)
 	{
 		wcscpy_s(_nid.szTip, text.unicode().c_str());
 		Shell_NotifyIconW(NIM_MODIFY, &_nid);
 	}
 
-	void NotifyIcon::ShowBalloonTip(const EString& title, const EString& msg, int_t timeOut) {
+	void NotifyIcon::ShowBalloonTip(const UIString& title, const UIString& msg, int_t timeOut) {
 		_nid.uTimeout = timeOut;
 		_nid.uFlags = NIF_INFO;
 		_nid.dwInfoFlags = NIIF_INFO;

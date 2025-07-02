@@ -10,6 +10,6 @@ protected:
 	void OnPaint(PaintEventArgs& args)override;
 public:
 	DesktopLrcFrm(VlcPlayer* player);
-	void LoadLrc(const EString& lrcData);
+	void LoadLrc(const UIString& lrcData);
 	void ChangePostion(int postion);
 };

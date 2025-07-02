@@ -46,8 +46,8 @@ void MainFrm::InitForm() {
 	playerBar2 = this->FindControl("rate");
 	playerBar = this->FindControl("playerBar");
 	tabCtrl = (TabLayout*)FindControl("rightView");
-	localList = (VList*)this->FindControl("playList");
-	searchList = (VList*)this->FindControl("searchList");
+	localList = (VListView*)this->FindControl("playList");
+	searchList = (VListView*)this->FindControl("searchList");
 	searchEdit = (TextBox*)this->FindControl("searchEdit");
 	labelDeskLrc = (CheckBox*)this->FindControl("deskLrc");
 
@@ -69,9 +69,9 @@ void MainFrm::InitForm() {
 	//加载左侧播放过的音乐
 	for (auto& _it : cfg->GetSections()) {
 
-		EString name = cfg->ReadString("name", "", _it);
+		UIString name = cfg->ReadString("name", "", _it);
 		int  dur = cfg->ReadInt("dur", 0, _it);
-		EString  singer = cfg->ReadString("singer", "", _it);
+		UIString  singer = cfg->ReadString("singer", "", _it);
 		LocalItem* it = new LocalItem(name, global::toTimeStr(dur));
 		it->SetAttribute("FileHash", _it);
 		it->SetAttribute("SingerName", singer);
@@ -87,7 +87,7 @@ void MainFrm::InitForm() {
 		localList->Add(it);
 	}
 	//滚动条滚动事件 滚动条滚动到底部加载剩余音乐
-	searchList->GetScrollBar()->Scroll = [=](ScrollBar* sb, float pos, Event type)->void {
+	searchList->GetScrollBar()->Scroll = [=](IScrollBar* sb, float pos, Event type)->void {
 		if (type == Event::OnMouseWheel) {
 			NextPage(pos);
 		}
@@ -148,7 +148,7 @@ void MainFrm::OnClose(bool& cal) {
 	Application::Exit(0);
 }
 
-size_t MainFrm::FindLocalSong(const EString& hash)
+size_t MainFrm::FindLocalSong(const UIString& hash)
 {
 	for (size_t i = 0; i < songs.size(); i++)
 	{
@@ -158,7 +158,7 @@ size_t MainFrm::FindLocalSong(const EString& hash)
 	}
 	return size_t(-1);
 }
-void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
+void MainFrm::DownLoadImage(UIString _SingerName, UIString headImageUrl)
 {
 	auto  SingerName = _SingerName.split(",")[0];
 	std::string headFileData;
@@ -177,7 +177,7 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 	{
 		bkImg = NULL;
 		auto rect = GetClientRect();
-		EString bkurl = global::GetSingerBackground(_SingerName);
+		UIString bkurl = global::GetSingerBackground(_SingerName);
 		if (!bkurl.empty()) {
 			std::string fileData;
 			WebClient wc2;
@@ -214,18 +214,18 @@ void MainFrm::DownLoadImage(EString _SingerName, EString headImageUrl)
 
 
 
-bool MainFrm::PlayForHash(const EString& hash, Song& info)
+bool MainFrm::PlayForHash(const UIString& hash, Song& info)
 {
 	timer->Stop();
 
-	EString errStr;
+	UIString errStr;
 	bool ret = global::GetSongInfo(hash, errStr, info);
 	if (!ret) {
 		::MessageBoxW(Hwnd(), errStr.unicode().c_str(), L"无法播放", MB_OK);
 		return false;
 	}
 
-	EString singerName = info.SingerName;
+	UIString singerName = info.SingerName;
 	auto singers = singerName.split("、");
 	if (!singers.empty()) {
 		singerName = singers[0];
@@ -251,7 +251,7 @@ bool MainFrm::PlayForHash(const EString& hash, Song& info)
 
 	FindControl("lrcView")->SendNotify(Event::OnMouseClick);
 
-	downloadTask = new Task([this](EString singname, EString imgUrl) {
+	downloadTask = new Task([this](UIString singname, UIString imgUrl) {
 		this->DownLoadImage(singname, imgUrl);
 		}, singerName, info.imgUrl);
 
@@ -270,7 +270,7 @@ bool MainFrm::PlayForHash(const EString& hash, Song& info)
 	player.OpenUrl(info.url);
 	player.SetDuration(info.Duration);
 	player.Play();
-	EString lrcData = global::GetSongLrc(hash);
+	UIString lrcData = global::GetSongLrc(hash);
 	lrcCtl.LoadLrc(lrcData);
 	deskTopWnd->LoadLrc(lrcData);
 	timer->Start();
@@ -284,7 +284,7 @@ void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 		global::page = 1;
 		global::nextPage = true;
 		FindControl("songView")->SendNotify(MouseEventArgs(Event::OnMouseClick));
-		EString keyword = searchEdit->GetText();
+		UIString keyword = searchEdit->GetText();
 		std::vector<Song> songs = global::SearchSongs(keyword);
 		searchList->Clear(true);
 		for (auto& it : songs) {
@@ -320,7 +320,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 	}
 	if (args.EventType == Event::OnMouseDoubleClick) {
 		if (!sender->GetAttribute("FileHash").empty()) {
-			EString hash = sender->GetAttribute("FileHash");
+			UIString hash = sender->GetAttribute("FileHash");
 
 			Song info;
 			bool ret = this->PlayForHash(hash, info);
@@ -353,7 +353,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 		if (sender->Name == "next") {
 			int pos = this->FindLocalSong(this->nowSong);
 			pos++;
-			EString hash;
+			UIString hash;
 			if (pos >= songs.size()) {
 				hash = songs[0].hash;
 			}
@@ -367,7 +367,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 		if (sender->Name == "up") {
 			int pos = this->FindLocalSong(this->nowSong);
 			pos--;
-			EString hash;
+			UIString hash;
 			if (pos < 0) {
 				hash = songs[songs.size() - 1].hash;
 			}
@@ -404,7 +404,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			LocalItem* songItem = (LocalItem*)sender->Parent;
 			localList->Remove(songItem);
 
-			EString hash = songItem->GetAttribute("FileHash");
+			UIString hash = songItem->GetAttribute("FileHash");
 			if (!hash.empty()) {
 				cfg->DeleteSection(hash);
 			}
@@ -426,7 +426,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 		}
 		if (!sender->GetAttribute("mvhash").empty()) {
 			timer->Stop();
-			EString mvhash = sender->GetAttribute("mvhash");
+			UIString mvhash = sender->GetAttribute("mvhash");
 
 			Song info;
 			global::GetMvInfo(mvhash, info);
@@ -438,8 +438,8 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			((Label*)FindControl("songName"))->Invalidate();
 
 
-			EString filehash = sender->Parent->GetAttribute("FileHash");
-			EString lrcData = global::GetSongLrc(filehash);
+			UIString filehash = sender->Parent->GetAttribute("FileHash");
+			UIString lrcData = global::GetSongLrc(filehash);
 
 			player.OpenUrl(info.url);
 			player.Play();
@@ -472,9 +472,9 @@ void MainFrm::TimerTick() {
 				deskTopWnd->ChangePostion(position);
 			}
 
-			EString f1 = global::toTimeStr(position / 1000);
-			EString f2 = global::toTimeStr(duration);
-			EString fen = f1 + "/" + f2;
+			UIString f1 = global::toTimeStr(position / 1000);
+			UIString f2 = global::toTimeStr(duration);
+			UIString fen = f1 + "/" + f2;
 
 			if (control->GetPageIndex() != 1) {
 				control->SetPageIndex(1);
@@ -504,7 +504,7 @@ void MainFrm::NextPage(float scrollPos) {
 	//Debug::Info(L"滚动条当前位置:%d 可滚动距离:%d", a, b);
 	if (scrollPos >= 1.0f && global::nextPage) {
 		global::page++;
-		EString keyword = searchEdit->GetText();
+		UIString keyword = searchEdit->GetText();
 		std::vector<Song> songs = global::SearchSongs(keyword);
 		for (auto& it : songs) {
 			SearchItem* sit = new SearchItem(it);

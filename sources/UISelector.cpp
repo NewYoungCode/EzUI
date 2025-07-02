@@ -1,31 +1,31 @@
-#include "Selector.h"
+#include "UISelector.h"
 
 namespace EzUI {
-	Selector::Selector(const std::vector<Control*>& controls)
+	UISelector::UISelector(const std::vector<Control*>& controls)
 	{
 		this->ctls = controls;
 	}
-	Selector::Selector(const std::list<Control*>& controls)
+	UISelector::UISelector(const std::list<Control*>& controls)
 	{
 		this->ctls.resize(controls.size());
 		for (auto& it : controls) {
 			this->ctls.push_back(it);
 		}
 	}
-	Selector::Selector(Control* ctl)
+	UISelector::UISelector(Control* ctl)
 	{
 		this->ctl = ctl;
 	}
-	Selector::Selector(Control* ct, const EString& _mathStr)
+	UISelector::UISelector(Control* ct, const UIString& _mathStr)
 	{
-		EString mathStr = _mathStr;
+		UIString mathStr = _mathStr;
 		mathStr.replace("  ", " ");
 		//模仿jquery进行元素匹配
 	}
-	Selector::~Selector()
+	UISelector::~UISelector()
 	{
 	}
-	Selector& Selector::Css(const EString& styleStr)
+	UISelector& UISelector::Css(const UIString& styleStr)
 	{
 		/*	for (auto& it : this->ctls) {
 				if (notCtl == it)continue;
@@ -37,7 +37,7 @@ namespace EzUI {
 			}*/
 		return *this;
 	}
-	Selector& Selector::CssHover(const EString& styleStr)
+	UISelector& UISelector::CssHover(const UIString& styleStr)
 	{
 		/*	for (auto& it : this->ctls) {
 				if (notCtl == it)continue;
@@ -49,7 +49,7 @@ namespace EzUI {
 			}*/
 		return *this;
 	}
-	Selector& Selector::CssActive(const EString& styleStr)
+	UISelector& UISelector::CssActive(const UIString& styleStr)
 	{
 		/*	for (auto& it : this->ctls) {
 				if (notCtl == it)continue;
@@ -61,7 +61,7 @@ namespace EzUI {
 			}*/
 		return *this;
 	}
-	Selector& Selector::Attr(const EString& key, const EString& value)
+	UISelector& UISelector::Attr(const UIString& key, const UIString& value)
 	{
 		for (auto& it : this->ctls) {
 			if (notCtl == it)continue;
@@ -73,7 +73,7 @@ namespace EzUI {
 		}
 		return *this;
 	}
-	Selector& Selector::Refresh()
+	UISelector& UISelector::Refresh()
 	{
 		for (auto& it : this->ctls) {
 			it->Invalidate();
@@ -83,7 +83,7 @@ namespace EzUI {
 		}
 		return *this;
 	}
-	Selector& Selector::Not(Control* fiterCtl) {
+	UISelector& UISelector::Not(Control* fiterCtl) {
 
 		this->notCtl = fiterCtl;
 		return *this;

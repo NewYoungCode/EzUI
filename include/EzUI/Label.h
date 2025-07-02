@@ -15,17 +15,17 @@ namespace EzUI {
 		virtual void OnLayout()override;
 	public:
 		//文字溢出将显示的文字
-		EString Ellipsis;
+		UIString Ellipsis;
 		//基于控件的文字的边距
 		EzUI::Distance TextMargin;
 	public:
 		TextAlign TextAlign = TextAlign::MiddleCenter;
 		Label();
 		virtual ~Label();
-		virtual void SetAttribute(const EString& key, const EString& value)override;
+		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 		virtual void RefreshLayout() override;
-		void SetText(const EString& text);
+		void SetText(const UIString& text);
 		void SetUnderline(size_t pos, size_t count);
-		EString GetText()const;
+		UIString GetText()const;
 	};
 };

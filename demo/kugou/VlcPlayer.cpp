@@ -66,7 +66,7 @@ namespace EzUI {
 	void VlcPlayer::SetConfig()
 	{
 	}
-	void VlcPlayer::OpenPath(const EString& file)
+	void VlcPlayer::OpenPath(const UIString& file)
 	{
 		this->Stop();
 		vlc_media = libvlc_media_new_path(vlc_inst, file.c_str());
@@ -76,7 +76,7 @@ namespace EzUI {
 		libvlc_video_set_format_callbacks(vlc_player, setup, (libvlc_video_cleanup_cb)this);
 		libvlc_video_set_callbacks(vlc_player, lock, unlock, display, this);
 	}
-	void VlcPlayer::OpenUrl(const EString& url)
+	void VlcPlayer::OpenUrl(const UIString& url)
 	{
 		this->Stop();
 		vlc_media = libvlc_media_new_location(vlc_inst, url.c_str());

@@ -29,24 +29,24 @@ class MainFrm :public Window {
 	//第二页的控件
 	TextBox* editResFile;
 	Button* btnBrowserFile;
-	VList* listFiles;
+	VListView* listFiles;
 	Button* btnUnPackage;
 
 	//资源指针
 	Resource* res = NULL;
 public:
 	void Init();
-	MainFrm(const EString& cmdLine);
+	MainFrm(const UIString& cmdLine);
 	void OnPackDirChange();
 	void OnClose(bool& close)  override;
-	bool FileExists(const EString& fileName);
+	bool FileExists(const UIString& fileName);
 	bool OnNotify(Control* sender, EventArgs& args)override;
-	void OnResFileChange(EzUI::EString& resFile);
+	void OnResFileChange(EzUI::UIString& resFile);
 	virtual LRESULT WndProc(UINT msg, WPARAM wp, LPARAM lp);
 	virtual ~MainFrm();
 };
 
-inline bool FileExists(const EString& filename) {
+inline bool FileExists(const UIString& filename) {
 	DWORD dwAttr = GetFileAttributesW(filename.unicode().c_str());
 	if (dwAttr == DWORD(-1)) {
 		return false;
@@ -57,7 +57,7 @@ inline bool FileExists(const EString& filename) {
 	return false;
 
 }
-inline bool PathExist(const EString& dir) {
+inline bool PathExist(const UIString& dir) {
 	DWORD dwAttr = GetFileAttributesW(dir.unicode().c_str());
 	if (dwAttr == DWORD(-1)) {
 		return false;
@@ -68,18 +68,18 @@ inline bool PathExist(const EString& dir) {
 	}
 	return false;
 }
-inline bool CreatePath(const EString& path) {
+inline bool CreatePath(const UIString& path) {
 	::CreateDirectoryW(path.unicode().c_str(), NULL);
 	if (PathExist(path)) {
 		return true;
 	}
 	//创建多级目录
 	if (path.find(":") != size_t(-1)) {
-		EString dir = path + "/";
+		UIString dir = path + "/";
 		dir = dir.replace("\\", "/");
 		dir = dir.replace("//", "/");
 		auto arr = dir.split("/");
-		EString root;
+		UIString root;
 		if (arr.size() > 0) {
 			root += arr[0] + "/";
 			for (size_t i = 1; i < arr.size(); i++)
@@ -97,7 +97,7 @@ inline bool CreatePath(const EString& path) {
 	return PathExist(path);
 }
 
-inline EString ShowFileDialog(HWND ownerWnd, const EString& defaultPath = "", const EString& title = "") {
+inline UIString ShowFileDialog(HWND ownerWnd, const UIString& defaultPath = "", const UIString& title = "") {
 	OPENFILENAMEW ofn;       // 打开文件对话框结构体
 	WCHAR szFile[512]{ 0 };       // 选择的文件名
 	// 初始化OPENFILENAME结构体
@@ -120,7 +120,7 @@ inline EString ShowFileDialog(HWND ownerWnd, const EString& defaultPath = "", co
 	return szFile;
 }
 #include <ShlObj.h>
-inline EString ShowFolderDialog(HWND ownerWnd, const EString& defaultPath = "", const EString& title = "") {
+inline UIString ShowFolderDialog(HWND ownerWnd, const UIString& defaultPath = "", const UIString& title = "") {
 	WCHAR selectedPath[MAX_PATH]{ 0 };
 	BROWSEINFOW browseInfo{ 0 };
 	browseInfo.hwndOwner = ownerWnd;
@@ -159,7 +159,7 @@ inline std::string GetFileSize(__int64 _KEY_FILE_SIZE) {
 	else {
 		ext = "BT";
 	}
-	disp_size = Text::ToString(KEY_FILE_SIZE, 2) + " " + ext;
+	disp_size = UI_Text::ToString(KEY_FILE_SIZE, 2) + " " + ext;
 	return disp_size;
 }
 
@@ -167,7 +167,7 @@ class FileItem :public HBox {
 	Label name;
 	Label size;
 public:
-	FileItem(const EString& fileName, size_t fileSize) {
+	FileItem(const UIString& fileName, size_t fileSize) {
 		this->SetFixedHeight(25);
 		this->SetDockStyle(DockStyle::Horizontal);
 

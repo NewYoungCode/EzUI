@@ -1,4 +1,5 @@
 #include "HScrollBar.h"
+
 namespace EzUI {
 	HScrollBar::HScrollBar() {}
 	HScrollBar::~HScrollBar() {}

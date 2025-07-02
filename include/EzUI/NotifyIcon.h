@@ -14,9 +14,9 @@ namespace EzUI {
 		NotifyIcon();
 		void SetIcon(short id);
 		void SetIcon(HICON icon);
-		void SetText(const EString& text);
+		void SetText(const UIString& text);
 		void SetMenu(Menu* menu);
-		void ShowBalloonTip(const EString& title, const EString& msg, int_t timeOut = 1000);
+		void ShowBalloonTip(const UIString& title, const UIString& msg, int_t timeOut = 1000);
 		virtual ~NotifyIcon();
 	};
 

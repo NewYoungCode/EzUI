@@ -1,7 +1,7 @@
-#include "List.h"
+#include "PagedListView.h"
 namespace EzUI {
 
-	void List::SetPageInfo(const Controls& items, int_t pageSize)
+	void PagedListView::SetPageInfo(const Controls& items, int_t pageSize)
 	{
 		this->_pageIndex = 0;
 		this->_pageSize = pageSize;
@@ -10,7 +10,7 @@ namespace EzUI {
 		this->NextPage();
 	}
 
-	void List::GetPage(int_t pageIndex, Controls* outCtls)
+	void PagedListView::GetPage(int_t pageIndex, Controls* outCtls)
 	{
 		if (outCtls) {
 			outCtls->clear();
@@ -24,18 +24,18 @@ namespace EzUI {
 		}
 	}
 
-	void List::Clear() {
+	void PagedListView::Clear() {
 		__super::Clear();
 	}
 
-	void List::Clear(bool freeChilds) {
+	void PagedListView::Clear(bool freeChilds) {
 		__super::Clear(freeChilds);
 		this->_items.clear();
 		this->_pageIndex = 0;
 		this->_pageTotal = 0;
 	}
 
-	void List::NextPage()
+	void PagedListView::NextPage()
 	{
 		if (_items.size() <= 0)return;
 		if ((_pageIndex + 1) > _pageTotal)return;
@@ -50,10 +50,10 @@ namespace EzUI {
 		}
 		this->Invalidate();
 	}
-	List::List()
+	PagedListView::PagedListView()
 	{
 	}
-	List::~List()
+	PagedListView::~PagedListView()
 	{
 	}
 };

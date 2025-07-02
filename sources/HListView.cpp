@@ -1,7 +1,7 @@
-#include "HList.h"
+#include "HListView.h"
 
 namespace EzUI {
-	void HList::Init()
+	void HListView::Init()
 	{
 		this->GetScrollBar()->SetWidth(Width());//滚动条宽度
 		this->GetScrollBar()->Parent = this;
@@ -12,14 +12,14 @@ namespace EzUI {
 			this->Offset(offsetValue);
 			};
 	}
-	HList::HList()
+	HListView::HListView()
 	{
 		Init();
 	}
-	HList::~HList()
+	HListView::~HListView()
 	{
 	}
-	void HList::OnLayout() {
+	void HListView::OnLayout() {
 		this->Offset(0);
 		if (IsAutoWidth()) {
 			this->GetScrollBar()->SetVisible(false);
@@ -30,11 +30,11 @@ namespace EzUI {
 		this->GetScrollBar()->RefreshScroll();
 	}
 
-	ScrollBar* HList::GetScrollBar()
+	IScrollBar* HListView::GetScrollBar()
 	{
 		return &_hScrollBar;
 	}
-	void HList::Offset(int_t offset) {
+	void HListView::Offset(int_t offset) {
 		int_t _contentHeight = 0;
 		int_t _contentWidth = offset;
 		for (auto& it : GetControls()) {
@@ -69,7 +69,7 @@ namespace EzUI {
 		this->SetContentSize({ _contentWidth - offset,_contentHeight });
 	}
 
-	void HList::OnChildPaint(PaintEventArgs& args) {
+	void HListView::OnChildPaint(PaintEventArgs& args) {
 		ViewControls.clear();
 		//绘制子控件
 		auto rect = Rect(0, 0, Width(), Height());

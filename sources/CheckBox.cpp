@@ -21,7 +21,7 @@ namespace EzUI {
 		}
 		__super::OnDpiChange(args);
 	}
-	void CheckBox::SetAttribute(const EString& key, const EString& value)
+	void CheckBox::SetAttribute(const UIString& key, const UIString& value)
 	{
 		__super::SetAttribute(key, value);
 		if (key == "checked") {

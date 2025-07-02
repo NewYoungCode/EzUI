@@ -6,7 +6,7 @@
 #include "EzUI/UIManager.h"
 #include "EzUI/HLayout.h"
 #include "EzUI/Label.h"
-#include "EzUI/VList.h"
+#include "EzUI/VListView.h"
 #include "EzUI/HLayout.h"
 #include "EzUI/VLayout.h"
 #include "EzUI/Button.h"
@@ -16,7 +16,7 @@
 #include "EzUI/LayeredWindow.h"
 #include "EzUI/UIManager.h"
 #include "EzUI/Task.h"
-#include "EzUI/Selector.h"
+#include "EzUI/UISelector.h"
 
 #include "WebClient.h"
 #include "JsonCpp.h"
@@ -36,17 +36,17 @@
 using namespace EzUI;
 
 struct Song {
-	EString hash;//歌曲哈希值
-	EString SongName;//歌曲名称
-	EString SingerName;//歌手名称
-	EString MvHash;//mv哈希值
+	UIString hash;//歌曲哈希值
+	UIString SongName;//歌曲名称
+	UIString SingerName;//歌手名称
+	UIString MvHash;//mv哈希值
 	int Duration;//音乐时长 单位:秒
-	EString AlbumID;//
-	EString AlbumName;//
+	UIString AlbumID;//
+	UIString AlbumName;//
 	int QualityLevel;//歌曲热度
-	EString url;
-	EString imgUrl;
-	EString fileName;
+	UIString url;
+	UIString imgUrl;
+	UIString fileName;
 };
 
 
@@ -56,17 +56,17 @@ namespace global {
 	extern bool nextPage;
 
 	//歌曲长度转字符串显示
-	extern EString toTimeStr(long dur);
+	extern UIString toTimeStr(long dur);
 	//http对酷狗api的请求
-	extern int HttpGet(const EString& url, EString& resp);
+	extern int HttpGet(const UIString& url, UIString& resp);
 	//根据关键字进行歌曲搜索
-	extern std::vector<Song> SearchSongs(const EString& keyword);
+	extern std::vector<Song> SearchSongs(const UIString& keyword);
 	//使用歌曲的AlbumId寻找查找对应的歌词
-	extern EString GetSongLrc(const EString& hash, const EString& AlbumID = "");
+	extern UIString GetSongLrc(const UIString& hash, const UIString& AlbumID = "");
 	//获取歌曲信息
-	extern bool GetSongInfo(const EString& hash, EString& errorInfo, Song& info);
+	extern bool GetSongInfo(const UIString& hash, UIString& errorInfo, Song& info);
 	//获取mv信息
-	extern bool GetMvInfo(const EString& mvhash, Song& info);
+	extern bool GetMvInfo(const UIString& mvhash, Song& info);
 	//获取歌手写真(酷我的接口)
-	extern EString GetSingerBackground(const EString& SingerName);
+	extern UIString GetSingerBackground(const UIString& SingerName);
 };

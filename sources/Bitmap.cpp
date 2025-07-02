@@ -87,7 +87,7 @@ namespace EzUI {
 		}
 		return _hdc;
 	}
-	void Bitmap::Save(const EString& fileName)
+	void Bitmap::Save(const UIString& fileName)
 	{
 		// 保存位图为BMP文件
 		BITMAPINFOHEADER& bi = _bmpInfo.bmiHeader;

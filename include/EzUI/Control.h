@@ -26,7 +26,7 @@ namespace EzUI {
 		EzUI::LayoutState _layoutState = EzUI::LayoutState::None;
 
 		// 鼠标悬浮提示文字
-		EString _tipsText;
+		UIString _tipsText;
 
 		// 上一次位置
 		Point _lastLocation;
@@ -75,7 +75,7 @@ namespace EzUI {
 		Distance Margin;
 
 		// 控件的 ObjectName ID
-		EString Name;
+		UIString Name;
 
 		// 控件当前状态
 		ControlState State = ControlState::Static;
@@ -375,19 +375,19 @@ namespace EzUI {
 		virtual void RefreshLayout();
 
 		// 设置提示文字（类似 tooltip）
-		void SetTips(const EString& text);
+		void SetTips(const UIString& text);
 
 		// 获取提示文字
-		const EString& GetTips();
+		const UIString& GetTips();
 
 		// 获取控件的滚动条对象
-		virtual ScrollBar* GetScrollBar();
+		virtual IScrollBar* GetScrollBar();
 
 		// 派发事件（如鼠标单击事件等...）返回true则事件成功派发 返回false代表当前控件对象已被释放
 		bool SendNotify(const EventArgs& arg);
 
 		// 设置控件属性
-		virtual void SetAttribute(const EString& attrName, const EString& attrValue);
+		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue);
 
 		// 获取当前可见的子控件集合
 		const Controls& GetViewControls();
@@ -405,22 +405,22 @@ namespace EzUI {
 		int_t IndexOf(Control* childCtl);
 
 		// 根据 name 查找控件（包括自身）
-		Control* FindControl(const EString& ctlName);
+		Control* FindControl(const UIString& ctlName);
 
 		// 根据属性查找所有匹配控件（包括自身）
-		Controls FindControl(const EString& attrName, const EString& attrValue);
+		Controls FindControl(const UIString& attrName, const UIString& attrValue);
 
 		// 根据属性查找第一个匹配控件（包括自身）
-		Control* FindSingleControl(const EString& attrName, const EString& attrValue);
+		Control* FindSingleControl(const UIString& attrName, const UIString& attrValue);
 
 		// 根据 name 查找子控件（仅限直接子集）
-		Control* FindChild(const EString& ctlName);
+		Control* FindChild(const UIString& ctlName);
 
 		// 根据属性查找所有匹配的子控件（仅限直接子集）
-		Controls FindChild(const EString& attrName, const EString& attrValue);
+		Controls FindChild(const UIString& attrName, const UIString& attrValue);
 
 		// 根据属性查找第一个匹配的子控件（仅限直接子集）
-		Control* FindSingleChild(const EString& attrName, const EString& attrValue);
+		Control* FindSingleChild(const UIString& attrName, const UIString& attrValue);
 
 		// 交换两个子控件的位置
 		virtual bool SwapChild(Control* childCtl, Control* childCt2);
@@ -464,89 +464,4 @@ namespace EzUI {
 		virtual ~IIFrame() {};
 	};
 
-	//添加弹簧无需用户手动释放,
-	class UI_EXPORT Spacer :public Control {
-	public:
-		virtual ~Spacer() {};
-	};
-	//具有绝对高度的 的弹簧
-	class UI_EXPORT VSpacer :public Spacer {
-	private:
-		VSpacer() {};
-	public:
-		virtual ~VSpacer() {};
-		VSpacer(int_t fixedHeight) {
-			SetFixedHeight(fixedHeight);
-		}
-	};
-	//具有绝对宽度的 的弹簧
-	class UI_EXPORT HSpacer :public Spacer {
-	private:
-		HSpacer() {};
-	public:
-		virtual ~HSpacer() {};
-		HSpacer(int_t fixedWidth) {
-			SetFixedWidth(fixedWidth);
-		}
-	};
-
-	class UI_EXPORT ScrollBar :public Control {
-	protected:
-		//鼠标是否已经按下
-		bool _mouseDown = false;
-		//上一次鼠标命中的坐标
-		int_t _lastPoint = 0;
-		//滚动条当前的坐标
-		double _sliderPos = 0;
-		//滚动条的长度
-		int_t _sliderLength = 0;
-		//滚动条每滚动一次的比率
-		double _rollRate = 0;
-		//父容器内的坐标偏移
-		int_t _offset = 0;
-		//父容器的内容长度
-		int_t _contentLength = 0;
-		//父容器可见长度(容器自身长度)
-		int_t _viewLength = 0;
-		//溢出容器的长度
-		int_t _overflowLength = 0;
-
-		//int_t _old_viewLength = 0;
-		//int_t _old_contentLength = 0;
-		//int_t _old_offset = 0;
-	public:
-		//滚动条计算出偏移之后的回调函数
-		std::function<void(int_t)> OffsetCallback = NULL;
-		//滚动事件 arg1:发送者 arg2:滚动百分比 arg3:滚动类型
-		std::function<void(ScrollBar*, float, Event)> Scroll = NULL;
-	protected:
-		virtual void OnBackgroundPaint(PaintEventArgs& arg)override;
-		virtual void OnForePaint(PaintEventArgs& args) override;
-		virtual void OnMouseUp(const MouseEventArgs& arg)override;
-		virtual void OnMouseLeave(const MouseEventArgs& arg) override;
-		virtual void OnMouseWheel(const MouseEventArgs& arg)override;
-		virtual void GetInfo(int_t* viewLength, int_t* contentLength, int_t* scrollBarLength) = 0;
-		void ScrollTo(int_t offset, const Event& type);
-		void SyncInfo();
-	public:
-		//滚动到指定控件可见位置
-		virtual void ScrollTo(Control* ctl) = 0;
-		//按照百分比滚动 0.0f~1.0f
-		void ScrollTo(float scrollRate);
-		//获取当前滚动到的位置 进度的百分比
-		float ScrollPos();
-		//获取滑块的矩形
-		virtual Rect GetSliderRect() = 0;//
-		virtual void ParentSize(const Size& parentSize) = 0;
-		//滚动条是否已经绘制且显示
-		bool IsDraw();
-		//重置滚动条数据到起点(不执行重绘)
-		void Reset();
-		//滚动条是否能够滚动
-		bool Scrollable();
-		//当父控件发生内容发生改变 请调用刷新滚动条
-		void RefreshScroll();
-		ScrollBar();
-		virtual ~ScrollBar();
-	};
 };

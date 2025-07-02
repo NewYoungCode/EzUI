@@ -1,7 +1,7 @@
-#include "ComBox.h"
+#include "ComboBox.h"
 
 namespace EzUI {
-	void ComBox::Init()
+	void ComboBox::Init()
 	{
 		this->_textBox.ReadOnly = true;
 		this->Add(&_textBox);
@@ -54,19 +54,19 @@ namespace EzUI {
 			}
 			};
 	}
-	ComBox::ComBox()
+	ComboBox::ComboBox()
 	{
 		Init();
 	}
-	EString ComBox::GetText()
+	UIString ComboBox::GetText()
 	{
 		return this->_textBox.GetText();
 	}
-	int_t ComBox::GetCheck()
+	int_t ComboBox::GetCheck()
 	{
 		return this->_index;
 	}
-	bool ComBox::SetCheck(int_t pos)
+	bool ComboBox::SetCheck(int_t pos)
 	{
 		auto item = _list.GetControl(pos);
 		if (item) {
@@ -77,7 +77,7 @@ namespace EzUI {
 		return false;
 	}
 
-	ComBox::~ComBox()
+	ComboBox::~ComboBox()
 	{
 		_list.Clear(true);
 		//涉及到由于"_list"是成员变量 释放比较靠后 所以释放窗口的时候 必须把 "_list"的公共数据也置零
@@ -90,7 +90,7 @@ namespace EzUI {
 			delete _menuWnd;
 		}
 	}
-	int_t ComBox::AddItem(const EString& text)
+	int_t ComboBox::AddItem(const UIString& text)
 	{
 		Label* lb = new Label;
 		lb->SetDockStyle(DockStyle::Horizontal);
@@ -110,20 +110,20 @@ namespace EzUI {
 
 		return _list.GetControls().size() - 1;
 	}
-	void ComBox::RemoveItem(int_t index)
+	void ComboBox::RemoveItem(int_t index)
 	{
 		Control* lb = _list.GetControl(index);
 		_list.Remove(lb,true);
 	}
-	void ComBox::OnLayout() {
+	void ComboBox::OnLayout() {
 		this->_UpDown.SetFixedSize(Size(Height(), Height()));
 		__super::OnLayout();
 	}
 
-	ComBox::MenuContent::MenuContent(Control* ownerCtl, Control* hittestCtl) :PopupWindow(0, 0, ownerCtl), _hittestCtl(hittestCtl)
+	ComboBox::MenuContent::MenuContent(Control* ownerCtl, Control* hittestCtl) :PopupWindow(0, 0, ownerCtl), _hittestCtl(hittestCtl)
 	{
 	}
-	void ComBox::MenuContent::OnKillFocus(HWND wnd)
+	void ComboBox::MenuContent::OnKillFocus(HWND wnd)
 	{
 		if (::GetWindowOwner(Hwnd()) == wnd) {
 			POINT pt;
@@ -142,7 +142,7 @@ namespace EzUI {
 			this->Hide();
 		}
 	}
-	ComBox::MenuContent::~MenuContent()
+	ComboBox::MenuContent::~MenuContent()
 	{
 	}
 }

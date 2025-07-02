@@ -7,14 +7,14 @@
 #include "EzUI/EzUI.h"
 #include "EzUI/BorderlessWindow.h"
 #include "EzUI/Button.h"
-#include "EzUI/TileList.h"
-#include "EzUI/VList.h"
-#include "EzUI/HList.h"
+#include "EzUI/TileListView.h"
+#include "EzUI/VListView.h"
+#include "EzUI/HListView.h"
 #include "EzUI/HLayout.h"
 #include "EzUI/VLayout.h"
 #include "EzUI/Application.h"
 #include "EzUI/TextBox.h"
-#include "EzUI/ComBox.h"
+#include "EzUI/ComBoBox.h"
 
 using namespace EzUI;
 
@@ -95,7 +95,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
 	//Label labelBottom;
 	//labelBottom.SetText(L"这是一个简单的窗口示例!");
-	HList list;
+	HListView list;
 	list.SetParent(&mainLayout);
 	//list.SetAutoHeight(true);
 	for (size_t i = 0; i < 10; i++)
@@ -123,7 +123,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 		list.Add(lb);
 	}
 
-	ComBox cbox;
+	ComboBox cbox;
 	cbox.Style.Border = 1;
 	cbox.Style.Border.Color = Color::Red;
 

@@ -14,6 +14,6 @@ namespace EzUI {
 		PictureBox();
 		virtual ~PictureBox();
 		void SetImage(Image* image);
-		virtual void SetAttribute(const EString& key, const EString& value)override;
+		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 	};
 };

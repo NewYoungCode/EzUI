@@ -1,5 +1,5 @@
 #pragma once
-#include "EString.h"
+#include "UIString.h"
 namespace EzUI {
 	/// <summary>
 	/// 框架中的资源类
@@ -9,7 +9,7 @@ namespace EzUI {
 		struct Entry {
 			size_t Offset = 0;//偏移
 			size_t Size = 0;//大小
-			EString Name;//名称
+			UIString Name;//名称
 		};
 		//资源文件读取流
 		class UI_EXPORT ReadStream {
@@ -19,7 +19,7 @@ namespace EzUI {
 			std::ifstream* _ifs = NULL;
 		public:
 			ReadStream(HRSRC hRsrc);
-			ReadStream(const EString& fileName);
+			ReadStream(const UIString& fileName);
 			void seekg(size_t pos);
 			void read(char* buf, size_t count);
 			size_t tellg();
@@ -34,16 +34,16 @@ namespace EzUI {
 		const std::list<Entry> Items;
 		bool IsGood();
 		//对资源目录进行打包
-		static void Package(const EString& dir, const EString& outFile, const std::function<void(const EString&, int, int)>& packCallback = NULL);
-		static HRSRC FindRC(const EString& rcIDName);
+		static void Package(const UIString& dir, const UIString& outFile, const std::function<void(const UIString&, int, int)>& packCallback = NULL);
+		static HRSRC FindRC(const UIString& rcIDName);
 	public:
 		virtual ~Resource();
 		//从本地文件创建对象
-		Resource(const EString& resFile);
+		Resource(const UIString& resFile);
 		//使用vs内置资源文件创建对象
 		Resource(HRSRC hRsrc);
 		//寻找资源中的文件
-		bool GetFile(const EString& fileName, std::string* out);
+		bool GetFile(const UIString& fileName, std::string* out);
 		//传入item直接返回数据
 		void GetFile(const Entry& item, std::string* out);
 	};

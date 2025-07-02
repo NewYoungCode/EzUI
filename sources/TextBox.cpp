@@ -187,7 +187,7 @@ namespace EzUI {
 		_text.insert(_textPos, str);
 		_textPos += str.size();
 		if (TextChanged) {
-			TextChanged(EString(_text));
+			TextChanged(UIString(_text));
 		}
 	}
 	bool TextBox::DeleteRange() {
@@ -197,7 +197,7 @@ namespace EzUI {
 			_textPos = pos;
 			_text.erase(pos, count);
 			if (TextChanged) {
-				TextChanged(EString(_text));
+				TextChanged(UIString(_text));
 			}
 			return true;
 		}
@@ -212,11 +212,11 @@ namespace EzUI {
 	bool TextBox::Paste() {
 		std::wstring wBuf;
 		bool bRet = EzUI::GetClipboardData(&wBuf, PublicData->HANDLE);
-		EString u8Str(wBuf);
+		UIString u8Str(wBuf);
 		if (!_multiLine) {
 			//行编辑框不允许有换行符
-			Text::Replace(&u8Str, "\r", "");
-			Text::Replace(&u8Str, "\n", "");
+			UI_Text::Replace(&u8Str, "\r", "");
+			UI_Text::Replace(&u8Str, "\n", "");
 		}
 		_Insert(u8Str.unicode());//插入新的字符
 		return bRet;
@@ -230,7 +230,7 @@ namespace EzUI {
 			if (_textPos > -1) {
 				_text.erase(_textPos, 1);
 				if (TextChanged) {
-					TextChanged(EString(_text));
+					TextChanged(UIString(_text));
 				}
 			}
 		}
@@ -398,7 +398,7 @@ namespace EzUI {
 		}
 	}
 
-	ScrollBar* TextBox::GetScrollBar()
+	IScrollBar* TextBox::GetScrollBar()
 	{
 		return &_vScrollbar;
 	}
@@ -498,11 +498,11 @@ namespace EzUI {
 		_timer.Stop();
 		this->Invalidate();
 	}
-	const EString TextBox::GetText()
+	const UIString TextBox::GetText()
 	{
-		return EString(this->_text);
+		return UIString(this->_text);
 	}
-	void TextBox::SetText(const EString& text)
+	void TextBox::SetText(const UIString& text)
 	{
 		this->_text = text.unicode();
 		Analysis();
@@ -525,12 +525,12 @@ namespace EzUI {
 		rect.Y += _scrollY;
 		return rect;
 	}
-	void TextBox::Insert(const EString& str)
+	void TextBox::Insert(const UIString& str)
 	{
 		_Insert(str.unicode());
 		Analysis();//分析字符串
 	}
-	void TextBox::SetAttribute(const EString& key, const EString& value) {
+	void TextBox::SetAttribute(const UIString& key, const UIString& value) {
 		__super::SetAttribute(key, value);
 		do
 		{

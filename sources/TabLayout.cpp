@@ -52,7 +52,7 @@ namespace EzUI {
 			++pos;
 		}
 	}
-	void TabLayout::SetAttribute(const EString& key, const EString& value) {
+	void TabLayout::SetAttribute(const UIString& key, const UIString& value) {
 		__super::SetAttribute(key, value);
 		if (key == "tabindex") {
 			this->SetPageIndex(std::atoi(value.c_str()));

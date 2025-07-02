@@ -1,4 +1,7 @@
 #include "Control.h"
+#include "ScrollBar.h"
+#include "Spacer.h"
+
 namespace EzUI {
 	inline bool __IsValid(int_t value) {
 		return value != 0;
@@ -18,7 +21,7 @@ namespace EzUI {
 	inline bool __IsValid(const Color& value) {
 		return value.GetValue() != 0;
 	}
-	inline bool __IsValid(const EString& value) {
+	inline bool __IsValid(const UIString& value) {
 		return !value.empty();
 	}
 	inline bool __IsValid(const std::wstring& value) {
@@ -217,7 +220,7 @@ namespace EzUI {
 		return this->Style;
 	}
 
-	void Control::SetAttribute(const EString& attrName, const EString& attrValue)
+	void Control::SetAttribute(const UIString& attrName, const UIString& attrValue)
 	{
 		__super::SetAttribute(attrName, attrValue);
 		do
@@ -372,7 +375,7 @@ namespace EzUI {
 				break;
 			}
 			if (attrName == "scrollbar") {
-				ScrollBar* sb = this->GetScrollBar();
+				IScrollBar* sb = this->GetScrollBar();
 				if (sb) {
 					sb->SetAttribute("name", attrValue);
 				}
@@ -535,11 +538,11 @@ namespace EzUI {
 		}
 		return this->_rect;
 	}
-	void Control::SetTips(const EString& text)
+	void Control::SetTips(const UIString& text)
 	{
 		_tipsText = text;
 	}
-	const EString& Control::GetTips()
+	const UIString& Control::GetTips()
 	{
 		return _tipsText;
 	}
@@ -813,7 +816,7 @@ namespace EzUI {
 		//绘制子控件
 		this->OnChildPaint(args);
 		//绘制滚动条
-		EzUI::ScrollBar* scrollbar = NULL;
+		IScrollBar* scrollbar = NULL;
 		if (scrollbar = this->GetScrollBar()) {
 			scrollbar->PublicData = args.PublicData;
 			scrollbar->SendNotify(args);
@@ -1006,7 +1009,7 @@ namespace EzUI {
 			PublicData = NULL;
 		}
 	}
-	Control* Control::FindControl(const EString& ctlName)
+	Control* Control::FindControl(const UIString& ctlName)
 	{
 		if (ctlName.empty()) {
 			return NULL;
@@ -1024,7 +1027,7 @@ namespace EzUI {
 		}
 		return NULL;
 	}
-	Controls Control::FindControl(const EString& attrName, const EString& attrValue)
+	Controls Control::FindControl(const UIString& attrName, const UIString& attrValue)
 	{
 		Controls ctls;
 		if (attrName.empty() || attrValue.empty()) {
@@ -1042,7 +1045,7 @@ namespace EzUI {
 		}
 		return ctls;
 	}
-	Control* Control::FindSingleControl(const EString& attrName, const EString& attrValue) {
+	Control* Control::FindSingleControl(const UIString& attrName, const UIString& attrValue) {
 		auto list = this->FindControl(attrName, attrValue);
 		if (list.size() > 0) {
 			return *list.begin();
@@ -1050,7 +1053,7 @@ namespace EzUI {
 		return NULL;
 	}
 
-	Control* Control::FindChild(const EString& ctlName)
+	Control* Control::FindChild(const UIString& ctlName)
 	{
 		if (ctlName.empty()) {
 			return NULL;
@@ -1063,7 +1066,7 @@ namespace EzUI {
 		}
 		return NULL;
 	}
-	Controls Control::FindChild(const EString& attrName, const EString& attrValue)
+	Controls Control::FindChild(const UIString& attrName, const UIString& attrValue)
 	{
 		Controls ctls;
 		if (attrName.empty() || attrValue.empty()) {
@@ -1077,7 +1080,7 @@ namespace EzUI {
 		}
 		return ctls;
 	}
-	Control* Control::FindSingleChild(const EString& ctlName, const EString& attrValue) {
+	Control* Control::FindSingleChild(const UIString& ctlName, const UIString& attrValue) {
 		auto list = this->FindChild(ctlName, attrValue);
 		if (list.size() > 0) {
 			return *list.begin();
@@ -1274,7 +1277,7 @@ namespace EzUI {
 		this->_controls.clear();//清空子控件集合
 		this->_spacers.clear();//清空弹簧
 		this->TryPendLayout();//挂起布局
-		ScrollBar* scrollBar = this->GetScrollBar();
+		IScrollBar* scrollBar = this->GetScrollBar();
 		if (scrollBar) {
 			scrollBar->Reset();
 		}
@@ -1347,151 +1350,8 @@ namespace EzUI {
 			Parent->TryPendLayout();//将父控件挂起
 		}
 	}
-	ScrollBar* Control::GetScrollBar()
+	IScrollBar* Control::GetScrollBar()
 	{
 		return NULL;
-	}
-};
-
-//滚动条相关
-namespace EzUI {
-	void ScrollBar::OnMouseUp(const MouseEventArgs& arg)
-	{
-		__super::OnMouseUp(arg);
-		_mouseDown = false;
-	}
-	void  ScrollBar::OnMouseLeave(const MouseEventArgs& arg)
-	{
-		__super::OnMouseLeave(arg);
-		_mouseDown = false;
-	}
-	ScrollBar::ScrollBar() {
-		Style.ForeColor = Color(205, 205, 205);//the bar default backgroundcolor
-		SetSize({ 10,10 });
-	}
-	ScrollBar::~ScrollBar() {}
-	bool ScrollBar::IsDraw()
-	{
-		if (!Scrollable()) {
-			return false;
-		}
-		return this->IsVisible();
-	}
-	void ScrollBar::Reset()
-	{
-		this->_sliderPos = 0;
-		this->_offset = 0;
-	}
-	bool ScrollBar::Scrollable()
-	{
-		if (this->_overflowLength > 0) {
-			return true;
-		}
-		return false;
-	}
-	void ScrollBar::OnBackgroundPaint(PaintEventArgs& e) {
-		if (!Scrollable()) {
-			return;
-		}
-		__super::OnBackgroundPaint(e);
-	}
-	void ScrollBar::OnForePaint(PaintEventArgs& args)
-	{
-		if (!Scrollable()) {
-			return;
-		}
-		__super::OnForePaint(args);
-		//绘制滑块
-		RectF sliderRect = GetSliderRect();
-		const Color& color = GetForeColor();
-		if (color.GetValue() != 0) {
-			args.Graphics.SetColor(color);
-			args.Graphics.FillRectangle(sliderRect, GetBorderTopLeftRadius());
-		}
-	}
-
-	void ScrollBar::ScrollTo(float scrollRate) {
-		if (Parent == NULL) return;
-		if (Parent->IsPendLayout()) {
-			Parent->RefreshLayout();
-		}
-		int_t offset = scrollRate * this->_overflowLength;
-		ScrollTo(-offset, Event::None);
-	}
-
-	float ScrollBar::ScrollPos()
-	{
-		if (this->_overflowLength <= 0)  return 1.0f;
-		return std::abs(this->_offset) * 1.0f / this->_overflowLength;
-	}
-
-	void ScrollBar::ScrollTo(int_t offset, const Event& type) {
-		if (Parent == NULL) return;
-		if (Parent->IsPendLayout()) {
-			Parent->RefreshLayout();
-		}
-		//if (!Scrollable()) {
-		//	return;
-		//}
-		int_t viewLength;
-		int_t contentLength;
-		int_t scrollBarLength;
-		this->GetInfo(&viewLength, &contentLength, &scrollBarLength);
-		if (offset > 0) {
-			//滚动条在顶部
-			this->_offset = 0;
-			this->_sliderPos = 0;
-		}
-		else if (std::abs(offset) >= this->_overflowLength) {
-			//滚动条在底部
-			this->_offset = -this->_overflowLength;
-			this->_sliderPos = scrollBarLength - this->_sliderLength;
-		}
-		else {
-			//正常滚动
-			this->_offset = offset;
-			this->_sliderPos = -offset / this->_rollRate;
-		}
-		//调用容器的滚动函数进行偏移
-		if (OffsetCallback) {
-			OffsetCallback(this->_offset);
-			SyncInfo();
-		}
-		Parent->Invalidate();
-		//Parent->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
-		if (Scroll) {
-			Scroll(this, (double)this->_offset / (-this->_overflowLength), type);
-		}
-	}
-	void ScrollBar::SyncInfo()
-	{
-		if (Parent == NULL)return;
-		if (Parent->IsPendLayout()) {
-			Parent->RefreshLayout();
-		}
-		int_t scrollBarLength;
-		this->GetInfo(&this->_viewLength, &this->_contentLength, &scrollBarLength);
-		this->_overflowLength = this->_contentLength - this->_viewLength;//超出容器的内容长度
-		if (_overflowLength > 0) {
-			this->_sliderLength = (double)this->_viewLength / this->_contentLength * scrollBarLength + 0.5;//滑块长度
-			double rollTotal = scrollBarLength - this->_sliderLength;//当前滑块可用滑道的总距离
-			this->_rollRate = (double)(_contentLength - this->_viewLength) / rollTotal;//滑块每次滚动一次的对应上下文内容的比率
-		}
-		else {
-			this->_sliderLength = scrollBarLength;
-			this->_sliderPos = 0;
-			this->_offset = 0;
-			this->_rollRate = 0;
-			this->_overflowLength = 0;
-		}
-	}
-	void ScrollBar::RefreshScroll() {
-		SyncInfo();
-		ScrollTo(this->_offset, Event::None);
-	};
-	void ScrollBar::OnMouseWheel(const MouseEventArgs& arg) {
-		__super::OnMouseWheel(arg);
-		this->_offset += arg.ZDelta * 0.5;
-		ScrollTo(this->_offset, Event::OnMouseWheel);
 	}
 };

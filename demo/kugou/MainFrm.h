@@ -19,10 +19,10 @@ private:
 	NotifyIcon ntfi;
 	UIManager umg;
 	VlcPlayer player;
-	VList* localList = NULL, * searchList = NULL;
+	VListView* localList = NULL, * searchList = NULL;
 	TextBox* searchEdit;
 	LrcControl lrcCtl;
-	EString lastFen;
+	UIString lastFen;
 	Label* time, * singer;
 	TabLayout* tabCtrl, * control;
 	Control* main, * center, * centerLeft, * tools, * playerBar, * playerBar2;
@@ -34,7 +34,7 @@ private:
 	Task* downloadTask = NULL;
 	int lastWidth = -1;
 	DesktopLrcFrm* deskTopWnd;
-	EString nowSong;
+	UIString nowSong;
 protected:
 	virtual void OnKeyDown(WPARAM wparam, LPARAM lParam)override;
 	bool OnNotify(Control* sender, EventArgs& args)override;
@@ -42,13 +42,13 @@ protected:
 	void TimerTick();
 	void OpenLrcView();
 	void InitForm();
-	void DownLoadImage(EString SingerName, EString headImageUrl);
-	bool PlayForHash(const EString& hash, Song& info);
+	void DownLoadImage(UIString SingerName, UIString headImageUrl);
+	bool PlayForHash(const UIString& hash, Song& info);
 public:
 	void NextPage(float scrollPos);
 	MainFrm();
 	virtual ~MainFrm();
 	void OnClose(bool& b) override;
-	size_t FindLocalSong(const EString& hash);
+	size_t FindLocalSong(const UIString& hash);
 };
 

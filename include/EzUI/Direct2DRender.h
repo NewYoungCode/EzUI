@@ -19,7 +19,7 @@
 #include <string>
 #include <list>
 #include <map>
-#include "RenderType.h"
+#include "RenderTypes.h"
 namespace EzUI {
 #define __MAXFLOAT 16777216
 	namespace D2D {

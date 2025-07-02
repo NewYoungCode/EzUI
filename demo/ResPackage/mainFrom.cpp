@@ -15,18 +15,18 @@ void MainFrm::Init() {
 	this->btnSatrtPackage = (Button*)this->FindControl("btnSatrtPackage");
 	this->labelTipsErr = (Label*)this->FindControl("labelTipsErr");
 	this->labelTips = (Label*)this->FindControl("labelTips");
-	this->editPackDir->TextChanged = [=](const EString text)->void {
+	this->editPackDir->TextChanged = [=](const UIString text)->void {
 		this->OnPackDirChange();
 		};
 
 	//第二页的控件
 	this->editResFile = (TextBox*)this->FindControl("editResFile");
 	this->btnBrowserFile = (Button*)this->FindControl("btnBrowserFile");
-	this->listFiles = (VList*)this->FindControl("listFiles");
+	this->listFiles = (VListView*)this->FindControl("listFiles");
 	this->btnUnPackage = (Button*)this->FindControl("btnUnPackage");
 }
 
-MainFrm::MainFrm(const EString& cmdLine) :Window(600, 400) {
+MainFrm::MainFrm(const UIString& cmdLine) :Window(600, 400) {
 	Init();
 	editPackDir->SetText(cmdLine);
 	OnPackDirChange();
@@ -34,7 +34,7 @@ MainFrm::MainFrm(const EString& cmdLine) :Window(600, 400) {
 
 void MainFrm::OnPackDirChange()
 {
-	EString dir = editPackDir->GetText();
+	UIString dir = editPackDir->GetText();
 	if (dir.empty() || !PathExist(dir)) {
 		editPackName->SetText("");
 		editPackName->Invalidate();
@@ -47,28 +47,28 @@ void MainFrm::OnPackDirChange()
 		labelTipsErr->Invalidate();
 	}
 
-	Text::Replace(&dir, "\"", "");
-	Text::Replace(&dir, "\\", "/");
-	Text::Replace(&dir, "//", "/");
+	UI_Text::Replace(&dir, "\"", "");
+	UI_Text::Replace(&dir, "\\", "/");
+	UI_Text::Replace(&dir, "//", "/");
 	if (dir[dir.size() - 1] == '/') {
 		dir.erase(dir.size() - 1, 1);
 	}
-	EString resDir = dir;
-	EString rootDir;
+	UIString resDir = dir;
+	UIString rootDir;
 	size_t pos = dir.rfind('/');
-	EString dirName;
+	UIString dirName;
 	if (pos != size_t(-1)) {
 		rootDir = dir.substr(0, pos);
 		dirName = dir.substr(pos + 1);
 	}
-	EString resFile = rootDir + "/" + dirName + ".bin";
+	UIString resFile = rootDir + "/" + dirName + ".bin";
 	editPackName->SetText(resFile);
 	editPackName->Invalidate();
 }
 void MainFrm::OnClose(bool& close) {
 	Application::Exit(0);
 }
-bool MainFrm::FileExists(const EString& fileName) {
+bool MainFrm::FileExists(const UIString& fileName) {
 	DWORD dwAttr = GetFileAttributesW(fileName.unicode().c_str());
 	if (dwAttr == DWORD(-1)) {
 		return false;
@@ -81,7 +81,7 @@ bool MainFrm::FileExists(const EString& fileName) {
 bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 	if (args.EventType == Event::OnMouseClick) {
 		if (sd->Name == "btnBrowserDir") {
-			EString dir = ShowFolderDialog(Hwnd(), "", "");
+			UIString dir = ShowFolderDialog(Hwnd(), "", "");
 			if (!dir.empty()) {
 				this->editPackDir->SetText(dir);
 				this->editPackDir->Invalidate();
@@ -91,8 +91,8 @@ bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 		if (sd->Name == "btnSatrtPackage") {
 			do
 			{
-				EString resDir = editPackDir->GetText();
-				EString resFile = editPackName->GetText();
+				UIString resDir = editPackDir->GetText();
+				UIString resFile = editPackName->GetText();
 
 				if (task && !task->IsStopped()) {
 					::MessageBoxW(Hwnd(), L"请等待上次任务完成!", L"失败", 0);
@@ -118,10 +118,10 @@ bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 				labelTips->Invalidate();
 
 				task = new Task([resDir, resFile, this]() {
-					Resource::Package(resDir, resFile, [=](const EString& file, int index, int count) {
+					Resource::Package(resDir, resFile, [=](const UIString& file, int index, int count) {
 						Invoke([&]() {
 							int rate = (index + 1) * 1.0f / count * 100 + 0.5;
-							labelTips->SetText(EString("(" + std::to_string(rate) + "%)") + EString(L"正在打包\"") + file + "\"");
+							labelTips->SetText(UIString("(" + std::to_string(rate) + "%)") + UIString(L"正在打包\"") + file + "\"");
 							labelTips->Invalidate();
 							});
 						Sleep(2);
@@ -137,17 +137,17 @@ bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 			} while (false);
 		}
 		if (sd->Name == "btnBrowserFile") {
-			EString resFile = ShowFileDialog(Hwnd());
+			UIString resFile = ShowFileDialog(Hwnd());
 			OnResFileChange(resFile);
 		}
 		if (sd->Name == "btnUnPackage") {
-			EString resDir = ShowFolderDialog(Hwnd());
+			UIString resDir = ShowFolderDialog(Hwnd());
 			if (!resDir.empty() && PathExist(resDir)) {
 				for (auto& it : this->res->Items) {
-					EString fileName = resDir + "/" + it.Name;
+					UIString fileName = resDir + "/" + it.Name;
 					Directory::Create(Path::GetDirectoryName(fileName));
 					File::Delete(fileName);
-					EString data;
+					UIString data;
 					this->res->GetFile(it, &data);
 					File::Write(data.c_str(), data.size(), fileName);
 				}
@@ -157,7 +157,7 @@ bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 	}
 	return __super::OnNotify(sd, args);
 }
-void MainFrm::OnResFileChange(EzUI::EString& resFile)
+void MainFrm::OnResFileChange(EzUI::UIString& resFile)
 {
 	do
 	{
@@ -192,7 +192,7 @@ LRESULT MainFrm::WndProc(UINT msg, WPARAM wp, LPARAM lp) {
 		UINT numFiles = ::DragQueryFileW(hDrop, 0xFFFFFFFF, NULL, 0);  //  获取拖入的文件数量
 		TCHAR szFilePath[MAX_PATH]{ 0 };
 		::DragQueryFileW(hDrop, 0, szFilePath, sizeof(szFilePath));  //  获取第一个文件路径
-		EString file = szFilePath;
+		UIString file = szFilePath;
 
 		if (tab->GetPageIndex() == 0) {
 			//打包

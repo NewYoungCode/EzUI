@@ -1,9 +1,10 @@
 #pragma once
 #include "Control.h"
+#include "ScrollBar.h"
 namespace EzUI {
 
 	class UI_EXPORT  HScrollBar :
-		public ScrollBar
+		public IScrollBar
 	{
 	protected:
 		virtual void OnMouseDown(const MouseEventArgs& arg)override;

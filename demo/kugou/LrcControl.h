@@ -4,9 +4,9 @@ class Lrc
 {
 public:
 	int postion;
-	EString text;
+	UIString text;
 	Point point;
-	Lrc(int postionInt, const EString& text, Point point)
+	Lrc(int postionInt, const UIString& text, Point point)
 	{
 		this->postion = postionInt;
 		this->text = text;
@@ -34,7 +34,7 @@ public:
 	void ChangePostion(int postion);
 
 	void OnBackgroundPaint(PaintEventArgs& arg)override;
-	void LoadLrc(const EString& lrcData);
+	void LoadLrc(const UIString& lrcData);
 	void Clear();
 };
 

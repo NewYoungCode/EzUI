@@ -4,10 +4,11 @@ Email:19980103ly@gmail.com/718987717@qq.com
 */
 
 #pragma once
+
 #include "UIDef.h"
-#include "EString.h"
+#include "UIString.h"
 #include "Resource.h"
-#include "RenderType.h"
+#include "RenderTypes.h"
 #include "Direct2DRender.h"
 
 namespace EzUI {
@@ -18,7 +19,7 @@ namespace EzUI {
 	class Control;
 	class Window;
 	class Spacer;
-	class ScrollBar;
+	class IScrollBar;
 	enum class Cursor :ULONG_PTR;
 
 #if 1
@@ -50,9 +51,9 @@ namespace EzUI {
 	extern UI_VAR_EXPORT HWND __EzUI_MessageWnd;//用于UI通讯的隐形窗口
 	extern UI_VAR_EXPORT const std::list<EzUI::MonitorInfo> __EzUI__MonitorInfos;//所有监视器信息
 	//装载字体
-	extern UI_EXPORT void InstallFont(const EString& fontFileName);
+	extern UI_EXPORT void InstallFont(const UIString& fontFileName);
 	//卸载字体
-	extern UI_EXPORT void UnstallFont(const EString& fontFileName);
+	extern UI_EXPORT void UnstallFont(const UIString& fontFileName);
 	//复制内容到剪切板
 	extern UI_EXPORT bool CopyToClipboard(int_t uFormat, void* pData, size_t size, HWND hWnd = NULL);
 	//打开剪切板
@@ -62,7 +63,7 @@ namespace EzUI {
 	//粘贴unicode文字
 	extern UI_EXPORT bool GetClipboardData(std::wstring* outStr, HWND hWnd = NULL);
 	//自动获取文件资源(本地文件/资源文件)
-	extern UI_EXPORT bool GetResource(const EString& fileName, std::string* outData);
+	extern UI_EXPORT bool GetResource(const UIString& fileName, std::string* outData);
 	//获取当前所有监视器的信息
 	extern UI_EXPORT size_t GetMonitor(std::list<MonitorInfo>* outMonitorInfo);
 	//获取用户当前所在的显示器
@@ -72,7 +73,7 @@ namespace EzUI {
 	//加载光标
 	extern UI_EXPORT HCURSOR LoadCursor(Cursor cursorType);
 	//加载光标(//需要释放)
-	extern UI_EXPORT HCURSOR LoadCursor(const EString& fileName);
+	extern UI_EXPORT HCURSOR LoadCursor(const UIString& fileName);
 	//释放光标
 	extern UI_EXPORT void FreeCursor(HCURSOR hCursor);
 
@@ -82,7 +83,7 @@ namespace EzUI {
 		Color(const DWORD& rgba = 0) :EzUI::__EzUI__Color(rgba) {}
 		Color(BYTE r, BYTE g, BYTE b, BYTE a = 255) :EzUI::__EzUI__Color(r, g, b, a) {}
 	public:
-		static Color Make(const EString& colorStr) {
+		static Color Make(const UIString& colorStr) {
 			if (colorStr.find("#") == 0) { //"#4e6ef2"
 				auto rStr = colorStr.substr(1, 2);
 				auto gStr = colorStr.substr(3, 2);
@@ -97,7 +98,7 @@ namespace EzUI {
 			if (colorStr.find("rgb") == 0) { //"rgb(255,100,2,3)"
 				size_t pos1 = colorStr.find("(");
 				size_t pos2 = colorStr.rfind(")");
-				EString rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
+				UIString rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
 				auto rgbList = rgbStr.split(",");
 				BYTE r, g, b;
 				r = std::stoi(rgbList.at(0));
@@ -134,7 +135,7 @@ namespace EzUI {
 		Image(const void* data, size_t dataCount) :DXImage(data, dataCount) {}
 	public:
 		//从资源或者本地文件自动构建一个Image
-		static Image* Make(const EString& fileOrRes) {
+		static Image* Make(const UIString& fileOrRes) {
 			//本地文件中获取
 			std::wstring wstr = fileOrRes.unicode();
 			DWORD dwAttr = GetFileAttributesW(wstr.c_str());
@@ -466,7 +467,7 @@ namespace EzUI {
 
 	class UI_EXPORT IControl {
 	private:
-		std::map<EString, EString> _attrs;
+		std::map<UIString, UIString> _attrs;
 	public:
 		const bool IsWindow = false;
 		//用户自定义数据
@@ -478,16 +479,16 @@ namespace EzUI {
 		virtual ~IControl();
 	public:
 		//设置属性
-		virtual void SetAttribute(const EString& attrName, const EString& attrValue);
+		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue);
 		//获取属性
-		virtual EString GetAttribute(const EString& attrName);
+		virtual UIString GetAttribute(const UIString& attrName);
 		//获取全部属性
-		virtual const std::map<EString, EString>& IControl::GetAttributes();
+		virtual const std::map<UIString, UIString>& IControl::GetAttributes();
 		//移除某个属性
-		virtual void RemoveAttribute(const EString& attrName);
+		virtual void RemoveAttribute(const UIString& attrName);
 	};
 
-	//原理采用PostMessage(请确保当前UI线程中至少存在一个窗口)
+	//原理采用PostMessage
 	template<class Func, class... Args>
 	bool BeginInvoke(Func&& f, Args&& ...args) {
 		HWND hWnd = EzUI::__EzUI_MessageWnd;
@@ -501,7 +502,7 @@ namespace EzUI {
 		}
 		return true;
 	}
-	//原理采用SendMessage(请确保当前UI线程中至少存在一个窗口)
+	//原理采用SendMessage
 	template<class Func, class... Args>
 	bool Invoke(Func&& f, Args&& ...args) {
 		std::function<void()> func(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));

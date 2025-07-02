@@ -58,7 +58,7 @@ namespace EzUI {
 		}
 	}
 
-	void Label::SetAttribute(const EString& key, const EString& value) {
+	void Label::SetAttribute(const UIString& key, const UIString& value) {
 		do
 		{
 			if (key == "valign") {
@@ -134,7 +134,7 @@ namespace EzUI {
 			}
 		}
 	}
-	void Label::SetText(const EString& text) {
+	void Label::SetText(const UIString& text) {
 		_wstr = text.unicode();
 		this->TryPendLayout();
 	}
@@ -143,8 +143,8 @@ namespace EzUI {
 		this->_underlinePos = pos;
 		this->_underlineCount = count;
 	}
-	EString Label::GetText()const
+	UIString Label::GetText()const
 	{
-		return EString(_wstr);
+		return UIString(_wstr);
 	}
 };

@@ -1,13 +1,13 @@
 #pragma once
 #include "TextBox.h"
 #include "Label.h"
-#include "VList.h"
+#include "VListView.h"
 #include "PopupWindow.h"
 #include "HLayout.h"
 
 namespace EzUI {
 	//简易的下拉列表框
-	class UI_EXPORT ComBox :public HLayout {
+	class UI_EXPORT ComboBox :public HLayout {
 	private:
 		//下拉菜单选项
 		class MenuContent :public PopupWindow {
@@ -25,21 +25,21 @@ namespace EzUI {
 		//展开菜单的按钮
 		Label _UpDown;
 
-		VList _list;
+		VListView _list;
 		int_t _index = -1;
 		void Init();
 	protected:
 		virtual void OnLayout()override;
 	public:
-		ComBox();
+		ComboBox();
 		//获取选中的文字
-		EString GetText();
+		UIString GetText();
 		//获取选中的下标
 		int_t GetCheck();
 		//选中某个下标
 		bool SetCheck(int_t pos);
-		virtual ~ComBox();
-		int_t AddItem(const EString& text);
+		virtual ~ComboBox();
+		int_t AddItem(const UIString& text);
 		void RemoveItem(int_t index);
 	};
 };

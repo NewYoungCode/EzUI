@@ -1,9 +1,9 @@
 #pragma once
-#include "List.h"
+#include "PagedListView.h"
 #include "HScrollBar.h"
 namespace EzUI {
-	class UI_EXPORT  HList :
-		public List
+	class UI_EXPORT  HListView :
+		public PagedListView
 	{
 	private:
 		HScrollBar _hScrollBar;
@@ -13,8 +13,8 @@ namespace EzUI {
 		virtual void OnLayout()override;
 		virtual void OnChildPaint(PaintEventArgs& args)override;
 	public:
-		HList();
-		virtual ~HList();
-		virtual ScrollBar* GetScrollBar()override;
+		HListView();
+		virtual ~HListView();
+		virtual IScrollBar* GetScrollBar()override;
 	};
 };
