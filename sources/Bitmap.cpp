@@ -1,5 +1,5 @@
 #include "Bitmap.h"
-namespace EzUI {
+namespace ezui {
 
 	Bitmap::Bitmap(int_t width, int_t height, PixelFormat piexlFormat) {
 		Create(width, height, piexlFormat);

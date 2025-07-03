@@ -1,5 +1,5 @@
 #include "VScrollBar.h"
-namespace EzUI {
+namespace ezui {
 	VScrollBar::VScrollBar() { }
 	VScrollBar::~VScrollBar() { }
 	void VScrollBar::ScrollTo(Control* ctl)

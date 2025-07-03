@@ -1,7 +1,7 @@
 #pragma once
 #include "EzUI/EzUI.h"
 #include "EzUI/UIString.h"
-namespace EzUI {
+namespace ezui {
 	struct FileInfo final {
 		UIString Name;
 		DWORD Attr;

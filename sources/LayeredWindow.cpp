@@ -1,6 +1,6 @@
 #include "LayeredWindow.h"
 
-namespace EzUI {
+namespace ezui {
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
 	LayeredWindow::LayeredWindow(int_t width, int_t height, HWND owner) :BorderlessWindow(width, height, owner, WS_EX_LAYERED)
 	{

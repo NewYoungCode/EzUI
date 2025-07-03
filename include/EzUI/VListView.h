@@ -2,7 +2,7 @@
 #include "PagedListView.h"
 #include "VScrollBar.h"
 
-namespace EzUI {
+namespace ezui {
 	class UI_EXPORT VListView :
 		public PagedListView
 	{

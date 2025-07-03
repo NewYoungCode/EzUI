@@ -11,7 +11,7 @@ Email:19980103ly@gmail.com/718987717@qq.com
 #include "RenderTypes.h"
 #include "Direct2DRender.h"
 
-namespace EzUI {
+namespace ezui {
 	struct MonitorInfo;
 	class IControl;
 	class EventArgs;
@@ -49,7 +49,7 @@ namespace EzUI {
 	extern UI_VAR_EXPORT DWORD __EzUI__ThreadId;//UI的线程Id
 	extern UI_VAR_EXPORT std::list<HWND> __EzUI__Wnds;//存储所有使用本框架产生的窗口句柄
 	extern UI_VAR_EXPORT HWND __EzUI_MessageWnd;//用于UI通讯的隐形窗口
-	extern UI_VAR_EXPORT const std::list<EzUI::MonitorInfo> __EzUI__MonitorInfos;//所有监视器信息
+	extern UI_VAR_EXPORT const std::list<ezui::MonitorInfo> __EzUI__MonitorInfos;//所有监视器信息
 	//装载字体
 	extern UI_EXPORT void InstallFont(const UIString& fontFileName);
 	//卸载字体
@@ -77,11 +77,11 @@ namespace EzUI {
 	//释放光标
 	extern UI_EXPORT void FreeCursor(HCURSOR hCursor);
 
-	class UI_EXPORT Color :public EzUI::__EzUI__Color {
+	class UI_EXPORT Color :public ezui::__EzUI__Color {
 	public:
-		Color(const EzUI::__EzUI__Color& copy) { this->RGBA = copy.GetValue(); }
-		Color(const DWORD& rgba = 0) :EzUI::__EzUI__Color(rgba) {}
-		Color(BYTE r, BYTE g, BYTE b, BYTE a = 255) :EzUI::__EzUI__Color(r, g, b, a) {}
+		Color(const ezui::__EzUI__Color& copy) { this->RGBA = copy.GetValue(); }
+		Color(const DWORD& rgba = 0) :ezui::__EzUI__Color(rgba) {}
+		Color(BYTE r, BYTE g, BYTE b, BYTE a = 255) :ezui::__EzUI__Color(r, g, b, a) {}
 	public:
 		static Color Make(const UIString& colorStr) {
 			if (colorStr.find("#") == 0) { //"#4e6ef2"
@@ -143,9 +143,9 @@ namespace EzUI {
 				return new Image(wstr);
 			}
 			//从资源中获取
-			if (EzUI::__EzUI__Resource) {
+			if (ezui::__EzUI__Resource) {
 				std::string data;
-				EzUI::__EzUI__Resource->GetFile(fileOrRes, &data);
+				ezui::__EzUI__Resource->GetFile(fileOrRes, &data);
 				if (data.empty()) {
 					return NULL;
 				}
@@ -160,9 +160,9 @@ namespace EzUI {
 		HMONITOR Monitor = NULL;
 		//显示器的位置 多显示器下Y轴可能出现负数或者大于0的时候代表显示器在设置里面显示器是错位的(多显示器没有平行);
 		//逻辑宽高
-		EzUI::Rect Rect;
+		ezui::Rect Rect;
 		//工作区域
-		EzUI::Rect WorkRect;
+		ezui::Rect WorkRect;
 		//显示器物理宽高
 		Size Physical;
 		//显示器缩放比例
@@ -190,7 +190,7 @@ namespace EzUI {
 		std::vector<Color> DebugColors{ Color::Red,Color::Green,Color::Blue,Color::Black,Color::White };
 #endif
 		//主窗类的实例
-		EzUI::Window* Window = NULL;
+		ezui::Window* Window = NULL;
 		//窗口句柄
 		HWND HANDLE = NULL;
 		//使一个区域无效
@@ -366,7 +366,7 @@ namespace EzUI {
 	class UI_EXPORT FocusEventArgs :public EventArgs {
 	public:
 		Control* Control;
-		FocusEventArgs(EzUI::Control* ctl) :EventArgs(Event::OnFocus) {
+		FocusEventArgs(ezui::Control* ctl) :EventArgs(Event::OnFocus) {
 			this->Control = ctl;
 		}
 		virtual ~FocusEventArgs() {}
@@ -375,7 +375,7 @@ namespace EzUI {
 	class UI_EXPORT KillFocusEventArgs :public EventArgs {
 	public:
 		Control* Control;
-		KillFocusEventArgs(EzUI::Control* ctl) :EventArgs(Event::OnKillFocus) {
+		KillFocusEventArgs(ezui::Control* ctl) :EventArgs(Event::OnKillFocus) {
 			this->Control = ctl;
 		}
 		virtual ~KillFocusEventArgs() {}
@@ -383,15 +383,15 @@ namespace EzUI {
 	//坐标发生改变
 	class UI_EXPORT MoveEventArgs :public EventArgs {
 	public:
-		const EzUI::Point& Location;
-		MoveEventArgs(const EzUI::Point& location) :EventArgs(Event::OnMove), Location(location) {}
+		const ezui::Point& Location;
+		MoveEventArgs(const ezui::Point& location) :EventArgs(Event::OnMove), Location(location) {}
 		virtual ~MoveEventArgs() {}
 	};
 	//大小发生改变
 	class UI_EXPORT SizeEventArgs :public EventArgs {
 	public:
-		const EzUI::Size& Size;
-		SizeEventArgs(const EzUI::Size& size) :EventArgs(Event::OnSize), Size(size) {}
+		const ezui::Size& Size;
+		SizeEventArgs(const ezui::Size& size) :EventArgs(Event::OnSize), Size(size) {}
 		virtual ~SizeEventArgs() {}
 	};
 	//dpi发生变化
@@ -411,9 +411,9 @@ namespace EzUI {
 		PaintEventArgs& operator=(const PaintEventArgs&) = delete;
 		WindowData* PublicData = NULL;
 		HDC DC = NULL;
-		EzUI::DXRender& Graphics;//画家
+		ezui::DXRender& Graphics;//画家
 		Rect InvalidRectangle;//WM_PAINT里面的无效区域
-		PaintEventArgs(EzUI::DXRender& _painter) : EventArgs(Event::OnPaint), Graphics(_painter) {}
+		PaintEventArgs(ezui::DXRender& _painter) : EventArgs(Event::OnPaint), Graphics(_painter) {}
 		virtual ~PaintEventArgs() {}
 		//添加裁剪(速度较快)
 		void PushLayer(const Rect& rectBounds);
@@ -437,7 +437,7 @@ namespace EzUI {
 		};
 	public:
 		//边框信息
-		EzUI::Border Border;
+		ezui::Border Border;
 		//整体不透明度
 		//UI_Float Opacity;
 		//背景颜色
@@ -491,7 +491,7 @@ namespace EzUI {
 	//原理采用PostMessage
 	template<class Func, class... Args>
 	bool BeginInvoke(Func&& f, Args&& ...args) {
-		HWND hWnd = EzUI::__EzUI_MessageWnd;
+		HWND hWnd = ezui::__EzUI_MessageWnd;
 		if (hWnd == NULL || !::IsWindow(hWnd)) {
 			return false;
 		}
@@ -506,11 +506,11 @@ namespace EzUI {
 	template<class Func, class... Args>
 	bool Invoke(Func&& f, Args&& ...args) {
 		std::function<void()> func(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
-		if (::GetCurrentThreadId() == EzUI::__EzUI__ThreadId) {
+		if (::GetCurrentThreadId() == ezui::__EzUI__ThreadId) {
 			func();
 			return true;
 		}
-		HWND hWnd = EzUI::__EzUI_MessageWnd;
+		HWND hWnd = ezui::__EzUI_MessageWnd;
 		if (hWnd == NULL || !::IsWindow(hWnd)) {
 			return false;
 		}

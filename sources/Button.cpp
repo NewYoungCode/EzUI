@@ -1,6 +1,6 @@
 #include "Button.h"
 
-namespace EzUI {
+namespace ezui {
 	void Button::Init()
 	{
 		Style.Cursor = LoadCursor(Cursor::HAND);

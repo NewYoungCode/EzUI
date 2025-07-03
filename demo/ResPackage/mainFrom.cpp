@@ -47,9 +47,9 @@ void MainFrm::OnPackDirChange()
 		labelTipsErr->Invalidate();
 	}
 
-	UI_Text::Replace(&dir, "\"", "");
-	UI_Text::Replace(&dir, "\\", "/");
-	UI_Text::Replace(&dir, "//", "/");
+	ui_text::Replace(&dir, "\"", "");
+	ui_text::Replace(&dir, "\\", "/");
+	ui_text::Replace(&dir, "//", "/");
 	if (dir[dir.size() - 1] == '/') {
 		dir.erase(dir.size() - 1, 1);
 	}
@@ -157,7 +157,7 @@ bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 	}
 	return __super::OnNotify(sd, args);
 }
-void MainFrm::OnResFileChange(EzUI::UIString& resFile)
+void MainFrm::OnResFileChange(UIString& resFile)
 {
 	do
 	{

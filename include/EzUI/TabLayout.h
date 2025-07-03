@@ -2,7 +2,7 @@
 #include "Control.h"
 #include "Timer.h"
 
-namespace EzUI {
+namespace ezui {
 
 	class UI_EXPORT TabLayout :
 		public Control

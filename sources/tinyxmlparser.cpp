@@ -37,7 +37,7 @@ distribution.
 #	endif
 #endif
 
-namespace EzUI {
+namespace ezui {
 
 	// Note tha "PutString" hardcodes the same list. This
 	// is less flexible than it appears. Changing the entries

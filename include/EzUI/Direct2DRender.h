@@ -20,7 +20,8 @@
 #include <list>
 #include <map>
 #include "RenderTypes.h"
-namespace EzUI {
+
+namespace ezui {
 #define __MAXFLOAT 16777216
 	namespace D2D {
 		extern UI_VAR_EXPORT ID2D1Factory* g_Direct2dFactory;
@@ -249,7 +250,7 @@ namespace EzUI {
 	};
 };
 
-namespace EzUI {
+namespace ezui {
 
 	class UI_EXPORT DXRender {
 	private:
@@ -276,7 +277,7 @@ namespace EzUI {
 		void SetColor(const __EzUI__Color& color);//会之前必须调用
 		void SetStrokeStyle(StrokeStyle strokeStyle = StrokeStyle::Solid, float dashWidth = 3);//设置样式 虚线/实线
 		void DrawTextLayout(const TextLayout& textLayout, const PointF & = { 0,0 });//根据已有的布局绘制文字
-		void DrawString(const std::wstring& text, const RectF& _rect, EzUI::TextAlign textAlign);//绘制文字
+		void DrawString(const std::wstring& text, const RectF& _rect, ezui::TextAlign textAlign);//绘制文字
 		void DrawLine(const PointF& _A, const  PointF& _B, float width = 1);//绘制一条线
 		void DrawRectangle(const RectF& _rect, float _radius = 0, float width = 1);//绘制矩形
 		void FillRectangle(const RectF& _rect, float _radius = 0);

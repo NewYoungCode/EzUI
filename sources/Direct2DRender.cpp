@@ -5,7 +5,7 @@
 #pragma comment(lib,"dwrite.lib")
 #pragma comment(lib,"d2d1.lib")
 #pragma comment(lib,"Windowscodecs.lib")
-namespace EzUI {
+namespace ezui {
 	namespace D2D {
 		ID2D1Factory* g_Direct2dFactory = NULL;
 		IDWriteFactory* g_WriteFactory = NULL;
@@ -453,7 +453,7 @@ namespace EzUI {
 	}
 };
 
-namespace EzUI {
+namespace ezui {
 	void RenderInitialize()
 	{
 		HRESULT hr = S_OK;
@@ -630,7 +630,7 @@ namespace EzUI {
 	void DXRender::DrawTextLayout(const TextLayout& textLayout, const PointF& startLacation) {
 		_render->DrawTextLayout(D2D1_POINT_2F{ (float)(startLacation.X) ,(float)(startLacation.Y) }, textLayout.Get(), GetBrush());
 	}
-	void DXRender::DrawString(const std::wstring& text, const  RectF& _rect, EzUI::TextAlign textAlign) {
+	void DXRender::DrawString(const std::wstring& text, const  RectF& _rect, ezui::TextAlign textAlign) {
 		const auto& rect = _rect;
 		TextLayout textLayout(text, *_font, { rect.Width, rect.Height }, textAlign);
 		this->DrawTextLayout(textLayout, { _rect.X,_rect.Y });
@@ -762,7 +762,7 @@ namespace EzUI {
 			imgSize.Width = sourceRect.Width;
 			imgSize.Height = sourceRect.Height;
 		}
-		Rect drawRect = EzUI::Transformation(imageSizeMode, rect, imgSize);
+		Rect drawRect = ezui::Transformation(imageSizeMode, rect, imgSize);
 		//开始绘制
 		D2D_RECT_F drawRectF = __To_D2D_RectF(drawRect);
 		if (!sourceRect.IsEmptyArea()) {

@@ -1,5 +1,5 @@
 #include "Label.h"
-namespace EzUI {
+namespace ezui {
 	Label::Label() {}
 	Label::~Label() {}
 	void Label::OnDpiChange(const DpiChangeEventArgs& args) {
@@ -62,9 +62,9 @@ namespace EzUI {
 		do
 		{
 			if (key == "valign") {
-				this->TextAlign = EzUI::TextAlign((int_t)this->TextAlign & ~(int_t)VAlign::Top);
-				this->TextAlign = EzUI::TextAlign((int_t)this->TextAlign & ~(int_t)VAlign::Mid);
-				this->TextAlign = EzUI::TextAlign((int_t)this->TextAlign & ~(int_t)VAlign::Bottom);
+				this->TextAlign = ezui::TextAlign((int_t)this->TextAlign & ~(int_t)VAlign::Top);
+				this->TextAlign = ezui::TextAlign((int_t)this->TextAlign & ~(int_t)VAlign::Mid);
+				this->TextAlign = ezui::TextAlign((int_t)this->TextAlign & ~(int_t)VAlign::Bottom);
 				VAlign v = VAlign::Mid;
 				if (value == "top") {
 					v = VAlign::Top;
@@ -72,7 +72,7 @@ namespace EzUI {
 				else if (value == "bottom") {
 					v = VAlign::Bottom;
 				}
-				this->TextAlign = EzUI::TextAlign((int_t)this->TextAlign | (int_t)v);
+				this->TextAlign = ezui::TextAlign((int_t)this->TextAlign | (int_t)v);
 				break;
 			}
 			if (key == "ellipsis") {
@@ -80,9 +80,9 @@ namespace EzUI {
 				break;
 			}
 			if (key == "halign") {
-				this->TextAlign = EzUI::TextAlign((int_t)this->TextAlign & ~(int_t)HAlign::Left);
-				this->TextAlign = EzUI::TextAlign((int_t)this->TextAlign & ~(int_t)HAlign::Center);
-				this->TextAlign = EzUI::TextAlign((int_t)this->TextAlign & ~(int_t)HAlign::Right);
+				this->TextAlign = ezui::TextAlign((int_t)this->TextAlign & ~(int_t)HAlign::Left);
+				this->TextAlign = ezui::TextAlign((int_t)this->TextAlign & ~(int_t)HAlign::Center);
+				this->TextAlign = ezui::TextAlign((int_t)this->TextAlign & ~(int_t)HAlign::Right);
 				HAlign h = HAlign::Center;
 				if (value == "left") {
 					h = HAlign::Left;
@@ -90,7 +90,7 @@ namespace EzUI {
 				else if (value == "right") {
 					h = HAlign::Right;
 				}
-				this->TextAlign = EzUI::TextAlign((int_t)this->TextAlign | (int_t)h);
+				this->TextAlign = ezui::TextAlign((int_t)this->TextAlign | (int_t)h);
 				break;
 			}
 			if (key == "text") {

@@ -7,7 +7,7 @@
 #pragma comment(lib,"imm32.lib")
 #pragma comment(lib, "Msimg32.lib")
 //#pragma comment(lib,"Shcore.lib")
-namespace EzUI {
+namespace ezui {
 
 	WCHAR __EzUI__WindowClassName[]{ L"EzUI_Window" };
 	HMODULE __EzUI__HINSTANCE = NULL;
@@ -15,7 +15,7 @@ namespace EzUI {
 	DWORD __EzUI__ThreadId = NULL;
 	std::list<HWND> __EzUI__Wnds;
 	HWND __EzUI_MessageWnd = NULL;
-	const std::list<EzUI::MonitorInfo> __EzUI__MonitorInfos;
+	const std::list<ezui::MonitorInfo> __EzUI__MonitorInfos;
 
 	void InstallFont(const UIString& fontFileName) {
 		auto ret = ::AddFontResourceW(fontFileName.unicode().c_str());
@@ -95,7 +95,7 @@ namespace EzUI {
 				break;
 			}
 			if (__EzUI__Resource) {
-				ok = EzUI::__EzUI__Resource->GetFile(filename, out);
+				ok = ezui::__EzUI__Resource->GetFile(filename, out);
 			}
 		} while (false);
 		return ok;

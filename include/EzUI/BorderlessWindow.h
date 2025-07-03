@@ -1,7 +1,8 @@
 #pragma once
 #include "Window.h"
 #include "ShadowBox.h"
-namespace EzUI {
+
+namespace ezui {
 	/// <summary>
 	/// BorderlessWindow //无边框 带阴影 
 	/// </summary>
@@ -14,7 +15,7 @@ namespace EzUI {
 		bool _resize = false;
 	public:
 		//窗口的边框信息
-		EzUI::Border Border;
+		ezui::Border Border;
 	protected:
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
 		virtual void OnMove(const Point& location) override;

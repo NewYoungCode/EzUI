@@ -1,5 +1,5 @@
 #include "PictureBox.h"
-namespace EzUI {
+namespace ezui {
 	PictureBox::PictureBox() {
 		_timer.Tick = [this](Timer* timer) {
 			timer->Stop();

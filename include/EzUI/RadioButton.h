@@ -1,6 +1,7 @@
 #pragma once
 #include "CheckBox.h"
-namespace EzUI {
+
+namespace ezui {
 	class UI_EXPORT RadioButton :
 		public CheckBox
 	{

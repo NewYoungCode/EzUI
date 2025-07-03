@@ -1,9 +1,10 @@
 #include "UIManager.h"
+#include "IFrame.h"
 
 #include "tinyxml.h"
 #include "tinystr.h"
 
-namespace EzUI {
+namespace ezui {
 	//去除空格或者其他符号 双引号内的空格不会去除
 	inline void __EraseChar(UIString& str, char _char) {
 		char* bufStr = new char[str.size() + 1] { 0 };
@@ -30,12 +31,12 @@ namespace EzUI {
 	}
 	inline float __ToFloat(UIString numStr) {
 		//去掉px字样
-		UI_Text::Replace(&numStr, "px", "", true);
+		ui_text::Replace(&numStr, "px", "", true);
 		return std::stof(numStr.c_str());
 	}
 };
 
-namespace EzUI {
+namespace ezui {
 
 	void SetStyle(Control* ctl, ControlStyle* style, ControlStyle::Type styleType, const UIString& key, UIString value, const std::function<void(Image*)>& callback)
 	{
@@ -54,22 +55,22 @@ namespace EzUI {
 
 			if (key == "cursor") {
 				if (value == "pointer") {
-					style->Cursor = LoadCursor(EzUI::Cursor::HAND);
+					style->Cursor = LoadCursor(ezui::Cursor::HAND);
 				}
 				else if (value == "help") {
-					style->Cursor = LoadCursor(EzUI::Cursor::HELP);
+					style->Cursor = LoadCursor(ezui::Cursor::HELP);
 				}
 				else if (value == "n-resize") {
 					//南北箭头 纵向
-					style->Cursor = LoadCursor(EzUI::Cursor::SIZENS);
+					style->Cursor = LoadCursor(ezui::Cursor::SIZENS);
 				}
 				else if (value == "e-resize") {
 					//东西箭头 水平
-					style->Cursor = LoadCursor(EzUI::Cursor::SIZEWE);
+					style->Cursor = LoadCursor(ezui::Cursor::SIZEWE);
 				}
 				else if (value == "move") {
 					//四个方向的箭头都有
-					style->Cursor = LoadCursor(EzUI::Cursor::SIZEALL);
+					style->Cursor = LoadCursor(ezui::Cursor::SIZEALL);
 				}
 				break;
 			}
@@ -188,7 +189,7 @@ namespace EzUI {
 			SetStyle(ctl, cSytle, styleType, key, value, callback);//去应用每一行样式
 		}
 	}
-	int_t MathStyle(Control* ctl, const UIString& selectorName, const std::list<UIManager::Selector>& selectors, const std::function<void(Image*)>& BuildImageCallback)
+	int_t MathStyle(Control* ctl, const UIString& selectorName, const std::list<UIManager::Style>& selectors, const std::function<void(Image*)>& BuildImageCallback)
 	{
 		int_t mathCount = 0;
 		for (auto& it : selectors) {
@@ -202,7 +203,7 @@ namespace EzUI {
 		//返回匹配成功的个数
 		return mathCount;
 	}
-	void ApplyStyle(Control* ctl, const  UIString& selectName, const std::list<UIManager::Selector>& selectors, const std::function<void(Image*)>& BuildImageCallback)
+	void ApplyStyle(Control* ctl, const  UIString& selectName, const std::list<UIManager::Style>& selectors, const std::function<void(Image*)>& BuildImageCallback)
 	{
 		MathStyle(ctl, selectName, selectors, BuildImageCallback);
 		MathStyle(ctl, selectName + ":checked", selectors, BuildImageCallback);
@@ -217,43 +218,43 @@ namespace EzUI {
 			MathStyle(scrollBar, scrollBarSelectName + ":hover", selectors, BuildImageCallback);
 		}
 	}
-	void UIManager::ApplyStyle(Control* ctl, const std::list<UIManager::Selector>& selectors, const UIString& tagName) {
+	void UIManager::ApplyStyle(Control* ctl, const std::list<UIManager::Style>& selectors, const UIString& tagName) {
 		{//加载样式 使用标签选择器
 			if (!tagName.empty()) {
 				UIString selectName = tagName;
-				EzUI::ApplyStyle(ctl, selectName, selectors, this->BuildImageCallback);
+				ezui::ApplyStyle(ctl, selectName, selectors, this->BuildImageCallback);
 			}
 		}
 		{//加载样式 使用属性选择器
 			for (auto& attr : ctl->GetAttributes()) {
 				UIString selectName = UIString("[%s=%s]").format(attr.first.c_str(), attr.second.c_str());
-				EzUI::ApplyStyle(ctl, selectName, selectors, BuildImageCallback);
+				ezui::ApplyStyle(ctl, selectName, selectors, BuildImageCallback);
 			}
 		}
 		{//加载样式 使用类选择器  
 			UIString classStr = ctl->GetAttribute("class");
-			UI_Text::Replace(&classStr, " ", ",");//去除所有空格转换为逗号
+			ui_text::Replace(&classStr, " ", ",");//去除所有空格转换为逗号
 			auto classes = classStr.split(",");//分割类选择器
 			for (const auto& className : classes) { //一个控件可能有多个类名
 				UIString selectName = UIString(".%s").format(className.c_str());
-				EzUI::ApplyStyle(ctl, selectName, selectors, BuildImageCallback);
+				ezui::ApplyStyle(ctl, selectName, selectors, BuildImageCallback);
 			}
 		}
 		//加载样式 使用ID/name选择器 
 		if (!(ctl->Name.empty())) {
 			UIString selectName = UIString("#%s").format(ctl->Name.c_str());
-			EzUI::ApplyStyle(ctl, selectName, selectors, BuildImageCallback);
+			ezui::ApplyStyle(ctl, selectName, selectors, BuildImageCallback);
 		}
 		{//加载内联样式 优先级最高
 			UIString sytle_static = ctl->GetAttribute("style");//内联样式语法
 			if (!sytle_static.empty()) { //内联样式只允许描述静态效果
 				__EraseChar(sytle_static, ' ');//去除空格
-				EzUI::SetStyleSheet(ctl, ControlStyle::Type::Static, sytle_static, BuildImageCallback);
+				ezui::SetStyleSheet(ctl, ControlStyle::Type::Static, sytle_static, BuildImageCallback);
 			}
 		}
 	}
 
-	void UIManager::AnalysisStyle(const UIString& styleStr, std::list<UIManager::Selector>* out) {
+	void UIManager::AnalysisStyle(const UIString& styleStr, std::list<UIManager::Style>* out) {
 		UIString style = styleStr;
 		//处理空格 双引号内的空格不处理
 		__EraseChar(style, ' ');
@@ -298,7 +299,7 @@ namespace EzUI {
 			auto names = name.split(",");
 			for (auto& name : names) {
 				//添加至集合
-				UIManager::Selector selector;
+				UIManager::Style selector;
 				selector.selectorName = name;
 				selector.styleStr = str;
 				if (style_type == "hover") {
@@ -321,7 +322,7 @@ namespace EzUI {
 		TiXmlElement* node = (TiXmlElement*)_node;
 		Control* ctl = NULL;
 		std::string tagName(node->ValueTStr().c_str());
-		UI_Text::Tolower(&tagName);
+		ui_text::Tolower(&tagName);
 		ctl = this->OnBuildControl(tagName);
 		if (ctl == NULL) {
 			UIString text = UIString("unknow element \"%s\"").format(tagName.c_str());
@@ -429,7 +430,7 @@ namespace EzUI {
 				ctl = new CheckBox;
 				break;
 			}
-			if (tagName == "combox") {
+			if (tagName == "combobox" || tagName == "select") {
 				ctl = new ComboBox;
 				break;
 			}
@@ -517,7 +518,7 @@ namespace EzUI {
 	void UIManager::SetStyleSheet(const UIString& styleContent)
 	{
 		UIString data = styleContent;
-		std::list<UIManager::Selector> styles;
+		std::list<UIManager::Style> styles;
 		//分析出样式
 		this->AnalysisStyle(data, &styles);
 		//保存样式到全局
@@ -568,8 +569,5 @@ namespace EzUI {
 		}
 		return NULL;
 	}
-	UIManager* IFrame::GetUIManager()
-	{
-		return &umg;
-	}
+
 };

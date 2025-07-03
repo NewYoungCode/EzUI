@@ -1,6 +1,7 @@
 #pragma once
 #include "Control.h"
-namespace EzUI {
+
+namespace ezui {
 	/**
  * 是一个分页显示控件集合的容器控件
  *

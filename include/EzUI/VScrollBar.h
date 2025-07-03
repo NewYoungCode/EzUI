@@ -2,7 +2,7 @@
 #include "Control.h"
 #include "ScrollBar.h"
 
-namespace EzUI {
+namespace ezui {
 
 	class UI_EXPORT VScrollBar :
 		public IScrollBar

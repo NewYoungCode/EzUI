@@ -1,6 +1,7 @@
 #pragma once
 #include "Control.h"
-namespace EzUI {
+
+namespace ezui {
 	class UI_EXPORT  VLayout :
 		public Control
 	{

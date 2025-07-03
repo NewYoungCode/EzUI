@@ -7,7 +7,7 @@
 #undef IsMaximized
 #undef IsRestored
 
-namespace EzUI {
+namespace ezui {
 	/// <summary>
 	/// Window //经典带边框带系统菜单WIN32窗口样式
 	/// </summary>
@@ -125,7 +125,7 @@ namespace EzUI {
 		void SetIcon(HICON icon);
 
 		//设置窗口主布局
-		void SetLayout(EzUI::Control* layout);
+		void SetLayout(ezui::Control* layout);
 
 		//获取窗口主布局
 		Control* GetLayout();

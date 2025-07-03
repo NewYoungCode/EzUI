@@ -1,6 +1,6 @@
 #include "Spacer.h"
 #include "Control.h"
-namespace EzUI {
+namespace ezui {
 
 	Spacer::~Spacer() {};
 

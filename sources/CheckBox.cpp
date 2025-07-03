@@ -1,6 +1,6 @@
 #include "CheckBox.h"
 
-namespace EzUI {
+namespace ezui {
 	CheckBox::CheckBox()
 	{
 	}

@@ -1,5 +1,5 @@
 #include "PagedListView.h"
-namespace EzUI {
+namespace ezui {
 
 	void PagedListView::SetPageInfo(const Controls& items, int_t pageSize)
 	{

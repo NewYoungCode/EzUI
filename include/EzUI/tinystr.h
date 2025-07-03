@@ -42,7 +42,7 @@ distribution.
 #endif
 
 
-namespace EzUI {
+namespace ezui {
 
 	/*
 	   TiXmlString is an emulation of a subset of the std::string template.

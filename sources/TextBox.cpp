@@ -1,5 +1,5 @@
 #include "TextBox.h"
-namespace EzUI {
+namespace ezui {
 	TextBox::TextBox() { Init(); }
 	TextBox::~TextBox() {
 		_timer.Stop();
@@ -207,16 +207,16 @@ namespace EzUI {
 		int_t pos, count;
 		if (!GetSelectedRange(&pos, &count))return false;
 		std::wstring wBuf(_text.substr(pos, count));
-		return EzUI::CopyToClipboard(wBuf, PublicData->HANDLE);
+		return ezui::CopyToClipboard(wBuf, PublicData->HANDLE);
 	}
 	bool TextBox::Paste() {
 		std::wstring wBuf;
-		bool bRet = EzUI::GetClipboardData(&wBuf, PublicData->HANDLE);
+		bool bRet = ezui::GetClipboardData(&wBuf, PublicData->HANDLE);
 		UIString u8Str(wBuf);
 		if (!_multiLine) {
 			//行编辑框不允许有换行符
-			UI_Text::Replace(&u8Str, "\r", "");
-			UI_Text::Replace(&u8Str, "\n", "");
+			ui_text::Replace(&u8Str, "\r", "");
+			ui_text::Replace(&u8Str, "\n", "");
 		}
 		_Insert(u8Str.unicode());//插入新的字符
 		return bRet;

@@ -1,7 +1,7 @@
 #pragma once
 #include "Control.h"
 
-namespace EzUI {
+namespace ezui {
 	class UI_EXPORT  Label :
 		public Control
 	{
@@ -17,7 +17,7 @@ namespace EzUI {
 		//文字溢出将显示的文字
 		UIString Ellipsis;
 		//基于控件的文字的边距
-		EzUI::Distance TextMargin;
+		ezui::Distance TextMargin;
 	public:
 		TextAlign TextAlign = TextAlign::MiddleCenter;
 		Label();

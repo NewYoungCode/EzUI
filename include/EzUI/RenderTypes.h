@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
-namespace EzUI {
+
+namespace ezui {
 #ifdef _WIN64
 	typedef __int64  int_t;
 #else
@@ -518,7 +519,7 @@ namespace EzUI {
 		class Radius {
 			Border& Border;
 		public:
-			Radius(EzUI::Border& bd) :Border(bd) {}
+			Radius(ezui::Border& bd) :Border(bd) {}
 			//对四个角度同时设置半径大小
 			Radius& operator=(WORD radius) {
 				Border.TopLeftRadius = radius;

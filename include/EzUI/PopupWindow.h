@@ -2,7 +2,8 @@
 #include "Window.h"
 #include "BorderlessWindow.h"
 #include "LayeredWindow.h"
-namespace EzUI {
+
+namespace ezui {
 	/// <summary>
 	/// 弹出式窗口(失去焦点窗口将会关闭) 一般用于做右键菜单等等
 	/// </summary>

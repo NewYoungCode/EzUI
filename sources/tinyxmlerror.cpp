@@ -30,7 +30,7 @@ distribution.
 //
 // It also cleans up the code a bit.
 //
-namespace EzUI {
+namespace ezui {
 	const char* TiXmlBase::errorString[TiXmlBase::TIXML_ERROR_STRING_COUNT] =
 	{
 		"No error",

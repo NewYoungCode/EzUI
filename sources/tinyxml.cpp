@@ -30,7 +30,7 @@ distribution.
 #endif
 
 #include "tinyxml.h"
-namespace EzUI {
+namespace ezui {
 
 	FILE* TiXmlFOpen(const char* filename, const char* mode);
 

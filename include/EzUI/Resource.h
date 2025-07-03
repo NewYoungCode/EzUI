@@ -1,6 +1,7 @@
 #pragma once
 #include "UIString.h"
-namespace EzUI {
+
+namespace ezui {
 	/// <summary>
 	/// 框架中的资源类
 	/// </summary>

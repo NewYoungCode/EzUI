@@ -1,7 +1,7 @@
 #include "Application.h"
 #include "LayeredWindow.h"
 #include <functional>
-namespace EzUI {
+namespace ezui {
 	LRESULT CALLBACK __EzUI__WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 		//if (message == WM_CREATE)
 		//{
@@ -63,29 +63,29 @@ namespace EzUI {
 			}
 			return ::DefWindowProc(hwnd, msg, wParam, lParam);
 			};
-		wc.hInstance = EzUI::__EzUI__HINSTANCE;
+		wc.hInstance = ezui::__EzUI__HINSTANCE;
 		wc.lpszClassName = __EzUI__HiddenMessageWindowClass;
 		RegisterClassW(&wc);
-		EzUI::__EzUI_MessageWnd = CreateWindowEx(
+		ezui::__EzUI_MessageWnd = CreateWindowEx(
 			0,                 // 无特殊扩展样式
 			__EzUI__HiddenMessageWindowClass,         // 上面注册的类名
 			L"",               // 窗口名（无用）
 			0,                 // 样式设为 0（无 WS_VISIBLE）
 			0, 0, 0, 0,        // 尺寸全为 0
-			nullptr, nullptr, EzUI::__EzUI__HINSTANCE, nullptr
+			nullptr, nullptr, ezui::__EzUI__HINSTANCE, nullptr
 		);
 	}
 
 	void Application::Init() {
 		//存入全局实例
-		EzUI::__EzUI__HINSTANCE = ::GetModuleHandleW(NULL);
-		EzUI::__EzUI__ThreadId = ::GetCurrentThreadId();
+		ezui::__EzUI__HINSTANCE = ::GetModuleHandleW(NULL);
+		ezui::__EzUI__ThreadId = ::GetCurrentThreadId();
 		//设计窗口
 		::WNDCLASSW    wc{ 0 };
 		wc.lpfnWndProc = __EzUI__WndProc;//窗口过程
-		wc.hInstance = EzUI::__EzUI__HINSTANCE;//
+		wc.hInstance = ezui::__EzUI__HINSTANCE;//
 		wc.hCursor = LoadCursorW(NULL, IDC_ARROW);//光标
-		wc.lpszClassName = EzUI::__EzUI__WindowClassName;//类名
+		wc.lpszClassName = ezui::__EzUI__WindowClassName;//类名
 		if (!RegisterClassW(&wc)) //注册窗口
 		{
 			::MessageBoxW(NULL, L"This program requires Windows NT !",
@@ -116,7 +116,7 @@ namespace EzUI {
 		RenderInitialize();
 	}
 	void Application::EnableHighDpi() {
-		EzUI::GetMonitor((std::list<MonitorInfo>*) & EzUI::__EzUI__MonitorInfos);
+		ezui::GetMonitor((std::list<MonitorInfo>*) & ezui::__EzUI__MonitorInfos);
 		//DPI感知相关
 		//不跟随系统放大无法接收WM_DISPLAYCHANGED消息
 		//bool b = SetProcessDPIAware();
@@ -141,15 +141,15 @@ namespace EzUI {
 
 	bool Application::SetResource(const UIString& localOrResName) {
 		//只允许有一个资源文件
-		if (EzUI::__EzUI__Resource) {
-			delete EzUI::__EzUI__Resource;
-			EzUI::__EzUI__Resource = NULL;
+		if (ezui::__EzUI__Resource) {
+			delete ezui::__EzUI__Resource;
+			ezui::__EzUI__Resource = NULL;
 		}
 		//先从vs中的资源里面查找
 		bool found = false;
 		HRSRC hRsrc = Resource::FindRC(localOrResName);
 		if (hRsrc) {
-			EzUI::__EzUI__Resource = new Resource(hRsrc);
+			ezui::__EzUI__Resource = new Resource(hRsrc);
 			found = true;
 		}
 		else {
@@ -157,7 +157,7 @@ namespace EzUI {
 			std::wstring wstr = localOrResName.unicode();
 			DWORD dwAttr = GetFileAttributesW(wstr.c_str());
 			if (dwAttr && (dwAttr != -1) && (dwAttr & FILE_ATTRIBUTE_ARCHIVE)) {
-				EzUI::__EzUI__Resource = new Resource(localOrResName);
+				ezui::__EzUI__Resource = new Resource(localOrResName);
 				found = true;
 			}
 		}
@@ -174,11 +174,11 @@ namespace EzUI {
 	Application::~Application() {
 		RenderUnInitialize();
 		::CoUninitialize();
-		if (EzUI::__EzUI__Resource) {
-			delete EzUI::__EzUI__Resource;
+		if (ezui::__EzUI__Resource) {
+			delete ezui::__EzUI__Resource;
 		}
-		UnregisterClassW(EzUI::__EzUI__HiddenMessageWindowClass, EzUI::__EzUI__HINSTANCE);
-		UnregisterClassW(EzUI::__EzUI__WindowClassName, EzUI::__EzUI__HINSTANCE);
+		UnregisterClassW(ezui::__EzUI__HiddenMessageWindowClass, ezui::__EzUI__HINSTANCE);
+		UnregisterClassW(ezui::__EzUI__WindowClassName, ezui::__EzUI__HINSTANCE);
 	}
 
 	int_t Application::Exec()
@@ -193,12 +193,12 @@ namespace EzUI {
 
 	void Application::Exit(int_t exitCode) {
 		//销毁通讯窗口
-		::DestroyWindow(EzUI::__EzUI_MessageWnd);
+		::DestroyWindow(ezui::__EzUI_MessageWnd);
 		//退出循环前 销毁所有窗口
-		while (EzUI::__EzUI__Wnds.size() > 0)
+		while (ezui::__EzUI__Wnds.size() > 0)
 		{
-			auto itor = EzUI::__EzUI__Wnds.begin();
-			if (itor != EzUI::__EzUI__Wnds.end()) {
+			auto itor = ezui::__EzUI__Wnds.begin();
+			if (itor != ezui::__EzUI__Wnds.end()) {
 				HWND hwnd = *itor;
 				__EzUI__Wnds.erase(itor);
 				::DestroyWindow(hwnd);

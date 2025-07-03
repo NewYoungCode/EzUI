@@ -1,6 +1,6 @@
 #include "TabLayout.h"
 
-namespace EzUI {
+namespace ezui {
 	TabLayout::TabLayout()
 	{
 		timer.Tick = [this](ThreadTimer* sender) {

@@ -1,6 +1,7 @@
 #pragma once
 #include "EzUI.h"
-namespace EzUI {
+
+namespace ezui {
 
 	class UI_EXPORT Menu
 	{

@@ -33,7 +33,7 @@
 //自定义通知栏消息
 #define WM_NOTIFYICON1 WM_APP+1
 
-using namespace EzUI;
+using namespace ezui;
 
 struct Song {
 	UIString hash;//歌曲哈希值

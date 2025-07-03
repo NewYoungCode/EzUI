@@ -1,5 +1,5 @@
 #include "RadioButton.h"
-namespace EzUI {
+namespace ezui {
 	RadioButton::RadioButton()
 	{
 	}

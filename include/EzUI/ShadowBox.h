@@ -2,7 +2,7 @@
 #include "Window.h"
 #include "Bitmap.h"
 
-namespace EzUI {
+namespace ezui {
 	class UI_EXPORT ShadowBox
 	{
 	private:

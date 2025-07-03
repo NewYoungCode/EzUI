@@ -1,6 +1,6 @@
 #include "TileListView.h"
 
-namespace EzUI {
+namespace ezui {
 
 	void TileListView::Init()
 	{

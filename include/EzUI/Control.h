@@ -1,6 +1,7 @@
 #pragma once
 #include "EzUI.h"
-namespace EzUI {
+
+namespace ezui {
 	class UI_EXPORT Control :public IControl
 	{
 	private:
@@ -23,7 +24,7 @@ namespace EzUI {
 		// AddControl、InsertControl、RemoveControl、OnSize 时此标志为挂起状态
 		// 调用 ResumeLayout 标志为布局中
 		// 调用 OnLayout() 之后标志为 None
-		EzUI::LayoutState _layoutState = EzUI::LayoutState::None;
+		ezui::LayoutState _layoutState = ezui::LayoutState::None;
 
 		// 鼠标悬浮提示文字
 		UIString _tipsText;
@@ -454,14 +455,6 @@ namespace EzUI {
 
 		// 立即强制刷新控件区域并更新无效区域（且立即触发布局）
 		virtual void Refresh();
-
-	};
-
-	//内联页面Interface类
-	class UI_EXPORT IIFrame :public Control {
-	public:
-		IIFrame() {};
-		virtual ~IIFrame() {};
 	};
 
 };

@@ -1,5 +1,5 @@
 #include "Task.h"
-namespace EzUI {
+namespace ezui {
 	void Task::Wait() {
 		if (!_bJoin)
 		{

@@ -1,7 +1,8 @@
 #pragma once
 #include "Window.h"
 #include "Resource.h"
-namespace EzUI {
+
+namespace ezui {
 	class UI_EXPORT Application
 	{
 		void Init();

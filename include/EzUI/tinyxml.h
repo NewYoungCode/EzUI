@@ -78,7 +78,7 @@ distribution.
 	#endif
 #endif	
 
-namespace EzUI {
+namespace ezui {
 
 	class TiXmlDocument;
 	class TiXmlElement;

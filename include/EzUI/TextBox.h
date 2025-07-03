@@ -2,7 +2,8 @@
 #include "Control.h"
 #include "VScrollBar.h"
 #include "Timer.h"
-namespace EzUI {
+
+namespace ezui {
 	class UI_EXPORT TextBox :
 		public Control
 	{

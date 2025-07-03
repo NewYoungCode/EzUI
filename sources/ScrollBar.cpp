@@ -1,6 +1,6 @@
 #include "ScrollBar.h"
 //滚动条相关
-namespace EzUI {
+namespace ezui {
 	void IScrollBar::OnMouseUp(const MouseEventArgs& arg)
 	{
 		__super::OnMouseUp(arg);

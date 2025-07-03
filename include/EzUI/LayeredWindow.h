@@ -3,7 +3,8 @@
 #include "Bitmap.h"
 #include "Task.h"
 #include "Timer.h"
-namespace EzUI {
+
+namespace ezui {
 	/// <summary>
 	/// //LayeredWindow	  //无边框  带阴影 窗口透明异形 窗口大小发生改变重绘
 	/// </summary>

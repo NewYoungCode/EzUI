@@ -1,7 +1,8 @@
 #pragma once
 #include "Control.h"
 #include "ScrollBar.h"
-namespace EzUI {
+
+namespace ezui {
 
 	class UI_EXPORT  HScrollBar :
 		public IScrollBar

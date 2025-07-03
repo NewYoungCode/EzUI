@@ -1,6 +1,7 @@
 #pragma once
 #include "Label.h"
-namespace EzUI {
+
+namespace ezui {
 	class UI_EXPORT Button :
 		public Label
 	{

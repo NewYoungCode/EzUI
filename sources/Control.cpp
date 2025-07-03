@@ -2,7 +2,7 @@
 #include "ScrollBar.h"
 #include "Spacer.h"
 
-namespace EzUI {
+namespace ezui {
 	inline bool __IsValid(int_t value) {
 		return value != 0;
 	}
@@ -100,7 +100,7 @@ return  defaultStyle .##_filed1.##_filed;\
 }\
 //end
 };
-namespace EzUI {
+namespace ezui {
 
 	UI_BORDER_BINDFUNC(int_t, Border, TopLeftRadius);
 	UI_BORDER_BINDFUNC(int_t, Border, TopRightRadius);

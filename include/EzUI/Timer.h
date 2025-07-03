@@ -1,7 +1,7 @@
 #pragma once
 #include "EzUI.h"
 #include "Task.h"
-namespace EzUI {
+namespace ezui {
 
 	//使用线程的计时器 不与主进程同步(启动的时候就直接开始执行回调函数)
 	class UI_EXPORT ThreadTimer :public IControl {

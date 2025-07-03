@@ -1,6 +1,6 @@
 #include "NotifyIcon.h"
 
-namespace EzUI {
+namespace ezui {
 	bool __Init__RegeditClass__ = false;
 	LRESULT CALLBACK __NotifyIcon_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
@@ -34,7 +34,7 @@ namespace EzUI {
 
 	NotifyIcon::NotifyIcon()
 	{
-		::HINSTANCE hInstance = EzUI::__EzUI__HINSTANCE;
+		::HINSTANCE hInstance = ezui::__EzUI__HINSTANCE;
 
 		if (!__Init__RegeditClass__) {
 			::WNDCLASSW    wc{ 0 };

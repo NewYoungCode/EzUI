@@ -1,5 +1,5 @@
 #include "VLayout.h"
-namespace EzUI {
+namespace ezui {
 	VLayout::VLayout()
 	{
 	}

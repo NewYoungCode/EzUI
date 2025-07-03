@@ -1,5 +1,5 @@
 #include "Timer.h"
-namespace EzUI {
+namespace ezui {
 	ThreadTimer::ThreadTimer() {
 		_task = new Task([this]() {
 			while (true)

@@ -1,5 +1,5 @@
 #include "HLayout.h"
-namespace EzUI {
+namespace ezui {
 	void HLayout::OnLayout()
 	{
 		int_t contentHeight = 0;

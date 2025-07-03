@@ -1,6 +1,6 @@
 #include "HScrollBar.h"
 
-namespace EzUI {
+namespace ezui {
 	HScrollBar::HScrollBar() {}
 	HScrollBar::~HScrollBar() {}
 	Rect HScrollBar::GetSliderRect() {

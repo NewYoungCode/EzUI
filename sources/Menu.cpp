@@ -1,6 +1,6 @@
 #include "Menu.h"
 
-namespace EzUI {
+namespace ezui {
 	UINT_PTR _dui_menu_index = 0;
 	Menu::Menu()
 	{

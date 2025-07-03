@@ -1,7 +1,8 @@
 #pragma once
 #include "PagedListView.h"
 #include "HScrollBar.h"
-namespace EzUI {
+
+namespace ezui {
 	class UI_EXPORT  HListView :
 		public PagedListView
 	{

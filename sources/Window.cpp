@@ -1,7 +1,8 @@
 #include "Window.h"
 #include "TabLayout.h"
+#include "IFrame.h"
 
-namespace EzUI {
+namespace ezui {
 	//具有焦点的控件
 #define __FOCUS_CONTROL PublicData->FocusControl
 //具有输入焦点的控件
@@ -41,7 +42,7 @@ namespace EzUI {
 
 		POINT cursorPos;
 		::GetCursorPos(&cursorPos);
-		for (auto& it : EzUI::__EzUI__MonitorInfos) {
+		for (auto& it : ezui::__EzUI__MonitorInfos) {
 			Rect rect = it.Rect;
 			rect.Width = it.Physical.Width;
 			rect.Height = it.Physical.Height;
@@ -60,8 +61,8 @@ namespace EzUI {
 			return this->WndProc(uMsg, wParam, lParam);
 			};
 		//创建窗口
-		PublicData->HANDLE = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, EzUI::__EzUI__WindowClassName, EzUI::__EzUI__WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
-			_rect.X, _rect.Y, _rect.Width, _rect.Height, owner, NULL, EzUI::__EzUI__HINSTANCE, NULL);
+		PublicData->HANDLE = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, ezui::__EzUI__WindowClassName, ezui::__EzUI__WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
+			_rect.X, _rect.Y, _rect.Width, _rect.Height, owner, NULL, ezui::__EzUI__HINSTANCE, NULL);
 		PublicData->Window = this;
 		if (owner) {
 			this->CenterToWindow(owner);
@@ -81,7 +82,7 @@ namespace EzUI {
 			CW_USEDEFAULT,
 			Hwnd(),
 			NULL,
-			EzUI::__EzUI__HINSTANCE,
+			ezui::__EzUI__HINSTANCE,
 			NULL
 		);
 
@@ -158,12 +159,12 @@ namespace EzUI {
 			}
 			};
 		PublicData->SendNotify = [this](Control* sender, EventArgs& args)->bool {
-			IIFrame* frame = NULL;
+			IFrame* frame = NULL;
 			Control* parent = sender;
 			//依次往上父控件看看有没有当前控件是否在内联页面中
 			while (parent)
 			{
-				if (frame = dynamic_cast<IIFrame*>(parent)) {
+				if (frame = dynamic_cast<IFrame*>(parent)) {
 					break;
 				}
 				parent = parent->Parent;
@@ -235,7 +236,7 @@ namespace EzUI {
 	bool Window::IsFullScreen() {
 		//判断是否全屏
 		MonitorInfo monitorInfo;
-		EzUI::GetMontior(&monitorInfo, Hwnd());//获取窗口所在的监视器位置
+		ezui::GetMontior(&monitorInfo, Hwnd());//获取窗口所在的监视器位置
 		auto rect = this->GetWindowRect();
 		bool isFullScreen = (monitorInfo.Rect.X == rect.X && monitorInfo.Rect.Y == rect.Y && monitorInfo.Rect.Width == rect.Width && monitorInfo.Rect.Height == rect.Height);
 		if (isFullScreen)
@@ -277,13 +278,13 @@ namespace EzUI {
 	}
 	void Window::SetIcon(short id)
 	{
-		SetIcon(::LoadIcon(::EzUI::__EzUI__HINSTANCE, MAKEINTRESOURCE(id)));//
+		SetIcon(::LoadIcon(::ezui::__EzUI__HINSTANCE, MAKEINTRESOURCE(id)));//
 	}
 	void Window::SetIcon(HICON icon)
 	{
 		::SendMessage(Hwnd(), WM_SETICON, ICON_SMALL, (LPARAM)icon);
 	}
-	void Window::SetLayout(EzUI::Control* layout) {
+	void Window::SetLayout(ezui::Control* layout) {
 		ASSERT(layout);
 		_layout = layout;
 		_layout->PublicData = this->PublicData;
@@ -353,7 +354,7 @@ namespace EzUI {
 	{
 		::ShowWindow(Hwnd(), SW_MAX);
 		MonitorInfo monitorInfo;
-		EzUI::GetMontior(&monitorInfo, Hwnd());
+		ezui::GetMontior(&monitorInfo, Hwnd());
 		::SetWindowPos(Hwnd(), HWND_TOP, monitorInfo.Rect.X, monitorInfo.Rect.Y, monitorInfo.Rect.Width, monitorInfo.Rect.Height, NULL);
 		::ShowWindow(Hwnd(), SW_SHOW);
 	}
@@ -411,7 +412,7 @@ namespace EzUI {
 	void Window::CenterToScreen()
 	{
 		MonitorInfo monitorInfo;
-		EzUI::GetMontior(&monitorInfo);
+		ezui::GetMontior(&monitorInfo);
 
 		int_t x = monitorInfo.WorkRect.X;
 		int_t y = monitorInfo.WorkRect.Y;

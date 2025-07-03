@@ -1,5 +1,5 @@
 #include "BorderlessWindow.h"
-namespace EzUI {
+namespace ezui {
 	BorderlessWindow::BorderlessWindow(int_t width, int_t height, HWND owner, DWORD exStyle) : Window(width, height, owner, WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP, exStyle)
 	{
 		//无边框

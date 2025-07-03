@@ -1,5 +1,5 @@
 #include "FileSystem.h"
-namespace EzUI {
+namespace ezui {
 	namespace File {
 		bool Exists(const UIString& filenNme) {
 			DWORD dwAttr = GetFileAttributesW(filenNme.unicode().c_str());

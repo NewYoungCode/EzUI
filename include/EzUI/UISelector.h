@@ -1,6 +1,7 @@
 #pragma once
 #include "UIManager.h"
-namespace EzUI {
+
+namespace ezui {
 	//控件选择器(多功能选择器暂时未完善)
 	class UI_EXPORT UISelector
 	{

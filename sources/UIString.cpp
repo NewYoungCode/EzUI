@@ -1,7 +1,7 @@
 #include "UIString.h"
-namespace EzUI {
+namespace ezui {
 	
-	namespace UI_Text {
+	namespace ui_text {
 		//-----------------------------------------------Copy Start-----------------------------------------------
 		size_t String::length() const {
 			auto* p = this->c_str();

@@ -1,5 +1,5 @@
 #include "VListView.h"
-namespace EzUI {
+namespace ezui {
 	void VListView::Init()
 	{
 		this->GetScrollBar()->SetHeight(Height());//滚动条宽度

@@ -1,9 +1,9 @@
 #include "Resource.h"
 #include "ezui.h"
-namespace EzUI {
+namespace ezui {
 	Resource::ReadStream::ReadStream(HRSRC hRsrc) {
-		this->_ptr = (char*)::LoadResource(EzUI::__EzUI__HINSTANCE, hRsrc);
-		this->_count = ::SizeofResource(EzUI::__EzUI__HINSTANCE, hRsrc);
+		this->_ptr = (char*)::LoadResource(ezui::__EzUI__HINSTANCE, hRsrc);
+		this->_count = ::SizeofResource(ezui::__EzUI__HINSTANCE, hRsrc);
 	}
 	Resource::ReadStream::ReadStream(const UIString& fileName) {
 		this->_ifs = new std::ifstream(fileName.unicode(), std::ios::binary);
@@ -162,7 +162,7 @@ namespace EzUI {
 	//通过资源中的ID名称查找资源
 	HRSRC Resource::FindRC(const UIString& rcIDName)
 	{
-		HMODULE hModule = EzUI::__EzUI__HINSTANCE;
+		HMODULE hModule = ezui::__EzUI__HINSTANCE;
 		ResourceContext ctx;
 		ctx.rcIDName = rcIDName;
 		EnumResourceTypesW(hModule, [](HMODULE hModule, LPWSTR lpszType, LONG_PTR lParam)->BOOL {

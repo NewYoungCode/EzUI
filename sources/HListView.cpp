@@ -1,6 +1,6 @@
 #include "HListView.h"
 
-namespace EzUI {
+namespace ezui {
 	void HListView::Init()
 	{
 		this->GetScrollBar()->SetWidth(Width());//滚动条宽度

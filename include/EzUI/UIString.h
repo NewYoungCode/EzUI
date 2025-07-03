@@ -3,8 +3,8 @@
 #include <codecvt>
 #include <iomanip>
 
-namespace EzUI {
-	namespace UI_Text {
+namespace ezui {
+	namespace ui_text {
 
 		//-----------------------------------------------Copy Start-----------------------------------------------
 		/// <summary>
@@ -72,5 +72,5 @@ namespace EzUI {
 		UI_EXPORT String ToString(double number, size_t keepBitSize);
 		//-----------------------------------------------Copy End-----------------------------------------------
 	};
-	using UIString = UI_Text::String;
+	using UIString = ui_text::String;
 };

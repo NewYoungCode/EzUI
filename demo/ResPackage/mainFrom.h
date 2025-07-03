@@ -7,7 +7,7 @@
 #include "EzUI/Task.h"
 #include "EzUI/HLayout.h"
 #include "EzUI/UIManager.h"
-using namespace EzUI;
+using namespace ezui;
 
 class MainFrm :public Window {
 	Task* task = NULL;
@@ -41,7 +41,7 @@ public:
 	void OnClose(bool& close)  override;
 	bool FileExists(const UIString& fileName);
 	bool OnNotify(Control* sender, EventArgs& args)override;
-	void OnResFileChange(EzUI::UIString& resFile);
+	void OnResFileChange(UIString& resFile);
 	virtual LRESULT WndProc(UINT msg, WPARAM wp, LPARAM lp);
 	virtual ~MainFrm();
 };
@@ -159,7 +159,7 @@ inline std::string GetFileSize(__int64 _KEY_FILE_SIZE) {
 	else {
 		ext = "BT";
 	}
-	disp_size = UI_Text::ToString(KEY_FILE_SIZE, 2) + " " + ext;
+	disp_size = ui_text::ToString(KEY_FILE_SIZE, 2) + " " + ext;
 	return disp_size;
 }
 

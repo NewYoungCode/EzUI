@@ -1,6 +1,6 @@
 #include "UISelector.h"
 
-namespace EzUI {
+namespace ezui {
 	UISelector::UISelector(const std::vector<Control*>& controls)
 	{
 		this->ctls = controls;

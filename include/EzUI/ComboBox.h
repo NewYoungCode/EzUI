@@ -5,7 +5,7 @@
 #include "PopupWindow.h"
 #include "HLayout.h"
 
-namespace EzUI {
+namespace ezui {
 	//简易的下拉列表框
 	class UI_EXPORT ComboBox :public HLayout {
 	private:

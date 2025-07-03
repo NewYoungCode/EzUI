@@ -16,7 +16,7 @@
 #include "EzUI/TextBox.h"
 #include "EzUI/ComBoBox.h"
 
-using namespace EzUI;
+using namespace ezui;
 
 class MainFrm :public Window {
 public:

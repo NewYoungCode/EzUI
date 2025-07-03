@@ -1,7 +1,7 @@
 #pragma once
 #include "EzUI.h"
 
-namespace EzUI {
+namespace ezui {
 	class UI_EXPORT Bitmap {
 	public:
 		enum class PixelFormat :int_t {

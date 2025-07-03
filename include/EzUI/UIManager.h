@@ -17,12 +17,12 @@
 #include "PictureBox.h"
 #include "Window.h"
 #include "ComboBox.h"
-namespace EzUI {
+
+namespace ezui {
 	//主窗口中的内联页面类
-	class UI_EXPORT IFrame;
 	class UI_EXPORT UIManager {
 	public:
-		struct Selector
+		struct Style
 		{
 			ControlStyle::Type styleType;
 			UIString selectorName;
@@ -38,13 +38,13 @@ namespace EzUI {
 		std::function<void(Image*)> BuildImageCallback;
 		std::list<Image*> freeImages;
 		std::list<XmlNode> controls;
-		std::list<UIManager::Selector> _styles;
+		std::list<UIManager::Style> _styles;
 		void LoadControl(void* node, Control* control);
 		Control* BuildControl(void* node);//内部函数
 		//记录XML中的控件到管理器 管理器释放的时候 由管理器加载的控件将自动释放
 		void RegisterControl(Control* ctl, const UIString& tagNamee);
-		void AnalysisStyle(const UIString& styleStr, std::list<UIManager::Selector>* out);//分析样式
-		void ApplyStyle(Control* ctl, const std::list<UIManager::Selector>& selectors, const UIString& tagName);
+		void AnalysisStyle(const UIString& styleStr, std::list<UIManager::Style>* out);//分析样式
+		void ApplyStyle(Control* ctl, const std::list<UIManager::Style>& selectors, const UIString& tagName);
 		//应用样式(为控件应用所有样式)
 	protected:
 		//当解析到一个节点的时候发生
@@ -68,26 +68,6 @@ namespace EzUI {
 		void Free(Control** ctl);
 		//释放由本此对象创建的图片
 		void Free(Image** img);
-	};
-
-	class IFrame :public IIFrame {
-		UIManager umg;
-	public:
-		IFrame() {}
-		virtual ~IFrame() {}
-		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue)override {
-			if (attrName == "src") {
-				umg.LoadXmlFile(attrValue);
-				umg.SetupUI(this);
-				if (this->GetControls().size() > 0) {
-					Control* root = this->GetControl(this->GetControls().size() - 1);
-					root->SetDockStyle(DockStyle::Fill);
-				}
-			}
-			__super::SetAttribute(attrName, attrValue);
-		};
-		//获取UI管理器
-		UIManager* GetUIManager();
 	};
 
 };

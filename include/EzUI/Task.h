@@ -1,7 +1,8 @@
 #pragma once
 #include "EzUI.h"
 #include <condition_variable>
-namespace EzUI {
+
+namespace ezui {
 	class UI_EXPORT Task {
 		bool _bStop = false;
 		std::thread* _task = NULL;

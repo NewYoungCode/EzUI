@@ -190,7 +190,7 @@ void MainFrm::DownLoadImage(UIString _SingerName, UIString headImageUrl)
 	}
 
 	//回到主线程去设置歌手头像 歌手背景图
-	Invoke([=]() {
+	BeginInvoke([=]() {
 		if (headImg) {
 			singer->Style.ForeImage = headImg;
 			singer->Style.BackImage->Visible = false;

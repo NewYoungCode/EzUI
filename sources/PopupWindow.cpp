@@ -1,5 +1,5 @@
 #include "PopupWindow.h"
-namespace EzUI {
+namespace ezui {
 	PopupWindow::PopupWindow(int_t width, int_t height, HWND owner) :LayeredWindow(width, height, owner)
 	{
 		this->SetResizable(false);

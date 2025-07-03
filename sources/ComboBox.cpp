@@ -1,6 +1,6 @@
 #include "ComboBox.h"
 
-namespace EzUI {
+namespace ezui {
 	void ComboBox::Init()
 	{
 		this->_textBox.ReadOnly = true;
