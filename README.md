@@ -1,55 +1,152 @@
-WIN32 desktop application UI framework (2d graphical library:direct2d,后期可能会采用其他跨平台的2d图形库对整个UI框架进行跨平台)
+# EzUI
 
-编译方式
+**EzUI** 是一个基于原生 Win32 消息机制和 Direct2D 的高性能桌面 UI 框架，具备强大的弹性布局、伪类样式支持和控件系统，目标是提供如 Web 前端般灵活、直观的界面开发体验。
 
-1.下载源码 使用git命令
+> 🚀 支持高 DPI、分层窗口、响应式布局、CSS 风格皮肤、GIF 动画、控件组合与继承机制。未来将支持跨平台 2D 图形库扩展。
 
-	git clone https://github.com/NewYoungCode/EzUI.git
+---
 
-2.下载并且安装cmkae https://cmake.org/download/ 
+## ✨ 框架特色
 
-	安装 Windows x64 Installer:	cmake-3.26.3-windows-x86_64.msi
+- 🪱 **基于 Win32 消息机制**：轻量、无依赖，逻辑控件系统拦截并下发鼠标键盘消息，自主响应 `WM_PAINT` 绘制。
+- 🎨 **2D 图形绘制**：当前基于 Direct2D 绘图，具备高性能、高分辨率适配能力。
+- 🧹 **弹性布局系统**：支持自动宽高、自适应布局，开发体验类比前端 Flex 设计。
+- 🎭 **伪类 CSS 支持**：支持 `hover`、`active`、`checked` 等状态样式，类选择器、ID 选择器、组合选择器等完整选择器系统。
+- 🌟 **控件组合系统**：Label、Button、TextBox、CheckBox、RadioButton 等丰富控件可自由组合构建 UI。
+- 💡 **事件系统**：支持事件冒泡机制，可实现事件捕获与穿透。
+- 🧩 **高 DPI 适配**：框架自动处理 DPI 缩放与坐标换算，支持多显示器高分屏。
+- 🪪 **多种窗口类型支持**：
+  - `Window`：经典边框窗口
+  - `BorderlessWindow`：无边框、带阴影
+  - `LayeredWindow`：分层透明窗口，支持异形与实时重绘
+  - `PopupWindow`：失焦自动关闭的弹出窗口，适用于菜单等
 
-3.编译运行
+---
 
-	请将这个文件 "kuGou运行依赖(需要将此解压到exe所在位置).zip" 解压到编译完成的exe所在目录(运行资源以及动态链接库)
+## 📆 快速开始
 
-简介:
+### 1. 下载源码
 
-原理:基于windows消息机制,所有控件都是逻辑控件 处理鼠标键盘对控件的命中消息并进行下发 响应WM_PAINT消息进行重绘 分层窗口则采用一个线程进行检测无效区域并进行重绘
+```bash
+git clone https://github.com/NewYoungCode/EzUI.git
+```
 
-高分辨率适配 使用direct2d进行高性能绘图 
+### 2. 安装 CMake
 
-可灵活使用控件组成大部分想要的效果(combox,datagridview,tree)将轻易实现
+请前往 [CMake 官网](https://cmake.org/download/) 下载安装。
 
-css普通进行修饰控件外观  模仿前端的继承样式 hover,active,checked伪样式 id选择器,类选择器,选择器可多选
+### 3. 构建与运行
 
-弹性布局 自动宽高 布局代码可以像写web前端一样轻松高DPI的适配 GIF显示
+- 构建 32 位项目：
 
-窗口类
+```bash
+build.bat
+```
 
-Window            //经典带边框带系统菜单WIN32窗口样式
+- 构建 64 位项目（未包含 kugou 项目，因为未提供对应 VLC 的 64 位库）：
 
-BorderlessWindow :public Window //继承于Window 无边框 带阴影 
+```bash
+build64.bat
+```
 
-LayeredWindow :public BorderlessWindow	  //分层窗口 继承于Window 无边框 带阴影 窗口透明异形 窗口大小发生改变重绘 (自定义绘制机制)
+---
 
-PopupWindow :public LayeredWindow    //继承于LayeredWindow 特点(弹出式窗口 窗口失去焦点将会自动关闭,可用于做弹出式菜单)
+## 📀 使用说明
 
-注:所有窗口调用Show()函数之前 所有窗口必须设置布局 使用 Window::SetLayout()进行设置布局
+### 🏁 程序入口
 
-常用控件(类所有控件都继承于"Control"):
+请在 `WinMain` 函数中创建 `Application` 实例并调用 `app.Exec()` 以启动消息循环：
 
-Label(带文字的控件)，Button(按钮),TextBox(文字输入框),HLayout(水平布局),VLayout(垂直布局),HList(水平排列),VList(垂直排列),TileList(瓦片布局),TabLayout(视图切换),PictureBox(可用于显示GIF),CheckBox(复选框),RadioButton(单选框) 
+```cpp
+int WINAPI WinMain(...) {
+    Application app;
+    Window win;
+    win.SetLayout(new VLayout(...));
+    win.Show();
+    return app.Exec();
+}
+```
+
+### 🧱 控件与组件列表（部分）
+
+- `Application`：EzUI 应用入口与消息循环控制器
+- `Window`：经典 Win32 边框窗口
+- `BorderlessWindow`：无边框带阴影窗口
+- `LayeredWindow`：支持透明和异形的分层窗口
+- `PopupWindow`：失焦自动关闭的弹出窗口
+- `Control`：所有控件基础类，封装鼠标命中、事件分发和重绘逻辑
+- `Label`：文字标签控件
+- `Button`：标准按钮控件
+- `TextBox`：文本输入框
+- `CheckBox` / `RadioButton`：复选框 / 单选框控件
+- `PictureBox`：图片显示控件，支持 GIF
+- `ComboBox`：下拉框控件
+- `Menu`：菜单支持
+- `NotifyIcon`：托盘图标支持
+- `ScrollBar` / `HScrollBar` / `VScrollBar`：滚动条组件
+- `HLayout` / `VLayout`：水平/垂直布局容器
+- `HListView` / `VListView`：横向/纵向列表视图容器
+- `TileListView`：瓦片式列表视图
+- `TabLayout`：选项卡切换容器
+- `Spacer`：空隙组件，占位用
+- `ShadowBox`：带阴影容器，可用于分组或浮层背景
+- `IFrame`：内嵌页面控件，功能类似 Web 前端中的 `<iframe>`
+- `UIDef`：框架内使用的宏定义集合
+- `UIManager`：UI 样式与资源统一管理
+- `UISelector`：选择器匹配系统，实现类选择器、链式查询控件
+- `UIString` / `tinystr.h` / `tinyxml.h`：字符串处理与 XML 配置解析支持
+- `RenderTypes`：绘图相关类型定义（颜色、对齐方式等）
+- `Direct2DRender`：Direct2D 绘图实现类
+- `Bitmap`：图像资源封装
+- `Resource.h`：自定义资源管理类（非 VS rc 文件），用于手动加载与管理框架资源（不含资源 ID 定义）
+- `Timer` / `Task`：定时与异步任务处理辅助类
+- `EzUI.h`：框架主接口头文件，定义事件类、枚举、全局资源等核心结构
+
+### 🎨 样式示例
+
+```css
+#submitBtn {
+    width: 100px;
+    height: 30px;
+    background: #0078d7;
+}
+
+#submitBtn:hover {
+    background: #005a9e;
+}
+
+.check:checked {
+    border-color: green;
+}
+```
+
+---
+
+## 🔧 调试技巧
+
+- 在 Debug 模式下运行时，按下 `F11` 可实时查看布局信息，高亮显示控件边界。
+
+---
+
+## 🧬 开发理念
+
+- **“一切皆控件”**：无 UI 描述文件，纯代码式组件组合；
+- **“CSS 驱动视觉”**：结构和样式分离；
+- **“面向前端思维”**：布局、交互风格向 Web 靠拟；
+- **“跨平台可拟扩”**：绘图模块可替换（未来可能会使用跨平台图形库）；
+
+---
+
+## 📖 学习 & 技术支持
+
+- 视频教程：https://space.bilibili.com/240269358/video
+- QQ：718987717
+- QQ群：758485934
+- 邮箱：[19980103ly@gmail.com]/[19980103ly@gmail.com]
+- 微信：wx19980103yon
+
+---
+
+## 📄 License
 
 
-Tips:
-    Debug模式运行程序按下F11可查看当前布局信息 每个控件将高亮显示边框
-
-学习&技术支持 
-
-框架学习:https://space.bilibili.com/240269358/video
-
-QQ:718987717 //qq群:758485934 //email:19980103ly@gmail.com //微信:
-
-<img src="https://github.com/NewYoungCode/EzUI/blob/master/wx.jpg?raw=true" width=400 height=565/>

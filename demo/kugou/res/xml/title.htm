@@ -1,0 +1,45 @@
+<hbox id="title" action="title">
+    <hbox width="309" action="title">
+        <spacer width="15"></spacer>
+        <label id="icon" width="29" height="29"></label>
+        <spacer width="15"></spacer>
+        <button enable="true" text="登录" id="login" width="40"></button>
+        <spacer ></spacer>
+    </hbox>
+    <hbox height="26" id="inputBox">
+        <label class="serachIcon" margin="0,5" width="20" height="20"></label>
+        <edit id="searchEdit" readonly="false" placeholder="输入音乐名/歌手" margin="0,10,0,0" height="26"></edit>
+    </hbox>
+    <spacer></spacer>
+    <hbox width="100" id="btns">  <label text="0" action="mini"></label><label text="1" action="max"></label><label text="r" name="close" action="close"></label> </hbox>
+</hbox>
+<style>
+    #login {
+        cursor: pointer;
+    }
+
+    .serachIcon {
+        fore-image: "res/imgs/search.png";
+    }
+
+    #icon {
+        fore-image: "res/imgs/icon.png";
+    }
+
+    #btns {
+        font-family: "Marlett";
+        font-size: 13;
+        color: #dddddd;
+    }
+
+    #title {
+        font-size: 13;
+        color: #ffffff;
+    }
+
+    #inputBox {
+        background-color: rgba(255,255,255,100);
+        color: #ffffff;
+        border-radius: 26;
+    }
+</style>

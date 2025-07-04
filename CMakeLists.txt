@@ -13,6 +13,7 @@ set(tag $<IF:$<CONFIG:Debug>,Debug,Release>)
 add_definitions(-D_UNICODE -DUNICODE)
 
 project(EzUI)
+
 file(GLOB src ./include/EzUI/*.* ./sources/*.* )
 # 添加一个选项，供用户选择构建静态库或动态库
 option(BUILD_SHARED_LIBS "Build shared library instead of static library" OFF)
@@ -23,7 +24,6 @@ else()
 endif()
 target_include_directories(EzUI PRIVATE ./include/EzUI)
 set_target_properties(EzUI PROPERTIES LINKER_LANGUAGE CXX)
-#set_target_properties(EzUI PROPERTIES DEBUG_POSTFIX "_D")
 
 #添加子项目
 add_subdirectory(./demo)

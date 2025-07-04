@@ -1,6 +1,14 @@
 #include "ComboBox.h"
 
 namespace ezui {
+	Control* ComboBox::Add(Control* childCtl)
+	{
+		return __super::Add(childCtl);
+	}
+	void ComboBox::Remove(Control* childCtl, bool freeCtrl)
+	{
+		__super::Remove(childCtl, freeCtrl);
+	}
 	void ComboBox::Init()
 	{
 		this->_textBox.ReadOnly = true;
@@ -113,7 +121,7 @@ namespace ezui {
 	void ComboBox::RemoveItem(int_t index)
 	{
 		Control* lb = _list.GetControl(index);
-		_list.Remove(lb,true);
+		_list.Remove(lb, true);
 	}
 	void ComboBox::OnLayout() {
 		this->_UpDown.SetFixedSize(Size(Height(), Height()));

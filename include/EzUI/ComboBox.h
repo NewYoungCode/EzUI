@@ -9,6 +9,11 @@ namespace ezui {
 	//简易的下拉列表框
 	class UI_EXPORT ComboBox :public HLayout {
 	private:
+		//添加选项请使用AddItem
+		virtual Control* Add(Control* childCtl)override;
+		//移除选项请使用RemoveItem
+		virtual void Remove(Control* childCtl, bool freeCtrl)override;
+	private:
 		//下拉菜单选项
 		class MenuContent :public PopupWindow {
 		public:

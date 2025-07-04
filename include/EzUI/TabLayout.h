@@ -18,12 +18,12 @@ namespace ezui {
 		void Sort();
 	protected:
 		virtual void OnLayout()override;
-		virtual Control* Add(Control* childCtl)override;
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 	public:
 		TabLayout();
 		virtual ~TabLayout();
 		virtual void Remove(Control* ctl, bool freeCtl = false)override;
+		virtual Control* Add(Control* childCtl)override;
 		//设置当前显示页
 		void SetPageIndex(int_t index);
 		//动画方式滑动到某一页

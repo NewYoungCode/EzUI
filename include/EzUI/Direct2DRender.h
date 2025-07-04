@@ -53,8 +53,8 @@ namespace ezui {
 	//文本命中测试数据
 	class UI_EXPORT HitTestMetrics {
 	public:
-		size_t Length;
-		size_t TextPos;//命中的下标
+		int_t Length;
+		int_t TextPos;//命中的下标
 		RectF FontBox;//文字的矩形位置
 		bool IsTrailingHit;//命中位置是否在尾部
 	public:
@@ -83,7 +83,7 @@ namespace ezui {
 		float _fontSize = 0;
 	public:
 		void GetMetrics();
-		TextLayout(const std::wstring& text, const Font& font, const SizeF &maxSize = SizeF{ __MAXFLOAT,__MAXFLOAT }, TextAlign textAlgin = TextAlign::TopLeft);
+		TextLayout(const std::wstring& text, const Font& font, const SizeF& maxSize = SizeF{ __MAXFLOAT,__MAXFLOAT }, TextAlign textAlgin = TextAlign::TopLeft);
 		Point HitTestPoint(const Point& pt, int_t* outTextPos, BOOL* outIsTrailingHit, int_t* fontHeight);
 		void HitTestPoint(const Point& pt, HitTestMetrics* hitTestMetrics);//根据坐标执行命中测试
 		Point HitTestTextPosition(int_t textPos, BOOL isTrailingHit);//根据文字下标执行命中测试
@@ -272,7 +272,7 @@ namespace ezui {
 		DXRender(DXImage* dxImage);
 		DXRender(HDC dc, int_t x, int_t y, int_t width, int_t height);//创建dx绘图对象
 		virtual ~DXRender();
-		void SetFont(const std::wstring& fontFamily,float fontSize);//必须先调用
+		void SetFont(const std::wstring& fontFamily, float fontSize);//必须先调用
 		void SetFont(const Font& _copy_font);//必须先调用
 		void SetColor(const __EzUI__Color& color);//会之前必须调用
 		void SetStrokeStyle(StrokeStyle strokeStyle = StrokeStyle::Solid, float dashWidth = 3);//设置样式 虚线/实线
