@@ -105,8 +105,8 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 		lb->SetText(std::to_string(i));
 		lb->Name = std::to_string(i);
 		lb->SetFixedSize({ 100,30 });
-		lb->Style.BackColor = Color::Green;
-		lb->HoverStyle.BackColor = Color::Gray;
+		lb->Style.BackColor = Color::LightGray;
+		lb->HoverStyle.BackColor = Color::Red;
 		lb->Margin = 1;
 		lb->EventHandler = [&list](Control* sd, const EventArgs& arg)->void {
 			if (arg.EventType == Event::OnMouseClick) {

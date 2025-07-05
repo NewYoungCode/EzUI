@@ -17,6 +17,193 @@ namespace ezui {
 	HWND __EzUI_MessageWnd = NULL;
 	const std::list<ezui::MonitorInfo> __EzUI__MonitorInfos;
 
+	Color Color::Make(const UIString& colorStr) {
+		if (colorStr == "black") {
+			return Color::Black;
+		}
+		else if (colorStr == "white") {
+			return Color::White;
+		}
+		else if (colorStr == "gray") {
+			return Color::Gray;
+		}
+		else if (colorStr == "lightgray") {
+			return Color::LightGray;
+		}
+		else if (colorStr == "darkgray") {
+			return Color::DarkGray;
+		}
+		else if (colorStr == "red") {
+			return Color::Red;
+		}
+		else if (colorStr == "darkred") {
+			return Color::DarkRed;
+		}
+		else if (colorStr == "lightcoral") {
+			return Color::LightCoral;
+		}
+		else if (colorStr == "tomato") {
+			return Color::Tomato;
+		}
+		else if (colorStr == "crimson") {
+			return Color::Crimson;
+		}
+		else if (colorStr == "green" || colorStr == "lime") {
+			return Color::Green;
+		}
+		else if (colorStr == "darkgreen") {
+			return Color::DarkGreen;
+		}
+		else if (colorStr == "lawngreen") {
+			return Color::LawnGreen;
+		}
+		else if (colorStr == "palegreen") {
+			return Color::PaleGreen;
+		}
+		else if (colorStr == "blue") {
+			return Color::Blue;
+		}
+		else if (colorStr == "royalblue") {
+			return Color::RoyalBlue;
+		}
+		else if (colorStr == "dodgerblue") {
+			return Color::DodgerBlue;
+		}
+		else if (colorStr == "deepskyblue") {
+			return Color::DeepSkyBlue;
+		}
+		else if (colorStr == "lightblue") {
+			return Color::LightBlue;
+		}
+		else if (colorStr == "yellow") {
+			return Color::Yellow;
+		}
+		else if (colorStr == "gold") {
+			return Color::Gold;
+		}
+		else if (colorStr == "lightyellow") {
+			return Color::LightYellow;
+		}
+		else if (colorStr == "khaki") {
+			return Color::Khaki;
+		}
+		else if (colorStr == "orange") {
+			return Color::Orange;
+		}
+		else if (colorStr == "darkorange") {
+			return Color::DarkOrange;
+		}
+		else if (colorStr == "coral") {
+			return Color::Coral;
+		}
+		else if (colorStr == "salmon") {
+			return Color::Salmon;
+		}
+		else if (colorStr == "purple") {
+			return Color::Purple;
+		}
+		else if (colorStr == "mediumpurple") {
+			return Color::MediumPurple;
+		}
+		else if (colorStr == "indigo") {
+			return Color::Indigo;
+		}
+		else if (colorStr == "violet") {
+			return Color::Violet;
+		}
+		else if (colorStr == "plum") {
+			return Color::Plum;
+		}
+		else if (colorStr == "cyan" || colorStr == "aqua") {
+			return Color::Cyan;
+		}
+		else if (colorStr == "teal") {
+			return Color::Teal;
+		}
+		else if (colorStr == "turquoise") {
+			return Color::Turquoise;
+		}
+		else if (colorStr == "brown") {
+			return Color::Brown;
+		}
+		else if (colorStr == "maroon") {
+			return Color::Maroon;
+		}
+		else if (colorStr == "tan") {
+			return Color::Tan;
+		}
+		else if (colorStr == "beige") {
+			return Color::Beige;
+		}
+		else if (colorStr == "navy") {
+			return Color::Navy;
+		}
+		else if (colorStr == "olive") {
+			return Color::Olive;
+		}
+		else if (colorStr == "silver") {
+			return Color::Silver;
+		}
+		else if (colorStr == "transparent") {
+			return Color::Transparent;
+		}
+		if (colorStr.find("#") == 0) { //"#4e6ef2"
+			auto rStr = colorStr.substr(1, 2);
+			auto gStr = colorStr.substr(3, 2);
+			auto bStr = colorStr.substr(5, 2);
+			DWORD r, g, b;
+			sscanf_s(rStr.c_str(), "%x", &r);
+			sscanf_s(gStr.c_str(), "%x", &g);
+			sscanf_s(bStr.c_str(), "%x", &b);
+			//Argb = MakeARGB(255, r, g, b);
+			return Color((BYTE)r, (BYTE)g, (BYTE)b);
+		}
+		if (colorStr.find("rgb") == 0) { //"rgb(255,100,2,3)"
+			size_t pos1 = colorStr.find("(");
+			size_t pos2 = colorStr.rfind(")");
+			UIString rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
+			auto rgbList = rgbStr.split(",");
+			BYTE r, g, b;
+			r = std::stoi(rgbList.at(0));
+			g = std::stoi(rgbList.at(1));
+			b = std::stoi(rgbList.at(2));
+			BYTE a = 255;
+			//考虑到rgba
+			if (rgbList.size() > 3) {
+				std::string aStr = rgbList.at(3);
+				if (aStr.find(".") != std::string::npos) {
+					//浮点型0~1
+					a = (BYTE)(255 * std::atof(aStr.c_str()) + 0.5);
+				}
+				else {
+					//整数型0~255
+					a = std::stoi(aStr.c_str());
+				}
+			}
+			return Color(r, g, b, a);
+		}
+		return Color();
+	}
+
+	Image* Image::Make(const UIString& fileOrRes) {
+		//本地文件中获取
+		std::wstring wstr = fileOrRes.unicode();
+		DWORD dwAttr = GetFileAttributesW(wstr.c_str());
+		if (dwAttr && (dwAttr != -1) && (dwAttr & FILE_ATTRIBUTE_ARCHIVE)) {
+			return new Image(wstr);
+		}
+		//从资源中获取
+		if (ezui::__EzUI__Resource) {
+			std::string data;
+			ezui::__EzUI__Resource->GetFile(fileOrRes, &data);
+			if (data.empty()) {
+				return NULL;
+			}
+			return new Image(data.c_str(), data.size());
+		}
+		return NULL;
+	}
+
 	void InstallFont(const UIString& fontFileName) {
 		auto ret = ::AddFontResourceW(fontFileName.unicode().c_str());
 		::SystemParametersInfoW(SPI_SETNONCLIENTMETRICS, 0, nullptr, SPIF_SENDCHANGE);//刷新

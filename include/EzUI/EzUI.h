@@ -83,44 +83,8 @@ namespace ezui {
 		Color(const DWORD& rgba = 0) :ezui::__EzUI__Color(rgba) {}
 		Color(BYTE r, BYTE g, BYTE b, BYTE a = 255) :ezui::__EzUI__Color(r, g, b, a) {}
 	public:
-		static Color Make(const UIString& colorStr) {
-			if (colorStr.find("#") == 0) { //"#4e6ef2"
-				auto rStr = colorStr.substr(1, 2);
-				auto gStr = colorStr.substr(3, 2);
-				auto bStr = colorStr.substr(5, 2);
-				DWORD r, g, b;
-				sscanf_s(rStr.c_str(), "%x", &r);
-				sscanf_s(gStr.c_str(), "%x", &g);
-				sscanf_s(bStr.c_str(), "%x", &b);
-				//Argb = MakeARGB(255, r, g, b);
-				return Color((BYTE)r, (BYTE)g, (BYTE)b);
-			}
-			if (colorStr.find("rgb") == 0) { //"rgb(255,100,2,3)"
-				size_t pos1 = colorStr.find("(");
-				size_t pos2 = colorStr.rfind(")");
-				UIString rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
-				auto rgbList = rgbStr.split(",");
-				BYTE r, g, b;
-				r = std::stoi(rgbList.at(0));
-				g = std::stoi(rgbList.at(1));
-				b = std::stoi(rgbList.at(2));
-				BYTE a = 255;
-				//考虑到rgba
-				if (rgbList.size() > 3) {
-					std::string aStr = rgbList.at(3);
-					if (aStr.find(".") != std::string::npos) {
-						//浮点型0~1
-						a = (BYTE)(255 * std::atof(aStr.c_str()) + 0.5);
-					}
-					else {
-						//整数型0~255
-						a = std::stoi(aStr.c_str());
-					}
-				}
-				return Color(r, g, b, a);
-			}
-			return Color();
-		}
+		//构建一个Color
+		static Color Make(const UIString& colorStr);
 		virtual ~Color() {}
 	};
 
@@ -135,24 +99,7 @@ namespace ezui {
 		Image(const void* data, size_t dataCount) :DXImage(data, dataCount) {}
 	public:
 		//从资源或者本地文件自动构建一个Image
-		static Image* Make(const UIString& fileOrRes) {
-			//本地文件中获取
-			std::wstring wstr = fileOrRes.unicode();
-			DWORD dwAttr = GetFileAttributesW(wstr.c_str());
-			if (dwAttr && (dwAttr != -1) && (dwAttr & FILE_ATTRIBUTE_ARCHIVE)) {
-				return new Image(wstr);
-			}
-			//从资源中获取
-			if (ezui::__EzUI__Resource) {
-				std::string data;
-				ezui::__EzUI__Resource->GetFile(fileOrRes, &data);
-				if (data.empty()) {
-					return NULL;
-				}
-				return new Image(data.c_str(), data.size());
-			}
-			return NULL;
-		}
+		static Image* Make(const UIString& fileOrRes);
 	};
 #endif
 	// 定义用于保存显示器信息的结构体

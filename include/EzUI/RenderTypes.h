@@ -374,15 +374,63 @@ namespace ezui {
 		}
 	public:
 		// Common color constants
-		enum :DWORD
+		enum : DWORD
 		{
-			Transparent = 0,
-			Red = 4278190335,
-			Green = 4278255360,
-			Blue = 4294901760,
-			Black = 4278190080,
-			White = 4294967295,
-			Gray = 4286611584,
+			Transparent = 0x00000000, // 全透明
+
+			Black = 0xFF000000, // 黑色
+			White = 0xFFFFFFFF, // 白色
+			Gray = 0xFF808080, // 灰色
+			LightGray = 0xFFD3D3D3, // 浅灰色
+			DarkGray = 0xFFA9A9A9, // 深灰色
+
+			Red = 0xFF0000FF, // 红色
+			DarkRed = 0xFF00008B, // 深红色
+			LightCoral = 0xFF8080F0, // 浅珊瑚红
+			Tomato = 0xFF4763FF, // 番茄色
+			Crimson = 0xFF3C14DC, // 猩红色
+
+			Green = 0xFF00FF00, // 绿色
+			Lime = 0xFF00FF00, // 酸橙绿（亮绿）
+			DarkGreen = 0xFF006400, // 深绿色
+			LawnGreen = 0xFF00FC7C, // 草坪绿
+			PaleGreen = 0xFF98FB98, // 苍绿色
+
+			Blue = 0xFFFF0000, // 蓝色
+			RoyalBlue = 0xFFE16941, // 皇家蓝
+			DodgerBlue = 0xFFFF901E, // 道奇蓝
+			DeepSkyBlue = 0xFFFFBF00, // 深天蓝
+			LightBlue = 0xFFE6D8AD, // 浅蓝色
+
+			Yellow = 0xFFFFFF00, // 黄色
+			Gold = 0xFFD700FF, // 金色
+			LightYellow = 0xFFE0FFFF, // 浅黄色
+			Khaki = 0xFF8CE6F0, // 卡其色
+
+			Orange = 0xFFA500FF, // 橙色
+			DarkOrange = 0xFF008CFF, // 深橙色
+			Coral = 0xFF507FFF, // 珊瑚色
+			Salmon = 0xFF7280FA, // 鲑鱼色
+
+			Purple = 0xFF800080, // 紫色
+			MediumPurple = 0xFFDB7093, // 中紫色
+			Indigo = 0xFF82004B, // 靛青色
+			Violet = 0xFFEE82EE, // 紫罗兰
+			Plum = 0xFFDDA0DD, // 李子紫
+
+			Cyan = 0xFFFFFF00, // 青色
+			Teal = 0xFF008080, // 水鸭色
+			Aqua = 0xFFFFFF00, // 浅绿色（水色）
+			Turquoise = 0xFFD0E040, // 绿松石色
+
+			Brown = 0xFF2A2AA5, // 棕色
+			Maroon = 0xFF000080, // 栗色（褐红）
+			Tan = 0xFF8CB4D2, // 茶色
+			Beige = 0xFFDCF5F5, // 米色
+
+			Navy = 0xFF800000, // 藏青色
+			Olive = 0xFF008080, // 橄榄色
+			Silver = 0xFFC0C0C0  // 银色
 		};
 	};
 
