@@ -58,17 +58,49 @@ build64.bat
 请在 `WinMain` 函数中创建 `Application` 实例并调用 `app.Exec()` 以启动消息循环：
 
 ```cpp
-int WINAPI WinMain(...) {
+#include <Windows.h>
+#include "EzUI/UIManager.h"
+#include "Ezui/Window.h"
+#include "Ezui/Application.h"
 
-    Application app;
+using namespace ezui;
 
-    Window wnd;
-    VLayout layout;
-    wnd.SetLayout(&layout);
-    wnd.Show();
+class TestForm :public Window {
+private:
+	UIManager umg;//ui管理器
+public:
+	TestForm() :Window(800, 600) {
+		//umg.LoadXmlFile("res/form.htm");//从文件中加载xml界面
+		umg.LoadXmlData("<vbox> <label text=\"hello world\"></label> </vbox>");//从内存中加载布局
+		umg.SetupUI(this);//设置ui
+	}
+	virtual ~TestForm() {
+	}
+	virtual void OnClose(bool& bClose) override {
+		int result = ::MessageBoxW(frm.Hwnd(), L"要退出程序吗？", L"提示", MB_YESNO | MB_ICONQUESTION);
+		if (result == IDYES) {
+			Application::Exit(0);//当窗口关闭时 整个程序退出
+		} else {
+			bClose=false;  // 用户点击了“否” 此标志设置为false将不会关闭
+		}
+	}
+};
 
-    return app.Exec();
-}
+//程序入口;
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPWSTR    lpCmdLine,
+	_In_ int       nCmdShow)
+{
+
+	Application app;
+
+	TestForm testForm;
+	testForm.SetText(L"我是测试窗口");
+	testForm.Show(nCmdShow);
+
+	return app.Exec();
+};
 ```
 
 ### 🧱 控件与组件列表（部分）
