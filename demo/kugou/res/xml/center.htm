@@ -4,11 +4,8 @@
         <hbox height="40" id="tools">
             <spacer width="15"></spacer>
             <label underline="1,3" text="默认列表" halign="left" tablayout="leftList"></label>
-            <!--<spacer width="18"></spacer>
-            <label id="icon1" width="25" height="25" y="7" tablayout="leftList"></label>-->
         </hbox>
         <tablayout id="leftList">
-            <!--<iframe src="xml/wechat.htm"></iframe>-->
             <vlist id="playList"></vlist>
             <vlist id="downList"></vlist>
         </tablayout>
@@ -67,4 +64,11 @@
     #testBar:active {
         color: #ff6a00;
     }
+
+    /*设置滚动条样式*/
+    #playList::-webkit-scrollbar {
+        width:9px;
+        border-radius:9px;
+    }
+
 </style>

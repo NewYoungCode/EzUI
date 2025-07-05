@@ -10,7 +10,6 @@ MainFrm::MainFrm() :Form(1020, 690)
 	exitMenu->Append(new Menu(L"打开主程序"));
 
 	ntfi.SetMenu(exitMenu);
-
 	ntfi.MessageCallback = [=](UINT menId)->bool {
 		
 		int pause = 0;
@@ -348,7 +347,9 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 
 	if (args.EventType == Event::OnMouseClick) {
 		if (sender->Name == "login") {
-			Application::Exit();
+			LoginFrm* loginFrm=new LoginFrm(Hwnd());
+			loginFrm->ShowModal(true);
+			delete loginFrm;
 		}
 		if (sender->Name == "next") {
 			int pos = this->FindLocalSong(this->nowSong);
@@ -487,6 +488,12 @@ void MainFrm::TimerTick() {
 			}
 			if (w != lastWidth) {
 				lastWidth = w;
+				if (w == 0) {
+					playerBar2->SetVisible(false);
+				}
+				else {
+					playerBar2->SetVisible(true);
+				}
 				playerBar2->SetFixedWidth(w);
 				playerBar2->Invalidate();
 			}

@@ -57,7 +57,7 @@ namespace ezui {
 		//从文件中加载布局
 		void LoadXmlFile(const UIString& fileName);
 		//从字符串中加载布局
-		void LoadXml(const UIString& xmlContent);
+		void LoadXmlData(const UIString& xmlContent);
 		//设置样式表
 		void SetStyleSheet(const UIString& styleContent);
 		//从文件中加载样式

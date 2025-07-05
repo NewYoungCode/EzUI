@@ -9,7 +9,6 @@ public:
 	Label time;
 	Label del;
 	virtual ~LocalItem();
-	virtual void OnChildPaint(PaintEventArgs& args)override;
 	LocalItem(const UIString& _songName, const UIString& _songTime = "03:56");
 };
 /// <summary>
@@ -25,4 +24,11 @@ class SearchItem :public HBox {
 public:
 	virtual ~SearchItem();
 	SearchItem(const Song& s);
+};
+
+//登录窗口
+class LoginFrm :public LayeredWindow {
+	UIManager umg;
+public:
+	LoginFrm(HWND owner);
 };

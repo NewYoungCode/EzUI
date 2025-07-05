@@ -31,11 +31,11 @@ namespace ezui {
 		//用于提示的窗口句柄
 		HWND _hWndTips = NULL;
 		//初始化窗口
-		void InitWindow(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
 	private:
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
 		bool IsInWindow(Control& pControl, Control& it);
+		void InitWindow(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
 	protected:
 		//鼠标按下以标题栏方式移动窗口
 		void TitleMoveWindow();
@@ -166,7 +166,7 @@ namespace ezui {
 		//关闭窗口 exitCode为退出代码
 		void Close(int_t exitCode = 0);
 
-		//模态窗口方式显示窗口(会阻塞)
+		//模态窗口方式显示窗口(会阻塞) 请务必在窗口构造函数中传入owner窗口句柄
 		virtual int_t ShowModal(bool disableOnwer = true);
 
 		//最小化窗口

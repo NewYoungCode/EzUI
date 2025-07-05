@@ -1,0 +1,74 @@
+<vbox style="background-color:rgb(255,255,255)">
+    <hbox id="title" height="45" action="move">
+        <spacer></spacer>
+        <hbox width="80" id="btns">
+            <label text="0" action="mini"></label>
+            <label text="r" name="close" action="close"></label>
+        </hbox>
+    </hbox>
+
+    <vbox id="form" margin-top="20" spacing="15">
+        <hbox>
+            <label width="60" text="用户名" halign="right"></label>
+            <spacer width="10"></spacer>
+            <hbox class="inputBox">
+                <input margin-left="10" type="text" name="username" placeholder="请输入用户名" />
+            </hbox>
+            <spacer width="10"></spacer>
+        </hbox>
+        <hbox>
+            <label width="60" text="密码" halign="right"></label>
+            <spacer width="10"></spacer>
+            <hbox class="inputBox">
+                <input margin-left="10" passwordchar="*" name="password" placeholder="请输入密码" />
+            </hbox>
+            <spacer width="10"></spacer>
+        </hbox>
+    </vbox>
+
+    <hbox>
+        <spacer></spacer>
+        <button id="btnLogin" text="登录"></button>
+        <spacer></spacer>
+
+    </hbox>
+</vbox>
+
+<style>
+    #btns {
+        font-family: "Marlett";
+        font-size: 13px;
+        color: #dddddd;
+    }
+
+        #btns:hover {
+            color: #ffffff;
+        }
+
+    #title {
+        font-size: 13px;
+        color: #ffffff;
+        background-color: #0078A0;
+    }
+
+    .inputBox {
+        height: 26px;
+        border: 1px;
+        border-radius: 4px;
+        background-color: #f8f8f8;
+        color: #333333;
+    }
+
+    #btnLogin {
+        width: 80px;
+        height: 30px;
+        background-color: #0078d7;
+        color: rgb(255,255,255);
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+        #btnLogin:hover {
+            background-color: #005a9e;
+        }
+</style>

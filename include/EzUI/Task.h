@@ -4,8 +4,8 @@
 
 namespace ezui {
 	class UI_EXPORT Task {
-		bool _bStop = false;
-		std::thread* _task = NULL;
+		bool _finished = false;
+		std::thread* _thread = NULL;
 		bool _bJoin = false;
 		std::mutex _mtx;
 		std::condition_variable _codv;
@@ -15,12 +15,12 @@ namespace ezui {
 		template<class Func, class... Args>
 		Task(Func&& f, Args&& ...args) {
 			std::function<void()>* func = new std::function<void()>(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
-			_task = new std::thread([this, func]() mutable {
+			_thread = new std::thread([this, func]() mutable {
 				(*func)();
 				delete func;
 				{
 					std::unique_lock<std::mutex> autoLock(_mtx);
-					_bStop = true;
+					_finished = true;
 				}
 				_codv.notify_all();
 				});

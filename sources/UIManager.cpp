@@ -474,10 +474,10 @@ namespace ezui {
 	void UIManager::LoadXmlFile(const UIString& fileName) {
 		std::string data;
 		if (GetResource(fileName, &data)) {
-			LoadXml(data);
+			LoadXmlData(data);
 		}
 	}
-	void UIManager::LoadXml(const UIString& xmlContent)
+	void UIManager::LoadXmlData(const UIString& xmlContent)
 	{
 		TiXmlDocument doc;
 		auto result = doc.Parse(xmlContent.c_str(), NULL, TiXmlEncoding::TIXML_ENCODING_UTF8);

@@ -6,7 +6,7 @@ const WCHAR* xml = L"<vbox id=\"main\"> <hbox height=\"40\">  <radiobutton class
 void MainFrm::Init() {
 	this->SetText(L"EzUI资源打包器");
 	//ui.LoadXmlFile("main.html");
-	ui.LoadXml(xml);
+	ui.LoadXmlData(xml);
 	ui.SetupUI(this);
 	//第一页的控件
 	this->tab = (TabLayout*)this->FindControl("tab");

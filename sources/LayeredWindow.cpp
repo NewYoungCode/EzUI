@@ -8,9 +8,7 @@ namespace ezui {
 		_timeOut.Tick = [this](ThreadTimer* t) {
 			t->Stop();//停止
 			Sleep(5);//延迟5ms之后再去绘制
-			Invoke([this]() {
-				this->Paint();
-				});
+			::SendMessage(Hwnd(), WM_PAINT,  NULL, NULL);
 			};
 		this->PublicData->InvalidateRect = [this](const Rect& rect) ->void {
 			//标记窗口无效区域
@@ -18,9 +16,7 @@ namespace ezui {
 			};
 		this->PublicData->UpdateWindow = [this]()->void {
 			//立即更新窗口中的无效区域
-			Invoke([this]() {
-				this->Paint();
-				});
+			::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
 			};
 		//获取客户区大小 创建一个位图给窗口绘制
 		Size sz = GetClientRect().GetSize();
@@ -31,12 +27,14 @@ namespace ezui {
 			delete _winBitmap;
 		}
 	}
+
 	void LayeredWindow::InvalidateRect(const Rect& _rect) {
 		//将此区域添加到无效区域
 		_invalidateRect.push_back(_rect);
 		//timer延迟绘制
 		_timeOut.Start();
 	}
+	
 	void LayeredWindow::BeginPaint(Rect* out_rect)
 	{
 		const Rect& clientRect = GetClientRect();
@@ -103,6 +101,7 @@ namespace ezui {
 		switch (uMsg)
 		{
 		case WM_PAINT: {
+			Paint();
 			return TRUE;
 		}
 		default:

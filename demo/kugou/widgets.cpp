@@ -2,10 +2,6 @@
 
 LocalItem::LocalItem(const UIString& _songName, const UIString& _songTime) {
 
-	//this->Style.FontSize = 12;
-	//this->Style.Angle = 5;
-	//this->HoverStyle.Angle = 6;
-
 	del.Style.ForeImage = Image::Make(L"res/imgs/del.png");
 	del.SetFixedSize({ 20,20 });
 	del.Style.Cursor = LoadCursor(Cursor::HAND);
@@ -22,10 +18,6 @@ LocalItem::LocalItem(const UIString& _songName, const UIString& _songTime) {
 	//穿透事件
 	songName.EventPassThrough = time.EventPassThrough = Event::OnHover | Event::OnActive | Event::OnMouseDoubleClick;
 	songName.HoverStyle.FontSize = 15;
-
-	/*	songName.Padding.Left = 10;
-		songName.SetAutoHeight(true);
-		songName.SetUnderline(0,5);*/
 
 	time.HoverStyle.Angle = 180;
 	time.SetFixedWidth(50);
@@ -48,12 +40,6 @@ LocalItem::~LocalItem() {
 	if (del.Style.ForeImage) {
 		delete del.Style.ForeImage;
 	}
-}
-void LocalItem::OnChildPaint(PaintEventArgs& args) {
-	__super::OnChildPaint(args);
-	//置顶 绘制删除线
-	//args.Graphics.SetColor(Color::Red);
-	//args.Graphics.FillRectangle(Rect(0,17, 308, 2),0);
 }
 
 SearchItem::~SearchItem() {
@@ -121,4 +107,13 @@ SearchItem::SearchItem(const Song& s) {
 	Add(new HSpacer(5));
 	Add(&time);
 	Add(new HSpacer(5));
+}
+
+LoginFrm::LoginFrm(HWND owner) :LayeredWindow(300, 200,  owner)
+{
+	umg.LoadXmlFile("res/xml/login.htm");
+	umg.SetupUI(this);
+	this->Border.Radius = 10;
+	this->Border = 1;
+	this->Border.Color = Color::Gray;
 }

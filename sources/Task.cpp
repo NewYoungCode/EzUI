@@ -6,18 +6,18 @@ namespace ezui {
 			_bJoin = true;
 			std::unique_lock<std::mutex> autoLock(_mtx);
 			_codv.wait(autoLock, [this]() ->bool {
-				return _bStop;
+				return _finished;
 				});
-			_task->join();
+			_thread->join();
 		}
 	}
 	bool Task::IsStopped() {
 		std::unique_lock<std::mutex> autoLock(_mtx);
-		return _bStop;
+		return _finished;
 	}
 	Task::~Task() {
 		Wait();
-		delete _task;
+		delete _thread;
 	}
 
 	TaskFactory::TaskFactory(int maxTaskCount) {
