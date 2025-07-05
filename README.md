@@ -8,7 +8,7 @@
 
 ## ✨ 框架特色
 
-- 🪱 **基于 Win32 消息机制**：轻量、无依赖，逻辑控件系统拦截并下发鼠标键盘消息，自主响应 `WM_PAINT` 绘制。
+- 🪱 **基于 Win32 消息机制**：轻量、无依赖，逻辑控件系统拦截并下发鼠标键盘消息
 - 🎨 **2D 图形绘制**：当前基于 Direct2D 绘图，具备高性能、高分辨率适配能力。
 - 🧹 **弹性布局系统**：支持自动宽高、自适应布局，开发体验类比前端 Flex 设计。
 - 🎭 **伪类 CSS 支持**：支持 `hover`、`active`、`checked` 等状态样式，类选择器、ID 选择器、组合选择器等完整选择器系统。
@@ -16,9 +16,9 @@
 - 💡 **事件系统**：支持事件冒泡机制，可实现事件捕获与穿透。
 - 🧩 **高 DPI 适配**：框架自动处理 DPI 缩放与坐标换算，支持多显示器高分屏。
 - 🪪 **多种窗口类型支持**：
-  - `Window`：经典边框窗口
-  - `BorderlessWindow`：无边框、带阴影
-  - `LayeredWindow`：分层透明窗口，支持异形与实时重绘
+  - `Window`：经典边框窗口 windows自动发送`WM_PAINT`消息绘制
+  - `BorderlessWindow`：无边框、带阴影 windows自动发送`WM_PAINT`消息绘制
+  - `LayeredWindow`：分层透明窗口，支持异形与实时重绘 手动发送 `WM_PAINT`消息进行绘制
   - `PopupWindow`：失焦自动关闭的弹出窗口，适用于菜单等
 
 ---
@@ -43,7 +43,7 @@ git clone https://github.com/NewYoungCode/EzUI.git
 build.bat
 ```
 
-- 构建 64 位项目（未包含 kugou 项目，因为未提供对应 VLC 的 64 位库）：
+- 构建 64 位项目（未包含 kugou 项目）：
 
 ```bash
 build64.bat
@@ -59,10 +59,14 @@ build64.bat
 
 ```cpp
 int WINAPI WinMain(...) {
+
     Application app;
-    Window win;
-    win.SetLayout(new VLayout(...));
-    win.Show();
+
+    Window wnd;
+    VLayout layout;
+    wnd.SetLayout(&layout);
+    wnd.Show();
+
     return app.Exec();
 }
 ```
@@ -89,7 +93,7 @@ int WINAPI WinMain(...) {
 - `TileListView`：瓦片式列表视图
 - `TabLayout`：选项卡切换容器
 - `Spacer`：空隙组件，占位用
-- `ShadowBox`：带阴影容器，可用于分组或浮层背景
+- `ShadowBox`：为无边框窗口提供窗口阴影
 - `IFrame`：内嵌页面控件，功能类似 Web 前端中的 `<iframe>`
 - `UIDef`：框架内使用的宏定义集合
 - `UIManager`：UI 样式与资源统一管理
@@ -98,7 +102,7 @@ int WINAPI WinMain(...) {
 - `RenderTypes`：绘图相关类型定义（颜色、对齐方式等）
 - `Direct2DRender`：Direct2D 绘图实现类
 - `Bitmap`：图像资源封装
-- `Resource.h`：自定义资源管理类（非 VS rc 文件），用于手动加载与管理框架资源（不含资源 ID 定义）
+- `Resource.h`：自定义资源管理类（非 VS rc 文件），用于手动加载与管理框架资源
 - `Timer` / `Task`：定时与异步任务处理辅助类
 - `EzUI.h`：框架主接口头文件，定义事件类、枚举、全局资源等核心结构
 
@@ -106,17 +110,27 @@ int WINAPI WinMain(...) {
 
 ```css
 #submitBtn {
-    width: 100px;
-    height: 30px;
-    background: #0078d7;
+    width: 100px; /*静态样式时支持调整大小*/
+    height: 30px; /*静态样式时支持调整大小*/
+    background-color: #0078d7;
 }
 
 #submitBtn:hover {
-    background: #005a9e;
+    background-color: #005a9e;
+}
+
+.classA .classB {  /*多选择器*/
+    color:#ffffff;
+}
+
+label{  /*标签选择器*/
+    color:#ffffff;
 }
 
 .check:checked {
-    border-color: green;
+    border:1px;
+    border-radius:10px;
+    border-color: #005a9e;
 }
 ```
 
