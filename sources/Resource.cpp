@@ -152,7 +152,8 @@ namespace ezui {
 	// 回调：枚举资源名称
 	BOOL CALLBACK EnumNamesProc(HMODULE hModule, LPCWSTR lpszType, LPWSTR lpszName, LONG_PTR lParam) {
 		ResourceContext* ctx = (ResourceContext*)(lParam);
-		if (!IS_INTRESOURCE(lpszName) && ctx->rcIDName == lpszName) {
+		UIString resName = UIString(lpszName).toLower();
+		if (!IS_INTRESOURCE(lpszName) && ctx->rcIDName.toLower() == resName) {
 			ctx->hResource = FindResourceW(hModule, lpszName, lpszType);
 			ctx->rcType = (wchar_t*)lpszType;
 			return FALSE; // 找到就停止

@@ -9,7 +9,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	Curl_Global_Init();//初始化curl
 	Application app;
-	app.SetResource("IDR_MY_RES");
+	app.SetResource("my_res");
 
 	app.EnableHighDpi();//启用高dpi适配
 
