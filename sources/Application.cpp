@@ -1,20 +1,7 @@
 #include "Application.h"
 #include "LayeredWindow.h"
-#include <functional>
 namespace ezui {
 	LRESULT CALLBACK __EzUI__WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-		//if (message == WM_CREATE)
-		//{
-		//	RECT rcClient;
-		//	GetWindowRect(hWnd, &rcClient);
-		//	// Inform the application of the frame change.
-		//	SetWindowPos(hWnd,
-		//		NULL,
-		//		rcClient.left, rcClient.top,
-		//		rcClient.right - rcClient.left, rcClient.bottom - rcClient.top,
-		//		SWP_FRAMECHANGED);
-		//}
-		WindowData* wndData = (WindowData*)UI_GET_USERDATA(hWnd);
 		if (message == WM_CREATE) {
 			__EzUI__Wnds.push_back(hWnd);
 		}
@@ -24,26 +11,12 @@ namespace ezui {
 				__EzUI__Wnds.erase(itor);
 			}
 		}
-		else if (message == WM_GUI_SYSTEM) {
-			if (wParam == WM_GUI_BEGININVOKE || wParam == WM_GUI_INVOKE) {
-				using Func = std::function<void()>;
-				Func* callback = (Func*)lParam;
-				(*callback)();
-				if (wParam == WM_GUI_BEGININVOKE) {
-					delete callback;
-				}
-			}
-			return 0;
-		}
-		else if (message == WM_GUI_APP) {
-			//框架保留消息
-			return 0;
-		}
+		WindowData* wndData = (WindowData*)UI_GET_USERDATA(hWnd);
 		//执行消息过程
 		if (wndData && wndData->WndProc) {
 			return wndData->WndProc(hWnd, message, wParam, lParam);
 		}
-		return ::DefWindowProcW(hWnd, message, wParam, lParam);
+		return ::DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
 	const wchar_t* __EzUI__HiddenMessageWindowClass = L"__EzUI__HiddenMessageWindowClass";
@@ -76,45 +49,6 @@ namespace ezui {
 		);
 	}
 
-	void Application::Init() {
-		//存入全局实例
-		ezui::__EzUI__HINSTANCE = ::GetModuleHandleW(NULL);
-		ezui::__EzUI__ThreadId = ::GetCurrentThreadId();
-		//设计窗口
-		::WNDCLASSW    wc{ 0 };
-		wc.lpfnWndProc = __EzUI__WndProc;//窗口过程
-		wc.hInstance = ezui::__EzUI__HINSTANCE;//
-		wc.hCursor = LoadCursorW(NULL, IDC_ARROW);//光标
-		wc.lpszClassName = ezui::__EzUI__WindowClassName;//类名
-		if (!RegisterClassW(&wc)) //注册窗口
-		{
-			::MessageBoxW(NULL, L"This program requires Windows NT !",
-				wc.lpszClassName, MB_ICONERROR);
-			return;
-		}
-
-		//注册一个窗口类并创建隐形窗口用于UI通讯
-		RegMessageWnd();
-
-		//初始化公共控件库
-		INITCOMMONCONTROLSEX icex;
-		icex.dwSize = sizeof(icex);
-		icex.dwICC = ICC_WIN95_CLASSES;  // 或者使用其他需要的控件类别
-		::InitCommonControlsEx(&icex);
-		//设置路径
-		wchar_t wPath[MAX_PATH]{ 0 };
-		DWORD count = ::GetModuleFileNameW(NULL, wPath, MAX_PATH);
-		for (int_t i = count - 1; i > -1; i--)
-		{
-			if (wPath[i] == L'\\') {
-				wPath[i] = 0;
-				break;
-			}
-		}
-		::SetCurrentDirectoryW(wPath);
-		::CoInitialize(NULL);//初始化com
-		RenderInitialize();
-	}
 	void Application::EnableHighDpi() {
 		ezui::GetMonitor((std::list<MonitorInfo>*) & ezui::__EzUI__MonitorInfos);
 		//DPI感知相关
@@ -168,8 +102,36 @@ namespace ezui {
 #endif
 		return found;
 	}
-	Application::Application() {
-		Init();
+	Application::Application(HINSTANCE hInstance) {
+		//存入全局实例
+		ezui::__EzUI__HINSTANCE = hInstance == NULL ? ::GetModuleHandleW(NULL) : hInstance;
+		ezui::__EzUI__ThreadId = ::GetCurrentThreadId();
+		//设计窗口
+		::WNDCLASSW    wc{ 0 };
+		wc.lpfnWndProc = __EzUI__WndProc;//窗口过程
+		wc.hInstance = ezui::__EzUI__HINSTANCE;//
+		wc.hCursor = LoadCursorW(NULL, IDC_ARROW);//光标
+		wc.lpszClassName = ezui::__EzUI__WindowClassName;//类名
+		if (!RegisterClassW(&wc)) //注册窗口
+		{
+			::MessageBoxW(NULL, L"This program requires Windows NT !",
+				wc.lpszClassName, MB_ICONERROR);
+			return;
+		}
+
+		//注册一个窗口类并创建隐形窗口用于UI通讯
+		RegMessageWnd();
+
+		//初始化公共控件库
+		INITCOMMONCONTROLSEX icex;
+		icex.dwSize = sizeof(icex);
+		icex.dwICC = ICC_WIN95_CLASSES;  // 或者使用其他需要的控件类别
+		::InitCommonControlsEx(&icex);
+		//为程序设置工作目录
+		std::wstring startPath = Application::StartPath().unicode();
+		::SetCurrentDirectoryW(startPath.c_str());
+		::CoInitialize(NULL);//初始化com
+		RenderInitialize();//初始化图形绘制库 D2D/GDI/GDI+
 	}
 	Application::~Application() {
 		RenderUnInitialize();
@@ -206,6 +168,20 @@ namespace ezui {
 		}
 		//退出消息循环
 		::PostQuitMessage(exitCode);
+	}
+
+	UIString Application::StartPath()
+	{
+		std::vector<wchar_t> wPath(32768);
+		DWORD count = ::GetModuleFileNameW(__EzUI__HINSTANCE, wPath.data(), (DWORD)wPath.size());
+		for (int_t i = count - 1; i > -1; i--)
+		{
+			if (wPath[i] == L'\\') {
+				wPath[i] = 0;
+				break;
+			}
+		}
+		return UIString(wPath.data());
 	}
 
 };
