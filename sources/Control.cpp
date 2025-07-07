@@ -27,6 +27,9 @@ namespace ezui {
 	inline bool __IsValid(const std::wstring& value) {
 		return !value.empty();
 	}
+	inline bool __IsValid(StrokeStyle value) {
+		return value != StrokeStyle::None;
+	}
 
 #define UI_SUPER_STYLE_BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed(ControlState _state)  { \
 	if (_state == ControlState::None) {\
@@ -111,6 +114,7 @@ namespace ezui {
 	UI_BORDER_BINDFUNC(int_t, Border, Right);
 	UI_BORDER_BINDFUNC(int_t, Border, Bottom);
 	UI_BORDER_BINDFUNC(Color, Border, Color);
+	UI_BORDER_BINDFUNC(StrokeStyle, Border, Style);
 
 	UI_STYLE_BINDFUNC(Color, BackColor);
 	UI_STYLE_BINDFUNC(Image*, ForeImage);
@@ -162,6 +166,7 @@ namespace ezui {
 	{
 		const Color& borderColor = border.Color;
 		if (borderColor.GetValue() == 0) return;//边框无效颜色不绘制
+		if (border.Style == StrokeStyle::None)return;//未指定边框风格 不允许绘制
 		int_t borderLeft = border.Left;
 		int_t borderTop = border.Top;
 		int_t borderRight = border.Right;
@@ -170,29 +175,25 @@ namespace ezui {
 		int_t topRightRadius = border.TopRightRadius;
 		int_t bottomRightRadius = border.BottomRightRadius;
 		int_t bottomLeftRadius = border.BottomLeftRadius;
-
-		//决定绘制虚线还是实线
-		e.Graphics.SetStrokeStyle(border.BorderStyle);
+		
+		//指定边框风格
+		e.Graphics.SetStrokeStyle(border.Style);
 		//规则的矩形
 		if (topLeftRadius == 0 && topRightRadius == 0 && bottomLeftRadius == 0 && bottomRightRadius == 0) {
 			bool hasBorder = borderLeft || borderTop || borderRight || borderBottom;
 			if (!hasBorder) return;//边框为0不绘制
 			e.Graphics.SetColor(borderColor);
 			if (borderLeft > 0) {
-				RectF rect(0, 0, (float)borderLeft, (float)Height());
-				e.Graphics.FillRectangle(rect);
+				e.Graphics.DrawLine(PointF{ 0, 0 }, PointF{ 0, (float)Height() }, borderLeft);
 			}
 			if (borderTop > 0) {
-				RectF rect(0, 0, (float)Width(), (float)borderTop);
-				e.Graphics.FillRectangle(rect);
+				e.Graphics.DrawLine(PointF{ 0, 0 }, PointF{ (float)Width(), 0 }, borderTop);
 			}
 			if (borderRight > 0) {
-				RectF rect((float)(_rect.Width - borderRight), 0, (float)borderRight, (float)Height());
-				e.Graphics.FillRectangle(rect);
+				e.Graphics.DrawLine(PointF{ (float)Width() , 0 }, PointF{ (float)Width() , (float)Height() }, borderRight);
 			}
 			if (borderBottom > 0) {
-				RectF rect(0, (float)(_rect.Height - borderBottom), (float)Width(), (float)borderBottom);
-				e.Graphics.FillRectangle(rect);
+				e.Graphics.DrawLine(PointF{ 0, (float)Height() }, PointF{ (float)Width(), (float)Height() }, borderBottom);
 			}
 		}
 		else {
@@ -823,6 +824,7 @@ namespace ezui {
 		}
 		//绘制边框
 		border.Color = GetBorderColor();
+		border.Style = GetBorderStyle();
 		this->OnBorderPaint(args, border);//绘制边框
 #ifdef _DEBUG
 		if (PublicData->Debug) {

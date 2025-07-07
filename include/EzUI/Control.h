@@ -233,6 +233,9 @@ namespace ezui {
 		// 获取边框颜色
 		Color GetBorderColor(ControlState _state = ControlState::None);
 
+		//获取边框样式
+		StrokeStyle GetBorderStyle(ControlState _state = ControlState::None);
+
 		// 获取前景图片
 		Image* GetForeImage(ControlState _state = ControlState::None);
 

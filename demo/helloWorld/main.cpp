@@ -34,36 +34,18 @@ public:
 
 int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
-
 	Application app;//消息循环对象
 
-	//{
-	//	MainFrm frm(800, 600);//无边框窗口
-
-	//	HLayout mainLayout;
-	//	frm.SetLayout(&mainLayout);
-	//	mainLayout.Style.BackgroundColor = Color::White;
-
-	//	Label lb1(&mainLayout);
-	//	Label lb2(&mainLayout);
-
-	//	Label lb3(&mainLayout);
-
-
-	//	lb1.SetMiniWidth(200);
-	//	lb1.SetMaxWidth(500);
-
-	//	lb3.SetMaxWidth(400);
-
-	//	lb1.SetText(L"我是label1");
-	//	lb2.SetText(L"我是label2");
-	//	lb3.SetText(L"我是label333");
-
-
-	//	frm.Show();
-
-	//	return app.exec();
-	//}
+	{
+		MainFrm frm(800, 600);//无边框窗口
+		HLayout mainLayout;
+		mainLayout.Style.Border = 2;
+		mainLayout.Style.Border.Style = StrokeStyle::Dash;
+		mainLayout.Style.Border.Color = Color::Red;
+		frm.SetLayout(&mainLayout);
+		frm.Show();
+		return app.Exec();
+	}
 
 	//keybd_event(VK_LWIN, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
 	MainFrm frm(800, 600);//无边框窗口

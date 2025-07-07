@@ -5,25 +5,6 @@
 #include "tinystr.h"
 
 namespace ezui {
-	//去除空格或者其他符号 双引号内的空格不会去除
-	inline void __EraseChar(UIString& str, char _char) {
-		char* bufStr = new char[str.size() + 1] { 0 };
-		size_t pos = 0;
-		size_t count = 0;
-		for (auto& it : str) {
-			if (it == '"') {
-				++count;
-			}
-			if (it == _char && count != 1) {
-				continue;
-			}
-			if (count == 2)count = 0;
-			bufStr[pos] = it;
-			++pos;
-		}
-		str = bufStr;
-		delete[] bufStr;
-	}
 	inline UIString __Attribute(TiXmlElement* node, const char* szstr) {
 		auto str = node->Attribute(szstr);
 		if (str == NULL) return "";
@@ -33,6 +14,44 @@ namespace ezui {
 		//去掉px字样
 		ui_text::Replace(&numStr, "px", "", true);
 		return std::stof(numStr.c_str());
+	}
+	inline bool __IsPx(const UIString& num, float& outNum) {
+		size_t pos = num.find("px");
+		if (pos != 0 && pos == num.size() - 2) {
+			outNum = std::stof(num.substr(0, pos).c_str());
+			return true;
+		}
+		return false;
+	}
+	inline void __MakeBorder(const UIString str, Border& bd, const std::function<void(float)>& callback) {
+		auto values = str.split(" ");
+		for (auto& v : values) {
+			float num;
+			if (v == "dashed") {
+				bd.Style = StrokeStyle::Dash;
+				continue;
+			}
+			else if (v == "solid") {
+				bd.Style = StrokeStyle::Solid;
+				continue;
+			}
+			else if (v == "none") {
+				bd.Style = StrokeStyle::None;
+				continue;
+			}
+			else if (__IsPx(v, num)) {
+				callback(num);
+				continue;
+			}
+			else
+			{
+				bool isGood = false;
+				Color color = Color::Make(v, &isGood);
+				if (isGood) {
+					bd.Color = color;
+				}
+			}
+		}
 	}
 };
 
@@ -104,10 +123,10 @@ namespace ezui {
 			}
 			if (key == "border-style") {
 				if (value == "solid") {
-					style->Border.BorderStyle = StrokeStyle::Solid;
+					style->Border.Style = StrokeStyle::Solid;
 				}
 				else if (value == "dashed") {
-					style->Border.BorderStyle = StrokeStyle::Dash;
+					style->Border.Style = StrokeStyle::Dash;
 				}
 				break;
 			}
@@ -141,27 +160,36 @@ namespace ezui {
 				break;
 			}
 			if (key == "border") {
-				auto width = __ToFloat(value);
-				style->Border.Left = width;
-				style->Border.Top = width;
-				style->Border.Right = width;
-				style->Border.Bottom = width;
+				__MakeBorder(value, style->Border, [style](float num) {
+					style->Border.Left = num;
+					style->Border.Top = num;
+					style->Border.Right = num;
+					style->Border.Bottom = num;
+					});
 				break;
 			}
 			if (key == "border-left") {
-				style->Border.Left = __ToFloat(value);
+				__MakeBorder(value, style->Border, [style](float num) {
+					style->Border.Left = num;
+					});
 				break;
 			}
 			if (key == "border-top") {
-				style->Border.Top = __ToFloat(value);
+				__MakeBorder(value, style->Border, [style](float num) {
+					style->Border.Top = num;
+					});
 				break;
 			}
 			if (key == "border-right") {
-				style->Border.Right = __ToFloat(value);
+				__MakeBorder(value, style->Border, [style](float num) {
+					style->Border.Right = num;
+					});
 				break;
 			}
 			if (key == "border-bottom") {
-				style->Border.Bottom = __ToFloat(value);
+				__MakeBorder(value, style->Border, [style](float num) {
+					style->Border.Bottom = num;
+					});
 				break;
 			}
 		} while (false);
@@ -186,6 +214,8 @@ namespace ezui {
 			if (pos == -1)continue;
 			UIString key = it.substr(0, pos);
 			UIString value = it.substr(pos + 1);
+			key = key.trim();//去除前后空格
+			value = value.trim();//去除前后空格
 			SetStyle(ctl, cSytle, styleType, key, value, callback);//去应用每一行样式
 		}
 	}
@@ -248,16 +278,13 @@ namespace ezui {
 		{//加载内联样式 优先级最高
 			UIString sytle_static = ctl->GetAttribute("style");//内联样式语法
 			if (!sytle_static.empty()) { //内联样式只允许描述静态效果
-				__EraseChar(sytle_static, ' ');//去除空格
-				ezui::SetStyleSheet(ctl, ControlStyle::Type::Static, sytle_static, BuildImageCallback);
+				ezui::SetStyleSheet(ctl, ControlStyle::Type::Static, sytle_static.trim(), BuildImageCallback);
 			}
 		}
 	}
 
 	void UIManager::AnalysisStyle(const UIString& styleStr, std::list<UIManager::Style>* out) {
-		UIString style = styleStr;
-		//处理空格 双引号内的空格不处理
-		__EraseChar(style, ' ');
+		UIString style = styleStr.trim();
 		while (true)
 		{
 			//处理css的注释
@@ -294,14 +321,16 @@ namespace ezui {
 			UIString str = style.substr(pos3 + 1, pos2 - pos3 - 1);
 			if (pos4 != size_t(-1)) {
 				style_type = name.substr(pos4 + 1);
+				style_type = style_type.trim();
 			}
 			//考虑到多个选择器
 			auto names = name.split(",");
 			for (auto& name : names) {
 				//添加至集合
 				UIManager::Style selector;
-				selector.selectorName = name;
-				selector.styleStr = str;
+				selector.selectorName = name.trim();
+				selector.styleStr = str.trim();
+
 				if (style_type == "hover") {
 					selector.styleType = ControlStyle::Type::Hover;
 				}

@@ -84,7 +84,7 @@ namespace ezui {
 		Color(BYTE r, BYTE g, BYTE b, BYTE a = 255) :ezui::__EzUI__Color(r, g, b, a) {}
 	public:
 		//构建一个Color
-		static Color Make(const UIString& colorStr);
+		static Color Make(const UIString& colorStr, bool* isGood=NULL);
 		virtual ~Color() {}
 	};
 

@@ -544,6 +544,7 @@ namespace ezui {
 	//描边样式
 	enum class StrokeStyle
 	{
+		None,//无
 		Solid,//实线
 		Dash//虚线
 	};
@@ -562,7 +563,7 @@ namespace ezui {
 		WORD BottomRightRadius = 0;
 		WORD BottomLeftRadius = 0;
 		__EzUI__Color Color;
-		StrokeStyle BorderStyle = StrokeStyle::Solid;
+		StrokeStyle Style = StrokeStyle::None;
 	public:
 		class Radius {
 			Border& Border;

@@ -22,7 +22,7 @@ namespace ezui {
 			String(const char* szbuf)noexcept;
 			String(const wchar_t* szbuf)noexcept;
 			String(const std::wstring& wstr)noexcept;
-			//the utf8 Length
+			//获取utf8字符串的字符串长度
 			virtual size_t length() const final;
 			std::wstring unicode() const;
 			std::string ansi() const;
@@ -32,6 +32,8 @@ namespace ezui {
 			String replace(const String& oldText, const String& newText, bool allReplace = true)const;
 			String toLower()const;
 			String toUpper()const;
+			//去除前后空格
+			String trim()const;
 			//find value count
 			size_t count(const String& value);
 			std::vector<String> split(const String& ch)const;

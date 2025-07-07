@@ -159,7 +159,7 @@ namespace ezui {
 
 					render = new DXRender(_bufBitmap->GetHDC(), 0, 0, width, height);
 					render->SetTransform(_shadowWidth, _shadowWidth);
-					render->SetStrokeStyle(border.BorderStyle);
+					render->SetStrokeStyle(border.Style);
 					render->SetColor(border.Color);
 
 					if (borderLeft > 0) {
@@ -184,7 +184,7 @@ namespace ezui {
 			else {
 				render = new DXRender(_bufBitmap->GetHDC(), 0, 0, width, height);
 				render->SetTransform(_shadowWidth, _shadowWidth);
-				render->SetStrokeStyle(border.BorderStyle);
+				render->SetStrokeStyle(border.Style);
 				render->SetColor(border.Color);
 
 				int_t value1 = borderLeft > borderTop ? borderLeft : borderTop;

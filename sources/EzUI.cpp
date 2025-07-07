@@ -17,172 +17,175 @@ namespace ezui {
 	HWND __EzUI_MessageWnd = NULL;
 	const std::list<ezui::MonitorInfo> __EzUI__MonitorInfos;
 
-	Color Color::Make(const UIString& colorStr) {
-		if (colorStr == "black") {
-			return Color::Black;
-		}
-		else if (colorStr == "white") {
-			return Color::White;
-		}
-		else if (colorStr == "gray") {
-			return Color::Gray;
-		}
-		else if (colorStr == "lightgray") {
-			return Color::LightGray;
-		}
-		else if (colorStr == "darkgray") {
-			return Color::DarkGray;
-		}
-		else if (colorStr == "red") {
-			return Color::Red;
-		}
-		else if (colorStr == "darkred") {
-			return Color::DarkRed;
-		}
-		else if (colorStr == "lightcoral") {
-			return Color::LightCoral;
-		}
-		else if (colorStr == "tomato") {
-			return Color::Tomato;
-		}
-		else if (colorStr == "crimson") {
-			return Color::Crimson;
-		}
-		else if (colorStr == "green" || colorStr == "lime") {
-			return Color::Green;
-		}
-		else if (colorStr == "darkgreen") {
-			return Color::DarkGreen;
-		}
-		else if (colorStr == "lawngreen") {
-			return Color::LawnGreen;
-		}
-		else if (colorStr == "palegreen") {
-			return Color::PaleGreen;
-		}
-		else if (colorStr == "blue") {
-			return Color::Blue;
-		}
-		else if (colorStr == "royalblue") {
-			return Color::RoyalBlue;
-		}
-		else if (colorStr == "dodgerblue") {
-			return Color::DodgerBlue;
-		}
-		else if (colorStr == "deepskyblue") {
-			return Color::DeepSkyBlue;
-		}
-		else if (colorStr == "lightblue") {
-			return Color::LightBlue;
-		}
-		else if (colorStr == "yellow") {
-			return Color::Yellow;
-		}
-		else if (colorStr == "gold") {
-			return Color::Gold;
-		}
-		else if (colorStr == "lightyellow") {
-			return Color::LightYellow;
-		}
-		else if (colorStr == "khaki") {
-			return Color::Khaki;
-		}
-		else if (colorStr == "orange") {
-			return Color::Orange;
-		}
-		else if (colorStr == "darkorange") {
-			return Color::DarkOrange;
-		}
-		else if (colorStr == "coral") {
-			return Color::Coral;
-		}
-		else if (colorStr == "salmon") {
-			return Color::Salmon;
-		}
-		else if (colorStr == "purple") {
-			return Color::Purple;
-		}
-		else if (colorStr == "mediumpurple") {
-			return Color::MediumPurple;
-		}
-		else if (colorStr == "indigo") {
-			return Color::Indigo;
-		}
-		else if (colorStr == "violet") {
-			return Color::Violet;
-		}
-		else if (colorStr == "plum") {
-			return Color::Plum;
-		}
-		else if (colorStr == "cyan" || colorStr == "aqua") {
-			return Color::Cyan;
-		}
-		else if (colorStr == "teal") {
-			return Color::Teal;
-		}
-		else if (colorStr == "turquoise") {
-			return Color::Turquoise;
-		}
-		else if (colorStr == "brown") {
-			return Color::Brown;
-		}
-		else if (colorStr == "maroon") {
-			return Color::Maroon;
-		}
-		else if (colorStr == "tan") {
-			return Color::Tan;
-		}
-		else if (colorStr == "beige") {
-			return Color::Beige;
-		}
-		else if (colorStr == "navy") {
-			return Color::Navy;
-		}
-		else if (colorStr == "olive") {
-			return Color::Olive;
-		}
-		else if (colorStr == "silver") {
-			return Color::Silver;
-		}
-		else if (colorStr == "transparent") {
-			return Color::Transparent;
-		}
-		if (colorStr.find("#") == 0) { //"#4e6ef2"
-			auto rStr = colorStr.substr(1, 2);
-			auto gStr = colorStr.substr(3, 2);
-			auto bStr = colorStr.substr(5, 2);
-			DWORD r, g, b;
-			sscanf_s(rStr.c_str(), "%x", &r);
-			sscanf_s(gStr.c_str(), "%x", &g);
-			sscanf_s(bStr.c_str(), "%x", &b);
-			//Argb = MakeARGB(255, r, g, b);
-			return Color((BYTE)r, (BYTE)g, (BYTE)b);
-		}
-		if (colorStr.find("rgb") == 0) { //"rgb(255,100,2,3)"
-			size_t pos1 = colorStr.find("(");
-			size_t pos2 = colorStr.rfind(")");
-			UIString rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
-			auto rgbList = rgbStr.split(",");
-			BYTE r, g, b;
-			r = std::stoi(rgbList.at(0));
-			g = std::stoi(rgbList.at(1));
-			b = std::stoi(rgbList.at(2));
-			BYTE a = 255;
-			//考虑到rgba
-			if (rgbList.size() > 3) {
-				std::string aStr = rgbList.at(3);
-				if (aStr.find(".") != std::string::npos) {
-					//浮点型0~1
-					a = (BYTE)(255 * std::atof(aStr.c_str()) + 0.5);
-				}
-				else {
-					//整数型0~255
-					a = std::stoi(aStr.c_str());
-				}
+	Color Color::Make(const UIString& colorStr, bool* _isGood) {
+		Color color;
+		bool _bCopy;
+		bool* isGood = _isGood ? _isGood : &_bCopy;
+		*isGood = false;
+		do {
+			if (colorStr == "black") {
+				color = Color::Black; *isGood = true; break;
 			}
-			return Color(r, g, b, a);
-		}
-		return Color();
+			else if (colorStr == "white") {
+				color = Color::White; *isGood = true; break;
+			}
+			else if (colorStr == "gray") {
+				color = Color::Gray; *isGood = true; break;
+			}
+			else if (colorStr == "lightgray") {
+				color = Color::LightGray; *isGood = true; break;
+			}
+			else if (colorStr == "darkgray") {
+				color = Color::DarkGray; *isGood = true; break;
+			}
+			else if (colorStr == "red") {
+				color = Color::Red; *isGood = true; break;
+			}
+			else if (colorStr == "darkred") {
+				color = Color::DarkRed; *isGood = true; break;
+			}
+			else if (colorStr == "lightcoral") {
+				color = Color::LightCoral; *isGood = true; break;
+			}
+			else if (colorStr == "tomato") {
+				color = Color::Tomato; *isGood = true; break;
+			}
+			else if (colorStr == "crimson") {
+				color = Color::Crimson; *isGood = true; break;
+			}
+			else if (colorStr == "green" || colorStr == "lime") {
+				color = Color::Green; *isGood = true; break;
+			}
+			else if (colorStr == "darkgreen") {
+				color = Color::DarkGreen; *isGood = true; break;
+			}
+			else if (colorStr == "lawngreen") {
+				color = Color::LawnGreen; *isGood = true; break;
+			}
+			else if (colorStr == "palegreen") {
+				color = Color::PaleGreen; *isGood = true; break;
+			}
+			else if (colorStr == "blue") {
+				color = Color::Blue; *isGood = true; break;
+			}
+			else if (colorStr == "royalblue") {
+				color = Color::RoyalBlue; *isGood = true; break;
+			}
+			else if (colorStr == "dodgerblue") {
+				color = Color::DodgerBlue; *isGood = true; break;
+			}
+			else if (colorStr == "deepskyblue") {
+				color = Color::DeepSkyBlue; *isGood = true; break;
+			}
+			else if (colorStr == "lightblue") {
+				color = Color::LightBlue; *isGood = true; break;
+			}
+			else if (colorStr == "yellow") {
+				color = Color::Yellow; *isGood = true; break;
+			}
+			else if (colorStr == "gold") {
+				color = Color::Gold; *isGood = true; break;
+			}
+			else if (colorStr == "lightyellow") {
+				color = Color::LightYellow; *isGood = true; break;
+			}
+			else if (colorStr == "khaki") {
+				color = Color::Khaki; *isGood = true; break;
+			}
+			else if (colorStr == "orange") {
+				color = Color::Orange; *isGood = true; break;
+			}
+			else if (colorStr == "darkorange") {
+				color = Color::DarkOrange; *isGood = true; break;
+			}
+			else if (colorStr == "coral") {
+				color = Color::Coral; *isGood = true; break;
+			}
+			else if (colorStr == "salmon") {
+				color = Color::Salmon; *isGood = true; break;
+			}
+			else if (colorStr == "purple") {
+				color = Color::Purple; *isGood = true; break;
+			}
+			else if (colorStr == "mediumpurple") {
+				color = Color::MediumPurple; *isGood = true; break;
+			}
+			else if (colorStr == "indigo") {
+				color = Color::Indigo; *isGood = true; break;
+			}
+			else if (colorStr == "violet") {
+				color = Color::Violet; *isGood = true; break;
+			}
+			else if (colorStr == "plum") {
+				color = Color::Plum; *isGood = true; break;
+			}
+			else if (colorStr == "cyan" || colorStr == "aqua") {
+				color = Color::Cyan; *isGood = true; break;
+			}
+			else if (colorStr == "teal") {
+				color = Color::Teal; *isGood = true; break;
+			}
+			else if (colorStr == "turquoise") {
+				color = Color::Turquoise; *isGood = true; break;
+			}
+			else if (colorStr == "brown") {
+				color = Color::Brown; *isGood = true; break;
+			}
+			else if (colorStr == "maroon") {
+				color = Color::Maroon; *isGood = true; break;
+			}
+			else if (colorStr == "tan") {
+				color = Color::Tan; *isGood = true; break;
+			}
+			else if (colorStr == "beige") {
+				color = Color::Beige; *isGood = true; break;
+			}
+			else if (colorStr == "navy") {
+				color = Color::Navy; *isGood = true; break;
+			}
+			else if (colorStr == "olive") {
+				color = Color::Olive; *isGood = true; break;
+			}
+			else if (colorStr == "silver") {
+				color = Color::Silver; *isGood = true; break;
+			}
+			else if (colorStr == "transparent") {
+				color = Color::Transparent; *isGood = true; break;
+			}
+			else if (colorStr.find("#") == 0) { //"#4e6ef2"
+				auto rStr = colorStr.substr(1, 2);
+				auto gStr = colorStr.substr(3, 2);
+				auto bStr = colorStr.substr(5, 2);
+				DWORD r, g, b;
+				sscanf_s(rStr.c_str(), "%x", &r);
+				sscanf_s(gStr.c_str(), "%x", &g);
+				sscanf_s(bStr.c_str(), "%x", &b);
+				color = Color((BYTE)r, (BYTE)g, (BYTE)b);
+				*isGood = true; break;
+			}
+			else if (colorStr.find("rgb") == 0) { //"rgb(255,100,2,3)"
+				size_t pos1 = colorStr.find("(");
+				size_t pos2 = colorStr.rfind(")");
+				UIString rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
+				auto rgbList = rgbStr.split(",");
+				BYTE r = std::stoi(rgbList.at(0));
+				BYTE g = std::stoi(rgbList.at(1));
+				BYTE b = std::stoi(rgbList.at(2));
+				BYTE a = 255;
+				if (rgbList.size() > 3) {
+					std::string aStr = rgbList.at(3);
+					if (aStr.find(".") != std::string::npos) {
+						a = (BYTE)(255 * std::atof(aStr.c_str()) + 0.5);
+					}
+					else {
+						a = std::stoi(aStr.c_str());
+					}
+				}
+				color = Color(r, g, b, a);
+				*isGood = true; break;
+			}
+		} while (false);
+		return color;
 	}
 
 	Image* Image::Make(const UIString& fileOrRes) {

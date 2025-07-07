@@ -115,5 +115,4 @@ LoginFrm::LoginFrm(HWND owner) :LayeredWindow(300, 200,  owner)
 	umg.SetupUI(this);
 	this->Border.Radius = 10;
 	this->Border = 1;
-	this->Border.Color = Color::Gray;
 }
