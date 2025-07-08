@@ -118,9 +118,9 @@ namespace ezui {
 			Copy(_right);
 			return *this;
 		}
-		Geometry(int_t x, int_t y, int_t width, int_t height);
-		Geometry(int_t x, int_t y, int_t width, int_t height, int_t _radius);
-		Geometry(const Rect& _rect, int_t topLeftRadius, int_t topRightRadius, int_t bottomRightRadius, int_t bottomLeftRadius);
+		Geometry(float x, float y, float width, float height);
+		Geometry(float x, float y, float width, float height, float _radius);
+		Geometry(const RectF& _rect, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius);
 		ID2D1Geometry* Get() const {
 			return rgn;
 		}

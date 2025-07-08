@@ -175,7 +175,7 @@ namespace ezui {
 		int_t topRightRadius = border.TopRightRadius;
 		int_t bottomRightRadius = border.BottomRightRadius;
 		int_t bottomLeftRadius = border.BottomLeftRadius;
-		
+
 		//指定边框风格
 		e.Graphics.SetStrokeStyle(border.Style);
 		//规则的矩形
@@ -184,24 +184,41 @@ namespace ezui {
 			if (!hasBorder) return;//边框为0不绘制
 			e.Graphics.SetColor(borderColor);
 			if (borderLeft > 0) {
-				e.Graphics.DrawLine(PointF{ 0, 0 }, PointF{ 0, (float)Height() }, borderLeft);
+				float half = borderLeft / 2.0f;
+				e.Graphics.DrawLine(PointF{ half, 0 }, PointF{ half, (float)Height() }, borderLeft);
 			}
 			if (borderTop > 0) {
-				e.Graphics.DrawLine(PointF{ 0, 0 }, PointF{ (float)Width(), 0 }, borderTop);
+				float half = borderTop / 2.0f;
+				e.Graphics.DrawLine(PointF{ 0, half }, PointF{ (float)Width(), half }, borderTop);
 			}
 			if (borderRight > 0) {
-				e.Graphics.DrawLine(PointF{ (float)Width() , 0 }, PointF{ (float)Width() , (float)Height() }, borderRight);
+				float half = borderRight / 2.0f;
+				e.Graphics.DrawLine(PointF{ (float)Width() - half, 0 }, PointF{ (float)Width() - half, (float)Height() }, borderRight);
 			}
 			if (borderBottom > 0) {
-				e.Graphics.DrawLine(PointF{ 0, (float)Height() }, PointF{ (float)Width(), (float)Height() }, borderBottom);
+				float half = borderBottom / 2.0f;
+				e.Graphics.DrawLine(PointF{ 0, (float)Height() - half }, PointF{ (float)Width(), (float)Height() - half }, borderBottom);
 			}
 		}
 		else {
 			int_t value1 = borderLeft > borderTop ? borderLeft : borderTop;
 			int_t value2 = borderRight > borderBottom ? borderRight : borderBottom;
 			int_t maxBorder = value1 > value2 ? value1 : value2;
+			if (maxBorder <= 0) return;
+			float half = maxBorder / 2.0f;
 			e.Graphics.SetColor(borderColor);
-			Geometry rr(Rect(0, 0, Width(), Height()), topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
+#undef max
+			// 减去半个边框宽度，确保所有边线和圆角都在控件内
+			auto shrink = [&](int r) -> float {
+				return std::max(0.0f, (float)r - half);
+				};
+			Geometry rr(
+				RectF(half, half, Width() - half * 2.0f, Height() - half * 2.0f),
+				shrink(topLeftRadius),
+				shrink(topRightRadius),
+				shrink(bottomRightRadius),
+				shrink(bottomLeftRadius)
+			);
 			e.Graphics.DrawGeometry(rr.Get(), maxBorder);
 		}
 	}

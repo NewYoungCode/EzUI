@@ -152,7 +152,7 @@ namespace ezui {
 			else if (colorStr == "transparent") {
 				color = Color::Transparent; *isGood = true; break;
 			}
-			else if (colorStr.find("#") == 0) { //"#4e6ef2"
+			else if (colorStr.find("#") == 0 && colorStr.size() == 7) { //"#4e6ef2"
 				auto rStr = colorStr.substr(1, 2);
 				auto gStr = colorStr.substr(3, 2);
 				auto bStr = colorStr.substr(5, 2);
@@ -166,19 +166,25 @@ namespace ezui {
 			else if (colorStr.find("rgb") == 0) { //"rgb(255,100,2,3)"
 				size_t pos1 = colorStr.find("(");
 				size_t pos2 = colorStr.rfind(")");
+				if (pos1 == size_t(-1) || pos2 == size_t(-1)) {
+					break;//非标准rgb格式
+				}
 				UIString rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
 				auto rgbList = rgbStr.split(",");
+				if (rgbList.size() < 3) {
+					break;//非标准rgb格式
+				}
 				BYTE r = std::stoi(rgbList.at(0));
 				BYTE g = std::stoi(rgbList.at(1));
 				BYTE b = std::stoi(rgbList.at(2));
 				BYTE a = 255;
-				if (rgbList.size() > 3) {
+				if (rgbList.size() > 3) { //如果有设置透明度
 					std::string aStr = rgbList.at(3);
 					if (aStr.find(".") != std::string::npos) {
-						a = (BYTE)(255 * std::atof(aStr.c_str()) + 0.5);
+						a = (BYTE)(255 * std::atof(aStr.c_str()) + 0.5);//小数点形式描述透明度
 					}
 					else {
-						a = std::stoi(aStr.c_str());
+						a = std::stoi(aStr.c_str());//0~255描述透明度
 					}
 				}
 				color = Color(r, g, b, a);

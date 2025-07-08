@@ -191,7 +191,7 @@ namespace ezui {
 				int_t value2 = borderRight > borderBottom ? borderRight : borderBottom;
 				int_t maxBorder = value1 > value2 ? value1 : value2;
 				Geometry rr(Rect(0, 0, roundWidth, roundHeight), topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
-				render->DrawGeometry(rr.Get(), maxBorder);
+				render->DrawGeometry(rr.Get(), maxBorder - 0.5f);//-0.5是因为Geometry这种方式抗锯齿导致看起来边框很宽
 				render->SetTransform(0, 0);
 			}
 

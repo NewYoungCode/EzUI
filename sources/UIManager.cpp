@@ -10,11 +10,6 @@ namespace ezui {
 		if (str == NULL) return "";
 		return str;
 	}
-	inline float __ToFloat(UIString numStr) {
-		//去掉px字样
-		ui_text::Replace(&numStr, "px", "", true);
-		return std::stof(numStr.c_str());
-	}
 	inline bool __IsPx(const UIString& num, float& outNum) {
 		size_t pos = num.find("px");
 		if (pos != 0 && pos == num.size() - 2) {
@@ -22,6 +17,13 @@ namespace ezui {
 			return true;
 		}
 		return false;
+	}
+	inline float __ToFloat(const UIString& numStr) {
+		float value;
+		if (__IsPx(numStr, value)) {
+			return value;
+		}
+		return 0;//解析失败
 	}
 	inline void __MakeBorder(const UIString str, Border& bd, const std::function<void(float)>& callback) {
 		auto values = str.split(" ");

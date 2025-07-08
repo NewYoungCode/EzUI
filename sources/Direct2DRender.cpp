@@ -39,7 +39,7 @@ namespace ezui {
 			SafeRelease(&_value);
 		}
 	}
-	 float Font::GetFontSize()const {
+	float Font::GetFontSize()const {
 		return _fontSize;
 	}
 	const std::wstring& Font::GetFontFamily()const {
@@ -148,26 +148,26 @@ namespace ezui {
 		FLOAT height = textMetrics.height;
 		return  Size{ (int_t)(width + 1) ,(int_t)(height + 1) };
 	}
-	 float TextLayout::GetFontSize()
+	float TextLayout::GetFontSize()
 	{
 		return this->_fontSize;
 	}
-	 int_t TextLayout::Width() {
+	int_t TextLayout::Width() {
 		this->GetMetrics();
 		FLOAT width = textMetrics.widthIncludingTrailingWhitespace;
 		return (int_t)(width + 1);
 	}
-	 int_t TextLayout::Height() {
+	int_t TextLayout::Height() {
 		this->GetMetrics();
 		FLOAT width = textMetrics.height;
 		return (width + 1);
 	}
-	 int_t TextLayout::GetFontHeight() {
+	int_t TextLayout::GetFontHeight() {
 		this->GetMetrics();
 		FLOAT height = textMetrics.height;
 		return  ((height / textMetrics.lineCount) + 0.5);
 	}
-	 int_t TextLayout::GetLineCount() {
+	int_t TextLayout::GetLineCount() {
 		this->GetMetrics();
 		return textMetrics.lineCount;
 	}
@@ -379,16 +379,16 @@ namespace ezui {
 			SafeRelease(&_bitMap);
 		}
 	}
-	Geometry::Geometry(int_t x, int_t y, int_t width, int_t height) {
+	Geometry::Geometry(float x, float y, float width, float height) {
 		D2D_RECT_F rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) };
 		D2D::g_Direct2dFactory->CreateRectangleGeometry(rectF, (ID2D1RectangleGeometry**)&rgn);
 	}
-	Geometry::Geometry(int_t x, int_t y, int_t width, int_t height, int_t _radius) {
+	Geometry::Geometry(float x, float y, float width, float height, float _radius) {
 		float radius = GetMaxRadius(width, height, _radius);
 		D2D1_ROUNDED_RECT rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) ,radius ,radius };
 		D2D::g_Direct2dFactory->CreateRoundedRectangleGeometry(rectF, (ID2D1RoundedRectangleGeometry**)&rgn);
 	}
-	Geometry::Geometry(const Rect& _rect, int_t topLeftRadius, int_t topRightRadius, int_t bottomRightRadius, int_t bottomLeftRadius)
+	Geometry::Geometry(const RectF& _rect, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius)
 	{
 		ID2D1PathGeometry* pPathGeometry = NULL;
 		D2D1_RECT_F rect = __To_D2D_RectF(_rect);
@@ -586,7 +586,7 @@ namespace ezui {
 	ID2D1StrokeStyle* DXRender::GetStrokeStyle() {
 		return _pStrokeStyle;
 	}
-	void DXRender::SetFont(const std::wstring& fontFamily,float fontSize) {
+	void DXRender::SetFont(const std::wstring& fontFamily, float fontSize) {
 		if (_font != NULL) {
 			if (_font->GetFontFamily() == fontFamily && _font->GetFontSize() == fontSize) {
 				return;
