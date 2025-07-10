@@ -17,14 +17,16 @@ namespace ezui {
 		Style.Cursor = LoadCursor(Cursor::IBEAM);
 		_timer.Interval = 500;
 		_timer.Tick = [this](Timer*) {
-			if (this->Enable == false || this->ReadOnly == true) {
-				_careShow = false;
-				return;
-			}
-			if (!_careRect.IsEmptyArea() && _focus) {
-				_careShow = !_careShow;
-				this->Invalidate();
-			}
+			Invoke([this]() {
+				if (this->Enable == false || this->ReadOnly == true) {
+					_careShow = false;
+					return;
+				}
+				if (!_careRect.IsEmptyArea() && _focus) {
+					_careShow = !_careShow;
+					this->Invalidate();
+				}
+				});
 			};
 	}
 	void TextBox::OnRemove() {
@@ -485,7 +487,7 @@ namespace ezui {
 	{
 		__super::OnFocus(arg);
 		_focus = true;
-		_careShow = true;
+		_careShow = false;
 		_timer.Start();
 		Invalidate();
 	}

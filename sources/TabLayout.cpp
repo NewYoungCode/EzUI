@@ -3,7 +3,7 @@
 namespace ezui {
 	TabLayout::TabLayout()
 	{
-		timer.Tick = [this](ThreadTimer* sender) {
+		timer.Tick = [this](Timer* sender) {
 
 			Invoke([this, sender]() {
 				stepAcc += stepPerFrame;

@@ -109,9 +109,9 @@ LrcControl::~LrcControl()
 LrcControl::LrcControl()
 {
 	//ActiveStyle.BackgroundColor = Color(200,100,200,100);
-	timer = new ThreadTimer;
+	timer = new Timer;
 	timer->Interval = 2;
-	timer->Tick = [=](ThreadTimer*) {
+	timer->Tick = [=](Timer*) {
 		Task();
 	};
 }

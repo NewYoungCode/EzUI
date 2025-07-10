@@ -9,7 +9,7 @@ namespace ezui {
 	{
 	private:
 		int_t _pageIndex = 0;
-		ThreadTimer timer;
+		Timer timer;
 		int_t offset = 0;
 		int_t nowOffset = 0;
 		std::vector<int_t> initialX;

@@ -28,7 +28,7 @@ private:
 	Control* main, * center, * centerLeft, * tools, * playerBar, * playerBar2;
 	CheckBox* labelDeskLrc;
 	//need new 需要释放
-	ThreadTimer* timer = NULL;
+	Timer* timer = NULL;
 	ConfigIni* cfg = NULL;
 	Image* bkImg = NULL, * headImg = NULL;
 	Task* downloadTask = NULL;
