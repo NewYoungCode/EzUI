@@ -27,7 +27,7 @@ namespace ezui {
 		}
 
 		MonitorInfo monitorInfo;
-		GetMontior(&monitorInfo, ::GetWindowOwner(Hwnd()));
+		GetMontior(&monitorInfo, ::GetWindow(Hwnd(),GW_OWNER));
 		x = location.x;
 		y = location.y;
 		width = rect.Width;

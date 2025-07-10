@@ -114,7 +114,7 @@ namespace ezui {
 	Bitmap::~Bitmap() {
 		if (_hdc) {
 			::DeleteDC(_hdc);
-			::DeleteBitmap(_bmp);
+			::DeleteObject((HGDIOBJ)(HBITMAP)(_bmp));
 		}
 	}
 };

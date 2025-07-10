@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "LayeredWindow.h"
+#include <CommCtrl.h>
 namespace ezui {
 	LRESULT CALLBACK __EzUI__WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 		if (message == WM_CREATE) {

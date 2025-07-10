@@ -1,6 +1,7 @@
 #include "Window.h"
 #include "TabLayout.h"
 #include "IFrame.h"
+#include <CommCtrl.h>
 
 namespace ezui {
 	//具有焦点的控件
@@ -362,7 +363,7 @@ namespace ezui {
 	{
 		//此处代码不能随意更改 解决关闭窗口时,owner窗口闪烁问题
 		if (disableOnwer) {
-			_oWnerWnd = ::GetWindowOwner(Hwnd());
+			_oWnerWnd = ::GetWindow(Hwnd(),GW_OWNER);
 		}
 		if (_oWnerWnd) {
 			::EnableWindow(_oWnerWnd, FALSE);

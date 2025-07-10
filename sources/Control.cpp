@@ -207,10 +207,11 @@ namespace ezui {
 			if (maxBorder <= 0) return;
 			float half = maxBorder / 2.0f;
 			e.Graphics.SetColor(borderColor);
-#undef max
+
+#define max(a,b)  (((a) > (b)) ? (a) : (b))
 			// 减去半个边框宽度，确保所有边线和圆角都在控件内
 			auto shrink = [&](int r) -> float {
-				return std::max(0.0f, (float)r - half);
+				return max(0.0f, (float)r - half);
 				};
 			Geometry rr(
 				RectF(half, half, Width() - half * 2.0f, Height() - half * 2.0f),

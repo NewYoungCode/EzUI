@@ -3,7 +3,6 @@
 #include <list>
 #include <vector>
 #include <map>
-#include <chrono>
 #include <exception>
 #include <iostream>
 #include <sstream>
@@ -13,28 +12,16 @@
 #include <functional>
 #include <thread>
 #include <mutex>
-#include <future>
-#include <condition_variable>
-#include <random>
 
 #include <windows.h>
-#include <windowsx.h>
-#include <time.h>
-#include <vcruntime.h>
-#include <commdlg.h>
-#include <stdlib.h>
-#include <malloc.h>
-#include <tchar.h>
-#include <Ime.h>
-#include <shellapi.h>
-#include <time.h>
-#include <sys/timeb.h>
-#include <WinUser.h>
-#include <objbase.h>
-#include <shlwapi.h>
-#include <objidl.h>
-#include <commctrl.h>
-//#include <shellscalingapi.h>
+
+#ifndef GET_X_LPARAM
+#define GET_X_LPARAM(lp)  ((int)(short)LOWORD(lp))
+#endif // !GET_X_LPARAM
+
+#ifndef GET_Y_LPARAM
+#define GET_Y_LPARAM(lp)  ((int)(short)HIWORD(lp))
+#endif // !GET_Y_LPARAM
 
 #ifndef ASSERT
 #ifdef _DEBUG

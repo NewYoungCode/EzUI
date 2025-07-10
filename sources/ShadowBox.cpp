@@ -104,15 +104,15 @@ namespace ezui {
 		//((BYTE*)point)[0] = 0;//修改B通道数值
 	}
 	void ShadowBox::Update(int_t _shadowWidth, const Border& border) {
-		HWND OwnerWnd = ::GetWindowOwner(_hWnd);
-		if (!::IsWindowVisible(OwnerWnd) || ::IsIconic(OwnerWnd)) {
+		HWND ownerWnd = ::GetWindow(_hWnd,GW_OWNER);
+		if (!::IsWindowVisible(ownerWnd) || ::IsIconic(ownerWnd) || ::GetParent(ownerWnd)!=NULL) {
 			::ShowWindow(_hWnd, SW_HIDE);
 			return;
 		}
 		::ShowWindow(_hWnd, SW_SHOW);
 
 		RECT Orect;
-		BOOL empty = ::GetWindowRect(OwnerWnd, &Orect);
+		BOOL empty = ::GetWindowRect(ownerWnd, &Orect);
 		Size paintSize{ Orect.right - Orect.left,Orect.bottom - Orect.top };//父控件作图大小
 
 		_clipRect = Rect({ _shadowWidth ,_shadowWidth }, paintSize);//裁剪区域

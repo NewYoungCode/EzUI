@@ -1,5 +1,6 @@
 #pragma once
 #include "UIString.h"
+#include <ios>
 
 namespace ezui {
 	/// <summary>
@@ -8,23 +9,23 @@ namespace ezui {
 	class UI_EXPORT Resource {
 	public:
 		struct Entry {
-			size_t Offset = 0;//偏移
-			size_t Size = 0;//大小
+			std::streampos Offset = 0;//偏移
+			std::streamsize Size = 0;//大小
 			UIString Name;//名称
 		};
 		//资源文件读取流
 		class UI_EXPORT ReadStream {
-			size_t _pos = 0;
-			size_t _count = 0;
+			std::streampos _pos = 0;
+			std::streamsize _count = 0;
 			const char* _ptr = NULL;
 			std::ifstream* _ifs = NULL;
 		public:
 			ReadStream(HRSRC hRsrc);
 			ReadStream(const UIString& fileName);
-			void seekg(size_t pos);
-			void read(char* buf, size_t count);
-			size_t tellg();
-			const size_t& size();
+			void seekg(std::streampos pos);
+			void read(char* buf, std::streamsize count);
+			std::streampos tellg();
+			const std::streamsize size();
 			virtual ~ReadStream();
 		};
 	private:

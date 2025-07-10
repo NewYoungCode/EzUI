@@ -133,11 +133,11 @@ namespace ezui {
 	}
 	void ComboBox::MenuContent::OnKillFocus(HWND wnd)
 	{
-		if (::GetWindowOwner(Hwnd()) == wnd) {
+		if (::GetWindow(Hwnd(),GW_OWNER) == wnd) {
 			POINT pt;
 			::GetCursorPos(&pt);
 			// 将鼠标屏幕坐标转换为客户端坐标
-			::ScreenToClient(::GetWindowOwner(Hwnd()), &pt);
+			::ScreenToClient(::GetWindow(Hwnd(), GW_OWNER), &pt);
 			Rect _hittestRect = _hittestCtl->GetClientRect();
 			if (_hittestRect.Contains(pt.x, pt.y)) {
 				return;

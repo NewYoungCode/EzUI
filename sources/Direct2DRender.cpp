@@ -1,4 +1,5 @@
 #include "Direct2DRender.h"
+#include <Shlwapi.h>
 #if USED_DIRECT2D
 #define _NOREND_IMAGE_ 
 //#define _NOREND_IMAGE_ return;

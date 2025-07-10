@@ -4,21 +4,11 @@
 #ifndef UI_EXPORT
 #define UI_EXPORT 
 #endif
-// Windows Header Files:
-#include <windows.h>
-// C RunTime Header Files:
-#include <stdlib.h>
-#include <malloc.h>
-#include <memory.h> 
-#include <wchar.h>
-#include <math.h>
+
 #include <d2d1.h>
 #include <d2d1helper.h>
 #include <dwrite.h>
 #include <wincodec.h>
-#include <string>
-#include <list>
-#include <map>
 #include "RenderTypes.h"
 
 namespace ezui {
@@ -37,9 +27,9 @@ namespace ezui {
 		std::wstring _fontFamily;
 		float _fontSize = 0;
 		IDWriteTextFormat* _value = NULL;
+		bool Ref = false;
 		void Copy(const Font& _copy);
 	public:
-		bool Ref = false;
 		Font(const Font& _copy);
 		Font(const std::wstring& fontFamily, float fontSize);
 		float GetFontSize()const;

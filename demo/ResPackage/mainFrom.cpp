@@ -1,7 +1,95 @@
 #include "mainFrom.h"
 #include "FileSystem.h"
 
-const WCHAR* xml = L"<vbox id=\"main\"> <hbox height=\"40\">  <radiobutton class=\"btnTab\" tablayout=\"tab\" checked=\"true\" text=\"打包\" width=\"100\"></radiobutton>  <radiobutton class=\"btnTab\" tablayout=\"tab\" text=\"解包\" width=\"100\"></radiobutton> </hbox> <tablayout id=\"tab\">  <hbox id=\"page1\">   <spacer width=\"10\"></spacer>   <vbox>    <spacer height=\"10\"></spacer>    <label height=\"30\" halign=\"left\" text=\"请选择你要打包的目录 :\"></label>    <hbox height=\"30\">  <textbox class=\"edit\" id=\"editPackDir\"></textbox> <spacer width=\"10\"></spacer><button class=\"btn\" id=\"btnBrowserDir\" width=\"100\" text=\"浏览\"></button>   </hbox>    <label halign=\"left\" style=\"color:#ff0000\" id=\"labelTipsErr\" height=\"20\"></label>    <spacer></spacer>    <label height=\"30\" halign=\"left\" text=\"请选择输出目录 :\"></label>    <hbox height=\"30\">  <textbox class=\"edit\" id=\"editPackName\"></textbox> <spacer width=\"10\"></spacer><button class=\"btn\" id=\"btnSatrtPackage\" width=\"100\" text=\"开始打包\"></button>   </hbox>    <spacer></spacer>    <!-- <hbox height=\"30\">  <spacer></spacer> <button class=\"btn\" id=\"btnSatrtPackage\" width=\"100\" text=\"开始\"></button> <spacer></spacer></hbox>-->    <spacer height=\"10\"></spacer>   </vbox>   <spacer width=\"10\"></spacer>  </hbox>  <hbox id=\"page2\">   <spacer width=\"10\"></spacer>   <vbox>    <spacer height=\"10\"></spacer>    <label height=\"30\" halign=\"left\" text=\"请选择你要预览的文件 :\"></label>    <hbox height=\"30\">  <textbox class=\"edit\" readonly=\"true\" id=\"editResFile\"></textbox> <spacer width=\"10\"></spacer><button class=\"btn\" id=\"btnBrowserFile\" width=\"100\" text=\"浏览\"></button><spacer width=\"10\"></spacer><button class=\"btn\" height=\"30\" id=\"btnUnPackage\" width=\"100\" text=\"解压至...\"></button>   </hbox>    <spacer height=\"10\"></spacer>    <vlist id=\"listFiles\" scrollbar=\"fileScrollbar\" style=\"background-color:rgba(175, 106, 106, 0.5)\"></vlist>   </vbox>   <spacer width=\"10\"></spacer>  </hbox> </tablayout> <hbox margin=\"0,10\" height=\"30\">  <label id=\"labelTips\" text=\"技术支持 718987717@qq.com/19980103ly@gmail.com\"></label> </hbox></vbox><style> .btn {  border-radius: 5;  border: 1;  border-color: #D0D0D0;  background-color: #FDFDFD;  font-size: 13; }  .btn:hover {   border-color: #0078D4;   background-color: #E0EEF9;  }  .btn:active {   font-size: 14;  } .edit {  border: 1;  border-radius: 2;  border-color: #808080; } #tab {  background-color: #F0F0F0; } .btnTab:checked {  background-color: #F0F0F0; } .btnTab:hover {  cursor: pointer; } #fileScrollbar {  border-radius: 5;  background-color: rgba(50,50,50,0.5);  fore-color: rgba(200,200,200,0.5); } #fileScrollbar:active {  fore-color: rgba(200,200,200,0.8); }</style>";
+const wchar_t* xml = LR"xml(
+<vbox id="main">
+  <hbox height="40">
+    <radiobutton class="btnTab" tablayout="tab" checked="true" text="打包" width="100"></radiobutton>
+    <radiobutton class="btnTab" tablayout="tab" text="解包" width="100"></radiobutton>
+  </hbox>
+  <tablayout id="tab">
+    <hbox id="page1">
+      <spacer width="10"></spacer>
+      <vbox>
+        <spacer height="10"></spacer>
+        <label height="30" halign="left" text="请选择你要打包的目录 :"></label>
+        <hbox height="30">
+          <textbox class="edit" id="editPackDir"></textbox>
+          <spacer width="10"></spacer>
+          <button class="btn" id="btnBrowserDir" width="100" text="浏览"></button>
+        </hbox>
+        <label halign="left" style="color:#ff0000" id="labelTipsErr" height="20"></label>
+        <spacer></spacer>
+        <label height="30" halign="left" text="请选择输出目录 :"></label>
+        <hbox height="30">
+          <textbox class="edit" id="editPackName"></textbox>
+          <spacer width="10"></spacer>
+          <button class="btn" id="btnSatrtPackage" width="100" text="开始打包"></button>
+        </hbox>
+        <spacer></spacer>
+        <spacer height="10"></spacer>
+      </vbox>
+      <spacer width="10"></spacer>
+    </hbox>
+    <hbox id="page2">
+      <spacer width="10"></spacer>
+      <vbox>
+        <spacer height="10"></spacer>
+        <label height="30" halign="left" text="请选择你要预览的文件 :"></label>
+        <hbox height="30">
+          <textbox class="edit" readonly="true" id="editResFile"></textbox>
+          <spacer width="10"></spacer>
+          <button class="btn" id="btnBrowserFile" width="100" text="浏览"></button>
+          <spacer width="10"></spacer>
+          <button class="btn" height="30" id="btnUnPackage" width="100" text="解压至..."></button>
+        </hbox>
+        <spacer height="10"></spacer>
+        <vlist id="listFiles" scrollbar="fileScrollbar" style="background-color:rgba(175, 106, 106, 0.5)"></vlist>
+      </vbox>
+      <spacer width="10"></spacer>
+    </hbox>
+  </tablayout>
+  <hbox margin="0,10" height="30">
+    <label id="labelTips" text="技术支持 718987717@qq.com/19980103ly@gmail.com"></label>
+  </hbox>
+</vbox>
+<style>
+  .btn {
+    border-radius: 5px;
+    border: 1px  #D0D0D0 solid;
+    background-color: #FDFDFD;
+    font-size: 13px;
+  }
+  .btn:hover {
+    border-color: #0078D4;
+    background-color: #E0EEF9;
+  }
+  .btn:active {
+    font-size: 14px;
+  }
+  .edit {
+    border: 1px  #808080 solid;
+    border-radius: 2px;
+  }
+  #tab {
+    background-color: #F0F0F0;
+  }
+  .btnTab:checked {
+    background-color: #F0F0F0;
+  }
+  .btnTab:hover {
+    cursor: pointer;
+  }
+  #fileScrollbar {
+    border-radius: 5px;
+    background-color: rgba(50,50,50,0.5);
+    fore-color: rgba(200,200,200,0.5);
+  }
+  #fileScrollbar:active {
+    fore-color: rgba(200,200,200,0.8);
+  }
+</style>
+)xml";
 
 void MainFrm::Init() {
 	this->SetText(L"EzUI资源打包器");
@@ -145,7 +233,8 @@ bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 			if (!resDir.empty() && PathExist(resDir)) {
 				for (auto& it : this->res->Items) {
 					UIString fileName = resDir + "/" + it.Name;
-					Directory::Create(Path::GetDirectoryName(fileName));
+					UIString dir = Path::GetDirectoryName(fileName);
+					Directory::Create(dir);
 					File::Delete(fileName);
 					UIString data;
 					this->res->GetFile(it, &data);

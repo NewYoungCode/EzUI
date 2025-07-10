@@ -11,7 +11,7 @@ namespace ezui {
 		this->_count = _ifs->tellg();
 		this->_ifs->seekg(0);
 	}
-	void Resource::ReadStream::seekg(size_t pos) {
+	void Resource::ReadStream::seekg(std::streampos pos) {
 		if (_ifs) {
 			_ifs->seekg(pos);
 		}
@@ -19,7 +19,7 @@ namespace ezui {
 			this->_pos = pos;
 		}
 	}
-	void Resource::ReadStream::read(char* buf, size_t count) {
+	void Resource::ReadStream::read(char* buf, std::streamsize count) {
 		if (_ifs) {
 			_ifs->read(buf, count);
 		}
@@ -28,7 +28,7 @@ namespace ezui {
 			this->_pos += count;
 		}
 	}
-	size_t Resource::ReadStream::tellg() {
+	std::streampos Resource::ReadStream::tellg() {
 		if (_ifs) {
 			return _ifs->tellg();
 		}
@@ -36,7 +36,7 @@ namespace ezui {
 			return _pos;
 		}
 	}
-	const size_t& Resource::ReadStream::size() {
+	const  std::streamsize Resource::ReadStream::size() {
 		return this->_count;
 	}
 	Resource::ReadStream::~ReadStream() {
@@ -81,7 +81,7 @@ namespace ezui {
 		std::list<Entry> items;
 		std::list<std::wstring> files;
 		__Resource__FindFilesRecursively(dir.unicode(), &files);
-		DWORD headOffset = sizeof(DWORD);
+		std::streamsize headOffset = sizeof(std::streamsize);
 		std::ofstream ofs(outFile.unicode(), std::ios::binary);
 		ofs.seekp(headOffset);
 		for (auto& file : files) {
@@ -105,14 +105,14 @@ namespace ezui {
 		}
 		//将偏移文件头偏移信息写入到文件初始位置
 		ofs.seekp(0);
-		ofs.write((char*)(&headOffset), 4);
+		ofs.write((char*)(&headOffset), sizeof(headOffset));
 		//设置到文件条目位置
 		ofs.seekp(headOffset);
 		//处理路径
 		UIString root = dir + "/";
 		root = root.replace("\\", "/");
 		root = root.replace("//", "/");
-		if (root[root.size() - 1] = '/') {
+		if (root[root.size() - 1] == '/') {
 			root.erase(root.size() - 1, 1);
 		}
 		size_t pos = root.rfind("/");
@@ -122,9 +122,9 @@ namespace ezui {
 		int index = 0;
 		for (auto& item : items) {
 			//写入文件偏移位置
-			ofs.write((char*)(&item.Offset), 4);
+			ofs.write((char*)(&item.Offset), sizeof(headOffset));
 			//写入文件大小
-			ofs.write((char*)(&item.Size), 4);
+			ofs.write((char*)(&item.Size), sizeof(headOffset));
 			//文件路径名称
 			UIString name = item.Name;
 			name = name.replace("\\", "/");
@@ -137,7 +137,7 @@ namespace ezui {
 			index++;
 		}
 		//首位呼应
-		ofs.write((char*)(&headOffset), 4);
+		ofs.write((char*)(&headOffset), sizeof(headOffset));
 		ofs.flush();
 		ofs.close();
 	}
@@ -176,19 +176,19 @@ namespace ezui {
 		_isGood = false;
 		std::list<Entry>& items = (std::list<Entry>&)this->Items;
 		auto& ifs = *(this->_rStream);
-		if (ifs.size() < 8) {
+		if (ifs.size() < sizeof(std::streamsize)*2) {
 			//不是标准的资源文件 不执行解析
 			ASSERT(!"error resource");
 			return;
 		}
 		//读取记录文件位置的偏移
 		ifs.seekg(0);
-		DWORD headOffset;
-		ifs.read((char*)&headOffset, 4);
+		std::streamsize headOffset;
+		ifs.read((char*)&headOffset,sizeof(headOffset));
 		//读取末尾
-		ifs.seekg(ifs.size() - 4);
-		DWORD endValue;
-		ifs.read((char*)&endValue, 4);
+		ifs.seekg(ifs.size() - sizeof(headOffset));
+		std::streamsize endValue;
+		ifs.read((char*)&endValue, sizeof(headOffset));
 		if (headOffset != endValue) {
 			//不是标准的资源文件 不执行解析
 			ASSERT(!"error resource");
@@ -197,18 +197,18 @@ namespace ezui {
 		_isGood = true;
 		//开始读取文件剩余条目
 		ifs.seekg(headOffset);
-		size_t endPos = ifs.size() - 4;
+		std::streampos endPos = ifs.size() - sizeof(headOffset);
 		while (ifs.tellg() < endPos)
 		{
 			//读取到文件偏移位置
-			DWORD fileOffset;
-			ifs.read((char*)&fileOffset, 4);
+			std::streamsize fileOffset;
+			ifs.read((char*)&fileOffset, sizeof(headOffset));
 			//读取文件大小
-			DWORD fileSize;
-			ifs.read((char*)&fileSize, 4);
+			std::streamsize fileSize;
+			ifs.read((char*)&fileSize, sizeof(headOffset));
 			//读取文件名称
-			char buf[512];
-			for (size_t i = 0; i < sizeof(buf); i++)
+			std::vector<char> buf(32768);
+			for (int i = 0; i < buf.size(); i++)
 			{
 				char ch;
 				ifs.read((char*)&ch, 1);
@@ -220,7 +220,7 @@ namespace ezui {
 			Entry item;
 			item.Offset = fileOffset;
 			item.Size = fileSize;
-			item.Name = buf;
+			item.Name = buf.data();
 			items.push_back(item);
 		}
 	}

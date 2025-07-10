@@ -93,7 +93,7 @@ namespace ezui {
 			UIString newStr = _filename;
 			Path::Format(&newStr);
 			int pos = newStr.rfind("/");
-			return _filename.substr(0, pos);
+			return newStr.substr(0, pos);
 		}
 		UIString GetExtension(const UIString& _filename) {
 			size_t pos = _filename.rfind(".");
