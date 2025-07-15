@@ -142,41 +142,11 @@ namespace ezui {
 		ofs.close();
 	}
 
-
-	// 内部使用：枚举名称时的上下文
-	struct ResourceContext {
-		UIString rcIDName;
-		HRSRC hResource = NULL;
-		UIString rcType;
-	};
-	// 回调：枚举资源名称
-	BOOL CALLBACK EnumNamesProc(HMODULE hModule, LPCWSTR lpszType, LPWSTR lpszName, LONG_PTR lParam) {
-		ResourceContext* ctx = (ResourceContext*)(lParam);
-		UIString resName = UIString(lpszName).toLower();
-		if (!IS_INTRESOURCE(lpszName) && ctx->rcIDName.toLower() == resName) {
-			ctx->hResource = FindResourceW(hModule, lpszName, lpszType);
-			ctx->rcType = (wchar_t*)lpszType;
-			return FALSE; // 找到就停止
-		}
-		return TRUE; // 继续
-	}
-	//通过资源中的ID名称查找资源
-	HRSRC Resource::FindRC(const UIString& rcIDName)
-	{
-		HMODULE hModule = ezui::__EzUI__HINSTANCE;
-		ResourceContext ctx;
-		ctx.rcIDName = rcIDName;
-		EnumResourceTypesW(hModule, [](HMODULE hModule, LPWSTR lpszType, LONG_PTR lParam)->BOOL {
-			return EnumResourceNamesW(hModule, lpszType, EnumNamesProc, lParam);
-			}, (LONG_PTR)&ctx);
-		return ctx.hResource;
-	}
-
 	void Resource::UnPackage() {
 		_isGood = false;
 		std::list<Entry>& items = (std::list<Entry>&)this->Items;
 		auto& ifs = *(this->_rStream);
-		if (ifs.size() < sizeof(std::streamsize)*2) {
+		if (ifs.size() < sizeof(std::streamsize) * 2) {
 			//不是标准的资源文件 不执行解析
 			ASSERT(!"error resource");
 			return;
@@ -184,7 +154,7 @@ namespace ezui {
 		//读取记录文件位置的偏移
 		ifs.seekg(0);
 		std::streamsize headOffset;
-		ifs.read((char*)&headOffset,sizeof(headOffset));
+		ifs.read((char*)&headOffset, sizeof(headOffset));
 		//读取末尾
 		ifs.seekg(ifs.size() - sizeof(headOffset));
 		std::streamsize endValue;

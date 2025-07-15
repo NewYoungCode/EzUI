@@ -204,8 +204,7 @@ namespace ezui {
 		//从资源中获取
 		if (ezui::__EzUI__Resource) {
 			std::string data;
-			ezui::__EzUI__Resource->GetFile(fileOrRes, &data);
-			if (data.empty()) {
+			if (!ezui::__EzUI__Resource->GetFile(fileOrRes, &data) || data.empty()) {
 				return NULL;
 			}
 			return new Image(data.c_str(), data.size());

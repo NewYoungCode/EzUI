@@ -1,6 +1,39 @@
 #include "Application.h"
 #include "LayeredWindow.h"
 #include <CommCtrl.h>
+
+#undef FindResource
+namespace ezui {
+	// 内部使用：枚举名称时的上下文
+	struct ResourceContext {
+		UIString rcIDName;
+		HRSRC hResource = NULL;
+		UIString rcType;
+	};
+	// 回调：枚举资源名称
+	BOOL CALLBACK EnumNamesProc(HMODULE hModule, LPCWSTR lpszType, LPWSTR lpszName, LONG_PTR lParam) {
+		ResourceContext* ctx = (ResourceContext*)(lParam);
+		UIString resName = UIString(lpszName).toLower();
+		if (!IS_INTRESOURCE(lpszName) && ctx->rcIDName.toLower() == resName) {
+			ctx->hResource = FindResourceW(hModule, lpszName, lpszType);
+			ctx->rcType = (wchar_t*)lpszType;
+			return FALSE; // 找到就停止
+		}
+		return TRUE; // 继续
+	}
+	//通过资源名称查找windows嵌套资源
+	HRSRC FindResource(const UIString& rcIDName)
+	{
+		HMODULE hModule = ezui::__EzUI__HINSTANCE;
+		ResourceContext ctx;
+		ctx.rcIDName = rcIDName;
+		EnumResourceTypesW(hModule, [](HMODULE hModule, LPWSTR lpszType, LONG_PTR lParam)->BOOL {
+			return EnumResourceNamesW(hModule, lpszType, EnumNamesProc, lParam);
+			}, (LONG_PTR)&ctx);
+		return ctx.hResource;
+	}
+}
+
 namespace ezui {
 	LRESULT CALLBACK __EzUI__WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 		if (message == WM_CREATE) {
@@ -82,7 +115,7 @@ namespace ezui {
 		}
 		//先从vs中的资源里面查找
 		bool found = false;
-		HRSRC hRsrc = Resource::FindRC(localOrResName);
+		HRSRC hRsrc = ezui::FindResource(localOrResName);
 		if (hRsrc) {
 			ezui::__EzUI__Resource = new Resource(hRsrc);
 			found = true;
@@ -183,6 +216,31 @@ namespace ezui {
 			}
 		}
 		return UIString(wPath.data());
+	}
+
+	bool Application::GetResource(const UIString& filename, std::string* outFileData)
+	{
+		outFileData->clear();
+		//本地文件中获取
+		std::wstring wstr = filename.unicode();
+		DWORD dwAttr = GetFileAttributesW(wstr.c_str());
+		if (dwAttr && (dwAttr != -1) && (dwAttr & FILE_ATTRIBUTE_ARCHIVE)) {
+			std::ifstream ifs(wstr, std::ios::binary);
+			ifs.seekg(0, std::ios::end);
+			auto size = ifs.tellg();
+			outFileData->resize(size);
+			ifs.seekg(0);
+			ifs.read((char*)outFileData->c_str(), size);
+			ifs.close();
+			return true;
+		}
+		//从资源中获取
+		if (ezui::__EzUI__Resource) {
+			if (ezui::__EzUI__Resource->GetFile(filename, outFileData)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 };

@@ -37,12 +37,11 @@ namespace ezui {
 		bool IsGood();
 		//对资源目录进行打包
 		static void Package(const UIString& dir, const UIString& outFile, const std::function<void(const UIString&, int, int)>& packCallback = NULL);
-		static HRSRC FindRC(const UIString& rcIDName);
 	public:
 		virtual ~Resource();
-		//从本地文件创建对象
+		//从本地文件创建资源对象
 		Resource(const UIString& resFile);
-		//使用vs内置资源文件创建对象
+		//使用windows内置资源文件创建资源对象
 		Resource(HRSRC hRsrc);
 		//寻找资源中的文件
 		bool GetFile(const UIString& fileName, std::string* out);

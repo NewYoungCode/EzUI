@@ -36,17 +36,6 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 {
 	Application app;//消息循环对象
 
-	{
-		MainFrm frm(800, 600);//无边框窗口
-		HLayout mainLayout;
-		mainLayout.Style.Border = 2;
-		mainLayout.Style.Border.Style = StrokeStyle::Dash;
-		mainLayout.Style.Border.Color = Color::Red;
-		frm.SetLayout(&mainLayout);
-		frm.Show();
-		return app.Exec();
-	}
-
 	//keybd_event(VK_LWIN, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
 	MainFrm frm(800, 600);//无边框窗口
 	VLayout mainLayout;//窗口中的main布局
