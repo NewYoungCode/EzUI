@@ -6,9 +6,9 @@ namespace ezui {
 		public Control
 	{
 	private:
-		std::wstring _wstr;
-		int_t _underlinePos = int_t(-1);
-		int_t _underlineCount = 0;
+		std::wstring m_wstr;
+		int_t m_underlinePos = int_t(-1);
+		int_t m_underlineCount = 0;
 	protected:
 		virtual void OnForePaint(PaintEventArgs& args) override;
 		virtual void OnDpiChange(const DpiChangeEventArgs& args)override;

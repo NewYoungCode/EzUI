@@ -9,10 +9,10 @@ namespace ezui {
 		::BitBlt(this->GetHDC(), 0, 0, rect.Width, rect.Height, dc, rect.X, rect.Y, SRCCOPY);
 	}
 	void Bitmap::Create(int_t width, int_t height, PixelFormat piexlFormat) {
-		_width = width;
-		_height = height;
-		memset(&_bmpInfo, 0, sizeof(_bmpInfo));
-		BITMAPINFOHEADER& bmih = _bmpInfo.bmiHeader;
+		m_width = width;
+		m_height = height;
+		memset(&m_bmpInfo, 0, sizeof(m_bmpInfo));
+		BITMAPINFOHEADER& bmih = m_bmpInfo.bmiHeader;
 		bmih.biSize = sizeof(bmih);
 		bmih.biBitCount = (byte)piexlFormat;
 		bmih.biCompression = BI_RGB;
@@ -20,18 +20,18 @@ namespace ezui {
 		bmih.biWidth = width;
 		bmih.biHeight = -height;
 		bmih.biSizeImage = 0;
-		_bmp = ::CreateDIBSection(NULL, &_bmpInfo, DIB_RGB_COLORS, (void**)&point, NULL, 0);
+		m_bmp = ::CreateDIBSection(NULL, &m_bmpInfo, DIB_RGB_COLORS, (void**)&m_point, NULL, 0);
 		this->GetHDC();
 	}
 	int_t Bitmap::Width() {
-		return _width;
+		return m_width;
 	}
 	int_t Bitmap::Height() {
-		return _height;
+		return m_height;
 	}
 	void Bitmap::SetPixel(int_t x, int_t y, const Color& color) {
-		DWORD* point = (DWORD*)this->point + (x + y * this->Width());//起始地址+坐标偏移	
-		if (_bmpInfo.bmiHeader.biBitCount == 32) { //argb
+		DWORD* point = (DWORD*)this->m_point + (x + y * this->Width());//起始地址+坐标偏移	
+		if (m_bmpInfo.bmiHeader.biBitCount == 32) { //argb
 			((BYTE*)point)[3] = color.GetA();//修改A通道数值
 		}
 		((BYTE*)point)[2] = color.GetR();//修改R通道数值
@@ -40,9 +40,9 @@ namespace ezui {
 	}
 
 	Color Bitmap::GetPixel(int_t x, int_t y) {
-		DWORD* point = (DWORD*)this->point + (x + y * this->Width());//起始地址+坐标偏移
+		DWORD* point = (DWORD*)this->m_point + (x + y * this->Width());//起始地址+坐标偏移
 		BYTE a = 255, r, g, b;
-		if (_bmpInfo.bmiHeader.biBitCount == 32) { //argb
+		if (m_bmpInfo.bmiHeader.biBitCount == 32) { //argb
 			a = ((BYTE*)point)[3];
 		}
 		r = ((BYTE*)point)[2];//修改R通道数值
@@ -52,7 +52,7 @@ namespace ezui {
 	}
 	byte* Bitmap::GetPixel()
 	{
-		return (byte*)this->point;
+		return (byte*)this->m_point;
 	}
 	void Bitmap::Earse(const Rect& _rect) {
 		Rect rect = _rect;
@@ -72,28 +72,28 @@ namespace ezui {
 		}
 		for (int_t y = rect.Y; y < rect.GetBottom(); ++y)
 		{
-			DWORD* point = (DWORD*)this->point + (rect.X + y * this->Width());//起始地址+坐标偏移
+			DWORD* point = (DWORD*)this->m_point + (rect.X + y * this->Width());//起始地址+坐标偏移
 			::memset(point, 0, rect.Width * 4);//抹除
 		}
 	}
 	HBITMAP Bitmap::GetHBITMAP()
 	{
-		return this->_bmp;
+		return this->m_bmp;
 	}
 	HDC Bitmap::GetHDC() {
-		if (!_hdc) {
-			_hdc = ::CreateCompatibleDC(NULL);
-			::SelectObject(_hdc, _bmp);
+		if (!m_hdc) {
+			m_hdc = ::CreateCompatibleDC(NULL);
+			::SelectObject(m_hdc, m_bmp);
 		}
-		return _hdc;
+		return m_hdc;
 	}
 	void Bitmap::Save(const UIString& fileName)
 	{
 		// 保存位图为BMP文件
-		BITMAPINFOHEADER& bi = _bmpInfo.bmiHeader;
+		BITMAPINFOHEADER& bi = m_bmpInfo.bmiHeader;
 		BITMAPFILEHEADER bmfh;
 		bmfh.bfType = 0x4D42; // "BM"字节标记
-		bmfh.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + Width() * Height() * (_bmpInfo.bmiHeader.biBitCount / 8); // 文件大小
+		bmfh.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + Width() * Height() * (m_bmpInfo.bmiHeader.biBitCount / 8); // 文件大小
 		bmfh.bfReserved1 = 0;
 		bmfh.bfReserved2 = 0;
 		bmfh.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER); // 位图数据偏移量
@@ -102,19 +102,19 @@ namespace ezui {
 		ofs.write((char*)&bmfh, sizeof(bmfh));
 		ofs.write((char*)&bi, sizeof(bi));
 		//获取像素数据 第五个参数传空可获取详细的BITMAPINFO
-		auto ret = ::GetDIBits(this->GetHDC(), this->_bmp, 0, this->Height(), NULL, &this->_bmpInfo, DIB_RGB_COLORS);
+		auto ret = ::GetDIBits(this->GetHDC(), this->m_bmp, 0, this->Height(), NULL, &this->m_bmpInfo, DIB_RGB_COLORS);
 		//写入像素数据
-		BYTE* buffer = new BYTE[this->_bmpInfo.bmiHeader.biSizeImage];
-		ret = ::GetDIBits(this->GetHDC(), this->_bmp, 0, this->Height(), buffer, &this->_bmpInfo, DIB_RGB_COLORS);
-		ofs.write((char*)buffer, this->_bmpInfo.bmiHeader.biSizeImage);
+		BYTE* buffer = new BYTE[this->m_bmpInfo.bmiHeader.biSizeImage];
+		ret = ::GetDIBits(this->GetHDC(), this->m_bmp, 0, this->Height(), buffer, &this->m_bmpInfo, DIB_RGB_COLORS);
+		ofs.write((char*)buffer, this->m_bmpInfo.bmiHeader.biSizeImage);
 		ofs.flush();
 		ofs.close();
 		delete[] buffer;
 	}
 	Bitmap::~Bitmap() {
-		if (_hdc) {
-			::DeleteDC(_hdc);
-			::DeleteObject((HGDIOBJ)(HBITMAP)(_bmp));
+		if (m_hdc) {
+			::DeleteDC(m_hdc);
+			::DeleteObject((HGDIOBJ)(HBITMAP)(m_bmp));
 		}
 	}
 };

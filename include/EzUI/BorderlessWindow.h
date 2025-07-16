@@ -8,11 +8,11 @@ namespace ezui {
 	/// </summary>
 	class UI_EXPORT BorderlessWindow :public Window {
 	private:
-		int_t _shadowWeight = 20;
-		ShadowBox* _shadowBox = NULL;
-		float _shadowScale = 1.0f;
+		int_t m_shadowWeight = 20;
+		ShadowBox* m_shadowBox = NULL;
+		float m_shadowScale = 1.0f;
 		//是否支持缩放
-		bool _resize = false;
+		bool m_bResize = false;
 	public:
 		//窗口的边框信息
 		ezui::Border Border;

@@ -422,33 +422,33 @@ namespace ezui {
 
 	void PaintEventArgs::PushLayer(const Geometry& dxGeometry) {
 		this->Graphics.PushLayer(dxGeometry);
-		layers.push_back(false);
+		m_layers.push_back(false);
 	}
 	void PaintEventArgs::PushLayer(const Rect& rectBounds) {
 		this->Graphics.PushAxisAlignedClip(rectBounds);
-		layers.push_back(true);
+		m_layers.push_back(true);
 	}
 	void PaintEventArgs::PopLayer() {
-		if (layers.size() > 0) {
-			if (*layers.rbegin() == true) {
+		if (m_layers.size() > 0) {
+			if (*m_layers.rbegin() == true) {
 				this->Graphics.PopAxisAlignedClip();
 			}
 			else {
 				this->Graphics.PopLayer();
 			}
-			layers.pop_back();
+			m_layers.pop_back();
 		}
 	}
 	void PaintEventArgs::PushOffset(const Point& offset)
 	{
 		this->Graphics.SetTransform(offset.X, offset.Y);
-		this->offsets.push_back(offset);
+		this->m_offsets.push_back(offset);
 	}
 	void PaintEventArgs::PopOffset()
 	{
-		this->offsets.pop_back();
-		if (this->offsets.size() > 0) {
-			auto& offset = *this->offsets.rbegin();
+		this->m_offsets.pop_back();
+		if (this->m_offsets.size() > 0) {
+			auto& offset = *this->m_offsets.rbegin();
 			this->Graphics.SetTransform(offset.X, offset.Y);
 		}
 	}

@@ -6,9 +6,9 @@ namespace ezui {
 	class UI_EXPORT Menu
 	{
 	public:
-		HMENU _hMenu;
-		UIString _text;
-		std::vector<UINT_PTR> _list;
+		HMENU m_hMenu;
+		UIString m_text;
+		std::vector<UINT_PTR> m_list;
 		std::function<void(UINT_PTR)> Callback = NULL;
 	public:
 		Menu();

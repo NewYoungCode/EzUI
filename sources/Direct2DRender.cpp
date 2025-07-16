@@ -31,35 +31,35 @@ namespace ezui {
 	//TextFormat
 	Font::Font(const std::wstring& fontFamily, float fontSize) {
 		ASSERT(!(fontSize == 0));
-		this->_fontFamily = fontFamily;
-		this->_fontSize = fontSize;
-		D2D::g_WriteFactory->CreateTextFormat(fontFamily.c_str(), NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, (FLOAT)this->_fontSize, L"", &_value);
+		this->m_fontFamily = fontFamily;
+		this->m_fontSize = fontSize;
+		D2D::g_WriteFactory->CreateTextFormat(fontFamily.c_str(), NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, (FLOAT)this->m_fontSize, L"", &m_value);
 	}
 	Font::~Font() {
-		if (_value && !Ref) {
-			SafeRelease(&_value);
+		if (m_value && !m_ref) {
+			SafeRelease(&m_value);
 		}
 	}
 	float Font::GetFontSize()const {
-		return _fontSize;
+		return m_fontSize;
 	}
 	const std::wstring& Font::GetFontFamily()const {
-		return _fontFamily;
+		return m_fontFamily;
 	}
 	void Font::Copy(const Font& _copy) {
-		((Font&)(_copy)).Ref = true;
-		this->_value = _copy.Get();
-		this->_fontFamily = _copy.GetFontFamily();
-		this->_fontSize = _copy.GetFontSize();
+		((Font&)(_copy)).m_ref = true;
+		this->m_value = _copy.Get();
+		this->m_fontFamily = _copy.GetFontFamily();
+		this->m_fontSize = _copy.GetFontSize();
 	}
 	IDWriteTextFormat* Font::Get() const {
-		return _value;
+		return m_value;
 	}
-	Font::Font(const Font& _copy) {
-		Copy(_copy);
+	Font::Font(const Font& rightValue) {
+		Copy(rightValue);
 	}
-	Font& Font::operator=(const Font& _copy) {
-		Copy(_copy);
+	Font& Font::operator=(const Font& rightValue) {
+		Copy(rightValue);
 		return *this;
 	}
 	bool Font::operator==(const Font& _right) {
@@ -71,13 +71,13 @@ namespace ezui {
 	void TextLayout::GetMetrics()
 	{
 		if (value) {
-			value->GetMetrics(&textMetrics);
+			value->GetMetrics(&m_textMetrics);
 		}
 	}
 	//TextLayout
 	TextLayout::TextLayout(const std::wstring& text, const Font& font, const SizeF& maxSize, TextAlign textAlign) {
-		this->_fontSize = font.GetFontSize();
-		this->fontFamily = font.GetFontFamily();
+		this->m_fontSize = font.GetFontSize();
+		this->m_fontFamily = font.GetFontFamily();
 		D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), font.Get(), (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &value);
 		if (value == NULL)return;
 		SetTextAlign(textAlign);
@@ -141,36 +141,36 @@ namespace ezui {
 	}
 	const std::wstring& TextLayout::GetFontFamily()
 	{
-		return this->fontFamily;
+		return this->m_fontFamily;
 	}
 	Size TextLayout::GetFontBox() {
 		this->GetMetrics();
-		FLOAT width = textMetrics.widthIncludingTrailingWhitespace;
-		FLOAT height = textMetrics.height;
+		FLOAT width = m_textMetrics.widthIncludingTrailingWhitespace;
+		FLOAT height = m_textMetrics.height;
 		return  Size{ (int_t)(width + 1) ,(int_t)(height + 1) };
 	}
 	float TextLayout::GetFontSize()
 	{
-		return this->_fontSize;
+		return this->m_fontSize;
 	}
 	int_t TextLayout::Width() {
 		this->GetMetrics();
-		FLOAT width = textMetrics.widthIncludingTrailingWhitespace;
+		FLOAT width = m_textMetrics.widthIncludingTrailingWhitespace;
 		return (int_t)(width + 1);
 	}
 	int_t TextLayout::Height() {
 		this->GetMetrics();
-		FLOAT width = textMetrics.height;
+		FLOAT width = m_textMetrics.height;
 		return (width + 1);
 	}
 	int_t TextLayout::GetFontHeight() {
 		this->GetMetrics();
-		FLOAT height = textMetrics.height;
-		return  ((height / textMetrics.lineCount) + 0.5);
+		FLOAT height = m_textMetrics.height;
+		return  ((height / m_textMetrics.lineCount) + 0.5);
 	}
 	int_t TextLayout::GetLineCount() {
 		this->GetMetrics();
-		return textMetrics.lineCount;
+		return m_textMetrics.lineCount;
 	}
 
 	Rect TextLayout::GetLineBox(int_t lineIndex) {
@@ -238,37 +238,37 @@ namespace ezui {
 	//DXImage
 	void DXImage::DecodeOfRender(ID2D1RenderTarget* render) {
 		HRESULT hr = 0;
-		if (_d2dBitmap != NULL) {
-			if (_d2dBitmap) {
-				SafeRelease(&_d2dBitmap);
+		if (m_d2dBitmap != NULL) {
+			if (m_d2dBitmap) {
+				SafeRelease(&m_d2dBitmap);
 			}
 		}
-		if (_fmtcovter) {
-			hr = render->CreateBitmapFromWicBitmap(_fmtcovter, 0, &_d2dBitmap);
+		if (m_fmtcovter) {
+			hr = render->CreateBitmapFromWicBitmap(m_fmtcovter, 0, &m_d2dBitmap);
 		}
-		if (_bitMap) {
-			hr = render->CreateBitmapFromWicBitmap(_bitMap, &_d2dBitmap);
+		if (m_bitMap) {
+			hr = render->CreateBitmapFromWicBitmap(m_bitMap, &m_d2dBitmap);
 		}
 	}
 	int_t DXImage::GetWidth() {
-		return _width;
+		return m_width;
 	}
 	int_t DXImage::GetHeight() {
-		return _height;
+		return m_height;
 	}
 	void DXImage::CreateFormStream(IStream* istram) {
 		HRESULT imgCreate = S_OK;
 		if (D2D::g_ImageFactory) {
-			imgCreate = D2D::g_ImageFactory->CreateDecoderFromStream(istram, NULL, WICDecodeMetadataCacheOnDemand, &_bitmapdecoder);//
+			imgCreate = D2D::g_ImageFactory->CreateDecoderFromStream(istram, NULL, WICDecodeMetadataCacheOnDemand, &m_bitmapdecoder);//
 		}
-		if (_bitmapdecoder) {
-			D2D::g_ImageFactory->CreateFormatConverter(&_fmtcovter);
-			_bitmapdecoder->GetFrame(0, &_pframe);
-			_fmtcovter->Initialize(_pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
+		if (m_bitmapdecoder) {
+			D2D::g_ImageFactory->CreateFormatConverter(&m_fmtcovter);
+			m_bitmapdecoder->GetFrame(0, &m_pframe);
+			m_fmtcovter->Initialize(m_pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
 			UINT width, height;
-			_pframe->GetSize(&width, &height);
-			this->_width = width;
-			this->_height = height;
+			m_pframe->GetSize(&width, &height);
+			this->m_width = width;
+			this->m_height = height;
 			Init();
 		}
 	}
@@ -276,24 +276,24 @@ namespace ezui {
 	{
 		HRESULT ret = S_OK;
 		if (D2D::g_ImageFactory) {
-			ret = D2D::g_ImageFactory->CreateDecoderFromFilename(filew.c_str(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &_bitmapdecoder);//
+			ret = D2D::g_ImageFactory->CreateDecoderFromFilename(filew.c_str(), NULL, GENERIC_READ, WICDecodeMetadataCacheOnDemand, &m_bitmapdecoder);//
 		}
-		if (_bitmapdecoder) {
-			ret = D2D::g_ImageFactory->CreateFormatConverter(&_fmtcovter);
-			ret = _bitmapdecoder->GetFrame(0, &_pframe);
-			ret = _fmtcovter->Initialize(_pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
+		if (m_bitmapdecoder) {
+			ret = D2D::g_ImageFactory->CreateFormatConverter(&m_fmtcovter);
+			ret = m_bitmapdecoder->GetFrame(0, &m_pframe);
+			ret = m_fmtcovter->Initialize(m_pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
 			UINT width, height;
-			ret = _pframe->GetSize(&width, &height);
-			this->_width = width;
-			this->_height = height;
+			ret = m_pframe->GetSize(&width, &height);
+			this->m_width = width;
+			this->m_height = height;
 			Init();
 		}
 	}
 	void DXImage::Init() {
 		_framePos = 0;
 		UINT fCount = 0;
-		if (_bitmapdecoder) {
-			_bitmapdecoder->GetFrameCount(&fCount);
+		if (m_bitmapdecoder) {
+			m_bitmapdecoder->GetFrameCount(&fCount);
 			_frameCount = fCount;
 		}
 	}
@@ -301,15 +301,15 @@ namespace ezui {
 		if (_framePos >= _frameCount) {
 			_framePos = 0;
 		}
-		if (_pframe) {
-			SafeRelease(&_pframe);
+		if (m_pframe) {
+			SafeRelease(&m_pframe);
 		}
-		if (_fmtcovter) {
-			SafeRelease(&_fmtcovter);
+		if (m_fmtcovter) {
+			SafeRelease(&m_fmtcovter);
 		}
-		D2D::g_ImageFactory->CreateFormatConverter(&_fmtcovter);
-		_bitmapdecoder->GetFrame(_framePos, &_pframe);
-		_fmtcovter->Initialize(_pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
+		D2D::g_ImageFactory->CreateFormatConverter(&m_fmtcovter);
+		m_bitmapdecoder->GetFrame(_framePos, &m_pframe);
+		m_fmtcovter->Initialize(m_pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
 
 		++_framePos;
 		return 60;
@@ -317,17 +317,17 @@ namespace ezui {
 	DXImage* DXImage::Clone()
 	{
 		UINT width, height;
-		_fmtcovter->GetSize(&width, &height); // 获取位图源的宽度和高度
+		m_fmtcovter->GetSize(&width, &height); // 获取位图源的宽度和高度
 		//暂时不做clone函数
 		return NULL;
 	}
 	DXImage::DXImage(HBITMAP hBitmap) {
 		if (D2D::g_ImageFactory) {
-			D2D::g_ImageFactory->CreateBitmapFromHBITMAP(hBitmap, NULL, WICBitmapUsePremultipliedAlpha, &_bitMap);
+			D2D::g_ImageFactory->CreateBitmapFromHBITMAP(hBitmap, NULL, WICBitmapUsePremultipliedAlpha, &m_bitMap);
 			UINT width, height;
-			_bitMap->GetSize(&width, &height);
-			this->_width = width;
-			this->_height = height;
+			m_bitMap->GetSize(&width, &height);
+			this->m_width = width;
+			this->m_height = height;
 			Init();
 		}
 	}
@@ -336,10 +336,10 @@ namespace ezui {
 	}
 	DXImage::DXImage(int_t width, int_t height)
 	{
-		this->_width = width;
-		this->_height = height;
+		this->m_width = width;
+		this->m_height = height;
 		ASSERT(!(width <= 0 || height <= 0));
-		HRESULT hr = D2D::g_ImageFactory->CreateBitmap((UINT)width, (UINT)height, GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnDemand, &_bitMap);
+		HRESULT hr = D2D::g_ImageFactory->CreateBitmap((UINT)width, (UINT)height, GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnDemand, &m_bitMap);
 	}
 	DXImage::DXImage(const void* data, size_t imgSize)
 	{
@@ -353,41 +353,41 @@ namespace ezui {
 	}
 	ID2D1Bitmap* DXImage::Get()
 	{
-		return _d2dBitmap;
+		return m_d2dBitmap;
 	}
 	IWICBitmap* DXImage::GetIWICBitmap()
 	{
-		return _bitMap;
+		return m_bitMap;
 	}
 	DXImage::DXImage(IStream* istram) {
 		CreateFormStream(istram);
 	}
 	DXImage::~DXImage()
 	{
-		if (_d2dBitmap) {
-			SafeRelease(&_d2dBitmap);
+		if (m_d2dBitmap) {
+			SafeRelease(&m_d2dBitmap);
 		}
-		if (_bitmapdecoder) {
-			SafeRelease(&_bitmapdecoder);
+		if (m_bitmapdecoder) {
+			SafeRelease(&m_bitmapdecoder);
 		}
-		if (_pframe) {
-			SafeRelease(&_pframe);
+		if (m_pframe) {
+			SafeRelease(&m_pframe);
 		}
-		if (_fmtcovter) {
-			SafeRelease(&_fmtcovter);
+		if (m_fmtcovter) {
+			SafeRelease(&m_fmtcovter);
 		}
-		if (_bitMap) {
-			SafeRelease(&_bitMap);
+		if (m_bitMap) {
+			SafeRelease(&m_bitMap);
 		}
 	}
 	Geometry::Geometry(float x, float y, float width, float height) {
 		D2D_RECT_F rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) };
-		D2D::g_Direct2dFactory->CreateRectangleGeometry(rectF, (ID2D1RectangleGeometry**)&rgn);
+		D2D::g_Direct2dFactory->CreateRectangleGeometry(rectF, (ID2D1RectangleGeometry**)&m_rgn);
 	}
 	Geometry::Geometry(float x, float y, float width, float height, float _radius) {
 		float radius = GetMaxRadius(width, height, _radius);
 		D2D1_ROUNDED_RECT rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) ,radius ,radius };
-		D2D::g_Direct2dFactory->CreateRoundedRectangleGeometry(rectF, (ID2D1RoundedRectangleGeometry**)&rgn);
+		D2D::g_Direct2dFactory->CreateRoundedRectangleGeometry(rectF, (ID2D1RoundedRectangleGeometry**)&m_rgn);
 	}
 	Geometry::Geometry(const RectF& _rect, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius)
 	{
@@ -450,7 +450,7 @@ namespace ezui {
 		pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 		pSink->Close();
 		SafeRelease(&pSink);
-		this->rgn = pPathGeometry;
+		this->m_rgn = pPathGeometry;
 	}
 };
 
@@ -546,10 +546,10 @@ namespace ezui {
 			D2D1_RENDER_TARGET_USAGE_NONE,
 			D2D1_FEATURE_LEVEL_DEFAULT
 		);
-		HRESULT	hr = D2D::g_Direct2dFactory->CreateDCRenderTarget(&defaultOption, (ID2D1DCRenderTarget**)&_render);
+		HRESULT	hr = D2D::g_Direct2dFactory->CreateDCRenderTarget(&defaultOption, (ID2D1DCRenderTarget**)&m_render);
 		RECT rc{ x,y,x + width ,y + height };
-		((ID2D1DCRenderTarget*)_render)->BindDC(dc, &rc);
-		_render->BeginDraw();
+		((ID2D1DCRenderTarget*)m_render)->BindDC(dc, &rc);
+		m_render->BeginDraw();
 	}
 
 	DXRender::DXRender(DXImage* dxImage) {
@@ -561,62 +561,62 @@ namespace ezui {
 			D2D1_RENDER_TARGET_USAGE_NONE,
 			D2D1_FEATURE_LEVEL_DEFAULT
 		);
-		HRESULT hr = D2D::g_Direct2dFactory->CreateWicBitmapRenderTarget(dxImage->GetIWICBitmap(), defaultOption, (ID2D1RenderTarget**)&_render);
-		_render->BeginDraw();
+		HRESULT hr = D2D::g_Direct2dFactory->CreateWicBitmapRenderTarget(dxImage->GetIWICBitmap(), defaultOption, (ID2D1RenderTarget**)&m_render);
+		m_render->BeginDraw();
 	}
 
 
 	DXRender::~DXRender() {
-		if (_render) {
-			_render->EndDraw();
+		if (m_render) {
+			m_render->EndDraw();
 		}
-		if (_font) {
-			delete _font;
+		if (m_font) {
+			delete m_font;
 		}
-		SafeRelease(&_render);
-		SafeRelease(&_brush);
-		SafeRelease(&_pStrokeStyle);
+		SafeRelease(&m_render);
+		SafeRelease(&m_brush);
+		SafeRelease(&m_pStrokeStyle);
 	}
 	ID2D1SolidColorBrush* DXRender::GetBrush()
 	{
-		if (_brush == NULL) {
-			_render->CreateSolidColorBrush(D2D_COLOR_F{ 0,0,0,1 }, &_brush);
+		if (m_brush == NULL) {
+			m_render->CreateSolidColorBrush(D2D_COLOR_F{ 0,0,0,1 }, &m_brush);
 		}
-		return _brush;
+		return m_brush;
 	}
 	ID2D1StrokeStyle* DXRender::GetStrokeStyle() {
-		return _pStrokeStyle;
+		return m_pStrokeStyle;
 	}
 	void DXRender::SetFont(const std::wstring& fontFamily, float fontSize) {
-		if (_font != NULL) {
-			if (_font->GetFontFamily() == fontFamily && _font->GetFontSize() == fontSize) {
+		if (m_font != NULL) {
+			if (m_font->GetFontFamily() == fontFamily && m_font->GetFontSize() == fontSize) {
 				return;
 			}
-			delete _font;
+			delete m_font;
 		}
-		_font = new Font(fontFamily, fontSize);
+		m_font = new Font(fontFamily, fontSize);
 	}
 	void DXRender::SetFont(const Font& _copy_font) {
-		if (_font != NULL) {
-			if (*_font == _copy_font) {
+		if (m_font != NULL) {
+			if (*m_font == _copy_font) {
 				return;
 			}
-			delete _font;
+			delete m_font;
 		}
-		_font = new Font(_copy_font);
+		m_font = new Font(_copy_font);
 	}
 	void DXRender::SetColor(const __EzUI__Color& color) {
-		if (_brush == NULL) {
-			_render->CreateSolidColorBrush(__To_D2D_COLOR_F(color), &_brush);
+		if (m_brush == NULL) {
+			m_render->CreateSolidColorBrush(__To_D2D_COLOR_F(color), &m_brush);
 		}
 		else {
-			_brush->SetColor(__To_D2D_COLOR_F(color));
+			m_brush->SetColor(__To_D2D_COLOR_F(color));
 		}
 	}
 	void DXRender::SetStrokeStyle(StrokeStyle strokeStyle, float dashWidth)
 	{
-		if (_pStrokeStyle != NULL) {
-			SafeRelease(&_pStrokeStyle);
+		if (m_pStrokeStyle != NULL) {
+			SafeRelease(&m_pStrokeStyle);
 		}
 		if (strokeStyle == StrokeStyle::Dash) {
 			float* dashes = new float[2] { (FLOAT)dashWidth, (FLOAT)dashWidth };
@@ -624,22 +624,22 @@ namespace ezui {
 			D2D::g_Direct2dFactory->CreateStrokeStyle(D2D1::StrokeStyleProperties(
 				D2D1_CAP_STYLE_FLAT, D2D1_CAP_STYLE_FLAT, D2D1_CAP_STYLE_ROUND,
 				D2D1_LINE_JOIN_ROUND, 10.0f, D2D1_DASH_STYLE_CUSTOM, 0.0f),
-				dashes, count, &_pStrokeStyle);
+				dashes, count, &m_pStrokeStyle);
 			delete[] dashes;
 		}
 	}
 	void DXRender::DrawTextLayout(const TextLayout& textLayout, const PointF& startLacation) {
-		_render->DrawTextLayout(D2D1_POINT_2F{ (float)(startLacation.X) ,(float)(startLacation.Y) }, textLayout.Get(), GetBrush());
+		m_render->DrawTextLayout(D2D1_POINT_2F{ (float)(startLacation.X) ,(float)(startLacation.Y) }, textLayout.Get(), GetBrush());
 	}
 	void DXRender::DrawString(const std::wstring& text, const  RectF& _rect, ezui::TextAlign textAlign) {
 		const auto& rect = _rect;
-		TextLayout textLayout(text, *_font, { rect.Width, rect.Height }, textAlign);
+		TextLayout textLayout(text, *m_font, { rect.Width, rect.Height }, textAlign);
 		this->DrawTextLayout(textLayout, { _rect.X,_rect.Y });
 	}
 	void DXRender::DrawLine(const PointF& _A, const PointF& _B, float width) {
 		const auto& A = _A;
 		const auto& B = _B;
-		_render->DrawLine(D2D1_POINT_2F{ (float)A.X,(float)A.Y }, D2D1_POINT_2F{ (float)B.X,(float)B.Y }, GetBrush(), (FLOAT)width, GetStrokeStyle());
+		m_render->DrawLine(D2D1_POINT_2F{ (float)A.X,(float)A.Y }, D2D1_POINT_2F{ (float)B.X,(float)B.Y }, GetBrush(), (FLOAT)width, GetStrokeStyle());
 	}
 
 	void DXRender::DrawRectangle(const RectF& _rect, float _radius, float width)
@@ -648,10 +648,10 @@ namespace ezui {
 		if (_radius > 0) {
 			float radius = GetMaxRadius(_rect.Width, _rect.Height, (float)_radius);
 			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), (float)radius, (float)radius };
-			_render->DrawRoundedRectangle(roundRect, GetBrush(), (FLOAT)width, GetStrokeStyle());
+			m_render->DrawRoundedRectangle(roundRect, GetBrush(), (FLOAT)width, GetStrokeStyle());
 		}
 		else {
-			_render->DrawRectangle(__To_D2D_RectF(rect), GetBrush(), (FLOAT)width, GetStrokeStyle());
+			m_render->DrawRectangle(__To_D2D_RectF(rect), GetBrush(), (FLOAT)width, GetStrokeStyle());
 		}
 	}
 
@@ -661,25 +661,25 @@ namespace ezui {
 		if (_radius > 0) {
 			float radius = GetMaxRadius(_rect.Width, _rect.Height, (float)_radius);
 			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), (float)radius, (float)radius };
-			_render->FillRoundedRectangle(roundRect, GetBrush());
+			m_render->FillRoundedRectangle(roundRect, GetBrush());
 		}
 		else {
-			_render->FillRectangle(__To_D2D_RectF(rect), GetBrush());
+			m_render->FillRectangle(__To_D2D_RectF(rect), GetBrush());
 		}
 	}
 
 	void DXRender::SetTransform(float offsetX, float offsetY)
 	{
-		this->_offset.X = offsetX;
-		this->_offset.Y = offsetY;
-		this->SetTransform(this->_offset.X, this->_offset.Y, this->_rotatePoint.X, this->_rotatePoint.Y, this->_angle);
+		this->m_offset.X = offsetX;
+		this->m_offset.Y = offsetY;
+		this->SetTransform(this->m_offset.X, this->m_offset.Y, this->m_rotatePoint.X, this->m_rotatePoint.Y, this->m_angle);
 	}
 
 	void DXRender::SetTransform(float startX, float startY, float angle) {
-		this->_rotatePoint.X = startX;
-		this->_rotatePoint.Y = startY;
-		this->_angle = angle;
-		this->SetTransform(this->_offset.X, this->_offset.Y, this->_rotatePoint.X, this->_rotatePoint.Y, this->_angle);
+		this->m_rotatePoint.X = startX;
+		this->m_rotatePoint.Y = startY;
+		this->m_angle = angle;
+		this->SetTransform(this->m_offset.X, this->m_offset.Y, this->m_rotatePoint.X, this->m_rotatePoint.Y, this->m_angle);
 	}
 
 	void DXRender::SetTransform(float offsetX, float offsetY, float startX, float startY, float angle)
@@ -693,7 +693,7 @@ namespace ezui {
 			transformMatrix = transformMatrix * D2D1::Matrix3x2F::Rotation(angle, D2D1_POINT_2F{ startX, startY });
 		}
 		// 将转换矩阵应用于绘制对象
-		_render->SetTransform(transformMatrix);
+		m_render->SetTransform(transformMatrix);
 	}
 
 	void DXRender::DrawBezier(const PointF& startPoint, const Bezier& points, float width) {
@@ -706,7 +706,7 @@ namespace ezui {
 		pSink->AddBezier(bzr);
 		pSink->EndFigure(D2D1_FIGURE_END_OPEN);
 		pSink->Close();
-		_render->DrawGeometry(pathGeometry, GetBrush(), (FLOAT)width, GetStrokeStyle());
+		m_render->DrawGeometry(pathGeometry, GetBrush(), (FLOAT)width, GetStrokeStyle());
 		SafeRelease(&pathGeometry);
 		SafeRelease(&pSink);
 	}
@@ -723,32 +723,32 @@ namespace ezui {
 		}
 		pSink->EndFigure(D2D1_FIGURE_END_OPEN);
 		pSink->Close();
-		_render->DrawGeometry(pathGeometry, GetBrush(), width, GetStrokeStyle());
+		m_render->DrawGeometry(pathGeometry, GetBrush(), width, GetStrokeStyle());
 		SafeRelease(&pathGeometry);
 		SafeRelease(&pSink);
 	}
 
 	void DXRender::PushLayer(const Geometry& dxGeometry) {
 		ID2D1Layer* layer = NULL;
-		_render->CreateLayer(&layer);
-		_render->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.Get()), layer);//放入layer
+		m_render->CreateLayer(&layer);
+		m_render->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), dxGeometry.Get()), layer);//放入layer
 		SafeRelease(&layer);
 	}
 	void DXRender::PopLayer() {
-		_render->PopLayer();
+		m_render->PopLayer();
 	}
 	void DXRender::PushAxisAlignedClip(const RectF& rectBounds) {
-		_render->PushAxisAlignedClip(__To_D2D_RectF(rectBounds), D2D1_ANTIALIAS_MODE::D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+		m_render->PushAxisAlignedClip(__To_D2D_RectF(rectBounds), D2D1_ANTIALIAS_MODE::D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	}
 	void DXRender::PopAxisAlignedClip() {
-		_render->PopAxisAlignedClip();
+		m_render->PopAxisAlignedClip();
 	}
 
 	void DXRender::DrawImage(DXImage* image, const  RectF& tagRect, float opacity) {
 		_NOREND_IMAGE_
 			if (image->Visible == false) return;
 		//解码
-		image->DecodeOfRender(_render);
+		image->DecodeOfRender(m_render);
 		ID2D1Bitmap* bitmap = image->Get();
 		if (!bitmap) {
 			return;
@@ -768,25 +768,25 @@ namespace ezui {
 		D2D_RECT_F drawRectF = __To_D2D_RectF(drawRect);
 		if (!sourceRect.IsEmptyArea()) {
 			D2D_RECT_F sourceRectF = __To_D2D_RectF(sourceRect);
-			_render->DrawBitmap(bitmap, drawRectF, opacity, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, sourceRectF);
+			m_render->DrawBitmap(bitmap, drawRectF, opacity, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, sourceRectF);
 		}
 		else {
-			_render->DrawBitmap(bitmap, drawRectF, opacity);
+			m_render->DrawBitmap(bitmap, drawRectF, opacity);
 		}
 	}
 	void DXRender::DrawEllipse(const PointF& point, float radiusX, float radiusY, float width)
 	{
 		D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F((FLOAT)point.X, (FLOAT)point.Y), (FLOAT)radiusX, (FLOAT)radiusY);
-		_render->DrawEllipse(ellipse, GetBrush(), (FLOAT)width, this->GetStrokeStyle());
+		m_render->DrawEllipse(ellipse, GetBrush(), (FLOAT)width, this->GetStrokeStyle());
 	}
 	void DXRender::FillEllipse(const PointF& point, float radiusX, float radiusY)
 	{
 		D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F((FLOAT)point.X, (FLOAT)point.Y), (FLOAT)radiusX, (FLOAT)radiusY);
-		_render->FillEllipse(ellipse, GetBrush());
+		m_render->FillEllipse(ellipse, GetBrush());
 	}
 	void DXRender::DrawPoint(const PointF& pt) {
 		D2D1_ELLIPSE ellipse = D2D1::Ellipse(__To_D2D_PointF(pt), 0.5, 0.5);
-		_render->FillEllipse(ellipse, GetBrush());
+		m_render->FillEllipse(ellipse, GetBrush());
 	}
 	void DXRender::DrawArc(const RectF& rect, float startAngle, float sweepAngle, float width) {
 
@@ -797,26 +797,26 @@ namespace ezui {
 	}
 	void DXRender::DrawGeometry(ID2D1Geometry* geometry, float width)
 	{
-		_render->DrawGeometry(geometry, GetBrush(), (FLOAT)width, this->GetStrokeStyle());
+		m_render->DrawGeometry(geometry, GetBrush(), (FLOAT)width, this->GetStrokeStyle());
 	}
 	void DXRender::FillGeometry(ID2D1Geometry* geometry)
 	{
-		_render->FillGeometry(geometry, GetBrush());
+		m_render->FillGeometry(geometry, GetBrush());
 	}
 	void DXRender::Flush()
 	{
-		_render->Flush();
+		m_render->Flush();
 	}
 	void DXRender::DrawPath(const DXPath& path, float width)
 	{
-		_render->DrawGeometry(path.Get(), GetBrush(), (FLOAT)width, this->GetStrokeStyle());
+		m_render->DrawGeometry(path.Get(), GetBrush(), (FLOAT)width, this->GetStrokeStyle());
 	}
 	void DXRender::FillPath(const DXPath& path)
 	{
-		_render->FillGeometry(path.Get(), GetBrush());
+		m_render->FillGeometry(path.Get(), GetBrush());
 	}
 	ID2D1DCRenderTarget* DXRender::Get() {
-		return _render;
+		return m_render;
 	}
 };
 

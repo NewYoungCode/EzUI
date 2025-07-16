@@ -18,7 +18,7 @@ namespace ezui {
 				Bottom = 8
 			};*/
 	private:
-		Control* _ownerCtl = NULL;
+		Control* m_ownerCtl = NULL;
 	protected:
 		virtual void OnKillFocus(HWND hWnd) override;
 	public:

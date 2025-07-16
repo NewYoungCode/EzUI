@@ -5,23 +5,23 @@ namespace ezui {
 	class UI_EXPORT IScrollBar :public Control {
 	protected:
 		//鼠标是否已经按下
-		bool _mouseDown = false;
+		bool m_mouseDown = false;
 		//上一次鼠标命中的坐标
-		int_t _lastPoint = 0;
+		int_t m_lastPoint = 0;
 		//滚动条当前的坐标
-		double _sliderPos = 0;
+		double m_sliderPos = 0;
 		//滚动条的长度
-		int_t _sliderLength = 0;
+		int_t m_sliderLength = 0;
 		//滚动条每滚动一次的比率
-		double _rollRate = 0;
+		double m_rollRate = 0;
 		//父容器内的坐标偏移
-		int_t _offset = 0;
+		int_t m_offset = 0;
 		//父容器的内容长度
-		int_t _contentLength = 0;
+		int_t m_contentLength = 0;
 		//父容器可见长度(容器自身长度)
-		int_t _viewLength = 0;
+		int_t m_viewLength = 0;
 		//溢出容器的长度
-		int_t _overflowLength = 0;
+		int_t m_overflowLength = 0;
 
 		//int_t _old_viewLength = 0;
 		//int_t _old_contentLength = 0;

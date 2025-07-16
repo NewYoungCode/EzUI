@@ -6,55 +6,55 @@ namespace ezui {
 	{
 	private:
 		// 控件是否已经被移除或释放
-		bool* _isRemove = NULL;
+		bool* m_bRemove = NULL;
 
 		// 控件是否可见。此标志为 true 时,控件为显示状态
-		bool _visible = true;
+		bool m_bVisible = true;
 
 		// 当前控件的 DPI 缩放比例
-		float _scale = 1.0f;
+		float m_scale = 1.0f;
 
 		// 子控件集合
-		Controls _controls;
+		Controls m_controls;
 
 		// 存储弹簧控件的集合
-		Controls _spacers;
+		Controls m_spacers;
 
 		// 布局状态
 		// AddControl、InsertControl、RemoveControl、OnSize 时此标志为挂起状态
 		// 调用 ResumeLayout 标志为布局中
 		// 调用 OnLayout() 之后标志为 None
-		ezui::LayoutState _layoutState = ezui::LayoutState::None;
+		ezui::LayoutState m_layoutState = ezui::LayoutState::None;
 
 		// 鼠标悬浮提示文字
-		UIString _tipsText;
+		UIString m_tipsText;
 
 		// 上一次位置
-		Point _lastLocation;
+		Point m_lastLocation;
 
 		// 上一次大小
-		Size _lastSize;
+		Size m_lastSize;
 
 		// 是否根据内容自动宽度
-		bool _autoWidth = false;
+		bool m_bAutoWidth = false;
 
 		// 根据内容自动高度变化
-		bool _autoHeight = false;
+		bool m_bAutoHeight = false;
 
 		// 控件内容宽高
-		Size _contentSize;
+		Size m_contentSize;
 
 		// 绝对尺寸
-		Size _fixedSize;
+		Size m_fixedSize;
 
 		// 控件矩形区域（基于父控件）
-		Rect _rect;
+		Rect m_rect;
 
 		// 控件在窗口中的可见区域
-		Rect _viewRect;
+		Rect m_viewRect;
 
 		// dock 样式
-		DockStyle _dock = DockStyle::None;
+		DockStyle m_dock = DockStyle::None;
 
 	private:
 		// 禁止拷贝构造

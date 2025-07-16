@@ -11,9 +11,9 @@ namespace ezui {
 	class  UI_EXPORT LayeredWindow :public BorderlessWindow
 	{
 	private:
-		Timer _timeOut;
-		std::list<Rect> _invalidateRect;
-		Bitmap* _winBitmap = NULL;
+		Timer m_timeOut;
+		std::list<Rect> m_invalidateRect;
+		Bitmap* m_winBitmap = NULL;
 		void UpdateLayeredWindow(HDC hdc);
 		void BeginPaint(Rect* rect);
 		void EndPaint();

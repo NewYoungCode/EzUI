@@ -4,25 +4,25 @@
 
 namespace ezui {
 	class UI_EXPORT Task {
-		bool _finished = false;
-		std::thread* _thread = NULL;
-		bool _bJoin = false;
-		std::mutex _mtx;
-		std::condition_variable _codv;
+		bool m_finished = false;
+		std::thread* m_thread = NULL;
+		bool m_bJoin = false;
+		std::mutex m_mtx;
+		std::condition_variable m_codv;
 	private:
 		Task(const Task&) = delete;
 	public:
 		template<class Func, class... Args>
 		Task(Func&& f, Args&& ...args) {
 			std::function<void()>* func = new std::function<void()>(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
-			_thread = new std::thread([this, func]() mutable {
+			m_thread = new std::thread([this, func]() mutable {
 				(*func)();
 				delete func;
 				{
-					std::unique_lock<std::mutex> autoLock(_mtx);
-					_finished = true;
+					std::unique_lock<std::mutex> autoLock(m_mtx);
+					m_finished = true;
 				}
-				_codv.notify_all();
+				m_codv.notify_all();
 				});
 		}
 		void Wait();
@@ -32,14 +32,14 @@ namespace ezui {
 	};
 
 	class UI_EXPORT TaskFactory {
-		bool bStop = false;
-		std::list<Task*> tasks;
-		std::list<std::function<void()>> funcs;
-		std::mutex mtx;
-		std::condition_variable codv;
+		bool m_bStop = false;
+		std::list<Task*> m_tasks;
+		std::list<std::function<void()>> m_funcs;
+		std::mutex m_mtx;
+		std::condition_variable m_codv;
 		//用于等待任务清空的锁和条件变量
-		std::mutex mtx2;
-		std::condition_variable codv2;
+		std::mutex m_mtx2;
+		std::condition_variable m_codv2;
 	private:
 		TaskFactory(const TaskFactory&) = delete;
 	public:
@@ -48,19 +48,19 @@ namespace ezui {
 		template<class Func, class... Args>
 		void Add(Func&& f, Args&& ...args) {
 			{
-				std::unique_lock<std::mutex> autoLock(mtx);
-				funcs.emplace_back(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
+				std::unique_lock<std::mutex> autoLock(m_mtx);
+				m_funcs.emplace_back(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
 			}
-			codv.notify_one();
+			m_codv.notify_one();
 		}
 		//添加至任务队列的第一位(优先执行)
 		template<class Func, class... Args>
 		void AddToFrist(Func&& f, Args&& ...args) {
 			{
-				std::unique_lock<std::mutex> autoLock(mtx);
-				funcs.emplace_front(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
+				std::unique_lock<std::mutex> autoLock(m_mtx);
+				m_funcs.emplace_front(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
 			}
-			codv.notify_one();
+			m_codv.notify_one();
 		}
 
 		//等待所有任务被取走

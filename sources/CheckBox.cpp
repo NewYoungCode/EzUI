@@ -9,11 +9,11 @@ namespace ezui {
 	}
 	void CheckBox::SetCheck(bool checked)
 	{
-		_checked = checked;
+		m_checked = checked;
 	}
 	bool CheckBox::GetCheck()
 	{
-		return _checked;
+		return m_checked;
 	}
 	void CheckBox::OnDpiChange(const DpiChangeEventArgs& args) {
 		if (args.Scale != this->GetScale()) {

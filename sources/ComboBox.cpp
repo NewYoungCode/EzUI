@@ -11,11 +11,11 @@ namespace ezui {
 	}
 	void ComboBox::Init()
 	{
-		this->_textBox.ReadOnly = true;
-		this->Add(&_textBox);
-		this->Add(&_UpDown);
+		this->m_textBox.ReadOnly = true;
+		this->Add(&m_textBox);
+		this->Add(&m_UpDown);
 
-		_UpDown.EventHandler = [&](Control* sd, EventArgs& arg)->void {
+		m_UpDown.EventHandler = [&](Control* sd, EventArgs& arg)->void {
 			if (arg.EventType == Event::OnPaint) {
 				//绘制
 				auto& args = (PaintEventArgs&)arg;
@@ -40,24 +40,24 @@ namespace ezui {
 			}
 			else if (arg.EventType == Event::OnMouseClick/*&& args.Button == MouseButton::Left*/) {
 				//单击
-				if (_menuWnd == NULL) {
-					_menuWnd = new MenuContent(this, &_UpDown);
-					_list.Style.BackColor = Color::White;
-					_menuWnd->SetLayout(&_list);
+				if (m_menuWnd == NULL) {
+					m_menuWnd = new MenuContent(this, &m_UpDown);
+					m_list.Style.BackColor = Color::White;
+					m_menuWnd->SetLayout(&m_list);
 				}
-				for (auto& it : _list.GetControls()) {
+				for (auto& it : m_list.GetControls()) {
 					it->SetFixedHeight(Height());
 				}
-				int_t height = this->Height() * _list.GetControls().size();
+				int_t height = this->Height() * m_list.GetControls().size();
 				if (height == 0) {
 					height = Height();
 				}
-				if (!_menuWnd->IsVisible()) {
-					::SetWindowPos(_menuWnd->Hwnd(), NULL, 0, 0, Width(), height, SWP_NOZORDER | SWP_NOACTIVATE);
-					_menuWnd->Show();
+				if (!m_menuWnd->IsVisible()) {
+					::SetWindowPos(m_menuWnd->Hwnd(), NULL, 0, 0, Width(), height, SWP_NOZORDER | SWP_NOACTIVATE);
+					m_menuWnd->Show();
 				}
 				else {
-					_menuWnd->Hide();
+					m_menuWnd->Hide();
 				}
 			}
 			};
@@ -68,18 +68,18 @@ namespace ezui {
 	}
 	UIString ComboBox::GetText()
 	{
-		return this->_textBox.GetText();
+		return this->m_textBox.GetText();
 	}
 	int_t ComboBox::GetCheck()
 	{
-		return this->_index;
+		return this->m_index;
 	}
 	bool ComboBox::SetCheck(int_t pos)
 	{
-		auto item = _list.GetControl(pos);
+		auto item = m_list.GetControl(pos);
 		if (item) {
-			_textBox.SetText(((Label*)item)->GetText());
-			_index = pos;
+			m_textBox.SetText(((Label*)item)->GetText());
+			m_index = pos;
 			return true;
 		}
 		return false;
@@ -87,15 +87,15 @@ namespace ezui {
 
 	ComboBox::~ComboBox()
 	{
-		_list.Clear(true);
+		m_list.Clear(true);
 		//涉及到由于"_list"是成员变量 释放比较靠后 所以释放窗口的时候 必须把 "_list"的公共数据也置零
-		_list.PublicData = NULL;
-		if (_list.GetScrollBar()) {
+		m_list.PublicData = NULL;
+		if (m_list.GetScrollBar()) {
 			//滚动条同理 也需要置零公共数据
-			_list.GetScrollBar()->PublicData = NULL;
+			m_list.GetScrollBar()->PublicData = NULL;
 		}
-		if (_menuWnd) {
-			delete _menuWnd;
+		if (m_menuWnd) {
+			delete m_menuWnd;
 		}
 	}
 	int_t ComboBox::AddItem(const UIString& text)
@@ -103,32 +103,32 @@ namespace ezui {
 		Label* lb = new Label;
 		lb->SetDockStyle(DockStyle::Horizontal);
 		lb->SetText(text);
-		_list.Add(lb);
+		m_list.Add(lb);
 		lb->HoverStyle.BackColor = Color::Gray;
 		lb->HoverStyle.ForeColor = Color::White;
 
 		lb->EventHandler = [&](Control* sd, const EventArgs& args) ->void {
 			if (args.EventType == Event::OnMouseClick) {
-				_index = sd->Parent->IndexOf(sd);
-				_textBox.SetText(((Label*)sd)->GetText());
-				_textBox.Invalidate();
-				_menuWnd->Hide();
+				m_index = sd->Parent->IndexOf(sd);
+				m_textBox.SetText(((Label*)sd)->GetText());
+				m_textBox.Invalidate();
+				m_menuWnd->Hide();
 			}
 			};
 
-		return _list.GetControls().size() - 1;
+		return m_list.GetControls().size() - 1;
 	}
 	void ComboBox::RemoveItem(int_t index)
 	{
-		Control* lb = _list.GetControl(index);
-		_list.Remove(lb, true);
+		Control* lb = m_list.GetControl(index);
+		m_list.Remove(lb, true);
 	}
 	void ComboBox::OnLayout() {
-		this->_UpDown.SetFixedSize(Size(Height(), Height()));
+		this->m_UpDown.SetFixedSize(Size(Height(), Height()));
 		__super::OnLayout();
 	}
 
-	ComboBox::MenuContent::MenuContent(Control* ownerCtl, Control* hittestCtl) :PopupWindow(0, 0, ownerCtl), _hittestCtl(hittestCtl)
+	ComboBox::MenuContent::MenuContent(Control* ownerCtl, Control* hittestCtl) :PopupWindow(0, 0, ownerCtl), m_hittestCtl(hittestCtl)
 	{
 	}
 	void ComboBox::MenuContent::OnKillFocus(HWND wnd)
@@ -138,7 +138,7 @@ namespace ezui {
 			::GetCursorPos(&pt);
 			// 将鼠标屏幕坐标转换为客户端坐标
 			::ScreenToClient(::GetWindow(Hwnd(), GW_OWNER), &pt);
-			Rect _hittestRect = _hittestCtl->GetClientRect();
+			Rect _hittestRect = m_hittestCtl->GetClientRect();
 			if (_hittestRect.Contains(pt.x, pt.y)) {
 				return;
 			}

@@ -5,9 +5,9 @@
 namespace ezui {
 	class UI_EXPORT PictureBox : public Control {
 	private:
-		Image* _srcImg = NULL;
-		Image* _img = NULL;
-		Timer _timer;
+		Image* m_srcImg = NULL;
+		Image* m_img = NULL;
+		Timer m_timer;
 	protected:
 		virtual void OnRemove()override;
 		virtual void OnForePaint(PaintEventArgs& arg)override;

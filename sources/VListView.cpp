@@ -32,7 +32,7 @@ namespace ezui {
 
 	IScrollBar* VListView::GetScrollBar()
 	{
-		return &_vScrollBar;
+		return &m_vScrollBar;
 	}
 
 	void VListView::Offset(int_t offset)

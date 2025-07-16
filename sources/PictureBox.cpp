@@ -1,33 +1,33 @@
 #include "PictureBox.h"
 namespace ezui {
 	PictureBox::PictureBox() {
-		_timer.Tick = [this](Timer* timer) {
+		m_timer.Tick = [this](Timer* timer) {
 			timer->Stop();
 			this->Invalidate();
 			};
 	}
 	PictureBox::~PictureBox() {
-		_timer.Stop();
-		if (_srcImg) {
-			delete _srcImg;
+		m_timer.Stop();
+		if (m_srcImg) {
+			delete m_srcImg;
 		}
 	}
 	void PictureBox::OnRemove() {
 		__super::OnRemove();
-		_timer.Stop();
+		m_timer.Stop();
 	}
 	void PictureBox::SetImage(Image* image) {
-		_img = image;
+		m_img = image;
 	}
 	void PictureBox::OnForePaint(PaintEventArgs& arg) {
-		if (_img) {
-			arg.Graphics.DrawImage(_img, RectF(0, 0, (float)Width(), (float)Height()));
-			if (_img->FrameCount() > 1) {
-				_timer.Interval = _img->NextFrame();
-				_timer.Start();
+		if (m_img) {
+			arg.Graphics.DrawImage(m_img, RectF(0, 0, (float)Width(), (float)Height()));
+			if (m_img->FrameCount() > 1) {
+				m_timer.Interval = m_img->NextFrame();
+				m_timer.Start();
 			}
 			else {
-				_timer.Stop();
+				m_timer.Stop();
 			}
 		}
 		__super::OnForePaint(arg);
@@ -35,9 +35,9 @@ namespace ezui {
 	void PictureBox::SetAttribute(const UIString& key, const UIString& value) {
 		__super::SetAttribute(key, value);
 		if (key == "src" || key == "img") {
-			if (_srcImg)delete _srcImg;
-			_srcImg = Image::Make(value);
-			SetImage(_srcImg);
+			if (m_srcImg)delete m_srcImg;
+			m_srcImg = Image::Make(value);
+			SetImage(m_srcImg);
 		}
 	}
 };

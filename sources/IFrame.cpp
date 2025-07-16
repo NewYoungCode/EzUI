@@ -8,12 +8,12 @@ namespace ezui {
 	}
 	UIManager* IFrame::GetUIManager()
 	{
-		return &_umg;
+		return &m_umg;
 	}
 	void IFrame::SetAttribute(const UIString& attrName, const UIString& attrValue) {
 		if (attrName == "src") {
-			_umg.LoadXmlFile(attrValue);
-			_umg.SetupUI(this);
+			m_umg.LoadXmlFile(attrValue);
+			m_umg.SetupUI(this);
 			if (this->GetControls().size() > 0) {
 				Control* root = this->GetControl(this->GetControls().size() - 1);
 				root->SetDockStyle(DockStyle::Fill);

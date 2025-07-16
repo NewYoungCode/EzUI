@@ -5,9 +5,9 @@ namespace ezui {
 	HScrollBar::~HScrollBar() {}
 	Rect HScrollBar::GetSliderRect() {
 		Rect sliderRect;
-		sliderRect.X = (int_t)_sliderPos;
+		sliderRect.X = (int_t)m_sliderPos;
 		sliderRect.Y = 0;
-		sliderRect.Width = _sliderLength;
+		sliderRect.Width = m_sliderLength;
 		sliderRect.Height = Height();
 		if (this->Scrollable() && sliderRect.Width <= 0) {
 			sliderRect.Width = 1;
@@ -26,10 +26,10 @@ namespace ezui {
 				return;
 			}
 			//出现在顶部
-			int_t offset = this->_offset - ctlRect.X;
+			int_t offset = this->m_offset - ctlRect.X;
 			if (ctlRect.Y > 0) {
 				//出现在底部
-				offset += this->_viewLength - ctlRect.Width;
+				offset += this->m_viewLength - ctlRect.Width;
 			}
 			__super::ScrollTo(offset, Event::None);
 		}
@@ -49,19 +49,19 @@ namespace ezui {
 		if (sliderRect.IsEmptyArea()) { return; }
 		auto point = arg.Location;
 		if (arg.Button == MouseButton::Left && sliderRect.Contains({ point.X,point.Y })) {
-			_mouseDown = true;
-			this->_lastPoint = point.X;
+			m_mouseDown = true;
+			this->m_lastPoint = point.X;
 		}
 	}
 	void HScrollBar::OnMouseMove(const MouseEventArgs& arg)
 	{
 		__super::OnMouseMove(arg);
 		auto point = arg.Location;
-		if (_mouseDown) {
-			int_t offsetX = point.X - this->_lastPoint;
-			_sliderPos += offsetX;
-			_lastPoint = point.X;
-			int_t offset = _sliderPos * this->_rollRate + 0.5;
+		if (m_mouseDown) {
+			int_t offsetX = point.X - this->m_lastPoint;
+			m_sliderPos += offsetX;
+			m_lastPoint = point.X;
+			int_t offset = m_sliderPos * this->m_rollRate + 0.5;
 			__super::ScrollTo(-offset, Event::OnMouseDrag);
 		}
 	}

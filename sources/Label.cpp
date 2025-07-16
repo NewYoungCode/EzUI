@@ -12,10 +12,10 @@ namespace ezui {
 	void Label::OnForePaint(PaintEventArgs& args)
 	{
 		__super::OnForePaint(args);
-		if (!_wstr.empty()) {
+		if (!m_wstr.empty()) {
 			int_t maxWidth = Width() - this->TextMargin.GetHSpace();
 			int_t maxHeight = Height() - this->TextMargin.GetVSpace();
-			std::wstring drawText(_wstr);
+			std::wstring drawText(m_wstr);
 			std::wstring fontFamily = GetFontFamily();
 			auto fontSize = GetFontSize();
 			if (fontSize == 0)return;
@@ -29,7 +29,7 @@ namespace ezui {
 					TextLayout textLayout(wEllipsisText, font);
 					ellipsisTextSize = textLayout.GetFontBox();
 				}
-				TextLayout textLayout(_wstr, font);
+				TextLayout textLayout(m_wstr, font);
 
 				if (textLayout.GetFontBox().Width > maxWidth) {//当文字显示超出的时候 宽度
 					int_t pos = 0;
@@ -51,8 +51,8 @@ namespace ezui {
 			}
 			std::wstring viewStr = !drawText.empty() ? drawText : Ellipsis.unicode();
 			TextLayout textLayout(viewStr, font, SizeF(maxWidth, maxHeight), (IsAutoWidth() && IsAutoHeight()) ? TextAlign::TopLeft : this->TextAlign);
-			if (this->_underlineCount != 0) {//下划线
-				textLayout.SetUnderline(_underlinePos, _underlineCount);
+			if (this->m_underlineCount != 0) {//下划线
+				textLayout.SetUnderline(m_underlinePos, m_underlineCount);
 			}
 			args.Graphics.DrawTextLayout(textLayout, { (float)this->TextMargin.Left,(float)this->TextMargin.Top });
 		}
@@ -99,8 +99,8 @@ namespace ezui {
 			}
 			if (key == "underline") {
 				size_t pos = value.find(",");
-				this->_underlinePos = std::atoi(value.substr(0, pos + 1).c_str());
-				this->_underlineCount = std::atoi(value.substr(pos + 1, pos).c_str());
+				this->m_underlinePos = std::atoi(value.substr(0, pos + 1).c_str());
+				this->m_underlineCount = std::atoi(value.substr(pos + 1, pos).c_str());
 				break;
 			}
 
@@ -123,7 +123,7 @@ namespace ezui {
 			int_t maxWidth = IsAutoWidth() ? __MAXFLOAT : Width() - this->TextMargin.GetHSpace();
 			int_t maxHeight = IsAutoHeight() ? __MAXFLOAT : Height() - this->TextMargin.GetVSpace();
 
-			TextLayout text(this->_wstr, font, SizeF(maxWidth, maxHeight));
+			TextLayout text(this->m_wstr, font, SizeF(maxWidth, maxHeight));
 			Size box = text.GetFontBox();
 			this->SetContentSize(box);
 			if (IsAutoWidth()) {
@@ -135,16 +135,16 @@ namespace ezui {
 		}
 	}
 	void Label::SetText(const UIString& text) {
-		_wstr = text.unicode();
+		m_wstr = text.unicode();
 		this->TryPendLayout();
 	}
 	void Label::SetUnderline(size_t pos, size_t count)
 	{
-		this->_underlinePos = pos;
-		this->_underlineCount = count;
+		this->m_underlinePos = pos;
+		this->m_underlineCount = count;
 	}
 	UIString Label::GetText()const
 	{
-		return UIString(_wstr);
+		return UIString(m_wstr);
 	}
 };

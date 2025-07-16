@@ -7,7 +7,7 @@ namespace ezui {
 		public PagedListView
 	{
 	private:
-		HScrollBar _hScrollBar;
+		HScrollBar m_hScrollBar;
 		void Init();
 		void Offset(int_t offset);
 	protected:

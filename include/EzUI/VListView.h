@@ -7,7 +7,7 @@ namespace ezui {
 		public PagedListView
 	{
 	private:
-		VScrollBar _vScrollBar;
+		VScrollBar m_vScrollBar;
 		void Init();
 		//对控件进行偏移
 		void Offset(int_t offset);

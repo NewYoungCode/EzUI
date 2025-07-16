@@ -9,14 +9,6 @@ namespace ezui {
 //具有输入焦点的控件
 #define __INPUT_CONTROL PublicData->InputControl
 
-	bool _mouseIn = false;//鼠标是否在里面
-	bool _mouseDown = false;//鼠标是否已经按下
-	bool _moveWindow = false;//窗口移动
-	POINT _dragPoint;//记录鼠标坐标
-	Point _downPoint;//记录鼠标按下的坐标
-	ULONGLONG _lastDownTime = 0;//上一次鼠标按下的时间
-	MouseButton _lastBtn = MouseButton::None;//上一次鼠标按下的按钮
-
 	Window::Window(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 	{
 		InitWindow(width, height, owner, dStyle, ExStyle);//设置基本数据
@@ -24,8 +16,8 @@ namespace ezui {
 
 	Window::~Window()
 	{
-		if (_hWndTips) {
-			::DestroyWindow(_hWndTips);
+		if (m_hWndTips) {
+			::DestroyWindow(m_hWndTips);
 		}
 		if (Hwnd()) {
 			::DestroyWindow(Hwnd());
@@ -39,7 +31,7 @@ namespace ezui {
 	{
 		this->PublicData = new WindowData;
 		(bool&)this->IsWindow = true;
-		Rect _rect(0, 0, width, height);
+		Rect rect(0, 0, width, height);
 
 		POINT cursorPos;
 		::GetCursorPos(&cursorPos);
@@ -48,14 +40,14 @@ namespace ezui {
 			rect.Width = it.Physical.Width;
 			rect.Height = it.Physical.Height;
 			if (rect.Contains(cursorPos.x, cursorPos.y)) {
-				_rect.X = rect.X;
-				_rect.Y = rect.Y;
+				rect.X = rect.X;
+				rect.Y = rect.Y;
 				this->PublicData->Scale = it.Scale;
 				break;
 			}
 		}
 
-		_rect.Scale(this->PublicData->Scale);
+		rect.Scale(this->PublicData->Scale);
 
 		//绑定消息过程
 		PublicData->WndProc = [this](HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) ->LRESULT {
@@ -63,7 +55,7 @@ namespace ezui {
 			};
 		//创建窗口
 		PublicData->HANDLE = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, ezui::__EzUI__WindowClassName, ezui::__EzUI__WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
-			_rect.X, _rect.Y, _rect.Width, _rect.Height, owner, NULL, ezui::__EzUI__HINSTANCE, NULL);
+			rect.X, rect.Y, rect.Width, rect.Height, owner, NULL, ezui::__EzUI__HINSTANCE, NULL);
 		PublicData->Window = this;
 		if (owner) {
 			this->CenterToWindow(owner);
@@ -73,7 +65,7 @@ namespace ezui {
 		}
 
 		//创建冒泡提示窗口
-		_hWndTips = CreateWindowEx(WS_EX_TOPMOST,
+		m_hWndTips = CreateWindowEx(WS_EX_TOPMOST,
 			TOOLTIPS_CLASS,
 			NULL,
 			WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
@@ -114,17 +106,17 @@ namespace ezui {
 		PublicData->SetTips = [this](Control* ctl, const std::wstring& text)->void {
 
 			// 枚举并删除每个提示项
-			int_t toolCount = SendMessage(_hWndTips, TTM_GETTOOLCOUNT, 0, 0);
+			int_t toolCount = SendMessage(m_hWndTips, TTM_GETTOOLCOUNT, 0, 0);
 			for (int_t i = 0; i < toolCount; ++i) {
 				TOOLINFO toolInfo{ 0 };
 				toolInfo.cbSize = sizeof(TOOLINFO);
 				toolInfo.hwnd = Hwnd();
 				toolInfo.uFlags = TTF_IDISHWND;
-				toolInfo.hwnd = _hWndTips;
+				toolInfo.hwnd = m_hWndTips;
 				// 发送 TTM_ENUMTOOLS 消息以获取提示项信息
-				if (SendMessage(_hWndTips, TTM_ENUMTOOLS, i, (LPARAM)&toolInfo)) {
+				if (SendMessage(m_hWndTips, TTM_ENUMTOOLS, i, (LPARAM)&toolInfo)) {
 					// 发送 TTM_DELTOOL 消息删除提示项
-					SendMessage(_hWndTips, TTM_DELTOOL, 0, (LPARAM)&toolInfo);
+					SendMessage(m_hWndTips, TTM_DELTOOL, 0, (LPARAM)&toolInfo);
 				}
 			}
 			//EString str;
@@ -140,7 +132,7 @@ namespace ezui {
 				tti.uId = (UINT_PTR)ctl;
 				tti.lpszText = (LPWSTR)text.c_str();
 				//添加一个tips信息
-				SendMessage(_hWndTips, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
+				SendMessage(m_hWndTips, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
 			}
 			};
 		PublicData->DelTips = [this](Control* ctl)->void {
@@ -149,7 +141,7 @@ namespace ezui {
 			tti.hwnd = Hwnd();
 			tti.uId = (UINT_PTR)ctl;
 			//移除
-			SendMessage(_hWndTips, TTM_DELTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
+			SendMessage(m_hWndTips, TTM_DELTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
 			};
 		PublicData->RemoveControl = [this](Control* delControl)->void {
 			if (__FOCUS_CONTROL == delControl) {
@@ -182,16 +174,16 @@ namespace ezui {
 		UI_SET_USERDATA(Hwnd(), this->PublicData);
 
 		//触发一些逻辑
-		::SendMessage(Hwnd(), WM_MOVE, NULL, MAKELPARAM(_rect.X, _rect.Y));
-		::SendMessage(Hwnd(), WM_SIZE, NULL, MAKELPARAM(_rect.Width, _rect.Height));
+		::SendMessage(Hwnd(), WM_MOVE, NULL, MAKELPARAM(rect.X, rect.Y));
+		::SendMessage(Hwnd(), WM_SIZE, NULL, MAKELPARAM(rect.Width, rect.Height));
 	}
 
 	Control* Window::FindControl(const UIString& objectName)
 	{
-		if (!_layout) {
+		if (!m_layout) {
 			return NULL;
 		}
-		return this->_layout->FindControl(objectName);
+		return this->m_layout->FindControl(objectName);
 	}
 
 	HWND Window::Hwnd()
@@ -202,15 +194,15 @@ namespace ezui {
 	{
 		RECT rect;
 		::GetWindowRect(Hwnd(), &rect);
-		_rect = { rect.left,rect.top,rect.right - rect.left,rect.bottom - rect.top };
-		return _rect;
+		m_rect = { rect.left,rect.top,rect.right - rect.left,rect.bottom - rect.top };
+		return m_rect;
 	}
 	const Rect& Window::GetClientRect()
 	{
 		RECT rect;
 		::GetClientRect(Hwnd(), &rect);
-		_rectClient = { rect.left,rect.top,rect.right - rect.left,rect.bottom - rect.top };
-		return _rectClient;
+		m_rectClient = { rect.left,rect.top,rect.right - rect.left,rect.bottom - rect.top };
+		return m_rectClient;
 	}
 
 	void Window::SetText(const UIString& text)
@@ -269,13 +261,13 @@ namespace ezui {
 	}
 	void Window::SetMiniSize(const Size& size)
 	{
-		_miniSize = size;
-		_miniSize.Scale(this->PublicData->Scale);
+		m_miniSize = size;
+		m_miniSize.Scale(this->PublicData->Scale);
 	}
 	void Window::SetMaxSize(const Size& size)
 	{
-		_maxSize = size;
-		_maxSize.Scale(this->PublicData->Scale);
+		m_maxSize = size;
+		m_maxSize.Scale(this->PublicData->Scale);
 	}
 	void Window::SetIcon(short id)
 	{
@@ -287,10 +279,10 @@ namespace ezui {
 	}
 	void Window::SetLayout(ezui::Control* layout) {
 		ASSERT(layout);
-		_layout = layout;
-		_layout->PublicData = this->PublicData;
+		m_layout = layout;
+		m_layout->PublicData = this->PublicData;
 
-		if (_layout->Style.FontFamily.empty()) {
+		if (m_layout->Style.FontFamily.empty()) {
 			WCHAR fontName[LF_FACESIZE] = { 0 };
 			NONCLIENTMETRICS ncm = { sizeof(NONCLIENTMETRICS) };
 			// 获取系统非客户区字体
@@ -303,38 +295,38 @@ namespace ezui {
 				// 获取系统普通文本字体
 				::SystemParametersInfoW(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &fontName, 0);
 			}
-			_layout->Style.FontFamily = fontName;
+			m_layout->Style.FontFamily = fontName;
 		}
-		if (_layout->Style.FontSize == 0) {
-			_layout->Style.FontSize = 12;
+		if (m_layout->Style.FontSize == 0) {
+			m_layout->Style.FontSize = 12;
 		}
-		if (_layout->Style.ForeColor.GetValue() == 0) {
-			_layout->Style.ForeColor = Color::Black;
+		if (m_layout->Style.ForeColor.GetValue() == 0) {
+			m_layout->Style.ForeColor = Color::Black;
 		}
-		if (_layout->Style.BackColor.GetValue() == 0) {
+		if (m_layout->Style.BackColor.GetValue() == 0) {
 			LONG_PTR exStyle = ::GetWindowLongPtr(Hwnd(), GWL_EXSTYLE);
 			bool isLayered = ((exStyle & WS_EX_LAYERED) != 0);
 			if (!isLayered) {//非layered窗口 主布局控件必须设置背景色
-				_layout->Style.BackColor = Color::White;
+				m_layout->Style.BackColor = Color::White;
 			}
 		}
-		if (_layout->GetScale() != this->GetScale()) {
-			_layout->SendNotify(DpiChangeEventArgs(this->GetScale()));
+		if (m_layout->GetScale() != this->GetScale()) {
+			m_layout->SendNotify(DpiChangeEventArgs(this->GetScale()));
 		}
-		_layout->SetRect(this->GetClientRect());
+		m_layout->SetRect(this->GetClientRect());
 	}
 
 	Control* Window::GetLayout()
 	{
-		return this->_layout;
+		return this->m_layout;
 	}
 	void Window::Close(int_t code) {
-		_closeCode = code;
+		m_closeCode = code;
 		::SendMessage(Hwnd(), WM_CLOSE, 0, 0);
 	}
 	void Window::Show()
 	{
-		ASSERT(_layout);
+		ASSERT(m_layout);
 		::ShowWindow(Hwnd(), SW_SHOW);
 	}
 	void Window::Show(int_t cmdShow)
@@ -359,14 +351,14 @@ namespace ezui {
 		::SetWindowPos(Hwnd(), HWND_TOP, monitorInfo.Rect.X, monitorInfo.Rect.Y, monitorInfo.Rect.Width, monitorInfo.Rect.Height, NULL);
 		::ShowWindow(Hwnd(), SW_SHOW);
 	}
-	int_t Window::ShowModal(bool disableOnwer)
+	int_t Window::ShowModal(bool disableOwner)
 	{
 		//此处代码不能随意更改 解决关闭窗口时,owner窗口闪烁问题
-		if (disableOnwer) {
-			_oWnerWnd = ::GetWindow(Hwnd(),GW_OWNER);
+		if (disableOwner) {
+			m_ownerWnd = ::GetWindow(Hwnd(),GW_OWNER);
 		}
-		if (_oWnerWnd) {
-			::EnableWindow(_oWnerWnd, FALSE);
+		if (m_ownerWnd) {
+			::EnableWindow(m_ownerWnd, FALSE);
 		}
 		this->Show();
 		::MSG msg{ 0 };
@@ -375,11 +367,11 @@ namespace ezui {
 			::TranslateMessage(&msg);
 			::DispatchMessage(&msg);
 		}
-		if (_oWnerWnd && ::IsWindow(_oWnerWnd)) {
-			::SetActiveWindow(_oWnerWnd);
-			_oWnerWnd = NULL;
+		if (m_ownerWnd && ::IsWindow(m_ownerWnd)) {
+			::SetActiveWindow(m_ownerWnd);
+			m_ownerWnd = NULL;
 		}
-		return _closeCode;
+		return m_closeCode;
 	}
 	void Window::Hide() {
 		::ShowWindow(Hwnd(), SW_HIDE);
@@ -399,14 +391,14 @@ namespace ezui {
 
 	void Window::Invalidate()
 	{
-		if (_layout) {
-			_layout->Invalidate();
+		if (m_layout) {
+			m_layout->Invalidate();
 		}
 	}
 	void Window::Refresh()
 	{
-		if (_layout) {
-			_layout->Refresh();
+		if (m_layout) {
+			m_layout->Refresh();
 		}
 	}
 
@@ -420,14 +412,14 @@ namespace ezui {
 		int_t sw = monitorInfo.WorkRect.Width;//当前工作区域的宽
 		int_t sh = monitorInfo.WorkRect.Height;//当前工作区域的高
 
-		Rect _rect = this->GetWindowRect();
-		int_t width = _rect.Width;
-		int_t height = _rect.Height;
+		Rect rect = this->GetWindowRect();
+		int_t width = rect.Width;
+		int_t height = rect.Height;
 		//基于屏幕的中心点
-		_rect.X = x + (sw - width) / 2.0f + 0.5;//保证左右居中
-		_rect.Y = y + (sh - height) / 2.0f + 0.5;//保证上下居中
+		rect.X = x + (sw - width) / 2.0f + 0.5;//保证左右居中
+		rect.Y = y + (sh - height) / 2.0f + 0.5;//保证上下居中
 		//移动窗口
-		::SetWindowPos(Hwnd(), NULL, _rect.X, _rect.Y, _rect.Width, _rect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
+		::SetWindowPos(Hwnd(), NULL, rect.X, rect.Y, rect.Width, rect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
 	}
 
 	void Window::CenterToWindow(HWND wnd)
@@ -441,19 +433,19 @@ namespace ezui {
 		if (wnd == NULL) {
 			return;
 		}
-		Rect _rect = this->GetWindowRect();
-		const int_t& width = _rect.Width;
-		const int_t& height = _rect.Height;
+		Rect rect = this->GetWindowRect();
+		const int_t& width = rect.Width;
+		const int_t& height = rect.Height;
 		//基于父窗口的中心点
 		RECT ownerRECT;
 		::GetWindowRect(wnd, &ownerRECT);
 		int_t onwerWidth = ownerRECT.right - ownerRECT.left;
 		int_t onwerHeight = ownerRECT.bottom - ownerRECT.top;
 		if (width > 0 && height > 0 && onwerWidth > 0 && onwerHeight > 0) {
-			_rect.X = ownerRECT.left + (onwerWidth - width) / 2.0f + 0.5;
-			_rect.Y = ownerRECT.top + (onwerHeight - height) / 2.0f + 0.5;
+			rect.X = ownerRECT.left + (onwerWidth - width) / 2.0f + 0.5;
+			rect.Y = ownerRECT.top + (onwerHeight - height) / 2.0f + 0.5;
 			//移动窗口
-			::SetWindowPos(Hwnd(), NULL, _rect.X, _rect.Y, _rect.Width, _rect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
+			::SetWindowPos(Hwnd(), NULL, rect.X, rect.Y, rect.Width, rect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
 		}
 	}
 
@@ -492,13 +484,13 @@ namespace ezui {
 		case WM_GETMINMAXINFO:
 		{
 			MINMAXINFO* pMMInfo = (MINMAXINFO*)lParam;
-			if (!_miniSize.Empty()) {
-				pMMInfo->ptMinTrackSize.x = _miniSize.Width;
-				pMMInfo->ptMinTrackSize.y = _miniSize.Height;
+			if (!m_miniSize.Empty()) {
+				pMMInfo->ptMinTrackSize.x = m_miniSize.Width;
+				pMMInfo->ptMinTrackSize.y = m_miniSize.Height;
 			}
-			if (!_maxSize.Empty()) {
-				pMMInfo->ptMaxTrackSize.x = _maxSize.Width;
-				pMMInfo->ptMaxTrackSize.y = _maxSize.Height;
+			if (!m_maxSize.Empty()) {
+				pMMInfo->ptMaxTrackSize.x = m_maxSize.Width;
+				pMMInfo->ptMaxTrackSize.y = m_maxSize.Height;
 				break;
 			}
 			MONITORINFO monitor;
@@ -538,7 +530,7 @@ namespace ezui {
 				Rect rect = input->GetCareRect();
 				int_t	x = input->GetClientRect().X + rect.X;
 				int_t y = input->GetClientRect().Y + rect.Y + rect.Height;
-				if (y == _rectClient.Height) {
+				if (y == m_rectClient.Height) {
 					y -= 1;//神奇!如果输入位置和等于窗口的高 那么输入法就会跑到左上角去
 				}
 				cpf.ptCurrentPos.x = x;
@@ -622,10 +614,10 @@ namespace ezui {
 			}
 			int_t xPos = (int_t)(short)LOWORD(lParam);   // horizontal position 
 			int_t yPos = (int_t)(short)HIWORD(lParam);   // vertical position 
-			_rect.X = xPos;
-			_rect.Y = yPos;
+			m_rect.X = xPos;
+			m_rect.Y = yPos;
 
-			OnMove(_rect.GetLocation());
+			OnMove(m_rect.GetLocation());
 			break;
 		}
 		case WM_SIZE: {
@@ -635,19 +627,19 @@ namespace ezui {
 			}
 			UINT width = LOWORD(lParam);
 			UINT height = HIWORD(lParam);
-			_rect.Width = width;
-			_rect.Height = height;
+			m_rect.Width = width;
+			m_rect.Height = height;
 
 			//获取客户区的矩形
 			RECT rect;
 			::GetClientRect(Hwnd(), &rect);
 
-			_rectClient.X = rect.left;
-			_rectClient.Y = rect.top;
-			_rectClient.Width = rect.right - rect.left;
-			_rectClient.Height = rect.bottom - rect.top;
+			m_rectClient.X = rect.left;
+			m_rectClient.Y = rect.top;
+			m_rectClient.Width = rect.right - rect.left;
+			m_rectClient.Height = rect.bottom - rect.top;
 
-			OnSize(_rect.GetSize());
+			OnSize(m_rect.GetSize());
 			break;
 		}
 		case WM_CLOSE:
@@ -656,8 +648,8 @@ namespace ezui {
 			OnClose(bClose);
 			if (bClose) {
 				//解决关闭窗口时 owner窗口闪烁的问题
-				if (_oWnerWnd) {
-					::EnableWindow(_oWnerWnd, TRUE);
+				if (m_ownerWnd) {
+					::EnableWindow(m_ownerWnd, TRUE);
 				}
 				::DestroyWindow(Hwnd());
 			}
@@ -740,7 +732,7 @@ namespace ezui {
 			tme.hwndTrack = Hwnd();
 			TrackMouseEvent(&tme);
 			OnMouseMove({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
-			_mouseIn = true;
+			m_mouseIn = true;
 			//给hwndTip发送消息告诉现在移动到什么位置了
 			//LPARAM lp = MAKELPARAM(args.Location.X, args.Location.Y);
 			//SendMessage(_hWndTips, TTM_TRACKPOSITION, 0, lParam);
@@ -770,7 +762,7 @@ namespace ezui {
 		}
 		case WM_MOUSELEAVE:
 		{
-			_mouseIn = false;
+			m_mouseIn = false;
 			OnMouseLeave();
 			break;
 		}
@@ -815,8 +807,8 @@ namespace ezui {
 
 	void Window::OnPaint(PaintEventArgs& arg)
 	{
-		if (_layout) {
-			_layout->SendNotify(arg);//
+		if (m_layout) {
+			m_layout->SendNotify(arg);//
 		}
 	}
 
@@ -838,7 +830,7 @@ namespace ezui {
 
 	Control* Window::FindControl(const Point clientPoint, Point* outPoint) {
 		*outPoint = clientPoint;
-		Control* outCtl = _layout;
+		Control* outCtl = m_layout;
 	Find_Loop:
 		IScrollBar* scrollBar = outCtl->GetScrollBar();
 		if (scrollBar && scrollBar->GetClientRect().Contains(clientPoint)) {
@@ -889,20 +881,20 @@ namespace ezui {
 	void Window::OnMouseMove(const Point& point)
 	{
 		//对窗口进行移动
-		if (_moveWindow && _mouseDown) {
+		if (m_moveWindow && m_mouseDown) {
 			POINT ptNow;
 			::GetCursorPos(&ptNow);
-			int_t dx = ptNow.x - _dragPoint.x;
-			int_t dy = ptNow.y - _dragPoint.y;
+			int_t dx = ptNow.x - m_dragPoint.x;
+			int_t dy = ptNow.y - m_dragPoint.y;
 			HWND hWnd = Hwnd();
 			RECT rect;
 			::GetWindowRect(hWnd, &rect);
 			this->SetRect(Rect(rect.left + dx, rect.top + dy, rect.right - rect.left, rect.bottom - rect.top));
-			_dragPoint = ptNow; // 更新起点
+			m_dragPoint = ptNow; // 更新起点
 			return;
 		}
 
-		if (__INPUT_CONTROL && _mouseDown) { //按住移动的控件
+		if (__INPUT_CONTROL && m_mouseDown) { //按住移动的控件
 			auto ctlRect = __INPUT_CONTROL->GetClientRect();
 			MouseEventArgs args(Event::OnMouseMove, { point.X - ctlRect.X ,point.Y - ctlRect.Y });
 			__INPUT_CONTROL->SendNotify(args);
@@ -945,7 +937,7 @@ namespace ezui {
 			__FOCUS_CONTROL->SendNotify(args);
 		}
 		__FOCUS_CONTROL = NULL;
-		_mouseDown = false;
+		m_mouseDown = false;
 	}
 
 	void Window::OnMouseWheel(int_t zDelta, const Point& point)
@@ -992,7 +984,7 @@ namespace ezui {
 	void Window::OnMouseDown(MouseButton mbtn, const Point& point)
 	{
 		::SetCapture(Hwnd());
-		_mouseDown = true;//标记为按下
+		m_mouseDown = true;//标记为按下
 		//寻早控件
 		Point relativePoint;
 		Control* outCtl = this->FindControl(point, &relativePoint);
@@ -1009,23 +1001,23 @@ namespace ezui {
 		}
 		//获取按下按钮和按下的时差
 		auto time_now = ::GetTickCount64();//记录鼠标按下的当前时间
-		auto offset = time_now - _lastDownTime;//本次与上次按下按钮的时间差
+		auto offset = time_now - m_lastDownTime;//本次与上次按下按钮的时间差
 		//300毫秒之内同一个按钮按下两次算双击消息
-		if (offset < 300 && _lastBtn == mbtn && _downPoint == point) {
+		if (offset < 300 && m_lastBtn == mbtn && m_downPoint == point) {
 			OnMouseDoubleClick(mbtn, point);
 		}
-		_lastDownTime = ::GetTickCount64();
-		_lastBtn = mbtn;
-		_downPoint = point;
+		m_lastDownTime = ::GetTickCount64();
+		m_lastBtn = mbtn;
+		m_downPoint = point;
 	}
 	void Window::OnMouseUp(MouseButton mbtn, const Point& point)
 	{
-		_moveWindow = false;
+		m_moveWindow = false;
 		::ReleaseCapture();
-		if (_mouseDown == false) {
+		if (m_mouseDown == false) {
 			return;
 		}
-		_mouseDown = false;
+		m_mouseDown = false;
 		if (__INPUT_CONTROL) {
 			Rect ctlRect = __INPUT_CONTROL->GetClientRect();
 			MouseEventArgs args(Event::None);
@@ -1038,9 +1030,9 @@ namespace ezui {
 
 			}
 			//触发单击事件 如果焦点还在并且鼠标未移出控件内 
-			if (__INPUT_CONTROL && mbtn == _lastBtn && ctlRect.Contains(point)) {
+			if (__INPUT_CONTROL && mbtn == m_lastBtn && ctlRect.Contains(point)) {
 				auto _time = ::GetTickCount64();
-				auto diff = _time - _lastDownTime;
+				auto diff = _time - m_lastDownTime;
 				if (diff < 500) {//鼠标按住超过200毫秒则不触发单机事件
 					args.EventType = Event::OnMouseClick;
 					__INPUT_CONTROL->SendNotify(args);
@@ -1071,14 +1063,14 @@ namespace ezui {
 
 	void Window::OnSize(const Size& sz)
 	{
-		if (!_layout) {
+		if (!m_layout) {
 			return;
 		}
-		if (_layout->GetScale() != PublicData->Scale) {
+		if (m_layout->GetScale() != PublicData->Scale) {
 			this->OnDpiChange(PublicData->Scale, Rect());
 		}
-		_layout->SetRect(this->GetClientRect());
-		_layout->Invalidate();
+		m_layout->SetRect(this->GetClientRect());
+		m_layout->Invalidate();
 	}
 
 	void Window::OnClose(bool& bClose)
@@ -1131,11 +1123,11 @@ namespace ezui {
 		//新的缩放比
 		float newScale = systemScale / PublicData->Scale;
 		this->PublicData->Scale = systemScale;
-		this->_miniSize.Scale(newScale);
-		this->_maxSize.Scale(newScale);
+		this->m_miniSize.Scale(newScale);
+		this->m_maxSize.Scale(newScale);
 		DpiChangeEventArgs arg(systemScale);
-		if (_layout) {
-			_layout->SendNotify(arg);
+		if (m_layout) {
+			m_layout->SendNotify(arg);
 		}
 		if (!newRect.IsEmptyArea()) {
 			SetWindowPos(Hwnd(), NULL, newRect.X, newRect.Y, newRect.Width, newRect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
@@ -1158,8 +1150,8 @@ namespace ezui {
 		}
 		case Event::OnMouseDown: {
 			if (sender->Action == ControlAction::MoveWindow) {
-				GetCursorPos(&_dragPoint); // 获取屏幕坐标
-				_moveWindow = true;
+				GetCursorPos(&m_dragPoint); // 获取屏幕坐标
+				m_moveWindow = true;
 				break;
 			}
 			if (sender->Action == ControlAction::Title) {

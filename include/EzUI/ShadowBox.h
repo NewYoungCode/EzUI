@@ -6,10 +6,10 @@ namespace ezui {
 	class UI_EXPORT ShadowBox
 	{
 	private:
-		Size _bufSize;
-		Bitmap* _bufBitmap = NULL;
-		Rect _clipRect;
-		HWND _hWnd = NULL;
+		Size m_bufSize;
+		Bitmap* m_bufBitmap = NULL;
+		Rect m_clipRect;
+		HWND m_hWnd = NULL;
 	private:
 		void setA(int_t x, int_t y, BYTE a, float radius);
 		bool SetShadow(int_t m_Width, int_t m_Height, int_t iSize, float radius);

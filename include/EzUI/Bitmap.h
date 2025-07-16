@@ -9,12 +9,12 @@ namespace ezui {
 			PixelFormatARGB = 32
 		};
 	private:
-		int_t _width = 0;
-		int_t _height = 0;
-		HBITMAP _bmp = NULL;
-		HDC _hdc = NULL;
-		byte* point = NULL;
-		BITMAPINFO _bmpInfo;
+		int_t m_width = 0;
+		int_t m_height = 0;
+		HBITMAP m_bmp = NULL;
+		HDC m_hdc = NULL;
+		byte* m_point = NULL;
+		BITMAPINFO m_bmpInfo;
 		Bitmap(const Bitmap& hBitmap) = delete;
 		void operator=(const Bitmap& hBitmap) = delete;
 	protected:

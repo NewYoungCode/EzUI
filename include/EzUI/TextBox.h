@@ -8,36 +8,36 @@ namespace ezui {
 		public Control
 	{
 	private:
-		VScrollBar _vScrollbar;
-		int_t _lastWidth = 0;
-		int_t _lastHeight = 0;
-		bool _multiLine = false;
-		std::wstring _text;//文字
-		Size _fontBox;
-		bool _down = false;//是否具有焦点中
-		bool _focus = false;//是否具有焦点中
-		Point _point_Start;//开始选中的位置
-		Point _point_End;//结束位置
-		std::list<Rect> _selectRects;//选中的字符矩形
-		Rect _careRect;//光标位置
-		Font* _font = NULL;//字体
-		TextLayout* _textLayout = NULL;//字体布局
-		Point _A;//A点
-		BOOL _A_isTrailingHit;//如果是1表示是字符的后半边
-		int_t _A_TextPos = 0;//点击了第几个字符
-		Point _B;//B点
-		BOOL _B_isTrailingHit;//如果是1表示是字符的后半边
-		int_t _B_TextPos = 0;//点击了第几个字符
-		int_t _textPos = 0;//当前文字的下标 0~text.size()
-		int_t _scrollX = 0;//用于左右滚动
-		int_t _scrollY = 0;//用于y轴滚动
-		int_t _lastX = 0;//上一个x位置
-		int_t _lastY = 0;//上一个y位置 
-		Timer _timer;//用于光标闪烁
-		bool _careShow = false;//用于光标闪烁
+		VScrollBar m_vScrollbar;
+		int_t m_lastWidth = 0;
+		int_t m_lastHeight = 0;
+		bool m_multiLine = false;
+		std::wstring m_text;//文字
+		Size m_fontBox;
+		bool m_down = false;//是否具有焦点中
+		bool m_focus = false;//是否具有焦点中
+		Point m_point_Start;//开始选中的位置
+		Point m_point_End;//结束位置
+		std::list<Rect> m_selectRects;//选中的字符矩形
+		Rect m_careRect;//光标位置
+		Font* m_font = NULL;//字体
+		TextLayout* m_textLayout = NULL;//字体布局
+		Point m_pointA;//A点
+		BOOL m_A_isTrailingHit;//如果是1表示是字符的后半边
+		int_t m_A_TextPos = 0;//点击了第几个字符
+		Point m_pointB;//B点
+		BOOL m_B_isTrailingHit;//如果是1表示是字符的后半边
+		int_t m_B_TextPos = 0;//点击了第几个字符
+		int_t m_textPos = 0;//当前文字的下标 0~text.size()
+		int_t m_scrollX = 0;//用于左右滚动
+		int_t m_scrollY = 0;//用于y轴滚动
+		int_t m_lastX = 0;//上一个x位置
+		int_t m_lastY = 0;//上一个y位置 
+		Timer m_timer;//用于光标闪烁
+		bool m_bCareShow = false;//用于光标闪烁
 	private:
 		void Init();
-		void _Insert(const std::wstring& str);//插入文字
+		void InsertUnicode(const std::wstring& str);//插入unicode文字内部使用
 		bool DeleteRange();//删除选中内容
 		bool GetSelectedRange(int_t* outPos, int_t* outCount);//获取当前被选中的区域 返回下标和个数
 		bool Copy();//复制到剪切板

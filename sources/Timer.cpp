@@ -1,15 +1,15 @@
 #include "Timer.h"
 namespace ezui {
 	Timer::Timer() {
-		_task = new Task([this]() {
+		m_task = new Task([this]() {
 			while (true)
 			{
 				{
-					std::unique_lock<std::mutex> autoLock(_mtx);
-					_condv.wait(autoLock, [this]() {
-						return  this->_bExit || !this->_bStop;
+					std::unique_lock<std::mutex> autoLock(m_mtx);
+					m_condv.wait(autoLock, [this]() {
+						return  this->m_bExit || !this->m_bStop;
 						});
-					if (this->_bExit) {
+					if (this->m_bExit) {
 						break;
 					}
 				}
@@ -21,25 +21,25 @@ namespace ezui {
 			});
 	}
 	bool Timer::IsStopped() {
-		return _bStop;
+		return m_bStop;
 	}
 	void Timer::Start() {
-		std::unique_lock<std::mutex> autoLock(_mtx);
-		_bStop = false;
-		_condv.notify_one();
+		std::unique_lock<std::mutex> autoLock(m_mtx);
+		m_bStop = false;
+		m_condv.notify_one();
 	}
 	void Timer::Stop() {
-		std::unique_lock<std::mutex> autoLock(_mtx);
-		_bStop = true;
-		_condv.notify_one();
+		std::unique_lock<std::mutex> autoLock(m_mtx);
+		m_bStop = true;
+		m_condv.notify_one();
 	}
 	Timer::~Timer() {
 		{
-			std::unique_lock<std::mutex> autoLock(_mtx);
+			std::unique_lock<std::mutex> autoLock(m_mtx);
 			this->Tick = NULL;
-			_bExit = true;
-			_condv.notify_one();
+			m_bExit = true;
+			m_condv.notify_one();
 		}
-		delete _task;
+		delete m_task;
 	}
 };

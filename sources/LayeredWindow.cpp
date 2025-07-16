@@ -4,8 +4,8 @@ namespace ezui {
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
 	LayeredWindow::LayeredWindow(int_t width, int_t height, HWND owner) :BorderlessWindow(width, height, owner, WS_EX_LAYERED)
 	{
-		_timeOut.Interval = 0;
-		_timeOut.Tick = [this](Timer* t) {
+		m_timeOut.Interval = 0;
+		m_timeOut.Tick = [this](Timer* t) {
 			t->Stop();//停止
 			Sleep(5);//延迟5ms之后再去绘制
 			::SendMessage(Hwnd(), WM_PAINT,  NULL, NULL);
@@ -20,19 +20,19 @@ namespace ezui {
 			};
 		//获取客户区大小 创建一个位图给窗口绘制
 		Size sz = GetClientRect().GetSize();
-		_winBitmap = new Bitmap(sz.Width, sz.Height, Bitmap::PixelFormat::PixelFormatARGB);
+		m_winBitmap = new Bitmap(sz.Width, sz.Height, Bitmap::PixelFormat::PixelFormatARGB);
 	}
 	LayeredWindow::~LayeredWindow() {
-		if (_winBitmap) {
-			delete _winBitmap;
+		if (m_winBitmap) {
+			delete m_winBitmap;
 		}
 	}
 
 	void LayeredWindow::InvalidateRect(const Rect& _rect) {
 		//将此区域添加到无效区域
-		_invalidateRect.push_back(_rect);
+		m_invalidateRect.push_back(_rect);
 		//timer延迟绘制
-		_timeOut.Start();
+		m_timeOut.Start();
 	}
 	
 	void LayeredWindow::BeginPaint(Rect* out_rect)
@@ -41,7 +41,7 @@ namespace ezui {
 		int_t Width = clientRect.Width;
 		int_t Height = clientRect.Height;
 		//将所有无效区域并集
-		for (auto& it : _invalidateRect) {
+		for (auto& it : m_invalidateRect) {
 			Rect rect = it;
 			//这段代码是保证重绘区域一定是在窗口内
 			if (rect.X < 0) {
@@ -68,16 +68,16 @@ namespace ezui {
 	}
 	void LayeredWindow::EndPaint()
 	{
-		_invalidateRect.clear();
+		m_invalidateRect.clear();
 	}
 	void LayeredWindow::Paint()
 	{
 		if (IsVisible()) {
 			Rect invalidateRect;
 			BeginPaint(&invalidateRect);
-			if ((_winBitmap && !invalidateRect.IsEmptyArea())) {
-				_winBitmap->Earse(invalidateRect);//清除背景
-				HDC winHDC = _winBitmap->GetHDC();
+			if ((m_winBitmap && !invalidateRect.IsEmptyArea())) {
+				m_winBitmap->Earse(invalidateRect);//清除背景
+				HDC winHDC = m_winBitmap->GetHDC();
 #if 1
 				//不使用双缓冲
 				DoPaint(winHDC, invalidateRect);
@@ -110,10 +110,10 @@ namespace ezui {
 		return __super::WndProc(uMsg, wParam, lParam);
 	}
 	void LayeredWindow::OnSize(const Size& sz) {
-		if (_winBitmap) {
-			delete _winBitmap;
+		if (m_winBitmap) {
+			delete m_winBitmap;
 		}
-		_winBitmap = new Bitmap(sz.Width, sz.Height, Bitmap::PixelFormat::PixelFormatARGB);
+		m_winBitmap = new Bitmap(sz.Width, sz.Height, Bitmap::PixelFormat::PixelFormatARGB);
 		__super::OnSize(sz);
 	}
 

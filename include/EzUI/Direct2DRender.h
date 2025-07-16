@@ -24,10 +24,10 @@ namespace ezui {
 	class UI_EXPORT Font {
 	private:
 		Font() = delete;
-		std::wstring _fontFamily;
-		float _fontSize = 0;
-		IDWriteTextFormat* _value = NULL;
-		bool Ref = false;
+		std::wstring m_fontFamily;
+		float m_fontSize = 0;
+		IDWriteTextFormat* m_value = NULL;
+		bool m_ref = false;
 		void Copy(const Font& _copy);
 	public:
 		Font(const Font& _copy);
@@ -64,13 +64,13 @@ namespace ezui {
 	class UI_EXPORT TextLayout {
 	private:
 		TextLayout() = delete;
-		TextLayout(const TextLayout& _copy) = delete;
-		TextLayout& operator=(const TextLayout& _copy) = delete;
+		TextLayout(const TextLayout& rightValue) = delete;
+		TextLayout& operator=(const TextLayout& rightValue) = delete;
 		IDWriteTextLayout* value = NULL;
 		void SetTextAlign(TextAlign textAlign);
-		std::wstring fontFamily;
-		DWRITE_TEXT_METRICS textMetrics{ 0 };
-		float _fontSize = 0;
+		std::wstring m_fontFamily;
+		DWRITE_TEXT_METRICS m_textMetrics{ 0 };
+		float m_fontSize = 0;
 	public:
 		void GetMetrics();
 		TextLayout(const std::wstring& text, const Font& font, const SizeF& maxSize = SizeF{ __MAXFLOAT,__MAXFLOAT }, TextAlign textAlgin = TextAlign::TopLeft);
@@ -92,12 +92,12 @@ namespace ezui {
 	class UI_EXPORT Geometry
 	{
 	protected:
-		bool Ref = false;
-		ID2D1Geometry* rgn = NULL;
+		bool m_ref = false;
+		ID2D1Geometry* m_rgn = NULL;
 	protected:
 		void Copy(const Geometry& _copy) {
-			((Geometry&)(_copy)).Ref = true;
-			this->rgn = ((Geometry&)(_copy)).rgn;
+			((Geometry&)(_copy)).m_ref = true;
+			this->m_rgn = ((Geometry&)(_copy)).m_rgn;
 		}
 	public:
 		Geometry() {}
@@ -112,11 +112,11 @@ namespace ezui {
 		Geometry(float x, float y, float width, float height, float _radius);
 		Geometry(const RectF& _rect, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius);
 		ID2D1Geometry* Get() const {
-			return rgn;
+			return m_rgn;
 		}
 		virtual ~Geometry() {
-			if (rgn && !Ref) {
-				rgn->Release();
+			if (m_rgn && !m_ref) {
+				m_rgn->Release();
 			}
 		}
 	public:
@@ -126,12 +126,12 @@ namespace ezui {
 			D2D::g_Direct2dFactory->CreatePathGeometry(&outPathGeometry);
 			ID2D1GeometrySink* geometrySink = NULL;
 			outPathGeometry->Open(&geometrySink);
-			HRESULT ret = a.rgn->CombineWithGeometry(b.rgn, COMBINE_MODE, NULL, geometrySink);
+			HRESULT ret = a.m_rgn->CombineWithGeometry(b.m_rgn, COMBINE_MODE, NULL, geometrySink);
 			geometrySink->Close();
-			if (out.rgn) {
-				out.rgn->Release();
+			if (out.m_rgn) {
+				out.m_rgn->Release();
 			}
-			out.rgn = outPathGeometry;
+			out.m_rgn = outPathGeometry;
 			geometrySink->Release();
 		}
 		//两块区域取最大边界
@@ -152,25 +152,25 @@ namespace ezui {
 
 	class UI_EXPORT DXPath {
 	private:
-		ID2D1GeometrySink* _pSink = NULL;
-		ID2D1PathGeometry* _pathGeometry = NULL;
-		bool _isBegin = false;
+		ID2D1GeometrySink* m_pSink = NULL;
+		ID2D1PathGeometry* m_pathGeometry = NULL;
+		bool m_isBegin = false;
 	public:
 		DXPath() {
-			D2D::g_Direct2dFactory->CreatePathGeometry(&_pathGeometry);
-			_pathGeometry->Open(&_pSink);
+			D2D::g_Direct2dFactory->CreatePathGeometry(&m_pathGeometry);
+			m_pathGeometry->Open(&m_pSink);
 		}
 		void AddRectangle(const Rect& rect) {
-			if (!_isBegin) {
-				_pSink->BeginFigure({ (float)rect.GetLeft(),(float)rect.GetTop() }, D2D1_FIGURE_BEGIN_FILLED);
-				_isBegin = true;
+			if (!m_isBegin) {
+				m_pSink->BeginFigure({ (float)rect.GetLeft(),(float)rect.GetTop() }, D2D1_FIGURE_BEGIN_FILLED);
+				m_isBegin = true;
 			}
 			else {
-				_pSink->AddLine({ (float)rect.GetLeft(),(float)rect.GetTop() });
+				m_pSink->AddLine({ (float)rect.GetLeft(),(float)rect.GetTop() });
 			}
-			_pSink->AddLine({ (float)rect.GetRight(),(float)rect.GetTop() });
-			_pSink->AddLine({ (float)rect.GetRight(),(float)rect.GetBottom() });
-			_pSink->AddLine({ (float)rect.GetLeft(),(float)rect.GetBottom() });
+			m_pSink->AddLine({ (float)rect.GetRight(),(float)rect.GetTop() });
+			m_pSink->AddLine({ (float)rect.GetRight(),(float)rect.GetBottom() });
+			m_pSink->AddLine({ (float)rect.GetLeft(),(float)rect.GetBottom() });
 		}
 		void AddArc(const Rect& rect, int_t startAngle, int_t sweepAngle) {
 
@@ -179,37 +179,37 @@ namespace ezui {
 
 		}
 		void CloseFigure() {
-			_pSink->EndFigure(D2D1_FIGURE_END_OPEN);
-			_pSink->Close();
+			m_pSink->EndFigure(D2D1_FIGURE_END_OPEN);
+			m_pSink->Close();
 		}
 		virtual ~DXPath() {
-			if (_pathGeometry) {
-				_pathGeometry->Release();
+			if (m_pathGeometry) {
+				m_pathGeometry->Release();
 			}
-			if (_pSink) {
-				_pSink->Release();
+			if (m_pSink) {
+				m_pSink->Release();
 			}
 		}
 		ID2D1PathGeometry* Get()const {
-			return _pathGeometry;
+			return m_pathGeometry;
 		}
 		ID2D1GeometrySink* operator ->() {
-			return _pSink;
+			return m_pSink;
 		}
 		ID2D1PathGeometry* operator *() {
-			return _pathGeometry;
+			return m_pathGeometry;
 		}
 	};
 
 	class UI_EXPORT DXImage : public IImage {
 	protected:
-		IWICBitmapDecoder* _bitmapdecoder = NULL;
-		IWICBitmapFrameDecode* _pframe = NULL;
-		IWICFormatConverter* _fmtcovter = NULL;//从文件加载
-		IWICBitmap* _bitMap = NULL;//从HBITMAP中加载
-		int_t _width = 0;
-		int_t _height = 0;
-		ID2D1Bitmap* _d2dBitmap = NULL;
+		IWICBitmapDecoder* m_bitmapdecoder = NULL;
+		IWICBitmapFrameDecode* m_pframe = NULL;
+		IWICFormatConverter* m_fmtcovter = NULL;//从文件加载
+		IWICBitmap* m_bitMap = NULL;//从HBITMAP中加载
+		int_t m_width = 0;
+		int_t m_height = 0;
+		ID2D1Bitmap* m_d2dBitmap = NULL;
 	private:
 		void CreateFormStream(IStream* istram);
 		void CreateFromFile(const std::wstring& file);
@@ -244,16 +244,16 @@ namespace ezui {
 
 	class UI_EXPORT DXRender {
 	private:
-		ID2D1DCRenderTarget* _render = NULL;
-		ID2D1SolidColorBrush* _brush = NULL;
-		Font* _font = NULL;
-		ID2D1StrokeStyle* _pStrokeStyle = NULL;
-		Point _offset;
-		PointF _rotatePoint;
-		float _angle = 0;
+		ID2D1DCRenderTarget* m_render = NULL;
+		ID2D1SolidColorBrush* m_brush = NULL;
+		Font* m_font = NULL;
+		ID2D1StrokeStyle* m_pStrokeStyle = NULL;
+		Point m_offset;
+		PointF m_rotatePoint;
+		float m_angle = 0;
 	private:
 		DXRender() = delete;
-		DXRender(const DXRender& _right) = delete;
+		DXRender(const DXRender& rightValue) = delete;
 		DXRender& operator=(const DXRender&) = delete;
 	public:
 		ID2D1SolidColorBrush* GetBrush();

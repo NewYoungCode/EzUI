@@ -6,7 +6,7 @@ namespace ezui {
 	//内联页面
 	class UI_EXPORT IFrame :public Control {
 	private:
-		UIManager _umg;
+		UIManager m_umg;
 	public:
 		IFrame();
 		virtual ~IFrame();

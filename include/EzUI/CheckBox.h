@@ -7,7 +7,7 @@ namespace ezui {
 		public Label
 	{
 	private:
-		bool _checked = false;
+		bool m_checked = false;
 	public:
 		//选中样式
 		ControlStyle CheckedStyle;

@@ -8,13 +8,13 @@ namespace ezui {
 		public Control
 	{
 	private:
-		int_t _pageIndex = 0;
-		Timer timer;
-		int_t offset = 0;
-		int_t nowOffset = 0;
-		std::vector<int_t> initialX;
-		float stepAcc = 0;
-		float stepPerFrame = 0;
+		int_t m_pageIndex = 0;
+		Timer m_timer;
+		int_t m_offset = 0;
+		int_t m_nowOffset = 0;
+		std::vector<int_t> m_initialX;
+		float m_stepAcc = 0;
+		float m_stepPerFrame = 0;
 		void Sort();
 	protected:
 		virtual void OnLayout()override;

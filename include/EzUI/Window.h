@@ -14,22 +14,36 @@ namespace ezui {
 	class UI_EXPORT Window :public IControl
 	{
 	private:
+		//鼠标是否在里面
+		bool m_mouseIn = false;
+		//鼠标是否已经按下
+		bool m_mouseDown = false;
+		//窗口移动
+		bool m_moveWindow = false;
+		//记录鼠标坐标
+		POINT m_dragPoint;
+		//记录鼠标按下的坐标
+		Point m_downPoint;
+		//上一次鼠标按下的时间
+		ULONGLONG m_lastDownTime = 0;
+		//上一次鼠标按下的按钮
+		MouseButton m_lastBtn = MouseButton::None;
 		//窗口最小尺寸
-		Size _miniSize;
+		Size m_miniSize;
 		//窗口最大尺寸
-		Size _maxSize;
+		Size m_maxSize;
 		//当窗口关闭的时候退出代码
-		int_t _closeCode = 0;
+		int_t m_closeCode = 0;
 		//基于桌面的坐标
-		Rect _rect;
+		Rect m_rect;
 		//客户绘图区域
-		Rect _rectClient;
+		Rect m_rectClient;
 		//所属窗口句柄
-		HWND _oWnerWnd = NULL;
+		HWND m_ownerWnd = NULL;
 		//窗口布局
-		Control* _layout = NULL;
+		Control* m_layout = NULL;
 		//用于提示的窗口句柄
-		HWND _hWndTips = NULL;
+		HWND m_hWndTips = NULL;
 		//初始化窗口
 	private:
 		Window(const Window&) = delete;

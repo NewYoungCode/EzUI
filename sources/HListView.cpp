@@ -32,7 +32,7 @@ namespace ezui {
 
 	IScrollBar* HListView::GetScrollBar()
 	{
-		return &_hScrollBar;
+		return &m_hScrollBar;
 	}
 	void HListView::Offset(int_t offset) {
 		int_t _contentHeight = 0;

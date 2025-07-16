@@ -6,7 +6,7 @@ namespace ezui {
 	}
 	PopupWindow::PopupWindow(int_t width, int_t height, Control* ownerCtl) :LayeredWindow(width, height, ownerCtl->PublicData->HANDLE)
 	{
-		this->_ownerCtl = ownerCtl;
+		this->m_ownerCtl = ownerCtl;
 		this->SetResizable(false);
 	}
 	void PopupWindow::Show()
@@ -16,11 +16,11 @@ namespace ezui {
 		Rect ctlRect;
 
 		POINT location;
-		if (_ownerCtl) {
-			ctlRect = _ownerCtl->GetClientRect();
+		if (m_ownerCtl) {
+			ctlRect = m_ownerCtl->GetClientRect();
 			location.x = ctlRect.GetLeft();
 			location.y = ctlRect.GetBottom();
-			::ClientToScreen(_ownerCtl->PublicData->HANDLE, &location);
+			::ClientToScreen(m_ownerCtl->PublicData->HANDLE, &location);
 		}
 		else {
 			::GetCursorPos(&location);
@@ -32,12 +32,12 @@ namespace ezui {
 		y = location.y;
 		width = rect.Width;
 		height = rect.Height;
-		if (_ownerCtl) {
+		if (m_ownerCtl) {
 			width = ctlRect.Width;
 		}
 		if ((location.y + height) > monitorInfo.Rect.GetBottom()) {
 			y -= height;
-			if (_ownerCtl) {
+			if (m_ownerCtl) {
 				y -= ctlRect.Height;
 			}
 		}

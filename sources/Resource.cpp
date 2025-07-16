@@ -2,49 +2,49 @@
 #include "ezui.h"
 namespace ezui {
 	Resource::ReadStream::ReadStream(HRSRC hRsrc) {
-		this->_ptr = (char*)::LoadResource(ezui::__EzUI__HINSTANCE, hRsrc);
-		this->_count = ::SizeofResource(ezui::__EzUI__HINSTANCE, hRsrc);
+		this->m_ptr = (char*)::LoadResource(ezui::__EzUI__HINSTANCE, hRsrc);
+		this->m_count = ::SizeofResource(ezui::__EzUI__HINSTANCE, hRsrc);
 	}
 	Resource::ReadStream::ReadStream(const UIString& fileName) {
-		this->_ifs = new std::ifstream(fileName.unicode(), std::ios::binary);
-		this->_ifs->seekg(0, std::ios::end);
-		this->_count = _ifs->tellg();
-		this->_ifs->seekg(0);
+		this->m_ifs = new std::ifstream(fileName.unicode(), std::ios::binary);
+		this->m_ifs->seekg(0, std::ios::end);
+		this->m_count = m_ifs->tellg();
+		this->m_ifs->seekg(0);
 	}
 	void Resource::ReadStream::seekg(std::streampos pos) {
-		if (_ifs) {
-			_ifs->seekg(pos);
+		if (m_ifs) {
+			m_ifs->seekg(pos);
 		}
 		else {
-			this->_pos = pos;
+			this->m_pos = pos;
 		}
 	}
 	void Resource::ReadStream::read(char* buf, std::streamsize count) {
-		if (_ifs) {
-			_ifs->read(buf, count);
+		if (m_ifs) {
+			m_ifs->read(buf, count);
 		}
 		else {
-			::memcpy(buf, _ptr + _pos, count);
-			this->_pos += count;
+			::memcpy(buf, m_ptr + m_pos, count);
+			this->m_pos += count;
 		}
 	}
 	std::streampos Resource::ReadStream::tellg() {
-		if (_ifs) {
-			return _ifs->tellg();
+		if (m_ifs) {
+			return m_ifs->tellg();
 		}
 		else {
-			return _pos;
+			return m_pos;
 		}
 	}
 	const  std::streamsize Resource::ReadStream::size() {
-		return this->_count;
+		return this->m_count;
 	}
 	Resource::ReadStream::~ReadStream() {
-		if (_ifs) {
-			delete _ifs;
+		if (m_ifs) {
+			delete m_ifs;
 		}
-		if (_ptr) {
-			::FreeResource((HGLOBAL)_ptr);
+		if (m_ptr) {
+			::FreeResource((HGLOBAL)m_ptr);
 		}
 	}
 
@@ -143,9 +143,9 @@ namespace ezui {
 	}
 
 	void Resource::UnPackage() {
-		_isGood = false;
+		m_isGood = false;
 		std::list<Entry>& items = (std::list<Entry>&)this->Items;
-		auto& ifs = *(this->_rStream);
+		auto& ifs = *(this->m_rStream);
 		if (ifs.size() < sizeof(std::streamsize) * 2) {
 			//不是标准的资源文件 不执行解析
 			ASSERT(!"error resource");
@@ -164,7 +164,7 @@ namespace ezui {
 			ASSERT(!"error resource");
 			return;
 		}
-		_isGood = true;
+		m_isGood = true;
 		//开始读取文件剩余条目
 		ifs.seekg(headOffset);
 		std::streampos endPos = ifs.size() - sizeof(headOffset);
@@ -196,36 +196,36 @@ namespace ezui {
 	}
 
 	Resource::Resource(const UIString& resFile) {
-		this->_rStream = new ReadStream(resFile);
+		this->m_rStream = new ReadStream(resFile);
 		this->UnPackage();
 	}
 	Resource::Resource(HRSRC hRsrc) {
-		this->_rStream = new ReadStream(hRsrc);
+		this->m_rStream = new ReadStream(hRsrc);
 		this->UnPackage();
 	}
 	Resource:: ~Resource() {
-		if (_rStream) {
-			delete _rStream;
+		if (m_rStream) {
+			delete m_rStream;
 		}
 	}
 	bool Resource::GetFile(const UIString& fileName, std::string* out) {
 		for (const auto& it : this->Items) {
 			if (it.Name == fileName) {
 				out->resize(it.Size);
-				_rStream->seekg(it.Offset);
-				_rStream->read((char*)out->c_str(), it.Size);
+				m_rStream->seekg(it.Offset);
+				m_rStream->read((char*)out->c_str(), it.Size);
 				return true;
 			}
 		}
 		return false;
 	}
 	bool Resource::IsGood() {
-		return _isGood;
+		return m_isGood;
 	}
 	void Resource::GetFile(const Entry& item, std::string* out) {
 		out->resize(item.Size);
-		_rStream->seekg(item.Offset);
-		_rStream->read((char*)out->c_str(), item.Size);
+		m_rStream->seekg(item.Offset);
+		m_rStream->read((char*)out->c_str(), item.Size);
 	}
 };
 

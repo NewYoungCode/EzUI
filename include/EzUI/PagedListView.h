@@ -16,10 +16,10 @@ namespace ezui {
 		public Control
 	{
 	private:
-		int_t _pageIndex = 0;
-		int_t _pageTotal = 0;
-		int_t _pageSize = 0;
-		Controls _items;
+		int_t m_pageIndex = 0;
+		int_t m_pageTotal = 0;
+		int_t m_pageSize = 0;
+		Controls m_items;
 	public:
 		//页面需要加载下一页的时候发生
 		std::function<bool(PagedListView*, int_t)> NextPaging = NULL;

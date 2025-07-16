@@ -6,9 +6,9 @@ namespace ezui {
 	class UI_EXPORT UISelector
 	{
 	private:
-		Control* ctl = NULL;
-		Control* notCtl = NULL;
-		std::vector<Control*> ctls;
+		Control* m_ctl = NULL;
+		Control* m_notCtl = NULL;
+		std::vector<Control*> m_ctls;
 		UISelector& NextName(const UIString& key) { return *this; };
 		UISelector& NextId(const UIString& key) { return *this; };
 	public:

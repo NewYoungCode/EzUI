@@ -112,7 +112,7 @@ namespace ezui {
 		ezui::Rect WorkRect;
 		//显示器物理宽高
 		Size Physical;
-		//显示器缩放比例
+		//显示器缩放比例 1.0 1.25 1.5 1.75 2.0
 		float Scale = 1.0f;
 		//显示器帧率
 		float FPS = 60;
@@ -351,8 +351,8 @@ namespace ezui {
 	// 为 OnPaint 事件提供数据。
 	class UI_EXPORT PaintEventArgs :public EventArgs {
 	private:
-		std::list<bool> layers;
-		std::list<Point> offsets;
+		std::list<bool> m_layers;
+		std::list<Point> m_offsets;
 	public:
 		PaintEventArgs(const PaintEventArgs&) = delete;
 		PaintEventArgs& operator=(const PaintEventArgs&) = delete;

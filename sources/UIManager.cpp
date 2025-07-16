@@ -225,10 +225,10 @@ namespace ezui {
 	{
 		int_t mathCount = 0;
 		for (auto& it : selectors) {
-			if (it.selectorName == selectorName) {
+			if (it.m_selectorName == selectorName) {
 				++mathCount;
-				auto& styleType = it.styleType;
-				auto& styleStr = it.styleStr;
+				auto& styleType = it.m_styleType;
+				auto& styleStr = it.m_styleStr;
 				SetStyleSheet(ctl, styleType, styleStr, BuildImageCallback);
 			}
 		}
@@ -330,20 +330,20 @@ namespace ezui {
 			for (auto& name : names) {
 				//添加至集合
 				UIManager::Style selector;
-				selector.selectorName = name.trim();
-				selector.styleStr = str.trim();
+				selector.m_selectorName = name.trim();
+				selector.m_styleStr = str.trim();
 
 				if (style_type == "hover") {
-					selector.styleType = ControlStyle::Type::Hover;
+					selector.m_styleType = ControlStyle::Type::Hover;
 				}
 				else if (style_type == "active") {
-					selector.styleType = ControlStyle::Type::Active;
+					selector.m_styleType = ControlStyle::Type::Active;
 				}
 				else if (style_type == "checked") {
-					selector.styleType = ControlStyle::Type::Checked;
+					selector.m_styleType = ControlStyle::Type::Checked;
 				}
 				else {
-					selector.styleType = ControlStyle::Type::Static;
+					selector.m_styleType = ControlStyle::Type::Static;
 				}
 				out->push_back(selector);
 			}
@@ -398,7 +398,7 @@ namespace ezui {
 	{
 		//弹簧需要交给控件自行处理
 		if (dynamic_cast<Spacer*>(ctl) == NULL) {
-			this->controls.emplace_front(ctl, tagNamee);
+			this->m_controls.emplace_front(ctl, tagNamee);
 		}
 	}
 	Control* UIManager::OnBuildControl(const UIString& tagName) {
@@ -485,7 +485,7 @@ namespace ezui {
 	UIManager::UIManager()
 	{
 		BuildImageCallback = [this](Image* img)->void {
-			this->freeImages.push_back((Image*)img);
+			this->m_freeImages.push_back((Image*)img);
 			};
 	}
 	void UIManager::SetupUI(Window* window)
@@ -553,32 +553,32 @@ namespace ezui {
 		//分析出样式
 		this->AnalysisStyle(data, &styles);
 		//保存样式到全局
-		this->_styles.splice(this->_styles.end(), styles);  // 把 styles 的所有元素移动到 this->_styles 末尾
-		if (!this->_styles.empty()) {
-			for (auto& it : this->controls) {
+		this->m_styles.splice(this->m_styles.end(), styles);  // 把 styles 的所有元素移动到 this->_styles 末尾
+		if (!this->m_styles.empty()) {
+			for (auto& it : this->m_controls) {
 				//对所有加载进来的控件应用样式
-				this->ApplyStyle(it.ctl, this->_styles, it.tagName);
+				this->ApplyStyle(it.m_ctl, this->m_styles, it.m_tagName);
 			}
 		}
 	}
 	void UIManager::Free(Control** ctl)
 	{
-		for (auto itor = controls.begin(); itor != controls.end(); ++itor)
+		for (auto itor = m_controls.begin(); itor != m_controls.end(); ++itor)
 		{
-			if (itor->ctl == *ctl) {
+			if (itor->m_ctl == *ctl) {
 				delete* ctl;
 				*ctl = NULL;
-				controls.erase(itor);
+				m_controls.erase(itor);
 				break;
 			}
 		}
 	}
 	void UIManager::Free(Image** img)
 	{
-		auto itor = std::find(freeImages.begin(), freeImages.end(), *img);
-		if (itor != freeImages.end()) {
+		auto itor = std::find(m_freeImages.begin(), m_freeImages.end(), *img);
+		if (itor != m_freeImages.end()) {
 			delete* itor;
-			freeImages.erase(itor);
+			m_freeImages.erase(itor);
 		}
 		else
 		{
@@ -587,16 +587,16 @@ namespace ezui {
 		*img = NULL;
 	}
 	UIManager::~UIManager() {
-		for (auto& it : controls) {
-			delete it.ctl;
+		for (auto& it : m_controls) {
+			delete it.m_ctl;
 		}
-		for (auto& it : freeImages) {
+		for (auto& it : m_freeImages) {
 			delete it;
 		}
 	}
 	Control* UIManager::GetRoot() {
-		if (!controls.empty()) {
-			return controls.rbegin()->ctl;
+		if (!m_controls.empty()) {
+			return m_controls.rbegin()->m_ctl;
 		}
 		return NULL;
 	}

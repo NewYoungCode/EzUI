@@ -13,18 +13,18 @@ namespace ezui {
 				if (ntfi->MessageCallback) {
 					ntfi->MessageCallback(lParam);
 				}
-				if (lParam == WM_RBUTTONDOWN && ntfi->_menu && ntfi->_menu->_hMenu) {
+				if (lParam == WM_RBUTTONDOWN && ntfi->m_menu && ntfi->m_menu->m_hMenu) {
 					POINT           point;
 					GetCursorPos(&point);
 					SetForegroundWindow(hwnd);
-					TrackPopupMenu(ntfi->_menu->_hMenu, TPM_RIGHTBUTTON, point.x, point.y, 0, hwnd, NULL);
+					TrackPopupMenu(ntfi->m_menu->m_hMenu, TPM_RIGHTBUTTON, point.x, point.y, 0, hwnd, NULL);
 				}
 				break;
 			}
 			if (message == WM_COMMAND) {
 				auto id = LOWORD(wParam);
-				if (ntfi->_menu && ntfi->_menu->Callback) {
-					ntfi->_menu->Callback(id);
+				if (ntfi->m_menu && ntfi->m_menu->Callback) {
+					ntfi->m_menu->Callback(id);
 				}
 				break;
 			}
@@ -45,53 +45,53 @@ namespace ezui {
 			RegisterClassW(&wc); //注册窗口
 			__Init__RegeditClass__ = true;
 		}
-		_menu = NULL;
-		_hInstance = hInstance;
-		_hwnd = ::CreateWindowW(L"EzUI_NotifyIcon", L"EzUI_NotifyIcon", WS_OVERLAPPEDWINDOW,
-			0, 0, 10, 10, NULL, NULL, _hInstance, NULL);
-		UI_SET_USERDATA(_hwnd, this);
-		_nid.cbSize = sizeof(_nid);//结构体长度
-		_nid.hWnd = _hwnd;//窗口句柄
-		_nid.uCallbackMessage = WM_USER + 1;//消息处理，这里很重要，处理鼠标点击
-		_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
-		Shell_NotifyIconW(NIM_ADD, &_nid);
+		m_menu = NULL;
+		m_hInstance = hInstance;
+		m_hwnd = ::CreateWindowW(L"EzUI_NotifyIcon", L"EzUI_NotifyIcon", WS_OVERLAPPEDWINDOW,
+			0, 0, 10, 10, NULL, NULL, m_hInstance, NULL);
+		UI_SET_USERDATA(m_hwnd, this);
+		m_nid.cbSize = sizeof(m_nid);//结构体长度
+		m_nid.hWnd = m_hwnd;//窗口句柄
+		m_nid.uCallbackMessage = WM_USER + 1;//消息处理，这里很重要，处理鼠标点击
+		m_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+		Shell_NotifyIconW(NIM_ADD, &m_nid);
 	}
 
 	void NotifyIcon::SetIcon(short id)
 	{
-		SetIcon(::LoadIcon(_hInstance, MAKEINTRESOURCE(id)));//加载图标
+		SetIcon(::LoadIcon(m_hInstance, MAKEINTRESOURCE(id)));//加载图标
 	}
 
 	void NotifyIcon::SetIcon(HICON icon)
 	{
-		_nid.hIcon = icon;
-		_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
-		Shell_NotifyIconW(NIM_MODIFY, &_nid);
+		m_nid.hIcon = icon;
+		m_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+		Shell_NotifyIconW(NIM_MODIFY, &m_nid);
 	}
 
 	void NotifyIcon::SetMenu(Menu* menu) {
-		this->_menu = menu;
+		this->m_menu = menu;
 	}
 
 	void NotifyIcon::SetText(const UIString& text)
 	{
-		wcscpy_s(_nid.szTip, text.unicode().c_str());
-		Shell_NotifyIconW(NIM_MODIFY, &_nid);
+		wcscpy_s(m_nid.szTip, text.unicode().c_str());
+		Shell_NotifyIconW(NIM_MODIFY, &m_nid);
 	}
 
 	void NotifyIcon::ShowBalloonTip(const UIString& title, const UIString& msg, int_t timeOut) {
-		_nid.uTimeout = timeOut;
-		_nid.uFlags = NIF_INFO;
-		_nid.dwInfoFlags = NIIF_INFO;
-		wcscpy_s(_nid.szInfoTitle, title.unicode().c_str());
-		wcscpy_s(_nid.szInfo, msg.unicode().c_str());
-		Shell_NotifyIconW(NIM_MODIFY, &_nid);
+		m_nid.uTimeout = timeOut;
+		m_nid.uFlags = NIF_INFO;
+		m_nid.dwInfoFlags = NIIF_INFO;
+		wcscpy_s(m_nid.szInfoTitle, title.unicode().c_str());
+		wcscpy_s(m_nid.szInfo, msg.unicode().c_str());
+		Shell_NotifyIconW(NIM_MODIFY, &m_nid);
 	}
 
 	NotifyIcon::~NotifyIcon()
 	{
-		if (::IsWindow(_hwnd)) {
-			::DestroyWindow(_hwnd);
+		if (::IsWindow(m_hwnd)) {
+			::DestroyWindow(m_hwnd);
 		}
 	}
 };

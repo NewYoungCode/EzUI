@@ -15,10 +15,10 @@ namespace ezui {
 		};
 		//资源文件读取流
 		class UI_EXPORT ReadStream {
-			std::streampos _pos = 0;
-			std::streamsize _count = 0;
-			const char* _ptr = NULL;
-			std::ifstream* _ifs = NULL;
+			std::streampos m_pos = 0;
+			std::streamsize m_count = 0;
+			const char* m_ptr = NULL;
+			std::ifstream* m_ifs = NULL;
 		public:
 			ReadStream(HRSRC hRsrc);
 			ReadStream(const UIString& fileName);
@@ -29,9 +29,9 @@ namespace ezui {
 			virtual ~ReadStream();
 		};
 	private:
-		ReadStream* _rStream = NULL;
+		ReadStream* m_rStream = NULL;
 		void UnPackage();
-		bool _isGood = false;
+		bool m_isGood = false;
 	public:
 		const std::list<Entry> Items;
 		bool IsGood();

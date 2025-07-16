@@ -3,18 +3,18 @@
 namespace ezui {
 	TabLayout::TabLayout()
 	{
-		timer.Tick = [this](Timer* sender) {
+		m_timer.Tick = [this](Timer* sender) {
 
 			Invoke([this, sender]() {
-				stepAcc += stepPerFrame;
-				int_t stepMove = stepAcc;
-				stepAcc -= stepMove;
-				nowOffset += stepMove;
+				m_stepAcc += m_stepPerFrame;
+				int_t stepMove = m_stepAcc;
+				m_stepAcc -= stepMove;
+				m_nowOffset += stepMove;
 
 				// 检查是否到达终点
-				if ((offset > 0 && nowOffset >= offset) ||
-					(offset < 0 && nowOffset <= offset)) {
-					nowOffset = offset;
+				if ((m_offset > 0 && m_nowOffset >= m_offset) ||
+					(m_offset < 0 && m_nowOffset <= m_offset)) {
+					m_nowOffset = m_offset;
 					sender->Stop();
 					this->Sort(); // 对齐页面
 					this->Invalidate();
@@ -22,7 +22,7 @@ namespace ezui {
 				}
 				for (size_t i = 0; i < GetControls().size(); ++i) {
 					Control* ctl = GetControls()[i];
-					ctl->SetRect(Rect(initialX[i] - nowOffset, 0, Width(), Height()));
+					ctl->SetRect(Rect(m_initialX[i] - m_nowOffset, 0, Width(), Height()));
 				}
 				this->Invalidate();
 				});
@@ -46,7 +46,7 @@ namespace ezui {
 		int_t pos = 0;
 		for (auto itor = GetControls().begin(); itor != GetControls().end(); ++itor)
 		{
-			int_t x = Width() * (pos - _pageIndex);//子控件索引-当前所在页索引
+			int_t x = Width() * (pos - m_pageIndex);//子控件索引-当前所在页索引
 			(*itor)->SetRect(Rect(x, 0, Width(), Height()));
 			(*itor)->SetVisible(true);
 			++pos;
@@ -60,7 +60,7 @@ namespace ezui {
 	}
 	void TabLayout::OnLayout()
 	{
-		timer.Stop();
+		m_timer.Stop();
 		Sort();
 		this->EndLayout();
 	}
@@ -74,7 +74,7 @@ namespace ezui {
 
 	void TabLayout::SetPageIndex(int_t index)
 	{
-		this->_pageIndex = index;
+		this->m_pageIndex = index;
 		this->TryPendLayout();
 	}
 
@@ -83,7 +83,7 @@ namespace ezui {
 	{
 		Sort();//先直接归位
 		int_t pageWidth = Width();
-		int_t offsetTotal = (index - _pageIndex) * pageWidth;
+		int_t offsetTotal = (index - m_pageIndex) * pageWidth;
 		if (offsetTotal == 0) {
 			return;
 		}
@@ -91,15 +91,15 @@ namespace ezui {
 		// 记录初始坐标
 		int_t controlCount = GetControls().size();
 
-		initialX.clear();
-		initialX.resize(controlCount);
+		m_initialX.clear();
+		m_initialX.resize(controlCount);
 		for (int_t i = 0; i < controlCount; ++i) {
-			initialX[i] = GetControls()[i]->X();
+			m_initialX[i] = GetControls()[i]->X();
 		}
 
-		nowOffset = 0;
-		offset = offsetTotal;
-		_pageIndex = index;
+		m_nowOffset = 0;
+		m_offset = offsetTotal;
+		m_pageIndex = index;
 
 		int_t ANIMATION_DURATION_MS = 200;
 		int_t FRAME_INTERVAL_MS = 16;
@@ -108,10 +108,10 @@ namespace ezui {
 			totalFrames = 1;
 		}
 
-		stepPerFrame = offsetTotal * 1.0f / totalFrames;
-		timer.Stop();
-		timer.Interval = FRAME_INTERVAL_MS;
-		timer.Start();
+		m_stepPerFrame = offsetTotal * 1.0f / totalFrames;
+		m_timer.Stop();
+		m_timer.Interval = FRAME_INTERVAL_MS;
+		m_timer.Start();
 	}
 
 
@@ -121,14 +121,14 @@ namespace ezui {
 #ifdef _DEBUG
 		ASSERT(ctl->Parent == this);
 #endif // _DEBUG
-		this->_pageIndex = this->IndexOf(ctl);
+		this->m_pageIndex = this->IndexOf(ctl);
 		this->TryPendLayout();
 	}
 
 	Control* TabLayout::GetPage() {
 		int_t pos = 0;
 		for (auto& it : GetControls()) {
-			if (pos == this->_pageIndex) {
+			if (pos == this->m_pageIndex) {
 				return it;
 			}
 			++pos;
@@ -137,6 +137,6 @@ namespace ezui {
 	}
 	int_t TabLayout::GetPageIndex()
 	{
-		return _pageIndex;
+		return m_pageIndex;
 	}
 };

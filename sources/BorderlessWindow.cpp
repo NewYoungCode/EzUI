@@ -7,7 +7,7 @@ namespace ezui {
 		style |= WS_THICKFRAME;
 		::SetWindowLong(Hwnd(), GWL_STYLE, style);
 
-		_shadowBox = new ShadowBox(width, height, Hwnd());
+		m_shadowBox = new ShadowBox(width, height, Hwnd());
 		UpdateShadowBox();
 	}
 	BorderlessWindow::~BorderlessWindow() {
@@ -15,11 +15,11 @@ namespace ezui {
 	}
 	ShadowBox* BorderlessWindow::GetShadowBox()
 	{
-		return _shadowBox;
+		return m_shadowBox;
 	}
 	void BorderlessWindow::SetShadow(int_t padding)
 	{
-		_shadowWeight = padding;
+		m_shadowWeight = padding;
 		UpdateShadowBox();
 	}
 	void BorderlessWindow::OnPaint(PaintEventArgs& args) {
@@ -40,10 +40,10 @@ namespace ezui {
 
 	void BorderlessWindow::OnDpiChange(float systemScale, const Rect& newRect)
 	{
-		if (_shadowBox) {//对窗口阴影进行新DPI适配
-			if (this->_shadowScale != systemScale) {
-				this->_shadowWeight *= systemScale / _shadowScale;
-				this->_shadowScale = systemScale;
+		if (m_shadowBox) {//对窗口阴影进行新DPI适配
+			if (this->m_shadowScale != systemScale) {
+				this->m_shadowWeight *= systemScale / m_shadowScale;
+				this->m_shadowScale = systemScale;
 				UpdateShadowBox();
 			}
 		}
@@ -54,23 +54,23 @@ namespace ezui {
 	}
 
 	void BorderlessWindow::SetResizable(bool resize) {
-		this->_resize = resize;
+		this->m_bResize = resize;
 	}
 
 	bool BorderlessWindow::IsResizable() {
-		return this->_resize;
+		return this->m_bResize;
 	}
 
 	void BorderlessWindow::UpdateShadowBox() {
-		if (_shadowBox) {
-			_shadowBox->Update(_shadowWeight * this->GetScale(), this->Border);
+		if (m_shadowBox) {
+			m_shadowBox->Update(m_shadowWeight * this->GetScale(), this->Border);
 		}
 	}
 	void BorderlessWindow::CloseShadowBox()
 	{
-		if (_shadowBox) {
-			delete _shadowBox;
-			_shadowBox = NULL;
+		if (m_shadowBox) {
+			delete m_shadowBox;
+			m_shadowBox = NULL;
 		}
 	}
 	LRESULT  BorderlessWindow::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {

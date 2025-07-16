@@ -4,12 +4,12 @@ namespace ezui {
 	void IScrollBar::OnMouseUp(const MouseEventArgs& arg)
 	{
 		__super::OnMouseUp(arg);
-		_mouseDown = false;
+		m_mouseDown = false;
 	}
 	void  IScrollBar::OnMouseLeave(const MouseEventArgs& arg)
 	{
 		__super::OnMouseLeave(arg);
-		_mouseDown = false;
+		m_mouseDown = false;
 	}
 	IScrollBar::IScrollBar() {
 		Style.ForeColor = Color(205, 205, 205);//the bar default backgroundcolor
@@ -25,12 +25,12 @@ namespace ezui {
 	}
 	void IScrollBar::Reset()
 	{
-		this->_sliderPos = 0;
-		this->_offset = 0;
+		this->m_sliderPos = 0;
+		this->m_offset = 0;
 	}
 	bool IScrollBar::Scrollable()
 	{
-		if (this->_overflowLength > 0) {
+		if (this->m_overflowLength > 0) {
 			return true;
 		}
 		return false;
@@ -61,14 +61,14 @@ namespace ezui {
 		if (Parent->IsPendLayout()) {
 			Parent->RefreshLayout();
 		}
-		int_t offset = scrollRate * this->_overflowLength;
+		int_t offset = scrollRate * this->m_overflowLength;
 		ScrollTo(-offset, Event::None);
 	}
 
 	float IScrollBar::ScrollPos()
 	{
-		if (this->_overflowLength <= 0)  return 1.0f;
-		return std::abs(this->_offset) * 1.0f / this->_overflowLength;
+		if (this->m_overflowLength <= 0)  return 1.0f;
+		return std::abs(this->m_offset) * 1.0f / this->m_overflowLength;
 	}
 
 	void IScrollBar::ScrollTo(int_t offset, const Event& type) {
@@ -85,28 +85,28 @@ namespace ezui {
 		this->GetInfo(&viewLength, &contentLength, &scrollBarLength);
 		if (offset > 0) {
 			//滚动条在顶部
-			this->_offset = 0;
-			this->_sliderPos = 0;
+			this->m_offset = 0;
+			this->m_sliderPos = 0;
 		}
-		else if (std::abs(offset) >= this->_overflowLength) {
+		else if (std::abs(offset) >= this->m_overflowLength) {
 			//滚动条在底部
-			this->_offset = -this->_overflowLength;
-			this->_sliderPos = scrollBarLength - this->_sliderLength;
+			this->m_offset = -this->m_overflowLength;
+			this->m_sliderPos = scrollBarLength - this->m_sliderLength;
 		}
 		else {
 			//正常滚动
-			this->_offset = offset;
-			this->_sliderPos = -offset / this->_rollRate;
+			this->m_offset = offset;
+			this->m_sliderPos = -offset / this->m_rollRate;
 		}
 		//调用容器的滚动函数进行偏移
 		if (OffsetCallback) {
-			OffsetCallback(this->_offset);
+			OffsetCallback(this->m_offset);
 			SyncInfo();
 		}
 		Parent->Invalidate();
 		//Parent->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
 		if (Scroll) {
-			Scroll(this, (double)this->_offset / (-this->_overflowLength), type);
+			Scroll(this, (double)this->m_offset / (-this->m_overflowLength), type);
 		}
 	}
 	void IScrollBar::SyncInfo()
@@ -116,28 +116,28 @@ namespace ezui {
 			Parent->RefreshLayout();
 		}
 		int_t scrollBarLength;
-		this->GetInfo(&this->_viewLength, &this->_contentLength, &scrollBarLength);
-		this->_overflowLength = this->_contentLength - this->_viewLength;//超出容器的内容长度
-		if (_overflowLength > 0) {
-			this->_sliderLength = (double)this->_viewLength / this->_contentLength * scrollBarLength + 0.5;//滑块长度
-			double rollTotal = scrollBarLength - this->_sliderLength;//当前滑块可用滑道的总距离
-			this->_rollRate = (double)(_contentLength - this->_viewLength) / rollTotal;//滑块每次滚动一次的对应上下文内容的比率
+		this->GetInfo(&this->m_viewLength, &this->m_contentLength, &scrollBarLength);
+		this->m_overflowLength = this->m_contentLength - this->m_viewLength;//超出容器的内容长度
+		if (m_overflowLength > 0) {
+			this->m_sliderLength = (double)this->m_viewLength / this->m_contentLength * scrollBarLength + 0.5;//滑块长度
+			double rollTotal = scrollBarLength - this->m_sliderLength;//当前滑块可用滑道的总距离
+			this->m_rollRate = (double)(m_contentLength - this->m_viewLength) / rollTotal;//滑块每次滚动一次的对应上下文内容的比率
 		}
 		else {
-			this->_sliderLength = scrollBarLength;
-			this->_sliderPos = 0;
-			this->_offset = 0;
-			this->_rollRate = 0;
-			this->_overflowLength = 0;
+			this->m_sliderLength = scrollBarLength;
+			this->m_sliderPos = 0;
+			this->m_offset = 0;
+			this->m_rollRate = 0;
+			this->m_overflowLength = 0;
 		}
 	}
 	void IScrollBar::RefreshScroll() {
 		SyncInfo();
-		ScrollTo(this->_offset, Event::None);
+		ScrollTo(this->m_offset, Event::None);
 	};
 	void IScrollBar::OnMouseWheel(const MouseEventArgs& arg) {
 		__super::OnMouseWheel(arg);
-		this->_offset += arg.ZDelta * 0.5;
-		ScrollTo(this->_offset, Event::OnMouseWheel);
+		this->m_offset += arg.ZDelta * 0.5;
+		ScrollTo(this->m_offset, Event::OnMouseWheel);
 	}
 };

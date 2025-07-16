@@ -24,21 +24,21 @@ namespace ezui {
 	public:
 		struct Style
 		{
-			ControlStyle::Type styleType;
-			UIString selectorName;
-			UIString styleStr;
+			ControlStyle::Type m_styleType;
+			UIString m_selectorName;
+			UIString m_styleStr;
 		};
 		struct XmlNode {
-			Control* ctl;
-			UIString tagName;
+			Control* m_ctl;
+			UIString m_tagName;
 		public:
-			XmlNode(Control* ctl, const UIString& tagName) :ctl(ctl), tagName(tagName) {}
+			XmlNode(Control* ctl, const UIString& tagName) :m_ctl(ctl), m_tagName(tagName) {}
 		};
 	private:
 		std::function<void(Image*)> BuildImageCallback;
-		std::list<Image*> freeImages;
-		std::list<XmlNode> controls;
-		std::list<UIManager::Style> _styles;
+		std::list<Image*> m_freeImages;
+		std::list<XmlNode> m_controls;
+		std::list<UIManager::Style> m_styles;
 		void LoadControl(void* node, Control* control);
 		Control* BuildControl(void* node);//内部函数
 		//记录XML中的控件到管理器 管理器释放的时候 由管理器加载的控件将自动释放

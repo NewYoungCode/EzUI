@@ -131,7 +131,7 @@ namespace ezui {
 		ViewControls.clear();
 		//绘制子控件
 		Rect rect(0, 0, Width(), Height());
-		for (auto& it : _controls) {
+		for (auto& it : m_controls) {
 			if (rect.IntersectsWith(it->GetRect())) {
 				ViewControls.push_back(it);
 			}
@@ -150,16 +150,16 @@ namespace ezui {
 
 		if (backgroundColor.GetValue() != 0) {
 			e.Graphics.SetColor(backgroundColor);
-			e.Graphics.FillRectangle(RectF{ 0,0,(float)_rect.Width,(float)_rect.Height });
+			e.Graphics.FillRectangle(RectF{ 0,0,(float)m_rect.Width,(float)m_rect.Height });
 		}
 		if (backgroundImage != NULL) {
-			e.Graphics.DrawImage(backgroundImage, RectF{ 0,0,(float)_rect.Width,(float)_rect.Height });
+			e.Graphics.DrawImage(backgroundImage, RectF{ 0,0,(float)m_rect.Width,(float)m_rect.Height });
 		}
 	}
 	void Control::OnForePaint(PaintEventArgs& e) {
 		Image* foreImage = this->GetForeImage();
 		if (foreImage) {
-			e.Graphics.DrawImage(foreImage, RectF{ 0,0,(float)_rect.Width,(float)_rect.Height });
+			e.Graphics.DrawImage(foreImage, RectF{ 0,0,(float)m_rect.Width,(float)m_rect.Height });
 		}
 	}
 	void Control::OnBorderPaint(PaintEventArgs& e, const Border& border)
@@ -342,7 +342,7 @@ namespace ezui {
 				break;
 			}
 			if (attrName == "visible" || attrName == "display") {
-				this->_visible = (::strcmp(attrValue.c_str(), "true") == 0 ? true : false);
+				this->m_bVisible = (::strcmp(attrValue.c_str(), "true") == 0 ? true : false);
 				break;
 			}
 			if (attrName == "tips") {
@@ -351,13 +351,13 @@ namespace ezui {
 			}
 			if (attrName == "dock") {
 				if (attrValue == "fill") {
-					this->_dock = DockStyle::Fill; break;
+					this->m_dock = DockStyle::Fill; break;
 				}
 				if (attrValue == "horizontal") {
-					this->_dock = DockStyle::Horizontal; break;
+					this->m_dock = DockStyle::Horizontal; break;
 				}
 				if (attrValue == "vertical") {
-					this->_dock = DockStyle::Vertical; break;
+					this->m_dock = DockStyle::Vertical; break;
 				}
 				break;
 			}
@@ -408,7 +408,7 @@ namespace ezui {
 	}
 	float Control::GetScale()
 	{
-		return this->_scale;
+		return this->m_scale;
 	}
 	HCURSOR Control::GetHCursor() {
 		if (this->HoverStyle.Cursor != NULL) {
@@ -421,90 +421,90 @@ namespace ezui {
 	}
 	int_t Control::X()
 	{
-		return _rect.X;
+		return m_rect.X;
 	}
 	int_t Control::Y()
 	{
-		return _rect.Y;
+		return m_rect.Y;
 	}
 	int_t Control::Width()
 	{
-		return _rect.Width;
+		return m_rect.Width;
 	}
 	int_t Control::Height()
 	{
-		return _rect.Height;
+		return m_rect.Height;
 	}
 	void Control::SetX(int_t X) {
-		SetLocation({ X,_rect.Y });
+		SetLocation({ X,m_rect.Y });
 	}
 	void Control::SetY(int_t Y) {
-		SetLocation({ _rect.X,Y });
+		SetLocation({ m_rect.X,Y });
 	}
 	void Control::SetLocation(const Point& pt) {
-		SetRect(Rect(pt.X, pt.Y, _rect.Width, _rect.Height));
+		SetRect(Rect(pt.X, pt.Y, m_rect.Width, m_rect.Height));
 	}
 	void Control::SetWidth(int_t width) {
-		SetSize({ width,_rect.Height });
+		SetSize({ width,m_rect.Height });
 	}
 	void Control::SetHeight(int_t height) {
-		SetSize({ _rect.Width,height });
+		SetSize({ m_rect.Width,height });
 	}
 	void Control::SetSize(const Size& size)
 	{
-		SetRect({ _rect.X,_rect.Y,size.Width,size.Height });
+		SetRect({ m_rect.X,m_rect.Y,size.Width,size.Height });
 	}
 	Point Control::GetLocation()
 	{
-		return _rect.GetLocation();
+		return m_rect.GetLocation();
 	}
 	Size Control::GetSize()
 	{
-		return _rect.GetSize();
+		return m_rect.GetSize();
 	}
 	const Rect& Control::GetRect()
 	{
-		return _rect;
+		return m_rect;
 	}
 	void Control::SetFixedWidth(int_t fixedWidth)
 	{
-		_fixedSize.Width = fixedWidth;
-		SetRect({ _rect.X,_rect.Y,fixedWidth,_rect.Height });
+		m_fixedSize.Width = fixedWidth;
+		SetRect({ m_rect.X,m_rect.Y,fixedWidth,m_rect.Height });
 	}
 	void Control::SetFixedHeight(int_t fixedHeight)
 	{
-		_fixedSize.Height = fixedHeight;
-		SetRect({ _rect.X,_rect.Y,_rect.Width,fixedHeight });
+		m_fixedSize.Height = fixedHeight;
+		SetRect({ m_rect.X,m_rect.Y,m_rect.Width,fixedHeight });
 	}
 	void Control::SetFixedSize(const Size& size)
 	{
-		_fixedSize.Width = size.Width;
-		_fixedSize.Height = size.Height;
-		SetRect({ _rect.X,_rect.Y,size.Width,size.Height });
+		m_fixedSize.Width = size.Width;
+		m_fixedSize.Height = size.Height;
+		SetRect({ m_rect.X,m_rect.Y,size.Width,size.Height });
 	}
 	int_t Control::GetFixedWidth()
 	{
-		return _fixedSize.Width;
+		return m_fixedSize.Width;
 	}
 	int_t Control::GetFixedHeight()
 	{
-		return _fixedSize.Height;
+		return m_fixedSize.Height;
 	}
 	bool Control::IsPendLayout() {
-		return this->_layoutState == LayoutState::Pend;
+		return this->m_layoutState == LayoutState::Pend;
 	}
 	const LayoutState Control::TryPendLayout() {
-		if (this->_layoutState == LayoutState::None) {
-			this->_layoutState = LayoutState::Pend;
+		if (this->m_layoutState == LayoutState::None) {
+			this->m_layoutState = LayoutState::Pend;
 		}
-		return this->_layoutState;
+		return this->m_layoutState;
 	}
 	const LayoutState Control::GetLayoutState()
 	{
-		return this->_layoutState;
+		return this->m_layoutState;
 	}
 	void Control::EndLayout() {
-		this->_layoutState = LayoutState::None;
+		this->m_layoutState = LayoutState::None;
 	}
 	Rect Control::GetClientRect() {
 		Control* pCtrl = this;
@@ -520,65 +520,65 @@ namespace ezui {
 	}
 	const Rect& Control::GetViewRect()
 	{
-		return this->_viewRect;
+		return this->m_viewRect;
 	}
 	DockStyle Control::GetDockStyle()
 	{
-		return this->_dock;
+		return this->m_dock;
 	}
 	void Control::SetDockStyle(const DockStyle& dockStyle)
 	{
-		if (dockStyle != this->_dock && Parent) {
+		if (dockStyle != this->m_dock && Parent) {
 			Parent->TryPendLayout();
 		}
-		this->_dock = dockStyle;
+		this->m_dock = dockStyle;
 	}
 	const Rect& Control::SetRect(const Rect& rect)
 	{
-		this->_rect = rect;
+		this->m_rect = rect;
 
 		if (GetFixedWidth() > 0) {
-			_rect.Width = GetFixedWidth();
+			m_rect.Width = GetFixedWidth();
 		}
 		if (GetFixedHeight() > 0) {
-			_rect.Height = GetFixedHeight();
+			m_rect.Height = GetFixedHeight();
 		}
 
-		Point newLocation = _rect.GetLocation();
-		Size newSize = _rect.GetSize();
+		Point newLocation = m_rect.GetLocation();
+		Size newSize = m_rect.GetSize();
 
-		if (!_lastLocation.Equals(newLocation)) {
+		if (!m_lastLocation.Equals(newLocation)) {
 			this->SendNotify(MoveEventArgs(newLocation));
-			_lastLocation = newLocation;
+			m_lastLocation = newLocation;
 		}
-		if (!newSize.Equals(_lastSize)) {
+		if (!newSize.Equals(m_lastSize)) {
 			this->SendNotify(SizeEventArgs(newSize));
-			_lastSize = newSize;
+			m_lastSize = newSize;
 		}
-		return this->_rect;
+		return this->m_rect;
 	}
 	void Control::SetTips(const UIString& text)
 	{
-		_tipsText = text;
+		m_tipsText = text;
 	}
 	const UIString& Control::GetTips()
 	{
-		return _tipsText;
+		return m_tipsText;
 	}
 	void Control::RefreshLayout()
 	{
-		if (this->_layoutState == LayoutState::Layouting) {
+		if (this->m_layoutState == LayoutState::Layouting) {
 			return;
 		}
-		this->_layoutState = LayoutState::Layouting;//布局中
+		this->m_layoutState = LayoutState::Layouting;//布局中
 		if (GetScrollBar()) {//如果存在滚动条就设置滚动条的矩形位置
-			GetScrollBar()->ParentSize({ _rect.Width,_rect.Height });
+			GetScrollBar()->ParentSize({ m_rect.Width,m_rect.Height });
 		}
-		_contentSize.Width = 0;
-		_contentSize.Height = 0;
+		m_contentSize.Width = 0;
+		m_contentSize.Height = 0;
 		this->OnLayout();
-		if (IsAutoHeight() && Height() != _contentSize.Height) {
-			this->SetFixedHeight(_contentSize.Height);
+		if (IsAutoHeight() && Height() != m_contentSize.Height) {
+			this->SetFixedHeight(m_contentSize.Height);
 			this->EndLayout();
 			this->RefreshLayout();
 			if (Parent) {
@@ -586,8 +586,8 @@ namespace ezui {
 			}
 			return;
 		}
-		if (IsAutoWidth() && Width() != _contentSize.Width) {
-			this->SetFixedWidth(_contentSize.Width);
+		if (IsAutoWidth() && Width() != m_contentSize.Width) {
+			this->SetFixedWidth(m_contentSize.Width);
 			this->EndLayout();
 			this->RefreshLayout();
 			if (Parent) {
@@ -598,8 +598,8 @@ namespace ezui {
 		this->EndLayout();
 	}
 	void Control::OnLayout() {
-		_contentSize.Width = 0;
-		_contentSize.Height = 0;
+		m_contentSize.Width = 0;
+		m_contentSize.Height = 0;
 		int_t _width;
 		int_t _height;
 		for (auto& it : GetControls()) {
@@ -615,12 +615,12 @@ namespace ezui {
 			}
 
 			_width = it->X() + it->Width();
-			if (_width > _contentSize.Width) {
-				_contentSize.Width = _width;
+			if (_width > m_contentSize.Width) {
+				m_contentSize.Width = _width;
 			}
 			_height = it->Y() + it->Height();
-			if (_height > _contentSize.Height) {
-				_contentSize.Height = _height;
+			if (_height > m_contentSize.Height) {
+				m_contentSize.Height = _height;
 			}
 		}
 		this->EndLayout();
@@ -632,7 +632,7 @@ namespace ezui {
 	bool Control::OnNotify(EventArgs& arg)
 	{
 		bool isRemove = false;
-		this->_isRemove = &isRemove;
+		this->m_bRemove = &isRemove;
 		do
 		{
 			if (arg.EventType == Event::OnPaint && !IsVisible()) {
@@ -689,7 +689,7 @@ namespace ezui {
 				this->EventHandler(this, arg);
 			}
 			if (!isRemove) {
-				this->_isRemove = NULL;
+				this->m_bRemove = NULL;
 				return true;
 			};
 		}
@@ -787,7 +787,7 @@ namespace ezui {
 		auto& pt = args.Graphics;
 		Rect _ClipRect = clientRect;
 		this->ComputeClipRect();//重新计算基于父亲的裁剪区域
-		if (!Rect::Intersect(_ClipRect, this->_viewRect, invalidRect)) {//和重绘区域进行裁剪
+		if (!Rect::Intersect(_ClipRect, this->m_viewRect, invalidRect)) {//和重绘区域进行裁剪
 			return;
 		}
 
@@ -862,8 +862,8 @@ namespace ezui {
 	}
 	void Control::OnDpiChange(const DpiChangeEventArgs& arg)
 	{
-		float scale = arg.Scale / this->_scale;
-		this->_scale = arg.Scale;
+		float scale = arg.Scale / this->m_scale;
+		this->m_scale = arg.Scale;
 
 		bool needScale = false;
 		if (scale != 1.0f) {
@@ -910,11 +910,11 @@ namespace ezui {
 	}
 	void Control::DestroySpacers() {
 		//控件释放的时候自动释放弹簧
-		auto spacersCopy = _spacers;  // 复制一份避免迭代器错误
+		auto spacersCopy = m_spacers;  // 复制一份避免迭代器错误
 		for (auto& it : spacersCopy) {
 			this->Remove(it, true);//移除且释放控件
 		}
-		_spacers.clear(); // 如果需要的话，清空原列表
+		m_spacers.clear(); // 如果需要的话，清空原列表
 	}
 	int_t Control::IndexOf(Control* childCtl)
 	{
@@ -934,15 +934,15 @@ namespace ezui {
 	}
 	Control* Control::Add(Control* ctl) {
 #ifdef _DEBUG
-		auto itor = std::find(_controls.begin(), _controls.end(), ctl);
-		if (itor != _controls.end()) {
+		auto itor = std::find(m_controls.begin(), m_controls.end(), ctl);
+		if (itor != m_controls.end()) {
 			ASSERT(!"The control already exists and cannot be added repeatedly");
 		}
 #endif
 		if (dynamic_cast<Spacer*>(ctl)) {
-			_spacers.push_back(ctl);
+			m_spacers.push_back(ctl);
 		}
-		_controls.push_back(ctl);
+		m_controls.push_back(ctl);
 		ctl->PublicData = this->PublicData;
 		ctl->Parent = this;
 
@@ -958,28 +958,28 @@ namespace ezui {
 	{
 #ifdef _DEBUG
 		{
-			auto itor = std::find(_controls.begin(), _controls.end(), ctl);
-			if (itor != _controls.end()) {
+			auto itor = std::find(m_controls.begin(), m_controls.end(), ctl);
+			if (itor != m_controls.end()) {
 				ASSERT(!"The control already exists and cannot be added repeatedly");
 			}
 		}
 #endif
 		if (dynamic_cast<Spacer*>(ctl)) {
-			_spacers.push_back(ctl);
+			m_spacers.push_back(ctl);
 		}
 		size_t i = 0;
-		auto itor = _controls.begin();
-		for (; itor != _controls.end(); ++itor) {
+		auto itor = m_controls.begin();
+		for (; itor != m_controls.end(); ++itor) {
 			if (i == pos) {
 				break;
 			}
 			++i;
 		}
-		if (itor == _controls.end()) {
-			_controls.push_back(ctl);
+		if (itor == m_controls.end()) {
+			m_controls.push_back(ctl);
 		}
 		else {
-			_controls.insert(itor, ctl);
+			m_controls.insert(itor, ctl);
 		}
 		ctl->PublicData = this->PublicData;
 		ctl->Parent = this;
@@ -997,11 +997,11 @@ namespace ezui {
 	void Control::Remove(Control* ctl, bool freeCtrl)
 	{
 		//寻找控件看是否包含
-		auto itor = ::std::find(_controls.begin(), _controls.end(), ctl);
-		if (itor != _controls.end()) {
+		auto itor = ::std::find(m_controls.begin(), m_controls.end(), ctl);
+		if (itor != m_controls.end()) {
 			ctl->OnRemove();
 			this->TryPendLayout();//移除控件需要将布局重新挂起
-			_controls.erase(itor);
+			m_controls.erase(itor);
 			auto itor2 = ::std::find(ViewControls.begin(), ViewControls.end(), ctl);
 			if (itor2 != ViewControls.end()) {
 				ViewControls.erase(itor2);
@@ -1011,17 +1011,17 @@ namespace ezui {
 			}
 		}
 		//如果是弹簧控件 顺便把弹簧容器中的item也移除
-		auto itorSpacer = ::std::find(_spacers.begin(), _spacers.end(), ctl);
-		if (itorSpacer != _spacers.end()) {
-			_spacers.erase(itorSpacer);
+		auto itorSpacer = ::std::find(m_spacers.begin(), m_spacers.end(), ctl);
+		if (itorSpacer != m_spacers.end()) {
+			m_spacers.erase(itorSpacer);
 		}
 	}
 	void Control::OnRemove()
 	{
-		if (_isRemove) {
-			*_isRemove = true;
+		if (m_bRemove) {
+			*m_bRemove = true;
 		}
-		for (auto& it : _controls) {
+		for (auto& it : m_controls) {
 			it->OnRemove();
 		}
 		if (PublicData) {
@@ -1037,7 +1037,7 @@ namespace ezui {
 		if (this->Name == ctlName) {
 			return this;
 		}
-		for (auto& it : (this->_controls))
+		for (auto& it : (this->m_controls))
 		{
 			if (it->Name == ctlName) {
 				return it;
@@ -1053,7 +1053,7 @@ namespace ezui {
 		if (attrName.empty() || attrValue.empty()) {
 			return ctls;
 		}
-		for (auto& it : (this->_controls))
+		for (auto& it : (this->m_controls))
 		{
 			if (it->GetAttribute(attrName) == attrValue) {
 				ctls.push_back(it);
@@ -1078,7 +1078,7 @@ namespace ezui {
 		if (ctlName.empty()) {
 			return NULL;
 		}
-		for (auto& it : (this->_controls))
+		for (auto& it : (this->m_controls))
 		{
 			if (it->Name == ctlName) {
 				return it;
@@ -1092,7 +1092,7 @@ namespace ezui {
 		if (attrName.empty() || attrValue.empty()) {
 			return ctls;
 		}
-		for (auto& it : (this->_controls))
+		for (auto& it : (this->m_controls))
 		{
 			if (it->GetAttribute(attrName) == attrValue) {
 				ctls.push_back(it);
@@ -1111,7 +1111,7 @@ namespace ezui {
 	bool Control::SwapChild(Control* ct1, Control* ct2)
 	{
 		int_t swapCount = 0;
-		for (auto& it : this->_controls) {
+		for (auto& it : this->m_controls) {
 			if (swapCount == 2) {
 				break;
 			}
@@ -1133,13 +1133,13 @@ namespace ezui {
 		return false;
 	}
 	void Control::SetVisible(bool flag) {
-		if (flag != this->_visible && this->Parent) {
+		if (flag != this->m_bVisible && this->Parent) {
 			this->Parent->TryPendLayout();
 		}
-		this->_visible = flag;
+		this->m_bVisible = flag;
 	}
 	bool Control::IsVisible() {
-		return this->_visible;
+		return this->m_bVisible;
 	}
 
 	//void CalculateRotatedMaxRect(const Rect& rect, double angle, RectF* outRect) {
@@ -1191,11 +1191,11 @@ namespace ezui {
 	}
 	const Size& Control::GetContentSize()
 	{
-		return _contentSize;
+		return m_contentSize;
 	}
 	bool Control::IsAutoWidth()
 	{
-		return this->_autoWidth;
+		return this->m_bAutoWidth;
 	}
 	void Control::SetAutoSize(bool flag)
 	{
@@ -1204,59 +1204,59 @@ namespace ezui {
 	}
 	void Control::SetAutoWidth(bool flag)
 	{
-		if (flag != this->_autoWidth && Parent) {
+		if (flag != this->m_bAutoWidth && Parent) {
 			Parent->TryPendLayout();
 		}
 		if (flag && Width() == 0) {
-			_rect.Width = 1;
+			m_rect.Width = 1;
 		}
-		this->_autoWidth = flag;
+		this->m_bAutoWidth = flag;
 	}
 	bool Control::IsAutoHeight()
 	{
-		return this->_autoHeight;
+		return this->m_bAutoHeight;
 	}
 	void Control::SetAutoHeight(bool flag)
 	{
-		if (flag != this->_autoHeight && Parent) {
+		if (flag != this->m_bAutoHeight && Parent) {
 			Parent->TryPendLayout();
 		}
 		if (flag && Height() == 0) {
-			_rect.Height = 1;
+			m_rect.Height = 1;
 		}
-		this->_autoHeight = flag;
+		this->m_bAutoHeight = flag;
 	}
 	void Control::SetContentWidth(int_t width)
 	{
-		this->_contentSize.Width = width;
+		this->m_contentSize.Width = width;
 	}
 	void Control::SetContentHeight(int_t height)
 	{
-		this->_contentSize.Height = height;
+		this->m_contentSize.Height = height;
 	}
 	void Control::SetContentSize(const Size& size)
 	{
-		this->_contentSize = size;
+		this->m_contentSize = size;
 	}
 	void Control::ComputeClipRect()
 	{
 		if (Parent) {
-			Rect& ClipRectRef = *(Rect*)(&this->_viewRect);//引用父控件的裁剪区域
-			Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->_viewRect);//自身和父控件对比较裁剪区域
+			Rect& ClipRectRef = *(Rect*)(&this->m_viewRect);//引用父控件的裁剪区域
+			Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->m_viewRect);//自身和父控件对比较裁剪区域
 		}
 		else {
-			Rect& ClipRectRef = *(Rect*)(&this->_viewRect);
+			Rect& ClipRectRef = *(Rect*)(&this->m_viewRect);
 			ClipRectRef = this->GetClientRect();
 		}
 	}
 	const Controls& Control::GetControls()
 	{
-		return _controls;
+		return m_controls;
 	}
 	Control* Control::GetControl(int_t pos)
 	{
 		int_t _pos = 0;
-		for (auto& it : _controls) {
+		for (auto& it : m_controls) {
 			if (_pos == pos) {
 				return it;
 			}
@@ -1284,7 +1284,7 @@ namespace ezui {
 
 	void Control::Clear(bool freeChilds)
 	{
-		auto temp = _controls;
+		auto temp = m_controls;
 		for (auto itor = temp.begin(); itor != temp.end(); ++itor)
 		{
 			Control* it = *itor;
@@ -1294,8 +1294,8 @@ namespace ezui {
 			}
 		}
 		this->ViewControls.clear();//清空可见控件
-		this->_controls.clear();//清空子控件集合
-		this->_spacers.clear();//清空弹簧
+		this->m_controls.clear();//清空子控件集合
+		this->m_spacers.clear();//清空弹簧
 		this->TryPendLayout();//挂起布局
 		IScrollBar* scrollBar = this->GetScrollBar();
 		if (scrollBar) {

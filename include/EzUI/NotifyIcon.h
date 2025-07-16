@@ -5,10 +5,10 @@ namespace ezui {
 	class UI_EXPORT  NotifyIcon
 	{
 	public:
-		HMODULE _hInstance;
-		HWND _hwnd;
-		NOTIFYICONDATAW _nid;
-		Menu* _menu;
+		HMODULE m_hInstance;
+		HWND m_hwnd;
+		NOTIFYICONDATAW m_nid;
+		Menu* m_menu;
 		std::function<bool(UINT)> MessageCallback = NULL;
 	public:
 		//需要自定义一个WIN32消息来供此类使用

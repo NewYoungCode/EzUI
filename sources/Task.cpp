@@ -1,45 +1,45 @@
 #include "Task.h"
 namespace ezui {
 	void Task::Wait() {
-		if (!_bJoin)
+		if (!m_bJoin)
 		{
-			_bJoin = true;
-			std::unique_lock<std::mutex> autoLock(_mtx);
-			_codv.wait(autoLock, [this]() ->bool {
-				return _finished;
+			m_bJoin = true;
+			std::unique_lock<std::mutex> autoLock(m_mtx);
+			m_codv.wait(autoLock, [this]() ->bool {
+				return m_finished;
 				});
-			_thread->join();
+			m_thread->join();
 		}
 	}
 	bool Task::IsStopped() {
-		std::unique_lock<std::mutex> autoLock(_mtx);
-		return _finished;
+		std::unique_lock<std::mutex> autoLock(m_mtx);
+		return m_finished;
 	}
 	Task::~Task() {
 		Wait();
-		delete _thread;
+		delete m_thread;
 	}
 
 	TaskFactory::TaskFactory(int maxTaskCount) {
 		for (size_t i = 0; i < maxTaskCount; ++i)
 		{
-			tasks.push_back(new Task([this]() {
+			m_tasks.push_back(new Task([this]() {
 				while (true)
 				{
 					std::function<void()> task;
 					{
-						std::unique_lock<std::mutex> autoLock(this->mtx);
-						this->codv.wait(autoLock, [this]()->bool {
-							return this->bStop || !this->funcs.empty();
+						std::unique_lock<std::mutex> autoLock(this->m_mtx);
+						this->m_codv.wait(autoLock, [this]()->bool {
+							return this->m_bStop || !this->m_funcs.empty();
 							});
-						if (funcs.empty()) {
-							this->codv2.notify_all();
+						if (m_funcs.empty()) {
+							this->m_codv2.notify_all();
 						}
-						if (this->bStop && funcs.empty()) {
+						if (this->m_bStop && m_funcs.empty()) {
 							break;
 						}
-						task = std::move(*funcs.begin());
-						funcs.pop_front();
+						task = std::move(*m_funcs.begin());
+						m_funcs.pop_front();
 					}
 					task();
 				}
@@ -48,26 +48,26 @@ namespace ezui {
 	}
 
 	void TaskFactory::WaitAll() {
-		codv.notify_all();
-		std::unique_lock<std::mutex> lock2(this->mtx2);
-		this->codv2.wait(lock2, [this]()->bool {
-			return funcs.empty();
+		m_codv.notify_all();
+		std::unique_lock<std::mutex> lock2(this->m_mtx2);
+		this->m_codv2.wait(lock2, [this]()->bool {
+			return m_funcs.empty();
 			});
 	}
 	TaskFactory::~TaskFactory() {
 		{
-			std::unique_lock<std::mutex> autoLock(mtx);
-			bStop = true;
+			std::unique_lock<std::mutex> autoLock(m_mtx);
+			m_bStop = true;
 		}
 		WaitAll();
-		while (!tasks.empty())
+		while (!m_tasks.empty())
 		{
-			for (auto itor = tasks.begin(); itor != tasks.end(); )
+			for (auto itor = m_tasks.begin(); itor != m_tasks.end(); )
 			{
 				if ((*itor)->IsStopped()) {
 					(*itor)->Wait();
 					delete (*itor);
-					itor = tasks.erase(itor);
+					itor = m_tasks.erase(itor);
 				}
 				else {
 					++itor;
