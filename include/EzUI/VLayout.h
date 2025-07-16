@@ -11,6 +11,7 @@ namespace ezui {
 		virtual void OnLayout() override;
 	public:
 		VLayout();
+		VLayout(Control* parentObject);
 		virtual ~VLayout();
 
 	};

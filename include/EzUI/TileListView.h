@@ -16,6 +16,7 @@ namespace ezui {
 		virtual void OnLayout()override;
 	public:
 		TileListView();
+		TileListView(Control* parentObject);
 		virtual ~TileListView();
 		virtual IScrollBar* GetScrollBar()override;
 	};

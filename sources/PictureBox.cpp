@@ -1,6 +1,13 @@
 #include "PictureBox.h"
 namespace ezui {
 	PictureBox::PictureBox() {
+		Init();
+	}
+	PictureBox::PictureBox(Control* parentObject):Control(parentObject)
+	{
+		Init();
+	}
+	void PictureBox::Init() {
 		m_timer.Tick = [this](Timer* timer) {
 			timer->Stop();
 			this->Invalidate();

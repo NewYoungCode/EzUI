@@ -12,6 +12,13 @@ namespace ezui {
 		m_mouseDown = false;
 	}
 	IScrollBar::IScrollBar() {
+		Init();
+	}
+	IScrollBar::IScrollBar(Control* parentObject) :Control(parentObject)
+	{
+		Init();
+	}
+	void IScrollBar::Init() {
 		Style.ForeColor = Color(205, 205, 205);//the bar default backgroundcolor
 		SetSize({ 10,10 });
 	}

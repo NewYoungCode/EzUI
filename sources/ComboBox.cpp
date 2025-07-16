@@ -66,6 +66,10 @@ namespace ezui {
 	{
 		Init();
 	}
+	ComboBox::ComboBox(Control* parentObject):HLayout(parentObject)
+	{
+		Init();
+	}
 	UIString ComboBox::GetText()
 	{
 		return this->m_textBox.GetText();

@@ -1,6 +1,9 @@
 #include "Label.h"
 namespace ezui {
 	Label::Label() {}
+	Label::Label(Control* parentObject):Control(parentObject)
+	{
+	}
 	Label::~Label() {}
 	void Label::OnDpiChange(const DpiChangeEventArgs& args) {
 		if (args.Scale != this->GetScale()) {

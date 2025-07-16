@@ -1,6 +1,9 @@
 #include "VScrollBar.h"
 namespace ezui {
 	VScrollBar::VScrollBar() { }
+	VScrollBar::VScrollBar(Control* parentObject):IScrollBar(parentObject)
+	{
+	}
 	VScrollBar::~VScrollBar() { }
 	void VScrollBar::ScrollTo(Control* ctl)
 	{

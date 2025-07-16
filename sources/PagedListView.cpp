@@ -53,6 +53,9 @@ namespace ezui {
 	PagedListView::PagedListView()
 	{
 	}
+	PagedListView::PagedListView(Control* patentObject):Control(patentObject)
+	{
+	}
 	PagedListView::~PagedListView()
 	{
 	}

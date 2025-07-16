@@ -34,6 +34,7 @@ namespace ezui {
 		virtual void Clear() override;
 		virtual void Clear(bool freeChilds) override;
 		PagedListView();
+		PagedListView(Control* parentObject);
 		virtual ~PagedListView();
 	};
 };

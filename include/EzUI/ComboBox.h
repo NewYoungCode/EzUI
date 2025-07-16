@@ -37,6 +37,7 @@ namespace ezui {
 		virtual void OnLayout()override;
 	public:
 		ComboBox();
+		ComboBox(Control* parentObject);
 		//获取选中的文字
 		UIString GetText();
 		//获取选中的下标

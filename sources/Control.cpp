@@ -126,6 +126,12 @@ namespace ezui {
 	UI_SUPER_STYLE_BINDFUNC(std::wstring, FontFamily);
 
 	Control::Control() {}
+	Control::Control(Control* parentObject)
+	{
+		if (parentObject) {
+			parentObject->m_childObjects.push_back(this);
+		}
+	}
 	void Control::OnChildPaint(PaintEventArgs& args)
 	{
 		ViewControls.clear();
@@ -901,10 +907,16 @@ namespace ezui {
 	}
 	Control::~Control()
 	{
+		//清除绑定信息
 		if (PublicData) {
 			PublicData->RemoveControl(this);
 			PublicData = NULL;
 		}
+		//释放子对象
+		for (auto& it : m_childObjects) {
+			delete it;
+		}
+		//释放弹簧
 		DestroySpacers();
 		Parent = NULL;
 	}
@@ -1007,6 +1019,11 @@ namespace ezui {
 				ViewControls.erase(itor2);
 			}
 			if (freeCtrl) {
+				//子对象存在相同的对象也要跟随移除
+				auto childObj = std::find(m_childObjects.begin(), m_childObjects.end(), ctl);
+				if (childObj != m_childObjects.end()) {
+					m_childObjects.erase(childObj);
+				}
 				delete ctl;
 			}
 		}
@@ -1290,6 +1307,13 @@ namespace ezui {
 			Control* it = *itor;
 			it->OnRemove();
 			if (freeChilds) {
+
+				//子对象存在相同的对象也要跟随移除
+				auto childObj = std::find(m_childObjects.begin(), m_childObjects.end(), it);
+				if (childObj != m_childObjects.end()) {
+					m_childObjects.erase(childObj);
+				}
+
 				delete it;
 			}
 		}

@@ -20,6 +20,7 @@ namespace ezui {
 		//选中状态发送变化的回调函数
 		std::function<void(CheckBox* sender, bool checked)> CheckedChanged = NULL;
 		CheckBox();
+		CheckBox(Control* parentObject);
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 		//设置选中状态
 		virtual void SetCheck(bool checked);

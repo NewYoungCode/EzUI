@@ -18,6 +18,10 @@ namespace ezui {
 	{
 		Init();
 	}
+	TileListView::TileListView(Control* parentObject):PagedListView(parentObject)
+	{
+		Init();
+	}
 	TileListView::~TileListView()
 	{
 	}

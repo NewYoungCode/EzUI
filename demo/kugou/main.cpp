@@ -13,6 +13,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	app.EnableHighDpi();//启用高dpi适配
 
+	//while (true)
+	//{
+	//	Control test;
+	//	Button* btn = new Button(&test);//btn无需释放 生命周期跟随test
+	//}
+
 	MainFrm frm;
 	frm.Show();
 	return app.Exec();

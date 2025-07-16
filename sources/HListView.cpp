@@ -16,6 +16,10 @@ namespace ezui {
 	{
 		Init();
 	}
+	HListView::HListView(Control* parentObject):PagedListView(parentObject)
+	{
+		Init();
+	}
 	HListView::~HListView()
 	{
 	}

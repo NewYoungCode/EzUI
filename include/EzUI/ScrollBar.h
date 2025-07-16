@@ -26,6 +26,8 @@ namespace ezui {
 		//int_t _old_viewLength = 0;
 		//int_t _old_contentLength = 0;
 		//int_t _old_offset = 0;
+	private:
+		void Init();
 	public:
 		//滚动条计算出偏移之后的回调函数
 		std::function<void(int_t)> OffsetCallback = NULL;
@@ -59,6 +61,7 @@ namespace ezui {
 		//当父控件发生内容发生改变 请调用刷新滚动条
 		void RefreshScroll();
 		IScrollBar();
+		IScrollBar(Control* parentObject);
 		virtual ~IScrollBar();
 	};
 };

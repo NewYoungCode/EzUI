@@ -70,6 +70,7 @@ namespace ezui {
 		std::function<void(const UIString&)> TextChanged = NULL;
 	public:
 		TextBox();
+		TextBox(Control* parentObject);
 		virtual ~TextBox();
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 		virtual Rect GetCareRect()override;

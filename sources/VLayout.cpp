@@ -3,6 +3,9 @@ namespace ezui {
 	VLayout::VLayout()
 	{
 	}
+	VLayout::VLayout(Control* parentObject):Control(parentObject)
+	{
+	}
 	VLayout::~VLayout()
 	{
 	}

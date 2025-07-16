@@ -16,11 +16,13 @@ namespace ezui {
 		float m_stepAcc = 0;
 		float m_stepPerFrame = 0;
 		void Sort();
+		void Init();
 	protected:
 		virtual void OnLayout()override;
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 	public:
 		TabLayout();
+		TabLayout(Control* parentObject);
 		virtual ~TabLayout();
 		virtual void Remove(Control* ctl, bool freeCtl = false)override;
 		virtual Control* Add(Control* childCtl)override;

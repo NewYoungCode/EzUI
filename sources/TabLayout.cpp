@@ -3,6 +3,14 @@
 namespace ezui {
 	TabLayout::TabLayout()
 	{
+		Init();
+	}
+	TabLayout::TabLayout(Control* parentObject):Control(parentObject)
+	{
+		Init();
+	}
+	void TabLayout::Init()
+	{
 		m_timer.Tick = [this](Timer* sender) {
 
 			Invoke([this, sender]() {

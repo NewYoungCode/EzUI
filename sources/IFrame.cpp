@@ -3,6 +3,9 @@ namespace ezui {
 	IFrame::IFrame()
 	{
 	}
+	IFrame::IFrame(Control* parentObject):Control(parentObject)
+	{
+	}
 	IFrame::~IFrame()
 	{
 	}

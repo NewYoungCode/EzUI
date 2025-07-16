@@ -1,6 +1,12 @@
 #include "TextBox.h"
 namespace ezui {
-	TextBox::TextBox() { Init(); }
+	TextBox::TextBox() { 
+		Init(); 
+	}
+	TextBox::TextBox(Control* parentObject):Control(parentObject)
+	{
+		Init();
+	}
 	TextBox::~TextBox() {
 		m_timer.Stop();
 		if (m_textLayout) { delete m_textLayout; }

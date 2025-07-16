@@ -3,6 +3,9 @@ namespace ezui {
 	RadioButton::RadioButton()
 	{
 	}
+	RadioButton::RadioButton(Control* parentObject):CheckBox(parentObject)
+	{
+	}
 	void RadioButton::OnMouseClick(const MouseEventArgs& arg)
 	{
 		__super::OnMouseClick(arg);

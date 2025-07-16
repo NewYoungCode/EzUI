@@ -2,6 +2,9 @@
 
 namespace ezui {
 	HScrollBar::HScrollBar() {}
+	HScrollBar::HScrollBar(Control* parentObj):IScrollBar(parentObj)
+	{
+	}
 	HScrollBar::~HScrollBar() {}
 	Rect HScrollBar::GetSliderRect() {
 		Rect sliderRect;

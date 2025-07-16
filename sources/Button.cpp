@@ -8,6 +8,10 @@ namespace ezui {
 	Button::Button() {
 		Init();
 	}
+	Button::Button(Control* parentObject):Label(parentObject)
+	{
+		Init();
+	}
 	Button::~Button()
 	{
 	}

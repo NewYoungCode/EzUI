@@ -21,6 +21,7 @@ namespace ezui {
 	public:
 		TextAlign TextAlign = TextAlign::MiddleCenter;
 		Label();
+		Label(Control* parentObject);
 		virtual ~Label();
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 		virtual void RefreshLayout() override;

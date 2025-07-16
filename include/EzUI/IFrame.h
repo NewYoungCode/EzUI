@@ -9,6 +9,7 @@ namespace ezui {
 		UIManager m_umg;
 	public:
 		IFrame();
+		IFrame(Control* parentObject);
 		virtual ~IFrame();
 		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue)override;
 		//获取UI管理器

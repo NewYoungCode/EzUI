@@ -69,6 +69,9 @@ namespace ezui {
 	HLayout::HLayout()
 	{
 	}
+	HLayout::HLayout(Control* parentObject):Control(parentObject)
+	{
+	}
 	HLayout::~HLayout()
 	{
 	}

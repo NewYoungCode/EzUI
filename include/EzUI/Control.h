@@ -17,6 +17,9 @@ namespace ezui {
 		// 子控件集合
 		Controls m_controls;
 
+		// 管理子对象的释放
+		Controls m_childObjects;
+
 		// 存储弹簧控件的集合
 		Controls m_spacers;
 
@@ -263,6 +266,9 @@ namespace ezui {
 	public:
 		// 构造函数
 		Control();
+
+		// 构造函数 可传入父对象(由父对象自动管理内存)
+		Control(Control*parentObject);
 
 		// 析构函数
 		virtual ~Control();
