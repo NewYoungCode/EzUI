@@ -105,7 +105,7 @@ namespace ezui {
 	}
 	void ShadowBox::Update(int_t _shadowWidth, const Border& border) {
 		HWND ownerWnd = ::GetWindow(m_hWnd,GW_OWNER);
-		if (!::IsWindowVisible(ownerWnd) || ::IsIconic(ownerWnd) || ::GetParent(ownerWnd)!=NULL) {
+		if (!::IsWindowVisible(ownerWnd) || ::IsIconic(ownerWnd)) {
 			::ShowWindow(m_hWnd, SW_HIDE);
 			return;
 		}

@@ -71,7 +71,7 @@ void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
 			if (LrcNow == &lrc)
 			{
 				arg.Graphics.SetColor(Color(211, 174, 87));
-				arg.Graphics.SetFont(GetFontFamily(), GetFontSize() + 3);
+				arg.Graphics.SetFont(GetFontFamily(), GetFontSize() + 4);
 				arg.Graphics.DrawString(lrc.text.unicode(), rectangle, TextAlign::MiddleCenter);
 			}
 			else

@@ -29,6 +29,10 @@ public:
 //登录窗口
 class LoginFrm :public LayeredWindow {
 	UIManager umg;
+protected:
+	virtual bool OnNotify(Control* sender, EventArgs& args)override;
 public:
+	//保存用户名
+	UIString m_userName;
 	LoginFrm(HWND owner);
 };

@@ -109,7 +109,32 @@ SearchItem::SearchItem(const Song& s) {
 	Add(new HSpacer(5));
 }
 
-LoginFrm::LoginFrm(HWND owner) :LayeredWindow(300, 200,  owner)
+bool LoginFrm::OnNotify(Control* sender, EventArgs& args)
+{
+	do
+	{
+		if (args.EventType == Event::OnMouseClick) {
+			if (sender->Name == "btnLogin") {
+				TextBox* editUser = (TextBox*)this->FindControl("username");
+				TextBox* editPwd = (TextBox*)this->FindControl("password");
+				if (editUser->GetText() == "admin" && editPwd->GetText() == "123456") {
+					this->m_userName = editUser->GetText();
+					::MessageBoxW(Hwnd(), L"登录成功!", L"成功", MB_OK);
+					this->Close(1);
+				}
+				else
+				{
+					::MessageBoxW(Hwnd(), L"用户名或密码错误!", L"失败", MB_OK);
+				}
+				break;
+			}
+		}
+	} while (false);
+
+	return __super::OnNotify(sender, args);
+}
+
+LoginFrm::LoginFrm(HWND owner) :LayeredWindow(300, 200, owner)
 {
 	umg.LoadXmlFile("res/xml/login.htm");
 	umg.SetupUI(this);

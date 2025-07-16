@@ -11,7 +11,7 @@ MainFrm::MainFrm() :Form(1020, 690)
 
 	ntfi.SetMenu(exitMenu);
 	ntfi.MessageCallback = [=](UINT menId)->bool {
-		
+
 		int pause = 0;
 		return true;
 		};
@@ -53,6 +53,7 @@ void MainFrm::InitForm() {
 	player.Name = "player";
 	this->FindControl("vlcDock")->Add(&player);
 	this->FindControl("lrcView2")->Add(&lrcCtl);//添加歌词控件
+	lrcCtl.Style.FontSize = 15;
 
 	//创建桌面歌词视频窗口
 	deskTopWnd = new DesktopLrcFrm(&player);
@@ -347,8 +348,13 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 
 	if (args.EventType == Event::OnMouseClick) {
 		if (sender->Name == "login") {
-			LoginFrm* loginFrm=new LoginFrm(Hwnd());
-			loginFrm->ShowModal(true);
+			LoginFrm* loginFrm = new LoginFrm(Hwnd());
+			int code = loginFrm->ShowModal(true);
+			if (code == 1) {
+				UIString text = UIString(L"欢迎您,%s").format(loginFrm->m_userName.c_str());
+				((Label*)sender)->SetText(text);
+				sender->Invalidate();
+			}
 			delete loginFrm;
 		}
 		if (sender->Name == "next") {
