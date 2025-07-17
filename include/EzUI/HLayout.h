@@ -10,8 +10,7 @@ namespace ezui {
 	protected:
 		virtual void OnLayout()override;
 	public:
-		HLayout();
-		HLayout(Control*parentObject);
+		HLayout(Object* parentObject = NULL);
 		virtual ~HLayout();
 	};
 	using HBox = HLayout;

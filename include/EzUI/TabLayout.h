@@ -21,8 +21,7 @@ namespace ezui {
 		virtual void OnLayout()override;
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 	public:
-		TabLayout();
-		TabLayout(Control* parentObject);
+		TabLayout(Object* parentObject = NULL);
 		virtual ~TabLayout();
 		virtual void Remove(Control* ctl, bool freeCtl = false)override;
 		virtual Control* Add(Control* childCtl)override;

@@ -30,7 +30,6 @@ namespace ezui {
 	void Window::InitWindow(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  exStyle)
 	{
 		this->PublicData = new WindowData;
-		(bool&)this->IsWindow = true;
 		Rect rect(0, 0, width, height);
 
 		POINT cursorPos;
@@ -832,7 +831,7 @@ namespace ezui {
 		*outPoint = clientPoint;
 		Control* outCtl = m_layout;
 	Find_Loop:
-		IScrollBar* scrollBar = outCtl->GetScrollBar();
+		ScrollBar* scrollBar = outCtl->GetScrollBar();
 		if (scrollBar && scrollBar->GetClientRect().Contains(clientPoint)) {
 			if (scrollBar->IsDraw()) {
 				auto barRect = scrollBar->GetClientRect();
@@ -949,15 +948,15 @@ namespace ezui {
 			args.ZDelta = zDelta;
 			__FOCUS_CONTROL->SendNotify(args);
 		}
-		IScrollBar* scrollBar = NULL;
+		ScrollBar* scrollBar = NULL;
 		if (__FOCUS_CONTROL && __FOCUS_CONTROL->GetScrollBar() && __FOCUS_CONTROL->GetScrollBar()->Scrollable()) {
-			scrollBar = dynamic_cast<IScrollBar*>(__FOCUS_CONTROL->GetScrollBar());
+			scrollBar = dynamic_cast<ScrollBar*>(__FOCUS_CONTROL->GetScrollBar());
 		}
 		Control* pControl = __FOCUS_CONTROL;
 		while (scrollBar == NULL && pControl)
 		{
 			if (pControl->GetScrollBar() && pControl->GetScrollBar()->Scrollable()) {
-				scrollBar = dynamic_cast<IScrollBar*>(pControl->GetScrollBar());
+				scrollBar = dynamic_cast<ScrollBar*>(pControl->GetScrollBar());
 				break;
 			}
 			pControl = pControl->Parent;
@@ -1112,6 +1111,9 @@ namespace ezui {
 	{
 	}
 
+	bool Window::IsWindow()const {
+		return true;
+	}
 	void Window::TitleMoveWindow() {
 		::ReleaseCapture();
 		::SendMessage(Hwnd(), WM_NCLBUTTONDOWN, HTCAPTION, NULL);//模拟鼠标按住标题栏移动窗口,会吃掉鼠标左键的弹起消息,手动触发也无惧于事

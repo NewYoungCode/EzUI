@@ -10,8 +10,7 @@ namespace ezui {
 	protected:
 		virtual void OnLayout() override;
 	public:
-		VLayout();
-		VLayout(Control* parentObject);
+		VLayout(Object* parentObject = NULL);
 		virtual ~VLayout();
 
 	};

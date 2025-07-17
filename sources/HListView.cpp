@@ -12,11 +12,7 @@ namespace ezui {
 			this->Offset(offsetValue);
 			};
 	}
-	HListView::HListView()
-	{
-		Init();
-	}
-	HListView::HListView(Control* parentObject):PagedListView(parentObject)
+	HListView::HListView(Object* parentObject):PagedListView(parentObject)
 	{
 		Init();
 	}
@@ -34,7 +30,7 @@ namespace ezui {
 		this->GetScrollBar()->RefreshScroll();
 	}
 
-	IScrollBar* HListView::GetScrollBar()
+	ScrollBar* HListView::GetScrollBar()
 	{
 		return &m_hScrollBar;
 	}

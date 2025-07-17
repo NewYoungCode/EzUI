@@ -1,8 +1,7 @@
 #include "HScrollBar.h"
 
 namespace ezui {
-	HScrollBar::HScrollBar() {}
-	HScrollBar::HScrollBar(Control* parentObj):IScrollBar(parentObj)
+	HScrollBar::HScrollBar(Object* parentObj):ScrollBar(parentObj)
 	{
 	}
 	HScrollBar::~HScrollBar() {}

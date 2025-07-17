@@ -50,10 +50,8 @@ namespace ezui {
 		}
 		this->Invalidate();
 	}
-	PagedListView::PagedListView()
-	{
-	}
-	PagedListView::PagedListView(Control* patentObject):Control(patentObject)
+
+	PagedListView::PagedListView(Object* patentObject):Control(patentObject)
 	{
 	}
 	PagedListView::~PagedListView()

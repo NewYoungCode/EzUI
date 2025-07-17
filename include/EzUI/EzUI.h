@@ -13,13 +13,13 @@ Email:19980103ly@gmail.com/718987717@qq.com
 
 namespace ezui {
 	struct MonitorInfo;
-	class IControl;
+	class Object;
 	class EventArgs;
 	class ControlStyle;
 	class Control;
 	class Window;
 	class Spacer;
-	class IScrollBar;
+	class ScrollBar;
 	enum class Cursor :ULONG_PTR;
 
 #if 1
@@ -84,7 +84,7 @@ namespace ezui {
 		Color(BYTE r, BYTE g, BYTE b, BYTE a = 255) :ezui::__EzUI__Color(r, g, b, a) {}
 	public:
 		//构建一个Color
-		static Color Make(const UIString& colorStr, bool* isGood=NULL);
+		static Color Make(const UIString& colorStr, bool* isGood = NULL);
 		virtual ~Color() {}
 	};
 
@@ -412,25 +412,33 @@ namespace ezui {
 		void Scale(float scale);
 	};
 
-	class UI_EXPORT IControl {
+	//所有控件和窗口的基类
+	class UI_EXPORT Object {
 	private:
-		std::map<UIString, UIString> _attrs;
+		//属性集合
+		std::map<UIString, UIString> m_attrs;
+		// 管理子对象的释放
+		std::vector<Object*> m_childObjects;
 	public:
-		const bool IsWindow = false;
 		//用户自定义数据
 		int_t Tag = NULL;
 		//公共数据 请不要改动此变量
 		WindowData* PublicData = NULL;
+	protected:
+		//移除子对象
+		void RemoveObject(Object* object);
 	public:
-		IControl();
-		virtual ~IControl();
+		Object(Object* parentObject = NULL);
+		virtual ~Object();
+		//是否为窗口
+		virtual bool IsWindow() const { return false; }
 	public:
 		//设置属性
 		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue);
 		//获取属性
 		virtual UIString GetAttribute(const UIString& attrName);
 		//获取全部属性
-		virtual const std::map<UIString, UIString>& IControl::GetAttributes();
+		virtual const std::map<UIString, UIString>& GetAttributes();
 		//移除某个属性
 		virtual void RemoveAttribute(const UIString& attrName);
 	};

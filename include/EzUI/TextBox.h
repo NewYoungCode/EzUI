@@ -69,8 +69,7 @@ namespace ezui {
 		bool ReadOnly = false;//是否只读
 		std::function<void(const UIString&)> TextChanged = NULL;
 	public:
-		TextBox();
-		TextBox(Control* parentObject);
+		TextBox(Object* parentObject = NULL);
 		virtual ~TextBox();
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 		virtual Rect GetCareRect()override;
@@ -80,7 +79,7 @@ namespace ezui {
 		void Insert(const UIString& str);
 		const UIString GetText();
 		//获取滚动条
-		virtual IScrollBar* GetScrollBar()override;
+		virtual ScrollBar* GetScrollBar()override;
 		void SetText(const UIString& text);
 		//是否多行显示
 		bool IsMultiLine();

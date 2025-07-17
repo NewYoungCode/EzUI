@@ -1,10 +1,7 @@
 #include "CheckBox.h"
 
 namespace ezui {
-	CheckBox::CheckBox()
-	{
-	}
-	CheckBox::CheckBox(Control* parentObject):Label(parentObject)
+	CheckBox::CheckBox(Object* parentObject):Label(parentObject)
 	{
 	}
 	CheckBox::~CheckBox()

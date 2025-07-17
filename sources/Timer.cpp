@@ -1,6 +1,7 @@
 #include "Timer.h"
 namespace ezui {
-	Timer::Timer() {
+	Timer::Timer(Object* parentObject):Object(parentObject)
+	{
 		m_task = new Task([this]() {
 			while (true)
 			{

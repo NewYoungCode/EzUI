@@ -387,36 +387,54 @@ namespace ezui {
 		this->Border.Scale(scale);
 	}
 
-	IControl::IControl() {}
-	IControl::~IControl() {}
-
-	void IControl::SetAttribute(const UIString& attrName, const UIString& attrValue) {
-		auto itor = _attrs.find(attrName);
-		if (itor != _attrs.end()) {
-			(*itor).second = attrValue;
+	Object::Object(Object* parentObject)
+	{
+		if (parentObject) {
+			parentObject->m_childObjects.push_back(this);
 		}
-		else {
-			_attrs.insert(std::pair<UIString, UIString>(attrName, attrValue));
+	}
+	Object::~Object() {
+		//释放子对象
+		for (auto& it : m_childObjects) {
+			delete it;
 		}
 	}
 
-	UIString IControl::GetAttribute(const UIString& attrName) {
-		auto itor = _attrs.find(attrName);
-		if (itor != _attrs.end()) {
+	void Object::RemoveObject(Object* object) {
+		//子对象存在相同的对象也要跟随移除
+		auto childObj = std::find(m_childObjects.begin(), m_childObjects.end(), object);
+		if (childObj != m_childObjects.end()) {
+			m_childObjects.erase(childObj);
+		}
+	}
+
+	void Object::SetAttribute(const UIString& attrName, const UIString& attrValue) {
+		auto itor = m_attrs.find(attrName);
+		if (itor != m_attrs.end()) {
+			(*itor).second = attrValue;
+		}
+		else {
+			m_attrs.insert(std::pair<UIString, UIString>(attrName, attrValue));
+		}
+	}
+
+	UIString Object::GetAttribute(const UIString& attrName) {
+		auto itor = m_attrs.find(attrName);
+		if (itor != m_attrs.end()) {
 			return (*itor).second;
 		}
 		return "";
 	}
 
-	const std::map<UIString, UIString>& IControl::GetAttributes() {
-		return _attrs;
+	const std::map<UIString, UIString>& Object::GetAttributes() {
+		return m_attrs;
 	}
 
-	void IControl::RemoveAttribute(const UIString& attrName)
+	void Object::RemoveAttribute(const UIString& attrName)
 	{
-		auto itor = _attrs.find(attrName);
-		if (itor != _attrs.end()) {
-			_attrs.erase(itor);
+		auto itor = m_attrs.find(attrName);
+		if (itor != m_attrs.end()) {
+			m_attrs.erase(itor);
 		}
 	}
 

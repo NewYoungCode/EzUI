@@ -11,7 +11,7 @@ namespace ezui {
 	/// <summary>
 	/// Window //经典带边框带系统菜单WIN32窗口样式
 	/// </summary>
-	class UI_EXPORT Window :public IControl
+	class UI_EXPORT Window :public Object
 	{
 	private:
 		//鼠标是否在里面
@@ -51,6 +51,8 @@ namespace ezui {
 		bool IsInWindow(Control& pControl, Control& it);
 		void InitWindow(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
 	protected:
+		//是否为窗口
+		bool IsWindow() const;
 		//鼠标按下以标题栏方式移动窗口
 		void TitleMoveWindow();
 		//当dpi发生更改时

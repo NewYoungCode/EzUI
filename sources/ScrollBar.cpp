@@ -1,54 +1,51 @@
 #include "ScrollBar.h"
 //滚动条相关
 namespace ezui {
-	void IScrollBar::OnMouseUp(const MouseEventArgs& arg)
+	void ScrollBar::OnMouseUp(const MouseEventArgs& arg)
 	{
 		__super::OnMouseUp(arg);
 		m_mouseDown = false;
 	}
-	void  IScrollBar::OnMouseLeave(const MouseEventArgs& arg)
+	void  ScrollBar::OnMouseLeave(const MouseEventArgs& arg)
 	{
 		__super::OnMouseLeave(arg);
 		m_mouseDown = false;
 	}
-	IScrollBar::IScrollBar() {
-		Init();
-	}
-	IScrollBar::IScrollBar(Control* parentObject) :Control(parentObject)
+	ScrollBar::ScrollBar(Object* parentObject) :Control(parentObject)
 	{
 		Init();
 	}
-	void IScrollBar::Init() {
+	void ScrollBar::Init() {
 		Style.ForeColor = Color(205, 205, 205);//the bar default backgroundcolor
 		SetSize({ 10,10 });
 	}
-	IScrollBar::~IScrollBar() {}
-	bool IScrollBar::IsDraw()
+	ScrollBar::~ScrollBar() {}
+	bool ScrollBar::IsDraw()
 	{
 		if (!Scrollable()) {
 			return false;
 		}
 		return this->IsVisible();
 	}
-	void IScrollBar::Reset()
+	void ScrollBar::Reset()
 	{
 		this->m_sliderPos = 0;
 		this->m_offset = 0;
 	}
-	bool IScrollBar::Scrollable()
+	bool ScrollBar::Scrollable()
 	{
 		if (this->m_overflowLength > 0) {
 			return true;
 		}
 		return false;
 	}
-	void IScrollBar::OnBackgroundPaint(PaintEventArgs& e) {
+	void ScrollBar::OnBackgroundPaint(PaintEventArgs& e) {
 		if (!Scrollable()) {
 			return;
 		}
 		__super::OnBackgroundPaint(e);
 	}
-	void IScrollBar::OnForePaint(PaintEventArgs& args)
+	void ScrollBar::OnForePaint(PaintEventArgs& args)
 	{
 		if (!Scrollable()) {
 			return;
@@ -63,7 +60,7 @@ namespace ezui {
 		}
 	}
 
-	void IScrollBar::ScrollTo(float scrollRate) {
+	void ScrollBar::ScrollTo(float scrollRate) {
 		if (Parent == NULL) return;
 		if (Parent->IsPendLayout()) {
 			Parent->RefreshLayout();
@@ -72,13 +69,13 @@ namespace ezui {
 		ScrollTo(-offset, Event::None);
 	}
 
-	float IScrollBar::ScrollPos()
+	float ScrollBar::ScrollPos()
 	{
 		if (this->m_overflowLength <= 0)  return 1.0f;
 		return std::abs(this->m_offset) * 1.0f / this->m_overflowLength;
 	}
 
-	void IScrollBar::ScrollTo(int_t offset, const Event& type) {
+	void ScrollBar::ScrollTo(int_t offset, const Event& type) {
 		if (Parent == NULL) return;
 		if (Parent->IsPendLayout()) {
 			Parent->RefreshLayout();
@@ -116,7 +113,7 @@ namespace ezui {
 			Scroll(this, (double)this->m_offset / (-this->m_overflowLength), type);
 		}
 	}
-	void IScrollBar::SyncInfo()
+	void ScrollBar::SyncInfo()
 	{
 		if (Parent == NULL)return;
 		if (Parent->IsPendLayout()) {
@@ -138,11 +135,11 @@ namespace ezui {
 			this->m_overflowLength = 0;
 		}
 	}
-	void IScrollBar::RefreshScroll() {
+	void ScrollBar::RefreshScroll() {
 		SyncInfo();
 		ScrollTo(this->m_offset, Event::None);
 	};
-	void IScrollBar::OnMouseWheel(const MouseEventArgs& arg) {
+	void ScrollBar::OnMouseWheel(const MouseEventArgs& arg) {
 		__super::OnMouseWheel(arg);
 		this->m_offset += arg.ZDelta * 0.5;
 		ScrollTo(this->m_offset, Event::OnMouseWheel);

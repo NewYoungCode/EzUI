@@ -1,9 +1,6 @@
 #include "VLayout.h"
 namespace ezui {
-	VLayout::VLayout()
-	{
-	}
-	VLayout::VLayout(Control* parentObject):Control(parentObject)
+	VLayout::VLayout(Object* parentObject):Control(parentObject)
 	{
 	}
 	VLayout::~VLayout()

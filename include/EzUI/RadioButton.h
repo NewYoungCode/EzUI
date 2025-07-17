@@ -8,8 +8,7 @@ namespace ezui {
 	protected:
 		virtual void OnMouseClick(const MouseEventArgs& arg)override;
 	public:
-		RadioButton();
-		RadioButton(Control* parentObject);
+		RadioButton(Object* parentObject = NULL);
 		virtual~RadioButton();
 	};
 };

@@ -242,7 +242,7 @@ namespace ezui {
 		MathStyle(ctl, selectName + ":active", selectors, BuildImageCallback);
 		MathStyle(ctl, selectName + ":hover", selectors, BuildImageCallback);
 		//是否有滚动条 有滚动条则应用滚动条样式
-		IScrollBar* scrollBar = ctl->GetScrollBar();
+		ScrollBar* scrollBar = ctl->GetScrollBar();
 		if (scrollBar) {
 			UIString scrollBarSelectName = UIString("%s::-webkit-scrollbar").format(selectName.c_str());
 			MathStyle(scrollBar, scrollBarSelectName, selectors, BuildImageCallback);

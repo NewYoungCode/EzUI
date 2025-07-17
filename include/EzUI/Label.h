@@ -18,10 +18,10 @@ namespace ezui {
 		UIString Ellipsis;
 		//基于控件的文字的边距
 		ezui::Distance TextMargin;
-	public:
+		//文字对齐方式
 		TextAlign TextAlign = TextAlign::MiddleCenter;
-		Label();
-		Label(Control* parentObject);
+	public:
+		Label(Object* parentObject=NULL);
 		virtual ~Label();
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 		virtual void RefreshLayout() override;

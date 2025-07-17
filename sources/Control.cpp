@@ -125,12 +125,8 @@ namespace ezui {
 	UI_SUPER_STYLE_BINDFUNC(Color, ForeColor);
 	UI_SUPER_STYLE_BINDFUNC(std::wstring, FontFamily);
 
-	Control::Control() {}
-	Control::Control(Control* parentObject)
+	Control::Control(Object* parentObject):Object(parentObject)
 	{
-		if (parentObject) {
-			parentObject->m_childObjects.push_back(this);
-		}
 	}
 	void Control::OnChildPaint(PaintEventArgs& args)
 	{
@@ -400,7 +396,7 @@ namespace ezui {
 				break;
 			}
 			if (attrName == "scrollbar") {
-				IScrollBar* sb = this->GetScrollBar();
+				ScrollBar* sb = this->GetScrollBar();
 				if (sb) {
 					sb->SetAttribute("name", attrValue);
 				}
@@ -841,7 +837,7 @@ namespace ezui {
 		//绘制子控件
 		this->OnChildPaint(args);
 		//绘制滚动条
-		IScrollBar* scrollbar = NULL;
+		ScrollBar* scrollbar = NULL;
 		if (scrollbar = this->GetScrollBar()) {
 			scrollbar->PublicData = args.PublicData;
 			scrollbar->SendNotify(args);
@@ -911,10 +907,6 @@ namespace ezui {
 		if (PublicData) {
 			PublicData->RemoveControl(this);
 			PublicData = NULL;
-		}
-		//释放子对象
-		for (auto& it : m_childObjects) {
-			delete it;
 		}
 		//释放弹簧
 		DestroySpacers();
@@ -1020,10 +1012,7 @@ namespace ezui {
 			}
 			if (freeCtrl) {
 				//子对象存在相同的对象也要跟随移除
-				auto childObj = std::find(m_childObjects.begin(), m_childObjects.end(), ctl);
-				if (childObj != m_childObjects.end()) {
-					m_childObjects.erase(childObj);
-				}
+				this->RemoveObject(ctl);
 				delete ctl;
 			}
 		}
@@ -1307,13 +1296,8 @@ namespace ezui {
 			Control* it = *itor;
 			it->OnRemove();
 			if (freeChilds) {
-
 				//子对象存在相同的对象也要跟随移除
-				auto childObj = std::find(m_childObjects.begin(), m_childObjects.end(), it);
-				if (childObj != m_childObjects.end()) {
-					m_childObjects.erase(childObj);
-				}
-
+				this->RemoveObject(it);
 				delete it;
 			}
 		}
@@ -1321,7 +1305,7 @@ namespace ezui {
 		this->m_controls.clear();//清空子控件集合
 		this->m_spacers.clear();//清空弹簧
 		this->TryPendLayout();//挂起布局
-		IScrollBar* scrollBar = this->GetScrollBar();
+		ScrollBar* scrollBar = this->GetScrollBar();
 		if (scrollBar) {
 			scrollBar->Reset();
 		}
@@ -1394,7 +1378,7 @@ namespace ezui {
 			Parent->TryPendLayout();//将父控件挂起
 		}
 	}
-	IScrollBar* Control::GetScrollBar()
+	ScrollBar* Control::GetScrollBar()
 	{
 		return NULL;
 	}

@@ -1,9 +1,6 @@
 #include "IFrame.h"
 namespace ezui {
-	IFrame::IFrame()
-	{
-	}
-	IFrame::IFrame(Control* parentObject):Control(parentObject)
+	IFrame::IFrame(Object* parentObject):Control(parentObject)
 	{
 	}
 	IFrame::~IFrame()

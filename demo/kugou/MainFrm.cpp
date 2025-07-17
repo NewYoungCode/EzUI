@@ -87,7 +87,7 @@ void MainFrm::InitForm() {
 		localList->Add(it);
 	}
 	//滚动条滚动事件 滚动条滚动到底部加载剩余音乐
-	searchList->GetScrollBar()->Scroll = [=](IScrollBar* sb, float pos, Event type)->void {
+	searchList->GetScrollBar()->Scroll = [=](ScrollBar* sb, float pos, Event type)->void {
 		if (type == Event::OnMouseWheel) {
 			NextPage(pos);
 		}

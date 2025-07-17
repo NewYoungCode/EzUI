@@ -2,7 +2,7 @@
 #include "EzUI.h"
 
 namespace ezui {
-	class UI_EXPORT Control :public IControl
+	class UI_EXPORT Control :public Object
 	{
 	private:
 		// 控件是否已经被移除或释放
@@ -16,9 +16,6 @@ namespace ezui {
 
 		// 子控件集合
 		Controls m_controls;
-
-		// 管理子对象的释放
-		Controls m_childObjects;
 
 		// 存储弹簧控件的集合
 		Controls m_spacers;
@@ -264,11 +261,9 @@ namespace ezui {
 		int_t GetFontSize(ControlState _state = ControlState::None);
 
 	public:
-		// 构造函数
-		Control();
 
 		// 构造函数 可传入父对象(由父对象自动管理内存)
-		Control(Control*parentObject);
+		Control(Object* parentObject = NULL);
 
 		// 析构函数
 		virtual ~Control();
@@ -391,7 +386,7 @@ namespace ezui {
 		const UIString& GetTips();
 
 		// 获取控件的滚动条对象
-		virtual IScrollBar* GetScrollBar();
+		virtual ScrollBar* GetScrollBar();
 
 		// 派发事件（如鼠标单击事件等...）返回true则事件成功派发 返回false代表当前控件对象已被释放
 		bool SendNotify(const EventArgs& arg);

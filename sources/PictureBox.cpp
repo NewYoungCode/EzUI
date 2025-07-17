@@ -1,9 +1,6 @@
 #include "PictureBox.h"
 namespace ezui {
-	PictureBox::PictureBox() {
-		Init();
-	}
-	PictureBox::PictureBox(Control* parentObject):Control(parentObject)
+	PictureBox::PictureBox(Object* parentObject):Control(parentObject)
 	{
 		Init();
 	}

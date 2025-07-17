@@ -62,11 +62,7 @@ namespace ezui {
 			}
 			};
 	}
-	ComboBox::ComboBox()
-	{
-		Init();
-	}
-	ComboBox::ComboBox(Control* parentObject):HLayout(parentObject)
+	ComboBox::ComboBox(Object* parentObject):HLayout(parentObject)
 	{
 		Init();
 	}

@@ -1,9 +1,6 @@
 #include "TextBox.h"
 namespace ezui {
-	TextBox::TextBox() { 
-		Init(); 
-	}
-	TextBox::TextBox(Control* parentObject):Control(parentObject)
+	TextBox::TextBox(Object* parentObject):Control(parentObject)
 	{
 		Init();
 	}
@@ -406,7 +403,7 @@ namespace ezui {
 		}
 	}
 
-	IScrollBar* TextBox::GetScrollBar()
+	ScrollBar* TextBox::GetScrollBar()
 	{
 		return &m_vScrollbar;
 	}

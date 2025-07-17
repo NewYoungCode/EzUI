@@ -21,6 +21,8 @@ namespace ezui {
 		int_t m_pageSize = 0;
 		Controls m_items;
 	public:
+		PagedListView(Object* parentObject = NULL);
+		virtual ~PagedListView();
 		//页面需要加载下一页的时候发生
 		std::function<bool(PagedListView*, int_t)> NextPaging = NULL;
 		void SetPageInfo(const Controls& items, int_t pageSize);
@@ -33,8 +35,5 @@ namespace ezui {
 		virtual void NextPage();
 		virtual void Clear() override;
 		virtual void Clear(bool freeChilds) override;
-		PagedListView();
-		PagedListView(Control* parentObject);
-		virtual ~PagedListView();
 	};
 };

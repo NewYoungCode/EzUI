@@ -14,18 +14,14 @@ namespace ezui {
 			};
 	}
 
-	TileListView::TileListView()
-	{
-		Init();
-	}
-	TileListView::TileListView(Control* parentObject):PagedListView(parentObject)
+	TileListView::TileListView(Object* parentObject):PagedListView(parentObject)
 	{
 		Init();
 	}
 	TileListView::~TileListView()
 	{
 	}
-	IScrollBar* TileListView::GetScrollBar()
+	ScrollBar* TileListView::GetScrollBar()
 	{
 		return &m_vScrollBar;
 	}

@@ -1,9 +1,6 @@
 #include "RadioButton.h"
 namespace ezui {
-	RadioButton::RadioButton()
-	{
-	}
-	RadioButton::RadioButton(Control* parentObject):CheckBox(parentObject)
+	RadioButton::RadioButton(Object* parentObject):CheckBox(parentObject)
 	{
 	}
 	void RadioButton::OnMouseClick(const MouseEventArgs& arg)

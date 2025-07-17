@@ -11,11 +11,7 @@ namespace ezui {
 			this->Offset(offsetValue);
 			};
 	}
-	VListView::VListView()
-	{
-		Init();
-	}
-	VListView::VListView(Control* parentObject):PagedListView(parentObject)
+	VListView::VListView(Object* parentObject):PagedListView(parentObject)
 	{
 		Init();
 	}
@@ -34,7 +30,7 @@ namespace ezui {
 		this->EndLayout();
 	}
 
-	IScrollBar* VListView::GetScrollBar()
+	ScrollBar* VListView::GetScrollBar()
 	{
 		return &m_vScrollBar;
 	}

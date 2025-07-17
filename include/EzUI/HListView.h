@@ -14,9 +14,8 @@ namespace ezui {
 		virtual void OnLayout()override;
 		virtual void OnChildPaint(PaintEventArgs& args)override;
 	public:
-		HListView();
-		HListView(Control* parentObject);
+		HListView(Object* parentObject = NULL);
 		virtual ~HListView();
-		virtual IScrollBar* GetScrollBar()override;
+		virtual ScrollBar* GetScrollBar()override;
 	};
 };

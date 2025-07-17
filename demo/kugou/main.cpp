@@ -15,9 +15,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	//while (true)
 	//{
-	//	Control test;
-	//	Button* btn = new Button(&test);//btn无需释放 生命周期跟随test
+	//	VListView view;
+	//	for (size_t i = 0; i < 999; i++)
+	//	{
+	//		//btn无需释放 生命周期跟随view
+	//		Button* btn = new Button(&view);
+	//		btn->SetFixedSize({ 100,30 });
+	//		btn->SetText(L"按钮1");
+	//		view.Add(btn);
+	//	}
+	//	int pause = 0;
 	//}
+
 
 	MainFrm frm;
 	frm.Show();
