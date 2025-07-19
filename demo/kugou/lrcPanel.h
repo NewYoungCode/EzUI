@@ -17,7 +17,7 @@ public:
 	}
 };
 
-class LrcControl :
+class LrcPanel :
 	public Control
 {
 	float offsetY = 0;
@@ -28,8 +28,8 @@ class LrcControl :
 	int marginVertical = 40;
 	int FontHeight = 30;
 public:
-	LrcControl();
-	virtual ~LrcControl();
+	LrcPanel();
+	virtual ~LrcPanel();
 	void Task();
 	void ChangePostion(int postion);
 

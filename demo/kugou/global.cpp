@@ -123,6 +123,8 @@ namespace global {
 			}
 		}
 
+		info.imgUrl = json["mvicon"].asString();
+		info.SingerName = json["singer"].asString();
 		info.Duration = json["timelength"].asInt();
 		info.SongName = json["songname"].asString();
 		info.url = urls[urls.size() - 1];

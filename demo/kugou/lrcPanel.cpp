@@ -1,5 +1,5 @@
-#include "lrcControl.h"
-void LrcControl::ChangePostion(int postion)
+#include "lrcPanel.h"
+void LrcPanel::ChangePostion(int postion)
 {
 	for (auto _it = LrcList.rbegin(); _it != LrcList.rend(); _it++)
 	{
@@ -19,7 +19,7 @@ void LrcControl::ChangePostion(int postion)
 	offsetY = LrcNow->point.Y - VerticalCenter;
 }
 
-void LrcControl::Task()
+void LrcPanel::Task()
 {
 	if (this->GetRect().IsEmptyArea() || LrcNow == NULL) {
 		return;
@@ -57,7 +57,7 @@ void LrcControl::Task()
 	}
 
 }
-void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
+void LrcPanel::OnBackgroundPaint(PaintEventArgs& arg) {
 
 	__super::OnBackgroundPaint(arg);
 	for (auto&& item : LrcList)
@@ -85,7 +85,7 @@ void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
 	}
 }
 
-void LrcControl::Clear()
+void LrcPanel::Clear()
 {
 	timer->Stop();
 	LrcNow = NULL;
@@ -96,7 +96,7 @@ void LrcControl::Clear()
 	VerticalCenter = Height() / 2 - (marginVertical + FontHeight) / 2;
 }
 
-LrcControl::~LrcControl()
+LrcPanel::~LrcPanel()
 {
 	if (timer) {
 		timer->Stop();
@@ -107,9 +107,8 @@ LrcControl::~LrcControl()
 	}
 }
 
-LrcControl::LrcControl()
+LrcPanel::LrcPanel()
 {
-	//ActiveStyle.BackgroundColor = Color(200,100,200,100);
 	timer = new Timer;
 	timer->Interval = 2;
 	timer->Tick = [=](Timer*) {
@@ -117,7 +116,7 @@ LrcControl::LrcControl()
 		};
 }
 
-void LrcControl::LoadLrc(const UIString& lrcData)
+void LrcPanel::LoadLrc(const UIString& lrcData)
 {
 	Clear();
 	auto lrc = lrcData.split("\n");
@@ -134,9 +133,9 @@ void LrcControl::LoadLrc(const UIString& lrcData)
 		auto gbk2 = Text::UTF8ToANSI(it);
 		int fen = std::atoi(it.substr(1, 2).c_str());
 		float miao = std::atof(it.substr(4, 5).c_str());
-		int postion = (fen * 60 * 1000 + miao * 1000);//????????
+		int postion = (fen * 60 * 1000 + miao * 1000);
 		LrcList.push_back(new Lrc(postion, text, Point(0, VerticalCenter)));
-		VerticalCenter += (FontHeight + marginVertical);//??????????
+		VerticalCenter += (FontHeight + marginVertical);
 	}
 
 	if (LrcList.size() > 0)

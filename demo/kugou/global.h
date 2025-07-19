@@ -31,8 +31,21 @@
 #pragma comment(lib,"CommonD.lib")
 #endif
 
-//自定义通知栏消息
-#define WM_NOTIFYICON1 WM_APP+1
+#include <random>
+class Random {
+	std::mt19937 randomer;
+public:
+	Random() :randomer(std::random_device()()) {
+	}
+	int Next(int lower, int upper) {
+		std::uniform_int_distribution<int> distribution(lower, upper);
+		return distribution(randomer);
+	}
+	float Next(float lower, float upper) {
+		std::uniform_real_distribution<float> distribution(lower, upper);
+		return distribution(randomer);
+	}
+};
 
 using namespace ezui;
 

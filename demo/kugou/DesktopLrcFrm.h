@@ -1,11 +1,11 @@
 #include "global.h"
-#include "LrcControl.h"
+#include "lrcPanel.h"
 #include "VlcPlayer.h"
 
 class DesktopLrcFrm :public LayeredWindow {
 private:
 	VlcPlayer* _player;
-	LrcControl _lrc;
+	LrcPanel _lrc;
 protected:
 	void OnPaint(PaintEventArgs& args)override;
 public:
