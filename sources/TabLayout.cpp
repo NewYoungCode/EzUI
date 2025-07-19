@@ -1,7 +1,7 @@
 #include "TabLayout.h"
 
 namespace ezui {
-	TabLayout::TabLayout(Object* parentObject):Control(parentObject)
+	TabLayout::TabLayout(Object* parentObject) :Control(parentObject)
 	{
 		Init();
 	}
@@ -83,7 +83,7 @@ namespace ezui {
 	}
 
 
-	void TabLayout::SlideToPage(int_t index)
+	void TabLayout::SlideToPage(int_t index, int_t durationMs, int_t fps)
 	{
 		Sort();//先直接归位
 		int_t pageWidth = Width();
@@ -105,9 +105,8 @@ namespace ezui {
 		m_offset = offsetTotal;
 		m_pageIndex = index;
 
-		int_t ANIMATION_DURATION_MS = 200;
-		int_t FRAME_INTERVAL_MS = 16;
-		int_t totalFrames = ANIMATION_DURATION_MS / FRAME_INTERVAL_MS;
+		int_t FRAME_INTERVAL_MS = 1000 / fps;
+		int_t totalFrames = durationMs / FRAME_INTERVAL_MS;
 		if (totalFrames <= 0) {
 			totalFrames = 1;
 		}

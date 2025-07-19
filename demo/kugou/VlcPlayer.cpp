@@ -1,5 +1,5 @@
 #include "vlcPlayer.h"
-void* lock(void* opaque, void** planes)
+void* lock_cb(void* opaque, void** planes)
 {
 	VlcPlayer* vp = (VlcPlayer*)opaque;
 	vp->mtx.lock();
@@ -7,19 +7,23 @@ void* lock(void* opaque, void** planes)
 	return NULL;
 }
 /*##get the argb picture AND save to file*/
-void unlock(void* opaque, void* picture, void* const* planes)
+void unlock_cb(void* opaque, void* picture, void* const* planes)
 {
 	VlcPlayer* vp = (VlcPlayer*)opaque;
 	vp->mtx.unlock();
 }
-void display(void* opaque, void* picture)
+void display_cb(void* opaque, void* picture)
 {
 	VlcPlayer* vp = (VlcPlayer*)opaque;
 	if (vp->PlayingCallback) {
 		vp->PlayingCallback(vp->BuffBitmap);
 	}
 }
-unsigned setup(void** opaque, char* chroma, unsigned* width, unsigned* height, unsigned* pitches, unsigned* lines)
+void cleanup_cb(void* opaque)
+{
+}
+
+unsigned setup_cb(void** opaque, char* chroma, unsigned* width, unsigned* height, unsigned* pitches, unsigned* lines)
 {
 	int w = *width;
 	int h = *height;
@@ -35,31 +39,29 @@ unsigned setup(void** opaque, char* chroma, unsigned* width, unsigned* height, u
 }
 VlcPlayer::VlcPlayer()
 {
-	vlc_inst = libvlc_new(NULL, NULL);
+	m_vlc = libvlc_new(NULL, NULL);
+	m_vlcplayer = libvlc_media_player_new(m_vlc);
+	libvlc_video_set_callbacks(m_vlcplayer, lock_cb, unlock_cb, display_cb, this);
+	libvlc_video_set_format_callbacks(m_vlcplayer, setup_cb, cleanup_cb);
 }
 VlcPlayer::~VlcPlayer()
 {
-	if (vlc_player) {
-		libvlc_media_player_stop(vlc_player);
-		libvlc_media_player_release(vlc_player);
+	Stop();
+	if (m_vlcplayer) {
+		libvlc_media_player_release(m_vlcplayer);
 	}
-	if (vlc_media) {
-		libvlc_media_release(vlc_media);
-	}
-	if (vlc_inst) {
-		libvlc_free(vlc_inst);
-	}
+	libvlc_release(m_vlc);
 	if (BuffBitmap) {
 		delete BuffBitmap;
 	}
 }
-void VlcPlayer::OnBackgroundPaint(PaintEventArgs& pArg) {
-	__super::OnBackgroundPaint(pArg);
+void VlcPlayer::OnBackgroundPaint(PaintEventArgs& args) {
+	__super::OnBackgroundPaint(args);
 	if (BuffBitmap) {
 		Image img(BuffBitmap->GetHBITMAP());
 		img.SizeMode = ImageSizeMode::Zoom;
 		//img.Offset = Rect(500,50,200,200);
-		pArg.Graphics.DrawImage(&img, GetRect());
+		args.Graphics.DrawImage(&img, GetRect());
 	}
 }
 void VlcPlayer::SetConfig()
@@ -67,76 +69,61 @@ void VlcPlayer::SetConfig()
 }
 void VlcPlayer::OpenPath(const UIString& file)
 {
-	this->Stop();
-	vlc_media = libvlc_media_new_path(vlc_inst, file.c_str());
-	libvlc_media_parse(vlc_media);//
-	_Duration = libvlc_media_get_duration(vlc_media);//
-	vlc_player = libvlc_media_player_new_from_media(vlc_media);//
-	libvlc_video_set_format_callbacks(vlc_player, setup, (libvlc_video_cleanup_cb)this);
-	libvlc_video_set_callbacks(vlc_player, lock, unlock, display, this);
+	Stop();
+	libvlc_media_t* pmedia = libvlc_media_new_path(m_vlc, file.c_str());
+	libvlc_media_parse(pmedia);//
+	libvlc_media_player_set_media(m_vlcplayer, pmedia);
+	m_duration = libvlc_media_get_duration(pmedia);//
+	libvlc_media_player_play(m_vlcplayer);
+	libvlc_media_release(pmedia);
 }
 void VlcPlayer::OpenUrl(const UIString& url)
 {
-	this->Stop();
-	vlc_media = libvlc_media_new_location(vlc_inst, url.c_str());
-	libvlc_media_parse(vlc_media);//
-	_Duration = libvlc_media_get_duration(vlc_media);//
-	vlc_player = libvlc_media_player_new_from_media(vlc_media);//
-	libvlc_video_set_format_callbacks(vlc_player, setup, (libvlc_video_cleanup_cb)this);
-	libvlc_video_set_callbacks(vlc_player, lock, unlock, display, this);
+	Stop();
+	libvlc_media_t* pmedia = libvlc_media_new_location(m_vlc, url.c_str());
+	libvlc_media_parse(pmedia);//
+	libvlc_media_player_set_media(m_vlcplayer, pmedia);
+	m_duration = libvlc_media_get_duration(pmedia);//
+	libvlc_media_player_play(m_vlcplayer);
+	libvlc_media_release(pmedia);
 }
 void VlcPlayer::Play()
 {
-	if (vlc_player) {
-		int volume = 80;
-		libvlc_audio_set_volume(vlc_player, volume);
-		libvlc_media_player_play(vlc_player);
-	}
+	libvlc_media_player_play(m_vlcplayer);
 }
+
+void VlcPlayer::SetVolume(int volume) {
+	libvlc_audio_set_volume(m_vlcplayer, volume);
+}
+
 void VlcPlayer::Pause()
 {
-	if (vlc_player) {
-		libvlc_media_player_pause(vlc_player);
+	if (libvlc_media_player_can_pause(m_vlcplayer))
+	{
+		libvlc_media_player_pause(m_vlcplayer);
 	}
 }
 void VlcPlayer::Stop()
 {
-	if (vlc_player) {
-		//https://forum.videolan.org/viewtopic.php?f=32&t=147724&p=484850&hilit=libvlc_media_player_stop+bug#p484835
-		libvlc_media_player_stop(vlc_player);//如果停止播放视频那么 vlc会崩溃 无法避免
-		libvlc_media_player_release(vlc_player);//
-		vlc_player = nullptr;
-	}
-	if (vlc_media) {
-		libvlc_media_release(vlc_media);
-		vlc_media = nullptr;
-	}
+	libvlc_media_player_stop(m_vlcplayer);
 }
 long long  VlcPlayer::Duration() {
-	return _Duration;
+	return m_duration;
 }
 void VlcPlayer::SetDuration(int dur)
 {
-	_Duration = dur;
+	m_duration = dur;
 }
-long long  VlcPlayer::Position() {
-	if (vlc_player) {
-		libvlc_time_t play_time = libvlc_media_player_get_time(vlc_player);
-		return play_time;
-	}
-	return 0;
+long long VlcPlayer::Position() {
+	libvlc_time_t play_time = libvlc_media_player_get_time(m_vlcplayer);
+	return play_time;
 }
 
 void VlcPlayer::SetPosition(float f_pos)
 {
-	if (vlc_player) {
-		libvlc_media_player_set_position(vlc_player, f_pos);
-	}
+	libvlc_media_player_set_position(m_vlcplayer, f_pos);
 }
 
 libvlc_state_t VlcPlayer::GetState() {
-	if (!vlc_player) {
-		return libvlc_state_t::libvlc_Error;
-	}
-	return libvlc_media_player_get_state(vlc_player);
+	return libvlc_media_player_get_state(m_vlcplayer);
 }

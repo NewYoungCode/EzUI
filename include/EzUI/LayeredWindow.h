@@ -23,6 +23,8 @@ namespace ezui {
 		void InvalidateRect(const Rect& rect);
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
 	public:
+		//窗口透明度
+		float Opacity = 1.0f;
 		LayeredWindow(int_t width, int_t height, HWND owner = NULL);
 		virtual ~LayeredWindow();
 	};

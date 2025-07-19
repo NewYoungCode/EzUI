@@ -8,7 +8,7 @@ namespace ezui {
 		m_timeOut.Tick = [this](Timer* t) {
 			t->Stop();//停止
 			Sleep(5);//延迟5ms之后再去绘制
-			::SendMessage(Hwnd(), WM_PAINT,  NULL, NULL);
+			::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
 			};
 		this->PublicData->InvalidateRect = [this](const Rect& rect) ->void {
 			//标记窗口无效区域
@@ -34,7 +34,7 @@ namespace ezui {
 		//timer延迟绘制
 		m_timeOut.Start();
 	}
-	
+
 	void LayeredWindow::BeginPaint(Rect* out_rect)
 	{
 		const Rect& clientRect = GetClientRect();
@@ -122,7 +122,7 @@ namespace ezui {
 		POINT point{ _rectClient.X,_rectClient.Y };
 		SIZE size{ _rectClient.Width,  _rectClient.Height };
 		BLENDFUNCTION blendFunc{ 0 };
-		blendFunc.SourceConstantAlpha = 255;
+		blendFunc.SourceConstantAlpha = 255 * this->Opacity;
 		blendFunc.BlendOp = AC_SRC_OVER;
 		blendFunc.AlphaFormat = AC_SRC_ALPHA;
 		blendFunc.BlendFlags = 0;

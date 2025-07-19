@@ -16,7 +16,7 @@ MainFrm::MainFrm() :Form(1020, 690)
 		return true;
 		};
 
-	this->SetMiniSize({ 800,600 });
+	this->SetMiniSize({ 300,200 });
 }
 void MainFrm::InitForm() {
 	this->SetResizable(true);
@@ -53,7 +53,6 @@ void MainFrm::InitForm() {
 	player.Name = "player";
 	this->FindControl("vlcDock")->Add(&player);
 	this->FindControl("lrcView2")->Add(&lrcCtl);//添加歌词控件
-	lrcCtl.Style.FontSize = 15;
 
 	//创建桌面歌词视频窗口
 	deskTopWnd = new DesktopLrcFrm(&player);

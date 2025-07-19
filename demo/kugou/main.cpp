@@ -27,8 +27,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	//	int pause = 0;
 	//}
 
-
 	MainFrm frm;
+
+	//给窗口添加淡入效果
+	Animation* ant = new Animation(&frm);
+	ant->SetStartValue(0.1);
+	ant->SetEndValue(1.0);
+	ant->ValueChanged = [&](double value) {
+		Invoke([&] {
+			frm.Opacity = value;
+			frm.Invalidate();
+			});
+		};
+	ant->Start(200);//开始动画
+
 	frm.Show();
 	return app.Exec();
 }

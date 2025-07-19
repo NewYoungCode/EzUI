@@ -68,16 +68,17 @@ void LrcControl::OnBackgroundPaint(PaintEventArgs& arg) {
 		Rect drawRec(GetRect());
 		if (drawRec.Contains(rectangle))
 		{
+			float fontSize = 14 * this->GetScale();
 			if (LrcNow == &lrc)
 			{
 				arg.Graphics.SetColor(Color(211, 174, 87));
-				arg.Graphics.SetFont(GetFontFamily(), GetFontSize() + 4);
+				arg.Graphics.SetFont(GetFontFamily(), fontSize + 4);
 				arg.Graphics.DrawString(lrc.text.unicode(), rectangle, TextAlign::MiddleCenter);
 			}
 			else
 			{
 				arg.Graphics.SetColor(GetForeColor());
-				arg.Graphics.SetFont(GetFontFamily(), GetFontSize());
+				arg.Graphics.SetFont(GetFontFamily(), fontSize);
 				arg.Graphics.DrawString(lrc.text.unicode(), rectangle, TextAlign::MiddleCenter);
 			}
 		}
@@ -113,7 +114,7 @@ LrcControl::LrcControl()
 	timer->Interval = 2;
 	timer->Tick = [=](Timer*) {
 		Task();
-	};
+		};
 }
 
 void LrcControl::LoadLrc(const UIString& lrcData)

@@ -12,10 +12,9 @@ using namespace ezui;
 class VlcPlayer :public Control
 {
 private:
-	libvlc_instance_t* vlc_inst = NULL;
-	libvlc_media_player_t* vlc_player = NULL;
-	libvlc_media_t* vlc_media = NULL;
-	libvlc_time_t _Duration = 0;
+	libvlc_instance_t* m_vlc = NULL;
+	libvlc_media_player_t* m_vlcplayer = NULL;
+	libvlc_time_t m_duration = 0;
 public:
 	std::mutex mtx;
 	unsigned int IMG_WIDTH = 0;
@@ -24,13 +23,14 @@ public:
 	std::function<void(Bitmap* bitmap)> PlayingCallback;
 protected:
 	void SetConfig();
-	virtual void OnBackgroundPaint(PaintEventArgs& pArg) override;
+	virtual void OnBackgroundPaint(PaintEventArgs& args) override;
 public:
 	VlcPlayer();
 	virtual ~VlcPlayer();
 	void OpenPath(const UIString& file);
 	void OpenUrl(const UIString& url);
 	void Play();
+	void SetVolume(int volume);
 	void Pause();
 	void Stop();
 	long long Duration();

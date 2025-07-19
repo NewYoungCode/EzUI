@@ -17,6 +17,7 @@
 #include "EzUI/UIManager.h"
 #include "EzUI/Task.h"
 #include "EzUI/UISelector.h"
+#include "EzUI/Animation.h"
 
 #include "WebClient.h"
 #include "JsonCpp.h"
