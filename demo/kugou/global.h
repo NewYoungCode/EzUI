@@ -20,15 +20,15 @@
 #include "EzUI/Animation.h"
 
 #include "WebClient.h"
-#include "JsonCpp.h"
-#include "HttpUtility.h"
+#include "JsonValue.h"
+#include "Util.h"
 #include "base64.h"
 #include "ConfigIni.h"
 
-#ifdef NDEBUG
-#pragma comment(lib,"Common.lib")
+#ifdef _DEBUG
+#pragma comment(lib,"Debug/Common.lib")
 #else
-#pragma comment(lib,"CommonD.lib")
+#pragma comment(lib,"Release/Common.lib")
 #endif
 
 #include <random>

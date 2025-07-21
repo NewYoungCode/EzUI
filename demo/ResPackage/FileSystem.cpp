@@ -1,15 +1,9 @@
 #include "FileSystem.h"
 namespace ezui {
 	namespace File {
-		bool Exists(const UIString& filenNme) {
-			DWORD dwAttr = GetFileAttributesW(filenNme.unicode().c_str());
-			if (dwAttr == DWORD(-1)) {
-				return false;
-			}
-			if (dwAttr & FILE_ATTRIBUTE_ARCHIVE) {
-				return true;
-			}
-			return false;
+		bool Exists(const UIString& filename) {
+			DWORD dwAttr = ::GetFileAttributesW(filename.unicode().c_str());
+			return (dwAttr != INVALID_FILE_ATTRIBUTES && !(dwAttr & FILE_ATTRIBUTE_DIRECTORY));
 		}
 		bool Copy(const UIString& src, const UIString& desc) {
 			return ::CopyFileW(src.unicode().c_str(), desc.unicode().c_str(), FALSE);

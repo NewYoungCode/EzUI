@@ -130,7 +130,6 @@ void LrcPanel::LoadLrc(const UIString& lrcData)
 			continue;
 		}
 		UIString text = it.substr(pos2 + 1);
-		auto gbk2 = Text::UTF8ToANSI(it);
 		int fen = std::atoi(it.substr(1, 2).c_str());
 		float miao = std::atof(it.substr(4, 5).c_str());
 		int postion = (fen * 60 * 1000 + miao * 1000);

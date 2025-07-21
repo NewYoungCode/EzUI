@@ -43,7 +43,7 @@ git clone https://github.com/NewYoungCode/EzUI.git
 build.bat
 ```
 
-- 构建 64 位项目（未包含 kugou 项目）：
+- 构建 64 位项目：
 
 ```bash
 build64.bat
@@ -137,6 +137,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 - `Resource.h`：自定义资源管理类（非 VS rc 文件），用于手动加载与管理框架资源
 - `Timer` / `Task`：定时与异步任务处理辅助类
 - `EzUI.h`：框架主接口头文件，定义事件类、枚举、全局资源等核心结构
+- `Animation.h`：类似于QT的那种过渡动画
 
 ### 🎨 样式示例
 

@@ -65,19 +65,20 @@ void MainFrm::InitForm() {
 	//加载左侧播放过的音乐
 	for (auto& item : listFile->GetSections()) {
 
-		UIString name = listFile->ReadString("name", "", item);
-		int  dur = listFile->ReadInt("dur", 0, item);
-		UIString  singer = listFile->ReadString("singer", "", item);
+		listFile->SetSection(item);
+		UIString name = listFile->ReadString("name");
+		int  dur = listFile->ReadInt("dur");
+		UIString  singer = listFile->ReadString("singer");
 		LocalItem* it = new LocalItem(name, global::toTimeStr(dur));
 		it->SetAttribute("FileHash", item);
 		it->SetAttribute("SingerName", singer);
 		it->SetTips(name);
 
 		Song s;
-		s.SongName = listFile->ReadString("name", "", item);
+		s.SongName = listFile->ReadString("name");
 		s.hash = item;
-		s.Duration = listFile->ReadInt("dur", 0, item);
-		s.SingerName = listFile->ReadString("singer", "", item);
+		s.Duration = listFile->ReadInt("dur");
+		s.SingerName = listFile->ReadString("singer");
 
 		songLsit.push_back(s);
 		vlistLocal->Add(it);
@@ -167,7 +168,7 @@ void MainFrm::DownLoadImage(UIString singers, UIString headImageUrl)
 	{
 		headImg = NULL;
 		WebClient wc2;
-		auto code = wc2.HttpGet(headImageUrl.replace("{size}", "400"), headFileData, 5);
+		auto code = wc2.HttpGet(headImageUrl.replace("{size}", "400"), &headFileData, 5);
 		if (code == 200) {
 			headImg = new Image(headFileData.c_str(), headFileData.size());
 			headImg->SizeMode = ImageSizeMode::CenterImage;
@@ -182,7 +183,7 @@ void MainFrm::DownLoadImage(UIString singers, UIString headImageUrl)
 		if (!bkurl.empty()) {
 			std::string fileData;
 			WebClient wc2;
-			auto code = wc2.HttpGet(bkurl, fileData, 5);
+			auto code = wc2.HttpGet(bkurl, &fileData, 5);
 			if (code == 200) {
 				bkImg = new Image(fileData.c_str(), fileData.size());
 				bkImg->SizeMode = ImageSizeMode::CenterImage;
@@ -244,9 +245,10 @@ bool MainFrm::PlaySong(const UIString& hash, Song& info)
 		vlistLocal->Invalidate();
 
 		//写入本地文件
-		listFile->WriteValue("name", info.fileName, hash);
-		listFile->WriteValue("singer", info.SingerName, hash);
-		listFile->WriteValue("dur", std::to_string(info.Duration), hash);
+		listFile->SetSection(hash);
+		listFile->WriteString("name", info.fileName );
+		listFile->WriteString("singer", info.SingerName);
+		listFile->WriteString("dur", std::to_string(info.Duration));
 	}
 
 	//请求歌手头像和写真

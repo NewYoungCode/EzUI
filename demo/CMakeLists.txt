@@ -3,6 +3,13 @@ cmake_minimum_required(VERSION 3.0...4.0)
 #gui库的包含目录位置
 set(include ../include)
 
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(ARCH_NAME "x64")
+else()
+    set(ARCH_NAME "x86")
+endif()
+
+
 #一个简单的helloworld
 project(helloWorld)
 file(GLOB src helloWorld/*.*)
@@ -33,22 +40,20 @@ function(add_resource_package TARGET_NAME INPUT_DIR OUTPUT_FILE)
     add_dependencies(${TARGET_NAME} ${TARGET_NAME}_ResPackage)
 endfunction()
 
-if (WIN32 AND CMAKE_SIZEOF_VOID_P EQUAL 4)
-    message(STATUS "Windows x86 (32-bit) build detected")
     #模仿酷狗音乐demo
     project(kugou)
-    
     #主程序
     file(GLOB src ./kugou/*.*)
     add_executable(kugou WIN32 ${src})
 
-    #添加常用库依赖
     target_include_directories(kugou PRIVATE  ${include})
-    target_include_directories(kugou PRIVATE ./kugou/lib/Common/include)
-    target_include_directories(kugou PRIVATE ./kugou/lib/vlc/include)
+    #添加常用库依赖
+    target_include_directories(kugou PRIVATE ./kugou/include/Common/include)
+    target_include_directories(kugou PRIVATE ./kugou/include/vlc/include)
     #添加vlc解码器依赖
-    target_link_directories(kugou PRIVATE ./kugou/lib/Common/lib)
-    target_link_directories(kugou PRIVATE ./kugou/lib/vlc/lib)
+    target_link_directories(kugou PRIVATE ./kugou/lib/${ARCH_NAME}/Common)
+    target_link_directories(kugou PRIVATE ./kugou/lib/${ARCH_NAME}/vlc)
+
     #添加引用
     target_link_libraries(kugou PRIVATE EzUI)
     #解决 "模块对于 SAFESEH 映像是不安全的" 的报错
@@ -65,13 +70,6 @@ if (WIN32 AND CMAKE_SIZEOF_VOID_P EQUAL 4)
     add_custom_command(
         TARGET kugou
         POST_BUILD
-        COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/kugou/extract.bat" "$<TARGET_FILE_DIR:kugou>"
+        COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/kugou/extract${ARCH_NAME}.bat" "$<TARGET_FILE_DIR:kugou>"
         COMMENT "Running extract.bat to conditionally extract dll.zip"
     )
-
-endif()
-
-
-
-
-
