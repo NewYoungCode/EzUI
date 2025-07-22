@@ -85,7 +85,7 @@ namespace ezui {
 			}
 			return std::string(raw + start, end - start);
 		}
-		size_t String::count(const String& value)
+		size_t String::count(const String& value)const
 		{
 			size_t count = 0;
 			size_t pos = 0;

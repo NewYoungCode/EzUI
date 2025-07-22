@@ -13,7 +13,7 @@ namespace ezui {
 		return value != 0;
 	}
 	inline bool __IsValid(float value) {
-		return value != 0;
+		return std::abs(value) > 1e-6f;
 	}
 	inline bool __IsValid(const Image* value) {
 		return value != NULL;
@@ -125,7 +125,7 @@ namespace ezui {
 	UI_SUPER_STYLE_BINDFUNC(Color, ForeColor);
 	UI_SUPER_STYLE_BINDFUNC(std::wstring, FontFamily);
 
-	Control::Control(Object* parentObject):Object(parentObject)
+	Control::Control(Object* parentObject) :Object(parentObject)
 	{
 	}
 	void Control::OnChildPaint(PaintEventArgs& args)
@@ -328,8 +328,13 @@ namespace ezui {
 					this->SetAutoWidth(true);
 				}
 				else {
-					//如果单独设置了宽高那就是绝对宽高了
-					this->SetFixedWidth(std::stoi(attrValue));
+					if (attrValue.count(".") > 0) {
+						this->SetRateWidth(std::stof(attrValue.c_str()));
+					}
+					else {
+						//如果单独设置了宽高那就是绝对宽高了
+						this->SetFixedWidth(std::stoi(attrValue));
+					}
 				}
 				break;
 			}
@@ -338,8 +343,13 @@ namespace ezui {
 					this->SetAutoHeight(true);
 				}
 				else {
-					//如果单独设置了宽高那就是绝对宽高了
-					this->SetFixedHeight(std::stoi(attrValue));
+					if (attrValue.count(".") > 0) {
+						this->SetRateHeight(std::stof(attrValue.c_str()));
+					}
+					else {
+						//如果单独设置了宽高那就是绝对宽高了
+						this->SetFixedHeight(std::stoi(attrValue));
+					}
 				}
 				break;
 			}
@@ -478,6 +488,14 @@ namespace ezui {
 		m_fixedSize.Height = fixedHeight;
 		SetRect({ m_rect.X,m_rect.Y,m_rect.Width,fixedHeight });
 	}
+	void Control::SetRateWidth(float rateWidth)
+	{
+		m_rateSize.Width = rateWidth;
+	}
+	void Control::SetRateHeight(float rateHeight)
+	{
+		m_rateSize.Height = rateHeight;
+	}
 	void Control::SetFixedSize(const Size& size)
 	{
 		m_fixedSize.Width = size.Width;
@@ -486,10 +504,20 @@ namespace ezui {
 	}
 	int_t Control::GetFixedWidth()
 	{
+		if (Parent) {
+			if (m_rateSize.Width > 1e-6f) {
+				m_fixedSize.Width = Parent->Width() * m_rateSize.Width + 0.5;
+			}
+		}
 		return m_fixedSize.Width;
 	}
 	int_t Control::GetFixedHeight()
 	{
+		if (Parent) {
+			if (m_rateSize.Height > 1e-6f) {
+				m_fixedSize.Height = Parent->Height() * m_rateSize.Height + 0.5;
+			}
+		}
 		return m_fixedSize.Height;
 	}
 	bool Control::IsPendLayout() {

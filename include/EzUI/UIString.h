@@ -35,7 +35,7 @@ namespace ezui {
 			//去除前后空格
 			String trim()const;
 			//find value count
-			size_t count(const String& value);
+			size_t count(const String& value)const;
 			std::vector<String> split(const String& ch)const;
 			bool operator==(const wchar_t* szbuf)const;
 			bool operator==(const std::wstring& wStr)const;

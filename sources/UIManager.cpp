@@ -65,11 +65,21 @@ namespace ezui {
 		{
 			if (styleType == ControlStyle::Type::Static) {
 				if (key == "width") {
-					ctl->SetFixedWidth(__ToFloat(value));
+					if (value.count(".") > 0) {
+						ctl->SetRateWidth(std::stof(value.c_str()));
+					}
+					else {
+						ctl->SetFixedWidth(__ToFloat(value));
+					}
 					break;
 				}
 				if (key == "height") {
-					ctl->SetFixedHeight(__ToFloat(value));
+					if (value.count(".") > 0) {
+						ctl->SetRateHeight(std::stof(value.c_str()));
+					}
+					else {
+						ctl->SetFixedHeight(__ToFloat(value));
+					}
 					break;
 				}
 			}
@@ -107,11 +117,23 @@ namespace ezui {
 				}
 				break;
 			}
+			if (key == "background-size" || key == "background-image-size") {
+				if (value == "auto" && style->BackImage) {
+					style->BackImage->SizeMode = ImageSizeMode::OriginalSize;
+				}
+				break;
+			}
 			if (key == "fore-image") {
 				value = value.replace("\"", "");//删除双引号;
 				style->ForeImage = Image::Make(value);
 				if (callback) {
 					callback(style->ForeImage);
+				}
+				break;
+			}
+			if (key == "fore-image-size") {
+				if (value == "auto" && style->ForeImage) {
+					style->ForeImage->SizeMode = ImageSizeMode::OriginalSize;
 				}
 				break;
 			}
@@ -499,7 +521,10 @@ namespace ezui {
 	}
 	void UIManager::SetupUI(Control* parentCtl)
 	{
-		parentCtl->Add(GetRoot());
+		if (GetRoot()) {
+			parentCtl->Add(GetRoot());
+			GetRoot()->SetDockStyle(DockStyle::Fill);
+		}
 	}
 
 	void UIManager::LoadXmlFile(const UIString& fileName) {

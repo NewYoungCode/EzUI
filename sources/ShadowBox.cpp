@@ -104,7 +104,7 @@ namespace ezui {
 		//((BYTE*)point)[0] = 0;//修改B通道数值
 	}
 	void ShadowBox::Update(int_t _shadowWidth, const Border& border) {
-		HWND ownerWnd = ::GetWindow(m_hWnd,GW_OWNER);
+		HWND ownerWnd = ::GetWindow(m_hWnd, GW_OWNER);
 		if (!::IsWindowVisible(ownerWnd) || ::IsIconic(ownerWnd)) {
 			::ShowWindow(m_hWnd, SW_HIDE);
 			return;
@@ -135,8 +135,7 @@ namespace ezui {
 		Rect rect{ 0,0,width, height };
 		SetShadow(rect.Width, rect.Height, _shadowWidth, border.TopLeftRadius);
 
-
-#if 1
+#if 0
 		{
 			int_t roundWidth = m_bufBitmap->Width() - _shadowWidth * 2;
 			int_t roundHeight = m_bufBitmap->Height() - _shadowWidth * 2;

@@ -530,16 +530,22 @@ namespace ezui {
 		// 摘要:
 		//     Owner控件 中的图像被拉伸或收缩，以适合 Owner控件
 		//     的大小。
-		StretchImage = 1,
+		StretchImage,
+		//
 		// 摘要:
 		//     如果 Owner控件 比图像大，则图像将居中显示。如果图像比 Owner控件
 		//     大，则图片将居于 Owner控件 中心，而外边缘将被剪裁掉。
-		CenterImage = 3,
+		CenterImage,
 		//
 		// 摘要:
 		//     图像大小按其原有的大小比例被增加或减小。
-		Zoom = 4
+		Zoom,
+		//
+		// 摘要:
+		//     图像按原始大小居中显示，不进行缩放。
+		OriginalSize
 	};
+
 
 	//描边样式
 	enum class StrokeStyle
@@ -752,6 +758,12 @@ namespace ezui {
 				float y = (zoomHeight - clientHeight) / 2.0f + 0.5f;
 				return Rect(rect.X, (int_t)(rect.Y - y), (int_t)clientWidth, (int_t)zoomHeight);
 			}
+		}
+		//按照图片原大小居中显示
+		if (imageSizeMode == ImageSizeMode::OriginalSize) {
+			int_t x = (rect.Width - imgSize.Width) / 2.0f + 0.5;
+			int_t y = (rect.Height - imgSize.Height) / 2.0f + 0.5;
+			return Rect(x, y, imgSize.Width, imgSize.Height);
 		}
 		return rect;
 	}

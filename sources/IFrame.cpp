@@ -1,6 +1,6 @@
 #include "IFrame.h"
 namespace ezui {
-	IFrame::IFrame(Object* parentObject):Control(parentObject)
+	IFrame::IFrame(Object* parentObject) :Control(parentObject)
 	{
 	}
 	IFrame::~IFrame()
@@ -21,4 +21,7 @@ namespace ezui {
 		}
 		__super::SetAttribute(attrName, attrValue);
 	};
+	bool IFrame::OnNotify(Control* sender, EventArgs& args) {
+		return false;
+	}
 }

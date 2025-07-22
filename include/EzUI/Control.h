@@ -47,6 +47,9 @@ namespace ezui {
 		// 绝对尺寸
 		Size m_fixedSize;
 
+		//比例尺寸(优先级最高)
+		SizeF m_rateSize;
+
 		// 控件矩形区域（基于父控件）
 		Rect m_rect;
 
@@ -311,6 +314,12 @@ namespace ezui {
 		// 设置绝对高度
 		void SetFixedHeight(int_t fixedHeight);
 
+		//设置宽度比例(优先级最高)
+		void SetRateWidth(float rateWidth);
+
+		//设置高度比例(优先级最高)
+		void SetRateHeight(float rateHeight);
+
 		// 设置相对父控件矩形，返回实际的 rect
 		const Rect& SetRect(const Rect& rect);
 
@@ -349,6 +358,7 @@ namespace ezui {
 
 		// 获取相对于父控件的矩形（布局计算后）
 		virtual const Rect& GetRect();
+
 		// 获取基于客户端区域的矩形
 		Rect GetClientRect();
 
