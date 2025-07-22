@@ -16,7 +16,7 @@ namespace ezui {
 	protected:
 		virtual ControlStyle& GetStyle(const ControlState& _state)override;
 		virtual ControlStyle& GetDefaultStyle()override;
-		virtual void OnMouseClick(const MouseEventArgs& arg)override;
+		virtual void OnMouseDown(const MouseEventArgs& arg)override;
 		virtual void OnDpiChange(const DpiChangeEventArgs& args)override;
 	public:
 		CheckBox(Object* parentObject = NULL);

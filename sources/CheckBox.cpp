@@ -52,8 +52,8 @@ namespace ezui {
 		return __super::GetStyle(_state);
 	}
 
-	void CheckBox::OnMouseClick(const MouseEventArgs& arg) {
-		__super::OnMouseClick(arg);
+	void CheckBox::OnMouseDown(const MouseEventArgs& arg) {
+		__super::OnMouseDown(arg);
 		SetCheck(!GetCheck());
 		if (CheckedChanged) {
 			CheckedChanged(this, GetCheck());
