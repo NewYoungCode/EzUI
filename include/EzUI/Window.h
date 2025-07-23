@@ -14,6 +14,8 @@ namespace ezui {
 	class UI_EXPORT Window :public Object
 	{
 	private:
+		//鼠标跟踪
+		bool m_bTracking = false;
 		//鼠标是否在里面
 		bool m_mouseIn = false;
 		//鼠标是否已经按下
@@ -59,6 +61,8 @@ namespace ezui {
 		virtual void OnDpiChange(float systemScale, const Rect& newRect);
 		//鼠标移动时发生
 		virtual void OnMouseMove(const Point& point);
+		//当鼠标悬停时发生
+		virtual void OnMouseHover(const Point& point);
 		//鼠标离开时发生
 		virtual void OnMouseLeave();
 		//鼠标滚动发生

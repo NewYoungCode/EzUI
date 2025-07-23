@@ -54,7 +54,9 @@ namespace ezui {
 		m_timer.Interval = 1000 / fps; //频率
 		m_timer.Start();
 	}
-
+	bool Animation::IsStopped() {
+		return m_timer.IsStopped();
+	}
 	void Animation::Stop()
 	{
 		m_timer.Stop();

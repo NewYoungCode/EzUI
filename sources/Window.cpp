@@ -727,14 +727,30 @@ namespace ezui {
 			}
 			break;
 		}
+		case WM_MOUSEHOVER: {
+			//鼠标悬停消息
+			m_bTracking = false;
+			auto xPos = GET_X_LPARAM(lParam);
+			auto yPos = GET_Y_LPARAM(lParam);
+			OnMouseHover({ xPos,yPos });
+			break;
+		}
 		case WM_MOUSEMOVE:
 		{
-			TRACKMOUSEEVENT tme{ 0 };
-			tme.cbSize = sizeof(tme);
-			tme.dwFlags = TME_LEAVE;
-			tme.hwndTrack = Hwnd();
-			TrackMouseEvent(&tme);
-			OnMouseMove({ GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) });
+			if (!m_bTracking) {
+				TRACKMOUSEEVENT tme;
+				tme.cbSize = sizeof(tme);
+				tme.dwFlags = TME_LEAVE | TME_HOVER;
+				tme.hwndTrack = Hwnd();
+				tme.dwHoverTime = 500;//500毫秒算鼠标悬停
+				if (TrackMouseEvent(&tme) == TRUE) {
+					m_bTracking = true;
+				}
+			}
+			auto xPos = GET_X_LPARAM(lParam);
+			auto yPos = GET_Y_LPARAM(lParam);
+			//OutputDebugStringA(UIString("%d %d\n").format(x, y).c_str());
+			OnMouseMove({ xPos,yPos });
 			m_mouseIn = true;
 			//给hwndTip发送消息告诉现在移动到什么位置了
 			//LPARAM lp = MAKELPARAM(args.Location.X, args.Location.Y);
@@ -765,6 +781,7 @@ namespace ezui {
 		}
 		case WM_MOUSELEAVE:
 		{
+			m_bTracking = false;
 			m_mouseIn = false;
 			OnMouseLeave();
 			break;
@@ -874,11 +891,15 @@ namespace ezui {
 		if (dynamic_cast<Spacer*>(outCtl) && outCtl->Parent) {
 			return  outCtl->Parent;
 		}
-		////鼠标键盘的事件是可以穿透的(这样做貌似不是很好)
-		//if ((outCtl->EventPassThrough & Event::OnMouseEvent || outCtl->EventPassThrough & Event::OnKeyBoardEvent) && outCtl->Parent) {
-		//	return outCtl->Parent;
-		//}
+		//鼠标键盘的事件是可以穿透的(这样做貌似不是很好)
+	/*	if ((outCtl->EventPassThrough & Event::OnMouseEvent || outCtl->EventPassThrough & Event::OnKeyBoardEvent) && outCtl->Parent) {
+			return outCtl->Parent;
+		}*/
 		return outCtl;
+	}
+
+	void Window::OnMouseHover(const Point& point) {
+
 	}
 
 	void Window::OnMouseMove(const Point& point)
@@ -943,35 +964,6 @@ namespace ezui {
 		m_mouseDown = false;
 	}
 
-	void Window::OnMouseWheel(int_t zDelta, const Point& point)
-	{
-		if (__FOCUS_CONTROL == NULL) return;
-		if (__FOCUS_CONTROL) {
-			MouseEventArgs args(Event::OnMouseWheel);
-			args.Location = point;
-			args.ZDelta = zDelta;
-			__FOCUS_CONTROL->SendNotify(args);
-		}
-		ScrollBar* scrollBar = NULL;
-		if (__FOCUS_CONTROL && __FOCUS_CONTROL->GetScrollBar() && __FOCUS_CONTROL->GetScrollBar()->Scrollable()) {
-			scrollBar = dynamic_cast<ScrollBar*>(__FOCUS_CONTROL->GetScrollBar());
-		}
-		Control* pControl = __FOCUS_CONTROL;
-		while (scrollBar == NULL && pControl)
-		{
-			if (pControl->GetScrollBar() && pControl->GetScrollBar()->Scrollable()) {
-				scrollBar = dynamic_cast<ScrollBar*>(pControl->GetScrollBar());
-				break;
-			}
-			pControl = pControl->Parent;
-		}
-		if (scrollBar) {
-			MouseEventArgs args(Event::OnMouseWheel);
-			args.Location = point;
-			args.ZDelta = zDelta;
-			scrollBar->SendNotify(args);
-		}
-	}
 	void Window::OnMouseDoubleClick(MouseButton mbtn, const Point& point)
 	{
 		Point relativePoint;
@@ -1055,7 +1047,35 @@ namespace ezui {
 			}
 		}
 	}
-
+	void Window::OnMouseWheel(int_t zDelta, const Point& point)
+	{
+		if (__FOCUS_CONTROL == NULL) return;
+		if (__FOCUS_CONTROL) {
+			MouseEventArgs args(Event::OnMouseWheel);
+			args.Location = point;
+			args.ZDelta = zDelta;
+			__FOCUS_CONTROL->SendNotify(args);
+		}
+		ScrollBar* scrollBar = NULL;
+		if (__FOCUS_CONTROL && __FOCUS_CONTROL->GetScrollBar() && __FOCUS_CONTROL->GetScrollBar()->Scrollable()) {
+			scrollBar = dynamic_cast<ScrollBar*>(__FOCUS_CONTROL->GetScrollBar());
+		}
+		Control* pControl = __FOCUS_CONTROL;
+		while (scrollBar == NULL && pControl)
+		{
+			if (pControl->GetScrollBar() && pControl->GetScrollBar()->Scrollable()) {
+				scrollBar = dynamic_cast<ScrollBar*>(pControl->GetScrollBar());
+				break;
+			}
+			pControl = pControl->Parent;
+		}
+		if (scrollBar) {
+			MouseEventArgs args(Event::OnMouseWheel);
+			args.Location = point;
+			args.ZDelta = zDelta;
+			scrollBar->SendNotify(args);
+		}
+	}
 	void Window::OnMouseClick(MouseButton mbtn, const Point& point) {
 
 	}

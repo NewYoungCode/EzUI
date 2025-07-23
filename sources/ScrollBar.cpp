@@ -3,6 +3,7 @@
 namespace ezui {
 	void ScrollBar::OnMouseUp(const MouseEventArgs& arg)
 	{
+		//::ReleaseCapture();
 		__super::OnMouseUp(arg);
 		m_mouseDown = false;
 	}
@@ -58,6 +59,12 @@ namespace ezui {
 			args.Graphics.SetColor(color);
 			args.Graphics.FillRectangle(sliderRect, GetBorderTopLeftRadius());
 		}
+	}
+
+	void ScrollBar::OnMouseDown(const MouseEventArgs& arg)
+	{
+		//::SetCapture(this->PublicData->HANDLE);
+		__super::OnMouseDown(arg);
 	}
 
 	void ScrollBar::ScrollTo(float scrollRate) {

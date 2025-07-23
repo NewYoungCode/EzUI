@@ -36,6 +36,7 @@ namespace ezui {
 	protected:
 		virtual void OnBackgroundPaint(PaintEventArgs& arg)override;
 		virtual void OnForePaint(PaintEventArgs& args) override;
+		virtual void OnMouseDown(const MouseEventArgs& arg)override;
 		virtual void OnMouseUp(const MouseEventArgs& arg)override;
 		virtual void OnMouseLeave(const MouseEventArgs& arg) override;
 		virtual void OnMouseWheel(const MouseEventArgs& arg)override;

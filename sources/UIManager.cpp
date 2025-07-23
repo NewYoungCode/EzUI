@@ -25,6 +25,18 @@ namespace ezui {
 		}
 		return 0;//解析失败
 	}
+
+	inline Image* __MakeImage(UIString value) {
+		value = value.replace("\"", "");//删除双引号;
+		auto pos1 = value.find("(");
+		auto pos2 = value.find(")");
+		if (pos1 != size_t(-1) && pos2 != size_t(-1)) {
+			//background-image:url(res/images/xxx.png)的方式
+			value = value.substr(pos1 + 1, pos2 - pos1 - 1);
+		}
+		return Image::Make(value);
+	}
+
 	inline void __MakeBorder(const UIString str, Border& bd, const std::function<void(float)>& callback) {
 		auto values = str.split(" ");
 		for (auto& v : values) {
@@ -82,6 +94,16 @@ namespace ezui {
 					}
 					break;
 				}
+				if (key == "pointer-events") {
+					if (value == "none") {
+						//忽略鼠标事件 将直接穿透
+						ctl->EventPassThrough = ctl->EventPassThrough | Event::OnMouseEvent;
+					}
+					else if (value == "auto") {
+						ctl->EventPassThrough = Event::None;
+					}
+					break;
+				}
 			}
 
 			if (key == "cursor") {
@@ -110,8 +132,7 @@ namespace ezui {
 				break;
 			}
 			if (key == "background-image") {
-				value = value.replace("\"", "");//删除双引号;
-				style->BackImage = Image::Make(value);
+				style->BackImage = __MakeImage(value);
 				if (callback) {
 					callback(style->BackImage);
 				}
@@ -124,8 +145,7 @@ namespace ezui {
 				break;
 			}
 			if (key == "fore-image") {
-				value = value.replace("\"", "");//删除双引号;
-				style->ForeImage = Image::Make(value);
+				style->ForeImage = __MakeImage(value);
 				if (callback) {
 					callback(style->ForeImage);
 				}
@@ -507,7 +527,9 @@ namespace ezui {
 	UIManager::UIManager()
 	{
 		BuildImageCallback = [this](Image* img)->void {
-			this->m_freeImages.push_back((Image*)img);
+			if (img) {
+				this->m_freeImages.push_back((Image*)img);
+			}
 			};
 	}
 	void UIManager::SetupUI(Window* window)
