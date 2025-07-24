@@ -697,7 +697,9 @@ namespace ezui {
 		WORD _frameCount = 0;//总帧数
 		WORD _framePos = 0;//当前帧率索引
 	public:
-		Rect Offset;//取出图像部分区域进行绘制
+		Rect Clip;//取出图像部分区域进行绘制
+		Point DrawPosition;//绘制在owner矩形坐标
+		ezui::Size DrawSize;//绘制在owner矩形的大小
 		ImageSizeMode SizeMode = ImageSizeMode::Zoom;// 图像显示模式
 	public:
 		virtual ~IImage() {}

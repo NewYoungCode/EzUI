@@ -138,9 +138,32 @@ namespace ezui {
 				}
 				break;
 			}
+			if (key == "background-position" && style->BackImage) {
+				if (value.count("px") >= 2) {
+					auto pxs = value.split(" ");
+					float x = 0;
+					__IsPx(pxs[0], x);
+					style->BackImage->DrawPosition.X = x;
+
+					float y = 0;
+					__IsPx(pxs[1], y);
+					style->BackImage->DrawPosition.Y = y;
+				}
+				break;
+			}
 			if (key == "background-size" || key == "background-image-size") {
 				if (value == "auto" && style->BackImage) {
 					style->BackImage->SizeMode = ImageSizeMode::OriginalSize;
+				}
+				else if (value.count("px") >= 2) {
+					auto pxs = value.split(" ");
+					float w = 0;
+					__IsPx(pxs[0], w);
+					style->BackImage->DrawSize.Width = w;
+
+					float h = 0;
+					__IsPx(pxs[1], h);
+					style->BackImage->DrawSize.Height = h;
 				}
 				break;
 			}

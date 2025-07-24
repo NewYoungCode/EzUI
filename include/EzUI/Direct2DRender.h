@@ -224,8 +224,8 @@ namespace ezui {
 		DXImage(const void* data, size_t count);
 		ID2D1Bitmap* Get();
 		IWICBitmap* GetIWICBitmap();
-		int_t GetWidth();
-		int_t GetHeight();
+		int_t Width();
+		int_t Height();
 		virtual WORD NextFrame()override;
 		DXImage* Clone();
 		DXImage() {}

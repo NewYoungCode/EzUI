@@ -612,6 +612,7 @@ namespace ezui {
 			this->EndLayout();
 			this->RefreshLayout();
 			if (Parent) {
+				Parent->RefreshLayout();
 				Parent->Invalidate();
 			}
 			return;
@@ -621,6 +622,7 @@ namespace ezui {
 			this->EndLayout();
 			this->RefreshLayout();
 			if (Parent) {
+				Parent->RefreshLayout();
 				Parent->Invalidate();
 			}
 			return;

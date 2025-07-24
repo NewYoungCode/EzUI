@@ -385,6 +385,15 @@ namespace ezui {
 	{
 		this->FontSize = this->FontSize * scale + 0.5;
 		this->Border.Scale(scale);
+
+		if (this->BackImage) {
+			this->BackImage->DrawPosition.Scale(scale);
+			this->BackImage->DrawSize.Scale(scale);
+		}
+		if (this->ForeImage) {
+			this->ForeImage->DrawPosition.Scale(scale);
+			this->ForeImage->DrawSize.Scale(scale);
+		}
 	}
 
 	Object::Object(Object* parentObject)

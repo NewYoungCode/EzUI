@@ -26,7 +26,12 @@ namespace ezui {
 				}
 				for (size_t i = 0; i < GetControls().size(); ++i) {
 					Control* ctl = GetControls()[i];
-					ctl->SetRect(Rect(m_initialX[i] - m_nowOffset, 0, Width(), Height()));
+					if (m_dlideDirection == SlideDirection::Horizontal) {
+						ctl->SetRect(Rect(m_initial[i] - m_nowOffset, 0, Width(), Height()));
+					}
+					else {
+						ctl->SetRect(Rect(0, m_initial[i] - m_nowOffset, Width(), Height()));
+					}
 				}
 				this->Invalidate();
 				});
@@ -50,8 +55,14 @@ namespace ezui {
 		int_t pos = 0;
 		for (auto itor = GetControls().begin(); itor != GetControls().end(); ++itor)
 		{
-			int_t x = Width() * (pos - m_pageIndex);//子控件索引-当前所在页索引
-			(*itor)->SetRect(Rect(x, 0, Width(), Height()));
+			if (m_dlideDirection == SlideDirection::Horizontal) {
+				int_t x = Width() * (pos - m_pageIndex);//子控件索引-当前所在页索引
+				(*itor)->SetRect(Rect(x, 0, Width(), Height()));
+			}
+			else {
+				int_t y = Height() * (pos - m_pageIndex);//子控件索引-当前所在页索引
+				(*itor)->SetRect(Rect(0, y, Width(), Height()));
+			}
 			(*itor)->SetVisible(true);
 			++pos;
 		}
@@ -83,11 +94,13 @@ namespace ezui {
 	}
 
 
-	void TabLayout::SlideToPage(int_t index, int_t durationMs, int_t fps)
+	void TabLayout::SlideToPage(int_t index, SlideDirection dlideDirection, int_t durationMs, int_t fps)
 	{
+		//滑动方向
+		m_dlideDirection = dlideDirection;
+
 		Sort();//先直接归位
-		int_t pageWidth = Width();
-		int_t offsetTotal = (index - m_pageIndex) * pageWidth;
+		int_t offsetTotal = (index - m_pageIndex) * (m_dlideDirection == SlideDirection::Horizontal ? Width() : Height());
 		if (offsetTotal == 0) {
 			return;
 		}
@@ -95,10 +108,15 @@ namespace ezui {
 		// 记录初始坐标
 		int_t controlCount = GetControls().size();
 
-		m_initialX.clear();
-		m_initialX.resize(controlCount);
+		m_initial.clear();
+		m_initial.resize(controlCount);
 		for (int_t i = 0; i < controlCount; ++i) {
-			m_initialX[i] = GetControls()[i]->X();
+			if (m_dlideDirection == SlideDirection::Horizontal) {
+				m_initial[i] = GetControls()[i]->X();
+			}
+			else {
+				m_initial[i] = GetControls()[i]->Y();
+			}
 		}
 
 		m_nowOffset = 0;

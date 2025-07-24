@@ -250,10 +250,10 @@ namespace ezui {
 			hr = render->CreateBitmapFromWicBitmap(m_bitMap, &m_d2dBitmap);
 		}
 	}
-	int_t DXImage::GetWidth() {
+	int_t DXImage::Width() {
 		return m_width;
 	}
-	int_t DXImage::GetHeight() {
+	int_t DXImage::Height() {
 		return m_height;
 	}
 	void DXImage::CreateFormStream(IStream* istram) {
@@ -751,26 +751,42 @@ namespace ezui {
 		image->DecodeOfRender(m_render);
 		ID2D1Bitmap* bitmap = image->Get();
 		if (!bitmap) {
+			//解码失败
 			return;
 		}
-		const ImageSizeMode& imageSizeMode = image->SizeMode;
-		const Rect& sourceRect = image->Offset;
+		ImageSizeMode imageSizeMode = image->SizeMode;
+		const Rect& sourceRect = image->Clip;
 		//计算坐标
 		Rect rect(tagRect.X + 0.5, tagRect.Y + 0.5, tagRect.Width + 0.5, tagRect.Height + 0.5);
 		//转换坐标,缩放
-		Size imgSize(image->GetWidth(), image->GetHeight());
+		Size imgSize(image->Width(), image->Height());
 		if (!sourceRect.IsEmptyArea()) {
 			imgSize.Width = sourceRect.Width;
 			imgSize.Height = sourceRect.Height;
 		}
-		Rect drawRect = ezui::Transformation(imageSizeMode, rect, imgSize);
+
+		//加上在Owner区域的偏移
+		rect.X += image->DrawPosition.X;
+		rect.Y += image->DrawPosition.Y;
+
+		Rect drawRect;
+		if (!image->DrawSize.Empty()) {
+			//限制在Owner中的绘制区域
+			drawRect = Rect(rect.X, rect.Y, image->DrawSize.Width, image->DrawSize.Height);
+		}
+		else {
+			//不限制绘制区域 根据imageSizeMode属性进行坐标转换
+			drawRect = ezui::Transformation(imageSizeMode, rect, imgSize);
+		}
 		//开始绘制
 		D2D_RECT_F drawRectF = __To_D2D_RectF(drawRect);
 		if (!sourceRect.IsEmptyArea()) {
-			D2D_RECT_F sourceRectF = __To_D2D_RectF(sourceRect);
-			m_render->DrawBitmap(bitmap, drawRectF, opacity, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, sourceRectF);
+			//裁剪图片部分内容进行绘制
+			D2D_RECT_F imageClipRectF = __To_D2D_RectF(sourceRect);
+			m_render->DrawBitmap(bitmap, drawRectF, opacity, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, imageClipRectF);
 		}
 		else {
+			//不裁剪图片的方式进行绘制
 			m_render->DrawBitmap(bitmap, drawRectF, opacity);
 		}
 	}

@@ -123,9 +123,11 @@ namespace ezui {
 		//移动阴影窗口
 		::MoveWindow(m_hWnd, Orect.left - _shadowWidth, Orect.top - _shadowWidth, width, height, FALSE);
 		//只有在大小发生改变的时候才回去重新生成layered窗口
-		if (paintSize.Equals(m_bufSize)) {
+		if (paintSize.Equals(m_bufSize) && m_borderWidth == border.TopLeftRadius) {
 			return;
 		}
+		//新窗口圆角值
+		m_borderWidth = border.TopLeftRadius;
 		m_bufSize = paintSize;
 		if (m_bufBitmap != NULL) {
 			delete m_bufBitmap;
