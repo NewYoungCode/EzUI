@@ -50,7 +50,7 @@ void LrcPanel::Task()
 		}
 	}
 
-	if (this->PublicData) {
+	if (this->m_publicData) {
 		BeginInvoke([=]() {
 			Invalidate();
 			});

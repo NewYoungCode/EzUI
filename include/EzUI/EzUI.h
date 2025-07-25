@@ -420,7 +420,7 @@ namespace ezui {
 		std::vector<Object*> m_childObjects;
 	protected:
 		//公共数据 请不要改动此变量
-		WindowData* PublicData = NULL;
+		WindowData* m_publicData = NULL;
 		//移除子对象
 		void RemoveObject(Object* object);
 	public:

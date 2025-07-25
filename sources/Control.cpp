@@ -416,8 +416,8 @@ namespace ezui {
 	}
 	HWND Control::OwnerHwnd()
 	{
-		if (this->PublicData) {
-			return 	this->PublicData->HANDLE;
+		if (this->m_publicData) {
+			return 	this->m_publicData->HANDLE;
 		}
 		return NULL;
 	}
@@ -708,9 +708,9 @@ namespace ezui {
 		} while (false);
 		do
 		{
-			if (PublicData && ((this->EventFilter & arg.EventType) == arg.EventType)) {
+			if (m_publicData && ((this->EventFilter & arg.EventType) == arg.EventType)) {
 				if (arg.EventType != Event::OnPaint) {
-					bool bHandle = PublicData->SendNotify(this, (EventArgs&)arg);
+					bool bHandle = m_publicData->SendNotify(this, (EventArgs&)arg);
 					if (bHandle) {
 						//如果处理过了则不需要继续往下派发
 						break;
@@ -811,7 +811,7 @@ namespace ezui {
 		}
 	}
 	void Control::OnPaintBefore(PaintEventArgs& args) {
-		this->PublicData = args.PublicData;
+		this->m_publicData = args.PublicData;
 		if (this->IsPendLayout()) {//绘制的时候会检查时候有挂起的布局 如果有 立即让布局生效并重置布局标志
 			this->RefreshLayout();
 		}
@@ -861,7 +861,7 @@ namespace ezui {
 		}
 #endif 
 		//调用公共函数,如果那边不拦截,就开始绘制自身基本上下文
-		bool bHandle = PublicData->SendNotify(this, args);
+		bool bHandle = m_publicData->SendNotify(this, args);
 		if (!bHandle) {
 			this->OnPaint(args);
 		}
@@ -871,7 +871,7 @@ namespace ezui {
 		//绘制滚动条
 		ScrollBar* scrollbar = NULL;
 		if (scrollbar = this->GetScrollBar()) {
-			scrollbar->PublicData = args.PublicData;
+			scrollbar->m_publicData = args.PublicData;
 			scrollbar->SendEvent(args);
 		}
 		//绘制边框
@@ -879,9 +879,9 @@ namespace ezui {
 		border.Style = GetBorderStyle();
 		this->OnBorderPaint(args, border);//绘制边框
 #ifdef _DEBUG
-		if (PublicData->Debug) {
+		if (m_publicData->Debug) {
 			float width = 1 * this->GetScale();
-			pt.SetColor(PublicData->DebugColor);
+			pt.SetColor(m_publicData->DebugColor);
 			pt.DrawRectangle(RectF(0, 0, clientRect.Width, clientRect.Height), 0, width);
 		}
 #endif
@@ -936,9 +936,9 @@ namespace ezui {
 	Control::~Control()
 	{
 		//清除绑定信息
-		if (PublicData) {
-			PublicData->RemoveControl(this);
-			PublicData = NULL;
+		if (m_publicData) {
+			m_publicData->RemoveControl(this);
+			m_publicData = NULL;
 		}
 		//释放弹簧
 		DestroySpacers();
@@ -979,7 +979,7 @@ namespace ezui {
 			m_spacers.push_back(ctl);
 		}
 		m_controls.push_back(ctl);
-		ctl->PublicData = this->PublicData;
+		ctl->m_publicData = this->m_publicData;
 		ctl->Parent = this;
 
 		if (ctl->GetScale() != this->GetScale()) {
@@ -1017,7 +1017,7 @@ namespace ezui {
 		else {
 			m_controls.insert(itor, ctl);
 		}
-		ctl->PublicData = this->PublicData;
+		ctl->m_publicData = this->m_publicData;
 		ctl->Parent = this;
 		if (ctl->GetScale() != this->GetScale()) {
 			ctl->SendEvent(DpiChangeEventArgs(this->GetScale()));
@@ -1062,9 +1062,9 @@ namespace ezui {
 		for (auto& it : m_controls) {
 			it->OnRemove();
 		}
-		if (PublicData) {
-			PublicData->RemoveControl(this);
-			PublicData = NULL;
+		if (m_publicData) {
+			m_publicData->RemoveControl(this);
+			m_publicData = NULL;
 		}
 	}
 	Control* Control::FindControl(const UIString& ctlName)
@@ -1201,7 +1201,7 @@ namespace ezui {
 	winData->InvalidateRect(&r2); */
 
 	bool Control::Invalidate() {
-		if (PublicData) {
+		if (m_publicData) {
 			if (Parent && this->IsPendLayout()) {
 				return Parent->Invalidate();
 			}
@@ -1209,7 +1209,7 @@ namespace ezui {
 			if (!(angle == 0 || angle == 180) && Parent) {
 				return Parent->Invalidate();
 			}
-			WindowData* winData = PublicData;
+			WindowData* winData = m_publicData;
 			if (winData) {
 				Rect _InvalidateRect = GetClientRect();
 				winData->InvalidateRect(_InvalidateRect);
@@ -1220,7 +1220,7 @@ namespace ezui {
 	}
 	void Control::Refresh() {
 		if (Invalidate()) {
-			PublicData->UpdateWindow();//立即更新全部无效区域
+			m_publicData->UpdateWindow();//立即更新全部无效区域
 		}
 	}
 	Rect Control::GetCareRect()
@@ -1354,8 +1354,8 @@ namespace ezui {
 	void Control::OnMouseEnter(const MouseEventArgs& args)
 	{
 		this->State = ControlState::Hover;
-		if (PublicData) {
-			PublicData->SetTips(this, this->GetTips().unicode());
+		if (m_publicData) {
+			m_publicData->SetTips(this, this->GetTips().unicode());
 		}
 		if (!(this->EventPassThrough & Event::OnMouseEnter)) {
 			this->Invalidate();

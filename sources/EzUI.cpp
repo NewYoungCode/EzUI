@@ -411,12 +411,12 @@ namespace ezui {
 
 	void Object::SetPublicData(WindowData* data)
 	{
-		this->PublicData = data;
+		this->m_publicData = data;
 	}
 
 	WindowData* Object::GetPublicData()
 	{
-		return this->PublicData;
+		return this->m_publicData;
 	}
 
 	void Object::RemoveObject(Object* object) {

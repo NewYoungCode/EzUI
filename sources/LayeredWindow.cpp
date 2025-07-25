@@ -10,11 +10,11 @@ namespace ezui {
 			Sleep(5);//延迟5ms之后再去绘制
 			::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
 			};
-		this->PublicData->InvalidateRect = [this](const Rect& rect) ->void {
+		this->m_publicData->InvalidateRect = [this](const Rect& rect) ->void {
 			//标记窗口无效区域
 			this->InvalidateRect(rect);
 			};
-		this->PublicData->UpdateWindow = [this]()->void {
+		this->m_publicData->UpdateWindow = [this]()->void {
 			//立即更新窗口中的无效区域
 			::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
 			};

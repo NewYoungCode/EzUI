@@ -212,11 +212,11 @@ namespace ezui {
 		int_t pos, count;
 		if (!GetSelectedRange(&pos, &count))return false;
 		std::wstring wBuf(m_text.substr(pos, count));
-		return ezui::CopyToClipboard(wBuf, PublicData->HANDLE);
+		return ezui::CopyToClipboard(wBuf, OwnerHwnd());
 	}
 	bool TextBox::Paste() {
 		std::wstring wBuf;
-		bool bRet = ezui::GetClipboardData(&wBuf, PublicData->HANDLE);
+		bool bRet = ezui::GetClipboardData(&wBuf, OwnerHwnd());
 		UIString u8Str(wBuf);
 		if (!m_multiLine) {
 			//行编辑框不允许有换行符
