@@ -52,6 +52,8 @@ namespace ezui {
 		Window& operator=(const Window&) = delete;
 		bool IsInWindow(Control& pControl, Control& it);
 		void InitWindow(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
+		//在窗口中使用基于客户区的鼠标位置寻找可命中的控件 
+		Control* HitTestControl(const Point clientPoint, Point* outPoint);
 	protected:
 		//是否为窗口
 		bool IsWindow() const;
@@ -73,8 +75,6 @@ namespace ezui {
 		virtual void OnMouseDown(MouseButton mbtn, const Point& point);
 		//鼠标弹起时发生
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point);
-		//鼠标单击并弹起时发生
-		virtual void OnMouseClick(MouseButton mbtn, const Point& point);
 		//生成渲染器 渲染参数
 		virtual void DoPaint(HDC winDC, const Rect& rePaint);
 		//渲染中
@@ -104,9 +104,6 @@ namespace ezui {
 	public:
 		Window(int_t width, int_t height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
 		virtual ~Window();
-
-		/// 在窗口中寻找命中的控件 //根据坐标获取控件
-		Control* FindControl(const Point clientPoint, Point* outPoint);
 
 		//使用id寻找控件
 		Control* FindControl(const UIString& objectName);

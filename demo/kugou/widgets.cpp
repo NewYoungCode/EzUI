@@ -113,7 +113,7 @@ bool LoginFrm::OnNotify(Control* sender, EventArgs& args)
 {
 	do
 	{
-		if (args.EventType == Event::OnMouseClick) {
+		if (args.EventType == Event::OnMouseDown) {
 			if (sender->Name == "btnLogin") {
 				TextBox* editUser = (TextBox*)this->FindControl("username");
 				TextBox* editPwd = (TextBox*)this->FindControl("password");

@@ -59,15 +59,6 @@ namespace ezui {
 		// dock 样式
 		DockStyle m_dock = DockStyle::None;
 
-	private:
-		// 禁止拷贝构造
-		Control(const Control&) = delete;
-
-		// 禁止赋值
-		Control& operator=(const Control&) = delete;
-
-		// 计算基于父控件的裁剪区域
-		void ComputeClipRect();
 
 	protected:
 		// 基于控件中的可见控件集合
@@ -103,13 +94,26 @@ namespace ezui {
 		bool Enable = true;
 
 		// 添加到主窗口通知函数中可拦截的事件
-		Event EventFilter = Event::OnMouseClick | Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnKeyChar | Event::OnKeyDown | Event::OnKeyUp;
+		Event EventFilter = Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnKeyChar | Event::OnKeyDown | Event::OnKeyUp;
 
 		// 控件可被穿透的事件
 		Event EventPassThrough = Event::None;
 
 		// 事件处理器
 		std::function<void(Control*, EventArgs&)> EventHandler = NULL;
+
+	private:
+		// 禁止拷贝构造
+		Control(const Control&) = delete;
+
+		// 禁止赋值
+		Control& operator=(const Control&) = delete;
+
+		// 计算基于父控件的裁剪区域
+		void ComputeClipRect();
+
+		// 所有事件优先进入此函数(内部处理)
+		bool OnEvent(EventArgs& arg);
 
 	protected:
 		// 设置内容宽度，仅限子类使用
@@ -121,8 +125,6 @@ namespace ezui {
 		// 设置内容尺寸，仅限子类使用
 		virtual void SetContentSize(const Size& size);
 
-		// 所有事件优先进入此函数
-		virtual bool OnNotify(EventArgs& arg);
 
 		// 绘制之前
 		virtual void OnPaintBefore(PaintEventArgs& args);
@@ -168,9 +170,6 @@ namespace ezui {
 
 		// 鼠标弹起事件
 		virtual void OnMouseUp(const MouseEventArgs& arg);
-
-		// 鼠标单击事件
-		virtual void OnMouseClick(const MouseEventArgs& arg);
 
 		// 鼠标双击事件
 		virtual void OnMouseDoubleClick(const MouseEventArgs& arg);
@@ -398,8 +397,8 @@ namespace ezui {
 		// 获取控件的滚动条对象
 		virtual ScrollBar* GetScrollBar();
 
-		// 派发事件（如鼠标单击事件等...）返回true则事件成功派发 返回false代表当前控件对象已被释放
-		bool SendNotify(const EventArgs& arg);
+		// 派发事件（如鼠标单击事件等...）返回true则事件成功派发 返回false代表派发途中当前控件已被释放
+		bool SendEvent(const EventArgs& arg);
 
 		// 设置控件属性
 		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue);

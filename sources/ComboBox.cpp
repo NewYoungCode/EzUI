@@ -38,7 +38,7 @@ namespace ezui {
 				args.Graphics.DrawLine(p1, p3);
 				args.Graphics.DrawLine(p2, p3);
 			}
-			else if (arg.EventType == Event::OnMouseClick/*&& args.Button == MouseButton::Left*/) {
+			else if (arg.EventType == Event::OnMouseDown/*&& args.Button == MouseButton::Left*/) {
 				//单击
 				if (m_menuWnd == NULL) {
 					m_menuWnd = new MenuContent(this, &m_UpDown);
@@ -108,7 +108,7 @@ namespace ezui {
 		lb->HoverStyle.ForeColor = Color::White;
 
 		lb->EventHandler = [&](Control* sd, const EventArgs& args) ->void {
-			if (args.EventType == Event::OnMouseClick) {
+			if (args.EventType == Event::OnMouseDown) {
 				m_index = sd->Parent->IndexOf(sd);
 				m_textBox.SetText(((Label*)sd)->GetText());
 				m_textBox.Invalidate();

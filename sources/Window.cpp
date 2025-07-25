@@ -314,7 +314,7 @@ namespace ezui {
 			}
 		}
 		if (m_layout->GetScale() != this->GetScale()) {
-			m_layout->SendNotify(DpiChangeEventArgs(this->GetScale()));
+			m_layout->SendEvent(DpiChangeEventArgs(this->GetScale()));
 		}
 		m_layout->SetRect(this->GetClientRect());
 	}
@@ -459,10 +459,10 @@ namespace ezui {
 		}
 		if (__INPUT_CONTROL) {
 			KillFocusEventArgs args(ctl);
-			__INPUT_CONTROL->SendNotify(args);
+			__INPUT_CONTROL->SendEvent(args);
 		}
 		FocusEventArgs args(__INPUT_CONTROL);
-		ctl->SendNotify(args);
+		ctl->SendEvent(args);
 		__INPUT_CONTROL = ctl;
 		__FOCUS_CONTROL = ctl;
 	}
@@ -702,7 +702,7 @@ namespace ezui {
 				::ScreenToClient(Hwnd(), &p1);
 				Point point{ p1.x,p1.y };
 				Point relativePoint;
-				Control* outCtl = this->FindControl(point, &relativePoint);//找到当前控件的位置
+				Control* outCtl = this->HitTestControl(point, &relativePoint);//找到当前控件的位置
 				if (outCtl && outCtl->Enable) {
 					Control* pCtl = outCtl;
 					if ((pCtl->EventPassThrough & Event::OnHover)) {
@@ -828,7 +828,7 @@ namespace ezui {
 	void Window::OnPaint(PaintEventArgs& arg)
 	{
 		if (m_layout) {
-			m_layout->SendNotify(arg);//
+			m_layout->SendEvent(arg);//
 		}
 	}
 
@@ -848,7 +848,7 @@ namespace ezui {
 		return true;
 	}
 
-	Control* Window::FindControl(const Point clientPoint, Point* outPoint) {
+	Control* Window::HitTestControl(const Point clientPoint, Point* outPoint) {
 		*outPoint = clientPoint;
 		Control* outCtl = m_layout;
 	Find_Loop:
@@ -921,12 +921,12 @@ namespace ezui {
 		if (__INPUT_CONTROL && m_mouseDown) { //按住移动的控件
 			auto ctlRect = __INPUT_CONTROL->GetClientRect();
 			MouseEventArgs args(Event::OnMouseMove, { point.X - ctlRect.X ,point.Y - ctlRect.Y });
-			__INPUT_CONTROL->SendNotify(args);
+			__INPUT_CONTROL->SendEvent(args);
 			return;
 		}
 
 		Point relativePoint;
-		Control* newCtl = this->FindControl(point, &relativePoint);//找到当前控件的位置
+		Control* newCtl = this->HitTestControl(point, &relativePoint);//找到当前控件的位置
 		MouseEventArgs args(Event::None);
 		args.Location = relativePoint;
 
@@ -938,11 +938,11 @@ namespace ezui {
 				auto rect = __FOCUS_CONTROL->GetClientRect();
 				args.Location.X = point.X - rect.X;
 				args.Location.Y = point.Y - rect.Y;
-				ok = __FOCUS_CONTROL->SendNotify(args);
+				ok = __FOCUS_CONTROL->SendEvent(args);
 			}
 			//触发MouseEnter
 			args.EventType = Event::OnMouseEnter;
-			ok = newCtl->SendNotify(args);
+			ok = newCtl->SendEvent(args);
 			if (ok) {
 				__FOCUS_CONTROL = newCtl;
 			}
@@ -950,7 +950,7 @@ namespace ezui {
 		//触发命中的MouseMove
 		if (__FOCUS_CONTROL) {
 			args.EventType = Event::OnMouseMove;
-			__FOCUS_CONTROL->SendNotify(args);
+			__FOCUS_CONTROL->SendEvent(args);
 		}
 
 	}
@@ -958,7 +958,7 @@ namespace ezui {
 	{
 		if (__FOCUS_CONTROL) {
 			MouseEventArgs args(Event::OnMouseLeave);
-			__FOCUS_CONTROL->SendNotify(args);
+			__FOCUS_CONTROL->SendEvent(args);
 		}
 		__FOCUS_CONTROL = NULL;
 		m_mouseDown = false;
@@ -967,12 +967,12 @@ namespace ezui {
 	void Window::OnMouseDoubleClick(MouseButton mbtn, const Point& point)
 	{
 		Point relativePoint;
-		Control* outCtl = this->FindControl(point, &relativePoint);
+		Control* outCtl = this->HitTestControl(point, &relativePoint);
 		if (outCtl) {
 			MouseEventArgs args(Event::OnMouseDoubleClick);
 			args.Button = mbtn;
 			args.Location = relativePoint;
-			outCtl->SendNotify(args);
+			outCtl->SendEvent(args);
 		}
 	}
 
@@ -982,7 +982,7 @@ namespace ezui {
 		m_mouseDown = true;//标记为按下
 		//寻早控件
 		Point relativePoint;
-		Control* outCtl = this->FindControl(point, &relativePoint);
+		Control* outCtl = this->HitTestControl(point, &relativePoint);
 		//如果单机的不是上一个 那么上一个触发失去焦点事件
 		if (__INPUT_CONTROL != outCtl) {
 			this->SetFocus(outCtl);//设置焦点
@@ -992,7 +992,7 @@ namespace ezui {
 			MouseEventArgs args(Event::OnMouseDown);
 			args.Button = mbtn;
 			args.Location = relativePoint;
-			__INPUT_CONTROL->SendNotify(args);
+			__INPUT_CONTROL->SendEvent(args);
 		}
 		//获取按下按钮和按下的时差
 		auto time_now = ::GetTickCount64();//记录鼠标按下的当前时间
@@ -1021,17 +1021,8 @@ namespace ezui {
 			//触发抬起事件
 			{
 				args.EventType = Event::OnMouseUp;
-				__INPUT_CONTROL->SendNotify(args);
+				__INPUT_CONTROL->SendEvent(args);
 
-			}
-			//触发单击事件 如果焦点还在并且鼠标未移出控件内 
-			if (__INPUT_CONTROL && mbtn == m_lastBtn && ctlRect.Contains(point)) {
-				auto _time = ::GetTickCount64();
-				auto diff = _time - m_lastDownTime;
-				if (diff < 500) {//鼠标按住超过200毫秒则不触发单机事件
-					args.EventType = Event::OnMouseClick;
-					__INPUT_CONTROL->SendNotify(args);
-				}
 			}
 			if (__INPUT_CONTROL) {
 				POINT p1{ 0 };
@@ -1043,7 +1034,7 @@ namespace ezui {
 				else {
 					args.EventType = Event::OnMouseLeave;//触发鼠标离开事件
 				}
-				__INPUT_CONTROL->SendNotify(args);
+				__INPUT_CONTROL->SendEvent(args);
 			}
 		}
 	}
@@ -1054,7 +1045,7 @@ namespace ezui {
 			MouseEventArgs args(Event::OnMouseWheel);
 			args.Location = point;
 			args.ZDelta = zDelta;
-			__FOCUS_CONTROL->SendNotify(args);
+			__FOCUS_CONTROL->SendEvent(args);
 		}
 		ScrollBar* scrollBar = NULL;
 		if (__FOCUS_CONTROL && __FOCUS_CONTROL->GetScrollBar() && __FOCUS_CONTROL->GetScrollBar()->Scrollable()) {
@@ -1073,11 +1064,8 @@ namespace ezui {
 			MouseEventArgs args(Event::OnMouseWheel);
 			args.Location = point;
 			args.ZDelta = zDelta;
-			scrollBar->SendNotify(args);
+			scrollBar->SendEvent(args);
 		}
-	}
-	void Window::OnMouseClick(MouseButton mbtn, const Point& point) {
-
 	}
 
 	float Window::GetScale() {
@@ -1108,21 +1096,21 @@ namespace ezui {
 	{
 		if (__INPUT_CONTROL) { //
 			KeyboardEventArgs args(Event::OnKeyChar, wParam, lParam);
-			__INPUT_CONTROL->SendNotify(args);
+			__INPUT_CONTROL->SendEvent(args);
 			return;
 		}
 	}
 	void Window::OnKeyDown(WPARAM wParam, LPARAM lParam) {
 		if (__INPUT_CONTROL) { //
 			KeyboardEventArgs args(Event::OnKeyDown, wParam, lParam);
-			__INPUT_CONTROL->SendNotify(args);
+			__INPUT_CONTROL->SendEvent(args);
 			return;
 		}
 	}
 	void Window::OnKeyUp(WPARAM wParam, LPARAM lParam) {
 		if (__INPUT_CONTROL) { //
 			KeyboardEventArgs args(Event::OnKeyUp, wParam, lParam);
-			__INPUT_CONTROL->SendNotify(args);
+			__INPUT_CONTROL->SendEvent(args);
 			return;
 		}
 	}
@@ -1153,7 +1141,7 @@ namespace ezui {
 		this->m_maxSize.Scale(newScale);
 		DpiChangeEventArgs arg(systemScale);
 		if (m_layout) {
-			m_layout->SendNotify(arg);
+			m_layout->SendEvent(arg);
 		}
 		if (!newRect.IsEmptyArea()) {
 			SetWindowPos(Hwnd(), NULL, newRect.X, newRect.Y, newRect.Width, newRect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
@@ -1199,16 +1187,11 @@ namespace ezui {
 			}
 			if (sender->Action == ControlAction::Close) {
 				MouseEventArgs args(Event::OnMouseLeave);
-				sender->SendNotify(args);
+				sender->SendEvent(args);
 				this->Close();
 				break;
 			}
-			break;
-		}
-		case Event::OnMouseClick: {
-			//鼠标左侧按钮单击
-				//if (args.EventType == Event::OnMouseClick) {
-			UIString  ctlName = sender->GetAttribute("tablayout");
+			UIString ctlName = sender->GetAttribute("tablayout");
 			if (!ctlName.empty()) {
 				auto ctls = sender->Parent->FindControl("tablayout", ctlName);
 				TabLayout* tabLayout = dynamic_cast<TabLayout*>(FindControl(ctlName));

@@ -137,7 +137,7 @@ namespace ezui {
 			if (rect.IntersectsWith(it->GetRect())) {
 				ViewControls.push_back(it);
 			}
-			it->SendNotify(args);
+			it->SendEvent(args);
 		}
 	}
 	void Control::OnPaint(PaintEventArgs& args)
@@ -578,11 +578,11 @@ namespace ezui {
 		Size newSize = m_rect.GetSize();
 
 		if (!m_lastLocation.Equals(newLocation)) {
-			this->SendNotify(MoveEventArgs(newLocation));
+			this->SendEvent(MoveEventArgs(newLocation));
 			m_lastLocation = newLocation;
 		}
 		if (!newSize.Equals(m_lastSize)) {
-			this->SendNotify(SizeEventArgs(newSize));
+			this->SendEvent(SizeEventArgs(newSize));
 			m_lastSize = newSize;
 		}
 		return this->m_rect;
@@ -657,11 +657,11 @@ namespace ezui {
 		}
 		this->EndLayout();
 	}
-	bool Control::SendNotify(const EventArgs& arg)
+	bool Control::SendEvent(const EventArgs& arg)
 	{
-		return this->OnNotify((EventArgs&)arg);
+		return this->OnEvent((EventArgs&)arg);
 	}
-	bool Control::OnNotify(EventArgs& arg)
+	bool Control::OnEvent(EventArgs& arg)
 	{
 		bool isRemove = false;
 		this->m_bRemove = &isRemove;
@@ -669,18 +669,6 @@ namespace ezui {
 		{
 			if (arg.EventType == Event::OnPaint && !IsVisible()) {
 				break;
-			}
-			if (PublicData && ((this->EventFilter & arg.EventType) == arg.EventType)) {
-				if (arg.EventType != Event::OnPaint) {
-					bool bHandle = PublicData->SendNotify(this, (EventArgs&)arg);
-					if (bHandle) {
-						//如果处理过了则不需要继续往下派发
-						break;
-					}
-					if (isRemove) {
-						break;
-					}
-				}
 			}
 			if (arg.EventType == Event::OnPaint) {
 				this->OnPaintBefore((PaintEventArgs&)arg);
@@ -715,6 +703,21 @@ namespace ezui {
 				break;
 			}
 		} while (false);
+		do
+		{
+			if (PublicData && ((this->EventFilter & arg.EventType) == arg.EventType)) {
+				if (arg.EventType != Event::OnPaint) {
+					bool bHandle = PublicData->SendNotify(this, (EventArgs&)arg);
+					if (bHandle) {
+						//如果处理过了则不需要继续往下派发
+						break;
+					}
+					if (isRemove) {
+						break;
+					}
+				}
+			}
+		} while (false);
 		if (!isRemove) {
 			//通用事件处理 ps:绘制函数比较特殊(在其他地方处理)
 			if (this->EventHandler && (arg.EventType != Event::OnPaint)) {
@@ -736,7 +739,7 @@ namespace ezui {
 			KeyboardEventArgs& args = (KeyboardEventArgs&)_args;
 			if ((this->EventPassThrough & args.EventType) == args.EventType && this->Parent) {//检查鼠标穿透
 				KeyboardEventArgs copy_args = args;
-				this->Parent->SendNotify(copy_args);//如果设置了穿透就直接发送给上一层控件
+				this->Parent->SendEvent(copy_args);//如果设置了穿透就直接发送给上一层控件
 			}
 			switch (args.EventType)
 			{
@@ -767,10 +770,6 @@ namespace ezui {
 			{
 			case Event::OnMouseWheel: {
 				OnMouseWheel(args);
-				break;
-			}
-			case Event::OnMouseClick: {
-				OnMouseClick(args);
 				break;
 			}
 			case Event::OnMouseEnter: {
@@ -805,7 +804,7 @@ namespace ezui {
 			MouseEventArgs copy_args = args;
 			copy_args.Location.X += this->X();
 			copy_args.Location.Y += this->Y();
-			this->Parent->SendNotify(copy_args);//如果设置了穿透就发送给上一层控件
+			this->Parent->SendEvent(copy_args);//如果设置了穿透就发送给上一层控件
 		}
 	}
 	void Control::OnPaintBefore(PaintEventArgs& args) {
@@ -870,7 +869,7 @@ namespace ezui {
 		ScrollBar* scrollbar = NULL;
 		if (scrollbar = this->GetScrollBar()) {
 			scrollbar->PublicData = args.PublicData;
-			scrollbar->SendNotify(args);
+			scrollbar->SendEvent(args);
 		}
 		//绘制边框
 		border.Color = GetBorderColor();
@@ -923,11 +922,11 @@ namespace ezui {
 		}
 
 		for (auto& it : GetControls()) {
-			it->SendNotify(arg);
+			it->SendEvent(arg);
 		}
 
 		if (needScale && this->GetScrollBar()) {
-			this->GetScrollBar()->SendNotify(arg);
+			this->GetScrollBar()->SendEvent(arg);
 		}
 
 	}
@@ -981,7 +980,7 @@ namespace ezui {
 		ctl->Parent = this;
 
 		if (ctl->GetScale() != this->GetScale()) {
-			ctl->SendNotify(DpiChangeEventArgs(this->GetScale()));
+			ctl->SendEvent(DpiChangeEventArgs(this->GetScale()));
 		}
 
 		ctl->TryPendLayout();
@@ -1018,7 +1017,7 @@ namespace ezui {
 		ctl->PublicData = this->PublicData;
 		ctl->Parent = this;
 		if (ctl->GetScale() != this->GetScale()) {
-			ctl->SendNotify(DpiChangeEventArgs(this->GetScale()));
+			ctl->SendEvent(DpiChangeEventArgs(this->GetScale()));
 		}
 		ctl->TryPendLayout();
 		this->TryPendLayout();//添加控件需要将布局重新挂起
@@ -1344,9 +1343,6 @@ namespace ezui {
 	{
 	}
 	void Control::OnMouseWheel(const MouseEventArgs& args)
-	{
-	}
-	void Control::OnMouseClick(const MouseEventArgs& args)
 	{
 	}
 	void Control::OnMouseDoubleClick(const MouseEventArgs& args)

@@ -167,7 +167,7 @@ bool MainFrm::FileExists(const UIString& fileName) {
 	return false;
 }
 bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
-	if (args.EventType == Event::OnMouseClick) {
+	if (args.EventType == Event::OnMouseDown) {
 		if (sd->Name == "btnBrowserDir") {
 			UIString dir = ShowFolderDialog(Hwnd(), "", "");
 			if (!dir.empty()) {

@@ -90,7 +90,7 @@ void MainFrm::InitForm() {
 		}
 		};
 	//可穿透父控件
-	playerBar2->EventPassThrough = Event::OnHover | Event::OnActive | Event::OnMouseClick;
+	playerBar2->EventPassThrough = Event::OnHover | Event::OnActive | Event::OnMouseDown;
 	//创建启动一个实时获取歌曲进度以及状态
 	timer = new Timer;
 	timer->Interval = 10;
@@ -227,7 +227,7 @@ bool MainFrm::PlaySong(const UIString& hash, Song& info)
 
 	playType = 1;//当前正在播放音乐
 
-	FindControl("lrcView")->SendNotify(Event::OnMouseClick);
+	FindControl("lrcView")->SendEvent(Event::OnMouseDown);
 
 	if (this->FindLocalSong(hash) == size_t(-1)) {
 		info.hash = hash;
@@ -246,7 +246,7 @@ bool MainFrm::PlaySong(const UIString& hash, Song& info)
 
 		//写入本地文件
 		listFile->SetSection(hash);
-		listFile->WriteString("name", info.fileName );
+		listFile->WriteString("name", info.fileName);
 		listFile->WriteString("singer", info.SingerName);
 		listFile->WriteString("dur", std::to_string(info.Duration));
 	}
@@ -277,7 +277,7 @@ void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 	if (wparam == VK_RETURN) {
 		global::page = 1;
 		global::nextPage = true;
-		FindControl("songView")->SendNotify(MouseEventArgs(Event::OnMouseClick));
+		FindControl("songView")->SendEvent(Event::OnMouseDown);
 		UIString keyword = editSearch->GetText();
 		std::vector<Song> songs = global::SearchSongs(keyword);
 		vlistSearch->Clear(true);
@@ -323,7 +323,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			break;
 		}
 
-		if (args.EventType == Event::OnMouseClick) {
+		if (args.EventType == Event::OnMouseDown) {
 			if (sender->Name == "login") {
 				OpenLoginFrm(sender);
 				break;
@@ -432,7 +432,7 @@ void MainFrm::UpSong()
 	auto it = vlistLocal->FindSingleChild("FileHash", hash);
 	if (it) {
 		vlistLocal->GetScrollBar()->ScrollTo(it);
-		it->SendNotify(MouseEventArgs(Event::OnMouseDoubleClick));
+		it->SendEvent(MouseEventArgs(Event::OnMouseDoubleClick));
 	}
 }
 void MainFrm::NextSong()
@@ -449,7 +449,7 @@ void MainFrm::NextSong()
 	auto it = vlistLocal->FindSingleChild("FileHash", hash);
 	if (it) {
 		vlistLocal->GetScrollBar()->ScrollTo(it);
-		it->SendNotify(MouseEventArgs(Event::OnMouseDoubleClick));
+		it->SendEvent(MouseEventArgs(Event::OnMouseDoubleClick));
 	}
 }
 void MainFrm::PlayMv(const UIString& mvhash, const UIString& songHash)
@@ -461,7 +461,7 @@ void MainFrm::PlayMv(const UIString& mvhash, const UIString& songHash)
 
 	RequestNewImage(info);
 
-	FindControl("mvView")->SendNotify(Event::OnMouseClick);
+	FindControl("mvView")->SendEvent(Event::OnMouseDown);
 
 	this->SetText(info.SongName);
 	((Label*)FindControl("songName"))->SetText(info.SongName);

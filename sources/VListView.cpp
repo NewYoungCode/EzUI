@@ -11,7 +11,7 @@ namespace ezui {
 			this->Offset(offsetValue);
 			};
 	}
-	VListView::VListView(Object* parentObject):PagedListView(parentObject)
+	VListView::VListView(Object* parentObject) :PagedListView(parentObject)
 	{
 		Init();
 	}
@@ -86,7 +86,7 @@ namespace ezui {
 				}
 			}
 			else {
-				it->SendNotify(args);
+				it->SendEvent(args);
 			}
 		}
 	}
