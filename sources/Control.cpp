@@ -414,6 +414,13 @@ namespace ezui {
 			}
 		} while (false);
 	}
+	HWND Control::OwnerHwnd()
+	{
+		if (this->PublicData) {
+			return 	this->PublicData->HANDLE;
+		}
+		return NULL;
+	}
 	const Controls& Control::GetViewControls()
 	{
 		return this->ViewControls;
@@ -547,10 +554,6 @@ namespace ezui {
 			y += pCtrl->Y();
 		}
 		return Rect{ x,y,Width(),Height() };
-	}
-	const Rect& Control::GetViewRect()
-	{
-		return this->m_viewRect;
 	}
 	DockStyle Control::GetDockStyle()
 	{

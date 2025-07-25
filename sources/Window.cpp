@@ -127,7 +127,7 @@ namespace ezui {
 				tti.cbSize = sizeof(TOOLINFO);
 				tti.uFlags = TTF_SUBCLASS;// | TTF_TRACK;
 				tti.hwnd = Hwnd();
-				tti.rect = ctl->GetViewRect().ToRECT();
+				//tti.rect = ctl->GetViewRect().ToRECT();
 				tti.uId = (UINT_PTR)ctl;
 				tti.lpszText = (LPWSTR)text.c_str();
 				//添加一个tips信息
@@ -283,7 +283,7 @@ namespace ezui {
 	void Window::SetLayout(ezui::Control* layout) {
 		ASSERT(layout);
 		m_layout = layout;
-		m_layout->PublicData = this->PublicData;
+		m_layout->SetPublicData(this->PublicData);
 
 		if (m_layout->Style.FontFamily.empty()) {
 			WCHAR fontName[LF_FACESIZE] = { 0 };

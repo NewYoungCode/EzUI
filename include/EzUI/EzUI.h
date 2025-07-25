@@ -418,17 +418,21 @@ namespace ezui {
 		std::map<UIString, UIString> m_attrs;
 		// 管理子对象的释放
 		std::vector<Object*> m_childObjects;
-	public:
-		//用户自定义数据
-		int_t Tag = NULL;
+	protected:
 		//公共数据 请不要改动此变量
 		WindowData* PublicData = NULL;
-	protected:
 		//移除子对象
 		void RemoveObject(Object* object);
 	public:
+		//用户自定义数据
+		int_t Tag = NULL;
+	public:
 		Object(Object* parentObject = NULL);
 		virtual ~Object();
+		//设置公共数据(内部使用)
+		void SetPublicData(WindowData* data);
+		//获取公共数据(内部使用)
+		WindowData* GetPublicData();
 		//是否为窗口
 		virtual bool IsWindow() const { return false; }
 	public:

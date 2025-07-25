@@ -125,7 +125,6 @@ namespace ezui {
 		// 设置内容尺寸，仅限子类使用
 		virtual void SetContentSize(const Size& size);
 
-
 		// 绘制之前
 		virtual void OnPaintBefore(PaintEventArgs& args);
 
@@ -361,9 +360,6 @@ namespace ezui {
 		// 获取基于客户端区域的矩形
 		Rect GetClientRect();
 
-		// 获取控件在窗口中可视区域的矩形
-		const Rect& GetViewRect();
-
 		// 获取控件的 DockStyle（停靠方式）
 		DockStyle GetDockStyle();
 
@@ -402,6 +398,9 @@ namespace ezui {
 
 		// 设置控件属性
 		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue);
+
+		//获取控件所在的窗口句柄
+		HWND OwnerHwnd();
 
 		// 获取当前可见的子控件集合
 		const Controls& GetViewControls();
