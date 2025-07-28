@@ -154,6 +154,12 @@ namespace ezui {
 		std::function<void(Control*)> DelTips = NULL;
 		//处理消息过程的回调函数
 		std::function<LRESULT(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)> WndProc = NULL;
+
+#ifdef _DEBUG
+		virtual ~WindowData() {
+		}
+#endif
+
 	};
 
 	enum class LayoutState :byte {
@@ -416,9 +422,9 @@ namespace ezui {
 	private:
 		//属性集合
 		std::map<UIString, UIString> m_attrs;
+	protected:
 		// 管理子对象的释放
 		std::vector<Object*> m_childObjects;
-	protected:
 		//公共数据 请不要改动此变量
 		WindowData* m_publicData = NULL;
 		//移除子对象

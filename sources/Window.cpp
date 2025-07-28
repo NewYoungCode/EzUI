@@ -22,6 +22,13 @@ namespace ezui {
 		if (Hwnd()) {
 			::DestroyWindow(Hwnd());
 		}
+		////判断如果子对象采用了本窗口的公共数据 则释放子对象的时候需要将公共数据置零
+		//for (auto& it : m_childObjects) {
+		//	Control* ctrl = dynamic_cast<Control*>(it);
+		//	if (ctrl && ctrl->GetPublicData() == this->m_publicData) {
+		//		ctrl->SetPublicData(NULL);
+		//	}
+		//}
 		if (m_publicData) {
 			delete m_publicData;
 		}

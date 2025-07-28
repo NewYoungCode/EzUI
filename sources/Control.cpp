@@ -938,19 +938,16 @@ namespace ezui {
 		//清除绑定信息
 		if (m_publicData) {
 			m_publicData->RemoveControl(this);
-			m_publicData = NULL;
 		}
 		//释放弹簧
 		DestroySpacers();
-		Parent = NULL;
 	}
 	void Control::DestroySpacers() {
-		//控件释放的时候自动释放弹簧
-		auto spacersCopy = m_spacers;  // 复制一份避免迭代器错误
-		for (auto& it : spacersCopy) {
-			this->Remove(it, true);//移除且释放控件
+		for (auto itor = m_spacers.begin(); itor != m_spacers.end(); /* no increment */)
+		{
+			this->Remove(*itor, true);  // 移除弹簧控件 并且释放控件 
+			itor = m_spacers.begin();   // 获取新的迭代器
 		}
-		m_spacers.clear(); // 如果需要的话，清空原列表
 	}
 	int_t Control::IndexOf(Control* childCtl)
 	{
