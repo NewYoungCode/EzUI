@@ -452,6 +452,71 @@ namespace ezui {
 		SafeRelease(&pSink);
 		this->m_rgn = pPathGeometry;
 	}
+
+	GeometryPie::GeometryPie(const RectF& rectF, float startAngle, float endAngle)
+	{
+		auto rect = __To_D2D_RectF(rectF);
+		// 1. 计算圆心和半径
+		D2D1_POINT_2F center = {
+			(rect.left + rect.right) / 2.0f,
+			(rect.top + rect.bottom) / 2.0f
+		};
+
+		float radiusX = (rect.right - rect.left) / 2.0f;
+		float radiusY = (rect.bottom - rect.top) / 2.0f;
+
+		bool isFullCircle = fabsf(endAngle - startAngle) >= 359.999f;
+		if (isFullCircle) {
+			// 方法2：直接使用椭圆几何（更高效）
+			ID2D1EllipseGeometry* pEllipse = nullptr;
+			D2D1_ELLIPSE ellipse{ center, radiusX, radiusY };
+			D2D::g_Direct2dFactory->CreateEllipseGeometry(&ellipse, &pEllipse);
+			//赋值
+			this->m_rgn = pEllipse;
+		}
+		else {
+
+			// 2. 角度处理（转换为弧度）
+			float startRad = startAngle * (3.1415926f / 180.0f);
+			float endRad = endAngle * (3.1415926f / 180.0f);
+
+			// 3. 创建路径几何
+			ID2D1PathGeometry* pGeometry = nullptr;
+			D2D::g_Direct2dFactory->CreatePathGeometry(&pGeometry);
+
+			ID2D1GeometrySink* pSink = nullptr;
+			pGeometry->Open(&pSink);
+			// 4. 计算弧线起点和终点
+			D2D1_POINT_2F startPoint = {
+				center.x + radiusX * cosf(startRad),
+				center.y + radiusY * sinf(startRad)
+			};
+			D2D1_POINT_2F endPoint = {
+				center.x + radiusX * cosf(endRad),
+				center.y + radiusY * sinf(endRad)
+			};
+
+			// 5. 构造扇形路径
+			pSink->BeginFigure(center, D2D1_FIGURE_BEGIN_FILLED);
+			pSink->AddLine(startPoint);
+
+			D2D1_ARC_SEGMENT arc{
+				endPoint,
+				D2D1::SizeF(radiusX, radiusY),
+				0.0f,
+				(endRad > startRad) ? D2D1_SWEEP_DIRECTION_CLOCKWISE : D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE,
+				(fabsf(endRad - startRad) <= 3.1415926f) ? D2D1_ARC_SIZE_SMALL : D2D1_ARC_SIZE_LARGE
+			};
+			pSink->AddArc(arc);
+			pSink->AddLine(center);
+			pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
+			//释放
+			pSink->Close();
+			SafeRelease(&pSink);
+			//赋值
+			this->m_rgn = pGeometry;
+		}
+	}
 };
 
 namespace ezui {
@@ -790,15 +855,26 @@ namespace ezui {
 			m_render->DrawBitmap(bitmap, drawRectF, opacity);
 		}
 	}
-	void DXRender::DrawEllipse(const PointF& point, float radiusX, float radiusY, float width)
+	void DXRender::DrawEllipse(const RectF& rectF, float strokeWidth)
 	{
-		D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F((FLOAT)point.X, (FLOAT)point.Y), (FLOAT)radiusX, (FLOAT)radiusY);
-		m_render->DrawEllipse(ellipse, GetBrush(), (FLOAT)width, this->GetStrokeStyle());
+		GeometryPie pie(rectF, 0, 360);
+		DrawGeometry(pie.Get(), strokeWidth);
 	}
-	void DXRender::FillEllipse(const PointF& point, float radiusX, float radiusY)
+	void DXRender::FillEllipse(const RectF& rectF)
 	{
-		D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F((FLOAT)point.X, (FLOAT)point.Y), (FLOAT)radiusX, (FLOAT)radiusY);
-		m_render->FillEllipse(ellipse, GetBrush());
+		GeometryPie pie(rectF, 0, 360);
+		FillGeometry(pie.Get());
+	}
+
+	void DXRender::DrawPie(const RectF& rectF, float startAngle, float endAngle, float strokeWidth)
+	{
+		GeometryPie pie(rectF, startAngle, endAngle);
+		DrawGeometry(pie.Get(), strokeWidth);
+	}
+	void DXRender::FillPie(const RectF& rectF, float startAngle, float endAngle)
+	{
+		GeometryPie pie(rectF, startAngle, endAngle);
+		FillGeometry(pie.Get());
 	}
 	void DXRender::DrawPoint(const PointF& pt) {
 		D2D1_ELLIPSE ellipse = D2D1::Ellipse(__To_D2D_PointF(pt), 0.5, 0.5);

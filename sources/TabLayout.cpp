@@ -75,7 +75,6 @@ namespace ezui {
 	}
 	void TabLayout::OnLayout()
 	{
-		m_timer.Stop();
 		Sort();
 		this->EndLayout();
 	}
@@ -96,6 +95,7 @@ namespace ezui {
 
 	void TabLayout::SlideToPage(int_t index, SlideDirection dlideDirection, int_t durationMs, int_t fps)
 	{
+		m_timer.Stop();
 		//滑动方向
 		m_dlideDirection = dlideDirection;
 
@@ -130,7 +130,6 @@ namespace ezui {
 		}
 
 		m_stepPerFrame = offsetTotal * 1.0f / totalFrames;
-		m_timer.Stop();
 		m_timer.Interval = FRAME_INTERVAL_MS;
 		m_timer.Start();
 	}

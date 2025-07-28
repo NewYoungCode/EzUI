@@ -120,6 +120,13 @@ namespace ezui {
 			}
 		}
 	public:
+		/// <summary>
+		/// 将两个几何图形通过指定的合并模式（Union、Intersect、Xor、Exclude）合并到一个输出几何中。
+		/// </summary>
+		/// <param name="out">合并结果输出到该 Geometry。</param>
+		/// <param name="a">参与合并的第一个 Geometry。</param>
+		/// <param name="b">参与合并的第二个 Geometry。</param>
+		/// <param name="COMBINE_MODE">几何合并模式，取值如 D2D1_COMBINE_MODE_UNION、INTERSECT、XOR、EXCLUDE。</param>
 		static void Combine(Geometry& out, const Geometry& a, const Geometry& b, D2D1_COMBINE_MODE COMBINE_MODE)
 		{
 			ID2D1PathGeometry* outPathGeometry = NULL;
@@ -134,20 +141,48 @@ namespace ezui {
 			out.m_rgn = outPathGeometry;
 			geometrySink->Release();
 		}
-		//两块区域取最大边界
+
+		/// <summary>
+		/// 合并两个区域，取它们的联合部分（即最大边界区域）。
+		/// </summary>
 		static void Union(Geometry& out, const Geometry& a, const Geometry& b) {
 			Combine(out, a, b, D2D1_COMBINE_MODE::D2D1_COMBINE_MODE_UNION);
 		}
-		//两块区域有交集的部分
+
+		/// <summary>
+		/// 获取两个区域的交集部分。
+		/// </summary>
 		static void Intersect(Geometry& out, const Geometry& a, const Geometry& b) {
 			Combine(out, a, b, D2D1_COMBINE_MODE::D2D1_COMBINE_MODE_INTERSECT);
 		}
+
+		/// <summary>
+		/// 合并两个区域，保留不重叠的部分（异或运算）。
+		/// </summary>
 		static void Xor(Geometry& out, const Geometry& a, const Geometry& b) {
 			Combine(out, a, b, D2D1_COMBINE_MODE::D2D1_COMBINE_MODE_XOR);
 		}
+
+		/// <summary>
+		/// 从第一个区域中排除第二个区域的部分（差集）。
+		/// </summary>
 		static void Exclude(Geometry& out, const Geometry& a, const Geometry& b) {
 			Combine(out, a, b, D2D1_COMBINE_MODE::D2D1_COMBINE_MODE_EXCLUDE);
 		}
+	};
+
+	//生成扇形
+	class UI_EXPORT GeometryPie :public Geometry {
+	public:
+		GeometryPie(const RectF& rectF, float startAngle, float endAngle);
+		virtual ~GeometryPie() {};
+	};
+
+	//生成圆形/椭圆
+	class UI_EXPORT GeometryEllipse :public GeometryPie {
+	public:
+		GeometryEllipse(const RectF& rectF) :GeometryPie(rectF, 0, 360) {}
+		virtual ~GeometryEllipse() {};
 	};
 
 	class UI_EXPORT DXPath {
@@ -282,8 +317,10 @@ namespace ezui {
 		void DrawImage(DXImage* _image, const  RectF& tagRect, float opacity = 1);//绘制图像
 		void DrawBezier(const PointF& startPoint, const Bezier& points, float width = 1);//贝塞尔线
 		void DrawBezier(const PointF& startPoint, std::list<Bezier>& points, float width = 1);//贝塞尔线
-		void DrawEllipse(const PointF& point, float radiusX, float radiusY, float width = 1);
-		void FillEllipse(const PointF& point, float radiusX, float radiusY);
+		void DrawEllipse(const RectF& rectF, float width = 1);
+		void FillEllipse(const RectF& rectF);
+		void DrawPie(const RectF& rectF, float startAngle, float endAngle, float strokeWidth = 1);
+		void FillPie(const RectF& rectF, float startAngle, float endAngle);
 		void DrawPoint(const PointF& pt);
 		void DrawArc(const RectF& rect, float startAngle, float sweepAngle, float width = 1);//未实现
 		void DrawArc(const PointF& point1, const  PointF& point2, const PointF& point3, float width = 1);
