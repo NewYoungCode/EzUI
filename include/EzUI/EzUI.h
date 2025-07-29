@@ -20,6 +20,7 @@ namespace ezui {
 	class Window;
 	class Spacer;
 	class ScrollBar;
+	class Bitmap;
 	enum class Cursor :ULONG_PTR;
 
 #if 1
@@ -79,7 +80,7 @@ namespace ezui {
 
 	class UI_EXPORT Color :public ezui::__EzUI__Color {
 	public:
-		Color(const ezui::__EzUI__Color& copy) { this->RGBA = copy.GetValue(); }
+		Color(const ezui::__EzUI__Color& copy) { this->BGRA = copy.GetValue(); }
 		Color(const DWORD& rgba = 0) :ezui::__EzUI__Color(rgba) {}
 		Color(BYTE r, BYTE g, BYTE b, BYTE a = 255) :ezui::__EzUI__Color(r, g, b, a) {}
 	public:
@@ -92,8 +93,10 @@ namespace ezui {
 	class UI_EXPORT Image :public DXImage {
 	public:
 		virtual ~Image() {}
+		//创建带预乘Alpha的BGRA图片
 		Image(int_t width, int_t height) :DXImage(width, height) {}
 		Image(HBITMAP hBitmap) :DXImage(hBitmap) {}
+		Image(Bitmap* bitmap);
 		Image(IStream* iStream) :DXImage(iStream) {}
 		Image(const std::wstring& fileName) :DXImage(fileName) {}
 		Image(const void* data, size_t dataCount) :DXImage(data, dataCount) {}

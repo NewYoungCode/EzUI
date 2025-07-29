@@ -323,6 +323,7 @@ namespace ezui {
 	}
 	DXImage::DXImage(HBITMAP hBitmap) {
 		if (D2D::g_ImageFactory) {
+			//WICBitmapUsePremultipliedAlpha:传入的图像颜色值已经与 Alpha 通道预乘
 			D2D::g_ImageFactory->CreateBitmapFromHBITMAP(hBitmap, NULL, WICBitmapUsePremultipliedAlpha, &m_bitMap);
 			UINT width, height;
 			m_bitMap->GetSize(&width, &height);
@@ -605,7 +606,7 @@ namespace ezui {
 			D2D1_RENDER_TARGET_TYPE_DEFAULT,
 			D2D1::PixelFormat(
 				DXGI_FORMAT_B8G8R8A8_UNORM,
-				D2D1_ALPHA_MODE_PREMULTIPLIED),//解决在分层窗中的鼠标穿透问题
+				D2D1_ALPHA_MODE_PREMULTIPLIED),//表示三通道的值已经是预乘了a通之后的数值
 			0,
 			0,
 			D2D1_RENDER_TARGET_USAGE_NONE,

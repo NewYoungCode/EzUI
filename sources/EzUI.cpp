@@ -1,4 +1,5 @@
 #include "EzUI.h"
+#include "Bitmap.h"
 #pragma comment(lib,"Shlwapi.lib")
 #pragma comment(lib,"Uuid.lib")
 #pragma comment(lib, "comctl32.lib")
@@ -192,6 +193,10 @@ namespace ezui {
 			}
 		} while (false);
 		return color;
+	}
+
+	Image::Image(Bitmap* bitmap) :DXImage(bitmap->GetHBITMAP())
+	{
 	}
 
 	Image* Image::Make(const UIString& fileOrRes) {

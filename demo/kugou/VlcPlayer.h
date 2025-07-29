@@ -2,7 +2,12 @@
 #include "EzUI/Control.h"
 #include "EzUI/BorderlessWindow.h"
 #include "EzUI/Label.h"
+#include "EzUI/Task.h"
 #include <mutex>
+#ifdef _WIN32
+#include <basetsd.h>
+typedef SSIZE_T ssize_t;
+#endif
 #include "vlc/vlc.h"
 #pragma comment(lib,"libvlc.lib")
 #pragma comment(lib,"libvlccore.lib")
@@ -15,6 +20,7 @@ private:
 	libvlc_instance_t* m_vlc = NULL;
 	libvlc_media_player_t* m_vlcplayer = NULL;
 	libvlc_time_t m_duration = 0;
+	Task * m_task = NULL;
 public:
 	std::mutex mtx;
 	unsigned int IMG_WIDTH = 0;

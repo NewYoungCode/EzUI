@@ -5,8 +5,8 @@ namespace ezui {
 	class UI_EXPORT Bitmap {
 	public:
 		enum class PixelFormat :int_t {
-			PixelFormatRGB = 24,
-			PixelFormatARGB = 32
+			BGR = 24,//不透明BGR位图
+			BGRA = 32//带透明通道但是RGB数值未预乘A值的位图
 		};
 	private:
 		int_t m_width = 0;
@@ -20,17 +20,18 @@ namespace ezui {
 	protected:
 		void Create(int_t width, int_t height, PixelFormat piexlFormat);
 	public:
-		int_t Width();
-		int_t Height();
-		Bitmap(int_t width, int_t height, PixelFormat piexlFormat = PixelFormat::PixelFormatRGB);
-		Bitmap(HDC dc, const Rect& rect, PixelFormat piexlFormat = PixelFormat::PixelFormatRGB);
+		int_t Width()const;
+		int_t Height()const;
+		Bitmap(int_t width, int_t height, PixelFormat piexlFormat = PixelFormat::BGR);
+		Bitmap(HDC dc, const Rect& rect, PixelFormat piexlFormat = PixelFormat::BGR);
 		void SetPixel(int_t x, int_t y, const Color& color);
-		Color GetPixel(int_t x, int_t y);
+		Color GetPixel(int_t x, int_t y)const;
 		byte* GetPixel();
 		void Earse(const Rect& rect);//抹除矩形内容
 		HBITMAP GetHBITMAP();
 		HDC GetHDC();
 		void Save(const UIString& fileName);
+		Bitmap* Clone()const;
 		virtual ~Bitmap();
 	};
 };

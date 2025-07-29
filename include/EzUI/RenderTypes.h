@@ -317,7 +317,7 @@ namespace ezui {
 	class __EzUI__Color
 	{
 	protected:
-		DWORD RGBA = 0;
+		DWORD BGRA = 0;
 	public:
 		__EzUI__Color() {}
 		__EzUI__Color(
@@ -326,111 +326,112 @@ namespace ezui {
 			const BYTE& b,
 			const BYTE& a = 255)
 		{
-			((BYTE*)&RGBA)[0] = r;
-			((BYTE*)&RGBA)[1] = g;
-			((BYTE*)&RGBA)[2] = b;
-			((BYTE*)&RGBA)[3] = a;
+			((BYTE*)&BGRA)[0] = b;
+			((BYTE*)&BGRA)[1] = g;
+			((BYTE*)&BGRA)[2] = r;
+			((BYTE*)&BGRA)[3] = a;
 		}
-		__EzUI__Color(DWORD argb)
+		__EzUI__Color(DWORD bgra)
 		{
-			RGBA = argb;
+			BGRA = bgra;
 		}
 		virtual ~__EzUI__Color() {}
 		BYTE GetR() const
 		{
-			return ((BYTE*)&RGBA)[0];
+			return ((BYTE*)&BGRA)[2];
 		}
 		BYTE GetG() const
 		{
-			return ((BYTE*)&RGBA)[1];
+			return ((BYTE*)&BGRA)[1];
 		}
 		BYTE GetB() const
 		{
-			return ((BYTE*)&RGBA)[2];
+			return ((BYTE*)&BGRA)[0];
 		}
 		BYTE GetA() const
 		{
-			return ((BYTE*)&RGBA)[3];
+			return ((BYTE*)&BGRA)[3];
 		}
 		DWORD GetValue() const
 		{
-			return RGBA;
+			return BGRA;
 		}
-		void SetValue(DWORD argb)
+		void SetValue(DWORD bgra)
 		{
-			RGBA = argb;
+			BGRA = bgra;
 		}
 		void SetR(BYTE value) {
-			((BYTE*)&RGBA)[0] = value;
+			((BYTE*)&BGRA)[2] = value;
 		}
 		void SetG(BYTE value) {
-			((BYTE*)&RGBA)[1] = value;
+			((BYTE*)&BGRA)[1] = value;
 		}
 		void SetB(BYTE value) {
-			((BYTE*)&RGBA)[2] = value;
+			((BYTE*)&BGRA)[0] = value;
 		}
 		void SetA(BYTE value) {
-			((BYTE*)&RGBA)[3] = value;
+			((BYTE*)&BGRA)[3] = value;
 		}
 	public:
-		// Common color constants
+		// Common color constants (BGRA format)
 		enum : DWORD
 		{
 			Transparent = 0x00000000, // 全透明
 
-			Black = 0xFF000000, // 黑色
-			White = 0xFFFFFFFF, // 白色
-			Gray = 0xFF808080, // 灰色
-			LightGray = 0xFFD3D3D3, // 浅灰色
-			DarkGray = 0xFFA9A9A9, // 深灰色
+			Black = 0xFF000000,       // 黑色
+			White = 0xFFFFFFFF,       // 白色
+			Gray = 0xFF808080,        // 灰色
+			LightGray = 0xFFD3D3D3,   // 浅灰色
+			DarkGray = 0xFFA9A9A9,    // 深灰色
 
-			Red = 0xFF0000FF, // 红色
-			DarkRed = 0xFF00008B, // 深红色
-			LightCoral = 0xFF8080F0, // 浅珊瑚红
-			Tomato = 0xFF4763FF, // 番茄色
-			Crimson = 0xFF3C14DC, // 猩红色
+			Red = 0xFFFF0000,         // 红色
+			DarkRed = 0xFF8B0000,     // 深红色
+			LightCoral = 0xFFF08080,  // 浅珊瑚红
+			Tomato = 0xFFFF6347,      // 番茄色
+			Crimson = 0xFFDC143C,     // 猩红色
 
-			Green = 0xFF00FF00, // 绿色
-			Lime = 0xFF00FF00, // 酸橙绿（亮绿）
-			DarkGreen = 0xFF006400, // 深绿色
-			LawnGreen = 0xFF00FC7C, // 草坪绿
-			PaleGreen = 0xFF98FB98, // 苍绿色
+			Green = 0xFF00FF00,       // 绿色
+			Lime = 0xFF00FF00,        // 酸橙绿（亮绿）
+			DarkGreen = 0xFF006400,   // 深绿色
+			LawnGreen = 0xFF7CFC00,   // 草坪绿
+			PaleGreen = 0xFF98FB98,   // 苍绿色
 
-			Blue = 0xFFFF0000, // 蓝色
-			RoyalBlue = 0xFFE16941, // 皇家蓝
-			DodgerBlue = 0xFFFF901E, // 道奇蓝
-			DeepSkyBlue = 0xFFFFBF00, // 深天蓝
-			LightBlue = 0xFFE6D8AD, // 浅蓝色
+			Blue = 0xFF0000FF,        // 蓝色
+			RoyalBlue = 0xFF4169E1,   // 皇家蓝
+			DodgerBlue = 0xFF1E90FF,  // 道奇蓝
+			DeepSkyBlue = 0xFF00BFFF, // 深天蓝
+			LightBlue = 0xFFADD8E6,   // 浅蓝色
 
-			Yellow = 0xFFFFFF00, // 黄色
-			Gold = 0xFFD700FF, // 金色
-			LightYellow = 0xFFE0FFFF, // 浅黄色
-			Khaki = 0xFF8CE6F0, // 卡其色
+			Yellow = 0xFF00FFFF,      // 黄色
+			Gold = 0xFFFFD700,        // 金色
+			LightYellow = 0xFFFFFFE0, // 浅黄色
+			Khaki = 0xFFF0E68C,       // 卡其色
 
-			Orange = 0xFFA500FF, // 橙色
-			DarkOrange = 0xFF008CFF, // 深橙色
-			Coral = 0xFF507FFF, // 珊瑚色
-			Salmon = 0xFF7280FA, // 鲑鱼色
+			Orange = 0xFFFFA500,      // 橙色
+			DarkOrange = 0xFFFF8C00,  // 深橙色
+			Coral = 0xFFFF7F50,       // 珊瑚色
+			Salmon = 0xFFFA8072,      // 鲑鱼色
 
-			Purple = 0xFF800080, // 紫色
-			MediumPurple = 0xFFDB7093, // 中紫色
-			Indigo = 0xFF82004B, // 靛青色
-			Violet = 0xFFEE82EE, // 紫罗兰
-			Plum = 0xFFDDA0DD, // 李子紫
+			Purple = 0xFF800080,      // 紫色
+			MediumPurple = 0xFF9370DB,// 中紫色
+			Indigo = 0xFF4B0082,      // 靛青色
+			Violet = 0xFFEE82EE,      // 紫罗兰
+			Plum = 0xFFDDA0DD,        // 李子紫
 
-			Cyan = 0xFFFFFF00, // 青色
-			Teal = 0xFF008080, // 水鸭色
-			Aqua = 0xFFFFFF00, // 浅绿色（水色）
-			Turquoise = 0xFFD0E040, // 绿松石色
+			Cyan = 0xFF00FFFF,        // 青色
+			Teal = 0xFF808000,        // 水鸭色（G+B）
+			Aqua = 0xFF00FFFF,        // 浅绿色（水色）
 
-			Brown = 0xFF2A2AA5, // 棕色
-			Maroon = 0xFF000080, // 栗色（褐红）
-			Tan = 0xFF8CB4D2, // 茶色
-			Beige = 0xFFDCF5F5, // 米色
+			Turquoise = 0xFF40E0D0,   // 绿松石色
 
-			Navy = 0xFF800000, // 藏青色
-			Olive = 0xFF008080, // 橄榄色
-			Silver = 0xFFC0C0C0  // 银色
+			Brown = 0xFFA52A2A,       // 棕色
+			Maroon = 0xFF800000,      // 栗色（褐红）
+			Tan = 0xFFD2B48C,         // 茶色
+			Beige = 0xFFF5F5DC,       // 米色
+
+			Navy = 0xFF000080,        // 藏青色
+			Olive = 0xFF808000,       // 橄榄色
+			Silver = 0xFFC0C0C0       // 银色
 		};
 	};
 

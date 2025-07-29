@@ -23,10 +23,10 @@ namespace ezui {
 		m_bmp = ::CreateDIBSection(NULL, &m_bmpInfo, DIB_RGB_COLORS, (void**)&m_point, NULL, 0);
 		this->GetHDC();
 	}
-	int_t Bitmap::Width() {
+	int_t Bitmap::Width()const {
 		return m_width;
 	}
-	int_t Bitmap::Height() {
+	int_t Bitmap::Height() const {
 		return m_height;
 	}
 	void Bitmap::SetPixel(int_t x, int_t y, const Color& color) {
@@ -39,7 +39,7 @@ namespace ezui {
 		((BYTE*)point)[0] = color.GetB();//修改B通道数值
 	}
 
-	Color Bitmap::GetPixel(int_t x, int_t y) {
+	Color Bitmap::GetPixel(int_t x, int_t y) const {
 		DWORD* point = (DWORD*)this->m_point + (x + y * this->Width());//起始地址+坐标偏移
 		BYTE a = 255, r, g, b;
 		if (m_bmpInfo.bmiHeader.biBitCount == 32) { //argb
@@ -90,7 +90,7 @@ namespace ezui {
 	void Bitmap::Save(const UIString& fileName)
 	{
 		// 保存位图为BMP文件
-		BITMAPINFOHEADER& bi = m_bmpInfo.bmiHeader;
+		const BITMAPINFOHEADER& bi = m_bmpInfo.bmiHeader;
 		BITMAPFILEHEADER bmfh;
 		bmfh.bfType = 0x4D42; // "BM"字节标记
 		bmfh.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + Width() * Height() * (m_bmpInfo.bmiHeader.biBitCount / 8); // 文件大小
@@ -111,6 +111,19 @@ namespace ezui {
 		ofs.close();
 		delete[] buffer;
 	}
+
+	Bitmap* Bitmap::Clone() const {
+		if (m_width <= 0 || m_height <= 0) {
+			return NULL;
+		}
+		// 创建新 Bitmap 对象（保留格式）
+		Bitmap* clone = new Bitmap(m_width, m_height, (m_bmpInfo.bmiHeader.biBitCount == 32) ? PixelFormat::BGRA : PixelFormat::BGR);
+		//拷贝像素
+		int pixelBytes = m_bmpInfo.bmiHeader.biBitCount == 24 ? 3 : 4;
+		memcpy(clone->m_point, m_point, m_width * m_height * pixelBytes);
+		return clone;
+	}
+
 	Bitmap::~Bitmap() {
 		if (m_hdc) {
 			::DeleteDC(m_hdc);

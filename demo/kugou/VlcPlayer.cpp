@@ -15,12 +15,17 @@ void unlock_cb(void* opaque, void* picture, void* const* planes)
 void display_cb(void* opaque, void* picture)
 {
 	VlcPlayer* vp = (VlcPlayer*)opaque;
-	if (vp->PlayingCallback) {
-		vp->PlayingCallback(vp->BuffBitmap);
-	}
+	// 通知主线程刷新
+	BeginInvoke([=] {
+		if (vp->PlayingCallback) {
+			vp->PlayingCallback(vp->BuffBitmap);
+		}
+		vp->Invalidate();
+		});
 }
 void cleanup_cb(void* opaque)
 {
+	VlcPlayer* vp = (VlcPlayer*)opaque;
 }
 
 unsigned setup_cb(void** opaque, char* chroma, unsigned* width, unsigned* height, unsigned* pitches, unsigned* lines)
@@ -31,7 +36,7 @@ unsigned setup_cb(void** opaque, char* chroma, unsigned* width, unsigned* height
 	if (vp->BuffBitmap != NULL) {
 		delete vp->BuffBitmap;
 	}
-	vp->BuffBitmap = new Bitmap(w, h, Bitmap::PixelFormat::PixelFormatARGB);
+	vp->BuffBitmap = new Bitmap(w, h, Bitmap::PixelFormat::BGRA);
 	memcpy(chroma, "RV32", 4);
 	*pitches = w * 4;
 	*lines = h;
@@ -47,6 +52,9 @@ VlcPlayer::VlcPlayer()
 VlcPlayer::~VlcPlayer()
 {
 	Stop();
+	if (m_task) {
+		delete m_task;
+	}
 	if (m_vlcplayer) {
 		libvlc_media_player_release(m_vlcplayer);
 	}
@@ -58,7 +66,7 @@ VlcPlayer::~VlcPlayer()
 void VlcPlayer::OnBackgroundPaint(PaintEventArgs& args) {
 	__super::OnBackgroundPaint(args);
 	if (BuffBitmap) {
-		Image img(BuffBitmap->GetHBITMAP());
+		Image img(BuffBitmap);
 		img.SizeMode = ImageSizeMode::Zoom;
 		//img.Offset = Rect(500,50,200,200);
 		args.Graphics.DrawImage(&img, GetRect());
@@ -67,15 +75,37 @@ void VlcPlayer::OnBackgroundPaint(PaintEventArgs& args) {
 void VlcPlayer::SetConfig()
 {
 }
-void VlcPlayer::OpenPath(const UIString& file)
+void VlcPlayer::OpenPath(const UIString& file_)
 {
-	Stop();
-	libvlc_media_t* pmedia = libvlc_media_new_path(m_vlc, file.c_str());
-	libvlc_media_parse(pmedia);//
-	libvlc_media_player_set_media(m_vlcplayer, pmedia);
-	m_duration = libvlc_media_get_duration(pmedia);//
-	libvlc_media_player_play(m_vlcplayer);
-	libvlc_media_release(pmedia);
+	if (m_task && m_task->IsStopped()) {
+		delete m_task;
+		m_task = NULL;
+	}
+	else if (m_task && !m_task->IsStopped()) {
+		//上一次播放请求尚未完成
+		return;
+	}
+	m_task = new Task([&, file_]() {
+#ifdef _DEBUG
+		OutputDebugStringA("-----------------------------------------------------------stop in..\n");
+#endif // _DEBUG
+		Stop();
+		//回到主线程进行处理
+		Invoke([&]() {
+			UIString file = file_.replace("/", "\\");
+			libvlc_media_t* pmedia = libvlc_media_new_path(m_vlc, file.c_str());
+			libvlc_media_parse(pmedia);//
+			libvlc_media_player_set_media(m_vlcplayer, pmedia);
+			m_duration = libvlc_media_get_duration(pmedia);//
+			libvlc_media_player_play(m_vlcplayer);
+			libvlc_media_release(pmedia);
+			});
+#ifdef _DEBUG
+		OutputDebugStringA("-----------------------------------------------------------stop out..\n");
+#endif // _DEBUG
+
+		});
+
 }
 void VlcPlayer::OpenUrl(const UIString& url)
 {

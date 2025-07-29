@@ -252,9 +252,11 @@ namespace ezui {
 	public:
 		bool Visible = true;
 		void DecodeOfRender(ID2D1RenderTarget* render);
+		//如果HBITMAP带有透明通道 确保传入的图像颜色值已经与 Alpha 通道预乘
 		DXImage(HBITMAP hBitmap);
 		DXImage(IStream* istram);
 		DXImage(const std::wstring& file);
+		//创建带预乘Alpha的BGRA图片
 		DXImage(int_t width, int_t height);
 		DXImage(const void* data, size_t count);
 		ID2D1Bitmap* Get();
