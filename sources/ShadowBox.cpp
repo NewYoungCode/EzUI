@@ -45,6 +45,7 @@ namespace ezui {
 			Top = iSize + radius,
 			Right = m_Width - iSize - radius,
 			Bottom = m_Height - iSize - radius;
+		//处理四边的阴影
 		int x = 0, y = 0;
 		for (size_t i = 0; i < iSize; ++i)
 		{
@@ -60,6 +61,7 @@ namespace ezui {
 				setA(m_Width - i - 1, y, iAplpha, _radius);
 			}
 		}
+		//处理R角的阴影
 		double fL = 0;
 		int iSizeR = iSize + radius;
 		for (int y = 0; y < iSizeR; ++y)
