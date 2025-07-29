@@ -96,14 +96,16 @@ namespace ezui {
 
 	void ShadowBox::setA(int_t x, int_t y, BYTE a, float radius) {
 		//如果窗口没有圆角 则不允许圆角绘制到窗口内部去造成遮挡影响观感
-		if (radius == 0 && m_clipRect.Contains(x, y)) { //不允许绘制在OWner窗口区域
+		if (std::abs(radius) < 1e-6f && m_clipRect.Contains(x, y)) { //不允许绘制在OWner窗口区域
 			return;
 		}
 		DWORD* point = (DWORD*)m_bufBitmap->GetPixel() + (x + y * m_bufBitmap->Width());//起始地址+坐标偏移
 		((BYTE*)point)[3] = a;//修改A通道数值
-		//((BYTE*)point)[2] = 0;//修改R通道数值
-		//((BYTE*)point)[1] = 0;//修改G通道数值
-		//((BYTE*)point)[0] = 0;//修改B通道数值
+		//使用A通道数值进行预乘
+		float opacity = (1.0f / 255.0f) * a;
+		((BYTE*)point)[2] = 50 * opacity;//修改R通道数值
+		((BYTE*)point)[1] = 50 * opacity;//修改G通道数值
+		((BYTE*)point)[0] = 50 * opacity;//修改B通道数值
 	}
 	void ShadowBox::Update(int_t _shadowWidth, const Border& border) {
 		HWND ownerWnd = ::GetWindow(m_hWnd, GW_OWNER);
