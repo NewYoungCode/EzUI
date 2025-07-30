@@ -813,7 +813,7 @@ namespace ezui {
 	void Window::DoPaint(HDC winHDC, const Rect& rePaintRect) {
 #define COUNT_ONPAINT 0
 #if COUNT_ONPAINT
-		StopWatch sw;
+		auto t1 = ::GetTickCount64();
 #endif // COUNT_ONPAINT
 #if USED_DIRECT2D
 		DXRender graphics(winHDC, 0, 0, GetClientRect().Width, GetClientRect().Height);
@@ -826,7 +826,7 @@ namespace ezui {
 #endif
 #if COUNT_ONPAINT
 		char buf[256]{ 0 };
-		sprintf(buf, "OnPaint Count(%d) (%d,%d,%d,%d) %dms \n", args.PublicData->PaintCount, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, (int)sw.ElapsedMilliseconds());
+		sprintf(buf, "%ld OnPaint Count(%d) Rect(%d,%d,%d,%d) %dms \n", ::GetTickCount64(), args.PublicData->PaintCount, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, ::GetTickCount64() - t1);
 		OutputDebugStringA(buf);
 #endif // COUNT_ONPAINT
 
