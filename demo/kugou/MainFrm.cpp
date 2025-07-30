@@ -26,7 +26,7 @@ void MainFrm::InitForm() {
 
 	//设置窗口边框样式
 	this->Border.Radius = 15;
-	this->Border.Color = Color(128, 128, 128, 100);
+	this->Border.Color = Color(0, 0, 0, 100);
 	this->Border = 1;
 
 	//关闭阴影

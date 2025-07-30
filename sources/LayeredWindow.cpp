@@ -20,7 +20,7 @@ namespace ezui {
 			};
 		//获取客户区大小 创建一个位图给窗口绘制
 		Size sz = GetClientRect().GetSize();
-		m_winBitmap = new Bitmap(sz.Width, sz.Height, Bitmap::PixelFormat::BGRA);
+		m_winBitmap = new Bitmap(sz.Width, sz.Height);
 	}
 	LayeredWindow::~LayeredWindow() {
 		if (m_winBitmap) {
@@ -113,7 +113,7 @@ namespace ezui {
 		if (m_winBitmap) {
 			delete m_winBitmap;
 		}
-		m_winBitmap = new Bitmap(sz.Width, sz.Height, Bitmap::PixelFormat::BGRA);
+		m_winBitmap = new Bitmap(sz.Width, sz.Height);
 		__super::OnSize(sz);
 	}
 

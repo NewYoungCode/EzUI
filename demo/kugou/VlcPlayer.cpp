@@ -36,7 +36,7 @@ unsigned setup_cb(void** opaque, char* chroma, unsigned* width, unsigned* height
 	if (vp->BuffBitmap != NULL) {
 		delete vp->BuffBitmap;
 	}
-	vp->BuffBitmap = new Bitmap(w, h, Bitmap::PixelFormat::BGRA);
+	vp->BuffBitmap = new Bitmap(w, h);
 	memcpy(chroma, "RV32", 4);
 	*pitches = w * 4;
 	*lines = h;

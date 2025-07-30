@@ -101,11 +101,11 @@ namespace ezui {
 		}
 		DWORD* point = (DWORD*)m_bufBitmap->GetPixel() + (x + y * m_bufBitmap->Width());//起始地址+坐标偏移
 		((BYTE*)point)[3] = a;//修改A通道数值
-		//使用A通道数值进行预乘
-		float opacity = (1.0f / 255.0f) * a;
-		((BYTE*)point)[2] = 50 * opacity;//修改R通道数值
-		((BYTE*)point)[1] = 50 * opacity;//修改G通道数值
-		((BYTE*)point)[0] = 50 * opacity;//修改B通道数值
+		////使用A通道数值进行预乘
+		//float opacity = (1.0f / 255.0f) * a;
+		//((BYTE*)point)[2] = 50 * opacity;//修改R通道数值
+		//((BYTE*)point)[1] = 50 * opacity;//修改G通道数值
+		//((BYTE*)point)[0] = 50 * opacity;//修改B通道数值
 	}
 	void ShadowBox::Update(int_t _shadowWidth, const Border& border) {
 		HWND ownerWnd = ::GetWindow(m_hWnd, GW_OWNER);
@@ -137,11 +137,11 @@ namespace ezui {
 			delete m_bufBitmap;
 			m_bufBitmap = NULL;
 		}
-		m_bufBitmap = new Bitmap(width, height, Bitmap::PixelFormat::BGRA);//32位透明图
+		m_bufBitmap = new Bitmap(width, height);//32位透明图
 		Rect rect{ 0,0,width, height };
 		SetShadow(rect.Width, rect.Height, _shadowWidth, border.TopLeftRadius);
 
-#if 0
+#if 1
 		{
 			int_t roundWidth = m_bufBitmap->Width() - _shadowWidth * 2;
 			int_t roundHeight = m_bufBitmap->Height() - _shadowWidth * 2;
@@ -196,7 +196,7 @@ namespace ezui {
 				int_t value2 = borderRight > borderBottom ? borderRight : borderBottom;
 				int_t maxBorder = value1 > value2 ? value1 : value2;
 				Geometry rr(Rect(0, 0, roundWidth, roundHeight), topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
-				render->DrawGeometry(rr.Get(), maxBorder - 0.5f);//-0.5是因为Geometry这种方式抗锯齿导致看起来边框很宽
+				render->DrawGeometry(rr.Get(), maxBorder / 2.0f);//-0.5是因为Geometry这种方式抗锯齿导致看起来边框很宽
 				render->SetTransform(0, 0);
 			}
 

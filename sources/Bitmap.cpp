@@ -1,25 +1,25 @@
 #include "Bitmap.h"
 namespace ezui {
 
-	Bitmap::Bitmap(int_t width, int_t height, PixelFormat piexlFormat) {
-		Create(width, height, piexlFormat);
+	Bitmap::Bitmap(int_t width, int_t height) {
+		Create(width, height);
 	}
-	Bitmap::Bitmap(HDC dc, const Rect& rect, PixelFormat piexlFormat) {
-		Create(rect.Width, rect.Height, piexlFormat);
+	Bitmap::Bitmap(HDC dc, const Rect& rect) {
+		Create(rect.Width, rect.Height);
 		::BitBlt(this->GetHDC(), 0, 0, rect.Width, rect.Height, dc, rect.X, rect.Y, SRCCOPY);
 	}
-	void Bitmap::Create(int_t width, int_t height, PixelFormat piexlFormat) {
+	void Bitmap::Create(int_t width, int_t height) {
 		m_width = width;
 		m_height = height;
 		memset(&m_bmpInfo, 0, sizeof(m_bmpInfo));
 		BITMAPINFOHEADER& bmih = m_bmpInfo.bmiHeader;
 		bmih.biSize = sizeof(bmih);
-		bmih.biBitCount = (byte)piexlFormat;
+		bmih.biBitCount = 32;
 		bmih.biCompression = BI_RGB;
 		bmih.biPlanes = 1;
 		bmih.biWidth = width;
 		bmih.biHeight = -height;
-		bmih.biSizeImage = 0;
+		bmih.biSizeImage = width * height * 4;
 		m_bmp = ::CreateDIBSection(NULL, &m_bmpInfo, DIB_RGB_COLORS, (void**)&m_point, NULL, 0);
 		this->GetHDC();
 	}
@@ -117,7 +117,7 @@ namespace ezui {
 			return NULL;
 		}
 		// 创建新 Bitmap 对象（保留格式）
-		Bitmap* clone = new Bitmap(m_width, m_height, (m_bmpInfo.bmiHeader.biBitCount == 32) ? PixelFormat::BGRA : PixelFormat::BGR);
+		Bitmap* clone = new Bitmap(m_width, m_height);
 		//拷贝像素
 		int pixelBytes = m_bmpInfo.bmiHeader.biBitCount == 24 ? 3 : 4;
 		memcpy(clone->m_point, m_point, m_width * m_height * pixelBytes);

@@ -2,12 +2,8 @@
 #include "EzUI.h"
 
 namespace ezui {
+	//BGRA 32位图
 	class UI_EXPORT Bitmap {
-	public:
-		enum class PixelFormat :int_t {
-			BGR = 24,//不透明BGR位图
-			BGRA = 32//带透明通道但是RGB数值未预乘A值的位图
-		};
 	private:
 		int_t m_width = 0;
 		int_t m_height = 0;
@@ -18,12 +14,13 @@ namespace ezui {
 		Bitmap(const Bitmap& hBitmap) = delete;
 		void operator=(const Bitmap& hBitmap) = delete;
 	protected:
-		void Create(int_t width, int_t height, PixelFormat piexlFormat);
+		void Create(int_t width, int_t height);
 	public:
 		int_t Width()const;
 		int_t Height()const;
-		Bitmap(int_t width, int_t height, PixelFormat piexlFormat = PixelFormat::BGR);
-		Bitmap(HDC dc, const Rect& rect, PixelFormat piexlFormat = PixelFormat::BGR);
+		//BGRA 32位图
+		Bitmap(int_t width, int_t height);
+		Bitmap(HDC dc, const Rect& rect);
 		void SetPixel(int_t x, int_t y, const Color& color);
 		Color GetPixel(int_t x, int_t y)const;
 		byte* GetPixel();
