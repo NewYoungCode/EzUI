@@ -18,6 +18,7 @@ namespace ezui {
 		extern UI_VAR_EXPORT IDWriteFactory* g_WriteFactory;
 		extern UI_VAR_EXPORT IWICImagingFactory* g_ImageFactory;
 	}
+	extern UI_VAR_EXPORT ULONG_PTR g_GdiplusToken;
 	UI_EXPORT void RenderInitialize();//全局初始化direct2d
 	UI_EXPORT void RenderUnInitialize();//释放direct2d
 	UI_EXPORT float GetMaxRadius(float width, float height, float _radius);//获取最大半径 用于自动适应border-radius属性

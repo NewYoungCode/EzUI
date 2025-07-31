@@ -13,15 +13,11 @@ namespace ezui {
 		float m_shadowScale = 1.0f;
 		//是否支持缩放
 		bool m_bResize = false;
-	public:
-		//窗口的边框信息
-		ezui::Border Border;
 	protected:
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
 		virtual void OnMove(const Point& location) override;
 		virtual void OnSize(const Size& sz) override;
 		virtual void OnDpiChange(float systemScale, const Rect& newRect);//当dpi发生更改时
-		virtual void OnPaint(PaintEventArgs& args)override;
 	public:
 		//设置阴影宽度
 		void SetShadow(int_t weight);

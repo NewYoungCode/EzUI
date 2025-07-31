@@ -18,10 +18,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	ant->SetEndValue(1.0);
 	ant->ValueChanged = [&](double value) {
 		Invoke([&] {
-		    frm.Opacity = value;//修改透明度
+			frm.Opacity = value;//修改透明度
 			frm.Invalidate();//刷新
 			});
 		};
+
+	frm.Opacity = 0.1;
 	ant->Start(200);//开始动画
 
 	frm.Show();

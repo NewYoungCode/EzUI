@@ -4,10 +4,9 @@ namespace ezui {
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
 	LayeredWindow::LayeredWindow(int_t width, int_t height, HWND owner) :BorderlessWindow(width, height, owner, WS_EX_LAYERED)
 	{
-		m_timeOut.Interval = 0;
+		m_timeOut.Interval = 1;
 		m_timeOut.Tick = [this](Timer* t) {
 			t->Stop();//停止
-			Sleep(5);//延迟5ms之后再去绘制
 			::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
 			};
 		this->m_publicData->InvalidateRect = [this](const Rect& rect) ->void {

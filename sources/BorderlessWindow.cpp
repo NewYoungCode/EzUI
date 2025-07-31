@@ -22,21 +22,6 @@ namespace ezui {
 		m_shadowWeight = padding;
 		UpdateShadowBox();
 	}
-	void BorderlessWindow::OnPaint(PaintEventArgs& args) {
-		const auto& border = this->Border;
-		const auto& rect = this->GetClientRect();
-		bool hasRadius = border.TopLeftRadius || border.TopRightRadius || border.BottomRightRadius || border.BottomLeftRadius;
-		if (hasRadius) {
-			//处理圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分) 带抗锯齿
-			Geometry roundRect(rect, border.TopLeftRadius, border.TopRightRadius, border.BottomRightRadius, border.BottomLeftRadius);
-			args.PushLayer(roundRect);
-		}
-		else {
-			args.PushLayer(rect);
-		}
-		__super::OnPaint(args);
-		args.PopLayer();
-	}
 
 	void BorderlessWindow::OnDpiChange(float systemScale, const Rect& newRect)
 	{
@@ -49,7 +34,6 @@ namespace ezui {
 		}
 		//对边框进行新DPI适配
 		float newScale = systemScale / m_publicData->Scale;
-		this->Border.Scale(newScale);
 		__super::OnDpiChange(systemScale, newRect);
 	}
 
@@ -63,7 +47,8 @@ namespace ezui {
 
 	void BorderlessWindow::UpdateShadowBox() {
 		if (m_shadowBox) {
-			m_shadowBox->Update(m_shadowWeight * this->GetScale(), this->Border);
+			auto* mainLayout = this->GetLayout();
+			m_shadowBox->Update(m_shadowWeight * this->GetScale(), (mainLayout ? mainLayout->GetBorderTopLeftRadius() : 0));
 		}
 	}
 	void BorderlessWindow::CloseShadowBox()

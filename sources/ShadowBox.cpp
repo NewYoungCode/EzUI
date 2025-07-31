@@ -107,7 +107,7 @@ namespace ezui {
 		//((BYTE*)point)[1] = 50 * opacity;//修改G通道数值
 		//((BYTE*)point)[0] = 50 * opacity;//修改B通道数值
 	}
-	void ShadowBox::Update(int_t _shadowWidth, const Border& border) {
+	void ShadowBox::Update(int_t _shadowWidth,int_t radius) {
 		HWND ownerWnd = ::GetWindow(m_hWnd, GW_OWNER);
 		if (!::IsWindowVisible(ownerWnd) || ::IsIconic(ownerWnd)) {
 			::ShowWindow(m_hWnd, SW_HIDE);
@@ -127,11 +127,11 @@ namespace ezui {
 		//移动阴影窗口
 		::MoveWindow(m_hWnd, Orect.left - _shadowWidth, Orect.top - _shadowWidth, width, height, FALSE);
 		//只有在大小发生改变的时候才回去重新生成layered窗口
-		if (paintSize.Equals(m_bufSize) && m_borderWidth == border.TopLeftRadius) {
+		if (paintSize.Equals(m_bufSize) && m_radius == radius) {
 			return;
 		}
 		//新窗口圆角值
-		m_borderWidth = border.TopLeftRadius;
+		m_radius = radius;
 		m_bufSize = paintSize;
 		if (m_bufBitmap != NULL) {
 			delete m_bufBitmap;
@@ -139,72 +139,7 @@ namespace ezui {
 		}
 		m_bufBitmap = new Bitmap(width, height);//32位透明图
 		Rect rect{ 0,0,width, height };
-		SetShadow(rect.Width, rect.Height, _shadowWidth, border.TopLeftRadius);
-
-#if 1
-		{
-			int_t roundWidth = m_bufBitmap->Width() - _shadowWidth * 2;
-			int_t roundHeight = m_bufBitmap->Height() - _shadowWidth * 2;
-
-			//绘制边框
-			DXRender* render = NULL;
-
-			//规则的矩形
-			int_t borderLeft = border.Left;
-			int_t borderTop = border.Top;
-			int_t borderRight = border.Right;
-			int_t borderBottom = border.Bottom;
-			int_t topLeftRadius = border.TopLeftRadius;
-			int_t topRightRadius = border.TopRightRadius;
-			int_t bottomRightRadius = border.BottomRightRadius;
-			int_t bottomLeftRadius = border.BottomLeftRadius;
-			if (topLeftRadius == 0 && topRightRadius == 0 && bottomLeftRadius == 0 && bottomRightRadius == 0) {
-				bool hasBorder = borderLeft || borderTop || borderRight || borderBottom;
-				if (hasBorder) {
-
-					render = new DXRender(m_bufBitmap->GetHDC(), 0, 0, width, height);
-					render->SetTransform(_shadowWidth, _shadowWidth);
-					render->SetStrokeStyle(border.Style);
-					render->SetColor(border.Color);
-
-					if (borderLeft > 0) {
-						RectF rect(0, 0, (float)borderLeft, (float)roundHeight);
-						render->FillRectangle(rect);
-					}
-					if (borderTop > 0) {
-						RectF rect(0, 0, (float)roundWidth, (float)borderTop);
-						render->FillRectangle(rect);
-					}
-					if (borderRight > 0) {
-						RectF rect((float)(roundWidth - borderRight), 0, (float)borderRight, (float)roundHeight);
-						render->FillRectangle(rect);
-					}
-					if (borderBottom > 0) {
-						RectF rect(0, (float)(roundHeight - borderBottom), (float)roundWidth, (float)borderBottom);
-						render->FillRectangle(rect);
-					}
-					render->SetTransform(0, 0);
-				}
-			}
-			else {
-				render = new DXRender(m_bufBitmap->GetHDC(), 0, 0, width, height);
-				render->SetTransform(_shadowWidth, _shadowWidth);
-				render->SetStrokeStyle(border.Style);
-				render->SetColor(border.Color);
-
-				int_t value1 = borderLeft > borderTop ? borderLeft : borderTop;
-				int_t value2 = borderRight > borderBottom ? borderRight : borderBottom;
-				int_t maxBorder = value1 > value2 ? value1 : value2;
-				Geometry rr(Rect(0, 0, roundWidth, roundHeight), topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius);
-				render->DrawGeometry(rr.Get(), maxBorder / 2.0f);//-0.5是因为Geometry这种方式抗锯齿导致看起来边框很宽
-				render->SetTransform(0, 0);
-			}
-
-			if (render) {
-				delete render;
-			}
-		}
-#endif
+		SetShadow(rect.Width, rect.Height, _shadowWidth, radius);
 
 		POINT point{ 0,0 };
 		SIZE size{ rect.Width,  rect.Height };

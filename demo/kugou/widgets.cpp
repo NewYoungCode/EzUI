@@ -138,6 +138,4 @@ LoginFrm::LoginFrm(HWND owner) :LayeredWindow(300, 200, owner)
 {
 	umg.LoadXmlFile("res/xml/login.htm");
 	umg.SetupUI(this);
-	this->Border.Radius = 10;
-	this->Border = 1;
 }

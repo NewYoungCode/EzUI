@@ -95,7 +95,6 @@ namespace ezui {
 
 	void TabLayout::SlideToPage(int_t index, SlideDirection dlideDirection, int_t durationMs, int_t fps)
 	{
-		m_timer.Stop();
 		//滑动方向
 		m_dlideDirection = dlideDirection;
 

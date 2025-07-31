@@ -1,5 +1,9 @@
 #include "Direct2DRender.h"
 #include <Shlwapi.h>
+
+#include <GdiPlus.h>
+#pragma comment(lib, "gdiplus.lib")
+
 #if USED_DIRECT2D
 #define _NOREND_IMAGE_ 
 //#define _NOREND_IMAGE_ return;
@@ -7,6 +11,7 @@
 #pragma comment(lib,"d2d1.lib")
 #pragma comment(lib,"Windowscodecs.lib")
 namespace ezui {
+	ULONG_PTR g_GdiplusToken = NULL;
 	namespace D2D {
 		ID2D1Factory* g_Direct2dFactory = NULL;
 		IDWriteFactory* g_WriteFactory = NULL;
@@ -572,6 +577,10 @@ namespace ezui {
 				::MessageBoxA(NULL, "Failed to create IWICImagingFactory", buf, MB_ICONSTOP);
 			}
 		}
+
+		//初始化GDI+
+		Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+		Gdiplus::GdiplusStartup(&g_GdiplusToken, &gdiplusStartupInput, NULL);
 	}
 	void RenderUnInitialize()
 	{
@@ -583,6 +592,10 @@ namespace ezui {
 		}
 		if (D2D::g_ImageFactory) {
 			SafeRelease(&D2D::g_ImageFactory);
+		}
+		//释放GDI+
+		if (g_GdiplusToken) {
+			Gdiplus::GdiplusShutdown(g_GdiplusToken);
 		}
 	}
 	float GetMaxRadius(float width, float height, float _radius)

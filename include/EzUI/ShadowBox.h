@@ -10,7 +10,7 @@ namespace ezui {
 		Bitmap* m_bufBitmap = NULL;
 		Rect m_clipRect;
 		HWND m_hWnd = NULL;
-		WORD m_borderWidth = 0;
+		WORD m_radius = 0;
 	private:
 		void setA(int_t x, int_t y, BYTE a, float radius);
 		bool SetShadow(int_t m_Width, int_t m_Height, int_t iSize, float radius);
@@ -23,7 +23,7 @@ namespace ezui {
 		ShadowBox(int_t width, int_t height, HWND OwnerWnd);//构造函数
 		virtual ~ShadowBox();
 		//在父窗口发生改变的时候更新阴影区域
-		virtual void Update(int_t _marginWidth, const Border& border);
+		virtual void Update(int_t _marginWidth, int_t radius);
 		const HWND Hwnd();
 	};
 };

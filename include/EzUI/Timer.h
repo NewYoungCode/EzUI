@@ -12,7 +12,7 @@ namespace ezui {
 		std::condition_variable m_condv;
 	public:
 		std::function<void(Timer*)> Tick = NULL;
-		int_t Interval = -1;
+		int_t Interval = 0;
 	public:
 		Timer(Object* parentObject = NULL);
 		bool IsStopped();

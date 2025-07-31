@@ -25,9 +25,10 @@ void MainFrm::InitForm() {
 	umg.SetupUI(this);
 
 	//设置窗口边框样式
-	this->Border.Radius = 15;
-	this->Border.Color = Color(0, 0, 0, 100);
-	this->Border = 1;
+	this->GetLayout()->Style.Border.Radius = 15;
+	this->GetLayout()->Style.Border.Color = Color(128, 128, 128, 200);
+	this->GetLayout()->Style.Border.Style = StrokeStyle::Solid;
+	this->GetLayout()->Style.Border = 1;
 
 	//关闭阴影
 	//this->CloseShadowBox();
