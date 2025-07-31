@@ -6,8 +6,11 @@ namespace ezui {
 	}
 	void PictureBox::Init() {
 		m_timer.Tick = [this](Timer* timer) {
-			timer->Stop();
-			this->Invalidate();
+			Invoke([&]() {
+				timer->Stop();
+				m_timer.Interval = m_img->NextFrame();
+				this->Invalidate();
+				});
 			};
 	}
 	PictureBox::~PictureBox() {
@@ -27,8 +30,9 @@ namespace ezui {
 		if (m_img) {
 			arg.Graphics.DrawImage(m_img, RectF(0, 0, (float)Width(), (float)Height()));
 			if (m_img->FrameCount() > 1) {
-				m_timer.Interval = m_img->NextFrame();
-				m_timer.Start();
+				if (m_timer.IsStopped()) {
+					m_timer.Start();
+				}
 			}
 			else {
 				m_timer.Stop();

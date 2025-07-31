@@ -314,10 +314,34 @@ namespace ezui {
 		}
 		D2D::g_ImageFactory->CreateFormatConverter(&m_fmtcovter);
 		m_bitmapdecoder->GetFrame(_framePos, &m_pframe);
-		m_fmtcovter->Initialize(m_pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
+
+		////获取原帧图片格式
+		//WICPixelFormatGUID pixelFormat;
+		//m_pframe->GetPixelFormat(&pixelFormat);
+
+		//转换为预乘图片
+		HRESULT hr = m_fmtcovter->Initialize(m_pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
+
+		//从帧元数据中读取 GIF 下一帧播放延迟时间
+		UINT frameDelay = 16; // 默认16毫秒 大约60fps
+		IWICMetadataQueryReader* pMetadataReader = nullptr;
+		if (SUCCEEDED(m_pframe->GetMetadataQueryReader(&pMetadataReader))) {
+			PROPVARIANT propValue;
+			PropVariantInit(&propValue);
+			// 读取 GIF 帧延迟（/grctlext/Delay）
+			if (SUCCEEDED(pMetadataReader->GetMetadataByName(L"/grctlext/Delay", &propValue))) {
+				if (propValue.vt == VT_UI2) {
+					frameDelay = propValue.uiVal; // 单位是 10ms
+				}
+				PropVariantClear(&propValue);
+			}
+			SafeRelease(&pMetadataReader);
+		}
+
+		UINT delayMs = frameDelay * 10;
 
 		++_framePos;
-		return 60;
+		return delayMs;
 	}
 	DXImage* DXImage::Clone()
 	{
