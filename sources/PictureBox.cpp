@@ -1,6 +1,6 @@
 #include "PictureBox.h"
 namespace ezui {
-	PictureBox::PictureBox(Object* parentObject):Control(parentObject)
+	PictureBox::PictureBox(Object* parentObject) :Control(parentObject)
 	{
 		Init();
 	}
@@ -23,9 +23,6 @@ namespace ezui {
 		__super::OnRemove();
 		m_timer.Stop();
 	}
-	void PictureBox::SetImage(Image* image) {
-		m_img = image;
-	}
 	void PictureBox::OnForePaint(PaintEventArgs& arg) {
 		if (m_img) {
 			arg.Graphics.DrawImage(m_img, RectF(0, 0, (float)Width(), (float)Height()));
@@ -39,6 +36,9 @@ namespace ezui {
 			}
 		}
 		__super::OnForePaint(arg);
+	}
+	void PictureBox::SetImage(Image* image) {
+		m_img = image;
 	}
 	void PictureBox::SetAttribute(const UIString& key, const UIString& value) {
 		__super::SetAttribute(key, value);

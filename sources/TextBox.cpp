@@ -1,6 +1,6 @@
 #include "TextBox.h"
 namespace ezui {
-	TextBox::TextBox(Object* parentObject):Control(parentObject)
+	TextBox::TextBox(Object* parentObject) :Control(parentObject)
 	{
 		Init();
 	}
@@ -490,7 +490,7 @@ namespace ezui {
 	{
 		__super::OnFocus(arg);
 		m_focus = true;
-		m_bCareShow = false;
+		m_bCareShow = true;
 		m_timer.Start();
 		Invalidate();
 	}

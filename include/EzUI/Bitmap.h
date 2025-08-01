@@ -27,7 +27,7 @@ namespace ezui {
 		void Earse(const Rect& rect);//抹除矩形内容
 		HBITMAP GetHBITMAP();
 		HDC GetHDC();
-		void Save(const UIString& fileName);
+		bool Save(const UIString& fileName);
 		Bitmap* Clone()const;
 		virtual ~Bitmap();
 	};

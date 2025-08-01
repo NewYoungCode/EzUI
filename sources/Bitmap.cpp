@@ -1,5 +1,37 @@
 #include "Bitmap.h"
+#include <gdiplus.h>
 namespace ezui {
+	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
+	{
+		UINT  num = 0;          // number of image encoders
+		UINT  size = 0;         // size of the image encoder array in bytes
+
+		Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
+
+		Gdiplus::GetImageEncodersSize(&num, &size);
+		if (size == 0) {
+			return -1;  // Failure
+		}
+
+		pImageCodecInfo = (Gdiplus::ImageCodecInfo*)(malloc(size));
+		if (pImageCodecInfo == NULL) {
+			return -1;  // Failure
+		}
+
+		Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
+
+		for (UINT j = 0; j < num; ++j)
+		{
+			if (wcscmp(pImageCodecInfo[j].MimeType, format) == 0)
+			{
+				*pClsid = pImageCodecInfo[j].Clsid;
+				free(pImageCodecInfo);
+				return j;  // Success
+			}
+		}
+		free(pImageCodecInfo);
+		return -1;  // Failure
+	}
 
 	Bitmap::Bitmap(int_t width, int_t height) {
 		Create(width, height);
@@ -87,29 +119,47 @@ namespace ezui {
 		}
 		return m_hdc;
 	}
-	void Bitmap::Save(const UIString& fileName)
+	bool Bitmap::Save(const UIString& fileName)
 	{
-		// 保存位图为BMP文件
-		const BITMAPINFOHEADER& bi = m_bmpInfo.bmiHeader;
-		BITMAPFILEHEADER bmfh;
-		bmfh.bfType = 0x4D42; // "BM"字节标记
-		bmfh.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + Width() * Height() * (m_bmpInfo.bmiHeader.biBitCount / 8); // 文件大小
-		bmfh.bfReserved1 = 0;
-		bmfh.bfReserved2 = 0;
-		bmfh.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER); // 位图数据偏移量
-		//写入文件头
-		std::ofstream ofs(fileName.unicode(), std::ios::binary);
-		ofs.write((char*)&bmfh, sizeof(bmfh));
-		ofs.write((char*)&bi, sizeof(bi));
-		//获取像素数据 第五个参数传空可获取详细的BITMAPINFO
-		auto ret = ::GetDIBits(this->GetHDC(), this->m_bmp, 0, this->Height(), NULL, &this->m_bmpInfo, DIB_RGB_COLORS);
-		//写入像素数据
-		BYTE* buffer = new BYTE[this->m_bmpInfo.bmiHeader.biSizeImage];
-		ret = ::GetDIBits(this->GetHDC(), this->m_bmp, 0, this->Height(), buffer, &this->m_bmpInfo, DIB_RGB_COLORS);
-		ofs.write((char*)buffer, this->m_bmpInfo.bmiHeader.biSizeImage);
-		ofs.flush();
-		ofs.close();
-		delete[] buffer;
+		size_t pos = fileName.rfind(".");
+		UIString ext;
+		if (pos != size_t(-1)) {
+			ext = fileName.substr(pos);
+			ext = ext.toLower();
+		}
+
+		bool ret = false;
+		Gdiplus::Bitmap* pbmSrc = NULL;
+		do
+		{
+			CLSID pngClsid;
+			int code = -1;
+			if (ext == ".png") {
+				code = GetEncoderClsid(L"image/png", &pngClsid);
+			}
+			else if (ext == ".jpg" || ext == ".jpeg") {
+				code = GetEncoderClsid(L"image/jpeg", &pngClsid);
+			}
+			else if (ext == ".tiff") {
+				code = GetEncoderClsid(L"image/tiff", &pngClsid);
+			}
+			else {
+				code = GetEncoderClsid(L"image/bmp", &pngClsid);
+			}
+			if (code == -1) {
+				break;
+			}
+			pbmSrc = new Gdiplus::Bitmap(Width(), Height(), Width() * 4, PixelFormat32bppARGB, (BYTE*)GetPixel());
+			if (pbmSrc && pbmSrc->Save(fileName.unicode().c_str(), &pngClsid) == Gdiplus::Status::Ok)
+			{
+				ret = true;
+				break;
+			}
+		} while (false);
+		if (pbmSrc) {
+			delete pbmSrc;
+		}
+		return ret;
 	}
 
 	Bitmap* Bitmap::Clone() const {

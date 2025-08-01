@@ -11,7 +11,6 @@ namespace ezui {
 			m_task = new Task([this]() {
 				while (true)
 				{
-					Sleep(this->Interval);
 					{
 						std::unique_lock<std::mutex> autoLock(m_mtx);
 						m_condv.wait(autoLock, [this]() {
@@ -21,6 +20,7 @@ namespace ezui {
 							break;
 						}
 					}
+					Sleep(this->Interval);
 					if (this->Tick) {
 						this->Tick(this);
 					}
