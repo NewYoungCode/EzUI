@@ -15,7 +15,7 @@ MainFrm::MainFrm() :Form(1020, 690)
 		return true;
 		};
 
-	this->SetMiniSize({ 300,200 });
+	this->SetMiniSize({ 800,600 });
 }
 void MainFrm::InitForm() {
 	this->SetResizable(true);
@@ -26,7 +26,7 @@ void MainFrm::InitForm() {
 
 	//设置窗口边框样式
 	this->GetLayout()->Style.Border.Radius = 15;
-	this->GetLayout()->Style.Border.Color = Color(128, 128, 128, 200);
+	this->GetLayout()->Style.Border.Color = Color(128, 128, 128, 100);
 	this->GetLayout()->Style.Border.Style = StrokeStyle::Solid;
 	this->GetLayout()->Style.Border = 1;
 

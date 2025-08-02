@@ -15,6 +15,17 @@ namespace ezui {
 		std::unique_lock<std::mutex> autoLock(m_mtx);
 		return m_finished;
 	}
+
+	void Task::DoWork(std::function<void()>* func) {
+		(*func)();
+		delete func;
+		{
+			std::unique_lock<std::mutex> autoLock(m_mtx);
+			m_finished = true;
+		}
+		m_codv.notify_all();
+	}
+
 	Task::~Task() {
 		Wait();
 		delete m_thread;

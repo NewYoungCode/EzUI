@@ -27,21 +27,25 @@ namespace ezui {
 				}
 				});
 		}
-		std::unique_lock<std::mutex> autoLock(m_mtx);
-		m_bStop = false;
+		{
+			std::unique_lock<std::mutex> autoLock(m_mtx);
+			m_bStop = false;
+		}
 		m_condv.notify_one();
 	}
 	void Timer::Stop() {
-		std::unique_lock<std::mutex> autoLock(m_mtx);
-		m_bStop = true;
+		{
+			std::unique_lock<std::mutex> autoLock(m_mtx);
+			m_bStop = true;
+		}
 		m_condv.notify_one();
 	}
 	Timer::~Timer() {
 		{
 			std::unique_lock<std::mutex> autoLock(m_mtx);
 			m_bExit = true;
-			m_condv.notify_one();
 		}
+		m_condv.notify_one();
 		if (m_task) {
 			delete m_task;
 		}
