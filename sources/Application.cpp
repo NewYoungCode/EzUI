@@ -146,6 +146,7 @@ namespace ezui {
 		wc.hInstance = ezui::__EzUI__HINSTANCE;//
 		wc.hCursor = LoadCursorW(NULL, IDC_ARROW);//光标
 		wc.lpszClassName = ezui::__EzUI__WindowClassName;//类名
+		wc.hbrBackground = NULL;//窗口背景
 		if (!RegisterClassW(&wc)) //注册窗口
 		{
 			::MessageBoxW(NULL, L"This program requires Windows NT !",
