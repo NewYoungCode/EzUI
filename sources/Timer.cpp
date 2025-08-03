@@ -12,13 +12,15 @@ namespace ezui {
 				while (true)
 				{
 					{
-						std::unique_lock<std::mutex> autoLock(m_mtx);
-						m_condv.wait(autoLock, [this]() {
+						m_condv.Wait([this]() {
 							return  this->m_bExit || !this->m_bStop;
 							});
+						m_condv.Lock();
 						if (this->m_bExit) {
+							m_condv.Unlock();
 							break;
 						}
+						m_condv.Unlock();
 					}
 					Sleep(this->Interval);
 					if (this->Tick) {
@@ -28,24 +30,27 @@ namespace ezui {
 				});
 		}
 		{
-			std::unique_lock<std::mutex> autoLock(m_mtx);
+			m_condv.Lock();
 			m_bStop = false;
+			m_condv.Unlock();
 		}
-		m_condv.notify_one();
+		m_condv.Notify();
 	}
 	void Timer::Stop() {
 		{
-			std::unique_lock<std::mutex> autoLock(m_mtx);
+			m_condv.Lock();
 			m_bStop = true;
+			m_condv.Unlock();
 		}
-		m_condv.notify_one();
+		m_condv.Notify();
 	}
 	Timer::~Timer() {
 		{
-			std::unique_lock<std::mutex> autoLock(m_mtx);
+			m_condv.Lock();
 			m_bExit = true;
+			m_condv.Unlock();
 		}
-		m_condv.notify_one();
+		m_condv.Notify();
 		if (m_task) {
 			delete m_task;
 		}

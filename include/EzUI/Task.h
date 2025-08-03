@@ -3,12 +3,46 @@
 #include <condition_variable>
 
 namespace ezui {
+	//互斥锁
+	class UI_EXPORT Mutex {
+	private:
+		CRITICAL_SECTION m_mtx;  // 互斥锁
+		bool m_bLocked;
+		Mutex(const Mutex&) = delete;
+	public:
+		Mutex();
+		virtual ~Mutex();
+		// 锁定互斥锁
+		void Lock();
+		// 解锁互斥锁
+		void UnLock();
+	};
+	//带互斥锁的条件变量类
+	class UI_EXPORT ConditionVariable {
+	private:
+		HANDLE m_codv = NULL;     // 事件对象（模拟条件变量）
+		Mutex m_mtx;              // 锁对象
+		ConditionVariable(const ConditionVariable&) = delete;
+	public:
+		ConditionVariable();
+		virtual ~ConditionVariable();
+		// 唤醒等待的线程(唤醒单个线程)
+		void Notify();
+		// 可选条件的等待(不可以多个线程使用此函数)
+		void Wait(const std::function<bool()>& condition_cb = nullptr);
+		// 锁定互斥锁
+		void Lock();
+		// 解锁互斥锁
+		void Unlock();
+	};
+};
+
+namespace ezui {
 	class UI_EXPORT Task {
 		bool m_finished = false;
 		std::thread* m_thread = NULL;
 		bool m_bJoin = false;
-		std::mutex m_mtx;
-		std::condition_variable m_codv;
+		ConditionVariable m_mtx_codv;
 	private:
 		Task(const Task&) = delete;
 		void DoWork(std::function<void()>* func);

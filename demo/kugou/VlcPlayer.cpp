@@ -2,7 +2,7 @@
 void* lock_cb(void* opaque, void** planes)
 {
 	VlcPlayer* vp = (VlcPlayer*)opaque;
-	vp->mtx.lock();
+	vp->mtx.Lock();
 	*planes = vp->BuffBitmap->GetPixel();           /*tell VLC to put decoded data to this buffer*/
 	return NULL;
 }
@@ -10,7 +10,7 @@ void* lock_cb(void* opaque, void** planes)
 void unlock_cb(void* opaque, void* picture, void* const* planes)
 {
 	VlcPlayer* vp = (VlcPlayer*)opaque;
-	vp->mtx.unlock();
+	vp->mtx.UnLock();
 }
 void display_cb(void* opaque, void* picture)
 {

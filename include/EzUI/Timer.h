@@ -8,8 +8,7 @@ namespace ezui {
 		bool m_bExit = false;
 		bool m_bStop = true;
 		Task* m_task = NULL;
-		std::mutex m_mtx;
-		std::condition_variable m_condv;
+		ConditionVariable m_condv;
 	public:
 		std::function<void(Timer*)> Tick = NULL;
 		int_t Interval = 0;

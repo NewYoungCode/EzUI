@@ -22,7 +22,7 @@ private:
 	libvlc_time_t m_duration = 0;
 	Task * m_task = NULL;
 public:
-	std::mutex mtx;
+	Mutex mtx;
 	unsigned int IMG_WIDTH = 0;
 	unsigned int IMG_HEIGHT = 0;
 	Bitmap* BuffBitmap = NULL;
