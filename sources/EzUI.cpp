@@ -414,16 +414,6 @@ namespace ezui {
 		}
 	}
 
-	void Object::SetPublicData(WindowData* data)
-	{
-		this->m_publicData = data;
-	}
-
-	WindowData* Object::GetPublicData()
-	{
-		return this->m_publicData;
-	}
-
 	void Object::RemoveObject(Object* object) {
 		//子对象存在相同的对象也要跟随移除
 		auto childObj = std::find(m_childObjects.begin(), m_childObjects.end(), object);

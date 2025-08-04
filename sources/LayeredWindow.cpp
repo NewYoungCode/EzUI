@@ -9,11 +9,13 @@ namespace ezui {
 			t->Stop();//停止
 			::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
 			};
-		this->m_publicData->InvalidateRect = [this](const Rect& rect) ->void {
+		//获取公共数据
+		auto* publicData = this->GetPublicData();
+		publicData->InvalidateRect = [this](const Rect& rect) ->void {
 			//标记窗口无效区域
 			this->InvalidateRect(rect);
 			};
-		this->m_publicData->UpdateWindow = [this]()->void {
+		publicData->UpdateWindow = [this]()->void {
 			//立即更新窗口中的无效区域
 			::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
 			};

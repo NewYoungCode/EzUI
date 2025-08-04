@@ -22,13 +22,6 @@ namespace ezui {
 		if (Hwnd()) {
 			::DestroyWindow(Hwnd());
 		}
-		////判断如果子对象采用了本窗口的公共数据 则释放子对象的时候需要将公共数据置零
-		//for (auto& it : m_childObjects) {
-		//	Control* ctrl = dynamic_cast<Control*>(it);
-		//	if (ctrl && ctrl->GetPublicData() == this->m_publicData) {
-		//		ctrl->SetPublicData(NULL);
-		//	}
-		//}
 		if (m_publicData) {
 			delete m_publicData;
 		}
@@ -290,7 +283,7 @@ namespace ezui {
 	void Window::SetLayout(ezui::Control* layout) {
 		ASSERT(layout);
 		m_layout = layout;
-		m_layout->SetPublicData(this->m_publicData);
+		m_layout->SetOwnerHwnd(Hwnd());
 
 		if (m_layout->Style.FontFamily.empty()) {
 			WCHAR fontName[LF_FACESIZE] = { 0 };
@@ -472,6 +465,15 @@ namespace ezui {
 		ctl->SendEvent(args);
 		__INPUT_CONTROL = ctl;
 		__FOCUS_CONTROL = ctl;
+	}
+
+	HWND Window::OwnerHwnd() {
+		return ::GetWindow(Hwnd(), GW_OWNER);
+	}
+
+	WindowData* Window::GetPublicData()
+	{
+		return m_publicData;
 	}
 
 	LRESULT  Window::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)

@@ -410,14 +410,33 @@ void MainFrm::OpenDesktopLrc()
 }
 void MainFrm::OpenLoginFrm(ezui::Control* sender)
 {
-	LoginFrm* loginFrm = new LoginFrm(Hwnd());
-	int code = loginFrm->ShowModal(true);
+	//测试代码
+	LoginFrm loginFrm(Hwnd());
+
+	//给窗口添加淡入效果
+	Animation* ant = new Animation;
+	ant->SetStartValue(0.1);
+	ant->SetEndValue(1.0);
+	ant->ValueChanged = [&](double value) {
+		Invoke([&] {
+			//loginFrm.Opacity = value;//修改透明度
+			//loginFrm.Invalidate();//刷新
+			int a = 0;
+			});
+		};
+	//loginFrm.Opacity = 0.1;
+	ant->Start(8000);//开始动画
+
+	int code = loginFrm.ShowModal(true);//阻塞函数内部进行消息循环
+
+	ant->Stop();
+	delete ant;
+
 	if (code == 1) {
-		UIString text = UIString(L"欢迎您,%s").format(loginFrm->m_userName.c_str());
+		UIString text = UIString(L"欢迎您,%s").format(loginFrm.m_userName.c_str());
 		((Label*)sender)->SetText(text);
 		sender->Invalidate();
 	}
-	delete loginFrm;
 }
 void MainFrm::UpSong()
 {

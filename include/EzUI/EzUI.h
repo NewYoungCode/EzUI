@@ -428,8 +428,6 @@ namespace ezui {
 	protected:
 		// 管理子对象的释放
 		std::vector<Object*> m_childObjects;
-		//公共数据 请不要改动此变量
-		WindowData* m_publicData = NULL;
 		//移除子对象
 		void RemoveObject(Object* object);
 	public:
@@ -438,10 +436,6 @@ namespace ezui {
 	public:
 		Object(Object* parentObject = NULL);
 		virtual ~Object();
-		//设置公共数据(内部使用)
-		void SetPublicData(WindowData* data);
-		//获取公共数据(内部使用)
-		WindowData* GetPublicData();
 		//是否为窗口
 		virtual bool IsWindow() const { return false; }
 	public:

@@ -22,11 +22,13 @@ class MainFrm :public Window {
 public:
 	VLayout* main;
 	MainFrm(int cx, int cy) :Window(cx, cy) {
-	
+
+		//以下代码专用与测试释放托管问题
+
 		main = new VLayout;
 		auto lb = new Label(this);
 
-		auto lb2= new Label(lb);
+		auto lb2 = new Label(lb);
 		lb2->SetText(L"999999");
 		lb->Add(lb2);
 

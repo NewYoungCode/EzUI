@@ -6,7 +6,7 @@ namespace ezui {
 	//使用线程的计时器 不与主进程同步(启动的时候就直接开始执行回调函数)
 	class UI_EXPORT Timer :public Object {
 		bool m_bExit = false;
-		bool m_bStop = true;
+		bool m_bPause = true;
 		Task* m_task = NULL;
 		ConditionVariable m_condv;
 	public:

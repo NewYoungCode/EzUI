@@ -50,11 +50,9 @@ void LrcPanel::Task()
 		}
 	}
 
-	if (this->m_publicData) {
 		BeginInvoke([=]() {
 			Invalidate();
 			});
-	}
 
 }
 void LrcPanel::OnBackgroundPaint(PaintEventArgs& arg) {

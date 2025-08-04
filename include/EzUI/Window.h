@@ -14,6 +14,8 @@ namespace ezui {
 	class UI_EXPORT Window :public Object
 	{
 	private:
+		//窗口公共数据
+		WindowData* m_publicData = NULL;
 		//鼠标跟踪
 		bool m_bTracking = false;
 		//鼠标是否在里面
@@ -215,5 +217,11 @@ namespace ezui {
 
 		//给指定控件为焦点控件
 		void SetFocus(Control* ctl);
+
+		//获取所属句柄
+		HWND OwnerHwnd();
+
+		//获取公共数据
+		WindowData* GetPublicData();
 	};
 };

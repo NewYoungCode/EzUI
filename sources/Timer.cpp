@@ -4,7 +4,7 @@ namespace ezui {
 	{
 	}
 	bool Timer::IsStopped() {
-		return m_bStop;
+		return m_bPause;
 	}
 	void Timer::Start() {
 		if (m_task == NULL) {
@@ -13,7 +13,7 @@ namespace ezui {
 				{
 					{
 						m_condv.Wait([this]() {
-							return  this->m_bExit || !this->m_bStop;
+							return  this->m_bExit || !this->m_bPause;
 							});
 						m_condv.Lock();
 						if (this->m_bExit) {
@@ -31,7 +31,7 @@ namespace ezui {
 		}
 		{
 			m_condv.Lock();
-			m_bStop = false;
+			m_bPause = false;
 			m_condv.Unlock();
 		}
 		m_condv.Notify();
@@ -39,7 +39,7 @@ namespace ezui {
 	void Timer::Stop() {
 		{
 			m_condv.Lock();
-			m_bStop = true;
+			m_bPause = true;//暂停
 			m_condv.Unlock();
 		}
 		m_condv.Notify();
@@ -47,7 +47,7 @@ namespace ezui {
 	Timer::~Timer() {
 		{
 			m_condv.Lock();
-			m_bExit = true;
+			m_bExit = true;//退出整个计时器
 			m_condv.Unlock();
 		}
 		m_condv.Notify();

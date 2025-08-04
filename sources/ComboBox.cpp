@@ -62,7 +62,7 @@ namespace ezui {
 			}
 			};
 	}
-	ComboBox::ComboBox(Object* parentObject):HLayout(parentObject)
+	ComboBox::ComboBox(Object* parentObject) :HLayout(parentObject)
 	{
 		Init();
 	}
@@ -89,10 +89,10 @@ namespace ezui {
 	{
 		m_list.Clear(true);
 		//涉及到由于"_list"是成员变量 释放比较靠后 所以释放窗口的时候 必须把 "_list"的公共数据也置零
-		m_list.SetPublicData(NULL);
+		m_list.SetOwnerHwnd(NULL);
 		if (m_list.GetScrollBar()) {
 			//滚动条同理 也需要置零公共数据
-			m_list.GetScrollBar()->SetPublicData(NULL);
+			m_list.GetScrollBar()->SetOwnerHwnd(NULL);
 		}
 		if (m_menuWnd) {
 			delete m_menuWnd;

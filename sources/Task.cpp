@@ -57,10 +57,6 @@ namespace ezui {
 		if (!m_bJoin)
 		{
 			m_bJoin = true;
-			// 直接调用 Wait() 会自动处理锁定和解锁
-			m_mtx_codv.Wait([this]() -> bool {
-				return m_finished; // 条件满足时退出等待
-				});
 			m_thread->join();  // 等待线程完成
 		}
 	}
@@ -70,13 +66,7 @@ namespace ezui {
 	void Task::DoWork(std::function<void()>* func) {
 		(*func)();  // 执行任务
 		delete func;
-		{
-			// 完成任务后更新状态
-			m_mtx_codv.Lock();
-			m_finished = true;
-			m_mtx_codv.Unlock();
-		}
-		m_mtx_codv.Notify();  // 通知等待的线程
+		m_finished = true;
 	}
 
 	Task::~Task() {

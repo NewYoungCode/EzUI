@@ -14,6 +14,9 @@ namespace ezui {
 		// 当前控件的 DPI 缩放比例
 		float m_scale = 1.0f;
 
+		//控件所属的窗口句柄
+		HWND m_ownerHWnd = NULL;
+
 		// 子控件集合
 		Controls m_controls;
 
@@ -261,6 +264,8 @@ namespace ezui {
 		// 获取字体大小
 		int_t GetFontSize(ControlState _state = ControlState::None);
 
+		//获取公共数据
+		WindowData* GetPublicData();
 	public:
 
 		// 构造函数 可传入父对象(由父对象自动管理内存)
@@ -398,6 +403,9 @@ namespace ezui {
 
 		// 设置控件属性
 		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue);
+
+		//设置控件所属窗口句柄
+		void SetOwnerHwnd(HWND hWnd);
 
 		//获取控件所在的窗口句柄
 		HWND OwnerHwnd();

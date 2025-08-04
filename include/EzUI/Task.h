@@ -42,7 +42,6 @@ namespace ezui {
 		bool m_finished = false;
 		std::thread* m_thread = NULL;
 		bool m_bJoin = false;
-		ConditionVariable m_mtx_codv;
 	private:
 		Task(const Task&) = delete;
 		void DoWork(std::function<void()>* func);
