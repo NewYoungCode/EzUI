@@ -114,6 +114,26 @@ void MainFrm::InitForm() {
 	//打开默认显示界面
 	OpenSongView();
 }
+
+void MainFrm::OnPaint(PaintEventArgs& args) {
+
+	__super::OnPaint(args);
+
+	//args.Graphics.SetColor(Color::Red);
+	//Geometry path;
+
+	//PointF p1(100, 150);   // 尖朝下（底部顶点）
+	//PointF p2(50, 50);     // 左上角
+	//PointF p3(150, 50);    // 右上角
+
+	//path.BeginFigure(p1); // BeginFigure
+	//path.AddLine(p2); // 
+	//path.AddLine(p3); // 
+	//path.CloseFigure();
+
+	//args.Graphics.FillGeometry(&path);
+}
+
 MainFrm::~MainFrm()
 {
 	if (timer) {

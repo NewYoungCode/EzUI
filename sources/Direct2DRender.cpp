@@ -410,16 +410,16 @@ namespace ezui {
 			SafeRelease(&m_bitMap);
 		}
 	}
-	Geometry::Geometry(float x, float y, float width, float height) {
+	RectangleGeometry::RectangleGeometry(float x, float y, float width, float height) {
 		D2D_RECT_F rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) };
 		D2D::g_Direct2dFactory->CreateRectangleGeometry(rectF, (ID2D1RectangleGeometry**)&m_rgn);
 	}
-	Geometry::Geometry(float x, float y, float width, float height, float _radius) {
+	RectangleGeometry::RectangleGeometry(float x, float y, float width, float height, float _radius) {
 		float radius = GetMaxRadius(width, height, _radius);
 		D2D1_ROUNDED_RECT rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) ,radius ,radius };
 		D2D::g_Direct2dFactory->CreateRoundedRectangleGeometry(rectF, (ID2D1RoundedRectangleGeometry**)&m_rgn);
 	}
-	Geometry::Geometry(const RectF& _rect, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius)
+	RectangleGeometry::RectangleGeometry(const RectF& _rect, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius)
 	{
 		ID2D1PathGeometry* pPathGeometry = NULL;
 		D2D1_RECT_F rect = __To_D2D_RectF(_rect);
@@ -483,130 +483,57 @@ namespace ezui {
 		this->m_rgn = pPathGeometry;
 	}
 
-	PathGeometry::PathGeometry() {
-		D2D::g_Direct2dFactory->CreatePathGeometry(&m_pathGeometry);
-		m_pathGeometry->Open(&m_pSink);
-		m_isBegin = false;
+	Geometry::Geometry() {
 	}
 
-	void PathGeometry::AddRectangle(const Rect& rect) {
-		D2D1_POINT_2F p1 = { (float)rect.GetLeft(), (float)rect.GetTop() };
-		D2D1_POINT_2F p2 = { (float)rect.GetRight(), (float)rect.GetTop() };
-		D2D1_POINT_2F p3 = { (float)rect.GetRight(), (float)rect.GetBottom() };
-		D2D1_POINT_2F p4 = { (float)rect.GetLeft(), (float)rect.GetBottom() };
-
-		if (!m_isBegin) {
-			m_pSink->BeginFigure(p1, D2D1_FIGURE_BEGIN_FILLED);
-			m_isBegin = true;
-		}
-		else {
-			m_pSink->AddLine(p1);
-		}
-
-		m_pSink->AddLine(p2);
-		m_pSink->AddLine(p3);
-		m_pSink->AddLine(p4);
-		m_pSink->AddLine(p1); // 闭合
+	void Geometry::AddArc(const PointF& endPoint, float radius) {
+		m_pSink->AddArc(
+			D2D1::ArcSegment(
+				D2D1::Point2F(endPoint.X, endPoint.Y),
+				D2D1::SizeF(radius, radius),
+				0.0f,
+				D2D1_SWEEP_DIRECTION_CLOCKWISE,
+				D2D1_ARC_SIZE_SMALL
+			)
+		);
 	}
 
-	void PathGeometry::AddArc(const Rect& rect, int_t startAngle, int_t sweepAngle) {
-		float centerX = rect.X + rect.Width / 2.0f;
-		float centerY = rect.Y + rect.Height / 2.0f;
-		float radiusX = rect.Width / 2.0f;
-		float radiusY = rect.Height / 2.0f;
-
-#define M_PI 3.14159265358979323846
-		// 起点
-		float startRad = startAngle * (float)M_PI / 180.0f;
-		float endRad = (startAngle + sweepAngle) * (float)M_PI / 180.0f;
-
-		D2D1_POINT_2F startPoint = {
-			centerX + radiusX * cosf(startRad),
-			centerY + radiusY * sinf(startRad)
-		};
-		D2D1_POINT_2F endPoint = {
-			centerX + radiusX * cosf(endRad),
-			centerY + radiusY * sinf(endRad)
-		};
-
-		if (!m_isBegin) {
-			m_pSink->BeginFigure(startPoint, D2D1_FIGURE_BEGIN_FILLED);
-			m_isBegin = true;
-		}
-		else {
-			m_pSink->AddLine(startPoint);
-		}
-
-		D2D1_ARC_SEGMENT arc = {};
-		arc.point = endPoint;
-		arc.size = { radiusX, radiusY };
-		arc.rotationAngle = 0.0f;
-		arc.sweepDirection = sweepAngle >= 0 ? D2D1_SWEEP_DIRECTION_CLOCKWISE : D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE;
-		arc.arcSize = (abs(sweepAngle) > 180) ? D2D1_ARC_SIZE_LARGE : D2D1_ARC_SIZE_SMALL;
-
+	void Geometry::AddAcr(const D2D1_ARC_SEGMENT& arc)
+	{
 		m_pSink->AddArc(arc);
 	}
 
-	void PathGeometry::AddLine(const Rect& rect) {
-		// 从 rect 左上角到右下角画线
-		D2D1_POINT_2F p1 = { (float)rect.GetLeft(), (float)rect.GetTop() };
-		D2D1_POINT_2F p2 = { (float)rect.GetRight(), (float)rect.GetBottom() };
-
-		if (!m_isBegin) {
-			m_pSink->BeginFigure(p1, D2D1_FIGURE_BEGIN_HOLLOW);
-			m_isBegin = true;
-		}
-		else {
-			m_pSink->AddLine(p1);
-		}
-		m_pSink->AddLine(p2);
+	void Geometry::AddLine(const PointF& endPoint) {
+		D2D1_POINT_2F p = { (float)endPoint.X, (float)endPoint.Y };
+		m_pSink->AddLine(p);
+	}
+	void Geometry::BeginFigure(const PointF& startPoint, D2D1_FIGURE_BEGIN figureBegin) {
+		ID2D1PathGeometry* path;
+		D2D::g_Direct2dFactory->CreatePathGeometry(&path);
+		path->Open(&m_pSink);
+		m_pSink->BeginFigure(__To_D2D_PointF(startPoint), figureBegin);
+		m_rgn = path;
+	}
+	void Geometry::CloseFigure(D2D1_FIGURE_END figureEnd) {
+		m_pSink->EndFigure(figureEnd);
+		m_pSink->Close(); // 完成 Path 定义
 	}
 
-	void PathGeometry::AddPoint(const Point& point) {
-		D2D1_POINT_2F p = { (float)point.X, (float)point.Y };
-		if (!m_isBegin) {
-			m_pSink->BeginFigure(p, D2D1_FIGURE_BEGIN_HOLLOW);
-			m_isBegin = true;
-		}
-		else {
-			m_pSink->AddLine(p);
-		}
-	}
-
-	void PathGeometry::CloseFigure() {
-		if (m_isBegin) {
-			m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
-			m_isBegin = false;
-			m_pSink->Close(); // 完成 Path 定义
-		}
-	}
-
-	PathGeometry::~PathGeometry() {
+	Geometry::~Geometry() {
 		if (m_pSink) {
-			m_pSink->Release();
-			m_pSink = nullptr;
+			SafeRelease(&m_pSink);
 		}
-		if (m_pathGeometry) {
-			m_pathGeometry->Release();
-			m_pathGeometry = nullptr;
+		if (m_rgn) {
+			SafeRelease(&m_rgn);
+
 		}
 	}
-
-	ID2D1PathGeometry* PathGeometry::Get() const {
-		return m_pathGeometry;
-	}
-
-	ID2D1GeometrySink* PathGeometry::operator->() {
-		return m_pSink;
-	}
-
-	ID2D1PathGeometry* PathGeometry::operator*() {
-		return m_pathGeometry;
+	ID2D1Geometry* Geometry::Get() const {
+		return m_rgn;
 	}
 
 
-
-	GeometryPie::GeometryPie(const RectF& rectF, float startAngle, float endAngle)
+	PieGeometry::PieGeometry(const RectF& rectF, float startAngle, float endAngle)
 	{
 		auto rect = __To_D2D_RectF(rectF);
 		// 1. 计算圆心和半径
@@ -625,7 +552,7 @@ namespace ezui {
 			D2D1_ELLIPSE ellipse{ center, radiusX, radiusY };
 			D2D::g_Direct2dFactory->CreateEllipseGeometry(&ellipse, &pEllipse);
 			//赋值
-			this->m_rgn = pEllipse;
+			this->m_rgn = (ID2D1Geometry*)pEllipse;
 		}
 		else {
 
@@ -1018,23 +945,23 @@ namespace ezui {
 	}
 	void DXRender::DrawEllipse(const RectF& rectF, float strokeWidth)
 	{
-		GeometryPie pie(rectF, 0, 360);
+		PieGeometry pie(rectF, 0, 360);
 		DrawGeometry(pie.Get(), strokeWidth);
 	}
 	void DXRender::FillEllipse(const RectF& rectF)
 	{
-		GeometryPie pie(rectF, 0, 360);
+		PieGeometry pie(rectF, 0, 360);
 		FillGeometry(pie.Get());
 	}
 
 	void DXRender::DrawPie(const RectF& rectF, float startAngle, float endAngle, float strokeWidth)
 	{
-		GeometryPie pie(rectF, startAngle, endAngle);
+		PieGeometry pie(rectF, startAngle, endAngle);
 		DrawGeometry(pie.Get(), strokeWidth);
 	}
 	void DXRender::FillPie(const RectF& rectF, float startAngle, float endAngle)
 	{
-		GeometryPie pie(rectF, startAngle, endAngle);
+		PieGeometry pie(rectF, startAngle, endAngle);
 		FillGeometry(pie.Get());
 	}
 	void DXRender::DrawPoint(const PointF& pt) {
@@ -1050,17 +977,17 @@ namespace ezui {
 	{
 		m_render->DrawGeometry(geometry, GetBrush(), (FLOAT)width, this->GetStrokeStyle());
 	}
-	void DXRender::FillGeometry(PathGeometry* path)
-	{
-		FillGeometry(path->Get());
-	}
-	void DXRender::DrawGeometry(PathGeometry* path, float width)
-	{
-		DrawGeometry(path->Get(), width);
-	}
 	void DXRender::FillGeometry(ID2D1Geometry* geometry)
 	{
 		m_render->FillGeometry(geometry, GetBrush());
+	}
+	void DXRender::DrawGeometry(Geometry* path, float width)
+	{
+		DrawGeometry(path->Get(), width);
+	}
+	void DXRender::FillGeometry(Geometry* path)
+	{
+		FillGeometry(path->Get());
 	}
 	void DXRender::Flush()
 	{

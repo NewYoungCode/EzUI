@@ -220,7 +220,7 @@ namespace ezui {
 			auto shrink = [&](int r) -> float {
 				return max(0.0f, (float)r - half);
 				};
-			Geometry rr(
+			RectangleGeometry rr(
 				RectF(half, half, Width() - half * 2.0f, Height() - half * 2.0f),
 				shrink(topLeftRadius),
 				shrink(topRightRadius),
@@ -857,8 +857,8 @@ namespace ezui {
 #if USED_DIRECT2D
 		if (hasRadius) {
 			//处理圆角控件 使用纹理的方式 (这样做是为了控件内部无论怎么绘制都不会超出圆角部分) 带抗锯齿
-			Geometry roundRect(Rect(0, 0, clientRect.Width, clientRect.Height), border.TopLeftRadius, border.TopRightRadius, border.BottomRightRadius, border.BottomLeftRadius);
-			Geometry _clientRect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height);
+			RectangleGeometry roundRect(Rect(0, 0, clientRect.Width, clientRect.Height), border.TopLeftRadius, border.TopRightRadius, border.BottomRightRadius, border.BottomLeftRadius);
+			RectangleGeometry _clientRect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height);
 			Geometry outClipRect;
 			Geometry::Intersect(outClipRect, roundRect, _clientRect);
 			args.PushLayer(outClipRect);

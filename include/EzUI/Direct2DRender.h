@@ -91,56 +91,21 @@ namespace ezui {
 		virtual ~TextLayout();
 	};
 
-	//几何路径
-	class UI_EXPORT PathGeometry {
-	private:
+	//几何图形基础类(支持自定义路径)
+	class UI_EXPORT Geometry {
+	protected:
 		ID2D1GeometrySink* m_pSink = NULL;
-		ID2D1PathGeometry* m_pathGeometry = NULL;
-		bool m_isBegin = false;
-		PathGeometry(const PathGeometry& rightCopy) = delete;
-	public:
-		PathGeometry();
-		virtual ~PathGeometry();
-		void AddRectangle(const Rect& rect);
-		void AddArc(const Rect& rect, int_t startAngle, int_t sweepAngle);
-		void AddLine(const Rect& rect);
-		void AddPoint(const Point& point);
-		void CloseFigure();
-		ID2D1PathGeometry* Get()const;
-		ID2D1GeometrySink* operator ->();
-		ID2D1PathGeometry* operator *();
-	};
-
-	class UI_EXPORT Geometry
-	{
-	protected:
-		bool m_ref = false;
 		ID2D1Geometry* m_rgn = NULL;
-	protected:
-		void Copy(const Geometry& _copy) {
-			((Geometry&)(_copy)).m_ref = true;
-			this->m_rgn = ((Geometry&)(_copy)).m_rgn;
-		}
+		Geometry(const Geometry& rightCopy) = delete;
 	public:
-		Geometry() {}
-		Geometry(const Geometry& _copy) {
-			Copy(_copy);
-		}
-		Geometry& operator =(const Geometry& _right) {
-			Copy(_right);
-			return *this;
-		}
-		Geometry(float x, float y, float width, float height);
-		Geometry(float x, float y, float width, float height, float _radius);
-		Geometry(const RectF& _rect, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius);
-		ID2D1Geometry* Get() const {
-			return m_rgn;
-		}
-		virtual ~Geometry() {
-			if (m_rgn && !m_ref) {
-				m_rgn->Release();
-			}
-		}
+		Geometry();
+		virtual ~Geometry();
+		void AddArc(const PointF& endPoint, float radius);
+		void AddAcr(const D2D1_ARC_SEGMENT& arc);
+		void AddLine(const PointF& endPoint);
+		void BeginFigure(const PointF& startPoint, D2D1_FIGURE_BEGIN figureBegin = D2D1_FIGURE_BEGIN_FILLED);
+		void CloseFigure(D2D1_FIGURE_END figureEnd = D2D1_FIGURE_END_CLOSED);
+		ID2D1Geometry* Get()const;
 	public:
 		/// <summary>
 		/// 将两个几何图形通过指定的合并模式（Union、Intersect、Xor、Exclude）合并到一个输出几何中。
@@ -193,18 +158,27 @@ namespace ezui {
 		}
 	};
 
-	//生成扇形
-	class UI_EXPORT GeometryPie :public Geometry {
+	//矩形(已经完成闭合)
+	class UI_EXPORT RectangleGeometry :public Geometry {
 	public:
-		GeometryPie(const RectF& rectF, float startAngle, float endAngle);
-		virtual ~GeometryPie() {};
+		RectangleGeometry(float x, float y, float width, float height);
+		RectangleGeometry(float x, float y, float width, float height, float _radius);
+		RectangleGeometry(const RectF& _rect, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius);
+		virtual ~RectangleGeometry() {};
 	};
 
-	//生成圆形/椭圆
-	class UI_EXPORT GeometryEllipse :public GeometryPie {
+	//扇形(已经完成闭合)
+	class UI_EXPORT PieGeometry :public Geometry {
 	public:
-		GeometryEllipse(const RectF& rectF) :GeometryPie(rectF, 0, 360) {}
-		virtual ~GeometryEllipse() {};
+		PieGeometry(const RectF& rectF, float startAngle, float endAngle);
+		virtual ~PieGeometry() {};
+	};
+
+	//圆形/椭圆(已经完成闭合)
+	class UI_EXPORT EllipseGeometry :public PieGeometry {
+	public:
+		EllipseGeometry(const RectF& rectF) :PieGeometry(rectF, 0, 360) {}
+		virtual ~EllipseGeometry() {};
 	};
 
 	class UI_EXPORT DXImage : public IImage {
@@ -298,9 +272,9 @@ namespace ezui {
 		void DrawArc(const RectF& rect, float startAngle, float sweepAngle, float width = 1);//未实现
 		void DrawArc(const PointF& point1, const  PointF& point2, const PointF& point3, float width = 1);
 		void DrawGeometry(ID2D1Geometry* path, float width = 1);
-		void FillGeometry(PathGeometry* path);
-		void DrawGeometry(PathGeometry* path, float width = 1);
 		void FillGeometry(ID2D1Geometry* path);
+		void DrawGeometry(Geometry* path, float width = 1);
+		void FillGeometry(Geometry* path);
 		void Flush();
 		ID2D1DCRenderTarget* Get();//获取原生DX对象
 	};
