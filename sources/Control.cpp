@@ -127,7 +127,7 @@ namespace ezui {
 
 	WindowData* Control::GetPublicData()
 	{
-		return (WindowData*)UI_GET_USERDATA(m_ownerHWnd);
+		return (WindowData*)UI_GET_USERDATA(Hwnd());
 	}
 
 	Control::Control(Object* parentObject) :Object(parentObject)
@@ -419,10 +419,6 @@ namespace ezui {
 			}
 		} while (false);
 	}
-	HWND Control::OwnerHwnd()
-	{
-		return m_ownerHWnd;
-	}
 	const Controls& Control::GetViewControls()
 	{
 		return this->ViewControls;
@@ -556,6 +552,15 @@ namespace ezui {
 			y += pCtrl->Y();
 		}
 		return Rect{ x,y,Width(),Height() };
+	}
+	Rect Control::GetScreenRect()
+	{
+		RECT winRect{ 0,0,0,0 };
+		GetWindowRect(Hwnd(), &winRect);//获取外层窗口基于屏幕的坐标
+		Rect ctrlRect = GetClientRect();//获取当前控件基于客户端窗口的坐标
+		ctrlRect.X += winRect.left;
+		ctrlRect.Y += winRect.top;
+		return ctrlRect;
 	}
 	DockStyle Control::GetDockStyle()
 	{
@@ -814,7 +819,7 @@ namespace ezui {
 		}
 	}
 	void Control::OnPaintBefore(PaintEventArgs& args) {
-		this->SetOwnerHwnd(args.PublicData->HANDLE);
+		this->SetHwnd(args.HWND);
 		if (this->IsPendLayout()) {//绘制的时候会检查时候有挂起的布局 如果有 立即让布局生效并重置布局标志
 			this->RefreshLayout();
 		}
@@ -980,7 +985,7 @@ namespace ezui {
 			m_spacers.push_back(ctl);
 		}
 		m_controls.push_back(ctl);
-		ctl->SetOwnerHwnd(this->OwnerHwnd());
+		ctl->SetHwnd(this->Hwnd());
 		ctl->Parent = this;
 
 		if (ctl->GetScale() != this->GetScale()) {
@@ -1018,7 +1023,7 @@ namespace ezui {
 		else {
 			m_controls.insert(itor, ctl);
 		}
-		ctl->SetOwnerHwnd(this->OwnerHwnd());
+		ctl->SetHwnd(this->Hwnd());
 		ctl->Parent = this;
 		if (ctl->GetScale() != this->GetScale()) {
 			ctl->SendEvent(DpiChangeEventArgs(this->GetScale()));
@@ -1279,10 +1284,6 @@ namespace ezui {
 	void Control::SetContentSize(const Size& size)
 	{
 		this->m_contentSize = size;
-	}
-	void Control::SetOwnerHwnd(HWND hWnd)
-	{
-		this->m_ownerHWnd = hWnd;
 	}
 	void Control::ComputeClipRect()
 	{

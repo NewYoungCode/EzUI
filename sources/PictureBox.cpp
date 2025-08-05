@@ -5,34 +5,37 @@ namespace ezui {
 		Init();
 	}
 	void PictureBox::Init() {
-		m_timer.Tick = [this](Timer* timer) {
-			Invoke([&]() {
-				timer->Stop();
-				m_timer.Interval = m_img->NextFrame();
+		m_timer = new Timer(this);
+		m_timer->Tick = [this](Timer* timer) {
+			timer->Stop();
+			HWND hWnd = this->Hwnd();
+			BeginInvoke([this, hWnd, timer]() {
+				if (!::IsWindow(hWnd))return;
+				m_timer->Interval = m_img->NextFrame();
 				this->Invalidate();
 				});
 			};
 	}
 	PictureBox::~PictureBox() {
-		m_timer.Stop();
+		m_timer->Stop();
 		if (m_srcImg) {
 			delete m_srcImg;
 		}
 	}
 	void PictureBox::OnRemove() {
 		__super::OnRemove();
-		m_timer.Stop();
+		m_timer->Stop();
 	}
 	void PictureBox::OnForePaint(PaintEventArgs& arg) {
 		if (m_img) {
 			arg.Graphics.DrawImage(m_img, RectF(0, 0, (float)Width(), (float)Height()));
 			if (m_img->FrameCount() > 1) {
-				if (m_timer.IsStopped()) {
-					m_timer.Start();
+				if (m_timer->IsStopped()) {
+					m_timer->Start();
 				}
 			}
 			else {
-				m_timer.Stop();
+				m_timer->Stop();
 			}
 		}
 		__super::OnForePaint(arg);

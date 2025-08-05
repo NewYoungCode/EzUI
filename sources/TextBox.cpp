@@ -5,7 +5,7 @@ namespace ezui {
 		Init();
 	}
 	TextBox::~TextBox() {
-		m_timer.Stop();
+		m_timer->Stop();
 		if (m_textLayout) { delete m_textLayout; }
 		if (m_font) { delete m_font; }
 	}
@@ -18,9 +18,15 @@ namespace ezui {
 			};
 
 		Style.Cursor = LoadCursor(Cursor::IBEAM);
-		m_timer.Interval = 500;
-		m_timer.Tick = [this](Timer*) {
-			Invoke([this]() {
+
+		m_timer = new Timer(this);
+		m_timer->Interval = 500;
+		m_timer->Tick = [this](Timer* t) {
+
+			HWND hWnd = this->Hwnd();//在对象析构前获取句柄
+			BeginInvoke([this, hWnd]() {//捕获hWnd
+				if (!::IsWindow(hWnd))return;//如果窗口已经销毁 则不往下执行
+
 				if (this->Enable == false || this->ReadOnly == true) {
 					m_bCareShow = false;
 					return;
@@ -34,7 +40,7 @@ namespace ezui {
 	}
 	void TextBox::OnRemove() {
 		__super::OnRemove();
-		m_timer.Stop();
+		m_timer->Stop();
 	}
 	void TextBox::SetAutoWidth(bool flag)
 	{
@@ -212,11 +218,11 @@ namespace ezui {
 		int_t pos, count;
 		if (!GetSelectedRange(&pos, &count))return false;
 		std::wstring wBuf(m_text.substr(pos, count));
-		return ezui::CopyToClipboard(wBuf, OwnerHwnd());
+		return ezui::CopyToClipboard(wBuf, Hwnd());
 	}
 	bool TextBox::Paste() {
 		std::wstring wBuf;
-		bool bRet = ezui::GetClipboardData(&wBuf, OwnerHwnd());
+		bool bRet = ezui::GetClipboardData(&wBuf, Hwnd());
 		UIString u8Str(wBuf);
 		if (!m_multiLine) {
 			//行编辑框不允许有换行符
@@ -491,7 +497,7 @@ namespace ezui {
 		__super::OnFocus(arg);
 		m_focus = true;
 		m_bCareShow = true;
-		m_timer.Start();
+		m_timer->Start();
 		Invalidate();
 	}
 	void TextBox::OnKillFocus(const KillFocusEventArgs& arg)
@@ -500,7 +506,7 @@ namespace ezui {
 		m_down = false;
 		m_focus = false;
 		m_bCareShow = false;
-		m_timer.Stop();
+		m_timer->Stop();
 		this->Invalidate();
 	}
 	const UIString TextBox::GetText()

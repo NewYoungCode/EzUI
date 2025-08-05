@@ -4,7 +4,7 @@ namespace ezui {
 	{
 		this->SetResizable(false);
 	}
-	PopupWindow::PopupWindow(int_t width, int_t height, Control* ownerCtl) :LayeredWindow(width, height, ownerCtl->OwnerHwnd())
+	PopupWindow::PopupWindow(int_t width, int_t height, Control* ownerCtl) :LayeredWindow(width, height, ownerCtl->Hwnd())
 	{
 		this->m_ownerCtl = ownerCtl;
 		this->SetResizable(false);
@@ -20,7 +20,7 @@ namespace ezui {
 			ctlRect = m_ownerCtl->GetClientRect();
 			location.x = ctlRect.GetLeft();
 			location.y = ctlRect.GetBottom();
-			::ClientToScreen(m_ownerCtl->OwnerHwnd(), &location);
+			::ClientToScreen(m_ownerCtl->Hwnd(), &location);
 		}
 		else {
 			::GetCursorPos(&location);

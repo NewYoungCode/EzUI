@@ -483,6 +483,129 @@ namespace ezui {
 		this->m_rgn = pPathGeometry;
 	}
 
+	PathGeometry::PathGeometry() {
+		D2D::g_Direct2dFactory->CreatePathGeometry(&m_pathGeometry);
+		m_pathGeometry->Open(&m_pSink);
+		m_isBegin = false;
+	}
+
+	void PathGeometry::AddRectangle(const Rect& rect) {
+		D2D1_POINT_2F p1 = { (float)rect.GetLeft(), (float)rect.GetTop() };
+		D2D1_POINT_2F p2 = { (float)rect.GetRight(), (float)rect.GetTop() };
+		D2D1_POINT_2F p3 = { (float)rect.GetRight(), (float)rect.GetBottom() };
+		D2D1_POINT_2F p4 = { (float)rect.GetLeft(), (float)rect.GetBottom() };
+
+		if (!m_isBegin) {
+			m_pSink->BeginFigure(p1, D2D1_FIGURE_BEGIN_FILLED);
+			m_isBegin = true;
+		}
+		else {
+			m_pSink->AddLine(p1);
+		}
+
+		m_pSink->AddLine(p2);
+		m_pSink->AddLine(p3);
+		m_pSink->AddLine(p4);
+		m_pSink->AddLine(p1); // 闭合
+	}
+
+	void PathGeometry::AddArc(const Rect& rect, int_t startAngle, int_t sweepAngle) {
+		float centerX = rect.X + rect.Width / 2.0f;
+		float centerY = rect.Y + rect.Height / 2.0f;
+		float radiusX = rect.Width / 2.0f;
+		float radiusY = rect.Height / 2.0f;
+
+#define M_PI 3.14159265358979323846
+		// 起点
+		float startRad = startAngle * (float)M_PI / 180.0f;
+		float endRad = (startAngle + sweepAngle) * (float)M_PI / 180.0f;
+
+		D2D1_POINT_2F startPoint = {
+			centerX + radiusX * cosf(startRad),
+			centerY + radiusY * sinf(startRad)
+		};
+		D2D1_POINT_2F endPoint = {
+			centerX + radiusX * cosf(endRad),
+			centerY + radiusY * sinf(endRad)
+		};
+
+		if (!m_isBegin) {
+			m_pSink->BeginFigure(startPoint, D2D1_FIGURE_BEGIN_FILLED);
+			m_isBegin = true;
+		}
+		else {
+			m_pSink->AddLine(startPoint);
+		}
+
+		D2D1_ARC_SEGMENT arc = {};
+		arc.point = endPoint;
+		arc.size = { radiusX, radiusY };
+		arc.rotationAngle = 0.0f;
+		arc.sweepDirection = sweepAngle >= 0 ? D2D1_SWEEP_DIRECTION_CLOCKWISE : D2D1_SWEEP_DIRECTION_COUNTER_CLOCKWISE;
+		arc.arcSize = (abs(sweepAngle) > 180) ? D2D1_ARC_SIZE_LARGE : D2D1_ARC_SIZE_SMALL;
+
+		m_pSink->AddArc(arc);
+	}
+
+	void PathGeometry::AddLine(const Rect& rect) {
+		// 从 rect 左上角到右下角画线
+		D2D1_POINT_2F p1 = { (float)rect.GetLeft(), (float)rect.GetTop() };
+		D2D1_POINT_2F p2 = { (float)rect.GetRight(), (float)rect.GetBottom() };
+
+		if (!m_isBegin) {
+			m_pSink->BeginFigure(p1, D2D1_FIGURE_BEGIN_HOLLOW);
+			m_isBegin = true;
+		}
+		else {
+			m_pSink->AddLine(p1);
+		}
+		m_pSink->AddLine(p2);
+	}
+
+	void PathGeometry::AddPoint(const Point& point) {
+		D2D1_POINT_2F p = { (float)point.X, (float)point.Y };
+		if (!m_isBegin) {
+			m_pSink->BeginFigure(p, D2D1_FIGURE_BEGIN_HOLLOW);
+			m_isBegin = true;
+		}
+		else {
+			m_pSink->AddLine(p);
+		}
+	}
+
+	void PathGeometry::CloseFigure() {
+		if (m_isBegin) {
+			m_pSink->EndFigure(D2D1_FIGURE_END_CLOSED);
+			m_isBegin = false;
+			m_pSink->Close(); // 完成 Path 定义
+		}
+	}
+
+	PathGeometry::~PathGeometry() {
+		if (m_pSink) {
+			m_pSink->Release();
+			m_pSink = nullptr;
+		}
+		if (m_pathGeometry) {
+			m_pathGeometry->Release();
+			m_pathGeometry = nullptr;
+		}
+	}
+
+	ID2D1PathGeometry* PathGeometry::Get() const {
+		return m_pathGeometry;
+	}
+
+	ID2D1GeometrySink* PathGeometry::operator->() {
+		return m_pSink;
+	}
+
+	ID2D1PathGeometry* PathGeometry::operator*() {
+		return m_pathGeometry;
+	}
+
+
+
 	GeometryPie::GeometryPie(const RectF& rectF, float startAngle, float endAngle)
 	{
 		auto rect = __To_D2D_RectF(rectF);
@@ -919,15 +1042,21 @@ namespace ezui {
 		m_render->FillEllipse(ellipse, GetBrush());
 	}
 	void DXRender::DrawArc(const RectF& rect, float startAngle, float sweepAngle, float width) {
-
 	}
 	void DXRender::DrawArc(const PointF& point1, const PointF& point2, const PointF& point3, float width)
 	{
-
 	}
 	void DXRender::DrawGeometry(ID2D1Geometry* geometry, float width)
 	{
 		m_render->DrawGeometry(geometry, GetBrush(), (FLOAT)width, this->GetStrokeStyle());
+	}
+	void DXRender::FillGeometry(PathGeometry* path)
+	{
+		FillGeometry(path->Get());
+	}
+	void DXRender::DrawGeometry(PathGeometry* path, float width)
+	{
+		DrawGeometry(path->Get(), width);
 	}
 	void DXRender::FillGeometry(ID2D1Geometry* geometry)
 	{
@@ -936,14 +1065,6 @@ namespace ezui {
 	void DXRender::Flush()
 	{
 		m_render->Flush();
-	}
-	void DXRender::DrawPath(const DXPath& path, float width)
-	{
-		m_render->DrawGeometry(path.Get(), GetBrush(), (FLOAT)width, this->GetStrokeStyle());
-	}
-	void DXRender::FillPath(const DXPath& path)
-	{
-		m_render->FillGeometry(path.Get(), GetBrush());
 	}
 	ID2D1DCRenderTarget* DXRender::Get() {
 		return m_render;

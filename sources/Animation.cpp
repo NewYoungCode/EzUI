@@ -4,7 +4,8 @@ namespace ezui {
 	Animation::Animation(Object* parentObject)
 		: Object(parentObject)
 	{
-		m_timer.Tick = [this](Timer* t) {
+		m_timer = new Timer(this);
+		m_timer->Tick = [this](Timer* t) {
 			ULONGLONG now = ::GetTickCount64();
 			ULONGLONG delta = now - m_lastTime;
 			m_lastTime = now;
@@ -29,7 +30,7 @@ namespace ezui {
 
 	Animation::~Animation()
 	{
-		m_timer.Stop();
+		m_timer->Stop();
 	}
 
 	void Animation::SetStartValue(double value)
@@ -44,21 +45,21 @@ namespace ezui {
 
 	void Animation::Start(int_t durationMs, int_t fps)
 	{
-		m_timer.Stop();
+		m_timer->Stop();
 
 		m_currValue = m_startValue;
 		double distance = m_endValue - m_startValue;
 		m_speedPerMs = distance / durationMs;
 
 		m_lastTime = ::GetTickCount64(); //记录开始时间
-		m_timer.Interval = 1000 / fps; //频率
-		m_timer.Start();
+		m_timer->Interval = 1000 / fps; //频率
+		m_timer->Start();
 	}
 	bool Animation::IsStopped() {
-		return m_timer.IsStopped();
+		return m_timer->IsStopped();
 	}
 	void Animation::Stop()
 	{
-		m_timer.Stop();
+		m_timer->Stop();
 	}
 }

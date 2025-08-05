@@ -7,9 +7,13 @@ namespace ezui {
 	}
 	void TabLayout::Init()
 	{
-		m_timer.Tick = [this](Timer* sender) {
+		m_timer = new Timer(this);
+		m_timer->Tick = [this](Timer* sender) {
 
-			Invoke([this, sender]() {
+			HWND hWnd = this->Hwnd();
+			BeginInvoke([this, hWnd,sender]() {
+				if (!::IsWindow(hWnd))return;
+
 				m_stepAcc += m_stepPerFrame;
 				int_t stepMove = m_stepAcc;
 				m_stepAcc -= stepMove;
@@ -129,8 +133,8 @@ namespace ezui {
 		}
 
 		m_stepPerFrame = offsetTotal * 1.0f / totalFrames;
-		m_timer.Interval = FRAME_INTERVAL_MS;
-		m_timer.Start();
+		m_timer->Interval = FRAME_INTERVAL_MS;
+		m_timer->Start();
 	}
 
 

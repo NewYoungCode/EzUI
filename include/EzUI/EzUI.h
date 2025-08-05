@@ -141,8 +141,6 @@ namespace ezui {
 #endif
 		//主窗类的实例
 		ezui::Window* Window = NULL;
-		//窗口句柄
-		HWND HANDLE = NULL;
 		//使一个区域无效
 		std::function<void(const Rect&)> InvalidateRect = NULL;
 		//立即更新全部无效区域
@@ -365,6 +363,7 @@ namespace ezui {
 		PaintEventArgs(const PaintEventArgs&) = delete;
 		PaintEventArgs& operator=(const PaintEventArgs&) = delete;
 		WindowData* PublicData = NULL;
+		::HWND HWND = NULL;
 		HDC DC = NULL;
 		ezui::DXRender& Graphics;//画家
 		Rect InvalidRectangle;//WM_PAINT里面的无效区域
@@ -425,6 +424,8 @@ namespace ezui {
 	private:
 		//属性集合
 		std::map<UIString, UIString> m_attrs;
+		//如果该对象是窗口则为窗口句柄 反之是所属窗口句柄
+		HWND m_hWnd = NULL;
 	protected:
 		// 管理子对象的释放
 		std::vector<Object*> m_childObjects;
@@ -439,6 +440,10 @@ namespace ezui {
 		//是否为窗口
 		virtual bool IsWindow() const { return false; }
 	public:
+		//设置窗口句柄
+		virtual void SetHwnd(HWND hWnd);
+		//如果该对象是窗口则返回窗口句柄 反之返回所属窗口句柄
+		virtual HWND Hwnd();
 		//设置属性
 		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue);
 		//获取属性

@@ -7,7 +7,7 @@ namespace ezui {
 	private:
 		Image* m_srcImg = NULL;
 		Image* m_img = NULL;
-		Timer m_timer;
+		Timer *m_timer;
 	private:
 		void Init();
 	protected:

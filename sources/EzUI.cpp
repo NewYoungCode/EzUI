@@ -405,6 +405,7 @@ namespace ezui {
 	{
 		if (parentObject) {
 			parentObject->m_childObjects.push_back(this);
+			this->SetHwnd(parentObject->Hwnd());
 		}
 	}
 	Object::~Object() {
@@ -420,6 +421,15 @@ namespace ezui {
 		if (childObj != m_childObjects.end()) {
 			m_childObjects.erase(childObj);
 		}
+	}
+
+	void Object::SetHwnd(HWND hWnd)
+	{
+		this->m_hWnd = hWnd;
+	}
+	HWND Object::Hwnd()
+	{
+		return this->m_hWnd;
 	}
 
 	void Object::SetAttribute(const UIString& attrName, const UIString& attrValue) {

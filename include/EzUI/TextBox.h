@@ -33,7 +33,7 @@ namespace ezui {
 		int_t m_scrollY = 0;//用于y轴滚动
 		int_t m_lastX = 0;//上一个x位置
 		int_t m_lastY = 0;//上一个y位置 
-		Timer m_timer;//用于光标闪烁
+		Timer *m_timer;//用于光标闪烁
 		bool m_bCareShow = false;//用于光标闪烁
 	private:
 		void Init();

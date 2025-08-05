@@ -53,7 +53,7 @@ namespace ezui {
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
 		bool IsInWindow(Control& pControl, Control& it);
-		void InitWindow(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
+		void Init(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
 		//在窗口中使用基于客户区的鼠标位置寻找可命中的控件 
 		Control* HitTestControl(const Point clientPoint, Point* outPoint);
 	protected:
@@ -110,8 +110,8 @@ namespace ezui {
 		//使用id寻找控件
 		Control* FindControl(const UIString& objectName);
 
-		//获取窗口句柄
-		HWND Hwnd();
+		//获取公共数据
+		WindowData* GetPublicData();
 
 		//获取窗口基于显示器的矩形
 		const Rect& GetWindowRect();
@@ -218,10 +218,5 @@ namespace ezui {
 		//给指定控件为焦点控件
 		void SetFocus(Control* ctl);
 
-		//获取所属句柄
-		HWND OwnerHwnd();
-
-		//获取公共数据
-		WindowData* GetPublicData();
 	};
 };

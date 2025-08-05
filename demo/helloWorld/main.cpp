@@ -56,13 +56,11 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 {
 	Application app;//消息循环对象
 
-	//keybd_event(VK_LWIN, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
-
-	{
-		MainFrm frm(800, 600);//无边框窗口
-		frm.Show();
-		return app.Exec();
-	}
+	//{
+	//	MainFrm frm(800, 600);//无边框窗口
+	//	frm.Show();
+	//	return app.Exec();
+	//}
 
 	MainFrm frm(800, 600);//无边框窗口
 	VLayout mainLayout;//窗口中的main布局

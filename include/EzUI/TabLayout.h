@@ -13,7 +13,7 @@ namespace ezui {
 	{
 	private:
 		int_t m_pageIndex = 0;
-		Timer m_timer;
+		Timer *m_timer;
 		int_t m_offset = 0;
 		int_t m_nowOffset = 0;
 		std::vector<int_t> m_initial;

@@ -11,7 +11,7 @@ namespace ezui {
 
 	Window::Window(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 	{
-		InitWindow(width, height, owner, dStyle, ExStyle);//设置基本数据
+		Init(width, height, owner, dStyle, ExStyle);//设置基本数据
 	}
 
 	Window::~Window()
@@ -27,7 +27,7 @@ namespace ezui {
 		}
 	}
 
-	void Window::InitWindow(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  exStyle)
+	void Window::Init(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  exStyle)
 	{
 		this->m_publicData = new WindowData;
 		Rect rect(0, 0, width, height);
@@ -53,9 +53,12 @@ namespace ezui {
 			return this->WndProc(uMsg, wParam, lParam);
 			};
 		//创建窗口
-		m_publicData->HANDLE = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, ezui::__EzUI__WindowClassName, ezui::__EzUI__WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
+		HWND hWnd = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, ezui::__EzUI__WindowClassName, ezui::__EzUI__WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
 			rect.X, rect.Y, rect.Width, rect.Height, owner, NULL, ezui::__EzUI__HINSTANCE, NULL);
+		//设置窗口句柄
+		this->SetHwnd(hWnd);
 		m_publicData->Window = this;
+
 		if (owner) {
 			this->CenterToWindow(owner);
 		}
@@ -77,9 +80,6 @@ namespace ezui {
 			ezui::__EzUI__HINSTANCE,
 			NULL
 		);
-
-		m_publicData->HANDLE = Hwnd();
-		m_publicData->Window = this;
 
 		if ((exStyle & WS_EX_LAYERED) != WS_EX_LAYERED) {
 			m_publicData->InvalidateRect = [this](const Rect& rect)->void {
@@ -189,10 +189,6 @@ namespace ezui {
 		return this->m_layout->FindControl(objectName);
 	}
 
-	HWND Window::Hwnd()
-	{
-		return m_publicData->HANDLE;
-	}
 	const Rect& Window::GetWindowRect()
 	{
 		RECT rect;
@@ -283,7 +279,7 @@ namespace ezui {
 	void Window::SetLayout(ezui::Control* layout) {
 		ASSERT(layout);
 		m_layout = layout;
-		m_layout->SetOwnerHwnd(Hwnd());
+		m_layout->SetHwnd(Hwnd());
 
 		if (m_layout->Style.FontFamily.empty()) {
 			WCHAR fontName[LF_FACESIZE] = { 0 };
@@ -465,10 +461,6 @@ namespace ezui {
 		ctl->SendEvent(args);
 		__INPUT_CONTROL = ctl;
 		__FOCUS_CONTROL = ctl;
-	}
-
-	HWND Window::OwnerHwnd() {
-		return ::GetWindow(Hwnd(), GW_OWNER);
 	}
 
 	WindowData* Window::GetPublicData()
@@ -700,7 +692,7 @@ namespace ezui {
 		}
 		case WM_DESTROY:
 		{
-			this->m_publicData->HANDLE = NULL;
+			SetHwnd(NULL);
 			OnDestroy();
 			break;
 		}
@@ -821,6 +813,7 @@ namespace ezui {
 		DXRender graphics(winHDC, 0, 0, GetClientRect().Width, GetClientRect().Height);
 		PaintEventArgs args(graphics);
 		args.DC = winHDC;
+		args.HWND = Hwnd();
 		args.PublicData = this->m_publicData;
 		args.PublicData->PaintCount = 0;
 		args.InvalidRectangle = rePaintRect;

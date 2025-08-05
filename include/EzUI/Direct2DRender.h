@@ -90,6 +90,27 @@ namespace ezui {
 		void SetUnderline(size_t pos = 0, size_t count = 0);
 		virtual ~TextLayout();
 	};
+
+	//几何路径
+	class UI_EXPORT PathGeometry {
+	private:
+		ID2D1GeometrySink* m_pSink = NULL;
+		ID2D1PathGeometry* m_pathGeometry = NULL;
+		bool m_isBegin = false;
+		PathGeometry(const PathGeometry& rightCopy) = delete;
+	public:
+		PathGeometry();
+		virtual ~PathGeometry();
+		void AddRectangle(const Rect& rect);
+		void AddArc(const Rect& rect, int_t startAngle, int_t sweepAngle);
+		void AddLine(const Rect& rect);
+		void AddPoint(const Point& point);
+		void CloseFigure();
+		ID2D1PathGeometry* Get()const;
+		ID2D1GeometrySink* operator ->();
+		ID2D1PathGeometry* operator *();
+	};
+
 	class UI_EXPORT Geometry
 	{
 	protected:
@@ -186,57 +207,6 @@ namespace ezui {
 		virtual ~GeometryEllipse() {};
 	};
 
-	class UI_EXPORT DXPath {
-	private:
-		ID2D1GeometrySink* m_pSink = NULL;
-		ID2D1PathGeometry* m_pathGeometry = NULL;
-		bool m_isBegin = false;
-	public:
-		DXPath() {
-			D2D::g_Direct2dFactory->CreatePathGeometry(&m_pathGeometry);
-			m_pathGeometry->Open(&m_pSink);
-		}
-		void AddRectangle(const Rect& rect) {
-			if (!m_isBegin) {
-				m_pSink->BeginFigure({ (float)rect.GetLeft(),(float)rect.GetTop() }, D2D1_FIGURE_BEGIN_FILLED);
-				m_isBegin = true;
-			}
-			else {
-				m_pSink->AddLine({ (float)rect.GetLeft(),(float)rect.GetTop() });
-			}
-			m_pSink->AddLine({ (float)rect.GetRight(),(float)rect.GetTop() });
-			m_pSink->AddLine({ (float)rect.GetRight(),(float)rect.GetBottom() });
-			m_pSink->AddLine({ (float)rect.GetLeft(),(float)rect.GetBottom() });
-		}
-		void AddArc(const Rect& rect, int_t startAngle, int_t sweepAngle) {
-
-		}
-		void AddLine(const Rect& rect) {
-
-		}
-		void CloseFigure() {
-			m_pSink->EndFigure(D2D1_FIGURE_END_OPEN);
-			m_pSink->Close();
-		}
-		virtual ~DXPath() {
-			if (m_pathGeometry) {
-				m_pathGeometry->Release();
-			}
-			if (m_pSink) {
-				m_pSink->Release();
-			}
-		}
-		ID2D1PathGeometry* Get()const {
-			return m_pathGeometry;
-		}
-		ID2D1GeometrySink* operator ->() {
-			return m_pSink;
-		}
-		ID2D1PathGeometry* operator *() {
-			return m_pathGeometry;
-		}
-	};
-
 	class UI_EXPORT DXImage : public IImage {
 	protected:
 		IWICBitmapDecoder* m_bitmapdecoder = NULL;
@@ -327,12 +297,11 @@ namespace ezui {
 		void DrawPoint(const PointF& pt);
 		void DrawArc(const RectF& rect, float startAngle, float sweepAngle, float width = 1);//未实现
 		void DrawArc(const PointF& point1, const  PointF& point2, const PointF& point3, float width = 1);
-		void DrawGeometry(ID2D1Geometry* path, float width);
+		void DrawGeometry(ID2D1Geometry* path, float width = 1);
+		void FillGeometry(PathGeometry* path);
+		void DrawGeometry(PathGeometry* path, float width = 1);
 		void FillGeometry(ID2D1Geometry* path);
 		void Flush();
-		//绘制弧线 未实现
-		void DrawPath(const DXPath& path, float width = 1);//绘制path 未实现
-		void FillPath(const DXPath& path);//填充Path 未实现
 		ID2D1DCRenderTarget* Get();//获取原生DX对象
 	};
 };

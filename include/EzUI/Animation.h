@@ -6,7 +6,7 @@ namespace ezui {
 
 	class UI_EXPORT Animation : public Object {
 	private:
-		Timer m_timer;
+		Timer *m_timer;
 		double m_startValue = 0;
 		double m_endValue = 0;
 		double m_currValue = 0;

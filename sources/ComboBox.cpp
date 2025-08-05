@@ -88,12 +88,6 @@ namespace ezui {
 	ComboBox::~ComboBox()
 	{
 		m_list.Clear(true);
-		//涉及到由于"_list"是成员变量 释放比较靠后 所以释放窗口的时候 必须把 "_list"的公共数据也置零
-		m_list.SetOwnerHwnd(NULL);
-		if (m_list.GetScrollBar()) {
-			//滚动条同理 也需要置零公共数据
-			m_list.GetScrollBar()->SetOwnerHwnd(NULL);
-		}
 		if (m_menuWnd) {
 			delete m_menuWnd;
 		}
@@ -133,7 +127,7 @@ namespace ezui {
 	}
 	void ComboBox::MenuContent::OnKillFocus(HWND wnd)
 	{
-		if (::GetWindow(Hwnd(),GW_OWNER) == wnd) {
+		if (::GetWindow(Hwnd(), GW_OWNER) == wnd) {
 			POINT pt;
 			::GetCursorPos(&pt);
 			// 将鼠标屏幕坐标转换为客户端坐标

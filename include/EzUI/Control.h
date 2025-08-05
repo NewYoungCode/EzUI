@@ -14,8 +14,6 @@ namespace ezui {
 		// 当前控件的 DPI 缩放比例
 		float m_scale = 1.0f;
 
-		//控件所属的窗口句柄
-		HWND m_ownerHWnd = NULL;
 
 		// 子控件集合
 		Controls m_controls;
@@ -365,6 +363,9 @@ namespace ezui {
 		// 获取基于客户端区域的矩形
 		Rect GetClientRect();
 
+		//获取控件基于屏幕的矩形位置
+		Rect GetScreenRect();
+
 		// 获取控件的 DockStyle（停靠方式）
 		DockStyle GetDockStyle();
 
@@ -403,12 +404,6 @@ namespace ezui {
 
 		// 设置控件属性
 		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue);
-
-		//设置控件所属窗口句柄
-		void SetOwnerHwnd(HWND hWnd);
-
-		//获取控件所在的窗口句柄
-		HWND OwnerHwnd();
 
 		// 获取当前可见的子控件集合
 		const Controls& GetViewControls();
