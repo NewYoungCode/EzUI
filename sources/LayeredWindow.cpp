@@ -1,14 +1,27 @@
 #include "LayeredWindow.h"
 
 namespace ezui {
+
+	std::vector<LayeredWindow*> g_layeredWnds;
+	Timer g_layeredWndTimer;
+
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
 	LayeredWindow::LayeredWindow(int_t width, int_t height, HWND owner) :BorderlessWindow(width, height, owner, WS_EX_LAYERED)
 	{
-		m_timeOut.Interval = 1;
-		m_timeOut.Tick = [this](Timer* t) {
-			t->Stop();//停止
-			::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
-			};
+		//初始化全局绘制计时器
+		if (g_layeredWndTimer.Tick == NULL) {
+			g_layeredWndTimer.Interval = 1;
+			g_layeredWndTimer.Tick = [](Timer* t) {
+				Invoke([]() {
+					for (auto& it : g_layeredWnds) {
+						it->Paint();
+					}
+					});
+				t->Stop();
+				};
+		}
+		//添加到全局绘制队列
+		g_layeredWnds.push_back(this);
 		//获取公共数据
 		auto* publicData = this->GetPublicData();
 		publicData->InvalidateRect = [this](const Rect& rect) ->void {
@@ -17,7 +30,7 @@ namespace ezui {
 			};
 		publicData->UpdateWindow = [this]()->void {
 			//立即更新窗口中的无效区域
-			::SendMessage(Hwnd(), WM_PAINT, NULL, NULL);
+			this->Paint();
 			};
 		//获取客户区大小 创建一个位图给窗口绘制
 		Size sz = GetClientRect().GetSize();
@@ -27,13 +40,18 @@ namespace ezui {
 		if (m_winBitmap) {
 			delete m_winBitmap;
 		}
+		//从全局中移除
+		auto itor = std::find(g_layeredWnds.begin(), g_layeredWnds.end(), this);
+		if (itor != g_layeredWnds.end()) {
+			g_layeredWnds.erase(itor);
+		}
 	}
 
 	void LayeredWindow::InvalidateRect(const Rect& _rect) {
 		//将此区域添加到无效区域
 		m_invalidateRect.push_back(_rect);
 		//timer延迟绘制
-		m_timeOut.Start();
+		g_layeredWndTimer.Start();
 	}
 
 	void LayeredWindow::BeginPaint(Rect* out_rect)
@@ -101,10 +119,6 @@ namespace ezui {
 	{
 		switch (uMsg)
 		{
-		case WM_PAINT: {
-			Paint();
-			return TRUE;
-		}
 		default:
 			break;
 		}
