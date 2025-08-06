@@ -14,7 +14,6 @@ namespace ezui {
 		// 当前控件的 DPI 缩放比例
 		float m_scale = 1.0f;
 
-
 		// 子控件集合
 		Controls m_controls;
 

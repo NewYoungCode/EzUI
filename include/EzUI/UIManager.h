@@ -50,6 +50,9 @@ namespace ezui {
 		//当解析到一个节点的时候发生
 		virtual Control* OnBuildControl(const UIString& nodeName);
 	public:
+		//绑定生成控件的回调函数(用于自定义控件)
+		std::function<Control* (const UIString& nodeName)> ControlBuilder;
+	public:
 		UIManager();
 		virtual ~UIManager();
 		void SetupUI(Window* window);

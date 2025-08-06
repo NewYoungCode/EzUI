@@ -226,6 +226,10 @@ namespace ezui {
 				style->FontFamily = value.unicode();
 				break;
 			}
+			if (key == "border-width") {
+				style->Border = __ToFloat(value);
+				break;
+			}
 			if (key == "border") {
 				__MakeBorder(value, style->Border, [style](float num) {
 					style->Border.Left = num;
@@ -466,7 +470,9 @@ namespace ezui {
 			this->m_controls.emplace_front(ctl, tagNamee);
 		}
 	}
-	Control* UIManager::OnBuildControl(const UIString& tagName) {
+	Control* UIManager::OnBuildControl(const UIString& tagName_) {
+		UIString tagName = tagName_;
+		ui_text::Tolower(&tagName);
 		Control* ctl = NULL;
 		do
 		{
@@ -544,7 +550,10 @@ namespace ezui {
 			}
 
 		} while (false);
-
+		//自定义控件
+		if (ctl == NULL && ControlBuilder) {
+			ctl = ControlBuilder(tagName_);
+		}
 		return ctl;
 	}
 	UIManager::UIManager()
