@@ -71,11 +71,15 @@ inline HCURSOR LoadCursor(HINSTANCE hInstance, LPCTSTR lpCursorName) {
 #define WM_GUI_BEGININVOKE 0x02
 
 #ifdef _WINDLL
-#define  UI_EXPORT  __declspec(dllexport) 
-#define	 UI_VAR_EXPORT UI_EXPORT
+
+#define UI_EXPORT  __declspec(dllexport) 
+#define	UI_VAR_EXPORT __declspec(dllexport) 
+
 #else
+
 #define UI_EXPORT 
 #define UI_VAR_EXPORT __declspec(dllimport)
+
 #endif // _WINDLL
 
 //下面的渲染方式只能选一个

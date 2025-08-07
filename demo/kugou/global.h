@@ -1,4 +1,5 @@
 #pragma once
+#define UI_VAR_EXPORT
 #include "EzUI/EzUI.h"
 #include "EzUI/TextBox.h"
 #include "EzUI/BorderlessWindow.h"

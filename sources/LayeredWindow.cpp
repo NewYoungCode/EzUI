@@ -12,12 +12,12 @@ namespace ezui {
 		if (g_layeredWndTimer.Tick == NULL) {
 			g_layeredWndTimer.Interval = 1;
 			g_layeredWndTimer.Tick = [](Timer* t) {
+				t->Stop();
 				Invoke([]() {
 					for (auto& it : g_layeredWnds) {
 						it->Paint();
 					}
 					});
-				t->Stop();
 				};
 		}
 		//添加到全局绘制队列

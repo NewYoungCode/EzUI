@@ -114,20 +114,7 @@ namespace ezui {
 		/// <param name="a">参与合并的第一个 Geometry。</param>
 		/// <param name="b">参与合并的第二个 Geometry。</param>
 		/// <param name="COMBINE_MODE">几何合并模式，取值如 D2D1_COMBINE_MODE_UNION、INTERSECT、XOR、EXCLUDE。</param>
-		static void Combine(Geometry& out, const Geometry& a, const Geometry& b, D2D1_COMBINE_MODE COMBINE_MODE)
-		{
-			ID2D1PathGeometry* outPathGeometry = NULL;
-			D2D::g_Direct2dFactory->CreatePathGeometry(&outPathGeometry);
-			ID2D1GeometrySink* geometrySink = NULL;
-			outPathGeometry->Open(&geometrySink);
-			HRESULT ret = a.m_rgn->CombineWithGeometry(b.m_rgn, COMBINE_MODE, NULL, geometrySink);
-			geometrySink->Close();
-			if (out.m_rgn) {
-				out.m_rgn->Release();
-			}
-			out.m_rgn = outPathGeometry;
-			geometrySink->Release();
-		}
+		static void Combine(Geometry& out, const Geometry& a, const Geometry& b, D2D1_COMBINE_MODE COMBINE_MODE);
 
 		/// <summary>
 		/// 合并两个区域，取它们的联合部分（即最大边界区域）。

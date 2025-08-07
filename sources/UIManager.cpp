@@ -422,7 +422,6 @@ namespace ezui {
 		TiXmlElement* node = (TiXmlElement*)_node;
 		Control* ctl = NULL;
 		std::string tagName(node->ValueTStr().c_str());
-		ui_text::Tolower(&tagName);
 		ctl = this->OnBuildControl(tagName);
 		if (ctl == NULL) {
 			UIString text = UIString("unknow element \"%s\"").format(tagName.c_str());
@@ -471,8 +470,7 @@ namespace ezui {
 		}
 	}
 	Control* UIManager::OnBuildControl(const UIString& tagName_) {
-		UIString tagName = tagName_;
-		ui_text::Tolower(&tagName);
+		UIString tagName = tagName_.toLower();
 		Control* ctl = NULL;
 		do
 		{
@@ -601,7 +599,10 @@ namespace ezui {
 		{
 			if (element == NULL) break;
 			if (element->ValueTStr() == "style") {// if element is style
-				styleStr = element->GetText();
+				const char* szStr = element->GetText();
+				if (szStr) {
+					styleStr = szStr;
+				}
 			}
 			else { //if no style , must be Control
 				controlNodes.push_back(element);

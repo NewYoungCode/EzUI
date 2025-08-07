@@ -51,6 +51,11 @@ namespace ezui {
 	extern UI_VAR_EXPORT std::list<HWND> __EzUI__Wnds;//存储所有使用本框架产生的窗口句柄
 	extern UI_VAR_EXPORT HWND __EzUI_MessageWnd;//用于UI通讯的隐形窗口
 	extern UI_VAR_EXPORT const std::list<ezui::MonitorInfo> __EzUI__MonitorInfos;//所有监视器信息
+	extern UI_VAR_EXPORT Control* __FOCUS_CONTROL;	//具有焦点的控件
+	extern UI_VAR_EXPORT Control* __INPUT_CONTROL; //具有输入焦点的控件
+
+	//清除控件在窗口的状态信息
+	extern UI_EXPORT void CleanControl(Control* ctrl);
 	//装载字体
 	extern UI_EXPORT void InstallFont(const UIString& fontFileName);
 	//卸载字体
@@ -125,10 +130,6 @@ namespace ezui {
 	struct WindowData {
 		//缩放率
 		float Scale = 1.0f;
-		//具有焦点的控件
-		Control* FocusControl = NULL;
-		//输入框
-		Control* InputControl = NULL;
 		//单次绘图数量
 		int_t PaintCount = 0;
 #ifdef _DEBUG
@@ -147,12 +148,6 @@ namespace ezui {
 		std::function<void()> UpdateWindow = NULL;
 		//通知函数
 		std::function<bool(Control*, EventArgs&)> SendNotify = NULL;//
-		//清空控件标记等等...
-		std::function<void(Control*)> RemoveControl = NULL;
-		//设置tips文字
-		std::function<void(Control*, const std::wstring&)> SetTips = NULL;
-		//删除tips文字
-		std::function<void(Control*)> DelTips = NULL;
 		//处理消息过程的回调函数
 		std::function<LRESULT(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)> WndProc = NULL;
 

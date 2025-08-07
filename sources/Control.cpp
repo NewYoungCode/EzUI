@@ -943,11 +943,8 @@ namespace ezui {
 	}
 	Control::~Control()
 	{
-		auto* publicData = GetPublicData();
 		//清除绑定信息
-		if (publicData) {
-			publicData->RemoveControl(this);
-		}
+		ezui::CleanControl(this);
 		//释放弹簧
 		DestroySpacers();
 	}
@@ -1068,10 +1065,7 @@ namespace ezui {
 		for (auto& it : m_controls) {
 			it->OnRemove();
 		}
-		auto* publicData = GetPublicData();
-		if (publicData) {
-			publicData->RemoveControl(this);
-		}
+		ezui::CleanControl(this);
 	}
 	Control* Control::FindControl(const UIString& ctlName)
 	{
@@ -1363,10 +1357,6 @@ namespace ezui {
 	void Control::OnMouseEnter(const MouseEventArgs& args)
 	{
 		this->State = ControlState::Hover;
-		auto* publicData = GetPublicData();
-		if (publicData) {
-			publicData->SetTips(this, this->GetTips().unicode());
-		}
 		if (!(this->EventPassThrough & Event::OnMouseEnter)) {
 			this->Invalidate();
 		}

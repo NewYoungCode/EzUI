@@ -4,10 +4,6 @@
 #include <CommCtrl.h>
 
 namespace ezui {
-	//具有焦点的控件
-#define __FOCUS_CONTROL m_publicData->FocusControl
-//具有输入焦点的控件
-#define __INPUT_CONTROL m_publicData->InputControl
 
 	Window::Window(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  ExStyle)
 	{
@@ -102,54 +98,7 @@ namespace ezui {
 				}
 				};
 		}
-		m_publicData->SetTips = [this](Control* ctl, const std::wstring& text)->void {
-
-			// 枚举并删除每个提示项
-			int_t toolCount = SendMessage(m_hWndTips, TTM_GETTOOLCOUNT, 0, 0);
-			for (int_t i = 0; i < toolCount; ++i) {
-				TOOLINFO toolInfo{ 0 };
-				toolInfo.cbSize = sizeof(TOOLINFO);
-				toolInfo.hwnd = Hwnd();
-				toolInfo.uFlags = TTF_IDISHWND;
-				toolInfo.hwnd = m_hWndTips;
-				// 发送 TTM_ENUMTOOLS 消息以获取提示项信息
-				if (SendMessage(m_hWndTips, TTM_ENUMTOOLS, i, (LPARAM)&toolInfo)) {
-					// 发送 TTM_DELTOOL 消息删除提示项
-					SendMessage(m_hWndTips, TTM_DELTOOL, 0, (LPARAM)&toolInfo);
-				}
-			}
-			//EString str;
-			//EString::UnicodeToANSI(text, &str);
-			//printf("tips: %s\n", str.c_str());
-			if (!text.empty()) {
-				// 发送 TTM_DELALLTOOL 消息
-				TOOLINFO	tti{ 0 };
-				tti.cbSize = sizeof(TOOLINFO);
-				tti.uFlags = TTF_SUBCLASS;// | TTF_TRACK;
-				tti.hwnd = Hwnd();
-				//tti.rect = ctl->GetViewRect().ToRECT();
-				tti.uId = (UINT_PTR)ctl;
-				tti.lpszText = (LPWSTR)text.c_str();
-				//添加一个tips信息
-				SendMessage(m_hWndTips, TTM_ADDTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
-			}
-			};
-		m_publicData->DelTips = [this](Control* ctl)->void {
-			TOOLINFO	tti{ 0 };
-			tti.cbSize = sizeof(TOOLINFO);
-			tti.hwnd = Hwnd();
-			tti.uId = (UINT_PTR)ctl;
-			//移除
-			SendMessage(m_hWndTips, TTM_DELTOOL, 0, (LPARAM)(LPTOOLINFO)&tti);
-			};
-		m_publicData->RemoveControl = [this](Control* delControl)->void {
-			if (__FOCUS_CONTROL == delControl) {
-				__FOCUS_CONTROL = NULL;
-			}
-			if (__INPUT_CONTROL == delControl) {
-				__INPUT_CONTROL = NULL;
-			}
-			};
+		
 		m_publicData->SendNotify = [this](Control* sender, EventArgs& args)->bool {
 			IFrame* frame = NULL;
 			Control* parent = sender;

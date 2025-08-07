@@ -410,6 +410,22 @@ namespace ezui {
 			SafeRelease(&m_bitMap);
 		}
 	}
+
+	void Geometry::Combine(Geometry& out, const Geometry& a, const Geometry& b, D2D1_COMBINE_MODE COMBINE_MODE)
+	{
+		ID2D1PathGeometry* outPathGeometry = NULL;
+		D2D::g_Direct2dFactory->CreatePathGeometry(&outPathGeometry);
+		ID2D1GeometrySink* geometrySink = NULL;
+		outPathGeometry->Open(&geometrySink);
+		HRESULT ret = a.m_rgn->CombineWithGeometry(b.m_rgn, COMBINE_MODE, NULL, geometrySink);
+		geometrySink->Close();
+		if (out.m_rgn) {
+			out.m_rgn->Release();
+		}
+		out.m_rgn = outPathGeometry;
+		geometrySink->Release();
+	}
+
 	RectangleGeometry::RectangleGeometry(float x, float y, float width, float height) {
 		D2D_RECT_F rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) };
 		D2D::g_Direct2dFactory->CreateRectangleGeometry(rectF, (ID2D1RectangleGeometry**)&m_rgn);
