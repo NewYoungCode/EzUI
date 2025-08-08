@@ -36,6 +36,7 @@ public:
 			ck->CheckedStyle.Border.Bottom = 10;
 			ck->CheckedStyle.Border.Style = StrokeStyle::Solid;
 			ck->CheckedStyle.Border.Color = Color::Red;
+			ck->CheckedStyle.BackImage = Image::Make("headImg.jpg");
 			ck->SetText("aaa" + std::to_string(i));
 
 			main->Add(ck);

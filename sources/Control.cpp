@@ -76,6 +76,10 @@ namespace ezui {
 			_state = this->State;\
 		}\
 		##_type _##_filed;\
+		if ((_state & ControlState::Checked) == ControlState::Checked) {\
+			_##_filed = this->GetStyle(ControlState::Checked).##_filed;\
+			if (__IsValid(_##_filed))return _##_filed;\
+		}\
 		if ((_state & ControlState::Hover) == ControlState::Hover) {\
 			_##_filed = this->GetStyle(ControlState::Hover).##_filed;\
 			if (__IsValid(_##_filed))return _##_filed;\
