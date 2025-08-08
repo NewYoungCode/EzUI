@@ -943,8 +943,11 @@ namespace ezui {
 	}
 	Control::~Control()
 	{
+		auto* publicData = GetPublicData();
 		//清除绑定信息
-		ezui::CleanControl(this);
+		if (publicData) {
+			publicData->CleanControl(this);
+		}
 		//释放弹簧
 		DestroySpacers();
 	}
@@ -1065,7 +1068,10 @@ namespace ezui {
 		for (auto& it : m_controls) {
 			it->OnRemove();
 		}
-		ezui::CleanControl(this);
+		auto* publicData = GetPublicData();
+		if (publicData) {
+			publicData->CleanControl(this);
+		}
 	}
 	Control* Control::FindControl(const UIString& ctlName)
 	{

@@ -169,7 +169,13 @@ namespace ezui {
 	};
 
 	class UI_EXPORT DXImage : public IImage {
+		struct GifFrame
+		{
+			IWICBitmap* wicBitmap; // 存一份完整帧
+			UINT delay;
+		};
 	protected:
+		std::vector<GifFrame> m_frames;
 		IWICBitmapDecoder* m_bitmapdecoder = NULL;
 		IWICBitmapFrameDecode* m_pframe = NULL;
 		IWICFormatConverter* m_fmtcovter = NULL;//从文件加载

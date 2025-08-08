@@ -98,7 +98,14 @@ namespace ezui {
 				}
 				};
 		}
-		
+		m_publicData->CleanControl = [this](Control* delControl)->void {
+			if (__FOCUS_CONTROL == delControl) {
+				__FOCUS_CONTROL = NULL;
+			}
+			if (__INPUT_CONTROL == delControl) {
+				__INPUT_CONTROL = NULL;
+			}
+			};
 		m_publicData->SendNotify = [this](Control* sender, EventArgs& args)->bool {
 			IFrame* frame = NULL;
 			Control* parent = sender;

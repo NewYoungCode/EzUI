@@ -51,11 +51,6 @@ namespace ezui {
 	extern UI_VAR_EXPORT std::list<HWND> __EzUI__Wnds;//存储所有使用本框架产生的窗口句柄
 	extern UI_VAR_EXPORT HWND __EzUI_MessageWnd;//用于UI通讯的隐形窗口
 	extern UI_VAR_EXPORT const std::list<ezui::MonitorInfo> __EzUI__MonitorInfos;//所有监视器信息
-	extern UI_VAR_EXPORT Control* __FOCUS_CONTROL;	//具有焦点的控件
-	extern UI_VAR_EXPORT Control* __INPUT_CONTROL; //具有输入焦点的控件
-
-	//清除控件在窗口的状态信息
-	extern UI_EXPORT void CleanControl(Control* ctrl);
 	//装载字体
 	extern UI_EXPORT void InstallFont(const UIString& fontFileName);
 	//卸载字体
@@ -148,6 +143,8 @@ namespace ezui {
 		std::function<void()> UpdateWindow = NULL;
 		//通知函数
 		std::function<bool(Control*, EventArgs&)> SendNotify = NULL;//
+		//清空控件标记等等...
+		std::function<void(Control*)> CleanControl = NULL;
 		//处理消息过程的回调函数
 		std::function<LRESULT(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)> WndProc = NULL;
 
@@ -421,9 +418,9 @@ namespace ezui {
 		std::map<UIString, UIString> m_attrs;
 		//如果该对象是窗口则为窗口句柄 反之是所属窗口句柄
 		HWND m_hWnd = NULL;
-	protected:
 		// 管理子对象的释放
 		std::vector<Object*> m_childObjects;
+	protected:
 		//移除子对象
 		void RemoveObject(Object* object);
 	public:

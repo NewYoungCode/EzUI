@@ -17,8 +17,6 @@ namespace ezui {
 	std::list<HWND> __EzUI__Wnds;
 	HWND __EzUI_MessageWnd = NULL;
 	const std::list<ezui::MonitorInfo> __EzUI__MonitorInfos;
-	Control* __FOCUS_CONTROL = NULL;
-	Control* __INPUT_CONTROL = NULL;
 
 	Color Color::Make(const UIString& colorStr, bool* _isGood) {
 		Color color;
@@ -217,16 +215,6 @@ namespace ezui {
 			return new Image(data.c_str(), data.size());
 		}
 		return NULL;
-	}
-
-	void CleanControl(Control* ctrl)
-	{
-		if (__FOCUS_CONTROL == ctrl) {
-			__FOCUS_CONTROL = NULL;
-		}
-		if (__INPUT_CONTROL == ctrl) {
-			__INPUT_CONTROL = NULL;
-		}
 	}
 
 	void InstallFont(const UIString& fontFileName) {

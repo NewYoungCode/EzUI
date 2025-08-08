@@ -14,6 +14,10 @@ namespace ezui {
 	class UI_EXPORT Window :public Object
 	{
 	private:
+		//具有焦点的控件
+		Control* __FOCUS_CONTROL = NULL;
+		//输入框
+		Control* __INPUT_CONTROL = NULL;
 		//窗口公共数据
 		WindowData* m_publicData = NULL;
 		//鼠标跟踪

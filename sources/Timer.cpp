@@ -8,12 +8,13 @@ namespace ezui {
 	}
 	void Timer::Start() {
 		if (m_task == NULL) {
+			m_bExit = false;
 			m_task = new Task([this]() {
 				while (true)
 				{
 					{
 						m_condv.Wait([this]() {
-							return  this->m_bExit || !this->m_bPause;
+							return this->m_bExit || !this->m_bPause;
 							});
 						m_condv.Lock();
 						if (this->m_bExit) {
@@ -22,7 +23,28 @@ namespace ezui {
 						}
 						m_condv.Unlock();
 					}
-					Sleep(this->Interval);
+
+					//当等待时间过长(超过100毫秒) 将等待时间拆分为片段
+					auto start = ::GetTickCount64();
+					if (this->Interval > 100) {
+						while (!this->m_bExit) {
+							auto elapsed = ::GetTickCount64() - start;
+							if (elapsed >= this->Interval) {
+								break;
+							}
+							DWORD remain = (DWORD)(this->Interval - elapsed);
+							Sleep(remain > 100 ? 100 : remain);
+						}
+					}
+					else {
+						//等待时间过小 直接sleep
+						Sleep(this->Interval);
+					}
+
+					if (this->m_bExit) {
+						break;
+					}
+
 					if (this->Tick) {
 						this->Tick(this);
 					}
@@ -45,11 +67,7 @@ namespace ezui {
 		m_condv.Notify();
 	}
 	Timer::~Timer() {
-		{
-			m_condv.Lock();
-			m_bExit = true;//退出整个计时器
-			m_condv.Unlock();
-		}
+		m_bExit = true;
 		m_condv.Notify();
 		if (m_task) {
 			delete m_task;

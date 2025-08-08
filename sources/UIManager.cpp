@@ -155,7 +155,7 @@ namespace ezui {
 				if (value == "auto" && style->BackImage) {
 					style->BackImage->SizeMode = ImageSizeMode::OriginalSize;
 				}
-				else if (value.count("px") >= 2) {
+				else if (value.count("px") >= 2 && style->BackImage) {
 					auto pxs = value.split(" ");
 					float w = 0;
 					__IsPx(pxs[0], w);

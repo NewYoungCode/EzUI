@@ -294,54 +294,253 @@ namespace ezui {
 			Init();
 		}
 	}
-	void DXImage::Init() {
-		_framePos = 0;
-		UINT fCount = 0;
-		if (m_bitmapdecoder) {
-			m_bitmapdecoder->GetFrameCount(&fCount);
-			_frameCount = fCount;
+
+	// 获取 GIF 帧位置
+	WICRect GetFrameRect(IWICMetadataQueryReader* metaReader) {
+		WICRect rect = { 0,0,0,0 };
+		PROPVARIANT pv;
+		PropVariantInit(&pv);
+
+		if (SUCCEEDED(metaReader->GetMetadataByName(L"/imgdesc/Left", &pv))) {
+			rect.X = pv.uiVal;
+		}
+		PropVariantClear(&pv);
+
+		if (SUCCEEDED(metaReader->GetMetadataByName(L"/imgdesc/Top", &pv)))
+		{
+			rect.Y = pv.uiVal;
+		}
+		PropVariantClear(&pv);
+
+		if (SUCCEEDED(metaReader->GetMetadataByName(L"/imgdesc/Width", &pv)))
+		{
+			rect.Width = pv.uiVal;
+		}
+		PropVariantClear(&pv);
+
+		if (SUCCEEDED(metaReader->GetMetadataByName(L"/imgdesc/Height", &pv)))
+		{
+			rect.Height = pv.uiVal;
+		}
+		PropVariantClear(&pv);
+
+		return rect;
+	}
+
+	// 拷贝整个位图
+	void CopyBitmap(IWICBitmap* src, IWICBitmap* dst) {
+		if (!src || !dst) return;
+
+		UINT w = 0, h = 0;
+		src->GetSize(&w, &h);
+		WICRect rect = { 0,0,(INT)w,(INT)h };
+
+		IWICBitmapLock* lockSrc = nullptr;
+		IWICBitmapLock* lockDst = nullptr;
+
+		if (SUCCEEDED(src->Lock(&rect, WICBitmapLockRead, &lockSrc)) &&
+			SUCCEEDED(dst->Lock(&rect, WICBitmapLockWrite, &lockDst)))
+		{
+			UINT cbBufferSrc = 0, cbBufferDst = 0;
+			BYTE* pSrc = nullptr;
+			BYTE* pDst = nullptr;
+			lockSrc->GetDataPointer(&cbBufferSrc, &pSrc);
+			lockDst->GetDataPointer(&cbBufferDst, &pDst);
+
+			memcpy(pDst, pSrc, cbBufferSrc);
+		}
+
+		if (lockSrc) lockSrc->Release();
+		if (lockDst) lockDst->Release();
+	}
+
+	// 清除矩形区域（透明）
+	void ClearRegion(IWICBitmap* bmp, const WICRect& rect) {
+		if (!bmp) return;
+
+		IWICBitmapLock* lock = nullptr;
+		if (SUCCEEDED(bmp->Lock(&rect, WICBitmapLockWrite, &lock)))
+		{
+			UINT cbBuffer = 0;
+			BYTE* pData = nullptr;
+			lock->GetDataPointer(&cbBuffer, &pData);
+			memset(pData, 0, cbBuffer); // 全部置 0（透明）
+			lock->Release();
 		}
 	}
-	WORD DXImage::NextFrame() {
-		if (_framePos >= _frameCount) {
-			_framePos = 0;
+	void CopyFrameToCanvas(IWICBitmapSource* frame, IWICBitmap* canvas, UINT CanvasWidth, UINT CanvasHeight, const WICRect& frameRect)
+	{
+		if (!frame || !canvas) return;
+
+		// 锁定整个画布
+		WICRect fullRect = { 0, 0, CanvasWidth, CanvasHeight };
+		IWICBitmapLock* lock = nullptr;
+		if (FAILED(canvas->Lock(&fullRect, WICBitmapLockWrite, &lock))) return;
+
+		UINT cbBuffer = 0;
+		BYTE* pDst = nullptr;
+		lock->GetDataPointer(&cbBuffer, &pDst);
+
+		UINT canvasStride = CanvasWidth * 4;
+		UINT frameStride = frameRect.Width * 4;
+		UINT frameBufferSize = frameStride * frameRect.Height;
+		BYTE* tempBuffer = new BYTE[frameBufferSize];
+
+		WICRect copyRect = { 0, 0, frameRect.Width, frameRect.Height };
+		HRESULT hr = frame->CopyPixels(&copyRect, frameStride, frameBufferSize, tempBuffer);
+		if (FAILED(hr)) {
+			delete[] tempBuffer;
+			lock->Release();
+			return;
 		}
-		if (m_pframe) {
-			SafeRelease(&m_pframe);
+
+		// 复制像素到画布的对应偏移位置
+		for (UINT y = 0; y < frameRect.Height; y++) {
+			BYTE* srcLine = tempBuffer + y * frameStride;
+			BYTE* dstLine = pDst + (frameRect.Y + y) * canvasStride + frameRect.X * 4;
+
+			for (UINT x = 0; x < frameRect.Width; x++) {
+				BYTE* srcPx = srcLine + x * 4;
+				BYTE* dstPx = dstLine + x * 4;
+
+				BYTE srcA = srcPx[3];
+				if (srcA != 0) {
+					dstPx[0] = srcPx[0];
+					dstPx[1] = srcPx[1];
+					dstPx[2] = srcPx[2];
+					dstPx[3] = srcPx[3];
+				}
+			}
+		}
+
+		//释放
+		delete[] tempBuffer;
+		lock->Release();
+	}
+
+	void DXImage::Init()
+	{
+		m_framePos = 0;
+		m_frames.clear();
+
+		if (!m_bitmapdecoder) return;
+
+		UINT fCount = 0;
+		m_bitmapdecoder->GetFrameCount(&fCount);
+		m_frameCount = fCount;
+
+		if (fCount <= 1) {
+			return;
 		}
 		if (m_fmtcovter) {
+			//如果是gif那就不需要m_fmtcovter 因为会把解析完毕的每一帧存储起来直接用
 			SafeRelease(&m_fmtcovter);
 		}
-		D2D::g_ImageFactory->CreateFormatConverter(&m_fmtcovter);
-		m_bitmapdecoder->GetFrame(_framePos, &m_pframe);
 
-		////获取原帧图片格式
-		//WICPixelFormatGUID pixelFormat;
-		//m_pframe->GetPixelFormat(&pixelFormat);
+		UINT width = Width();
+		UINT height = Height();
 
-		//转换为预乘图片
-		HRESULT hr = m_fmtcovter->Initialize(m_pframe, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0f, WICBitmapPaletteTypeCustom);
+		// 创建全尺寸画布
+		IWICBitmap* canvas = nullptr;
+		D2D::g_ImageFactory->CreateBitmap(
+			width, height,
+			GUID_WICPixelFormat32bppPBGRA,
+			WICBitmapCacheOnLoad,
+			&canvas);
 
-		//从帧元数据中读取 GIF 下一帧播放延迟时间
-		UINT frameDelay = 16; // 默认16毫秒 大约60fps
-		IWICMetadataQueryReader* pMetadataReader = nullptr;
-		if (SUCCEEDED(m_pframe->GetMetadataQueryReader(&pMetadataReader))) {
-			PROPVARIANT propValue;
-			PropVariantInit(&propValue);
-			// 读取 GIF 帧延迟（/grctlext/Delay）
-			if (SUCCEEDED(pMetadataReader->GetMetadataByName(L"/grctlext/Delay", &propValue))) {
-				if (propValue.vt == VT_UI2) {
-					frameDelay = propValue.uiVal; // 单位是 10ms
-				}
-				PropVariantClear(&propValue);
+		// 备份画布（用于 disposal=3）
+		IWICBitmap* prevCanvas = nullptr;
+		D2D::g_ImageFactory->CreateBitmap(
+			width, height,
+			GUID_WICPixelFormat32bppPBGRA,
+			WICBitmapCacheOnLoad,
+			&prevCanvas);
+
+		for (UINT i = 0; i < fCount; i++)
+		{
+			IWICBitmapFrameDecode* srcFrame = nullptr;
+			m_bitmapdecoder->GetFrame(i, &srcFrame);
+
+			// 元数据读取器
+			IWICMetadataQueryReader* metaReader = nullptr;
+			srcFrame->GetMetadataQueryReader(&metaReader);
+
+			// 延时
+			UINT delayMs = 100;
+			PROPVARIANT pv;
+			PropVariantInit(&pv);
+			if (SUCCEEDED(metaReader->GetMetadataByName(L"/grctlext/Delay", &pv)))
+			{
+				delayMs = pv.uiVal * 10; // 单位 1/100 秒
 			}
-			SafeRelease(&pMetadataReader);
+			PropVariantClear(&pv);
+
+			// Disposal
+			UINT disposal = 0;
+			if (SUCCEEDED(metaReader->GetMetadataByName(L"/grctlext/Disposal", &pv)))
+			{
+				disposal = pv.uiVal;
+			}
+			PropVariantClear(&pv);
+
+			// Disposal=3 保存备份
+			if (disposal == 3) {
+				CopyBitmap(canvas, prevCanvas);
+			}
+
+			// Disposal=2 清区域
+			if (disposal == 2 && i > 0)
+			{
+				WICRect rect = GetFrameRect(metaReader);
+				ClearRegion(canvas, rect);
+			}
+			else if (disposal == 3 && i > 0)
+			{
+				CopyBitmap(prevCanvas, canvas);
+			}
+
+			// 转换帧格式
+			IWICFormatConverter* converter = nullptr;
+			D2D::g_ImageFactory->CreateFormatConverter(&converter);
+			converter->Initialize(srcFrame, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, nullptr, 0.f, WICBitmapPaletteTypeCustom);
+
+			// 帧矩形
+			WICRect rect = GetFrameRect(metaReader);
+
+			// 绘制到 canvas
+			CopyFrameToCanvas(converter, canvas, width, height, rect);
+
+			// 存一份当前画布的完整副本
+			IWICBitmap* frameCopy = nullptr;
+			D2D::g_ImageFactory->CreateBitmapFromSource(canvas, WICBitmapCacheOnLoad, &frameCopy);
+			GifFrame gf = { frameCopy, delayMs };
+			m_frames.push_back(gf);
+
+			// 释放临时对象
+			converter->Release();
+			metaReader->Release();
+			srcFrame->Release();
 		}
+		// 释放画布
+		canvas->Release();
+		prevCanvas->Release();
+		//读取第一帧
+		this->NextFrame();
+	}
 
-		UINT delayMs = frameDelay * 10;
-
-		++_framePos;
-		return delayMs;
+	WORD DXImage::NextFrame() {
+		if (m_frames.empty()) {
+			return 0; // 没有帧
+		}
+		if (m_framePos >= m_frames.size()) {
+			m_framePos = 0;
+		}
+		this->m_bitMap = m_frames[m_framePos].wicBitmap;
+		UINT delayMs = m_frames[m_framePos].delay;
+		// 这里不需要释放和创建格式转换器了，播放时再转 D2D 位图
+		// 只移动索引
+		m_framePos++;
+		return (WORD)delayMs;
 	}
 	DXImage* DXImage::Clone()
 	{
@@ -408,6 +607,9 @@ namespace ezui {
 		}
 		if (m_bitMap) {
 			SafeRelease(&m_bitMap);
+		}
+		for (auto& it : m_frames) {
+			SafeRelease(&it.wicBitmap);
 		}
 	}
 

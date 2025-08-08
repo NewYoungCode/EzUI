@@ -695,8 +695,8 @@ namespace ezui {
 
 	class IImage {
 	protected:
-		WORD _frameCount = 0;//总帧数
-		WORD _framePos = 0;//当前帧率索引
+		WORD m_frameCount = 0;//总帧数
+		WORD m_framePos = 0;//当前帧率索引
 	public:
 		Rect Clip;//取出图像部分区域进行绘制
 		Point DrawPosition;//绘制在owner矩形坐标
@@ -705,16 +705,10 @@ namespace ezui {
 	public:
 		virtual ~IImage() {}
 		WORD FrameCount() {
-			return _frameCount;
+			return m_frameCount;
 		}
 		//跳转到下一帧 并且获取下一帧的延迟
-		virtual WORD NextFrame() {
-			if (_framePos >= _frameCount) {
-				_framePos = 0;
-			}
-			++_framePos;
-			return 0;
-		}
+		virtual WORD NextFrame() = 0;
 	};
 
 	inline Rect Transformation(ImageSizeMode imageSizeMode, const Rect& rect, const Size& imgSize) {
