@@ -15,25 +15,31 @@
 #include "EzUI/Application.h"
 #include "EzUI/TextBox.h"
 #include "EzUI/ComBoBox.h"
+#include "EzUI/CheckBox.h"
+#include "EzUI/radiobutton.h"
+
 
 using namespace ezui;
-
 class MainFrm :public Window {
 public:
-	VLayout* main;
+	HLayout* main;
 	MainFrm(int cx, int cy) :Window(cx, cy) {
 
 		//以下代码专用与测试释放托管问题
 
-		main = new VLayout;
-		auto lb = new Label(this);
+		main = new HLayout;
 
-		auto lb2 = new Label(lb);
-		lb2->SetText(L"999999");
-		lb->Add(lb2);
 
-		lb->SetText(L"666");
-		main->Add(lb);
+		for (size_t i = 1; i <= 3; i++)
+		{
+			auto ck = new RadioButton(this);
+			ck->CheckedStyle.Border.Bottom = 10;
+			ck->CheckedStyle.Border.Style = StrokeStyle::Solid;
+			ck->CheckedStyle.Border.Color = Color::Red;
+			ck->SetText("aaa" + std::to_string(i));
+
+			main->Add(ck);
+		}
 
 		SetLayout(main);
 	}
@@ -56,11 +62,11 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 {
 	Application app;//消息循环对象
 
-	//{
-	//	MainFrm frm(800, 600);//无边框窗口
-	//	frm.Show();
-	//	return app.Exec();
-	//}
+	{
+		MainFrm frm(800, 600);//无边框窗口
+		frm.Show();
+		return app.Exec();
+	}
 
 	MainFrm frm(800, 600);//无边框窗口
 	VLayout mainLayout;//窗口中的main布局

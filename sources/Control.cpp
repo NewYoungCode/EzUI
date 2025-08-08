@@ -30,80 +30,83 @@ namespace ezui {
 	inline bool __IsValid(StrokeStyle value) {
 		return value != StrokeStyle::None;
 	}
+};
+namespace ezui {
 
 #define UI_SUPER_STYLE_BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed(ControlState _state)  { \
-	if (_state == ControlState::None) {\
-		_state = this->State;\
-	}\
-	##_type _##_filed;\
-loop:\
-	Control* pControl = this;\
-	while (pControl)/* 如果没有则从父控件里面查找对应的样式 */{\
-		_##_filed = pControl->GetStyle(_state). ##_filed;\
-		if (__IsValid(_##_filed)) {\
-			return _##_filed; /* 如果从父控件里面查找到就返回 */\
+		if (_state == ControlState::None) { \
+			_state = this->State; \
 		}\
-		pControl = pControl->Parent;\
-	}\
-	/* 如果没有active样式 则采用hover样式 */\
-	if (!__IsValid(_##_filed) && _state == ControlState::Active) {\
-		_state = ControlState::Hover;\
-		goto loop;\
-	}\
-	if (!__IsValid(_##_filed) && _state != ControlState::Static) {\
-		_state = ControlState::Static;/* 如果从父样式中仍然未找到,则找静态样式 */ \
-		goto loop;\
-	}\
-	return _##_filed;\
+		##_type _##_filed;\
+		if ((_state & ControlState::Checked) == ControlState::Checked) {\
+			_##_filed = this->GetStyle(ControlState::Checked).##_filed;\
+			if (__IsValid(_##_filed)) {\
+				return _##_filed;\
+			}\
+		}\
+		if ((_state & ControlState::Hover) == ControlState::Hover) {\
+			_##_filed = this->GetStyle(ControlState::Hover).##_filed;\
+			if (__IsValid(_##_filed)) {\
+				return _##_filed;\
+			}\
+		}\
+		if ((_state & ControlState::Active) == ControlState::Active) {\
+			_##_filed = this->GetStyle(ControlState::Active).##_filed;\
+			if (__IsValid(_##_filed)) {\
+				return _##_filed;\
+			}\
+		}\
+		_##_filed = this->GetStyle(ControlState::Static).##_filed; \
+		if (__IsValid(_##_filed)) {\
+				return _##_filed; \
+		}\
+		Control* parentCtrl = this->Parent; \
+		while (parentCtrl){ \
+			_##_filed = parentCtrl->GetStyle(ControlState::Static).##_filed; \
+			if (__IsValid(_##_filed)) {\
+				break; \
+			}\
+			parentCtrl = parentCtrl->Parent; \
+		}\
+		return _##_filed; \
 	}\
 
 #define UI_STYLE_BINDFUNC(_type,_filed)  _type Control:: ##Get ##_filed(ControlState _state)  { \
-/* 先根据对应的状态来获取样式  */ \
-ControlStyle& stateStyle = this->GetStyle(this->State);\
-if(__IsValid(stateStyle.##_filed)){\
-	return stateStyle.##_filed; \
+		if (_state == ControlState::None) {\
+			_state = this->State;\
+		}\
+		##_type _##_filed;\
+		if ((_state & ControlState::Hover) == ControlState::Hover) {\
+			_##_filed = this->GetStyle(ControlState::Hover).##_filed;\
+			if (__IsValid(_##_filed))return _##_filed;\
+		}\
+		if ((_state & ControlState::Active) == ControlState::Active) {\
+			_##_filed = this->GetStyle(ControlState::Active).##_filed;\
+			if (__IsValid(_##_filed))return _##_filed;\
+		}\
+		return this->GetStyle(ControlState::Static).##_filed;;\
 }\
-/* 如果没有active样式 则采用hover样式 */\
-if(this->State==ControlState::Active){\
-	if(__IsValid(this->GetStyle(ControlState::Hover).##_filed)){\
-	return this->GetStyle(ControlState::Hover).##_filed; \
-	}\
-}\
-/* 获取不同的控件中默认样式  */ \
-ControlStyle& defaultStyle = this->GetDefaultStyle(); \
-if(__IsValid(defaultStyle.##_filed)){\
-	return  defaultStyle.##_filed;\
-\
-}\
-/* 以上两种样式都未获取成功的情况下才采用此样式 */ \
-	return this->Style.##_filed;\
-}\
-
 
 #define UI_BORDER_BINDFUNC(_type,_filed1,_filed)  _type Control:: ##Get ##_filed1 ##_filed(ControlState _state)  { \
-/* 先根据对应的状态来获取样式  */ \
-ControlStyle& stateStyle = this->GetStyle(this->State);\
-if(__IsValid(stateStyle .##_filed1. ##_filed)){\
-	return stateStyle .##_filed1.##_filed; \
+		if (_state == ControlState::None) {\
+			_state = this->State;\
+		}\
+		##_type _##_filed;\
+		if ((_state & ControlState::Checked) == ControlState::Checked) {\
+			_##_filed = this->GetStyle(ControlState::Checked).##_filed1.##_filed;\
+			if (__IsValid(_##_filed)) return _##_filed;\
+		}\
+		if ((_state & ControlState::Hover) == ControlState::Hover) {\
+			_##_filed = this->GetStyle(ControlState::Hover).##_filed1.##_filed;\
+			if (__IsValid(_##_filed)) return _##_filed;\
+		}\
+		if ((_state & ControlState::Active) == ControlState::Active) {\
+			_##_filed = this->GetStyle(ControlState::Active).##_filed1.##_filed;\
+			if (__IsValid(_##_filed)) return _##_filed;\
+		}\
+		return this->GetStyle(ControlState::Static).##_filed1.##_filed; \
 }\
-/* 如果没有active样式 则采用hover样式 */\
-if(this->State==ControlState::Active){\
-	if(__IsValid(this->GetStyle(ControlState::Hover) .##_filed1.##_filed)){\
-	return this->GetStyle(ControlState::Hover) .##_filed1.##_filed; \
-	}\
-}\
-/* 获取不同的控件中默认样式  */ \
-ControlStyle& defaultStyle = this->GetDefaultStyle(); \
-if(__IsValid(defaultStyle .##_filed1.##_filed)){\
-return  defaultStyle .##_filed1.##_filed;\
-\
-}\
-/* 以上两种样式都未获取成功的情况下才采用此样式 */ \
-	return this->Style .##_filed1.##_filed;\
-}\
-//end
-};
-namespace ezui {
+
 
 	UI_BORDER_BINDFUNC(int_t, Border, TopLeftRadius);
 	UI_BORDER_BINDFUNC(int_t, Border, TopRightRadius);
@@ -231,18 +234,12 @@ namespace ezui {
 		}
 	}
 	ControlStyle& Control::GetStyle(const ControlState& _state) {
-		if (_state == ControlState::Static) {
-			return this->Style;
-		}
-		if (_state == ControlState::Hover) {
+		if ((_state & ControlState::Hover) == ControlState::Hover) {
 			return this->HoverStyle;
 		}
-		if (_state == ControlState::Active) {
+		else if ((_state & ControlState::Active) == ControlState::Active) {
 			return this->ActiveStyle;
 		}
-		return this->Style;
-	}
-	ControlStyle& Control::GetDefaultStyle() {
 		return this->Style;
 	}
 

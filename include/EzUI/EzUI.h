@@ -202,13 +202,34 @@ namespace ezui {
 		Max,//最大化|恢复
 		Close//关闭
 	};
-	enum class ControlState {
-		None,//无状态 则是使用_nowStyle缓存样式
-		Static,//静态
-		Checked,//选中状态
-		Hover,//鼠标悬浮
-		Active//鼠标按住
+	enum class ControlState :int_t {
+		None = 1,//无状态 则是使用_nowStyle缓存样式
+		Static = 2,//静态
+		Checked = 4,//选中状态
+		Hover = 8,//鼠标悬浮
+		Active = 16//鼠标按住
 	};
+	inline ControlState operator|(ControlState left, ControlState right)
+	{
+		return (ControlState)((int_t)left | (int_t)right);
+	}
+	inline ControlState operator&(ControlState a, ControlState b) {
+		return (ControlState)((int_t)a & (int_t)b);
+	}
+	inline ControlState operator~(ControlState a) {
+		return (ControlState)(~(int_t)a);
+	}
+	inline ControlState& operator|=(ControlState& left, ControlState right) {
+		left = left | right;
+		return left;
+	}
+	inline ControlState& operator&=(ControlState& left, ControlState right) {
+		left = left & right;
+		return left;
+	}
+
+
+
 	enum class DockStyle {
 		// 摘要:
 		//未设置

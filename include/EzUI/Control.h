@@ -204,9 +204,6 @@ namespace ezui {
 		// 获取当前控件状态下的样式信息
 		virtual ControlStyle& GetStyle(const ControlState& _state);
 
-		// 获取默认样式（用于不同控件状态下的样式）
-		virtual ControlStyle& GetDefaultStyle();
-
 		// 获取左上圆角半径
 		int_t GetBorderTopLeftRadius(ControlState _state = ControlState::None);
 
