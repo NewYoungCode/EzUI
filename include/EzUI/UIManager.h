@@ -35,8 +35,6 @@ namespace ezui {
 			XmlNode(Control* ctl, const UIString& tagName) :m_ctl(ctl), m_tagName(tagName) {}
 		};
 	private:
-		std::function<void(Image*)> BuildImageCallback;
-		std::list<Image*> m_freeImages;
 		std::list<XmlNode> m_controls;
 		std::list<UIManager::Style> m_styles;
 		void LoadControl(void* node, Control* control);
@@ -69,8 +67,6 @@ namespace ezui {
 		Control* GetRoot();
 		//释放由本此对象创建的控件
 		void Free(Control** ctl);
-		//释放由本此对象创建的图片
-		void Free(Image** img);
 	};
 
 };

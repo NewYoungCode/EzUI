@@ -56,7 +56,7 @@ namespace ezui {
 
 namespace ezui {
 
-	void SetStyle(Control* ctl, ControlStyle* style, ControlStyle::Type styleType, const UIString& key, UIString value, const std::function<void(Image*)>& callback)
+	void SetStyle(Control* ctl, ControlStyle* style, ControlStyle::Type styleType, const UIString& key, UIString value)
 	{
 		do
 		{
@@ -121,10 +121,7 @@ namespace ezui {
 				break;
 			}
 			if (key == "background-image") {
-				style->BackImage = __MakeImage(value);
-				if (callback) {
-					callback(style->BackImage);
-				}
+				style->BackImage = ctl->Attach(__MakeImage(value));
 				break;
 			}
 			if (key == "background-position" && style->BackImage) {
@@ -157,10 +154,7 @@ namespace ezui {
 				break;
 			}
 			if (key == "fore-image") {
-				style->ForeImage = __MakeImage(value);
-				if (callback) {
-					callback(style->ForeImage);
-				}
+				style->ForeImage = ctl->Attach(__MakeImage(value));
 				break;
 			}
 			if (key == "fore-image-size") {
@@ -254,7 +248,7 @@ namespace ezui {
 			}
 		} while (false);
 	}
-	void SetStyleSheet(Control* ctl, ControlStyle::Type styleType, const UIString& styleStr, const std::function<void(Image*)>& callback)
+	void SetStyleSheet(Control* ctl, ControlStyle::Type styleType, const UIString& styleStr)
 	{
 		//确定每一个样式的类型
 		ControlStyle* cSytle = NULL;
@@ -276,10 +270,10 @@ namespace ezui {
 			UIString value = it.substr(pos + 1);
 			key = key.trim();//去除前后空格
 			value = value.trim();//去除前后空格
-			SetStyle(ctl, cSytle, styleType, key, value, callback);//去应用每一行样式
+			SetStyle(ctl, cSytle, styleType, key, value);//去应用每一行样式
 		}
 	}
-	int_t MathStyle(Control* ctl, const UIString& selectorName, const std::list<UIManager::Style>& selectors, const std::function<void(Image*)>& BuildImageCallback)
+	int_t MathStyle(Control* ctl, const UIString& selectorName, const std::list<UIManager::Style>& selectors)
 	{
 		int_t mathCount = 0;
 		for (auto& it : selectors) {
@@ -287,38 +281,38 @@ namespace ezui {
 				++mathCount;
 				auto& styleType = it.m_styleType;
 				auto& styleStr = it.m_styleStr;
-				SetStyleSheet(ctl, styleType, styleStr, BuildImageCallback);
+				SetStyleSheet(ctl, styleType, styleStr);
 			}
 		}
 		//返回匹配成功的个数
 		return mathCount;
 	}
-	void ApplyStyle(Control* ctl, const  UIString& selectName, const std::list<UIManager::Style>& selectors, const std::function<void(Image*)>& BuildImageCallback)
+	void ApplyStyle(Control* ctl, const  UIString& selectName, const std::list<UIManager::Style>& selectors)
 	{
-		MathStyle(ctl, selectName, selectors, BuildImageCallback);
-		MathStyle(ctl, selectName + ":checked", selectors, BuildImageCallback);
-		MathStyle(ctl, selectName + ":active", selectors, BuildImageCallback);
-		MathStyle(ctl, selectName + ":hover", selectors, BuildImageCallback);
+		MathStyle(ctl, selectName, selectors);
+		MathStyle(ctl, selectName + ":checked", selectors);
+		MathStyle(ctl, selectName + ":active", selectors);
+		MathStyle(ctl, selectName + ":hover", selectors);
 		//是否有滚动条 有滚动条则应用滚动条样式
 		ScrollBar* scrollBar = ctl->GetScrollBar();
 		if (scrollBar) {
 			UIString scrollBarSelectName = UIString("%s::-webkit-scrollbar").format(selectName.c_str());
-			MathStyle(scrollBar, scrollBarSelectName, selectors, BuildImageCallback);
-			MathStyle(scrollBar, scrollBarSelectName + ":active", selectors, BuildImageCallback);
-			MathStyle(scrollBar, scrollBarSelectName + ":hover", selectors, BuildImageCallback);
+			MathStyle(scrollBar, scrollBarSelectName, selectors);
+			MathStyle(scrollBar, scrollBarSelectName + ":active", selectors);
+			MathStyle(scrollBar, scrollBarSelectName + ":hover", selectors);
 		}
 	}
 	void UIManager::ApplyStyle(Control* ctl, const std::list<UIManager::Style>& selectors, const UIString& tagName) {
 		{//加载样式 使用标签选择器
 			if (!tagName.empty()) {
 				UIString selectName = tagName;
-				ezui::ApplyStyle(ctl, selectName, selectors, this->BuildImageCallback);
+				ezui::ApplyStyle(ctl, selectName, selectors);
 			}
 		}
 		{//加载样式 使用属性选择器
 			for (auto& attr : ctl->GetAttributes()) {
 				UIString selectName = UIString("[%s=%s]").format(attr.first.c_str(), attr.second.c_str());
-				ezui::ApplyStyle(ctl, selectName, selectors, BuildImageCallback);
+				ezui::ApplyStyle(ctl, selectName, selectors);
 			}
 		}
 		{//加载样式 使用类选择器  
@@ -327,18 +321,18 @@ namespace ezui {
 			auto classes = classStr.split(",");//分割类选择器
 			for (const auto& className : classes) { //一个控件可能有多个类名
 				UIString selectName = UIString(".%s").format(className.c_str());
-				ezui::ApplyStyle(ctl, selectName, selectors, BuildImageCallback);
+				ezui::ApplyStyle(ctl, selectName, selectors);
 			}
 		}
 		//加载样式 使用ID/name选择器 
 		if (!(ctl->Name.empty())) {
 			UIString selectName = UIString("#%s").format(ctl->Name.c_str());
-			ezui::ApplyStyle(ctl, selectName, selectors, BuildImageCallback);
+			ezui::ApplyStyle(ctl, selectName, selectors);
 		}
 		{//加载内联样式 优先级最高
 			UIString sytle_static = ctl->GetAttribute("style");//内联样式语法
 			if (!sytle_static.empty()) { //内联样式只允许描述静态效果
-				ezui::SetStyleSheet(ctl, ControlStyle::Type::Static, sytle_static.trim(), BuildImageCallback);
+				ezui::SetStyleSheet(ctl, ControlStyle::Type::Static, sytle_static.trim());
 			}
 		}
 	}
@@ -545,11 +539,6 @@ namespace ezui {
 	}
 	UIManager::UIManager()
 	{
-		BuildImageCallback = [this](Image* img)->void {
-			if (img) {
-				this->m_freeImages.push_back((Image*)img);
-			}
-			};
 	}
 	void UIManager::SetupUI(Window* window)
 	{
@@ -642,25 +631,9 @@ namespace ezui {
 			}
 		}
 	}
-	void UIManager::Free(Image** img)
-	{
-		auto itor = std::find(m_freeImages.begin(), m_freeImages.end(), *img);
-		if (itor != m_freeImages.end()) {
-			delete* itor;
-			m_freeImages.erase(itor);
-		}
-		else
-		{
-			delete(*img);
-		}
-		*img = NULL;
-	}
 	UIManager::~UIManager() {
 		for (auto& it : m_controls) {
 			delete it.m_ctl;
-		}
-		for (auto& it : m_freeImages) {
-			delete it;
 		}
 	}
 	Control* UIManager::GetRoot() {

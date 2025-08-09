@@ -445,7 +445,9 @@ namespace ezui {
 			}
 		}
 		void Add(const T& v) {
-			m_ptrs.push_back(v);
+			if (v) {
+				m_ptrs.push_back(v);
+			}
 		}
 		void Remove(const T& v/*, bool bFree = false*/) {
 			auto it = std::find(m_ptrs.begin(), m_ptrs.end(), v);
