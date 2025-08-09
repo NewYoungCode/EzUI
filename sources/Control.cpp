@@ -256,7 +256,15 @@ namespace ezui {
 				this->Name = attrValue;
 				break;
 			}
-			if (attrName == "point" || attrName == "location") {
+			if (attrName == "x") {
+				this->SetLocation({ std::stoi(attrValue) ,this->GetRect().Y });
+				break;
+			}
+			if (attrName == "y") {
+				this->SetLocation({ this->GetRect().X, std::stoi(attrValue) });
+				break;
+			}
+			if (attrName == "location") {
 				auto arr = attrValue.split(",");
 				int_t x = std::stoi(arr[0]);
 				int_t y = std::stoi(arr[1]);
@@ -264,10 +272,44 @@ namespace ezui {
 				break;
 			}
 			if (attrName == "size") {
-				auto arr = attrValue.split(",");
-				int_t width = std::stoi(arr[0]);
-				int_t height = std::stoi(arr[1]);
-				this->SetFixedSize(Size(width, height));
+				if (attrValue == "auto") {
+					this->SetAutoWidth(true);
+					this->SetAutoHeight(true);
+				}
+				else {
+					auto arr = attrValue.split(",");
+					int_t width = std::stoi(arr[0]);
+					int_t height = std::stoi(arr[1]);
+					this->SetFixedSize(Size(width, height));
+				}
+				break;
+			}
+			if (attrName == "width") {
+				if (attrValue == "auto") {
+					this->SetAutoWidth(true);//自动宽度
+				}
+				else {
+					if (attrValue.count(".") > 0) {
+						this->SetRateWidth(std::stof(attrValue.c_str()));//基于父控件的百分比
+					}
+					else {
+						this->SetFixedWidth(std::stoi(attrValue));//如果单独设置了宽高那就是绝对宽高了
+					}
+				}
+				break;
+			}
+			if (attrName == "height") {
+				if (attrValue == "auto") {
+					this->SetAutoHeight(true);//自动高度
+				}
+				else {
+					if (attrValue.count(".") > 0) {
+						this->SetRateHeight(std::stof(attrValue.c_str()));//基于父控件的百分比
+					}
+					else {
+						this->SetFixedHeight(std::stoi(attrValue));//如果单独设置了宽高那就是绝对宽高了
+					}
+				}
 				break;
 			}
 			if (attrName == "rect" && !attrValue.empty()) {
@@ -316,51 +358,8 @@ namespace ezui {
 				}
 				break;
 			}
-			if (attrName == "x") {
-				this->SetLocation({ std::stoi(attrValue) ,this->GetRect().Y });
-				break;
-			}
-			if (attrName == "y") {
-				this->SetLocation({ this->GetRect().X, std::stoi(attrValue) });
-				break;
-			}
-			if (attrName == "autosize" && attrValue == "true") {
-				this->SetAutoWidth(true);
-				this->SetAutoHeight(true);
-				break;
-			}
-			if (attrName == "width") {
-				if (attrValue == "auto") {
-					this->SetAutoWidth(true);
-				}
-				else {
-					if (attrValue.count(".") > 0) {
-						this->SetRateWidth(std::stof(attrValue.c_str()));
-					}
-					else {
-						//如果单独设置了宽高那就是绝对宽高了
-						this->SetFixedWidth(std::stoi(attrValue));
-					}
-				}
-				break;
-			}
-			if (attrName == "height") {
-				if (attrValue == "auto") {
-					this->SetAutoHeight(true);
-				}
-				else {
-					if (attrValue.count(".") > 0) {
-						this->SetRateHeight(std::stof(attrValue.c_str()));
-					}
-					else {
-						//如果单独设置了宽高那就是绝对宽高了
-						this->SetFixedHeight(std::stoi(attrValue));
-					}
-				}
-				break;
-			}
-			if (attrName == "visible" || attrName == "display") {
-				this->m_bVisible = (::strcmp(attrValue.c_str(), "true") == 0 ? true : false);
+			if (attrName == "visible") {
+				this->m_bVisible = (::strcmp(attrValue.c_str(), "false") == 0 ? false : true);
 				break;
 			}
 			if (attrName == "tips") {
@@ -959,6 +958,27 @@ namespace ezui {
 			itor = m_spacers.begin();   // 获取新的迭代器
 		}
 	}
+
+	Control* Control::Attach(Control* ctrl)
+	{
+		__super::Attach(ctrl);
+		return ctrl;
+	}
+	void Control::Detach(Control* ctrl)
+	{
+		__super::Detach(ctrl);
+	}
+
+	Image* Control::Attach(Image* img)
+	{
+		m_imgs.Add(img);
+		return img;
+	}
+	void Control::Detach(Image* img)
+	{
+		m_imgs.Remove(img);
+	}
+
 	int_t Control::IndexOf(Control* childCtl)
 	{
 		const auto& pControls = this->GetControls();
@@ -1050,11 +1070,11 @@ namespace ezui {
 				ViewControls.erase(itor2);
 			}
 			if (freeCtrl) {
-				//子对象存在相同的对象也要跟随移除
-				this->RemoveObject(ctl);
 				delete ctl;
 			}
 		}
+		//子对象存在相同的对象也要跟随移除
+		this->Detach(ctl);
 		//如果是弹簧控件 顺便把弹簧容器中的item也移除
 		auto itorSpacer = ::std::find(m_spacers.begin(), m_spacers.end(), ctl);
 		if (itorSpacer != m_spacers.end()) {
@@ -1329,7 +1349,7 @@ namespace ezui {
 			it->OnRemove();
 			if (freeChilds) {
 				//子对象存在相同的对象也要跟随移除
-				this->RemoveObject(it);
+				this->Detach(it);
 				delete it;
 			}
 		}

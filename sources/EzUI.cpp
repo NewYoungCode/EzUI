@@ -404,24 +404,13 @@ namespace ezui {
 	Object::Object(Object* parentObject)
 	{
 		if (parentObject) {
-			parentObject->m_childObjects.push_back(this);
+			parentObject->Attach(this);
 			this->SetHwnd(parentObject->Hwnd());
 		}
 	}
 	Object::~Object() {
-		//释放子对象
-		for (auto& it : m_childObjects) {
-			delete it;
-		}
 	}
 
-	void Object::RemoveObject(Object* object) {
-		//子对象存在相同的对象也要跟随移除
-		auto childObj = std::find(m_childObjects.begin(), m_childObjects.end(), object);
-		if (childObj != m_childObjects.end()) {
-			m_childObjects.erase(childObj);
-		}
-	}
 
 	void Object::SetHwnd(HWND hWnd)
 	{
@@ -460,6 +449,17 @@ namespace ezui {
 		if (itor != m_attrs.end()) {
 			m_attrs.erase(itor);
 		}
+	}
+
+	Object* Object::Attach(Object* obj)
+	{
+		m_childObjects.Add(obj);
+		return obj;
+	}
+
+	void Object::Detach(Object* obj)
+	{
+		m_childObjects.Remove(obj);
 	}
 
 	void PaintEventArgs::PushLayer(const Geometry& dxGeometry) {

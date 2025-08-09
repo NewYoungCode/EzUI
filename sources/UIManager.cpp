@@ -10,21 +10,6 @@ namespace ezui {
 		if (str == NULL) return "";
 		return str;
 	}
-	inline bool __IsPx(const UIString& num, float& outNum) {
-		size_t pos = num.find("px");
-		if (pos != 0 && pos == num.size() - 2) {
-			outNum = std::stof(num.substr(0, pos).c_str());
-			return true;
-		}
-		return false;
-	}
-	inline float __ToFloat(const UIString& numStr) {
-		float value;
-		if (__IsPx(numStr, value)) {
-			return value;
-		}
-		return 0;//解析失败
-	}
 
 	inline Image* __MakeImage(UIString value) {
 		value = value.replace("\"", "");//删除双引号;
@@ -102,6 +87,10 @@ namespace ezui {
 					else if (value == "auto") {
 						ctl->EventPassThrough = Event::None;
 					}
+					break;
+				}
+				if (key == "display") {
+					ctl->SetVisible(value != "none");
 					break;
 				}
 			}

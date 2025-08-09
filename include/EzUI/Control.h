@@ -20,6 +20,9 @@ namespace ezui {
 		// 存储弹簧控件的集合
 		Controls m_spacers;
 
+		// 管理图片的释放
+		PtrManager<Image*> m_imgs;
+
 		// 布局状态
 		// AddControl、InsertControl、RemoveControl、OnSize 时此标志为挂起状态
 		// 调用 ResumeLayout 标志为布局中
@@ -270,6 +273,18 @@ namespace ezui {
 
 		// 销毁控件内所有弹簧
 		void DestroySpacers();
+
+		//绑定控件(跟随释放)
+		Control* Attach(Control* ctrl);
+
+		//分离控件(解除跟随释放)
+		void Detach(Control* ctrl);
+
+		//绑定图片(跟随释放)
+		Image* Attach(Image* img);
+
+		//分离图片(解除跟随释放)
+		void Detach(Image* img);
 
 		// 以下函数请保证在父控件布局已完成的情况下使用，使用 ResumeLayout() 执行布局
 		// 获取 X 坐标

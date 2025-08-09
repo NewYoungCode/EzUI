@@ -432,6 +432,38 @@ namespace ezui {
 		void Scale(float scale);
 	};
 
+	//指针管理
+	template <typename T>
+	class PtrManager {
+	private:
+		std::vector<T> m_ptrs;
+	public:
+		PtrManager() {}
+		virtual ~PtrManager() {
+			for (auto& obj : m_ptrs) {
+				delete obj;
+			}
+		}
+		void Add(const T& v) {
+			m_ptrs.push_back(v);
+		}
+		void Remove(const T& v/*, bool bFree = false*/) {
+			auto it = std::find(m_ptrs.begin(), m_ptrs.end(), v);
+			if (it != m_ptrs.end()) {
+				/*if (bFree) {
+					delete(*it);
+				}*/
+				m_ptrs.erase(it);
+			}
+		}
+		void Clear() {
+			for (auto& obj : m_ptrs) {
+				delete obj;
+			}
+			m_ptrs.clear();
+		}
+	};
+
 	//所有控件和窗口的基类
 	class UI_EXPORT Object {
 	private:
@@ -440,10 +472,7 @@ namespace ezui {
 		//如果该对象是窗口则为窗口句柄 反之是所属窗口句柄
 		HWND m_hWnd = NULL;
 		// 管理子对象的释放
-		std::vector<Object*> m_childObjects;
-	protected:
-		//移除子对象
-		void RemoveObject(Object* object);
+		PtrManager<Object*> m_childObjects;
 	public:
 		//用户自定义数据
 		int_t Tag = NULL;
@@ -465,6 +494,10 @@ namespace ezui {
 		virtual const std::map<UIString, UIString>& GetAttributes();
 		//移除某个属性
 		virtual void RemoveAttribute(const UIString& attrName);
+		//绑定对象(跟随释放)
+		virtual Object* Attach(Object* obj);
+		//分离对象(解除跟随释放)
+		virtual void Detach(Object* obj);
 	};
 
 	//原理采用PostMessage
@@ -497,5 +530,23 @@ namespace ezui {
 			return false;
 		}
 		return true;
+	}
+
+	//是否是像素单位
+	static bool __IsPx(const UIString& num, float& outNum) {
+		size_t pos = num.find("px");
+		if (pos != 0 && pos == num.size() - 2) {
+			outNum = std::stof(num.substr(0, pos).c_str());
+			return true;
+		}
+		return false;
+	}
+	//字符串转数值
+	static float __ToFloat(const UIString& numStr) {
+		float value;
+		if (__IsPx(numStr, value)) {
+			return value;
+		}
+		return 0;//解析失败
 	}
 };
