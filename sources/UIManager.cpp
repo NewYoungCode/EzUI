@@ -10,269 +10,10 @@ namespace ezui {
 		if (str == NULL) return "";
 		return str;
 	}
-
-	inline Image* __MakeImage(UIString value) {
-		value = value.replace("\"", "");//删除双引号;
-		auto pos1 = value.find("(");
-		auto pos2 = value.find(")");
-		if (pos1 != size_t(-1) && pos2 != size_t(-1)) {
-			//background-image:url(res/images/xxx.png)的方式
-			value = value.substr(pos1 + 1, pos2 - pos1 - 1);
-		}
-		return Image::Make(value);
-	}
-
-	inline void __MakeBorder(const UIString str, Border& bd, const std::function<void(float)>& callback) {
-		auto values = str.split(" ");
-		for (auto& v : values) {
-			float num;
-			if (v == "dashed") {
-				bd.Style = StrokeStyle::Dash;
-				continue;
-			}
-			else if (v == "solid") {
-				bd.Style = StrokeStyle::Solid;
-				continue;
-			}
-			else if (v == "none") {
-				bd.Style = StrokeStyle::None;
-				continue;
-			}
-			else if (__IsPx(v, num)) {
-				callback(num);
-				continue;
-			}
-			else
-			{
-				bool isGood = false;
-				Color color = Color::Make(v, &isGood);
-				if (isGood) {
-					bd.Color = color;
-				}
-			}
-		}
-	}
 };
 
 namespace ezui {
 
-	void SetStyle(Control* ctl, ControlStyle* style, ControlStyle::Type styleType, const UIString& key, UIString value)
-	{
-		do
-		{
-			if (styleType == ControlStyle::Type::Static) {
-				if (key == "width") {
-					if (value.count(".") > 0) {
-						ctl->SetRateWidth(std::stof(value.c_str()));
-					}
-					else {
-						ctl->SetFixedWidth(__ToFloat(value));
-					}
-					break;
-				}
-				if (key == "height") {
-					if (value.count(".") > 0) {
-						ctl->SetRateHeight(std::stof(value.c_str()));
-					}
-					else {
-						ctl->SetFixedHeight(__ToFloat(value));
-					}
-					break;
-				}
-				if (key == "pointer-events") {
-					if (value == "none") {
-						//忽略鼠标事件 将直接穿透
-						ctl->EventPassThrough = ctl->EventPassThrough | Event::OnMouseEvent;
-					}
-					else if (value == "auto") {
-						ctl->EventPassThrough = Event::None;
-					}
-					break;
-				}
-				if (key == "display") {
-					ctl->SetVisible(value != "none");
-					break;
-				}
-			}
-
-			if (key == "cursor") {
-				if (value == "pointer") {
-					style->Cursor = LoadCursor(ezui::Cursor::HAND);
-				}
-				else if (value == "help") {
-					style->Cursor = LoadCursor(ezui::Cursor::HELP);
-				}
-				else if (value == "n-resize") {
-					//南北箭头 纵向
-					style->Cursor = LoadCursor(ezui::Cursor::SIZENS);
-				}
-				else if (value == "e-resize") {
-					//东西箭头 水平
-					style->Cursor = LoadCursor(ezui::Cursor::SIZEWE);
-				}
-				else if (value == "move") {
-					//四个方向的箭头都有
-					style->Cursor = LoadCursor(ezui::Cursor::SIZEALL);
-				}
-				break;
-			}
-			if (key == "background-color") {
-				style->BackColor = Color::Make(value);
-				break;
-			}
-			if (key == "background-image") {
-				style->BackImage = ctl->Attach(__MakeImage(value));
-				break;
-			}
-			if (key == "background-position" && style->BackImage) {
-				if (value.count("px") >= 2) {
-					auto pxs = value.split(" ");
-					float x = 0;
-					__IsPx(pxs[0], x);
-					style->BackImage->DrawPosition.X = x;
-
-					float y = 0;
-					__IsPx(pxs[1], y);
-					style->BackImage->DrawPosition.Y = y;
-				}
-				break;
-			}
-			if (key == "background-size" || key == "background-image-size") {
-				if (value == "auto" && style->BackImage) {
-					style->BackImage->SizeMode = ImageSizeMode::OriginalSize;
-				}
-				else if (value.count("px") >= 2 && style->BackImage) {
-					auto pxs = value.split(" ");
-					float w = 0;
-					__IsPx(pxs[0], w);
-					style->BackImage->DrawSize.Width = w;
-
-					float h = 0;
-					__IsPx(pxs[1], h);
-					style->BackImage->DrawSize.Height = h;
-				}
-				break;
-			}
-			if (key == "fore-image") {
-				style->ForeImage = ctl->Attach(__MakeImage(value));
-				break;
-			}
-			if (key == "fore-image-size") {
-				if (value == "auto" && style->ForeImage) {
-					style->ForeImage->SizeMode = ImageSizeMode::OriginalSize;
-				}
-				break;
-			}
-			if (key == "color" || key == "fore-color") {
-				style->ForeColor = Color::Make(value);
-				break;
-			}
-			if (key == "border-color") {
-				style->Border.Color = Color::Make(value);
-				break;
-			}
-			if (key == "border-style") {
-				if (value == "solid") {
-					style->Border.Style = StrokeStyle::Solid;
-				}
-				else if (value == "dashed") {
-					style->Border.Style = StrokeStyle::Dash;
-				}
-				break;
-			}
-			if (key == "border-radius") {
-				style->Border.Radius = __ToFloat(value);
-				break;
-			}
-			if (key == "border-top-left-radius") {
-				style->Border.TopLeftRadius = __ToFloat(value);
-				break;
-			}
-			if (key == "border-top-right-radius") {
-				style->Border.TopRightRadius = __ToFloat(value);
-				break;
-			}
-			if (key == "border-bottom-right-radius") {
-				style->Border.BottomRightRadius = __ToFloat(value);
-				break;
-			}
-			if (key == "border-bottom-left-radius") {
-				style->Border.BottomLeftRadius = __ToFloat(value);
-				break;
-			}
-			if (key == "font-size") {
-				style->FontSize = __ToFloat(value);
-				break;
-			}
-			if (key == "font-family") {
-				value = value.replace("\"", "");//删除双引号;
-				style->FontFamily = value.unicode();
-				break;
-			}
-			if (key == "border-width") {
-				style->Border = __ToFloat(value);
-				break;
-			}
-			if (key == "border") {
-				__MakeBorder(value, style->Border, [style](float num) {
-					style->Border.Left = num;
-					style->Border.Top = num;
-					style->Border.Right = num;
-					style->Border.Bottom = num;
-					});
-				break;
-			}
-			if (key == "border-left") {
-				__MakeBorder(value, style->Border, [style](float num) {
-					style->Border.Left = num;
-					});
-				break;
-			}
-			if (key == "border-top") {
-				__MakeBorder(value, style->Border, [style](float num) {
-					style->Border.Top = num;
-					});
-				break;
-			}
-			if (key == "border-right") {
-				__MakeBorder(value, style->Border, [style](float num) {
-					style->Border.Right = num;
-					});
-				break;
-			}
-			if (key == "border-bottom") {
-				__MakeBorder(value, style->Border, [style](float num) {
-					style->Border.Bottom = num;
-					});
-				break;
-			}
-		} while (false);
-	}
-	void SetStyleSheet(Control* ctl, ControlStyle::Type styleType, const UIString& styleStr)
-	{
-		//确定每一个样式的类型
-		ControlStyle* cSytle = NULL;
-		if (styleType == ControlStyle::Type::Static)cSytle = &ctl->Style;
-		if (styleType == ControlStyle::Type::Hover)cSytle = &ctl->HoverStyle;
-		if (styleType == ControlStyle::Type::Active)cSytle = &ctl->ActiveStyle;
-		if (styleType == ControlStyle::Type::Checked) {
-			auto* ckBox = dynamic_cast<CheckBox*>(ctl);
-			if (ckBox) {
-				cSytle = &ckBox->CheckedStyle;
-			}
-		}
-		//分割每一行样式
-		auto attrs = styleStr.split(";");
-		for (auto& it : attrs) {
-			size_t pos = it.find(":");
-			if (pos == -1)continue;
-			UIString key = it.substr(0, pos);
-			UIString value = it.substr(pos + 1);
-			key = key.trim();//去除前后空格
-			value = value.trim();//去除前后空格
-			SetStyle(ctl, cSytle, styleType, key, value);//去应用每一行样式
-		}
-	}
 	int_t MathStyle(Control* ctl, const UIString& selectorName, const std::list<UIManager::Style>& selectors)
 	{
 		int_t mathCount = 0;
@@ -281,7 +22,7 @@ namespace ezui {
 				++mathCount;
 				auto& styleType = it.m_styleType;
 				auto& styleStr = it.m_styleStr;
-				SetStyleSheet(ctl, styleType, styleStr);
+				ctl->SetStyleSheet(styleType, styleStr);
 			}
 		}
 		//返回匹配成功的个数
@@ -332,11 +73,10 @@ namespace ezui {
 		{//加载内联样式 优先级最高
 			UIString sytle_static = ctl->GetAttribute("style");//内联样式语法
 			if (!sytle_static.empty()) { //内联样式只允许描述静态效果
-				ezui::SetStyleSheet(ctl, ControlStyle::Type::Static, sytle_static.trim());
+				ctl->SetStyleSheet(ControlState::Static, sytle_static.trim());
 			}
 		}
 	}
-
 	void UIManager::AnalysisStyle(const UIString& styleStr, std::list<UIManager::Style>* out) {
 		UIString style = styleStr.trim();
 		while (true)
@@ -386,16 +126,16 @@ namespace ezui {
 				selector.m_styleStr = str.trim();
 
 				if (style_type == "hover") {
-					selector.m_styleType = ControlStyle::Type::Hover;
+					selector.m_styleType = ControlState::Hover;
 				}
 				else if (style_type == "active") {
-					selector.m_styleType = ControlStyle::Type::Active;
+					selector.m_styleType = ControlState::Active;
 				}
 				else if (style_type == "checked") {
-					selector.m_styleType = ControlStyle::Type::Checked;
+					selector.m_styleType = ControlState::Checked;
 				}
 				else {
-					selector.m_styleType = ControlStyle::Type::Static;
+					selector.m_styleType = ControlState::Static;
 				}
 				out->push_back(selector);
 			}

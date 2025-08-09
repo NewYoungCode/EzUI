@@ -30,6 +30,68 @@ namespace ezui {
 	inline bool __IsValid(StrokeStyle value) {
 		return value != StrokeStyle::None;
 	}
+
+	//是否是像素单位
+	inline bool __IsPx(const UIString& num, float& outNum) {
+		size_t pos = num.find("px");
+		if (pos != 0 && pos == num.size() - 2) {
+			outNum = std::stof(num.substr(0, pos).c_str());
+			return true;
+		}
+		return false;
+	}
+	//字符串转数值
+	inline float __ToFloat(const UIString& numStr) {
+		float value;
+		if (__IsPx(numStr, value)) {
+			return value;
+		}
+		return 0;//解析失败
+	}
+
+	//处理url(d:/imgs/aa.png)路径
+	inline Image* __MakeImage(UIString value) {
+		value = value.replace("\"", "");//删除双引号;
+		auto pos1 = value.find("(");
+		auto pos2 = value.find(")");
+		if (pos1 != size_t(-1) && pos2 != size_t(-1)) {
+			//background-image:url(res/images/xxx.png)的方式
+			value = value.substr(pos1 + 1, pos2 - pos1 - 1);
+		}
+		return Image::Make(value);
+	}
+
+	//构建边框信息并回调
+	inline void __MakeBorder(const UIString str, Border& bd, const std::function<void(float)>& callback) {
+		auto values = str.split(" ");
+		for (auto& v : values) {
+			float num;
+			if (v == "dashed") {
+				bd.Style = StrokeStyle::Dash;
+				continue;
+			}
+			else if (v == "solid") {
+				bd.Style = StrokeStyle::Solid;
+				continue;
+			}
+			else if (v == "none") {
+				bd.Style = StrokeStyle::None;
+				continue;
+			}
+			else if (__IsPx(v, num)) {
+				callback(num);
+				continue;
+			}
+			else
+			{
+				bool isGood = false;
+				Color color = Color::Make(v, &isGood);
+				if (isGood) {
+					bd.Color = color;
+				}
+			}
+		}
+	}
 };
 namespace ezui {
 
@@ -1427,5 +1489,213 @@ namespace ezui {
 	ScrollBar* Control::GetScrollBar()
 	{
 		return NULL;
+	}
+
+	void Control::SetStyle(ControlStyle& style, const UIString& key, const UIString& value_)
+	{
+		UIString value = value_;
+		do
+		{
+			if (key == "width") {
+				if (value.count(".") > 0) {
+					this->SetRateWidth(std::stof(value.c_str()));
+				}
+				else {
+					this->SetFixedWidth(__ToFloat(value));
+				}
+				break;
+			}
+			if (key == "height") {
+				if (value.count(".") > 0) {
+					this->SetRateHeight(std::stof(value.c_str()));
+				}
+				else {
+					this->SetFixedHeight(__ToFloat(value));
+				}
+				break;
+				if (key == "pointer-events") {
+					if (value == "none") {
+						//忽略鼠标事件 将直接穿透
+						this->EventPassThrough = this->EventPassThrough | Event::OnMouseEvent;
+					}
+					else if (value == "auto") {
+						this->EventPassThrough = Event::None;
+					}
+					break;
+				}
+				if (key == "display") {
+					this->SetVisible(value != "none");
+					break;
+				}
+			}
+
+			if (key == "cursor") {
+				if (value == "pointer") {
+					style.Cursor = LoadCursor(ezui::Cursor::HAND);
+				}
+				else if (value == "help") {
+					style.Cursor = LoadCursor(ezui::Cursor::HELP);
+				}
+				else if (value == "n-resize") {
+					//南北箭头 纵向
+					style.Cursor = LoadCursor(ezui::Cursor::SIZENS);
+				}
+				else if (value == "e-resize") {
+					//东西箭头 水平
+					style.Cursor = LoadCursor(ezui::Cursor::SIZEWE);
+				}
+				else if (value == "move") {
+					//四个方向的箭头都有
+					style.Cursor = LoadCursor(ezui::Cursor::SIZEALL);
+				}
+				break;
+			}
+			if (key == "background-color") {
+				style.BackColor = Color::Make(value);
+				break;
+			}
+			if (key == "background-image") {
+				style.BackImage = this->Attach(__MakeImage(value));
+				break;
+			}
+			if (key == "background-position" && style.BackImage) {
+				if (value.count("px") >= 2) {
+					auto pxs = value.split(" ");
+					float x = 0;
+					__IsPx(pxs[0], x);
+					style.BackImage->DrawPosition.X = x;
+
+					float y = 0;
+					__IsPx(pxs[1], y);
+					style.BackImage->DrawPosition.Y = y;
+				}
+				break;
+			}
+			if (key == "background-size" || key == "background-image-size") {
+				if (value == "auto" && style.BackImage) {
+					style.BackImage->SizeMode = ImageSizeMode::OriginalSize;
+				}
+				else if (value.count("px") >= 2 && style.BackImage) {
+					auto pxs = value.split(" ");
+					float w = 0;
+					__IsPx(pxs[0], w);
+					style.BackImage->DrawSize.Width = w;
+
+					float h = 0;
+					__IsPx(pxs[1], h);
+					style.BackImage->DrawSize.Height = h;
+				}
+				break;
+			}
+			if (key == "fore-image") {
+				style.ForeImage = this->Attach(__MakeImage(value));
+				break;
+			}
+			if (key == "fore-image-size") {
+				if (value == "auto" && style.ForeImage) {
+					style.ForeImage->SizeMode = ImageSizeMode::OriginalSize;
+				}
+				break;
+			}
+			if (key == "color" || key == "fore-color") {
+				style.ForeColor = Color::Make(value);
+				break;
+			}
+			if (key == "border-color") {
+				style.Border.Color = Color::Make(value);
+				break;
+			}
+			if (key == "border-style") {
+				if (value == "solid") {
+					style.Border.Style = StrokeStyle::Solid;
+				}
+				else if (value == "dashed") {
+					style.Border.Style = StrokeStyle::Dash;
+				}
+				break;
+			}
+			if (key == "border-radius") {
+				style.Border.Radius = __ToFloat(value);
+				break;
+			}
+			if (key == "border-top-left-radius") {
+				style.Border.TopLeftRadius = __ToFloat(value);
+				break;
+			}
+			if (key == "border-top-right-radius") {
+				style.Border.TopRightRadius = __ToFloat(value);
+				break;
+			}
+			if (key == "border-bottom-right-radius") {
+				style.Border.BottomRightRadius = __ToFloat(value);
+				break;
+			}
+			if (key == "border-bottom-left-radius") {
+				style.Border.BottomLeftRadius = __ToFloat(value);
+				break;
+			}
+			if (key == "font-size") {
+				style.FontSize = __ToFloat(value);
+				break;
+			}
+			if (key == "font-family") {
+				value = value.replace("\"", "");//删除双引号;
+				style.FontFamily = value.unicode();
+				break;
+			}
+			if (key == "border-width") {
+				style.Border = __ToFloat(value);
+				break;
+			}
+			if (key == "border") {
+				__MakeBorder(value, style.Border, [&style](float num) {
+					style.Border.Left = num;
+					style.Border.Top = num;
+					style.Border.Right = num;
+					style.Border.Bottom = num;
+					});
+				break;
+			}
+			if (key == "border-left") {
+				__MakeBorder(value, style.Border, [&style](float num) {
+					style.Border.Left = num;
+					});
+				break;
+			}
+			if (key == "border-top") {
+				__MakeBorder(value, style.Border, [&style](float num) {
+					style.Border.Top = num;
+					});
+				break;
+			}
+			if (key == "border-right") {
+				__MakeBorder(value, style.Border, [&style](float num) {
+					style.Border.Right = num;
+					});
+				break;
+			}
+			if (key == "border-bottom") {
+				__MakeBorder(value, style.Border, [&style](float num) {
+					style.Border.Bottom = num;
+					});
+				break;
+			}
+		} while (false);
+	}
+	void Control::SetStyleSheet(ControlState state, const UIString& styleStr)
+	{
+		auto attrs = styleStr.split(";");//分割每一行样式
+		if (!attrs.empty()) {
+			ControlStyle& sytle = this->GetStyle(state);//获取对应状态下的Style
+			for (auto& it : attrs) {
+				size_t pos = it.find(":");
+				if (pos == -1)continue;
+				UIString key = it.substr(0, pos);
+				UIString value = it.substr(pos + 1);
+				key = key.trim();//去除前后空格
+				value = value.trim();//去除前后空格
+				this->SetStyle(sytle, key, value);//去应用每一行样式
+			}
+		}
 	}
 };

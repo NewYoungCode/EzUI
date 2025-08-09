@@ -11,25 +11,19 @@ namespace ezui {
 			HWND hWnd = this->Hwnd();
 			BeginInvoke([this, hWnd, timer]() {
 				if (!::IsWindow(hWnd))return;
-				m_timer->Interval = m_img->NextFrame();
-				this->Invalidate();
+				if (this->Image) {
+					m_timer->Interval = this->Image->NextFrame();
+					this->Invalidate();
+				};
 				});
 			};
 	}
 	PictureBox::~PictureBox() {
-		m_timer->Stop();
-		if (m_srcImg) {
-			delete m_srcImg;
-		}
-	}
-	void PictureBox::OnRemove() {
-		__super::OnRemove();
-		m_timer->Stop();
 	}
 	void PictureBox::OnForePaint(PaintEventArgs& arg) {
-		if (m_img) {
-			arg.Graphics.DrawImage(m_img, RectF(0, 0, (float)Width(), (float)Height()));
-			if (m_img->FrameCount() > 1) {
+		if (Image) {
+			arg.Graphics.DrawImage(Image, RectF(0, 0, (float)Width(), (float)Height()));
+			if (Image->FrameCount() > 1) {
 				if (m_timer->IsStopped()) {
 					m_timer->Start();
 				}
@@ -40,15 +34,10 @@ namespace ezui {
 		}
 		__super::OnForePaint(arg);
 	}
-	void PictureBox::SetImage(Image* image) {
-		m_img = image;
-	}
 	void PictureBox::SetAttribute(const UIString& key, const UIString& value) {
 		__super::SetAttribute(key, value);
-		if (key == "src" || key == "img") {
-			if (m_srcImg)delete m_srcImg;
-			m_srcImg = Image::Make(value);
-			SetImage(m_srcImg);
+		if (key == "src") {
+			Image = this->Attach(Image::Make(value));
 		}
 	}
 };

@@ -487,6 +487,12 @@ namespace ezui {
 
 		// 立即强制刷新控件区域并更新无效区域（且立即触发布局）
 		virtual void Refresh();
+
+		//传入Style的引用 处理key value
+		virtual void SetStyle(ControlStyle& style, const UIString& key, const UIString& value);
+
+		//传入状态并分析样式字符串
+		virtual void SetStyleSheet(ControlState state, const UIString& styleStr);
 	};
 
 };

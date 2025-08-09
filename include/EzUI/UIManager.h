@@ -24,7 +24,7 @@ namespace ezui {
 	public:
 		struct Style
 		{
-			ControlStyle::Type m_styleType;
+			ControlState m_styleType;
 			UIString m_selectorName;
 			UIString m_styleStr;
 		};

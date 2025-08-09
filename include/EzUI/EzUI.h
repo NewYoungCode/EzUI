@@ -396,13 +396,6 @@ namespace ezui {
 	// 为控件样式提供数据。
 	class UI_EXPORT ControlStyle {
 	public:
-		enum class Type {
-			Static,
-			Checked,
-			Hover,
-			Active
-		};
-	public:
 		//边框信息
 		ezui::Border Border;
 		//整体不透明度
@@ -534,21 +527,4 @@ namespace ezui {
 		return true;
 	}
 
-	//是否是像素单位
-	static bool __IsPx(const UIString& num, float& outNum) {
-		size_t pos = num.find("px");
-		if (pos != 0 && pos == num.size() - 2) {
-			outNum = std::stof(num.substr(0, pos).c_str());
-			return true;
-		}
-		return false;
-	}
-	//字符串转数值
-	static float __ToFloat(const UIString& numStr) {
-		float value;
-		if (__IsPx(numStr, value)) {
-			return value;
-		}
-		return 0;//解析失败
-	}
 };
