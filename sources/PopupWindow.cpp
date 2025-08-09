@@ -27,7 +27,7 @@ namespace ezui {
 		}
 
 		MonitorInfo monitorInfo;
-		GetMontior(&monitorInfo, ::GetWindow(Hwnd(),GW_OWNER));
+		GetMontior(&monitorInfo, ::GetWindow(Hwnd(), GW_OWNER));
 		x = location.x;
 		y = location.y;
 		width = rect.Width;
@@ -41,10 +41,7 @@ namespace ezui {
 				y -= ctlRect.Height;
 			}
 		}
-		if ((location.x + width) > monitorInfo.Rect.GetRight()) {
-			x -= width;
-		}
-		::SetWindowPos(Hwnd(), NULL, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE);
+		this->SetRect({ x, y, width, height });
 		__super::Show();
 		::SetForegroundWindow(Hwnd());
 		this->SetTopMost(true);

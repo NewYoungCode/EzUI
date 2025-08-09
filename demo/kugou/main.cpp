@@ -17,7 +17,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	ant->SetStartValue(0.1);
 	ant->SetEndValue(1.0);
 	ant->ValueChanged = [&](double value) {
-		Invoke([&] {
+		Invoke([=, &frm] {
 			frm.Opacity = value;//修改透明度
 			frm.Invalidate();//刷新
 			});
@@ -26,6 +26,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	frm.Opacity = 0.1;
 	ant->Start(200);//开始动画
 
+	frm.CenterToScreen();//屏幕居中
 	frm.Show();
 
 	return app.Exec();

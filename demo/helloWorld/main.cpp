@@ -62,12 +62,12 @@ public:
 int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
 	Application app;//消息循环对象
-
-	{
-		MainFrm frm(800, 600);//无边框窗口
-		frm.Show();
-		return app.Exec();
-	}
+	app.EnableHighDpi();
+	//{
+	//	MainFrm frm(800, 600);//无边框窗口
+	//	frm.Show();
+	//	return app.Exec();
+	//}
 
 	MainFrm frm(800, 600);//无边框窗口
 	VLayout mainLayout;//窗口中的main布局
@@ -128,7 +128,8 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
 	ComboBox cbox;
 	cbox.Style.Border = 1;
-	cbox.Style.Border.Color = Color::Red;
+	cbox.Style.Border.Color = Color::Gray;
+	cbox.Style.Border.Style = StrokeStyle::Solid;
 
 	cbox.SetFixedSize({ 100,30 });
 	cbox.SetParent(&mainLayout);
@@ -136,6 +137,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	cbox.AddItem(L"青菜");
 	cbox.AddItem(L"牛肉");
 	cbox.AddItem(L"猪肉");
+	cbox.SetCheck(0);
 
 	TextBox text;
 	text.SetParent(&mainLayout);

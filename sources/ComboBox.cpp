@@ -42,6 +42,7 @@ namespace ezui {
 				//单击
 				if (m_menuWnd == NULL) {
 					m_menuWnd = new MenuContent(this, &m_UpDown);
+					m_menuWnd->SetShadow(10);
 					m_list.Style.BackColor = Color::White;
 					m_menuWnd->SetLayout(&m_list);
 				}
@@ -53,7 +54,7 @@ namespace ezui {
 					height = Height();
 				}
 				if (!m_menuWnd->IsVisible()) {
-					::SetWindowPos(m_menuWnd->Hwnd(), NULL, 0, 0, Width(), height, SWP_NOZORDER | SWP_NOACTIVATE);
+					m_menuWnd->SetSize({ Width(), height });
 					m_menuWnd->Show();
 				}
 				else {

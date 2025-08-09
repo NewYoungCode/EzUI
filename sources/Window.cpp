@@ -212,7 +212,7 @@ namespace ezui {
 	}
 	void Window::SetRect(const Rect& rect)
 	{
-		::SetWindowPos(Hwnd(), NULL, rect.X, rect.Y, rect.Width, rect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
+		::MoveWindow(Hwnd(), rect.X, rect.Y, rect.Width, rect.Height, FALSE);
 	}
 	void Window::SetMiniSize(const Size& size)
 	{
@@ -279,6 +279,10 @@ namespace ezui {
 		m_closeCode = code;
 		::SendMessage(Hwnd(), WM_CLOSE, 0, 0);
 	}
+	void Window::Destroy()
+	{
+		::DestroyWindow(Hwnd());
+	}
 	void Window::Show()
 	{
 		ASSERT(m_layout);
@@ -303,7 +307,8 @@ namespace ezui {
 		::ShowWindow(Hwnd(), SW_MAX);
 		MonitorInfo monitorInfo;
 		ezui::GetMontior(&monitorInfo, Hwnd());
-		::SetWindowPos(Hwnd(), HWND_TOP, monitorInfo.Rect.X, monitorInfo.Rect.Y, monitorInfo.Rect.Width, monitorInfo.Rect.Height, NULL);
+		SetRect(monitorInfo.Rect);
+		SetTopMost(true);
 		::ShowWindow(Hwnd(), SW_SHOW);
 	}
 	int_t Window::ShowModal(bool disableOwner)
@@ -329,6 +334,7 @@ namespace ezui {
 		return m_closeCode;
 	}
 	void Window::Hide() {
+		this->Refresh();//隐藏窗口前先刷新一下窗口中的画面(清除残留画面)
 		::ShowWindow(Hwnd(), SW_HIDE);
 	}
 	bool Window::IsVisible() {
@@ -374,7 +380,7 @@ namespace ezui {
 		rect.X = x + (sw - width) / 2.0f + 0.5;//保证左右居中
 		rect.Y = y + (sh - height) / 2.0f + 0.5;//保证上下居中
 		//移动窗口
-		::SetWindowPos(Hwnd(), NULL, rect.X, rect.Y, rect.Width, rect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
+		SetRect({ rect.X, rect.Y, rect.Width, rect.Height });
 	}
 
 	void Window::CenterToWindow(HWND wnd)
@@ -400,7 +406,7 @@ namespace ezui {
 			rect.X = ownerRECT.left + (onwerWidth - width) / 2.0f + 0.5;
 			rect.Y = ownerRECT.top + (onwerHeight - height) / 2.0f + 0.5;
 			//移动窗口
-			::SetWindowPos(Hwnd(), NULL, rect.X, rect.Y, rect.Width, rect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
+			SetRect({ rect.X, rect.Y, rect.Width, rect.Height });
 		}
 	}
 
@@ -1110,7 +1116,7 @@ namespace ezui {
 			this->DispatchEvent(m_layout, arg);
 		}
 		if (!newRect.IsEmptyArea()) {
-			SetWindowPos(Hwnd(), NULL, newRect.X, newRect.Y, newRect.Width, newRect.Height, SWP_NOZORDER | SWP_NOACTIVATE);
+			SetRect({ newRect.X, newRect.Y, newRect.Width, newRect.Height });
 		}
 	}
 	bool Window::OnNotify(Control* sender, EventArgs& args) {

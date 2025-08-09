@@ -461,6 +461,12 @@ namespace ezui {
 		// 获取控件可见性状态
 		virtual bool IsVisible();
 
+		//隐藏控件
+		void Hide();
+
+		//显示控件
+		void Show();
+
 		// 标记控件区域为无效（将会延迟刷新UI）
 		virtual bool Invalidate();
 

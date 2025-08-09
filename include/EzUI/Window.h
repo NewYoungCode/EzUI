@@ -190,6 +190,9 @@ namespace ezui {
 		//关闭窗口 exitCode为退出代码
 		void Close(int_t exitCode = 0);
 
+		//直接销毁窗口
+		void Destroy();
+
 		//模态窗口方式显示窗口(会阻塞) 请务必在窗口构造函数中传入owner窗口句柄
 		virtual int_t ShowModal(bool disableOnwer = true);
 

@@ -27,15 +27,12 @@ HWND GetDeskTopWnd() {
 DesktopLrcFrm::DesktopLrcFrm(VlcPlayer* player) :_player(player), LayeredWindow(0, 0) {
 	//关闭默认的窗口阴影
 	this->CloseShadowBox();
-	//获取当前屏幕的大小
-	std::list<MonitorInfo> monitorInfo;
-	GetMonitor(&monitorInfo);
-	const MonitorInfo& def = *monitorInfo.begin();
-	this->SetRect(def.Rect);
 	//获取桌面的窗口句柄
 	HWND workWnd = GetDeskTopWnd();
 	::SetParent(Hwnd(), workWnd);
-	this->SetRect(def.Rect);
+	RECT workRect;
+	::GetClientRect(workWnd, &workRect);
+	::SetWindowPos(Hwnd(), NULL, workRect.left, workRect.top, workRect.left + workRect.right, workRect.top + workRect.bottom, SWP_NOZORDER | SWP_NOACTIVATE);
 	//设置窗口布局
 	_lrc.Style.FontSize = 20;
 	_lrc.Style.ForeColor = Color::White;

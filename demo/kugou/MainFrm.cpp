@@ -161,9 +161,25 @@ MainFrm::~MainFrm()
 		delete deskTopWnd;
 	}
 }
+
 void MainFrm::OnClose(bool& cal) {
-	//关闭窗口时 退出消息循环 程序结束
-	Application::Exit(0);
+	cal = false;
+	//给窗口添加淡出效果
+	Animation* ant = new Animation(this);//绑定父对象为frm,则ant无需手动释放
+	ant->SetStartValue(1.0);
+	ant->SetEndValue(0);
+	ant->ValueChanged = [&](double value) {
+		Invoke([=] {
+			this->Opacity = value;//修改透明度
+			this->Invalidate();//刷新
+			if (value <= 0.1) {
+				//退出消息循环 程序结束
+				Application::Exit(0);
+			}
+			});
+		};
+	this->Opacity = 1;
+	ant->Start(200);//开始动画
 }
 
 size_t MainFrm::FindLocalSong(const UIString& hash)
