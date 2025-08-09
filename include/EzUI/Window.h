@@ -14,10 +14,10 @@ namespace ezui {
 	class UI_EXPORT Window :public Object
 	{
 	private:
-		//具有焦点的控件
-		Control* __FOCUS_CONTROL = NULL;
-		//输入框
-		Control* __INPUT_CONTROL = NULL;
+		//具有鼠标焦点的控件
+		Control* m_focusControl = NULL;
+		//具有键盘焦点的控件
+		Control* m_inputControl = NULL;
 		//窗口公共数据
 		WindowData* m_publicData = NULL;
 		//鼠标跟踪
@@ -60,6 +60,7 @@ namespace ezui {
 		void Init(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
 		//在窗口中使用基于客户区的鼠标位置寻找可命中的控件 
 		Control* HitTestControl(const Point clientPoint, Point* outPoint);
+		bool DispatchEvent(Control* ctrl, const EventArgs& args);
 	protected:
 		//是否为窗口
 		bool IsWindow() const;
