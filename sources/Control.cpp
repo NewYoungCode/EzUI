@@ -1513,22 +1513,21 @@ namespace ezui {
 					this->SetFixedHeight(__ToFloat(value));
 				}
 				break;
-				if (key == "pointer-events") {
-					if (value == "none") {
-						//忽略鼠标事件 将直接穿透
-						this->EventPassThrough = this->EventPassThrough | Event::OnMouseEvent;
-					}
-					else if (value == "auto") {
-						this->EventPassThrough = Event::None;
-					}
-					break;
-				}
-				if (key == "display") {
-					this->SetVisible(value != "none");
-					break;
-				}
 			}
-
+			if (key == "pointer-events") {
+				if (value == "none") {
+					//忽略鼠标事件 将直接穿透
+					this->EventPassThrough = this->EventPassThrough | Event::OnMouseEvent | Event::OnKeyBoardEvent;
+				}
+				else if (value == "auto") {
+					this->EventPassThrough = Event::None;
+				}
+				break;
+			}
+			if (key == "display") {
+				this->SetVisible(value != "none");
+				break;
+			}
 			if (key == "cursor") {
 				if (value == "pointer") {
 					style.Cursor = LoadCursor(ezui::Cursor::HAND);
