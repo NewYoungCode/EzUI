@@ -421,7 +421,11 @@ namespace ezui {
 				break;
 			}
 			if (attrName == "visible") {
-				this->m_bVisible = (::strcmp(attrValue.c_str(), "false") == 0 ? false : true);
+				this->m_bVisible = (attrValue != "false");
+				break;
+			}
+			if (attrName == "display") {
+				this->m_bVisible = (attrValue != "none");
 				break;
 			}
 			if (attrName == "tips") {
