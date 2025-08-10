@@ -240,7 +240,7 @@ namespace ezui {
 		void SetFont(const std::wstring& fontFamily, float fontSize);//必须先调用
 		void SetFont(const Font& _copy_font);//必须先调用
 		void SetColor(const __EzUI__Color& color);//会之前必须调用
-		void SetStrokeStyle(StrokeStyle strokeStyle = StrokeStyle::Solid, float dashWidth = 3);//设置样式 虚线/实线
+		void SetStrokeStyle(StrokeStyle strokeStyle = StrokeStyle::Solid);//设置样式 虚线/实线
 		void DrawTextLayout(const TextLayout& textLayout, const PointF & = { 0,0 });//根据已有的布局绘制文字
 		void DrawString(const std::wstring& text, const RectF& _rect, ezui::TextAlign textAlign);//绘制文字
 		void DrawLine(const PointF& _A, const  PointF& _B, float width = 1);//绘制一条线

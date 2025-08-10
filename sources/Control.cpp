@@ -961,14 +961,16 @@ namespace ezui {
 		if (publicData->Debug) {
 			float width = 1 * this->GetScale();
 			Color color = publicData->DebugColor;
+			color.SetA(127);
+			pt.SetColor(color);
+
+			//绘制虚线
+			pt.SetStrokeStyle(StrokeStyle::Dash);
 
 			//绘制出控件边框
-			pt.SetColor(color);
 			pt.DrawRectangle(RectF(0, 0, clientRect.Width, clientRect.Height), 0, width);
 
 			//绘制出边距 类似安卓那样显示
-			color.SetA(127);
-			pt.SetColor(color);
 			// 左边距
 			if (Margin.Left) {
 				pt.FillRectangle(RectF(0 - Margin.Left, 0, Margin.Left, clientRect.Height));

@@ -984,19 +984,26 @@ namespace ezui {
 			m_brush->SetColor(__To_D2D_COLOR_F(color));
 		}
 	}
-	void DXRender::SetStrokeStyle(StrokeStyle strokeStyle, float dashWidth)
+	void DXRender::SetStrokeStyle(StrokeStyle strokeStyle)
 	{
 		if (m_pStrokeStyle != NULL) {
 			SafeRelease(&m_pStrokeStyle);
 		}
 		if (strokeStyle == StrokeStyle::Dash) {
-			float* dashes = new float[2] { (FLOAT)dashWidth, (FLOAT)dashWidth };
-			const int_t count = 2;
-			D2D::g_Direct2dFactory->CreateStrokeStyle(D2D1::StrokeStyleProperties(
-				D2D1_CAP_STYLE_FLAT, D2D1_CAP_STYLE_FLAT, D2D1_CAP_STYLE_ROUND,
-				D2D1_LINE_JOIN_ROUND, 10.0f, D2D1_DASH_STYLE_CUSTOM, 0.0f),
-				dashes, count, &m_pStrokeStyle);
-			delete[] dashes;
+			// 使用系统默认的虚线样式
+			D2D1_DASH_STYLE dashStyle = D2D1_DASH_STYLE_DASH;  // 常规虚线样式
+			// 创建虚线样式
+			D2D::g_Direct2dFactory->CreateStrokeStyle(
+				D2D1::StrokeStyleProperties(
+					D2D1_CAP_STYLE_FLAT,                // 线帽样式
+					D2D1_CAP_STYLE_FLAT,                // 结束线帽样式
+					D2D1_CAP_STYLE_ROUND,               // 虚线部分的线帽样式
+					D2D1_LINE_JOIN_ROUND,               // 线段连接样式
+					10.0f,                              // 斜接限制
+					dashStyle,                          // 设置虚线样式为常规虚线
+					0.0f                                 // 自定义虚线的间隔（不需要）
+				),
+				nullptr, 0, &m_pStrokeStyle);
 		}
 	}
 	void DXRender::DrawTextLayout(const TextLayout& textLayout, const PointF& startLacation) {
