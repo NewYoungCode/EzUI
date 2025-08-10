@@ -1162,10 +1162,10 @@ namespace ezui {
 				this->Close();
 				break;
 			}
-			UIString ctlName = sender->GetAttribute("tablayout");
-			if (!ctlName.empty()) {
-				auto ctls = sender->Parent->FindControl("tablayout", ctlName);
-				TabLayout* tabLayout = dynamic_cast<TabLayout*>(FindControl(ctlName));
+			UIString tabName = sender->GetAttribute("tablayout");
+			if (!tabName.empty()) {
+				auto ctls = sender->Parent->FindControl("tablayout", tabName);
+				TabLayout* tabLayout = dynamic_cast<TabLayout*>(FindControl(tabName));
 				if (tabLayout && sender->Parent) {
 					int_t pos = 0;
 					for (auto& it : ctls)
