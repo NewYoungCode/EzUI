@@ -952,17 +952,41 @@ namespace ezui {
 		border.Color = GetBorderColor();
 		border.Style = GetBorderStyle();
 		this->OnBorderPaint(args, border);//绘制边框
-#ifdef _DEBUG
-		if (publicData->Debug) {
-			float width = 1 * this->GetScale();
-			pt.SetColor(publicData->DebugColor);
-			pt.DrawRectangle(RectF(0, 0, clientRect.Width, clientRect.Height), 0, width);
-		}
-#endif
 		if (this->EventHandler) {
 			this->EventHandler(this, args);
 		}
 		args.PopLayer();//弹出纹理层
+
+#ifdef _DEBUG
+		if (publicData->Debug) {
+			float width = 1 * this->GetScale();
+			Color color = publicData->DebugColor;
+
+			//绘制出控件边框
+			pt.SetColor(color);
+			pt.DrawRectangle(RectF(0, 0, clientRect.Width, clientRect.Height), 0, width);
+
+			//绘制出边距 类似安卓那样显示
+			color.SetA(127);
+			pt.SetColor(color);
+			// 左边距
+			if (Margin.Left) {
+				pt.FillRectangle(RectF(0 - Margin.Left, 0, Margin.Left, clientRect.Height));
+			}
+			// 上边距
+			if (Margin.Top) {
+				pt.FillRectangle(RectF(0, 0 - Margin.Top, clientRect.Width, Margin.Top));
+			}
+			// 右边距
+			if (Margin.Right) {
+				pt.FillRectangle(RectF(clientRect.Width, 0, Margin.Right, clientRect.Height));
+			}
+			// 下边距
+			if (Margin.Bottom) {
+				pt.FillRectangle(RectF(0, clientRect.Height, clientRect.Width, Margin.Bottom));
+			}
+		}
+#endif
 		args.PopOffset();//弹出偏移
 		if (angle != 0) {
 			pt.SetTransform(0, 0, 0);
