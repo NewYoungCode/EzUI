@@ -635,12 +635,11 @@ namespace ezui {
 			if (wParam == VK_F11) {
 				m_publicData->Debug = !m_publicData->Debug;
 				if (m_publicData->Debug) {
+					m_publicData->DebugColor = m_publicData->DebugColors[m_publicData->ColorIndex];
+					m_publicData->ColorIndex++;
 					if (m_publicData->ColorIndex >= m_publicData->DebugColors.size()) {
 						m_publicData->ColorIndex = 0;
 					}
-					m_publicData->DebugColors;
-					m_publicData->DebugColor = m_publicData->DebugColors[m_publicData->ColorIndex];
-					m_publicData->ColorIndex++;
 				}
 				Invalidate();
 			}
