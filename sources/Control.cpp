@@ -106,17 +106,22 @@ namespace ezui {
 				return _##_filed;\
 			}\
 		}\
-		if ((_state & ControlState::Hover) == ControlState::Hover) {\
-			_##_filed = this->GetStyle(ControlState::Hover).##_filed;\
-			if (__IsValid(_##_filed)) {\
-				return _##_filed;\
+		if(this->Enable){ \
+			if ((_state & ControlState::Hover) == ControlState::Hover) {\
+				_##_filed = this->GetStyle(ControlState::Hover).##_filed;\
+				if (__IsValid(_##_filed)) {\
+					return _##_filed;\
+				}\
 			}\
-		}\
-		if ((_state & ControlState::Active) == ControlState::Active) {\
-			_##_filed = this->GetStyle(ControlState::Active).##_filed;\
-			if (__IsValid(_##_filed)) {\
-				return _##_filed;\
+			if ((_state & ControlState::Active) == ControlState::Active) {\
+				_##_filed = this->GetStyle(ControlState::Active).##_filed;\
+				if (__IsValid(_##_filed)) {\
+					return _##_filed;\
+				}\
 			}\
+		}else {\
+				_##_filed = this->GetStyle(ControlState::Disabled).##_filed;\
+				if (__IsValid(_##_filed)) return _##_filed;\
 		}\
 		_##_filed = this->GetStyle(ControlState::Static).##_filed; \
 		if (__IsValid(_##_filed)) {\
@@ -142,13 +147,18 @@ namespace ezui {
 			_##_filed = this->GetStyle(ControlState::Checked).##_filed;\
 			if (__IsValid(_##_filed))return _##_filed;\
 		}\
-		if ((_state & ControlState::Hover) == ControlState::Hover) {\
-			_##_filed = this->GetStyle(ControlState::Hover).##_filed;\
-			if (__IsValid(_##_filed))return _##_filed;\
-		}\
-		if ((_state & ControlState::Active) == ControlState::Active) {\
-			_##_filed = this->GetStyle(ControlState::Active).##_filed;\
-			if (__IsValid(_##_filed))return _##_filed;\
+		if(this->Enable){ \
+			if ((_state & ControlState::Hover) == ControlState::Hover) {\
+				_##_filed = this->GetStyle(ControlState::Hover).##_filed;\
+				if (__IsValid(_##_filed))return _##_filed;\
+			}\
+			if ((_state & ControlState::Active) == ControlState::Active) {\
+				_##_filed = this->GetStyle(ControlState::Active).##_filed;\
+				if (__IsValid(_##_filed))return _##_filed;\
+			}\
+		}else {\
+				_##_filed = this->GetStyle(ControlState::Disabled).##_filed;\
+				if (__IsValid(_##_filed)) return _##_filed;\
 		}\
 		return this->GetStyle(ControlState::Static).##_filed;;\
 }\
@@ -162,13 +172,18 @@ namespace ezui {
 			_##_filed = this->GetStyle(ControlState::Checked).##_filed1.##_filed;\
 			if (__IsValid(_##_filed)) return _##_filed;\
 		}\
-		if ((_state & ControlState::Hover) == ControlState::Hover) {\
-			_##_filed = this->GetStyle(ControlState::Hover).##_filed1.##_filed;\
-			if (__IsValid(_##_filed)) return _##_filed;\
-		}\
-		if ((_state & ControlState::Active) == ControlState::Active) {\
-			_##_filed = this->GetStyle(ControlState::Active).##_filed1.##_filed;\
-			if (__IsValid(_##_filed)) return _##_filed;\
+		if(this->Enable){ \
+			if ((_state & ControlState::Hover) == ControlState::Hover) {\
+				_##_filed = this->GetStyle(ControlState::Hover).##_filed1.##_filed;\
+				if (__IsValid(_##_filed)) return _##_filed;\
+			}\
+			if ((_state & ControlState::Active) == ControlState::Active) {\
+				_##_filed = this->GetStyle(ControlState::Active).##_filed1.##_filed;\
+				if (__IsValid(_##_filed)) return _##_filed;\
+			}\
+		}else {\
+				_##_filed = this->GetStyle(ControlState::Disabled).##_filed1.##_filed;\
+				if (__IsValid(_##_filed)) return _##_filed;\
 		}\
 		return this->GetStyle(ControlState::Static).##_filed1.##_filed; \
 }\
@@ -300,7 +315,10 @@ namespace ezui {
 		}
 	}
 	ControlStyle& Control::GetStyle(const ControlState& _state) {
-		if ((_state & ControlState::Hover) == ControlState::Hover) {
+		if ((_state & ControlState::Disabled) == ControlState::Disabled) {
+			return this->DisabledStyle;
+		}
+		else if ((_state & ControlState::Hover) == ControlState::Hover) {
 			return this->HoverStyle;
 		}
 		else if ((_state & ControlState::Active) == ControlState::Active) {
@@ -739,6 +757,12 @@ namespace ezui {
 	}
 	bool Control::OnEvent(EventArgs& arg)
 	{
+		// 禁用状态下拦截鼠标或键盘事件
+		if (!this->Enable && ((arg.EventType & Event::OnMouseEvent) == arg.EventType || (arg.EventType & Event::OnKeyBoardEvent) == arg.EventType))
+		{
+			return false; // 拦截，不再传递
+		}
+
 		bool isRemove = false;
 		this->m_bRemove = &isRemove;
 		do
@@ -812,7 +836,6 @@ namespace ezui {
 	void Control::OnKeyBoardEvent(const KeyboardEventArgs& _args) {
 		do
 		{
-			if (Enable == false) break;
 			KeyboardEventArgs& args = (KeyboardEventArgs&)_args;
 			if ((this->EventPassThrough & args.EventType) == args.EventType && this->Parent) {//检查鼠标穿透
 				KeyboardEventArgs copy_args = args;
@@ -839,7 +862,6 @@ namespace ezui {
 	}
 	//专门处理鼠标消息的
 	void Control::OnMouseEvent(const MouseEventArgs& _args) {
-		if (!Enable) return;
 		MouseEventArgs& args = (MouseEventArgs&)_args;
 		do
 		{

@@ -34,6 +34,8 @@ namespace ezui {
 		MathStyle(ctl, selectName + ":checked", selectors);
 		MathStyle(ctl, selectName + ":active", selectors);
 		MathStyle(ctl, selectName + ":hover", selectors);
+		MathStyle(ctl, selectName + ":disabled", selectors);
+
 		//是否有滚动条 有滚动条则应用滚动条样式
 		ScrollBar* scrollBar = ctl->GetScrollBar();
 		if (scrollBar) {
@@ -41,6 +43,7 @@ namespace ezui {
 			MathStyle(scrollBar, scrollBarSelectName, selectors);
 			MathStyle(scrollBar, scrollBarSelectName + ":active", selectors);
 			MathStyle(scrollBar, scrollBarSelectName + ":hover", selectors);
+			MathStyle(scrollBar, scrollBarSelectName + ":disabled", selectors);
 		}
 	}
 	void UIManager::ApplyStyle(Control* ctl, const std::list<UIManager::Style>& selectors, const UIString& tagName) {

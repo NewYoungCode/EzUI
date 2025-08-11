@@ -81,8 +81,11 @@ namespace ezui {
 		// 控件行为
 		ControlAction Action = ControlAction::None;
 
-		// 默认样式
+		// 静态默认样式
 		ControlStyle Style;
+
+		//禁用状态样式
+		ControlStyle DisabledStyle;
 
 		// 鼠标悬浮样式
 		ControlStyle HoverStyle;

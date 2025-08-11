@@ -205,9 +205,10 @@ namespace ezui {
 	enum class ControlState :int_t {
 		None = 1,//无状态 则是使用_nowStyle缓存样式
 		Static = 2,//静态
-		Checked = 4,//选中状态
-		Hover = 8,//鼠标悬浮
-		Active = 16//鼠标按住
+		Disabled = 4,//禁用状态
+		Checked = 8,//选中状态
+		Hover = 16,//鼠标悬浮
+		Active = 32//鼠标按住
 	};
 	inline ControlState operator|(ControlState left, ControlState right)
 	{
