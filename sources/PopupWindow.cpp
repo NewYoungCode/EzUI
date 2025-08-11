@@ -41,6 +41,15 @@ namespace ezui {
 				y -= ctlRect.Height;
 			}
 		}
+
+		//添加一点点偏移 不要紧贴着控件
+		if (y >= location.y) {
+			y += 1;
+		}
+		else {
+			y -= 1;
+		}
+
 		this->SetRect({ x, y, width, height });
 		__super::Show();
 		::SetForegroundWindow(Hwnd());
