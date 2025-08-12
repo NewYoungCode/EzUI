@@ -13,7 +13,7 @@ namespace ezui {
 		VSpacer();
 	public:
 		virtual ~VSpacer();
-		VSpacer(int_t fixedHeight);
+		VSpacer(int fixedHeight);
 	};
 	//具有绝对宽度的 的弹簧
 	class UI_EXPORT HSpacer :public Spacer {
@@ -21,6 +21,6 @@ namespace ezui {
 		HSpacer();
 	public:
 		virtual ~HSpacer();
-		HSpacer(int_t fixedWidth);
+		HSpacer(int fixedWidth);
 	};
 };

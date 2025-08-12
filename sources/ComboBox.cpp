@@ -21,7 +21,7 @@ namespace ezui {
 				auto& args = (PaintEventArgs&)arg;
 
 				auto fSzie = sd->GetFontSize() * 0.5f;
-				int_t width = fSzie * 1.5f;
+				int width = fSzie * 1.5f;
 
 				Rect rect(0, 0, width, fSzie);
 				rect.Y = (sd->Height() - fSzie) / 2.0f;
@@ -49,7 +49,7 @@ namespace ezui {
 				for (auto& it : m_list.GetControls()) {
 					it->SetFixedHeight(Height());
 				}
-				int_t height = this->Height() * m_list.GetControls().size();
+				int height = this->Height() * m_list.GetControls().size();
 				if (height == 0) {
 					height = Height();
 				}
@@ -71,11 +71,11 @@ namespace ezui {
 	{
 		return this->m_textBox.GetText();
 	}
-	int_t ComboBox::GetCheck()
+	int ComboBox::GetCheck()
 	{
 		return this->m_index;
 	}
-	bool ComboBox::SetCheck(int_t pos)
+	bool ComboBox::SetCheck(int pos)
 	{
 		auto item = m_list.GetControl(pos);
 		if (item) {
@@ -93,7 +93,7 @@ namespace ezui {
 			delete m_menuWnd;
 		}
 	}
-	int_t ComboBox::AddItem(const UIString& text)
+	int ComboBox::AddItem(const UIString& text)
 	{
 		Label* lb = new Label;
 		lb->SetDockStyle(DockStyle::Horizontal);
@@ -113,7 +113,7 @@ namespace ezui {
 
 		return m_list.GetControls().size() - 1;
 	}
-	void ComboBox::RemoveItem(int_t index)
+	void ComboBox::RemoveItem(int index)
 	{
 		Control* lb = m_list.GetControl(index);
 		m_list.Remove(lb, true);

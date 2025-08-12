@@ -7,7 +7,7 @@ namespace ezui {
 	{
 	public:
 		//退出消息循环
-		static void Exit(int_t exitCode = 0);
+		static void Exit(int exitCode = 0);
 		//获取程序启动路径
 		static UIString StartPath();
 		//获取资源
@@ -21,6 +21,6 @@ namespace ezui {
 		void EnableHighDpi();
 		virtual ~Application();
 		//执行消息循环
-		int_t Exec();
+		int Exec();
 	};
 };

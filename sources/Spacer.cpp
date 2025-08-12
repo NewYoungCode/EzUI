@@ -6,13 +6,13 @@ namespace ezui {
 
 	VSpacer::VSpacer() {};
 	VSpacer::~VSpacer() {};
-	VSpacer::VSpacer(int_t fixedHeight) {
+	VSpacer::VSpacer(int fixedHeight) {
 		SetFixedHeight(fixedHeight);
 	}
 
 	HSpacer::HSpacer() {};
 	HSpacer::~HSpacer() {};
-	HSpacer::HSpacer(int_t fixedWidth) {
+	HSpacer::HSpacer(int fixedWidth) {
 		SetFixedWidth(fixedWidth);
 	}
 };

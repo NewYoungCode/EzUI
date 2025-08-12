@@ -1,6 +1,6 @@
 #include "BorderlessWindow.h"
 namespace ezui {
-	BorderlessWindow::BorderlessWindow(int_t width, int_t height, HWND owner, DWORD exStyle) : Window(width, height, owner, WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP, exStyle)
+	BorderlessWindow::BorderlessWindow(int width, int height, HWND owner, DWORD exStyle) : Window(width, height, owner, WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP, exStyle)
 	{
 		//无边框
 		auto style = ::GetWindowLong(Hwnd(), GWL_STYLE);
@@ -17,7 +17,7 @@ namespace ezui {
 	{
 		return m_shadowBox;
 	}
-	void BorderlessWindow::SetShadow(int_t padding)
+	void BorderlessWindow::SetShadow(int padding)
 	{
 		m_shadowWeight = padding;
 		UpdateShadowBox();
@@ -102,7 +102,7 @@ namespace ezui {
 				RECT rc;
 				::GetWindowRect(Hwnd(), &rc);
 				POINT pt{ GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam) };
-				int_t x = 4;//
+				int x = 4;//
 				if (pt.x < rc.left + x)
 				{
 					if (pt.y < rc.top + x)return HTTOPLEFT;//

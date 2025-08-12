@@ -33,14 +33,14 @@ namespace ezui {
 		return -1;  // Failure
 	}
 
-	Bitmap::Bitmap(int_t width, int_t height) {
+	Bitmap::Bitmap(int width, int height) {
 		Create(width, height);
 	}
 	Bitmap::Bitmap(HDC dc, const Rect& rect) {
 		Create(rect.Width, rect.Height);
 		::BitBlt(this->GetHDC(), 0, 0, rect.Width, rect.Height, dc, rect.X, rect.Y, SRCCOPY);
 	}
-	void Bitmap::Create(int_t width, int_t height) {
+	void Bitmap::Create(int width, int height) {
 		m_width = width;
 		m_height = height;
 		memset(&m_bmpInfo, 0, sizeof(m_bmpInfo));
@@ -55,13 +55,13 @@ namespace ezui {
 		m_bmp = ::CreateDIBSection(NULL, &m_bmpInfo, DIB_RGB_COLORS, (void**)&m_point, NULL, 0);
 		this->GetHDC();
 	}
-	int_t Bitmap::Width()const {
+	int Bitmap::Width()const {
 		return m_width;
 	}
-	int_t Bitmap::Height() const {
+	int Bitmap::Height() const {
 		return m_height;
 	}
-	void Bitmap::SetPixel(int_t x, int_t y, const Color& color) {
+	void Bitmap::SetPixel(int x, int y, const Color& color) {
 		DWORD* point = (DWORD*)this->m_point + (x + y * this->Width());//起始地址+坐标偏移	
 		if (m_bmpInfo.bmiHeader.biBitCount == 32) { //argb
 			((BYTE*)point)[3] = color.GetA();//修改A通道数值
@@ -71,7 +71,7 @@ namespace ezui {
 		((BYTE*)point)[0] = color.GetB();//修改B通道数值
 	}
 
-	Color Bitmap::GetPixel(int_t x, int_t y) const {
+	Color Bitmap::GetPixel(int x, int y) const {
 		DWORD* point = (DWORD*)this->m_point + (x + y * this->Width());//起始地址+坐标偏移
 		BYTE a = 255, r, g, b;
 		if (m_bmpInfo.bmiHeader.biBitCount == 32) { //argb
@@ -102,7 +102,7 @@ namespace ezui {
 		if (rect.GetRight() > Width()) {
 			rect.Width = this->Width() - rect.X;
 		}
-		for (int_t y = rect.Y; y < rect.GetBottom(); ++y)
+		for (int y = rect.Y; y < rect.GetBottom(); ++y)
 		{
 			DWORD* point = (DWORD*)this->m_point + (rect.X + y * this->Width());//起始地址+坐标偏移
 			::memset(point, 0, rect.Width * 4);//抹除

@@ -178,7 +178,7 @@ namespace ezui {
 		UnregisterClassW(ezui::__EzUI__WindowClassName, ezui::__EzUI__HINSTANCE);
 	}
 
-	int_t Application::Exec()
+	int Application::Exec()
 	{
 		MSG msg;
 		while (::GetMessage(&msg, NULL, 0, 0)) {
@@ -188,7 +188,7 @@ namespace ezui {
 		return msg.wParam;
 	}
 
-	void Application::Exit(int_t exitCode) {
+	void Application::Exit(int exitCode) {
 		//销毁通讯窗口
 		::DestroyWindow(ezui::__EzUI_MessageWnd);
 		//退出循环前 销毁所有窗口
@@ -209,7 +209,7 @@ namespace ezui {
 	{
 		std::vector<wchar_t> wPath(32768);
 		DWORD count = ::GetModuleFileNameW(__EzUI__HINSTANCE, wPath.data(), (DWORD)wPath.size());
-		for (int_t i = count - 1; i > -1; i--)
+		for (int i = count - 1; i > -1; i--)
 		{
 			if (wPath[i] == L'\\') {
 				wPath[i] = 0;

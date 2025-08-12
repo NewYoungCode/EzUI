@@ -2,7 +2,7 @@
 
 namespace ezui {
 
-	ShadowBox::ShadowBox(int_t width, int_t height, HWND hwnd)
+	ShadowBox::ShadowBox(int width, int height, HWND hwnd)
 	{
 		DWORD dwFlags = WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT;
 		m_hWnd = CreateWindowExW(dwFlags, ezui::__EzUI__WindowClassName, L"ShadowBox", WS_POPUP, 0, 0, width, height, hwnd, NULL, ezui::__EzUI__HINSTANCE, NULL);
@@ -23,7 +23,7 @@ namespace ezui {
 		}
 		return ::DefWindowProcW(Hwnd(), uMsg, wParam, lParam);
 	}
-	bool ShadowBox::SetShadow(int_t m_Width, int_t m_Height, int_t iSize, float _radius) {
+	bool ShadowBox::SetShadow(int m_Width, int m_Height, int iSize, float _radius) {
 		float radius = _radius;
 		if (radius == 0) {//判断窗口是不是有圆角
 			//如果没有圆角就让窗口阴影加点弧度显得更和谐一点
@@ -94,7 +94,7 @@ namespace ezui {
 		return true;
 	}
 
-	void ShadowBox::setA(int_t x, int_t y, BYTE a, float radius) {
+	void ShadowBox::setA(int x, int y, BYTE a, float radius) {
 		//如果窗口没有圆角 则不允许圆角绘制到窗口内部去造成遮挡影响观感
 		if (std::abs(radius) < 1e-6f && m_clipRect.Contains(x, y)) { //不允许绘制在OWner窗口区域
 			return;
@@ -107,7 +107,7 @@ namespace ezui {
 		//((BYTE*)point)[1] = 50 * opacity;//修改G通道数值
 		//((BYTE*)point)[0] = 50 * opacity;//修改B通道数值
 	}
-	void ShadowBox::Update(int_t _shadowWidth,int_t radius) {
+	void ShadowBox::Update(int _shadowWidth,int radius) {
 		HWND ownerWnd = ::GetWindow(m_hWnd, GW_OWNER);
 		if (!::IsWindowVisible(ownerWnd) || ::IsIconic(ownerWnd)) {
 			::ShowWindow(m_hWnd, SW_HIDE);
@@ -120,10 +120,10 @@ namespace ezui {
 		Size paintSize{ Orect.right - Orect.left,Orect.bottom - Orect.top };//父控件作图大小
 
 		m_clipRect = Rect({ _shadowWidth ,_shadowWidth }, paintSize);//裁剪区域
-		int_t x = 0;
-		int_t y = 0;
-		int_t width = paintSize.Width + _shadowWidth * 2;
-		int_t height = paintSize.Height + _shadowWidth * 2;
+		int x = 0;
+		int y = 0;
+		int width = paintSize.Width + _shadowWidth * 2;
+		int height = paintSize.Height + _shadowWidth * 2;
 		//移动阴影窗口
 		::MoveWindow(m_hWnd, Orect.left - _shadowWidth, Orect.top - _shadowWidth, width, height, FALSE);
 		//只有在大小发生改变的时候才回去重新生成layered窗口

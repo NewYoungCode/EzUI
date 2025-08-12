@@ -12,11 +12,11 @@ namespace ezui {
 		public Control
 	{
 	private:
-		int_t m_pageIndex = 0;
+		int m_pageIndex = 0;
 		Timer *m_timer;
-		int_t m_offset = 0;
-		int_t m_nowOffset = 0;
-		std::vector<int_t> m_initial;
+		int m_offset = 0;
+		int m_nowOffset = 0;
+		std::vector<int> m_initial;
 		SlideDirection m_dlideDirection;
 		float m_stepAcc = 0;
 		float m_stepPerFrame = 0;
@@ -31,11 +31,12 @@ namespace ezui {
 		virtual void Remove(Control* ctl, bool freeCtl = false)override;
 		virtual Control* Add(Control* childCtl)override;
 		//设置当前显示页
-		void SetPageIndex(int_t index);
+		void SetPageIndex(int index);
 		//动画方式滑动到某一页
-		void SlideToPage(int_t index, SlideDirection dlideDirection = SlideDirection::Horizontal, int_t durationMs = 150, int_t fps = 90);
+		void SlideToPage(int index, SlideDirection dlideDirection = SlideDirection::Horizontal, int durationMs = 150, int fps = 90);
 		void SetPage(Control* ctl);
 		Control* GetPage();
-		int_t GetPageIndex();
+		//获取当前页索引
+		int GetPageIndex();
 	};
 };

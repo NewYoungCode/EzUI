@@ -20,7 +20,7 @@ namespace ezui {
 		void SetStartValue(double value);
 		void SetEndValue(double value);
 		//开始动画
-		void Start(int_t durationMs, int_t fps = 90);
+		void Start(int durationMs, int fps = 90);
 		//动画是否已经停止
 		bool IsStopped();
 		void Stop();

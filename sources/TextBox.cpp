@@ -13,7 +13,7 @@ namespace ezui {
 	{
 		this->GetScrollBar()->SetWidth(5);
 		this->GetScrollBar()->Parent = this;
-		this->GetScrollBar()->OffsetCallback = [=](int_t offset) {
+		this->GetScrollBar()->OffsetCallback = [=](int offset) {
 			this->Offset(offset);
 			};
 
@@ -154,15 +154,15 @@ namespace ezui {
 		}
 		return false;
 	}
-	bool TextBox::GetSelectedRange(int_t* outPos, int_t* outCount) {
+	bool TextBox::GetSelectedRange(int* outPos, int* outCount) {
 		if (m_selectRects.size() > 0) {
-			int_t pos, count;
+			int pos, count;
 			if ((m_A_TextPos + m_A_isTrailingHit) < (m_B_TextPos + m_B_isTrailingHit)) {
-				int_t pos1 = m_A_TextPos;
+				int pos1 = m_A_TextPos;
 				if (m_A_isTrailingHit == 1) {
 					pos1 += 1;
 				}
-				int_t pos2 = m_B_TextPos;
+				int pos2 = m_B_TextPos;
 				if (m_B_isTrailingHit == 0) {
 					pos2 -= 1;
 				}
@@ -170,11 +170,11 @@ namespace ezui {
 				count = std::abs(pos2 - pos1) + 1;
 			}
 			else {
-				int_t pos1 = m_A_TextPos;
+				int pos1 = m_A_TextPos;
 				if (m_A_isTrailingHit == 0) {
 					pos1 -= 1;
 				}
-				int_t pos2 = m_B_TextPos;
+				int pos2 = m_B_TextPos;
 				if (m_B_isTrailingHit == 1) {
 					pos2 += 1;
 				}
@@ -192,7 +192,7 @@ namespace ezui {
 	void TextBox::InsertUnicode(const std::wstring& str) {
 		DeleteRange();//先删除是否有选中的区域
 		if (m_textPos < 0)m_textPos = 0;
-		if (m_textPos > (int_t)m_text.size()) {
+		if (m_textPos > (int)m_text.size()) {
 			m_textPos = m_text.size();
 		}
 		m_text.insert(m_textPos, str);
@@ -202,7 +202,7 @@ namespace ezui {
 		}
 	}
 	bool TextBox::DeleteRange() {
-		int_t pos, count;
+		int pos, count;
 		if (GetSelectedRange(&pos, &count)) {//删除选中的
 			//isTrailingHit = FALSE;
 			m_textPos = pos;
@@ -215,7 +215,7 @@ namespace ezui {
 		return false;
 	}
 	bool TextBox::Copy() {
-		int_t pos, count;
+		int pos, count;
 		if (!GetSelectedRange(&pos, &count))return false;
 		std::wstring wBuf(m_text.substr(pos, count));
 		return ezui::CopyToClipboard(wBuf, Hwnd());
@@ -294,7 +294,7 @@ namespace ezui {
 		std::wstring* drawText = &this->m_text;
 		if (!PasswordChar.empty()) {
 			drawText = new std::wstring;
-			int_t count = PasswordChar.size() * m_text.size();
+			int count = PasswordChar.size() * m_text.size();
 			for (size_t i = 0; i < m_text.size(); ++i)
 			{
 				*drawText += PasswordChar;
@@ -336,7 +336,7 @@ namespace ezui {
 		if (m_textPos < 0) {
 			m_textPos = 0;
 		}
-		if (m_textPos > (int_t)m_text.size()) {
+		if (m_textPos > (int)m_text.size()) {
 			m_textPos = m_text.size();
 		}
 
@@ -348,12 +348,12 @@ namespace ezui {
 
 		if (!m_multiLine) {
 			//使光标一直在输入框内
-			int_t drawX = m_careRect.X + m_scrollX;
+			int drawX = m_careRect.X + m_scrollX;
 			if (drawX < 0) {//光标在最左侧
 				m_scrollX -= drawX;
 			}
 			if (drawX > Width()) {//光标在最右侧
-				int_t ofssetX = (Width() - drawX);
+				int ofssetX = (Width() - drawX);
 				m_scrollX += ofssetX;
 			}
 		}
@@ -370,7 +370,7 @@ namespace ezui {
 			m_down = true;
 			m_point_Start = ConvertPoint(point);
 			if (m_textLayout) {
-				int_t fontHeight;
+				int fontHeight;
 				m_selectRects.clear();
 				m_pointA = m_textLayout->HitTestPoint(m_point_Start, &m_A_TextPos, &m_A_isTrailingHit, &fontHeight);
 				m_careRect.X = m_pointA.X;
@@ -391,7 +391,7 @@ namespace ezui {
 	{
 		__super::OnMouseWheel(arg);
 		if (!m_multiLine) {//单行
-			int_t textWidth = m_fontBox.Width;
+			int textWidth = m_fontBox.Width;
 			if (arg.ZDelta > 0 && textWidth > Width()) {
 				m_scrollX += std::abs(arg.ZDelta) * 0.5;
 				if (m_scrollX > 0) {
@@ -413,7 +413,7 @@ namespace ezui {
 	{
 		return &m_vScrollbar;
 	}
-	void TextBox::Offset(int_t _sliderY) {
+	void TextBox::Offset(int _sliderY) {
 		this->m_scrollY = _sliderY;
 		Invalidate();
 	}
@@ -438,8 +438,8 @@ namespace ezui {
 	}
 
 	Point TextBox::ConvertPoint(const Point& pt) {
-		int_t _x = -m_scrollX;
-		int_t _y = -m_scrollY;
+		int _x = -m_scrollX;
+		int _y = -m_scrollY;
 		return Point{ pt.X + _x,pt.Y + _y };
 	}
 
@@ -450,7 +450,7 @@ namespace ezui {
 		if (m_down) {
 			m_point_End = ConvertPoint(point);
 			if (m_textLayout) {
-				int_t fontHeight;
+				int fontHeight;
 				m_selectRects.clear();//
 				m_pointB = m_textLayout->HitTestPoint(m_point_End, &m_B_TextPos, &m_B_isTrailingHit, &fontHeight);
 
@@ -458,7 +458,7 @@ namespace ezui {
 
 				if (!m_multiLine) {//单行
 					//当鼠标往左侧移动
-					int_t textWidth = m_fontBox.Width;
+					int textWidth = m_fontBox.Width;
 					if (m_lastX > point.X) {
 						m_lastX = point.X;
 						if (textWidth > Width() && m_scrollX < 0 && point.X < 0) {

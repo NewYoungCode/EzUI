@@ -6,7 +6,7 @@ namespace ezui {
 	Timer g_layeredWndTimer;
 
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
-	LayeredWindow::LayeredWindow(int_t width, int_t height, HWND owner) :BorderlessWindow(width, height, owner, WS_EX_LAYERED)
+	LayeredWindow::LayeredWindow(int width, int height, HWND owner) :BorderlessWindow(width, height, owner, WS_EX_LAYERED)
 	{
 		//初始化全局绘制计时器
 		if (g_layeredWndTimer.Tick == NULL) {
@@ -57,8 +57,8 @@ namespace ezui {
 	void LayeredWindow::BeginPaint(Rect* out_rect)
 	{
 		const Rect& clientRect = GetClientRect();
-		int_t Width = clientRect.Width;
-		int_t Height = clientRect.Height;
+		int Width = clientRect.Width;
+		int Height = clientRect.Height;
 		//将所有无效区域并集
 		for (auto& it : m_invalidateRect) {
 			Rect rect = it;

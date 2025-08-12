@@ -41,7 +41,7 @@ namespace ezui {
 		//窗口最大尺寸
 		Size m_maxSize;
 		//当窗口关闭的时候退出代码
-		int_t m_closeCode = 0;
+		int m_closeCode = 0;
 		//基于桌面的坐标
 		Rect m_rect;
 		//客户绘图区域
@@ -57,7 +57,7 @@ namespace ezui {
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
 		bool IsInWindow(Control& pControl, Control& it);
-		void Init(int_t width, int_t height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
+		void Init(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
 		//在窗口中使用基于客户区的鼠标位置寻找可命中的控件 
 		Control* HitTestControl(const Point clientPoint, Point* outPoint);
 		bool DispatchEvent(Control* ctrl, const EventArgs& args);
@@ -75,7 +75,7 @@ namespace ezui {
 		//鼠标离开时发生
 		virtual void OnMouseLeave();
 		//鼠标滚动发生
-		virtual void OnMouseWheel(int_t zDelta, const Point& point);
+		virtual void OnMouseWheel(int zDelta, const Point& point);
 		//鼠标双击是发生
 		virtual void OnMouseDoubleClick(MouseButton mbtn, const Point& point);
 		//鼠标按下时发生
@@ -109,7 +109,7 @@ namespace ezui {
 		//处理消息队列的
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	public:
-		Window(int_t width, int_t height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
+		Window(int width, int height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
 		virtual ~Window();
 
 		//使用id寻找控件
@@ -117,6 +117,18 @@ namespace ezui {
 
 		//获取公共数据
 		WindowData* GetPublicData();
+
+		//获取窗口X坐标
+		int X();
+
+		//获取窗口Y坐标
+		int Y();
+
+		// 获取窗口宽度
+		int Width();
+
+		// 获取窗口高度
+		int Height();
 
 		//获取窗口基于显示器的矩形
 		const Rect& GetWindowRect();
@@ -179,7 +191,7 @@ namespace ezui {
 		virtual void Show();
 
 		//操作窗口的显示 带参数
-		void Show(int_t cmdShow);
+		void Show(int cmdShow);
 
 		//隐藏窗口
 		virtual void Hide();
@@ -188,13 +200,13 @@ namespace ezui {
 		void ShowNormal();
 
 		//关闭窗口 exitCode为退出代码
-		void Close(int_t exitCode = 0);
+		void Close(int exitCode = 0);
 
 		//直接销毁窗口
 		void Destroy();
 
 		//模态窗口方式显示窗口(会阻塞) 请务必在窗口构造函数中传入owner窗口句柄
-		virtual int_t ShowModal(bool disableOnwer = true);
+		virtual int ShowModal(bool disableOnwer = true);
 
 		//最小化窗口
 		void ShowMinimized();

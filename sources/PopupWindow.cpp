@@ -1,17 +1,17 @@
 #include "PopupWindow.h"
 namespace ezui {
-	PopupWindow::PopupWindow(int_t width, int_t height, HWND owner) :LayeredWindow(width, height, owner)
+	PopupWindow::PopupWindow(int width, int height, HWND owner) :LayeredWindow(width, height, owner)
 	{
 		this->SetResizable(false);
 	}
-	PopupWindow::PopupWindow(int_t width, int_t height, Control* ownerCtl) :LayeredWindow(width, height, ownerCtl->Hwnd())
+	PopupWindow::PopupWindow(int width, int height, Control* ownerCtl) :LayeredWindow(width, height, ownerCtl->Hwnd())
 	{
 		this->m_ownerCtl = ownerCtl;
 		this->SetResizable(false);
 	}
 	void PopupWindow::Show()
 	{
-		int_t x, y, width, height;
+		int x, y, width, height;
 		const Rect& rect = this->GetClientRect();
 		Rect ctlRect;
 
@@ -56,7 +56,7 @@ namespace ezui {
 		this->SetTopMost(true);
 	}
 
-	int_t PopupWindow::ShowModal(bool disableOnwer)
+	int PopupWindow::ShowModal(bool disableOnwer)
 	{
 		return __super::ShowModal(disableOnwer);
 	}

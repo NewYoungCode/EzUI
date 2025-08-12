@@ -72,7 +72,7 @@ namespace ezui {
 		if (Parent->IsPendLayout()) {
 			Parent->RefreshLayout();
 		}
-		int_t offset = scrollRate * this->m_overflowLength;
+		int offset = scrollRate * this->m_overflowLength;
 		ScrollTo(-offset, Event::None);
 	}
 
@@ -82,7 +82,7 @@ namespace ezui {
 		return std::abs(this->m_offset) * 1.0f / this->m_overflowLength;
 	}
 
-	void ScrollBar::ScrollTo(int_t offset, const Event& type) {
+	void ScrollBar::ScrollTo(int offset, const Event& type) {
 		if (Parent == NULL) return;
 		if (Parent->IsPendLayout()) {
 			Parent->RefreshLayout();
@@ -90,9 +90,9 @@ namespace ezui {
 		//if (!Scrollable()) {
 		//	return;
 		//}
-		int_t viewLength;
-		int_t contentLength;
-		int_t scrollBarLength;
+		int viewLength;
+		int contentLength;
+		int scrollBarLength;
 		this->GetInfo(&viewLength, &contentLength, &scrollBarLength);
 		if (offset > 0) {
 			//滚动条在顶部
@@ -126,7 +126,7 @@ namespace ezui {
 		if (Parent->IsPendLayout()) {
 			Parent->RefreshLayout();
 		}
-		int_t scrollBarLength;
+		int scrollBarLength;
 		this->GetInfo(&this->m_viewLength, &this->m_contentLength, &scrollBarLength);
 		this->m_overflowLength = this->m_contentLength - this->m_viewLength;//超出容器的内容长度
 		if (m_overflowLength > 0) {

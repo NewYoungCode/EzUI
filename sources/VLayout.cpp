@@ -9,11 +9,11 @@ namespace ezui {
 
 	void VLayout::OnLayout()
 	{
-		int_t contentWidth = 0;
+		int contentWidth = 0;
 
-		int_t fixedHeight = 0;
-		int_t fixedTotal = 0;
-		int_t count = 0;//可见控件总数
+		int fixedHeight = 0;
+		int fixedTotal = 0;
+		int count = 0;//可见控件总数
 		for (auto& it : GetControls()) {
 			if ((it->IsAutoWidth() || it->IsAutoHeight()) && it->IsPendLayout()) {
 				it->RefreshLayout();
@@ -27,7 +27,7 @@ namespace ezui {
 			}
 			fixedHeight += +it->Margin.GetVSpace();
 		}
-		int_t autoTotal = count - fixedTotal;
+		int autoTotal = count - fixedTotal;
 		if (autoTotal == 0) {
 			//return;
 		}
@@ -39,19 +39,19 @@ namespace ezui {
 			if (it->IsVisible() == false)continue;
 
 			maxBottom += it->Margin.Top;
-			int_t	width = it->GetFixedWidth();
+			int	width = it->GetFixedWidth();
 			if (width == 0) {
 				width = this->Width() - it->Margin.GetHSpace();
 			}
 
-			int_t x = it->X();
+			int x = it->X();
 
 			//if (!IsAutoWidth()) {
 			if (ContentAlign == HAlign::Left) {
 				x = it->Margin.Left;
 			}
 			else  if (ContentAlign == HAlign::Center) {
-				x = int_t((this->Width() * 1.0 - width) / 2.0f + 0.5);
+				x = int((this->Width() * 1.0 - width) / 2.0f + 0.5);
 			}
 			else if (ContentAlign == HAlign::Right) {
 				x = this->Width() - it->Margin.Right - width;
@@ -59,20 +59,20 @@ namespace ezui {
 			//}
 
 			if (it->GetFixedHeight() > 0 || it->IsAutoHeight()) {
-				it->SetRect({ x, (int_t)maxBottom,width, it->GetFixedHeight() });
+				it->SetRect({ x, (int)maxBottom,width, it->GetFixedHeight() });
 				maxBottom += it->Height();
 			}
 			else {
-				it->SetRect({ x ,(int_t)maxBottom,width ,(int_t)autoHeight });
+				it->SetRect({ x ,(int)maxBottom,width ,(int)autoHeight });
 				maxBottom += it->Height();
 			}
 			maxBottom += it->Margin.Bottom;
 			//统计上下文宽高
-			int_t maxRight = it->GetRect().GetRight() + it->Margin.Right;
+			int maxRight = it->GetRect().GetRight() + it->Margin.Right;
 			if (maxRight > contentWidth) {
 				contentWidth = maxRight;
 			}
-			this->SetContentSize({ contentWidth ,(int_t)(maxBottom + 0.5) });
+			this->SetContentSize({ contentWidth ,(int)(maxBottom + 0.5) });
 		}
 	}
 };

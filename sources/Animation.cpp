@@ -43,7 +43,7 @@ namespace ezui {
 		m_endValue = value;
 	}
 
-	void Animation::Start(int_t durationMs, int_t fps)
+	void Animation::Start(int durationMs, int fps)
 	{
 		m_timer->Stop();
 

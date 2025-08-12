@@ -14,9 +14,9 @@ namespace ezui {
 
 namespace ezui {
 
-	int_t MathStyle(Control* ctl, const UIString& selectorName, const std::list<UIManager::Style>& selectors)
+	int MathStyle(Control* ctl, const UIString& selectorName, const std::list<UIManager::Style>& selectors)
 	{
-		int_t mathCount = 0;
+		int mathCount = 0;
 		for (auto& it : selectors) {
 			if (it.m_selectorName == selectorName) {
 				++mathCount;

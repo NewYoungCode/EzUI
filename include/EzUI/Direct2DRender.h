@@ -44,8 +44,8 @@ namespace ezui {
 	//文本命中测试数据
 	class UI_EXPORT HitTestMetrics {
 	public:
-		int_t Length;
-		int_t TextPos;//命中的下标
+		int Length;
+		int TextPos;//命中的下标
 		RectF FontBox;//文字的矩形位置
 		bool IsTrailingHit;//命中位置是否在尾部
 	public:
@@ -57,7 +57,7 @@ namespace ezui {
 			float y = FontBox.Y;
 			return Rect(x, y, 1, (FontBox.Height + 0.5));
 		}
-		int_t GetFontHeight() {
+		int GetFontHeight() {
 			return FontBox.Height + 0.5;
 		}
 	};
@@ -75,17 +75,17 @@ namespace ezui {
 	public:
 		void GetMetrics();
 		TextLayout(const std::wstring& text, const Font& font, const SizeF& maxSize = SizeF{ __MAXFLOAT,__MAXFLOAT }, TextAlign textAlgin = TextAlign::TopLeft);
-		Point HitTestPoint(const Point& pt, int_t* outTextPos, BOOL* outIsTrailingHit, int_t* fontHeight);
+		Point HitTestPoint(const Point& pt, int* outTextPos, BOOL* outIsTrailingHit, int* fontHeight);
 		void HitTestPoint(const Point& pt, HitTestMetrics* hitTestMetrics);//根据坐标执行命中测试
-		Point HitTestTextPosition(int_t textPos, BOOL isTrailingHit);//根据文字下标执行命中测试
+		Point HitTestTextPosition(int textPos, BOOL isTrailingHit);//根据文字下标执行命中测试
 		const std::wstring& GetFontFamily();
 		float GetFontSize();
-		int_t Width();
-		int_t Height();
+		int Width();
+		int Height();
 		Size GetFontBox();//获取文字绘制的时候占用多少行
-		Rect GetLineBox(int_t lineIndex);
-		int_t GetFontHeight();//获取字体高度
-		int_t GetLineCount();//获取一共有多少行
+		Rect GetLineBox(int lineIndex);
+		int GetFontHeight();//获取字体高度
+		int GetLineCount();//获取一共有多少行
 		IDWriteTextLayout* Get() const;
 		void SetUnderline(size_t pos = 0, size_t count = 0);
 		virtual ~TextLayout();
@@ -180,8 +180,8 @@ namespace ezui {
 		IWICBitmapFrameDecode* m_pframe = NULL;
 		IWICFormatConverter* m_fmtcovter = NULL;//从文件加载
 		IWICBitmap* m_bitMap = NULL;//从HBITMAP中加载
-		int_t m_width = 0;
-		int_t m_height = 0;
+		int m_width = 0;
+		int m_height = 0;
 		ID2D1Bitmap* m_d2dBitmap = NULL;
 	private:
 		void CreateFormStream(IStream* istram);
@@ -195,12 +195,12 @@ namespace ezui {
 		DXImage(IStream* istram);
 		DXImage(const std::wstring& file);
 		//创建带预乘Alpha的BGRA图片
-		DXImage(int_t width, int_t height);
+		DXImage(int width, int height);
 		DXImage(const void* data, size_t count);
 		ID2D1Bitmap* Get();
 		IWICBitmap* GetIWICBitmap();
-		int_t Width();
-		int_t Height();
+		int Width();
+		int Height();
 		virtual WORD NextFrame()override;
 		DXImage* Clone();
 		DXImage() {}
@@ -235,7 +235,7 @@ namespace ezui {
 		ID2D1StrokeStyle* GetStrokeStyle();
 	public:
 		DXRender(DXImage* dxImage);
-		DXRender(HDC dc, int_t x, int_t y, int_t width, int_t height);//创建dx绘图对象
+		DXRender(HDC dc, int x, int y, int width, int height);//创建dx绘图对象
 		virtual ~DXRender();
 		void SetFont(const std::wstring& fontFamily, float fontSize);//必须先调用
 		void SetFont(const Font& _copy_font);//必须先调用

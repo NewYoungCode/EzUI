@@ -12,18 +12,18 @@ namespace ezui {
 		HWND m_hWnd = NULL;
 		WORD m_radius = 0;
 	private:
-		void setA(int_t x, int_t y, BYTE a, float radius);
-		bool SetShadow(int_t m_Width, int_t m_Height, int_t iSize, float radius);
+		void setA(int x, int y, BYTE a, float radius);
+		bool SetShadow(int m_Width, int m_Height, int iSize, float radius);
 	protected:
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	public:
 		//公共数据 请不要改动此变量
 		WindowData* PublicData = NULL;
 	public:
-		ShadowBox(int_t width, int_t height, HWND OwnerWnd);//构造函数
+		ShadowBox(int width, int height, HWND OwnerWnd);//构造函数
 		virtual ~ShadowBox();
 		//在父窗口发生改变的时候更新阴影区域
-		virtual void Update(int_t _marginWidth, int_t radius);
+		virtual void Update(int _marginWidth, int radius);
 		const HWND Hwnd();
 	};
 };

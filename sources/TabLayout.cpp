@@ -15,7 +15,7 @@ namespace ezui {
 				if (!::IsWindow(hWnd))return;
 
 				m_stepAcc += m_stepPerFrame;
-				int_t stepMove = m_stepAcc;
+				int stepMove = m_stepAcc;
 				m_stepAcc -= stepMove;
 				m_nowOffset += stepMove;
 
@@ -49,22 +49,22 @@ namespace ezui {
 	{
 		size_t index = this->IndexOf(ctl);
 		__super::Remove(ctl, freeCtl);
-		int_t newIndex = this->GetControls().size() - 1;
+		int newIndex = this->GetControls().size() - 1;
 		newIndex = newIndex < 0 ? 0 : newIndex;
 		this->SetPageIndex(newIndex);
 		TryPendLayout();
 	}
 	void TabLayout::Sort()
 	{
-		int_t pos = 0;
+		int pos = 0;
 		for (auto itor = GetControls().begin(); itor != GetControls().end(); ++itor)
 		{
 			if (m_dlideDirection == SlideDirection::Horizontal) {
-				int_t x = Width() * (pos - m_pageIndex);//子控件索引-当前所在页索引
+				int x = Width() * (pos - m_pageIndex);//子控件索引-当前所在页索引
 				(*itor)->SetRect(Rect(x, 0, Width(), Height()));
 			}
 			else {
-				int_t y = Height() * (pos - m_pageIndex);//子控件索引-当前所在页索引
+				int y = Height() * (pos - m_pageIndex);//子控件索引-当前所在页索引
 				(*itor)->SetRect(Rect(0, y, Width(), Height()));
 			}
 			(*itor)->SetVisible(true);
@@ -90,30 +90,30 @@ namespace ezui {
 		return ret;
 	}
 
-	void TabLayout::SetPageIndex(int_t index)
+	void TabLayout::SetPageIndex(int index)
 	{
 		this->m_pageIndex = index;
 		this->TryPendLayout();
 	}
 
 
-	void TabLayout::SlideToPage(int_t index, SlideDirection dlideDirection, int_t durationMs, int_t fps)
+	void TabLayout::SlideToPage(int index, SlideDirection dlideDirection, int durationMs, int fps)
 	{
 		//滑动方向
 		m_dlideDirection = dlideDirection;
 
 		Sort();//先直接归位
-		int_t offsetTotal = (index - m_pageIndex) * (m_dlideDirection == SlideDirection::Horizontal ? Width() : Height());
+		int offsetTotal = (index - m_pageIndex) * (m_dlideDirection == SlideDirection::Horizontal ? Width() : Height());
 		if (offsetTotal == 0) {
 			return;
 		}
 
 		// 记录初始坐标
-		int_t controlCount = GetControls().size();
+		int controlCount = GetControls().size();
 
 		m_initial.clear();
 		m_initial.resize(controlCount);
-		for (int_t i = 0; i < controlCount; ++i) {
+		for (int i = 0; i < controlCount; ++i) {
 			if (m_dlideDirection == SlideDirection::Horizontal) {
 				m_initial[i] = GetControls()[i]->X();
 			}
@@ -126,8 +126,8 @@ namespace ezui {
 		m_offset = offsetTotal;
 		m_pageIndex = index;
 
-		int_t FRAME_INTERVAL_MS = 1000 / fps;
-		int_t totalFrames = durationMs / FRAME_INTERVAL_MS;
+		int FRAME_INTERVAL_MS = 1000 / fps;
+		int totalFrames = durationMs / FRAME_INTERVAL_MS;
 		if (totalFrames <= 0) {
 			totalFrames = 1;
 		}
@@ -149,7 +149,7 @@ namespace ezui {
 	}
 
 	Control* TabLayout::GetPage() {
-		int_t pos = 0;
+		int pos = 0;
 		for (auto& it : GetControls()) {
 			if (pos == this->m_pageIndex) {
 				return it;
@@ -158,7 +158,7 @@ namespace ezui {
 		}
 		return NULL;
 	}
-	int_t TabLayout::GetPageIndex()
+	int TabLayout::GetPageIndex()
 	{
 		return m_pageIndex;
 	}

@@ -123,10 +123,10 @@ namespace ezui {
 
 	protected:
 		// 设置内容宽度，仅限子类使用
-		virtual void SetContentWidth(int_t width);
+		virtual void SetContentWidth(int width);
 
 		// 设置内容高度，仅限子类使用
-		virtual void SetContentHeight(int_t height);
+		virtual void SetContentHeight(int height);
 
 		// 设置内容尺寸，仅限子类使用
 		virtual void SetContentSize(const Size& size);
@@ -211,28 +211,28 @@ namespace ezui {
 		virtual ControlStyle& GetStyle(const ControlState& _state);
 
 		// 获取左上圆角半径
-		int_t GetBorderTopLeftRadius(ControlState _state = ControlState::None);
+		int GetBorderTopLeftRadius(ControlState _state = ControlState::None);
 
 		// 获取右上圆角半径
-		int_t GetBorderTopRightRadius(ControlState _state = ControlState::None);
+		int GetBorderTopRightRadius(ControlState _state = ControlState::None);
 
 		// 获取右下圆角半径
-		int_t GetBorderBottomRightRadius(ControlState _state = ControlState::None);
+		int GetBorderBottomRightRadius(ControlState _state = ControlState::None);
 
 		// 获取左下圆角半径
-		int_t GetBorderBottomLeftRadius(ControlState _state = ControlState::None);
+		int GetBorderBottomLeftRadius(ControlState _state = ControlState::None);
 
 		// 获取左边框宽度
-		int_t GetBorderLeft(ControlState _state = ControlState::None);
+		int GetBorderLeft(ControlState _state = ControlState::None);
 
 		// 获取上边框宽度
-		int_t GetBorderTop(ControlState _state = ControlState::None);
+		int GetBorderTop(ControlState _state = ControlState::None);
 
 		// 获取右边框宽度
-		int_t GetBorderRight(ControlState _state = ControlState::None);
+		int GetBorderRight(ControlState _state = ControlState::None);
 
 		// 获取下边框宽度
-		int_t GetBorderBottom(ControlState _state = ControlState::None);
+		int GetBorderBottom(ControlState _state = ControlState::None);
 
 		// 获取边框颜色
 		Color GetBorderColor(ControlState _state = ControlState::None);
@@ -262,7 +262,7 @@ namespace ezui {
 		std::wstring GetFontFamily(ControlState _state = ControlState::None);
 
 		// 获取字体大小
-		int_t GetFontSize(ControlState _state = ControlState::None);
+		int GetFontSize(ControlState _state = ControlState::None);
 
 		//获取公共数据
 		WindowData* GetPublicData();
@@ -291,22 +291,22 @@ namespace ezui {
 
 		// 以下函数请保证在父控件布局已完成的情况下使用，使用 ResumeLayout() 执行布局
 		// 获取 X 坐标
-		int_t X();
+		int X();
 
 		// 获取 Y 坐标
-		int_t Y();
+		int Y();
 
 		// 获取宽度
-		int_t Width();
+		int Width();
 
 		// 获取高度
-		int_t Height();
+		int Height();
 
 		// 设置 X 坐标
-		void SetX(int_t X);
+		void SetX(int X);
 
 		// 设置 Y 坐标
-		void SetY(int_t Y);
+		void SetY(int Y);
 
 		// 移动相对于父控件的位置
 		void SetLocation(const Point& pt);
@@ -318,16 +318,16 @@ namespace ezui {
 		void SetFixedSize(const Size& size);
 
 		// 设置宽度（当重绘控件时不建议多次使用，影响性能，会调用 SetRect 函数）
-		void SetWidth(int_t width);
+		void SetWidth(int width);
 
 		// 设置高度（当重绘控件时不建议多次使用，影响性能，会调用 SetRect 函数）
-		void SetHeight(int_t height);
+		void SetHeight(int height);
 
 		// 设置绝对宽度
-		void SetFixedWidth(int_t fixedWidth);
+		void SetFixedWidth(int fixedWidth);
 
 		// 设置绝对高度
-		void SetFixedHeight(int_t fixedHeight);
+		void SetFixedHeight(int fixedHeight);
 
 		//设置宽度比例(优先级最高)
 		void SetRateWidth(float rateWidth);
@@ -339,10 +339,10 @@ namespace ezui {
 		const Rect& SetRect(const Rect& rect);
 
 		// 获取绝对宽度
-		int_t GetFixedWidth();
+		int GetFixedWidth();
 
 		// 获取绝对高度
-		int_t GetFixedHeight();
+		int GetFixedHeight();
 
 		// 获取光标位置
 		virtual Rect GetCareRect();
@@ -426,13 +426,13 @@ namespace ezui {
 		const Controls& GetControls();
 
 		// 使用下标获取控件，自动跳过 spacer 类控件
-		Control* GetControl(int_t pos);
+		Control* GetControl(int pos);
 
 		// 是否包含指定控件（递归遍历所有子控件）
 		bool Contains(Control* ctl);
 
 		// 获取指定子控件的索引
-		int_t IndexOf(Control* childCtl);
+		int IndexOf(Control* childCtl);
 
 		// 根据 name 查找控件（包括自身）
 		Control* FindControl(const UIString& ctlName);
@@ -456,7 +456,7 @@ namespace ezui {
 		virtual bool SwapChild(Control* childCtl, Control* childCt2);
 
 		// 在指定位置插入子控件
-		virtual void Insert(int_t pos, Control* childCtl);
+		virtual void Insert(int pos, Control* childCtl);
 
 		// 添加控件到末尾（如果是弹簧控件，在释放时将自动销毁）
 		virtual Control* Add(Control* childCtl);

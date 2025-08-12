@@ -52,7 +52,7 @@ SearchItem::~SearchItem() {
 }
 SearchItem::SearchItem(const Song& s) {
 	song = s;
-	this->Tag = (int_t)&song;
+	this->Tag = (LONG_PTR)&song;
 	SetAttribute("FileHash", s.hash);
 	SetAttribute("SingerName", s.SingerName);
 

@@ -2,11 +2,6 @@
 #include <Windows.h>
 
 namespace ezui {
-#ifdef _WIN64
-	typedef __int64  int_t;
-#else
-	typedef int      int_t;
-#endif
 	template<typename T>
 	class __EzUI__Size
 	{
@@ -453,13 +448,13 @@ namespace ezui {
 		}
 	};
 
-	typedef  __EzUI__Point<int_t> Point;
+	typedef  __EzUI__Point<int> Point;
 	typedef  __EzUI__Point<float> PointF;
-	typedef  __EzUI__Line<int_t> Line;
+	typedef  __EzUI__Line<int> Line;
 	typedef  __EzUI__Line<float> LineF;
-	typedef  __EzUI__Size<int_t> Size;
+	typedef  __EzUI__Size<int> Size;
 	typedef  __EzUI__Size<float> SizeF;
-	typedef  __EzUI__Rect<int_t> Rect;
+	typedef  __EzUI__Rect<int> Rect;
 
 	class RectF :public __EzUI__Rect<float> {
 	public:
@@ -529,13 +524,11 @@ namespace ezui {
 	enum class ImageSizeMode {
 		//
 		// 摘要:
-		//     Owner控件 中的图像被拉伸或收缩，以适合 Owner控件
-		//     的大小。
+		//     图像被拉伸或收缩填充至绘图区
 		StretchImage,
-		//
 		// 摘要:
-		//     如果 Owner控件 比图像大，则图像将居中显示。如果图像比 Owner控件
-		//     大，则图片将居于 Owner控件 中心，而外边缘将被剪裁掉。
+		//     如果 绘图区 比图像大，则图像将居中显示。如果图像比 绘图区
+		//     大，则图片将居于 绘图区 中心，而外边缘将被剪裁掉。
 		CenterImage,
 		//
 		// 摘要:
@@ -543,7 +536,7 @@ namespace ezui {
 		Zoom,
 		//
 		// 摘要:
-		//     图像按原始大小居中显示，不进行缩放。
+		//     图像按原始大小居中于绘图区，不进行缩放。
 		OriginalSize
 	};
 
@@ -626,7 +619,7 @@ namespace ezui {
 	/// <summary>
 	/// 水平状态下的对其方式
 	/// </summary>
-	enum class HAlign :int_t
+	enum class HAlign :int
 	{
 		Left = Align_Left,
 		Center = Align_Center,
@@ -635,55 +628,55 @@ namespace ezui {
 	/// <summary>
 	/// 垂直状态下的对其方式
 	/// </summary>
-	enum class VAlign :int_t
+	enum class VAlign :int
 	{
 		Top = Align_Top,
 		Mid = Align_Mid,
 		Bottom = Align_Bottom
 	};
 
-	enum class __Align :int_t {
+	enum class __Align :int {
 		//
 		// 摘要: 
 		//     内容在垂直方向上顶部对齐，在水平方向上左边对齐。
-		TopLeft = (int_t)VAlign::Top | (int_t)HAlign::Left,
+		TopLeft = (int)VAlign::Top | (int)HAlign::Left,
 		//
 		// 摘要: 
 		//     内容在垂直方向上顶部对齐，在水平方向上居中对齐。
-		TopCenter = (int_t)VAlign::Top | (int_t)HAlign::Center,
+		TopCenter = (int)VAlign::Top | (int)HAlign::Center,
 		//
 		// 摘要: 
 		//     内容在垂直方向上顶部对齐，在水平方向上右边对齐。
-		TopRight = (int_t)VAlign::Top | (int_t)HAlign::Right,
+		TopRight = (int)VAlign::Top | (int)HAlign::Right,
 		//
 		// 摘要: 
 		//     内容在垂直方向上中间对齐，在水平方向上左边对齐。
-		MiddleLeft = (int_t)VAlign::Mid | (int_t)HAlign::Left,
+		MiddleLeft = (int)VAlign::Mid | (int)HAlign::Left,
 		//
 		// 摘要: 
 		//     内容在垂直方向上中间对齐，在水平方向上居中对齐。
-		MiddleCenter = (int_t)VAlign::Mid | (int_t)HAlign::Center,
+		MiddleCenter = (int)VAlign::Mid | (int)HAlign::Center,
 		//
 		// 摘要: 
 		//     内容在垂直方向上中间对齐，在水平方向上右边对齐。
-		MiddleRight = (int_t)VAlign::Mid | (int_t)HAlign::Right,
+		MiddleRight = (int)VAlign::Mid | (int)HAlign::Right,
 		//
 		// 摘要: 
 		//     内容在垂直方向上底边对齐，在水平方向上左边对齐。
-		BottomLeft = (int_t)VAlign::Bottom | (int_t)HAlign::Left,
+		BottomLeft = (int)VAlign::Bottom | (int)HAlign::Left,
 		//
 		// 摘要: 
 		//     内容在垂直方向上底边对齐，在水平方向上居中对齐。
-		BottomCenter = (int_t)VAlign::Bottom | (int_t)HAlign::Center,
+		BottomCenter = (int)VAlign::Bottom | (int)HAlign::Center,
 		//
 		// 摘要: 
 		//     内容在垂直方向上底边对齐，在水平方向上右边对齐。
-		BottomRight = (int_t)VAlign::Bottom | (int_t)HAlign::Right
+		BottomRight = (int)VAlign::Bottom | (int)HAlign::Right
 	};
 
 	typedef __Align TextAlign;
 
-	enum class FontStyle :int_t {
+	enum class FontStyle :int {
 		NORMAL = 0
 		/* DWRITE_FONT_STYLE_NORMAL
 		字体样式 ：正常。
@@ -711,31 +704,31 @@ namespace ezui {
 		virtual WORD NextFrame() = 0;
 	};
 
-	inline Rect Transformation(ImageSizeMode imageSizeMode, const Rect& rect, const Size& imgSize) {
+	inline RectF Transformation(ImageSizeMode imageSizeMode, const RectF& rect, const Size& imgSize) {
 
 		if (imageSizeMode == ImageSizeMode::StretchImage) {
 			return rect;
 		}
 
 		//客户端数据
-		float clientWidth = (float)rect.Width;
-		float clientHeight = (float)rect.Height;
+		float clientWidth = rect.Width;
+		float clientHeight = rect.Height;
 		float clientRate = clientWidth / clientHeight;
 		//图片数据
-		float imgWidth = (float)imgSize.Width;
-		float imgHeight = (float)imgSize.Height;
+		float imgWidth = imgSize.Width;
+		float imgHeight = imgSize.Height;
 		float imgRate = imgWidth / imgHeight;
 
 		if (imageSizeMode == ImageSizeMode::Zoom) {
 			if (clientRate < imgRate) {
-				float zoomHeight = clientWidth / imgWidth * imgHeight + 0.5f;
+				float zoomHeight = clientWidth / imgWidth * imgHeight;
 				float y = (clientHeight - zoomHeight) / 2.0f + rect.Y;
-				return Rect(rect.X, (int_t)y, (int_t)clientWidth, (int_t)zoomHeight);
+				return RectF(rect.X, y, clientWidth, zoomHeight);
 			}
 			else {
-				float zoomWidth = clientHeight / imgHeight * imgWidth + 0.5f;
+				float zoomWidth = clientHeight / imgHeight * imgWidth;
 				float x = (clientWidth - zoomWidth) / 2.0f + rect.X;
-				return Rect((int_t)x, rect.Y, (int_t)zoomWidth, (int_t)clientHeight);
+				return RectF(x, rect.Y, zoomWidth, clientHeight);
 			}
 		}
 		if (imageSizeMode == ImageSizeMode::CenterImage) {
@@ -743,24 +736,24 @@ namespace ezui {
 				//1000 670 客户端
 				//1000 300 图片
 				//2233 670     缩放后的图片大小 
-				float zoomWidth = clientHeight / imgHeight * imgWidth + 0.5f;//图片应该这么宽才对
-				float x = (zoomWidth - clientWidth) / 2.0f + 0.5f;
-				return Rect((int_t)(rect.X - x), rect.Y, (int_t)zoomWidth, (int_t)clientHeight);
+				float zoomWidth = clientHeight / imgHeight * imgWidth;//图片应该这么宽才对
+				float x = (zoomWidth - clientWidth) / 2.0f;
+				return RectF(rect.X - x, rect.Y, zoomWidth, clientHeight);
 			}
 			else {
 				//1000 600 客户端
 				//400  600 图片
 				//1000 1500     缩放后的图片大小 
-				float zoomHeight = clientWidth / imgWidth * imgHeight + 0.5f;//图片应该这么高才对
-				float y = (zoomHeight - clientHeight) / 2.0f + 0.5f;
-				return Rect(rect.X, (int_t)(rect.Y - y), (int_t)clientWidth, (int_t)zoomHeight);
+				float zoomHeight = clientWidth / imgWidth * imgHeight;//图片应该这么高才对
+				float y = (zoomHeight - clientHeight) / 2.0f;
+				return RectF(rect.X, rect.Y - y, clientWidth, zoomHeight);
 			}
 		}
 		//按照图片原大小居中显示
 		if (imageSizeMode == ImageSizeMode::OriginalSize) {
-			int_t x = (rect.Width - imgSize.Width) / 2.0f + 0.5;
-			int_t y = (rect.Height - imgSize.Height) / 2.0f + 0.5;
-			return Rect(x, y, imgSize.Width, imgSize.Height);
+			float x = (rect.Width - imgSize.Width) / 2.0f;
+			float y = (rect.Height - imgSize.Height) / 2.0f;
+			return RectF(x, y, imgSize.Width, imgSize.Height);
 		}
 		return rect;
 	}

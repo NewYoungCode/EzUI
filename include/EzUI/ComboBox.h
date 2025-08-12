@@ -31,7 +31,7 @@ namespace ezui {
 		Label m_UpDown;
 
 		VListView m_list;
-		int_t m_index = -1;
+		int m_index = -1;
 		void Init();
 	protected:
 		virtual void OnLayout()override;
@@ -40,11 +40,12 @@ namespace ezui {
 		//获取选中的文字
 		UIString GetText();
 		//获取选中的下标
-		int_t GetCheck();
+		int GetCheck();
 		//选中某个下标
-		bool SetCheck(int_t pos);
+		bool SetCheck(int pos);
 		virtual ~ComboBox();
-		int_t AddItem(const UIString& text);
-		void RemoveItem(int_t index);
+		//添加一个item并返回新item的下标
+		int AddItem(const UIString& text);
+		void RemoveItem(int index);
 	};
 };

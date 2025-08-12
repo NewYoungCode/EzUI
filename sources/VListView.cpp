@@ -4,7 +4,7 @@ namespace ezui {
 	{
 		this->GetScrollBar()->SetHeight(Height());//滚动条宽度
 		this->GetScrollBar()->Parent = this;
-		this->GetScrollBar()->OffsetCallback = [this](int_t offsetValue)->void {
+		this->GetScrollBar()->OffsetCallback = [this](int offsetValue)->void {
 			if (this->GetScrollBar()->ScrollPos() >= 1) {
 				NextPage();
 			}
@@ -35,10 +35,10 @@ namespace ezui {
 		return &m_vScrollBar;
 	}
 
-	void VListView::Offset(int_t offset)
+	void VListView::Offset(int offset)
 	{
-		int_t contentWidth = 0;
-		int_t	_maxBottom = offset;
+		int contentWidth = 0;
+		int	_maxBottom = offset;
 		for (auto& it : GetControls()) {
 			if (it->IsVisible() == false) {
 				it->SetY(0);
@@ -46,16 +46,16 @@ namespace ezui {
 			}
 			{
 				//处理margin和x坐标
-				int_t	width = it->GetFixedWidth();
+				int	width = it->GetFixedWidth();
 				if (width == 0) {
 					width = this->Width() - it->Margin.GetHSpace();
 				}
-				int_t x = it->X();
+				int x = it->X();
 				if (x == 0) {
 					x = it->Margin.Left;
 				}
 				if (x == 0 && width < this->Width()) {
-					x = int_t((this->Width() * 1.0 - width) / 2 + 0.5);
+					x = int((this->Width() * 1.0 - width) / 2 + 0.5);
 				}
 				_maxBottom += it->Margin.Top;
 				it->SetRect(Rect{ x,_maxBottom,width,it->Height() });
@@ -63,7 +63,7 @@ namespace ezui {
 				_maxBottom += it->Margin.Bottom;
 			}
 			//计算最大宽度
-			int_t _width = it->X() + it->Width() + it->Margin.Right;
+			int _width = it->X() + it->Width() + it->Margin.Right;
 			if (_width > contentWidth) {
 				contentWidth = _width;
 			}

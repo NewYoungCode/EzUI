@@ -29,9 +29,9 @@ namespace ezui {
 	class UI_EXPORT Controls :public std::list<Control*> {
 	public:
 		//不要频繁使用此函数
-		inline	Control* operator[](int_t right_pos)const
+		inline	Control* operator[](size_t right_pos)const
 		{
-			int_t pos = 0;
+			size_t pos = 0;
 			for (auto& it : *this) {
 				if (pos == right_pos) {
 					return it;
@@ -56,9 +56,9 @@ namespace ezui {
 	//卸载字体
 	extern UI_EXPORT void UnstallFont(const UIString& fontFileName);
 	//复制内容到剪切板
-	extern UI_EXPORT bool CopyToClipboard(int_t uFormat, void* pData, size_t size, HWND hWnd = NULL);
+	extern UI_EXPORT bool CopyToClipboard(int uFormat, void* pData, size_t size, HWND hWnd = NULL);
 	//打开剪切板
-	extern UI_EXPORT bool GetClipboardData(int_t uFormat, std::function<void(void*, size_t)> Callback, HWND hWnd = NULL);
+	extern UI_EXPORT bool GetClipboardData(int uFormat, std::function<void(void*, size_t)> Callback, HWND hWnd = NULL);
 	//复制unicode文字
 	extern UI_EXPORT bool CopyToClipboard(const std::wstring& str, HWND hWnd = NULL);
 	//粘贴unicode文字
@@ -94,7 +94,7 @@ namespace ezui {
 	public:
 		virtual ~Image() {}
 		//创建带预乘Alpha的BGRA图片
-		Image(int_t width, int_t height) :DXImage(width, height) {}
+		Image(int width, int height) :DXImage(width, height) {}
 		Image(HBITMAP hBitmap) :DXImage(hBitmap) {}
 		Image(Bitmap* bitmap);
 		Image(IStream* iStream) :DXImage(iStream) {}
@@ -126,12 +126,12 @@ namespace ezui {
 		//缩放率
 		float Scale = 1.0f;
 		//单次绘图数量
-		int_t PaintCount = 0;
+		int PaintCount = 0;
 #ifdef _DEBUG
 		//是否开启debug模式
 		bool Debug = false;
 		//调试模式下的特有字段
-		int_t ColorIndex = 0;
+		int ColorIndex = 0;
 		Color DebugColor;
 		std::vector<Color> DebugColors{ Color::Red,Color::Green,Color::Blue,Color::Black,Color::White };
 #endif
@@ -202,7 +202,7 @@ namespace ezui {
 		Max,//最大化|恢复
 		Close//关闭
 	};
-	enum class ControlState :int_t {
+	enum class ControlState :int {
 		None = 1,//无状态 则是使用_nowStyle缓存样式
 		Static = 2,//静态
 		Disabled = 4,//禁用状态
@@ -212,13 +212,13 @@ namespace ezui {
 	};
 	inline ControlState operator|(ControlState left, ControlState right)
 	{
-		return (ControlState)((int_t)left | (int_t)right);
+		return (ControlState)((int)left | (int)right);
 	}
 	inline ControlState operator&(ControlState a, ControlState b) {
-		return (ControlState)((int_t)a & (int_t)b);
+		return (ControlState)((int)a & (int)b);
 	}
 	inline ControlState operator~(ControlState a) {
-		return (ControlState)(~(int_t)a);
+		return (ControlState)(~(int)a);
 	}
 	inline ControlState& operator|=(ControlState& left, ControlState right) {
 		left = left | right;
@@ -304,10 +304,10 @@ namespace ezui {
 	class UI_EXPORT MouseEventArgs :public EventArgs {
 	public:
 		MouseButton Button = MouseButton::None;
-		int_t ZDelta = 0;//方向
+		int ZDelta = 0;//方向
 		Point Location;
 	public:
-		MouseEventArgs(Event eventType, const Point& location = Point(0, 0), MouseButton mouseButton = MouseButton::None, int_t ZDelta = 0) :EventArgs(eventType) {
+		MouseEventArgs(Event eventType, const Point& location = Point(0, 0), MouseButton mouseButton = MouseButton::None, int ZDelta = 0) :EventArgs(eventType) {
 			this->Button = mouseButton;
 			this->Location = location;
 			this->ZDelta = ZDelta;
@@ -410,7 +410,7 @@ namespace ezui {
 		//字体名称 具有继承性
 		std::wstring FontFamily;
 		//字体大小 具有继承性
-		int_t FontSize = 0;
+		int FontSize = 0;
 		//前景颜色  具有继承性
 		Color ForeColor;
 		//鼠标样式
@@ -471,7 +471,7 @@ namespace ezui {
 		PtrManager<Object*> m_childObjects;
 	public:
 		//用户自定义数据
-		int_t Tag = NULL;
+		LONG_PTR Tag = NULL;
 	public:
 		Object(Object* parentObject = NULL);
 		virtual ~Object();

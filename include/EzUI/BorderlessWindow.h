@@ -8,7 +8,7 @@ namespace ezui {
 	/// </summary>
 	class UI_EXPORT BorderlessWindow :public Window {
 	private:
-		int_t m_shadowWeight = 20;
+		int m_shadowWeight = 20;
 		ShadowBox* m_shadowBox = NULL;
 		float m_shadowScale = 1.0f;
 		//是否支持缩放
@@ -20,8 +20,8 @@ namespace ezui {
 		virtual void OnDpiChange(float systemScale, const Rect& newRect);//当dpi发生更改时
 	public:
 		//设置阴影宽度
-		void SetShadow(int_t weight);
-		BorderlessWindow(int_t width, int_t height, HWND owner = NULL, DWORD exStyle = NULL);
+		void SetShadow(int weight);
+		BorderlessWindow(int width, int height, HWND owner = NULL, DWORD exStyle = NULL);
 		virtual ~BorderlessWindow();
 		//更新窗口阴影
 		void UpdateShadowBox();

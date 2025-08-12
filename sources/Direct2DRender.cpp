@@ -90,8 +90,8 @@ namespace ezui {
 	IDWriteTextLayout* TextLayout::Get() const {
 		return value;
 	}
-	Point TextLayout::HitTestPoint(const Point& pt, int_t* _textPos, BOOL* _isTrailingHit, int_t* fontHeight) {
-		int_t& textPos = *_textPos;
+	Point TextLayout::HitTestPoint(const Point& pt, int* _textPos, BOOL* _isTrailingHit, int* fontHeight) {
+		int& textPos = *_textPos;
 		BOOL& isTrailingHit = *_isTrailingHit;
 		DWRITE_HIT_TEST_METRICS hitTestMetrics;
 		BOOL isInside;
@@ -105,13 +105,13 @@ namespace ezui {
 				&hitTestMetrics
 			);
 		}
-		int_t posX = (int_t)(hitTestMetrics.left + 0.5);
+		int posX = (int)(hitTestMetrics.left + 0.5);
 		if (isTrailingHit) {//判断前侧还是尾侧
-			posX += (int_t)(hitTestMetrics.width + 0.5);
+			posX += (int)(hitTestMetrics.width + 0.5);
 		}
-		*fontHeight = (int_t)(hitTestMetrics.height + 0.5);
+		*fontHeight = (int)(hitTestMetrics.height + 0.5);
 		textPos = hitTestMetrics.textPosition;
-		return Point{ posX,(int_t)(hitTestMetrics.top + 0.5) };//返回光标所在的位置
+		return Point{ posX,(int)(hitTestMetrics.top + 0.5) };//返回光标所在的位置
 	}
 
 	void TextLayout::HitTestPoint(const Point& pt, HitTestMetrics* outHitTestMetrics) {
@@ -137,12 +137,12 @@ namespace ezui {
 		outHitTestMetrics->FontBox.Height = hitTestMetrics.height;
 	}
 
-	Point TextLayout::HitTestTextPosition(int_t textPos, BOOL isTrailingHit) {
+	Point TextLayout::HitTestTextPosition(int textPos, BOOL isTrailingHit) {
 		if (value == NULL)return Point{ 0,0 };
 		DWRITE_HIT_TEST_METRICS hitTestMetrics;
 		FLOAT X, Y;
 		value->HitTestTextPosition(textPos, isTrailingHit, &X, &Y, &hitTestMetrics);
-		return Point((int_t)(X + 0.5), (int_t)(Y + 0.5));
+		return Point((int)(X + 0.5), (int)(Y + 0.5));
 	}
 	const std::wstring& TextLayout::GetFontFamily()
 	{
@@ -152,33 +152,33 @@ namespace ezui {
 		this->GetMetrics();
 		FLOAT width = m_textMetrics.widthIncludingTrailingWhitespace;
 		FLOAT height = m_textMetrics.height;
-		return  Size{ (int_t)(width + 1) ,(int_t)(height + 1) };
+		return  Size{ (int)(width + 1) ,(int)(height + 1) };
 	}
 	float TextLayout::GetFontSize()
 	{
 		return this->m_fontSize;
 	}
-	int_t TextLayout::Width() {
+	int TextLayout::Width() {
 		this->GetMetrics();
 		FLOAT width = m_textMetrics.widthIncludingTrailingWhitespace;
-		return (int_t)(width + 1);
+		return (int)(width + 1);
 	}
-	int_t TextLayout::Height() {
+	int TextLayout::Height() {
 		this->GetMetrics();
 		FLOAT width = m_textMetrics.height;
 		return (width + 1);
 	}
-	int_t TextLayout::GetFontHeight() {
+	int TextLayout::GetFontHeight() {
 		this->GetMetrics();
 		FLOAT height = m_textMetrics.height;
 		return  ((height / m_textMetrics.lineCount) + 0.5);
 	}
-	int_t TextLayout::GetLineCount() {
+	int TextLayout::GetLineCount() {
 		this->GetMetrics();
 		return m_textMetrics.lineCount;
 	}
 
-	Rect TextLayout::GetLineBox(int_t lineIndex) {
+	Rect TextLayout::GetLineBox(int lineIndex) {
 		UINT lineCount = GetLineCount();
 		//// 获取每一行的宽高
 		DWRITE_LINE_METRICS* hitTestMetrics = new DWRITE_LINE_METRICS[lineCount]{ 0 };
@@ -203,23 +203,23 @@ namespace ezui {
 #define __Center DWRITE_TEXT_ALIGNMENT_CENTER
 		if (value == NULL)return;
 		//垂直对其方式
-		if (((int_t)textAlign & (int_t)VAlign::Top) == (int_t)VAlign::Top) {
+		if (((int)textAlign & (int)VAlign::Top) == (int)VAlign::Top) {
 			value->SetParagraphAlignment(__Top);
 		}
-		if (((int_t)textAlign & (int_t)VAlign::Mid) == (int_t)VAlign::Mid) {
+		if (((int)textAlign & (int)VAlign::Mid) == (int)VAlign::Mid) {
 			value->SetParagraphAlignment(__Middle);
 		}
-		if (((int_t)textAlign & (int_t)VAlign::Bottom) == (int_t)VAlign::Bottom) {
+		if (((int)textAlign & (int)VAlign::Bottom) == (int)VAlign::Bottom) {
 			value->SetParagraphAlignment(__Bottom);
 		}
 		//水平对其方式
-		if (((int_t)textAlign & (int_t)HAlign::Left) == (int_t)HAlign::Left) {
+		if (((int)textAlign & (int)HAlign::Left) == (int)HAlign::Left) {
 			value->SetTextAlignment(__Left);
 		}
-		if (((int_t)textAlign & (int_t)HAlign::Center) == (int_t)HAlign::Center) {
+		if (((int)textAlign & (int)HAlign::Center) == (int)HAlign::Center) {
 			value->SetTextAlignment(__Center);
 		}
-		if (((int_t)textAlign & (int_t)HAlign::Right) == (int_t)HAlign::Right) {
+		if (((int)textAlign & (int)HAlign::Right) == (int)HAlign::Right) {
 			value->SetTextAlignment(__Right);
 		}
 #undef __Top 
@@ -255,10 +255,10 @@ namespace ezui {
 			hr = render->CreateBitmapFromWicBitmap(m_bitMap, &m_d2dBitmap);
 		}
 	}
-	int_t DXImage::Width() {
+	int DXImage::Width() {
 		return m_width;
 	}
-	int_t DXImage::Height() {
+	int DXImage::Height() {
 		return m_height;
 	}
 	void DXImage::CreateFormStream(IStream* istram) {
@@ -563,7 +563,7 @@ namespace ezui {
 	DXImage::DXImage(const std::wstring& file) {
 		CreateFromFile(file);
 	}
-	DXImage::DXImage(int_t width, int_t height)
+	DXImage::DXImage(int width, int height)
 	{
 		this->m_width = width;
 		this->m_height = height;
@@ -906,7 +906,7 @@ namespace ezui {
 		}
 		return  radius;
 	}
-	DXRender::DXRender(HDC dc, int_t x, int_t y, int_t width, int_t height) {
+	DXRender::DXRender(HDC dc, int x, int y, int width, int height) {
 		D2D1_RENDER_TARGET_PROPERTIES defaultOption = D2D1::RenderTargetProperties(
 			D2D1_RENDER_TARGET_TYPE_DEFAULT,
 			D2D1::PixelFormat(
@@ -1135,7 +1135,7 @@ namespace ezui {
 		ImageSizeMode imageSizeMode = image->SizeMode;
 		const Rect& sourceRect = image->Clip;
 		//计算坐标
-		Rect rect(tagRect.X + 0.5, tagRect.Y + 0.5, tagRect.Width + 0.5, tagRect.Height + 0.5);
+		RectF rect(tagRect.X , tagRect.Y , tagRect.Width , tagRect.Height );
 		//转换坐标,缩放
 		Size imgSize(image->Width(), image->Height());
 		if (!sourceRect.IsEmptyArea()) {
@@ -1147,10 +1147,10 @@ namespace ezui {
 		rect.X += image->DrawPosition.X;
 		rect.Y += image->DrawPosition.Y;
 
-		Rect drawRect;
+		RectF drawRect;
 		if (!image->DrawSize.Empty()) {
 			//限制在Owner中的绘制区域
-			drawRect = Rect(rect.X, rect.Y, image->DrawSize.Width, image->DrawSize.Height);
+			drawRect = RectF(rect.X, rect.Y, image->DrawSize.Width, image->DrawSize.Height);
 		}
 		else {
 			//不限制绘制区域 根据imageSizeMode属性进行坐标转换
