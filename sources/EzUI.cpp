@@ -204,7 +204,13 @@ namespace ezui {
 		std::wstring wstr = fileOrRes.unicode();
 		DWORD dwAttr = GetFileAttributesW(wstr.c_str());
 		if (dwAttr && (dwAttr != -1) && (dwAttr & FILE_ATTRIBUTE_ARCHIVE)) {
-			return new Image(wstr);
+			Image* img = new Image(wstr);
+#ifdef _DEBUG
+			if (img) {
+				img->m_path = fileOrRes;
+			}
+#endif
+			return img;
 		}
 		//从资源中获取
 		if (ezui::__EzUI__Resource) {
@@ -212,7 +218,13 @@ namespace ezui {
 			if (!ezui::__EzUI__Resource->GetFile(fileOrRes, &data) || data.empty()) {
 				return NULL;
 			}
-			return new Image(data.c_str(), data.size());
+			Image* img = new Image(data.c_str(), data.size());
+#ifdef _DEBUG
+			if (img) {
+				img->m_path = fileOrRes;
+			}
+#endif
+			return img;
 		}
 		return NULL;
 	}

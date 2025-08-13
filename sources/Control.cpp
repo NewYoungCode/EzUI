@@ -1624,7 +1624,7 @@ namespace ezui {
 			}
 			if (key == "background-size" || key == "background-image-size") {
 				if (value == "auto" && style.BackImage) {
-					style.BackImage->SizeMode = ImageSizeMode::OriginalSize;
+					style.BackImage->SizeMode = ImageSizeMode::Original;
 				}
 				else if (value.count("px") >= 2 && style.BackImage) {
 					auto pxs = value.split(" ");
@@ -1644,7 +1644,7 @@ namespace ezui {
 			}
 			if (key == "fore-image-size") {
 				if (value == "auto" && style.ForeImage) {
-					style.ForeImage->SizeMode = ImageSizeMode::OriginalSize;
+					style.ForeImage->SizeMode = ImageSizeMode::Original;
 				}
 				break;
 			}

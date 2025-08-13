@@ -53,6 +53,7 @@ namespace ezui {
 		bmih.biHeight = -height;
 		bmih.biSizeImage = width * height * 4;
 		m_bmp = ::CreateDIBSection(NULL, &m_bmpInfo, DIB_RGB_COLORS, (void**)&m_point, NULL, 0);
+		::memset(m_point, 0, bmih.biSizeImage);
 		this->GetHDC();
 	}
 	int Bitmap::Width()const {
@@ -63,9 +64,8 @@ namespace ezui {
 	}
 	void Bitmap::SetPixel(int x, int y, const Color& color) {
 		DWORD* point = (DWORD*)this->m_point + (x + y * this->Width());//起始地址+坐标偏移	
-		if (m_bmpInfo.bmiHeader.biBitCount == 32) { //argb
-			((BYTE*)point)[3] = color.GetA();//修改A通道数值
-		}
+
+		((BYTE*)point)[3] = color.GetA();//修改A通道数值
 		((BYTE*)point)[2] = color.GetR();//修改R通道数值
 		((BYTE*)point)[1] = color.GetG();//修改G通道数值
 		((BYTE*)point)[0] = color.GetB();//修改B通道数值
@@ -73,10 +73,8 @@ namespace ezui {
 
 	Color Bitmap::GetPixel(int x, int y) const {
 		DWORD* point = (DWORD*)this->m_point + (x + y * this->Width());//起始地址+坐标偏移
-		BYTE a = 255, r, g, b;
-		if (m_bmpInfo.bmiHeader.biBitCount == 32) { //argb
-			a = ((BYTE*)point)[3];
-		}
+		BYTE a, r, g, b;
+		a = ((BYTE*)point)[3];
 		r = ((BYTE*)point)[2];//修改R通道数值
 		g = ((BYTE*)point)[1];//修改G通道数值
 		b = ((BYTE*)point)[0];//修改B通道数值
@@ -169,8 +167,7 @@ namespace ezui {
 		// 创建新 Bitmap 对象（保留格式）
 		Bitmap* clone = new Bitmap(m_width, m_height);
 		//拷贝像素
-		int pixelBytes = m_bmpInfo.bmiHeader.biBitCount == 24 ? 3 : 4;
-		memcpy(clone->m_point, m_point, m_width * m_height * pixelBytes);
+		memcpy(clone->m_point, m_point, m_width * m_height * 4);
 		return clone;
 	}
 

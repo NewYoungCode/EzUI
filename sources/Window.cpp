@@ -1105,6 +1105,11 @@ namespace ezui {
 	}
 	void Window::OnKillFocus(HWND hWnd)
 	{
+		if (m_inputControl) { //窗口失去焦点
+			KillFocusEventArgs args(NULL);
+			this->DispatchEvent(m_inputControl, args);
+			m_inputControl = NULL;
+		}
 	}
 
 	bool Window::IsWindow()const {

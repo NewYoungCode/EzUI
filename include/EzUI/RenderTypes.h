@@ -522,22 +522,23 @@ namespace ezui {
 	};
 
 	enum class ImageSizeMode {
-		//
-		// 摘要:
-		//     图像被拉伸或收缩填充至绘图区
-		StretchImage,
-		// 摘要:
-		//     如果 绘图区 比图像大，则图像将居中显示。如果图像比 绘图区
-		//     大，则图片将居于 绘图区 中心，而外边缘将被剪裁掉。
-		CenterImage,
-		//
-		// 摘要:
-		//     图像大小按其原有的大小比例被增加或减小。
-		Zoom,
-		//
-		// 摘要:
-		//     图像按原始大小居中于绘图区，不进行缩放。
-		OriginalSize
+
+		//图片强行拉伸完全填充控件
+		//不裁剪,图片变形
+		Stretch,
+
+		//图片缩放后完全填充控件
+		//图片会裁剪, 保持比例裁剪和控件同大小
+		Cover,
+
+		//图片缩放后完整居中显示在控件上 
+		//控件会留白
+		Fit,
+
+		//图片保持原尺寸, 
+		//如果图片小于控件: 控件留白,
+		//如果图片大于控件: 控件边界外的部分被裁剪
+		Original
 	};
 
 
@@ -694,7 +695,7 @@ namespace ezui {
 		Rect Clip;//取出图像部分区域进行绘制
 		Point DrawPosition;//绘制在owner矩形坐标
 		ezui::Size DrawSize;//绘制在owner矩形的大小
-		ImageSizeMode SizeMode = ImageSizeMode::Zoom;// 图像显示模式
+		ImageSizeMode SizeMode = ImageSizeMode::Fit;// 图像显示模式
 	public:
 		virtual ~IImage() {}
 		WORD FrameCount() {
@@ -706,7 +707,7 @@ namespace ezui {
 
 	inline RectF Transformation(ImageSizeMode imageSizeMode, const RectF& rect, const Size& imgSize) {
 
-		if (imageSizeMode == ImageSizeMode::StretchImage) {
+		if (imageSizeMode == ImageSizeMode::Stretch) {
 			return rect;
 		}
 
@@ -719,7 +720,7 @@ namespace ezui {
 		float imgHeight = imgSize.Height;
 		float imgRate = imgWidth / imgHeight;
 
-		if (imageSizeMode == ImageSizeMode::Zoom) {
+		if (imageSizeMode == ImageSizeMode::Fit) {
 			if (clientRate < imgRate) {
 				float zoomHeight = clientWidth / imgWidth * imgHeight;
 				float y = (clientHeight - zoomHeight) / 2.0f + rect.Y;
@@ -731,7 +732,7 @@ namespace ezui {
 				return RectF(x, rect.Y, zoomWidth, clientHeight);
 			}
 		}
-		if (imageSizeMode == ImageSizeMode::CenterImage) {
+		if (imageSizeMode == ImageSizeMode::Cover) {
 			if (clientRate < imgRate) {
 				//1000 670 客户端
 				//1000 300 图片
@@ -750,7 +751,7 @@ namespace ezui {
 			}
 		}
 		//按照图片原大小居中显示
-		if (imageSizeMode == ImageSizeMode::OriginalSize) {
+		if (imageSizeMode == ImageSizeMode::Original) {
 			float x = (rect.Width - imgSize.Width) / 2.0f;
 			float y = (rect.Height - imgSize.Height) / 2.0f;
 			return RectF(x, y, imgSize.Width, imgSize.Height);

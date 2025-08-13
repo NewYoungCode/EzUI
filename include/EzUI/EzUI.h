@@ -91,6 +91,10 @@ namespace ezui {
 
 #if USED_DIRECT2D
 	class UI_EXPORT Image :public DXImage {
+	private:
+#ifdef _DEBUG
+		UIString m_path;
+#endif
 	public:
 		virtual ~Image() {}
 		//创建带预乘Alpha的BGRA图片

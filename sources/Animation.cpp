@@ -33,12 +33,12 @@ namespace ezui {
 		m_timer->Stop();
 	}
 
-	void Animation::SetStartValue(double value)
+	void Animation::SetStartValue(float value)
 	{
 		m_startValue = value;
 	}
 
-	void Animation::SetEndValue(double value)
+	void Animation::SetEndValue(float value)
 	{
 		m_endValue = value;
 	}
@@ -48,7 +48,7 @@ namespace ezui {
 		m_timer->Stop();
 
 		m_currValue = m_startValue;
-		double distance = m_endValue - m_startValue;
+		float distance = m_endValue - m_startValue;
 		m_speedPerMs = distance / durationMs;
 
 		m_lastTime = ::GetTickCount64(); //记录开始时间
