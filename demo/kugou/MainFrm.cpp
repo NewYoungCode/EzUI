@@ -60,7 +60,7 @@ void MainFrm::InitForm() {
 
 	//给默认背景图片设置缩放属性
 	if (mainLayout->Style.BackImage) {
-		mainLayout->Style.BackImage->SizeMode = ImageSizeMode::CenterImage;
+		mainLayout->Style.BackImage->SizeMode = ImageSizeMode::Cover;
 	}
 
 	//加载左侧播放过的音乐
@@ -208,7 +208,7 @@ void MainFrm::DownLoadImage(UIString singers, UIString headImageUrl)
 		auto code = wc2.HttpGet(headImageUrl.replace("{size}", "400"), &headFileData, 5);
 		if (code == 200) {
 			headImg = new Image(headFileData.c_str(), headFileData.size());
-			headImg->SizeMode = ImageSizeMode::CenterImage;
+			headImg->SizeMode = ImageSizeMode::Cover;
 		}
 	}
 
@@ -223,7 +223,7 @@ void MainFrm::DownLoadImage(UIString singers, UIString headImageUrl)
 			auto code = wc2.HttpGet(bkurl, &fileData, 5);
 			if (code == 200) {
 				bkImg = new Image(fileData.c_str(), fileData.size());
-				bkImg->SizeMode = ImageSizeMode::CenterImage;
+				bkImg->SizeMode = ImageSizeMode::Cover;
 			}
 		}
 	}
@@ -339,7 +339,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				if (tabCtrl->GetPageIndex() == 1) {
 					PaintEventArgs& arg = (PaintEventArgs&)args;
 					Image img(player.BuffBitmap->GetHBITMAP());
-					img.SizeMode = ImageSizeMode::CenterImage;
+					img.SizeMode = ImageSizeMode::Cover;
 					arg.Graphics.DrawImage(&img, mainLayout->GetRect());
 					return  true;
 				}

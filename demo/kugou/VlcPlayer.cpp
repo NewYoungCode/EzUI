@@ -67,7 +67,7 @@ void VlcPlayer::OnBackgroundPaint(PaintEventArgs& args) {
 	__super::OnBackgroundPaint(args);
 	if (BuffBitmap) {
 		Image img(BuffBitmap);
-		img.SizeMode = ImageSizeMode::Zoom;
+		img.SizeMode = ImageSizeMode::Fit;
 		//img.Offset = Rect(500,50,200,200);
 		args.Graphics.DrawImage(&img, GetRect());
 	}

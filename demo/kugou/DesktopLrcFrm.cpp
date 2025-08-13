@@ -50,7 +50,7 @@ void DesktopLrcFrm::OnPaint(PaintEventArgs& arg) {
 	//绘制视频的帧图像到窗口上
 	if (_player->BuffBitmap) {
 		Image img(_player->BuffBitmap->GetHBITMAP());
-		img.SizeMode = ImageSizeMode::CenterImage;
+		img.SizeMode = ImageSizeMode::Cover;
 		arg.Graphics.DrawImage(&img, this->GetClientRect());
 		arg.Graphics.SetColor(Color(0, 0, 0, 100));
 		arg.Graphics.FillRectangle(this->GetClientRect());
