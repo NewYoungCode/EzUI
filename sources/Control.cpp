@@ -46,7 +46,7 @@ namespace ezui {
 		if (__IsPx(numStr, value)) {
 			return value;
 		}
-		return 0;//解析失败
+		return std::atof(numStr.c_str());//默认直接转数值返回
 	}
 
 	//处理url(d:/imgs/aa.png)路径
@@ -337,17 +337,17 @@ namespace ezui {
 				break;
 			}
 			if (attrName == "x") {
-				this->SetLocation({ std::stoi(attrValue) ,this->GetRect().Y });
+				this->SetLocation({ (int)__ToFloat(attrValue) ,this->Y() });
 				break;
 			}
 			if (attrName == "y") {
-				this->SetLocation({ this->GetRect().X, std::stoi(attrValue) });
+				this->SetLocation({ this->X(),(int)__ToFloat(attrValue) });
 				break;
 			}
 			if (attrName == "location") {
 				auto arr = attrValue.split(",");
-				int x = std::stoi(arr[0]);
-				int y = std::stoi(arr[1]);
+				int x = __ToFloat(arr[0]);
+				int y = __ToFloat(arr[1]);
 				this->SetLocation(Point(x, y));
 				break;
 			}
@@ -358,8 +358,8 @@ namespace ezui {
 				}
 				else {
 					auto arr = attrValue.split(",");
-					int width = std::stoi(arr[0]);
-					int height = std::stoi(arr[1]);
+					int width = __ToFloat(arr[0]);
+					int height = __ToFloat(arr[1]);
 					this->SetFixedSize(Size(width, height));
 				}
 				break;
@@ -369,11 +369,11 @@ namespace ezui {
 					this->SetAutoWidth(true);//自动宽度
 				}
 				else {
-					if (attrValue.count(".") > 0) {
-						this->SetRateWidth(std::stof(attrValue.c_str()));//基于父控件的百分比
+					if (attrValue.count(".") > 0 || attrValue.count("%") > 0) {
+						this->SetRateWidth(__ToFloat(attrValue));//基于父控件的百分比
 					}
 					else {
-						this->SetFixedWidth(std::stoi(attrValue));//如果单独设置了宽高那就是绝对宽高了
+						this->SetFixedWidth(__ToFloat(attrValue));//如果单独设置了宽高那就是绝对宽高了
 					}
 				}
 				break;
@@ -383,11 +383,11 @@ namespace ezui {
 					this->SetAutoHeight(true);//自动高度
 				}
 				else {
-					if (attrValue.count(".") > 0) {
-						this->SetRateHeight(std::stof(attrValue.c_str()));//基于父控件的百分比
+					if (attrValue.count(".") > 0 || attrValue.count("%") > 0) {
+						this->SetRateHeight(__ToFloat(attrValue));//基于父控件的百分比
 					}
 					else {
-						this->SetFixedHeight(std::stoi(attrValue));//如果单独设置了宽高那就是绝对宽高了
+						this->SetFixedHeight(__ToFloat(attrValue));//如果单独设置了宽高那就是绝对宽高了
 					}
 				}
 				break;
@@ -395,45 +395,45 @@ namespace ezui {
 			if (attrName == "rect" && !attrValue.empty()) {
 				auto rectStr = attrValue.split(",");
 				Rect rect;
-				rect.X = std::stoi(rectStr.at(0));
-				rect.Y = std::stoi(rectStr.at(1));
-				rect.Width = std::stoi(rectStr.at(2));
-				rect.Height = std::stoi(rectStr.at(3));
+				rect.X = __ToFloat(rectStr[0]);
+				rect.Y = __ToFloat(rectStr[1]);
+				rect.Width = __ToFloat(rectStr[2]);
+				rect.Height = __ToFloat(rectStr[3]);
 				this->SetRect(rect);
 				break;
 			}
 			if (attrName == "margin-left") {
-				this->Margin.Left = std::stoi(attrValue);
+				this->Margin.Left = __ToFloat(attrValue);
 				break;
 			}
 			if (attrName == "margin-top") {
-				this->Margin.Top = std::stoi(attrValue);
+				this->Margin.Top = __ToFloat(attrValue);
 				break;
 			}
 			if (attrName == "margin-right") {
-				this->Margin.Right = std::stoi(attrValue);
+				this->Margin.Right = __ToFloat(attrValue);
 				break;
 			}
 			if (attrName == "margin-bottom") {
-				this->Margin.Bottom = std::stoi(attrValue);
+				this->Margin.Bottom = __ToFloat(attrValue);
 				break;
 			}
 			if (attrName == "margin") {//遵循web前端的规则
 				auto strs = attrValue.split(",");
 				if (strs.size() == 1) {
-					this->Margin = std::stoi(strs[0]);
+					this->Margin = __ToFloat(strs[0]);
 					break;
 				}
 				if (strs.size() == 2) {
-					this->Margin.Top = this->Margin.Bottom = std::stoi(strs[0]);
-					this->Margin.Left = this->Margin.Right = std::stoi(strs[1]);
+					this->Margin.Top = this->Margin.Bottom = __ToFloat(strs[0]);
+					this->Margin.Left = this->Margin.Right = __ToFloat(strs[1]);
 					break;
 				}
 				if (strs.size() == 4) {
-					this->Margin.Top = std::stoi(strs[0]);
-					this->Margin.Right = std::stoi(strs[1]);
-					this->Margin.Bottom = std::stoi(strs[2]);
-					this->Margin.Left = std::stoi(strs[3]);
+					this->Margin.Top = __ToFloat(strs[0]);
+					this->Margin.Right = __ToFloat(strs[1]);
+					this->Margin.Bottom = __ToFloat(strs[2]);
+					this->Margin.Left = __ToFloat(strs[3]);
 					break;
 				}
 				break;
@@ -580,10 +580,16 @@ namespace ezui {
 	void Control::SetRateWidth(float rateWidth)
 	{
 		m_rateSize.Width = rateWidth;
+		if (Parent) {
+			SetFixedWidth(Parent->Width() * rateWidth);
+		}
 	}
 	void Control::SetRateHeight(float rateHeight)
 	{
 		m_rateSize.Height = rateHeight;
+		if (Parent) {
+			SetFixedHeight(Parent->Height() * rateHeight);
+		}
 	}
 	void Control::SetFixedSize(const Size& size)
 	{
@@ -730,14 +736,25 @@ namespace ezui {
 		int _height;
 		for (auto& it : GetControls()) {
 
+			if (Parent) {
+				//设置了宽高百分比的控件
+				if (it->m_rateSize.Width > 1e-6f) {
+					it->SetFixedWidth(Parent->Width() * m_rateSize.Width);
+				}
+				if (it->m_rateSize.Height > 1e-6f) {
+					it->SetFixedWidth(Parent->Height() * m_rateSize.Height);
+				}
+			}
+
+			//设置了dockstyle的控件
 			if (it->GetDockStyle() == DockStyle::Fill) {
 				it->SetRect(Rect{ 0,0,Width(),Height() });
 			}
 			else if (it->GetDockStyle() == DockStyle::Vertical) {
-				it->SetRect(Rect{ 0,0,it->Width(),Height() });
+				it->SetRect(Rect{ it->X(),0,it->Width(),Height() });
 			}
 			else if (it->GetDockStyle() == DockStyle::Horizontal) {
-				it->SetRect(Rect{ 0,0,Width(),it->Height() });
+				it->SetRect(Rect{ 0,it->Y(),Width(),it->Height() });
 			}
 
 			_width = it->X() + it->Width();

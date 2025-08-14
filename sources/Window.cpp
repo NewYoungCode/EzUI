@@ -794,8 +794,8 @@ namespace ezui {
 		OnPaint(args);
 #endif
 #if COUNT_ONPAINT
-		char buf[256]{ 0 };
-		sprintf(buf, "%ld OnPaint Count(%d) Rect(%d,%d,%d,%d) %dms \n", ::GetTickCount64(), args.PublicData->PaintCount, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, ::GetTickCount64() - t1);
+		char buf[512]{ 0 };
+		sprintf(buf, "Time:%ld DC:%p OnPaint Count(%d) Rect(%d,%d,%d,%d) %dms \n", ::GetTickCount64(), winHDC, args.PublicData->PaintCount, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, ::GetTickCount64() - t1);
 		OutputDebugStringA(buf);
 #endif // COUNT_ONPAINT
 

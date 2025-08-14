@@ -168,8 +168,8 @@ void MainFrm::OnClose(bool& cal) {
 	Animation* ant = new Animation(this);//绑定父对象为frm,则ant无需手动释放
 	ant->SetStartValue(1.0);
 	ant->SetEndValue(0);
-	ant->ValueChanged = [&](double value) {
-		Invoke([=] {
+	ant->ValueChanged = [&](float value) {
+		Invoke([this, value] {
 			this->Opacity = value;//修改透明度
 			this->Invalidate();//刷新
 			if (value <= 0.1) {

@@ -173,6 +173,7 @@ namespace ezui {
 		::CoUninitialize();
 		if (ezui::__EzUI__Resource) {
 			delete ezui::__EzUI__Resource;
+			ezui::__EzUI__Resource = NULL;
 		}
 		UnregisterClassW(ezui::__EzUI__HiddenMessageWindowClass, ezui::__EzUI__HINSTANCE);
 		UnregisterClassW(ezui::__EzUI__WindowClassName, ezui::__EzUI__HINSTANCE);

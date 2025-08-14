@@ -102,7 +102,7 @@ namespace ezui {
 				DoPaint(winHDC, invalidateRect);
 #else
 				//使用双缓冲
-				Bitmap doubleBuff(_winBitmap->Width(), _winBitmap->Height(), Bitmap::PixelFormat::PixelFormatARGB);
+				Bitmap doubleBuff(m_winBitmap->Width(), m_winBitmap->Height());
 				DoPaint(doubleBuff.GetHDC(), invalidateRect);
 				//使用BitBlt函数进行复制到winHDC  //如果窗体不规则 不适用于BitBlt进行复制
 				::BitBlt(winHDC, invalidateRect.X, invalidateRect.Y,

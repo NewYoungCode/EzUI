@@ -16,8 +16,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	Animation* ant = new Animation(&frm);//绑定父对象为frm,则ant无需手动释放
 	ant->SetStartValue(0.1);
 	ant->SetEndValue(1.0);
-	ant->ValueChanged = [&](double value) {
-		Invoke([=, &frm] {
+	ant->ValueChanged = [&](float value) {
+		Invoke([value, &frm] {
 			frm.Opacity = value;//修改透明度
 			frm.Invalidate();//刷新
 			});

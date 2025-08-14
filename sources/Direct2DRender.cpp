@@ -350,8 +350,8 @@ namespace ezui {
 			memcpy(pDst, pSrc, cbBufferSrc);
 		}
 
-		if (lockSrc) lockSrc->Release();
-		if (lockDst) lockDst->Release();
+		if (lockSrc) SafeRelease(&lockSrc);
+		if (lockDst) SafeRelease(&lockDst);
 	}
 
 	// 清除矩形区域（透明）
@@ -365,8 +365,8 @@ namespace ezui {
 			BYTE* pData = nullptr;
 			lock->GetDataPointer(&cbBuffer, &pData);
 			memset(pData, 0, cbBuffer); // 全部置 0（透明）
-			lock->Release();
 		}
+		SafeRelease(&lock);
 	}
 	void CopyFrameToCanvas(IWICBitmapSource* frame, IWICBitmap* canvas, UINT CanvasWidth, UINT CanvasHeight, const WICRect& frameRect)
 	{
@@ -390,7 +390,7 @@ namespace ezui {
 		HRESULT hr = frame->CopyPixels(&copyRect, frameStride, frameBufferSize, tempBuffer);
 		if (FAILED(hr)) {
 			delete[] tempBuffer;
-			lock->Release();
+			SafeRelease(&lock);
 			return;
 		}
 
@@ -415,7 +415,7 @@ namespace ezui {
 
 		//释放
 		delete[] tempBuffer;
-		lock->Release();
+		SafeRelease(&lock);
 	}
 
 	void DXImage::Init()
@@ -517,13 +517,14 @@ namespace ezui {
 			m_frames.push_back(gf);
 
 			// 释放临时对象
-			converter->Release();
-			metaReader->Release();
-			srcFrame->Release();
+			SafeRelease(&converter);
+			SafeRelease(&metaReader);
+			SafeRelease(&srcFrame);
+
 		}
 		// 释放画布
-		canvas->Release();
-		prevCanvas->Release();
+		SafeRelease(&canvas);
+		SafeRelease(&prevCanvas);
 		//读取第一帧
 		this->NextFrame();
 	}
@@ -622,10 +623,10 @@ namespace ezui {
 		HRESULT ret = a.m_rgn->CombineWithGeometry(b.m_rgn, COMBINE_MODE, NULL, geometrySink);
 		geometrySink->Close();
 		if (out.m_rgn) {
-			out.m_rgn->Release();
+			SafeRelease(&out.m_rgn);
 		}
 		out.m_rgn = outPathGeometry;
-		geometrySink->Release();
+		SafeRelease(&geometrySink);
 	}
 
 	RectangleGeometry::RectangleGeometry(float x, float y, float width, float height) {
@@ -870,9 +871,11 @@ namespace ezui {
 			}
 		}
 
-		//初始化GDI+
-		Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-		Gdiplus::GdiplusStartup(&g_GdiplusToken, &gdiplusStartupInput, NULL);
+		if (g_GdiplusToken == NULL) {
+			//初始化GDI+
+			Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+			Gdiplus::GdiplusStartup(&g_GdiplusToken, &gdiplusStartupInput, NULL);
+		}
 	}
 	void RenderUnInitialize()
 	{
@@ -888,6 +891,7 @@ namespace ezui {
 		//释放GDI+
 		if (g_GdiplusToken) {
 			Gdiplus::GdiplusShutdown(g_GdiplusToken);
+			g_GdiplusToken = NULL;
 		}
 	}
 	float GetMaxRadius(float width, float height, float _radius)
@@ -1135,7 +1139,7 @@ namespace ezui {
 		ImageSizeMode imageSizeMode = image->SizeMode;
 		const Rect& sourceRect = image->Clip;
 		//计算坐标
-		RectF rect(tagRect.X , tagRect.Y , tagRect.Width , tagRect.Height );
+		RectF rect(tagRect.X, tagRect.Y, tagRect.Width, tagRect.Height);
 		//转换坐标,缩放
 		Size imgSize(image->Width(), image->Height());
 		if (!sourceRect.IsEmptyArea()) {
@@ -1147,17 +1151,17 @@ namespace ezui {
 		rect.X += image->DrawPosition.X;
 		rect.Y += image->DrawPosition.Y;
 
-		RectF drawRect;
+		RectF realRendRect;//最终渲染的矩形位置
 		if (!image->DrawSize.Empty()) {
 			//限制在Owner中的绘制区域
-			drawRect = RectF(rect.X, rect.Y, image->DrawSize.Width, image->DrawSize.Height);
+			realRendRect = RectF(rect.X, rect.Y, image->DrawSize.Width, image->DrawSize.Height);
 		}
 		else {
 			//不限制绘制区域 根据imageSizeMode属性进行坐标转换
-			drawRect = ezui::Transformation(imageSizeMode, rect, imgSize);
+			realRendRect = ezui::Transformation(imageSizeMode, rect, imgSize);
 		}
 		//开始绘制
-		D2D_RECT_F drawRectF = __To_D2D_RectF(drawRect);
+		D2D_RECT_F drawRectF = __To_D2D_RectF(realRendRect);
 		if (!sourceRect.IsEmptyArea()) {
 			//裁剪图片部分内容进行绘制
 			D2D_RECT_F imageClipRectF = __To_D2D_RectF(sourceRect);
