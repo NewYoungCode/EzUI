@@ -121,6 +121,8 @@ namespace ezui {
 		// 所有事件优先进入此函数(内部处理)
 		bool OnEvent(EventArgs& arg);
 
+		//属性或者css样式都适用(css样式和属性都可以设置这些,只对静态样式生效)
+		bool ApplyStyleProperty(const UIString& key, const UIString& value);
 	protected:
 		// 设置内容宽度，仅限子类使用
 		virtual void SetContentWidth(int width);

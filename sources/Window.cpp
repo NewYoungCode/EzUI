@@ -12,9 +12,6 @@ namespace ezui {
 
 	Window::~Window()
 	{
-		if (m_hWndTips) {
-			::DestroyWindow(m_hWndTips);
-		}
 		if (Hwnd()) {
 			::DestroyWindow(Hwnd());
 		}
@@ -61,21 +58,6 @@ namespace ezui {
 		else {
 			this->CenterToScreen();
 		}
-
-		//创建冒泡提示窗口
-		m_hWndTips = CreateWindowEx(WS_EX_TOPMOST,
-			TOOLTIPS_CLASS,
-			NULL,
-			WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
-			Hwnd(),
-			NULL,
-			ezui::__EzUI__HINSTANCE,
-			NULL
-		);
 
 		if ((exStyle & WS_EX_LAYERED) != WS_EX_LAYERED) {
 			m_publicData->InvalidateRect = [this](const Rect& rect)->void {

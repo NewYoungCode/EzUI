@@ -50,9 +50,6 @@ namespace ezui {
 		HWND m_ownerWnd = NULL;
 		//窗口布局
 		Control* m_layout = NULL;
-		//用于提示的窗口句柄
-		HWND m_hWndTips = NULL;
-		//初始化窗口
 	private:
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;

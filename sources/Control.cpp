@@ -332,16 +332,11 @@ namespace ezui {
 		__super::SetAttribute(attrName, attrValue);
 		do
 		{
+			if (this->ApplyStyleProperty(attrName, attrValue)) {
+				break;
+			}
 			if (attrName == "name" || attrName == "id") {
 				this->Name = attrValue;
-				break;
-			}
-			if (attrName == "x") {
-				this->SetLocation({ (int)__ToFloat(attrValue) ,this->Y() });
-				break;
-			}
-			if (attrName == "y") {
-				this->SetLocation({ this->X(),(int)__ToFloat(attrValue) });
 				break;
 			}
 			if (attrName == "location") {
@@ -364,34 +359,6 @@ namespace ezui {
 				}
 				break;
 			}
-			if (attrName == "width") {
-				if (attrValue == "auto") {
-					this->SetAutoWidth(true);//自动宽度
-				}
-				else {
-					if (attrValue.count(".") > 0 || attrValue.count("%") > 0) {
-						this->SetRateWidth(__ToFloat(attrValue));//基于父控件的百分比
-					}
-					else {
-						this->SetFixedWidth(__ToFloat(attrValue));//如果单独设置了宽高那就是绝对宽高了
-					}
-				}
-				break;
-			}
-			if (attrName == "height") {
-				if (attrValue == "auto") {
-					this->SetAutoHeight(true);//自动高度
-				}
-				else {
-					if (attrValue.count(".") > 0 || attrValue.count("%") > 0) {
-						this->SetRateHeight(__ToFloat(attrValue));//基于父控件的百分比
-					}
-					else {
-						this->SetFixedHeight(__ToFloat(attrValue));//如果单独设置了宽高那就是绝对宽高了
-					}
-				}
-				break;
-			}
 			if (attrName == "rect" && !attrValue.empty()) {
 				auto rectStr = attrValue.split(",");
 				Rect rect;
@@ -402,51 +369,11 @@ namespace ezui {
 				this->SetRect(rect);
 				break;
 			}
-			if (attrName == "margin-left") {
-				this->Margin.Left = __ToFloat(attrValue);
-				break;
-			}
-			if (attrName == "margin-top") {
-				this->Margin.Top = __ToFloat(attrValue);
-				break;
-			}
-			if (attrName == "margin-right") {
-				this->Margin.Right = __ToFloat(attrValue);
-				break;
-			}
-			if (attrName == "margin-bottom") {
-				this->Margin.Bottom = __ToFloat(attrValue);
-				break;
-			}
-			if (attrName == "margin") {//遵循web前端的规则
-				auto strs = attrValue.split(",");
-				if (strs.size() == 1) {
-					this->Margin = __ToFloat(strs[0]);
-					break;
-				}
-				if (strs.size() == 2) {
-					this->Margin.Top = this->Margin.Bottom = __ToFloat(strs[0]);
-					this->Margin.Left = this->Margin.Right = __ToFloat(strs[1]);
-					break;
-				}
-				if (strs.size() == 4) {
-					this->Margin.Top = __ToFloat(strs[0]);
-					this->Margin.Right = __ToFloat(strs[1]);
-					this->Margin.Bottom = __ToFloat(strs[2]);
-					this->Margin.Left = __ToFloat(strs[3]);
-					break;
-				}
-				break;
-			}
 			if (attrName == "visible") {
 				this->m_bVisible = (attrValue != "false");
 				break;
 			}
-			if (attrName == "display") {
-				this->m_bVisible = (attrValue != "none");
-				break;
-			}
-			if (attrName == "tips") {
+			if (attrName == "tips" || attrName == "title") {
 				this->SetTips(attrValue);
 				break;
 			}
@@ -849,6 +776,89 @@ namespace ezui {
 		return false;
 	}
 
+	bool Control::ApplyStyleProperty(const UIString& key, const UIString& value) {
+		do
+		{
+			if (key == "x") {
+				this->SetLocation({ (int)__ToFloat(value) ,this->Y() });
+				break;
+			}
+			if (key == "y") {
+				this->SetLocation({ this->X(),(int)__ToFloat(value) });
+				break;
+			}
+			if (key == "width") {
+				if (value == "auto") {
+					this->SetAutoWidth(true);//自动宽度
+				}
+				else {
+					if (value.count(".") > 0 || value.count("%") > 0) {
+						this->SetRateWidth(__ToFloat(value));//基于父控件的百分比
+					}
+					else {
+						this->SetFixedWidth(__ToFloat(value));//如果单独设置了宽高那就是绝对宽高了
+					}
+				}
+				break;
+			}
+			if (key == "height") {
+				if (value == "auto") {
+					this->SetAutoHeight(true);//自动高度
+				}
+				else {
+					if (value.count(".") > 0 || value.count("%") > 0) {
+						this->SetRateHeight(__ToFloat(value));//基于父控件的百分比
+					}
+					else {
+						this->SetFixedHeight(__ToFloat(value));//如果单独设置了宽高那就是绝对宽高了
+					}
+				}
+				break;
+			}
+			if (key == "margin-left") {
+				this->Margin.Left = __ToFloat(value);
+				break;
+			}
+			if (key == "margin-top") {
+				this->Margin.Top = __ToFloat(value);
+				break;
+			}
+			if (key == "margin-right") {
+				this->Margin.Right = __ToFloat(value);
+				break;
+			}
+			if (key == "margin-bottom") {
+				this->Margin.Bottom = __ToFloat(value);
+				break;
+			}
+			if (key == "margin") {//遵循web前端的规则
+				auto strs = value.split(",");
+				if (strs.size() == 1) {
+					this->Margin = __ToFloat(strs[0]);
+					break;
+				}
+				if (strs.size() == 2) {
+					this->Margin.Top = this->Margin.Bottom = __ToFloat(strs[0]);
+					this->Margin.Left = this->Margin.Right = __ToFloat(strs[1]);
+					break;
+				}
+				if (strs.size() == 4) {
+					this->Margin.Top = __ToFloat(strs[0]);
+					this->Margin.Right = __ToFloat(strs[1]);
+					this->Margin.Bottom = __ToFloat(strs[2]);
+					this->Margin.Left = __ToFloat(strs[3]);
+					break;
+				}
+				break;
+			}
+			if (key == "display") {
+				this->m_bVisible = (value != "none");
+				break;
+			}
+			return false;//未处理
+		} while (false);
+		return true;//处理成功
+	}
 	//专门处理键盘消息的
 	void Control::OnKeyBoardEvent(const KeyboardEventArgs& _args) {
 		do
@@ -1565,22 +1575,7 @@ namespace ezui {
 		UIString value = value_;
 		do
 		{
-			if (key == "width") {
-				if (value.count(".") > 0) {
-					this->SetRateWidth(std::stof(value.c_str()));
-				}
-				else {
-					this->SetFixedWidth(__ToFloat(value));
-				}
-				break;
-			}
-			if (key == "height") {
-				if (value.count(".") > 0) {
-					this->SetRateHeight(std::stof(value.c_str()));
-				}
-				else {
-					this->SetFixedHeight(__ToFloat(value));
-				}
+			if (this->ApplyStyleProperty(key, value)) {
 				break;
 			}
 			if (key == "pointer-events") {
@@ -1591,10 +1586,6 @@ namespace ezui {
 				else if (value == "auto") {
 					this->EventPassThrough = Event::None;
 				}
-				break;
-			}
-			if (key == "display") {
-				this->SetVisible(value != "none");
 				break;
 			}
 			if (key == "cursor") {
