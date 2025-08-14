@@ -164,14 +164,14 @@ namespace ezui {
 				color = Color((BYTE)r, (BYTE)g, (BYTE)b);
 				*isGood = true; break;
 			}
-			else if (colorStr.find("rgb") == 0) { //"rgb(255,100,2,3)"
+			else if (colorStr.find("rgb") == 0) { //"rgb(255,255,255,50%)"
 				size_t pos1 = colorStr.find("(");
 				size_t pos2 = colorStr.rfind(")");
 				if (pos1 == size_t(-1) || pos2 == size_t(-1)) {
 					break;//非标准rgb格式
 				}
 				UIString rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
-				auto rgbList = rgbStr.split(",");
+				auto rgbList = rgbStr.replace(' ', ',').split(",");
 				if (rgbList.size() < 3) {
 					break;//非标准rgb格式
 				}
@@ -181,8 +181,8 @@ namespace ezui {
 				BYTE a = 255;
 				if (rgbList.size() > 3) { //如果有设置透明度
 					std::string aStr = rgbList.at(3);
-					if (aStr.find(".") != std::string::npos) {
-						a = (BYTE)(255 * std::atof(aStr.c_str()) + 0.5);//小数点形式描述透明度
+					if (aStr.rfind("%") != size_t(-1)) {
+						a = (BYTE)(std::atof(aStr.c_str()) / 100.0f * 255 + 0.5);//计算出透明度转为byte
 					}
 					else {
 						a = std::stoi(aStr.c_str());//0~255描述透明度

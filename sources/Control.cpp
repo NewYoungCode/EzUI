@@ -43,10 +43,14 @@ namespace ezui {
 	//字符串转数值
 	inline float __ToFloat(const UIString& numStr) {
 		float value;
-		if (__IsPx(numStr, value)) {
+		if (__IsPx(numStr, value)) {//以px为单位
 			return value;
 		}
-		return std::atof(numStr.c_str());//默认直接转数值返回
+		value = std::atof(numStr.c_str());
+		if (numStr.rfind("%") != size_t(-1)) {//判断是不是百分比
+			value = value / 100.0f;//如果是百分比则返回小数点(0.0f~1.0f)
+		}
+		return value;//直接转数值返回
 	}
 
 	//处理url(d:/imgs/aa.png)路径
@@ -792,7 +796,7 @@ namespace ezui {
 					this->SetAutoWidth(true);//自动宽度
 				}
 				else {
-					if (value.count(".") > 0 || value.count("%") > 0) {
+					if (value.rfind("%") != std::string::npos) {
 						this->SetRateWidth(__ToFloat(value));//基于父控件的百分比
 					}
 					else {
@@ -806,7 +810,7 @@ namespace ezui {
 					this->SetAutoHeight(true);//自动高度
 				}
 				else {
-					if (value.count(".") > 0 || value.count("%") > 0) {
+					if (value.rfind("%") != std::string::npos) {
 						this->SetRateHeight(__ToFloat(value));//基于父控件的百分比
 					}
 					else {
@@ -832,7 +836,7 @@ namespace ezui {
 				break;
 			}
 			if (key == "margin") {//遵循web前端的规则
-				auto strs = value.split(",");
+				auto strs = value.replace(' ', ',').split(",");//去掉空格并转为数组
 				if (strs.size() == 1) {
 					this->Margin = __ToFloat(strs[0]);
 					break;
