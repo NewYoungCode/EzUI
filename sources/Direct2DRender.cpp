@@ -229,7 +229,7 @@ namespace ezui {
 #undef __Middle 
 #undef __Center
 	}
-	void TextLayout::SetUnderline(size_t pos, size_t count)
+	void TextLayout::SetUnderline(int pos, int count)
 	{
 		if (count > 0) {
 			value->SetUnderline(TRUE, { (UINT32)pos,(UINT32)count });

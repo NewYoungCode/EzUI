@@ -125,11 +125,12 @@ namespace ezui {
 		return __super::WndProc(uMsg, wParam, lParam);
 	}
 	void LayeredWindow::OnSize(const Size& sz) {
+		__super::OnSize(sz);
 		if (m_winBitmap) {
 			delete m_winBitmap;
 		}
 		m_winBitmap = new Bitmap(sz.Width, sz.Height);
-		__super::OnSize(sz);
+		Invalidate();
 	}
 
 	void LayeredWindow::UpdateLayeredWindow(HDC hdc) {

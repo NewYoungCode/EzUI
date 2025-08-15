@@ -11,7 +11,7 @@ namespace ezui {
 	}
 	void ComboBox::Init()
 	{
-		this->m_textBox.ReadOnly = true;
+		this->m_textBox.SetReadOnly(true);
 		this->Add(&m_textBox);
 		this->Add(&m_UpDown);
 

@@ -173,7 +173,7 @@ public:
 
 		name.TextAlign = TextAlign::MiddleLeft;
 		name.SetText(" " + fileName);
-		name.Ellipsis = "...";
+		name.SetElidedText("...");
 		this->Add(&name);
 
 		size.SetFixedWidth(100);

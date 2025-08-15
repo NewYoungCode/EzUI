@@ -55,8 +55,9 @@ namespace ezui {
 
 	const wchar_t* __EzUI__HiddenMessageWindowClass = L"__EzUI__HiddenMessageWindowClass";
 	void RegMessageWnd() {
-		WNDCLASS wc = {};
-		wc.lpfnWndProc = [](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) -> LRESULT {
+		::WNDCLASSEXW wcex = {};
+		wcex.cbSize = sizeof(wcex);
+		wcex.lpfnWndProc = [](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) -> LRESULT {
 			if (msg == WM_GUI_SYSTEM) {
 				if (wParam == WM_GUI_BEGININVOKE || wParam == WM_GUI_INVOKE) {
 					using Func = std::function<void()>;
@@ -70,9 +71,9 @@ namespace ezui {
 			}
 			return ::DefWindowProc(hwnd, msg, wParam, lParam);
 			};
-		wc.hInstance = ezui::__EzUI__HINSTANCE;
-		wc.lpszClassName = __EzUI__HiddenMessageWindowClass;
-		RegisterClassW(&wc);
+		wcex.hInstance = ezui::__EzUI__HINSTANCE;
+		wcex.lpszClassName = __EzUI__HiddenMessageWindowClass;
+		RegisterClassExW(&wcex);
 		ezui::__EzUI_MessageWnd = CreateWindowEx(
 			0,                 // 无特殊扩展样式
 			__EzUI__HiddenMessageWindowClass,         // 上面注册的类名
@@ -141,16 +142,24 @@ namespace ezui {
 		ezui::__EzUI__HINSTANCE = hInstance == NULL ? ::GetModuleHandleW(NULL) : hInstance;
 		ezui::__EzUI__ThreadId = ::GetCurrentThreadId();
 		//设计窗口
-		::WNDCLASSW    wc{ 0 };
-		wc.lpfnWndProc = __EzUI__WndProc;//窗口过程
-		wc.hInstance = ezui::__EzUI__HINSTANCE;//
-		wc.hCursor = LoadCursorW(NULL, IDC_ARROW);//光标
-		wc.lpszClassName = ezui::__EzUI__WindowClassName;//类名
-		wc.hbrBackground = NULL;//窗口背景
-		if (!RegisterClassW(&wc)) //注册窗口
+		::WNDCLASSEXW wcex = {};
+		wcex.cbSize = sizeof(wcex);
+		wcex.style = CS_HREDRAW | CS_VREDRAW;//宽高改变窗口触发重绘
+		wcex.lpfnWndProc = __EzUI__WndProc;//窗口过程
+		wcex.cbClsExtra = 0;
+		wcex.cbWndExtra = 0;
+		wcex.hInstance = ezui::__EzUI__HINSTANCE;//
+		wcex.hIcon = NULL;//(大图标)用于窗口标题栏、Alt+Tab 切换界面、任务栏预览等显示大图标的地方
+		wcex.hIconSm = NULL;//(小图标)用于任务栏按钮、系统托盘（部分情况下）以及 Alt+Tab 小图标显示等
+		wcex.hCursor = LoadCursorW(NULL, IDC_ARROW);//光标
+		wcex.hbrBackground = NULL; // 窗口背景
+		wcex.lpszMenuName = NULL;
+		wcex.lpszClassName = ezui::__EzUI__WindowClassName;//类名
+
+		if (!RegisterClassExW(&wcex)) //注册窗口
 		{
 			::MessageBoxW(NULL, L"This program requires Windows NT !",
-				wc.lpszClassName, MB_ICONERROR);
+				wcex.lpszClassName, MB_ICONERROR);
 			return;
 		}
 

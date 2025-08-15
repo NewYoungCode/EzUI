@@ -167,7 +167,7 @@ namespace ezui {
 			else if (colorStr.find("rgb") == 0) { //"rgb(255,255,255,50%)"
 				size_t pos1 = colorStr.find("(");
 				size_t pos2 = colorStr.rfind(")");
-				if (pos1 == size_t(-1) || pos2 == size_t(-1)) {
+				if (pos1 == std::string::npos || pos2 == std::string::npos) {
 					break;//非标准rgb格式
 				}
 				UIString rgbStr = colorStr.substr(pos1 + 1, pos2 - pos1 - 1);
@@ -181,7 +181,7 @@ namespace ezui {
 				BYTE a = 255;
 				if (rgbList.size() > 3) { //如果有设置透明度
 					std::string aStr = rgbList.at(3);
-					if (aStr.rfind("%") != size_t(-1)) {
+					if (aStr.rfind("%") != std::string::npos) {
 						a = (BYTE)(std::atof(aStr.c_str()) / 100.0f * 255 + 0.5);//计算出透明度转为byte
 					}
 					else {

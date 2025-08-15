@@ -47,7 +47,7 @@ namespace ezui {
 			return value;
 		}
 		value = std::atof(numStr.c_str());
-		if (numStr.rfind("%") != size_t(-1)) {//判断是不是百分比
+		if (numStr.rfind("%") != std::string::npos) {//判断是不是百分比
 			value = value / 100.0f;//如果是百分比则返回小数点(0.0f~1.0f)
 		}
 		return value;//直接转数值返回
@@ -58,7 +58,7 @@ namespace ezui {
 		value = value.replace("\"", "");//删除双引号;
 		auto pos1 = value.find("(");
 		auto pos2 = value.find(")");
-		if (pos1 != size_t(-1) && pos2 != size_t(-1)) {
+		if (pos1 != std::string::npos && pos2 != std::string::npos) {
 			//background-image:url(res/images/xxx.png)的方式
 			value = value.substr(pos1 + 1, pos2 - pos1 - 1);
 		}
@@ -110,7 +110,7 @@ namespace ezui {
 				return _##_filed;\
 			}\
 		}\
-		if(this->Enable){ \
+		if(this->IsEnabled()){ \
 			if ((_state & ControlState::Hover) == ControlState::Hover) {\
 				_##_filed = this->GetStyle(ControlState::Hover).##_filed;\
 				if (__IsValid(_##_filed)) {\
@@ -151,7 +151,7 @@ namespace ezui {
 			_##_filed = this->GetStyle(ControlState::Checked).##_filed;\
 			if (__IsValid(_##_filed))return _##_filed;\
 		}\
-		if(this->Enable){ \
+		if(this->IsEnabled()){ \
 			if ((_state & ControlState::Hover) == ControlState::Hover) {\
 				_##_filed = this->GetStyle(ControlState::Hover).##_filed;\
 				if (__IsValid(_##_filed))return _##_filed;\
@@ -176,7 +176,7 @@ namespace ezui {
 			_##_filed = this->GetStyle(ControlState::Checked).##_filed1.##_filed;\
 			if (__IsValid(_##_filed)) return _##_filed;\
 		}\
-		if(this->Enable){ \
+		if(this->IsEnabled()){ \
 			if ((_state & ControlState::Hover) == ControlState::Hover) {\
 				_##_filed = this->GetStyle(ControlState::Hover).##_filed1.##_filed;\
 				if (__IsValid(_##_filed)) return _##_filed;\
@@ -413,16 +413,16 @@ namespace ezui {
 			}
 			if (attrName == "enable") {
 				if (attrValue == "true") {
-					this->Enable = true;
+					this->SetEnabled(true);
 					break;
 				}
 				if (attrValue == "false") {
-					this->Enable = false;
+					this->SetEnabled(false);
 					break;
 				}
 			}
 			if (attrName == "disabled") {
-				this->Enable = false;
+				this->SetEnabled(false);
 				break;
 			}
 			if (attrName == "scrollbar") {
@@ -706,7 +706,7 @@ namespace ezui {
 	bool Control::OnEvent(EventArgs& arg)
 	{
 		// 禁用状态下拦截鼠标或键盘事件
-		if (!this->Enable && ((arg.EventType & Event::OnMouseEvent) == arg.EventType || (arg.EventType & Event::OnKeyBoardEvent) == arg.EventType))
+		if (!this->IsEnabled() && ((arg.EventType & Event::OnMouseEvent) == arg.EventType || (arg.EventType & Event::OnKeyBoardEvent) == arg.EventType))
 		{
 			return false; // 拦截，不再传递
 		}
@@ -1342,6 +1342,17 @@ namespace ezui {
 		}
 		return false;
 	}
+
+	void Control::SetEnabled(bool flag) {
+		this->m_enabled = flag;
+	}
+	void Control::SetDisabled(bool flag) {
+		this->m_enabled = !flag;
+	}
+	bool Control::IsEnabled() {
+		return this->m_enabled;
+	}
+
 	void Control::SetVisible(bool flag) {
 		if (flag != this->m_bVisible && this->Parent) {
 			this->Parent->TryPendLayout();

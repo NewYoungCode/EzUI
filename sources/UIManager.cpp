@@ -87,7 +87,7 @@ namespace ezui {
 			//处理css的注释
 			auto pos1 = style.find("/*");
 			auto pos2 = style.find("*/", pos1 + 2);
-			if (pos1 != size_t(-1) && pos2 != size_t(-1)) {
+			if (pos1 != std::string::npos && pos2 != std::string::npos) {
 				style.erase(pos1, pos2 - pos1 + 2);
 			}
 			else {
@@ -99,7 +99,7 @@ namespace ezui {
 		while (true)
 		{
 			auto pos1 = style.find("}");
-			if (pos1 != size_t(-1)) {
+			if (pos1 != std::string::npos) {
 				strs.push_back(style.substr(0, pos1 + 1));
 				style.erase(0, pos1 + 1);
 			}
@@ -116,7 +116,7 @@ namespace ezui {
 			size_t pos4 = name.find(":");
 			UIString style_type;
 			UIString str = style.substr(pos3 + 1, pos2 - pos3 - 1);
-			if (pos4 != size_t(-1)) {
+			if (pos4 != std::string::npos) {
 				style_type = name.substr(pos4 + 1);
 				style_type = style_type.trim();
 			}

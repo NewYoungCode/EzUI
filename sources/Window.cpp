@@ -73,10 +73,9 @@ namespace ezui {
 				while (::GetUpdateRect(Hwnd(), &updateRect, FALSE))
 				{
 					Rect rect(updateRect);
-					if (updateRect.left == 0 && updateRect.top == 0 && updateRect.left == 0 && updateRect.right == 0) {
-						break;
+					if (!rect.IsEmptyArea()) {
+						::UpdateWindow(Hwnd());
 					}
-					::UpdateWindow(Hwnd());
 				}
 				};
 		}
@@ -207,7 +206,7 @@ namespace ezui {
 	}
 	void Window::SetRect(const Rect& rect)
 	{
-		::MoveWindow(Hwnd(), rect.X, rect.Y, rect.Width, rect.Height, FALSE);
+		::MoveWindow(Hwnd(), rect.X, rect.Y, rect.Width, rect.Height, TRUE);
 	}
 	void Window::SetMiniSize(const Size& size)
 	{
@@ -347,15 +346,11 @@ namespace ezui {
 
 	void Window::Invalidate()
 	{
-		if (m_layout) {
-			m_layout->Invalidate();
-		}
+		m_publicData->InvalidateRect(this->GetClientRect());
 	}
 	void Window::Refresh()
 	{
-		if (m_layout) {
-			m_layout->Refresh();
-		}
+		m_publicData->UpdateWindow();
 	}
 
 	void Window::CenterToScreen()
@@ -660,7 +655,7 @@ namespace ezui {
 				Point point{ p1.x,p1.y };
 				Point relativePoint;
 				Control* outCtl = this->HitTestControl(point, &relativePoint);//找到当前控件的位置
-				if (outCtl && outCtl->Enable) {
+				if (outCtl && outCtl->IsEnabled()) {
 					Control* pCtl = outCtl;
 					if ((pCtl->EventPassThrough & Event::OnHover)) {
 						while (pCtl)
@@ -1047,7 +1042,6 @@ namespace ezui {
 			this->OnDpiChange(m_publicData->Scale, Rect());
 		}
 		m_layout->SetRect(this->GetClientRect());
-		m_layout->Invalidate();
 	}
 
 	void Window::OnClose(bool& bClose)

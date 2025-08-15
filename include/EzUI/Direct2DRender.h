@@ -81,7 +81,7 @@ namespace ezui {
 		int GetFontHeight();//获取字体高度
 		int GetLineCount();//获取一共有多少行
 		IDWriteTextLayout* Get() const;
-		void SetUnderline(size_t pos = 0, size_t count = 0);
+		void SetUnderline(int pos = 0, int count = 0);
 		virtual ~TextLayout();
 	};
 

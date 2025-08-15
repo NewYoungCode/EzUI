@@ -12,7 +12,7 @@ LocalItem::LocalItem(const UIString& _songName, const UIString& _songTime) {
 
 	songName.Name = "autosz";
 	songName.SetText(_songName);
-	songName.Ellipsis = "...";//文本超出容器之外采用省略号
+	songName.SetElidedText("...");//文本超出容器之外采用省略号
 	songName.TextAlign = TextAlign::MiddleLeft;
 	songName.SetTips("child_" + _songName);
 	//穿透事件
@@ -62,7 +62,7 @@ SearchItem::SearchItem(const Song& s) {
 	Style.Border.Color = Color(245, 245, 245);
 	HoverStyle.BackColor = Color(245, 245, 245);
 
-	songName.Ellipsis = L"...";
+	songName.SetElidedText("...");
 	songName.SetText(s.SongName);
 	songName.TextAlign = TextAlign::MiddleLeft;
 	songName.EventPassThrough = Event::OnHover | Event::OnMouseDoubleClick;

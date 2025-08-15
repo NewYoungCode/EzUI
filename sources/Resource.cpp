@@ -116,7 +116,7 @@ namespace ezui {
 			root.erase(root.size() - 1, 1);
 		}
 		size_t pos = root.rfind("/");
-		if (pos != size_t(-1)) {
+		if (pos != std::string::npos) {
 			root = root.substr(0, pos + 1);
 		}
 		int index = 0;

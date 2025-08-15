@@ -33,8 +33,12 @@ namespace ezui {
 		int m_scrollY = 0;//用于y轴滚动
 		int m_lastX = 0;//上一个x位置
 		int m_lastY = 0;//上一个y位置 
-		Timer *m_timer;//用于光标闪烁
+		Timer* m_timer;//用于光标闪烁
 		bool m_bCareShow = false;//用于光标闪烁
+		int m_maxLen = -1;//最大文字数量
+		std::wstring m_placeholder;//placeholder懂得都懂 (在没有文字的情况下显示的文字)
+		std::wstring m_passwordChar;
+		bool m_readOnly = false;//是否只读
 	private:
 		void Init();
 		void InsertUnicode(const std::wstring& str);//插入unicode文字内部使用
@@ -63,27 +67,36 @@ namespace ezui {
 		virtual void OnLayout();
 		void Offset(int moveY);
 	public:
-		int MaxCount = -1;//最大文字数量
-		UIString Placeholder;//placeholder懂得都懂 (在没有文字的情况下显示的文字)
-		std::wstring PasswordChar;
-		bool ReadOnly = false;//是否只读
 		std::function<void(const UIString&)> TextChanged = NULL;
 	public:
 		TextBox(Object* parentObject = NULL);
 		virtual ~TextBox();
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
+		//获取焦点所在光标位置
 		virtual Rect GetCareRect()override;
 		//分析字符串
 		void Analysis();
 		//在当前光标中插入文字
 		void Insert(const UIString& str);
+		//获取输入框文字
 		const UIString GetText();
 		//获取滚动条
 		virtual ScrollBar* GetScrollBar()override;
+		//设置文字
 		void SetText(const UIString& text);
 		//是否多行显示
 		bool IsMultiLine();
 		//设置是否多行显示
 		void SetMultiLine(bool multiLine);
+		//设置为是否只读
+		void SetReadOnly(bool bReadOnly);
+		//是否为只读
+		bool IsReadOnly();
+		//设置最大输入字符个数
+		void SetMaxLength(int maxLen);
+		// 设置占位符文本
+		void SetPlaceholderText(const UIString& text);
+		//设置密码框占位符(建议单字符)
+		void SetPasswordChar(const UIString& passwordChar);
 	};
 };

@@ -24,7 +24,7 @@ namespace ezui {
 			Font font(fontFamily, fontSize);
 			args.Graphics.SetFont(font);
 			args.Graphics.SetColor(GetForeColor());
-			std::wstring wEllipsisText = Ellipsis.unicode();
+			const std::wstring& wEllipsisText = m_ellipsisText;
 			if (!wEllipsisText.empty()) { //水平文本溢出的显示方案
 				Size ellipsisTextSize;
 				{
@@ -51,7 +51,7 @@ namespace ezui {
 					}
 				}
 			}
-			std::wstring viewStr = !drawText.empty() ? drawText : Ellipsis.unicode();
+			std::wstring viewStr = !drawText.empty() ? drawText : wEllipsisText;
 			TextLayout textLayout(viewStr, font, SizeF(maxWidth, maxHeight), (IsAutoWidth() && IsAutoHeight()) ? TextAlign::TopLeft : this->TextAlign);
 			if (this->m_underlineCount != 0) {//下划线
 				textLayout.SetUnderline(m_underlinePos, m_underlineCount);
@@ -78,7 +78,7 @@ namespace ezui {
 				break;
 			}
 			if (key == "ellipsis") {
-				this->Ellipsis = value;
+				this->SetElidedText(value);
 				break;
 			}
 			if (key == "halign") {
@@ -146,7 +146,7 @@ namespace ezui {
 		m_wstr = text.unicode();
 		this->TryPendLayout();
 	}
-	void Label::SetUnderline(size_t pos, size_t count)
+	void Label::SetUnderline(int pos, int count)
 	{
 		this->m_underlinePos = pos;
 		this->m_underlineCount = count;
@@ -154,5 +154,9 @@ namespace ezui {
 	UIString Label::GetText()const
 	{
 		return UIString(m_wstr);
+	}
+	void Label::SetElidedText(const UIString& text)
+	{
+		this->m_ellipsisText = text.unicode();
 	}
 };

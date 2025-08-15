@@ -5,7 +5,7 @@
 #include "Text.h"
 
 namespace FileSystem {
-	extern class FileInfo;
+	class FileInfo;
 	enum FileType :int
 	{
 		File = 2,

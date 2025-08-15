@@ -27,7 +27,7 @@ namespace ezui {
 			BeginInvoke([this, hWnd]() {//捕获hWnd
 				if (!::IsWindow(hWnd))return;//如果窗口已经销毁 则不往下执行
 
-				if (this->Enable == false || this->ReadOnly == true) {
+				if (!this->IsEnabled() || this->IsReadOnly()) {
 					m_bCareShow = false;
 					return;
 				}
@@ -59,7 +59,7 @@ namespace ezui {
 		do
 		{
 			if (wParam == VK_BACK) { //退格键
-				if (ReadOnly) {
+				if (IsReadOnly()) {
 					break;
 				}
 				OnBackspace();//退格键的操作在里面
@@ -77,7 +77,7 @@ namespace ezui {
 				break;
 			}
 			if (wParam == 24) {//ctrl+x裁剪
-				if (ReadOnly) {
+				if (IsReadOnly()) {
 					break;
 				}
 				if (Copy()) {
@@ -88,7 +88,7 @@ namespace ezui {
 				break;
 			}
 			if (wParam == 22) {
-				if (ReadOnly) {
+				if (IsReadOnly()) {
 					break;
 				}
 				Paste();//粘贴
@@ -97,7 +97,7 @@ namespace ezui {
 				break;
 			}
 			if (wParam == 26) {//ctrl+z撤销
-				if (ReadOnly) {
+				if (IsReadOnly()) {
 					break;
 				}
 				break;
@@ -106,7 +106,7 @@ namespace ezui {
 		} while (false);
 
 		if (wParam < 32)return;//控制字符
-		if (ReadOnly) return;//只读
+		if (IsReadOnly()) return;//只读
 		WCHAR buf[2]{ (WCHAR)wParam ,0 };//
 		InsertUnicode(std::wstring(buf));//插入新的字符
 		Analysis();//分析字符串
@@ -275,8 +275,8 @@ namespace ezui {
 
 	void TextBox::Analysis()
 	{
-		if (m_text.size() > this->MaxCount) {
-			m_text.erase(this->MaxCount);
+		if (m_text.size() > (size_t)(this->m_maxLen)) {
+			m_text.erase((size_t)(this->m_maxLen));
 		}
 		m_scrollX = 0;
 		m_scrollY = 0;
@@ -292,12 +292,12 @@ namespace ezui {
 		if (m_textLayout) delete m_textLayout;
 
 		std::wstring* drawText = &this->m_text;
-		if (!PasswordChar.empty()) {
+		if (!m_passwordChar.empty()) {
 			drawText = new std::wstring;
-			int count = PasswordChar.size() * m_text.size();
+			int count = m_passwordChar.size() * m_text.size();
 			for (size_t i = 0; i < m_text.size(); ++i)
 			{
-				*drawText += PasswordChar;
+				*drawText += m_passwordChar;
 			}
 		}
 		else {
@@ -529,6 +529,26 @@ namespace ezui {
 			Analysis();
 		}
 	}
+	void TextBox::SetReadOnly(bool bReadOnly)
+	{
+		this->m_readOnly = bReadOnly;
+	}
+	bool TextBox::IsReadOnly()
+	{
+		return this->m_readOnly;
+	}
+	void TextBox::SetMaxLength(int maxLen)
+	{
+		this->m_maxLen = maxLen;
+	}
+	void TextBox::SetPlaceholderText(const UIString& text)
+	{
+		this->m_placeholder = text.unicode();
+	}
+	void TextBox::SetPasswordChar(const UIString& passwordChar)
+	{
+		this->m_passwordChar = passwordChar.unicode();
+	}
 	Rect TextBox::GetCareRect()
 	{
 		Rect rect(m_careRect);
@@ -546,11 +566,11 @@ namespace ezui {
 		do
 		{
 			if (key == "passwordchar") {
-				PasswordChar = value.unicode();
+				this->SetPasswordChar(value);
 				break;
 			}
 			if (key == "placeholder") {
-				this->Placeholder = value;
+				this->SetPlaceholderText(value);
 				break;
 			}
 			if (key == "text" || key == "value") {
@@ -559,11 +579,11 @@ namespace ezui {
 			}
 			if (key == "readonly") {
 				if (value == "true") {
-					this->ReadOnly = true;
+					this->SetReadOnly(true);
 					break;
 				}
 				if (value == "false") {
-					this->ReadOnly = false;
+					this->SetReadOnly(false);
 					break;
 				}
 			}
@@ -597,7 +617,7 @@ namespace ezui {
 			Color placeholderColor = fontColor;
 			placeholderColor.SetA(fontColor.GetA() * 0.6);
 			e.Graphics.SetColor(placeholderColor);
-			e.Graphics.DrawString(Placeholder.unicode(), RectF(0, 0, (float)Width(), (float)Height()), m_multiLine ? TextAlign::TopLeft : TextAlign::MiddleLeft);
+			e.Graphics.DrawString(m_placeholder, RectF(0, 0, (float)Width(), (float)Height()), m_multiLine ? TextAlign::TopLeft : TextAlign::MiddleLeft);
 		}
 
 		if (m_selectRects.size() > 0) {

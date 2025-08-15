@@ -8,6 +8,9 @@ namespace ezui {
 		// 控件是否已经被移除或释放
 		bool* m_bRemove = NULL;
 
+		// 控件是否启用，禁止状态下鼠标键盘消息将不可用
+		bool m_enabled = true;
+
 		// 控件是否可见。此标志为 true 时,控件为显示状态
 		bool m_bVisible = true;
 
@@ -61,12 +64,11 @@ namespace ezui {
 
 		// dock 样式
 		DockStyle m_dock = DockStyle::None;
-
-
 	protected:
 		// 基于控件中的可见控件集合
 		Controls ViewControls;
-
+		// 控件当前状态
+		ControlState State = ControlState::Static;
 	public:
 		// 外边距
 		// 让容器独占一行或一列时，设置边距会使控件变小，不可设置为负数
@@ -74,9 +76,6 @@ namespace ezui {
 
 		// 控件的 ObjectName ID
 		UIString Name;
-
-		// 控件当前状态
-		ControlState State = ControlState::Static;
 
 		// 控件行为
 		ControlAction Action = ControlAction::None;
@@ -95,9 +94,6 @@ namespace ezui {
 
 		// 父控件指针
 		Control* Parent = NULL;
-
-		// 控件是否启用，禁止状态下鼠标键盘消息将不可用
-		bool Enable = true;
 
 		// 添加到主窗口通知函数中可拦截的事件
 		Event EventFilter = Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnKeyChar | Event::OnKeyDown | Event::OnKeyUp;
@@ -121,9 +117,10 @@ namespace ezui {
 		// 所有事件优先进入此函数(内部处理)
 		bool OnEvent(EventArgs& arg);
 
-		//属性或者css样式都适用(css样式和属性都可以设置这些,只对静态样式生效)
-		bool ApplyStyleProperty(const UIString& key, const UIString& value);
 	protected:
+		//属性或者css样式都适用(css样式和属性都可以设置这些,只对静态样式生效)
+		virtual bool ApplyStyleProperty(const UIString& key, const UIString& value);
+
 		// 设置内容宽度，仅限子类使用
 		virtual void SetContentWidth(int width);
 
@@ -456,6 +453,15 @@ namespace ezui {
 
 		// 交换两个子控件的位置
 		virtual bool SwapChild(Control* childCtl, Control* childCt2);
+
+		//是否启用控件
+		void SetEnabled(bool flag);
+
+		//是否禁用控件
+		void SetDisabled(bool flag);
+
+		//控件是否已启用
+		bool IsEnabled();
 
 		// 在指定位置插入子控件
 		virtual void Insert(int pos, Control* childCtl);
