@@ -11,14 +11,12 @@ namespace ezui {
 		Rect m_clipRect;
 		HWND m_hWnd = NULL;
 		WORD m_radius = 0;
+		WindowData* m_publicData = NULL;
 	private:
-		void setA(int x, int y, BYTE a, float radius);
+		void SetAplpha(int x, int y, BYTE a, float radius);
 		bool SetShadow(int m_Width, int m_Height, int iSize, float radius);
 	protected:
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
-	public:
-		//公共数据 请不要改动此变量
-		WindowData* PublicData = NULL;
 	public:
 		ShadowBox(int width, int height, HWND OwnerWnd);//构造函数
 		virtual ~ShadowBox();

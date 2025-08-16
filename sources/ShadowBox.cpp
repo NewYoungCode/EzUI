@@ -7,12 +7,12 @@ namespace ezui {
 		DWORD dwFlags = WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT;
 		m_hWnd = CreateWindowExW(dwFlags, ezui::__EzUI__WindowClassName, L"ShadowBox", WS_POPUP, 0, 0, width, height, hwnd, NULL, ezui::__EzUI__HINSTANCE, NULL);
 		ASSERT(m_hWnd);
-		this->PublicData = new WindowData;
+		this->m_publicData = new WindowData;
 		//绑定消息过程
-		PublicData->WndProc = [this](HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) ->LRESULT {
+		m_publicData->WndProc = [this](HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) ->LRESULT {
 			return this->WndProc(uMsg, wParam, lParam);
 			};
-		UI_SET_USERDATA(Hwnd(), this->PublicData);
+		UI_SET_USERDATA(Hwnd(), this->m_publicData);
 	}
 
 	LRESULT ShadowBox::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -52,13 +52,13 @@ namespace ezui {
 			iAplpha = int(255 - cos(fN * (i)) * 255);
 			for (x = Left; x <= Right; ++x)
 			{
-				setA(x, i, iAplpha, _radius);
-				setA(x, m_Height - i - 1, iAplpha, _radius);
+				SetAplpha(x, i, iAplpha, _radius);
+				SetAplpha(x, m_Height - i - 1, iAplpha, _radius);
 			}
 			for (y = Top; y <= Bottom; ++y)
 			{
-				setA(i, y, iAplpha, _radius);
-				setA(m_Width - i - 1, y, iAplpha, _radius);
+				SetAplpha(i, y, iAplpha, _radius);
+				SetAplpha(m_Width - i - 1, y, iAplpha, _radius);
 			}
 		}
 		//处理R角的阴影
@@ -78,23 +78,23 @@ namespace ezui {
 				else {
 					iAplpha = 0;
 				}
-				setA(x, y, iAplpha, _radius);
-				setA(y, x, iAplpha, _radius);
+				SetAplpha(x, y, iAplpha, _radius);
+				SetAplpha(y, x, iAplpha, _radius);
 
-				setA(m_Width - x - 1, y, iAplpha, _radius);
-				setA(m_Width - y - 1, x, iAplpha, _radius);
+				SetAplpha(m_Width - x - 1, y, iAplpha, _radius);
+				SetAplpha(m_Width - y - 1, x, iAplpha, _radius);
 
-				setA(x, m_Height - y - 1, iAplpha, _radius);
-				setA(y, m_Height - x - 1, iAplpha, _radius);
+				SetAplpha(x, m_Height - y - 1, iAplpha, _radius);
+				SetAplpha(y, m_Height - x - 1, iAplpha, _radius);
 
-				setA(m_Width - x - 1, m_Height - y - 1, iAplpha, _radius);
-				setA(m_Width - y - 1, m_Height - x - 1, iAplpha, _radius);
+				SetAplpha(m_Width - x - 1, m_Height - y - 1, iAplpha, _radius);
+				SetAplpha(m_Width - y - 1, m_Height - x - 1, iAplpha, _radius);
 			}
 		}
 		return true;
 	}
 
-	void ShadowBox::setA(int x, int y, BYTE a, float radius) {
+	void ShadowBox::SetAplpha(int x, int y, BYTE a, float radius) {
 		//如果窗口没有圆角 则不允许圆角绘制到窗口内部去造成遮挡影响观感
 		if (std::abs(radius) < 1e-6f && m_clipRect.Contains(x, y)) { //不允许绘制在OWner窗口区域
 			return;
@@ -107,7 +107,7 @@ namespace ezui {
 		//((BYTE*)point)[1] = 50 * opacity;//修改G通道数值
 		//((BYTE*)point)[0] = 50 * opacity;//修改B通道数值
 	}
-	void ShadowBox::Update(int _shadowWidth,int radius) {
+	void ShadowBox::Update(int _shadowWidth, int radius) {
 		HWND ownerWnd = ::GetWindow(m_hWnd, GW_OWNER);
 		if (!::IsWindowVisible(ownerWnd) || ::IsIconic(ownerWnd)) {
 			::ShowWindow(m_hWnd, SW_HIDE);
@@ -156,14 +156,14 @@ namespace ezui {
 	}
 	ShadowBox::~ShadowBox()
 	{
-		if (Hwnd()) {
+		if (::IsWindow(Hwnd())) {
 			::DestroyWindow(Hwnd());
 		}
 		if (m_bufBitmap) {
 			delete m_bufBitmap;
 		}
-		if (PublicData) {
-			delete PublicData;
+		if (m_publicData) {
+			delete m_publicData;
 		}
 	}
 };
