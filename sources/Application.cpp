@@ -6,7 +6,7 @@
 namespace ezui {
 	bool g_comInitialized = false;//标记是否由我初始化
 	std::list<HWND> g_hWnds;//存储所有使用本框架产生的窗口句柄
-	const wchar_t* __EzUI__HiddenMessageWindowClass = L"__EzUI__HiddenMessageWindowClass";
+#define __EzUI__INVOKER_WINDOW_CLASS   L"__EzUI__InvokerWindowClass"
 
 	// 内部使用：枚举名称时的上下文
 	struct ResourceContext {
@@ -76,11 +76,11 @@ namespace ezui {
 				return ::DefWindowProc(hwnd, msg, wParam, lParam);
 				};
 			wcex.hInstance = ezui::__EzUI__HINSTANCE;
-			wcex.lpszClassName = __EzUI__HiddenMessageWindowClass;
+			wcex.lpszClassName = __EzUI__INVOKER_WINDOW_CLASS;
 			RegisterClassExW(&wcex);
 			ezui::__EzUI_MessageWnd = CreateWindowEx(
 				0,                 // 无特殊扩展样式
-				__EzUI__HiddenMessageWindowClass,         // 上面注册的类名
+				__EzUI__INVOKER_WINDOW_CLASS,         // 上面注册的类名
 				L"",               // 窗口名（无用）
 				0,                 // 样式设为 0（无 WS_VISIBLE）
 				0, 0, 0, 0,        // 尺寸全为 0
@@ -95,7 +95,7 @@ namespace ezui {
 		if (ezui::__EzUI_MessageWnd) {
 			::DestroyWindow(ezui::__EzUI_MessageWnd);
 			ezui::__EzUI_MessageWnd = NULL;
-			BOOL ret = UnregisterClassW(ezui::__EzUI__HiddenMessageWindowClass, ezui::__EzUI__HINSTANCE);
+			BOOL ret = UnregisterClassW(__EzUI__INVOKER_WINDOW_CLASS, ezui::__EzUI__HINSTANCE);
 		}
 	}
 
@@ -191,10 +191,8 @@ namespace ezui {
 		}
 		RenderInitialize();//初始化图形绘制库 D2D/GDI/GDI+
 	}
-	Application::~Application() {
-		//销毁通讯窗口
-		DestroyInvoker();
-		//销毁所有窗口
+	//销毁所有窗口
+	void DestroyAllWindows() {
 		while (ezui::g_hWnds.size() > 0)
 		{
 			auto itor = ezui::g_hWnds.begin();
@@ -204,6 +202,13 @@ namespace ezui {
 				::DestroyWindow(hwnd);
 			}
 		}
+	}
+
+	Application::~Application() {
+		//销毁通讯窗口
+		DestroyInvoker();
+		//销毁所有窗口
+		DestroyAllWindows();
 		//取消窗口注册的类
 		BOOL ret = UnregisterClassW(ezui::__EzUI__WindowClassName, ezui::__EzUI__HINSTANCE);
 		RenderUnInitialize();
@@ -230,6 +235,8 @@ namespace ezui {
 	void Application::Exit(int exitCode) {
 		//销毁用于通讯的不可见窗口
 		DestroyInvoker();
+		//销毁所有窗口
+		DestroyAllWindows();
 		//退出消息循环
 		::PostQuitMessage(exitCode);
 	}
