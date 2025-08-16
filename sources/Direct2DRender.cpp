@@ -833,15 +833,15 @@ namespace ezui {
 					D2D1_RENDER_TARGET_TYPE_DEFAULT,
 					D2D1::PixelFormat(
 						DXGI_FORMAT_B8G8R8A8_UNORM,
-						D2D1_ALPHA_MODE_IGNORE),
+						D2D1_ALPHA_MODE_PREMULTIPLIED),
 					0,
 					0,
 					D2D1_RENDER_TARGET_USAGE_NONE,
 					D2D1_FEATURE_LEVEL_DEFAULT
 				);
-				//初始化一下DX让第一次启动窗口快一点
+				//初始化一下d2d让第一次启动窗口快一点
 				ID2D1DCRenderTarget* initRender = NULL;
-				HRESULT	hr = D2D::g_Direct2dFactory->CreateDCRenderTarget(&defaultOption, (ID2D1DCRenderTarget**)&initRender);
+				hr = D2D::g_Direct2dFactory->CreateDCRenderTarget(&defaultOption, (ID2D1DCRenderTarget**)&initRender);
 				SafeRelease(&initRender);
 			}
 		}

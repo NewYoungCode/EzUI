@@ -14,7 +14,6 @@ namespace ezui {
 	HMODULE __EzUI__HINSTANCE = NULL;
 	Resource* __EzUI__Resource = NULL;
 	DWORD __EzUI__ThreadId = NULL;
-	std::list<HWND> __EzUI__Wnds;
 	HWND __EzUI_MessageWnd = NULL;
 	const std::list<ezui::MonitorInfo> __EzUI__MonitorInfos;
 

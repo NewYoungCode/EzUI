@@ -48,7 +48,6 @@ namespace ezui {
 	extern UI_VAR_EXPORT HMODULE __EzUI__HINSTANCE;//全局实例
 	extern UI_VAR_EXPORT Resource* __EzUI__Resource;//文件中的全局资源句柄
 	extern UI_VAR_EXPORT DWORD __EzUI__ThreadId;//UI的线程Id
-	extern UI_VAR_EXPORT std::list<HWND> __EzUI__Wnds;//存储所有使用本框架产生的窗口句柄
 	extern UI_VAR_EXPORT HWND __EzUI_MessageWnd;//用于UI通讯的隐形窗口
 	extern UI_VAR_EXPORT const std::list<ezui::MonitorInfo> __EzUI__MonitorInfos;//所有监视器信息
 	//装载字体

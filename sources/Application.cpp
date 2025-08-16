@@ -4,6 +4,10 @@
 
 #undef FindResource
 namespace ezui {
+	bool g_comInitialized = false;//标记是否由我初始化
+	std::list<HWND> g_hWnds;//存储所有使用本框架产生的窗口句柄
+	const wchar_t* __EzUI__HiddenMessageWindowClass = L"__EzUI__HiddenMessageWindowClass";
+
 	// 内部使用：枚举名称时的上下文
 	struct ResourceContext {
 		UIString rcIDName;
@@ -37,12 +41,12 @@ namespace ezui {
 namespace ezui {
 	LRESULT CALLBACK __EzUI__WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 		if (message == WM_CREATE) {
-			__EzUI__Wnds.push_back(hWnd);
+			g_hWnds.push_back(hWnd);
 		}
 		else if (message == WM_DESTROY) {
-			auto itor = std::find(__EzUI__Wnds.begin(), __EzUI__Wnds.end(), hWnd);
-			if (itor != __EzUI__Wnds.end()) {
-				__EzUI__Wnds.erase(itor);
+			auto itor = std::find(g_hWnds.begin(), g_hWnds.end(), hWnd);
+			if (itor != g_hWnds.end()) {
+				g_hWnds.erase(itor);
 			}
 		}
 		WindowData* wndData = (WindowData*)UI_GET_USERDATA(hWnd);
@@ -53,39 +57,50 @@ namespace ezui {
 		return ::DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
-	const wchar_t* __EzUI__HiddenMessageWindowClass = L"__EzUI__HiddenMessageWindowClass";
-	void RegMessageWnd() {
-		::WNDCLASSEXW wcex = {};
-		wcex.cbSize = sizeof(wcex);
-		wcex.lpfnWndProc = [](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) -> LRESULT {
-			if (msg == WM_GUI_SYSTEM) {
-				if (wParam == WM_GUI_BEGININVOKE || wParam == WM_GUI_INVOKE) {
-					using Func = std::function<void()>;
-					Func* callback = (Func*)lParam;
-					(*callback)();
-					if (wParam == WM_GUI_BEGININVOKE) {
-						delete callback;
+	void InitInvoker() {
+		if (!ezui::__EzUI_MessageWnd) {
+			::WNDCLASSEXW wcex = {};
+			wcex.cbSize = sizeof(wcex);
+			wcex.lpfnWndProc = [](HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) -> LRESULT {
+				if (msg == WM_GUI_SYSTEM) {
+					if (wParam == WM_GUI_BEGININVOKE || wParam == WM_GUI_INVOKE) {
+						using Func = std::function<void()>;
+						Func* callback = (Func*)lParam;
+						(*callback)();
+						if (wParam == WM_GUI_BEGININVOKE) {
+							delete callback;
+						}
 					}
+					return 0;
 				}
-				return 0;
-			}
-			return ::DefWindowProc(hwnd, msg, wParam, lParam);
-			};
-		wcex.hInstance = ezui::__EzUI__HINSTANCE;
-		wcex.lpszClassName = __EzUI__HiddenMessageWindowClass;
-		RegisterClassExW(&wcex);
-		ezui::__EzUI_MessageWnd = CreateWindowEx(
-			0,                 // 无特殊扩展样式
-			__EzUI__HiddenMessageWindowClass,         // 上面注册的类名
-			L"",               // 窗口名（无用）
-			0,                 // 样式设为 0（无 WS_VISIBLE）
-			0, 0, 0, 0,        // 尺寸全为 0
-			nullptr, nullptr, ezui::__EzUI__HINSTANCE, nullptr
-		);
+				return ::DefWindowProc(hwnd, msg, wParam, lParam);
+				};
+			wcex.hInstance = ezui::__EzUI__HINSTANCE;
+			wcex.lpszClassName = __EzUI__HiddenMessageWindowClass;
+			RegisterClassExW(&wcex);
+			ezui::__EzUI_MessageWnd = CreateWindowEx(
+				0,                 // 无特殊扩展样式
+				__EzUI__HiddenMessageWindowClass,         // 上面注册的类名
+				L"",               // 窗口名（无用）
+				0,                 // 样式设为 0（无 WS_VISIBLE）
+				0, 0, 0, 0,        // 尺寸全为 0
+				nullptr, nullptr, ezui::__EzUI__HINSTANCE, nullptr
+			);
+		}
+	}
+
+	//销毁多线程通讯窗口
+	void DestroyInvoker() {
+		//销毁用于通讯的不可见窗口
+		if (ezui::__EzUI_MessageWnd) {
+			::DestroyWindow(ezui::__EzUI_MessageWnd);
+			ezui::__EzUI_MessageWnd = NULL;
+			BOOL ret = UnregisterClassW(ezui::__EzUI__HiddenMessageWindowClass, ezui::__EzUI__HINSTANCE);
+		}
 	}
 
 	void Application::EnableHighDpi() {
-		ezui::GetMonitor((std::list<MonitorInfo>*) & ezui::__EzUI__MonitorInfos);
+		ezui::GetMonitor((std::list<MonitorInfo>*) & ezui::__EzUI__MonitorInfos);//获取一次显示器信息
 		//DPI感知相关
 		//不跟随系统放大无法接收WM_DISPLAYCHANGED消息
 		//bool b = SetProcessDPIAware();
@@ -163,29 +178,43 @@ namespace ezui {
 			return;
 		}
 
-		//注册一个窗口类并创建隐形窗口用于UI通讯
-		RegMessageWnd();
-
-		//初始化公共控件库
-		INITCOMMONCONTROLSEX icex;
-		icex.dwSize = sizeof(icex);
-		icex.dwICC = ICC_WIN95_CLASSES;  // 或者使用其他需要的控件类别
-		::InitCommonControlsEx(&icex);
+		//注册一个窗口类并创建隐形窗口用于UI直接的多线程通讯
+		InitInvoker();
 		//为程序设置工作目录
 		std::wstring startPath = Application::StartPath().unicode();
 		::SetCurrentDirectoryW(startPath.c_str());
-		::CoInitialize(NULL);//初始化com
+		if (!g_comInitialized) {
+			auto ret = ::CoInitialize(NULL);//初始化com
+			if (ret == S_OK) {
+				g_comInitialized = true;//由我初始化的
+			}
+		}
 		RenderInitialize();//初始化图形绘制库 D2D/GDI/GDI+
 	}
 	Application::~Application() {
+		//销毁通讯窗口
+		DestroyInvoker();
+		//销毁所有窗口
+		while (ezui::g_hWnds.size() > 0)
+		{
+			auto itor = ezui::g_hWnds.begin();
+			if (itor != ezui::g_hWnds.end()) {
+				HWND hwnd = *itor;
+				g_hWnds.erase(itor);
+				::DestroyWindow(hwnd);
+			}
+		}
+		//取消窗口注册的类
+		BOOL ret = UnregisterClassW(ezui::__EzUI__WindowClassName, ezui::__EzUI__HINSTANCE);
 		RenderUnInitialize();
-		::CoUninitialize();
+		if (g_comInitialized) {
+			::CoUninitialize();
+			g_comInitialized = false;
+		}
 		if (ezui::__EzUI__Resource) {
 			delete ezui::__EzUI__Resource;
 			ezui::__EzUI__Resource = NULL;
 		}
-		UnregisterClassW(ezui::__EzUI__HiddenMessageWindowClass, ezui::__EzUI__HINSTANCE);
-		UnregisterClassW(ezui::__EzUI__WindowClassName, ezui::__EzUI__HINSTANCE);
 	}
 
 	int Application::Exec()
@@ -199,18 +228,8 @@ namespace ezui {
 	}
 
 	void Application::Exit(int exitCode) {
-		//销毁通讯窗口
-		::DestroyWindow(ezui::__EzUI_MessageWnd);
-		//退出循环前 销毁所有窗口
-		while (ezui::__EzUI__Wnds.size() > 0)
-		{
-			auto itor = ezui::__EzUI__Wnds.begin();
-			if (itor != ezui::__EzUI__Wnds.end()) {
-				HWND hwnd = *itor;
-				__EzUI__Wnds.erase(itor);
-				::DestroyWindow(hwnd);
-			}
-		}
+		//销毁用于通讯的不可见窗口
+		DestroyInvoker();
 		//退出消息循环
 		::PostQuitMessage(exitCode);
 	}
