@@ -55,55 +55,6 @@ namespace ezui {
 		__super::OnKeyChar(arg);
 		WPARAM wParam = arg.wParam;
 		LPARAM lParam = arg.lParam;
-		//Debug::Log(utf8("按下了%d"), wParam);
-		do
-		{
-			if (wParam == VK_BACK) { //退格键
-				if (IsReadOnly()) {
-					break;
-				}
-				OnBackspace();//退格键的操作在里面
-				Analysis();//重新分析
-				Invalidate();//刷新
-				break;
-			}
-			if (wParam == 1) {
-				SelectedAll();//全选
-				Invalidate();//刷新
-				break;
-			}
-			if (wParam == 3) {//复制
-				Copy();
-				break;
-			}
-			if (wParam == 24) {//ctrl+x裁剪
-				if (IsReadOnly()) {
-					break;
-				}
-				if (Copy()) {
-					DeleteRange();//因为是剪切 所以要删除选中的这段
-					Analysis();
-					Invalidate();//刷新
-				}
-				break;
-			}
-			if (wParam == 22) {
-				if (IsReadOnly()) {
-					break;
-				}
-				Paste();//粘贴
-				Analysis();//分析字符串
-				Invalidate();//刷新
-				break;
-			}
-			if (wParam == 26) {//ctrl+z撤销
-				if (IsReadOnly()) {
-					break;
-				}
-				break;
-			}
-
-		} while (false);
 
 		if (wParam < 32)return;//控制字符
 		if (IsReadOnly()) return;//只读
@@ -251,9 +202,57 @@ namespace ezui {
 		__super::OnKeyDown(arg);
 		WPARAM wParam = arg.wParam;
 		LPARAM lParam = arg.lParam;
-		/*	if (wParam == 16) {
-				_down = true;
-			}*/
+		//判断是否按下Ctrl键
+		if (GetKeyState(VK_CONTROL) & 0x8000) {
+			do
+			{
+				if (wParam == 'A') {//ctrl+a全选
+					SelectedAll();//全选
+					Invalidate();//刷新
+					break;
+				}
+				if (wParam == 'C') {//ctrl+c 复制
+					Copy();
+					break;
+				}
+				if (wParam == 'X') {//ctrl+x 剪切
+					if (IsReadOnly()) {
+						break;
+					}
+					if (Copy()) {
+						DeleteRange();//因为是剪切 所以要删除选中的这段
+						Analysis();
+						Invalidate();//刷新
+					}
+					break;
+				}
+				if (wParam == 'V') {//ctrl+v 粘贴
+					if (IsReadOnly()) {
+						break;
+					}
+					Paste();
+					Analysis();//分析字符串
+					Invalidate();//刷新
+					break;
+				}
+				if (wParam == 'Z') {//ctrl+z撤销
+					if (IsReadOnly()) {
+						break;
+					}
+					break;
+				}
+			} while (false);
+			return;
+		}
+		if (wParam == VK_BACK) { //退格键(删除字符)
+			if (IsReadOnly()) {
+				return;
+			}
+			OnBackspace();//退格键的操作在里面
+			Analysis();//重新分析
+			Invalidate();//刷新
+			return;
+		}
 		if (wParam == VK_LEFT) {
 			m_textPos--;
 			m_bCareShow = true;
@@ -270,7 +269,6 @@ namespace ezui {
 			Invalidate();
 			return;
 		}
-		//Debug::Log(utf8("按下了%d"), wParam);
 	}
 
 	void TextBox::Analysis()

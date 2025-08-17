@@ -484,8 +484,9 @@ namespace ezui {
 				cpf.dwStyle = CFS_POINT;
 				Control* input = m_inputControl;
 				Rect rect = input->GetCareRect();
-				int	x = input->GetClientRect().X + rect.X;
-				int y = input->GetClientRect().Y + rect.Y + rect.Height;
+				Rect inputRect = input->GetClientRect();
+				int	x = inputRect.X + rect.X;
+				int y = inputRect.Y + rect.Y + rect.Height;
 				if (y == m_rectClient.Height) {
 					y -= 1;//神奇!如果输入位置和等于窗口的高 那么输入法就会跑到左上角去
 				}
@@ -494,19 +495,33 @@ namespace ezui {
 				ImmSetCompositionWindow(hIMC, &cpf);
 				ImmReleaseContext(Hwnd(), hIMC);
 			}
-			//Debug::Log("%d %d", x, y);
-			break;
+			return 0;
+			//break;
 		}
-		case WM_IME_COMPOSITION:
-		{
-			/*		HIMC        hIMC;
-					ImmGetContext(_hWnd);
-					hIMC = ImmGetContext(_hWnd);
-					char buf[256]{ 0 };
-					BOOL b = ImmGetCompositionString(hIMC, GCS_COMPSTR, buf, 255);
-					b = ImmReleaseContext(_hWnd, hIMC);*/
-			break;
-		}
+		//case WM_IME_COMPOSITION:
+		//{
+		//	if (lParam & GCS_RESULTSTR) {
+		//		HIMC hImc = ImmGetContext(Hwnd());
+		//		if (hImc) {
+		//			LONG bytes = ImmGetCompositionStringW(hImc, GCS_RESULTSTR, nullptr, 0);
+		//			if (bytes > 0) {
+		//				std::wstring committed(bytes / sizeof(wchar_t), L'\0');
+		//				ImmGetCompositionStringW(hImc, GCS_RESULTSTR,
+		//					(WCHAR*)committed.data(), bytes);
+		//				for (auto& it : committed) {
+		//					OnKeyChar((WPARAM)it, NULL);
+		//				}
+		//			}
+		//			ImmReleaseContext(Hwnd(), hImc);
+		//		}
+		//	}
+		//	return 0;
+		// 	break;
+		//}
+		//case WM_IME_ENDCOMPOSITION: {
+		//	return 0;
+		//	break;
+		//}
 		case WM_ERASEBKGND: {
 			break;
 		}
@@ -617,6 +632,7 @@ namespace ezui {
 		}
 		case WM_CHAR: {
 			OnKeyChar(wParam, lParam);
+			return 0;
 			break;
 		}
 		case WM_KEYDOWN:
