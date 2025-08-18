@@ -82,5 +82,7 @@ inline HCURSOR LoadCursor(HINSTANCE hInstance, LPCTSTR lpCursorName) {
 
 #endif // _WINDLL
 
+#define EZUI_WINDOW_CLASS L"EzUI_Window"
+#define EZUI_INVOKER_WINDOW_CLASS L"EzUI_InvokerWindow"
 //下面的渲染方式只能选一个
 #define USED_DIRECT2D 1  //DX绘制 性能好 内存占用高

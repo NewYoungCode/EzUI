@@ -373,7 +373,7 @@ namespace ezui {
 		if (!frame || !canvas) return;
 
 		// 锁定整个画布
-		WICRect fullRect = { 0, 0, CanvasWidth, CanvasHeight };
+		WICRect fullRect{ 0, 0, (INT)CanvasWidth, (INT)CanvasHeight };
 		IWICBitmapLock* lock = nullptr;
 		if (FAILED(canvas->Lock(&fullRect, WICBitmapLockWrite, &lock))) return;
 
@@ -866,8 +866,8 @@ namespace ezui {
 					goto ImagingFactoryInit;
 				}
 				CHAR buf[256]{ 0 };
-				sprintf_s(buf, "Code 0x%p", (void*)hr);
-				::MessageBoxA(NULL, "Failed to create IWICImagingFactory", buf, MB_ICONSTOP);
+				sprintf_s(buf, "Code 0x%08X", hr);
+				::MessageBoxA(NULL, buf, "Failed to create IWICImagingFactory", MB_ICONSTOP);
 			}
 		}
 

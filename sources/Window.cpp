@@ -46,7 +46,7 @@ namespace ezui {
 			return this->WndProc(uMsg, wParam, lParam);
 			};
 		//创建窗口
-		HWND hWnd = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, ezui::__EzUI__WindowClassName, ezui::__EzUI__WindowClassName, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
+		HWND hWnd = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, EZUI_WINDOW_CLASS, EZUI_WINDOW_CLASS, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
 			rect.X, rect.Y, rect.Width, rect.Height, owner, NULL, ezui::__EzUI__HINSTANCE, NULL);
 		//设置窗口句柄
 		this->SetHwnd(hWnd);

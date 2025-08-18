@@ -49,10 +49,10 @@ namespace ezui {
 				x += FontBox.Width;
 			}
 			float y = FontBox.Y;
-			return Rect(x, y, 1, (FontBox.Height + 0.5));
+			return Rect((int)x, (int)y, 1, (int)(FontBox.Height + 0.5));
 		}
 		int GetFontHeight() {
-			return FontBox.Height + 0.5;
+			return int(FontBox.Height + 0.5);
 		}
 	};
 

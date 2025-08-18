@@ -465,10 +465,10 @@ namespace ezui {
 			this->Height = 0;
 		}
 		RectF(const Rect& rect) {
-			this->X = rect.X;
-			this->Y = rect.Y;
-			this->Width = rect.Width;
-			this->Height = rect.Height;
+			this->X = (float)rect.X;
+			this->Y = (float)rect.Y;
+			this->Width = (float)rect.Width;
+			this->Height = (float)rect.Height;
 		}
 		RectF(const RectF& rect) {
 			this->X = rect.X;
@@ -506,10 +506,10 @@ namespace ezui {
 			return *this;
 		}
 		void Scale(float scale) {
-			Top = Top * scale + 0.5;
-			Bottom = Bottom * scale + 0.5;
-			Left = Left * scale + 0.5;
-			Right = Right * scale + 0.5;
+			Top = WORD(Top * scale + 0.5);
+			Bottom = WORD(Bottom * scale + 0.5);
+			Left = WORD(Left * scale + 0.5);
+			Right = WORD(Right * scale + 0.5);
 		}
 		//获取垂直所占空间
 		WORD GetVSpace() {
@@ -592,14 +592,14 @@ namespace ezui {
 			return *this;
 		}
 		void Scale(float scale) {
-			Left = Left * scale + 0.5;
-			Top = Top * scale + 0.5;
-			Right = Right * scale + 0.5;
-			Bottom = Bottom * scale + 0.5;
-			TopLeftRadius = TopLeftRadius * scale + 0.5;
-			TopRightRadius = TopRightRadius * scale + 0.5;
-			BottomRightRadius = BottomRightRadius * scale + 0.5;
-			BottomLeftRadius = BottomLeftRadius * scale + 0.5;
+			Left = WORD(Left * scale + 0.5);
+			Top = WORD(Top * scale + 0.5);
+			Right = WORD(Right * scale + 0.5);
+			Bottom = WORD(Bottom * scale + 0.5);
+			TopLeftRadius = WORD(TopLeftRadius * scale + 0.5);
+			TopRightRadius = WORD(TopRightRadius * scale + 0.5);
+			BottomRightRadius = WORD(BottomRightRadius * scale + 0.5);
+			BottomLeftRadius = WORD(BottomLeftRadius * scale + 0.5);
 		}
 	};
 #if 1
@@ -716,8 +716,8 @@ namespace ezui {
 		float clientHeight = rect.Height;
 		float clientRate = clientWidth / clientHeight;
 		//图片数据
-		float imgWidth = imgSize.Width;
-		float imgHeight = imgSize.Height;
+		float imgWidth = (float)imgSize.Width;
+		float imgHeight = (float)imgSize.Height;
 		float imgRate = imgWidth / imgHeight;
 
 		if (imageSizeMode == ImageSizeMode::Fit) {
@@ -754,7 +754,7 @@ namespace ezui {
 		if (imageSizeMode == ImageSizeMode::Original) {
 			float x = (rect.Width - imgSize.Width) / 2.0f;
 			float y = (rect.Height - imgSize.Height) / 2.0f;
-			return RectF(x, y, imgSize.Width, imgSize.Height);
+			return RectF(x, y, (float)imgSize.Width, (float)imgSize.Height);
 		}
 		return rect;
 	}

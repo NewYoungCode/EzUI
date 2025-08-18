@@ -6,7 +6,6 @@
 namespace ezui {
 	bool g_comInitialized = false;//标记是否由我初始化
 	std::list<HWND> g_hWnds;//存储所有使用本框架产生的窗口句柄
-#define __EzUI__INVOKER_WINDOW_CLASS   L"__EzUI__InvokerWindowClass"
 
 	// 内部使用：枚举名称时的上下文
 	struct ResourceContext {
@@ -76,11 +75,11 @@ namespace ezui {
 				return ::DefWindowProc(hwnd, msg, wParam, lParam);
 				};
 			wcex.hInstance = ezui::__EzUI__HINSTANCE;
-			wcex.lpszClassName = __EzUI__INVOKER_WINDOW_CLASS;
+			wcex.lpszClassName = EZUI_INVOKER_WINDOW_CLASS;
 			RegisterClassExW(&wcex);
 			ezui::__EzUI_MessageWnd = CreateWindowEx(
 				0,                 // 无特殊扩展样式
-				__EzUI__INVOKER_WINDOW_CLASS,         // 上面注册的类名
+				EZUI_INVOKER_WINDOW_CLASS,         // 上面注册的类名
 				L"",               // 窗口名（无用）
 				0,                 // 样式设为 0（无 WS_VISIBLE）
 				0, 0, 0, 0,        // 尺寸全为 0
@@ -95,7 +94,7 @@ namespace ezui {
 		if (ezui::__EzUI_MessageWnd) {
 			::DestroyWindow(ezui::__EzUI_MessageWnd);
 			ezui::__EzUI_MessageWnd = NULL;
-			BOOL ret = UnregisterClassW(__EzUI__INVOKER_WINDOW_CLASS, ezui::__EzUI__HINSTANCE);
+			BOOL ret = UnregisterClassW(EZUI_INVOKER_WINDOW_CLASS, ezui::__EzUI__HINSTANCE);
 		}
 	}
 
@@ -169,7 +168,7 @@ namespace ezui {
 		wcex.hCursor = LoadCursorW(NULL, IDC_ARROW);//光标
 		wcex.hbrBackground = NULL; // 窗口背景
 		wcex.lpszMenuName = NULL;
-		wcex.lpszClassName = ezui::__EzUI__WindowClassName;//类名
+		wcex.lpszClassName = EZUI_WINDOW_CLASS;//类名
 
 		if (!RegisterClassExW(&wcex)) //注册窗口
 		{
@@ -210,7 +209,7 @@ namespace ezui {
 		//销毁所有窗口
 		DestroyAllWindows();
 		//取消窗口注册的类
-		BOOL ret = UnregisterClassW(ezui::__EzUI__WindowClassName, ezui::__EzUI__HINSTANCE);
+		BOOL ret = UnregisterClassW(EZUI_WINDOW_CLASS, ezui::__EzUI__HINSTANCE);
 		RenderUnInitialize();
 		if (g_comInitialized) {
 			::CoUninitialize();

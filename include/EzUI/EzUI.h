@@ -44,7 +44,6 @@ namespace ezui {
 #endif
 
 	//全局资源句柄
-	extern UI_VAR_EXPORT WCHAR __EzUI__WindowClassName[];//窗口类名
 	extern UI_VAR_EXPORT HMODULE __EzUI__HINSTANCE;//全局实例
 	extern UI_VAR_EXPORT Resource* __EzUI__Resource;//文件中的全局资源句柄
 	extern UI_VAR_EXPORT DWORD __EzUI__ThreadId;//UI的线程Id

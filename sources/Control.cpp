@@ -432,6 +432,12 @@ namespace ezui {
 				}
 				break;
 			}
+			if (attrName == "event") {
+				if (attrValue == "none") {
+					this->EventPassThrough = Event::OnMouseEvent | Event::OnKeyBoardEvent;
+				}
+				break;
+			}
 		} while (false);
 	}
 	const Controls& Control::GetViewControls()

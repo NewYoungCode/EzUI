@@ -10,7 +10,6 @@
 //#pragma comment(lib,"Shcore.lib")
 namespace ezui {
 
-	WCHAR __EzUI__WindowClassName[]{ L"EzUI_Window" };
 	HMODULE __EzUI__HINSTANCE = NULL;
 	Resource* __EzUI__Resource = NULL;
 	DWORD __EzUI__ThreadId = NULL;
