@@ -232,19 +232,15 @@ namespace ezui {
 		m_layout->SetHwnd(Hwnd());
 
 		if (m_layout->Style.FontFamily.empty()) {
-			WCHAR fontName[LF_FACESIZE] = { 0 };
-			NONCLIENTMETRICS ncm = { sizeof(NONCLIENTMETRICS) };
-			// 获取系统非客户区字体
-			if (::SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0))
-			{
-				::lstrcpyW(fontName, ncm.lfMessageFont.lfFaceName);
+			NONCLIENTMETRICS ncm = {};
+			ncm.cbSize = sizeof(NONCLIENTMETRICS);
+			if (SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0)) {
+				//LOGFONTW lf = ncm.lfMessageFont;
+				//HFONT hFont = CreateFontIndirectW(&lf);
+				//lf.lfFaceName 就是系统 UI 默认字体名
+				// hFont 就是可以直接用的字体句柄
+				m_layout->Style.FontFamily = ncm.lfMessageFont.lfFaceName;
 			}
-			else
-			{
-				// 获取系统普通文本字体
-				::SystemParametersInfoW(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &fontName, 0);
-			}
-			m_layout->Style.FontFamily = fontName;
 		}
 		if (m_layout->Style.FontSize == 0) {
 			m_layout->Style.FontSize = 12;
