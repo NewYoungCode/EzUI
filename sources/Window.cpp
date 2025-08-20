@@ -491,8 +491,7 @@ namespace ezui {
 				ImmSetCompositionWindow(hIMC, &cpf);
 				ImmReleaseContext(Hwnd(), hIMC);
 			}
-			return 0;
-			//break;
+			break;
 		}
 		//case WM_IME_COMPOSITION:
 		//{
@@ -629,7 +628,6 @@ namespace ezui {
 		case WM_CHAR: {
 			OnKeyChar(wParam, lParam);
 			return 0;
-			break;
 		}
 		case WM_KEYDOWN:
 		{
