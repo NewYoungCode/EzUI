@@ -2,10 +2,11 @@
 
 namespace ezui {
 
-	ShadowBox::ShadowBox(int width, int height, HWND hwnd)
+	ShadowBox::ShadowBox(int width, int height, HWND mainHwnd)
 	{
+		m_mainHWnd = mainHwnd;
 		DWORD dwFlags = WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT;
-		m_hWnd = CreateWindowExW(dwFlags, EZUI_WINDOW_CLASS, L"EzUI_ShadowWindow", WS_POPUP, 0, 0, width, height, hwnd, NULL, ezui::__EzUI__HINSTANCE, NULL);
+		m_hWnd = CreateWindowExW(dwFlags, EZUI_WINDOW_CLASS, L"EzUI_ShadowWindow", WS_POPUP, 0, 0, width, height, NULL, NULL, ezui::__EzUI__HINSTANCE, NULL);
 		ASSERT(m_hWnd);
 		this->m_publicData = new WindowData;
 		//绑定消息过程
@@ -95,10 +96,6 @@ namespace ezui {
 	}
 
 	void ShadowBox::SetAplpha(int x, int y, BYTE a, float radius) {
-		//如果窗口没有圆角 则不允许圆角绘制到窗口内部去造成遮挡影响观感
-		if (std::abs(radius) < 1e-6f && m_clipRect.Contains(x, y)) { //不允许绘制在OWner窗口区域
-			return;
-		}
 		DWORD* point = (DWORD*)m_bufBitmap->GetPixel() + (x + y * m_bufBitmap->Width());//起始地址+坐标偏移
 		((BYTE*)point)[3] = a;//修改A通道数值
 		////使用A通道数值进行预乘
@@ -107,42 +104,44 @@ namespace ezui {
 		//((BYTE*)point)[1] = 50 * opacity;//修改G通道数值
 		//((BYTE*)point)[0] = 50 * opacity;//修改B通道数值
 	}
-	void ShadowBox::Update(int _shadowWidth, int radius) {
-		HWND ownerWnd = ::GetWindow(m_hWnd, GW_OWNER);
-		if (!::IsWindowVisible(ownerWnd) || ::IsIconic(ownerWnd)) {
+	void ShadowBox::Update(int shadowMargin, int radius) {
+		if (!::IsWindowVisible(m_mainHWnd) || ::IsIconic(m_mainHWnd)) {
 			::ShowWindow(m_hWnd, SW_HIDE);
 			return;
 		}
 		::ShowWindow(m_hWnd, SW_SHOW);
+		::SetWindowPos(m_hWnd, m_mainHWnd, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 
-		RECT Orect;
-		BOOL empty = ::GetWindowRect(ownerWnd, &Orect);
-		Size paintSize{ Orect.right - Orect.left,Orect.bottom - Orect.top };//父控件作图大小
+		Rect mainWinRect;//主窗口矩形
+		{
+			RECT winRect;
+			::GetWindowRect(m_mainHWnd, &winRect);
+			mainWinRect.X = winRect.left;
+			mainWinRect.Y = winRect.top;
+			mainWinRect.Width = winRect.right - winRect.left;
+			mainWinRect.Height = winRect.bottom - winRect.top;
+		}
+		Size mainWinSize = mainWinRect.GetSize();//主窗口大小
 
-		m_clipRect = Rect({ _shadowWidth ,_shadowWidth }, paintSize);//裁剪区域
-		int x = 0;
-		int y = 0;
-		int width = paintSize.Width + _shadowWidth * 2;
-		int height = paintSize.Height + _shadowWidth * 2;
-		//移动阴影窗口
-		::MoveWindow(m_hWnd, Orect.left - _shadowWidth, Orect.top - _shadowWidth, width, height, FALSE);
-		//只有在大小发生改变的时候才回去重新生成layered窗口
-		if (paintSize.Equals(m_bufSize) && m_radius == radius) {
+		//阴影窗口所在的位置
+		Rect shadowRect(mainWinRect.X - shadowMargin, mainWinRect.Y - shadowMargin, mainWinRect.Width + shadowMargin * 2, mainWinRect.Height + shadowMargin * 2);
+		::MoveWindow(m_hWnd, shadowRect.X, shadowRect.Y, shadowRect.Width, shadowRect.Height, FALSE);
+		//只有在大小发生改变或者圆角改变的时候才回去重新生成新的窗口阴影贴上去
+		if (mainWinSize.Equals(m_lastSize) && m_radius == radius) {
 			return;
 		}
-		//新窗口圆角值
-		m_radius = radius;
-		m_bufSize = paintSize;
-		if (m_bufBitmap != NULL) {
+		m_radius = radius;//新窗口圆角值
+		m_lastSize = mainWinSize;//新的阴影大小
+		if (m_bufBitmap) {
 			delete m_bufBitmap;
 			m_bufBitmap = NULL;
 		}
-		m_bufBitmap = new Bitmap(width, height);//32位透明图
-		Rect rect{ 0,0,width, height };
-		SetShadow(rect.Width, rect.Height, _shadowWidth, radius);
+		//创建用于渲染阴影的位图
+		m_bufBitmap = new Bitmap(shadowRect.Width, shadowRect.Height);
+		SetShadow(shadowRect.Width, shadowRect.Height, shadowMargin, radius);//渲染阴影
 
 		POINT point{ 0,0 };
-		SIZE size{ rect.Width,  rect.Height };
+		SIZE size{ shadowRect.Width, shadowRect.Height };
 		BLENDFUNCTION blend{ 0 };
 		blend.BlendOp = AC_SRC_OVER;
 		blend.BlendFlags = 0;

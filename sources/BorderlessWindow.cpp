@@ -83,6 +83,18 @@ namespace ezui {
 			if ((pPos->flags & SWP_SHOWWINDOW) || (pPos->flags & SWP_HIDEWINDOW)) {
 				this->UpdateShadowBox();
 			}
+			// Z-order 发生变化
+			if ((pPos->flags & SWP_NOZORDER) == 0) {
+				this->UpdateShadowBox();
+			}
+			break;
+		}
+		case WM_ACTIVATE: {
+			this->UpdateShadowBox();
+			break;
+		}
+		case WM_ACTIVATEAPP: {
+			this->UpdateShadowBox();
 			break;
 		}
 		case WM_SHOWWINDOW: {
@@ -93,6 +105,7 @@ namespace ezui {
 			else {
 				//HIDE WINDOWS
 			}
+			this->UpdateShadowBox();
 			break;
 		}
 		case WM_NCHITTEST:

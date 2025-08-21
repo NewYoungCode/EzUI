@@ -472,20 +472,21 @@ namespace ezui {
 			//Debug::Log("%d %d %d %d", pMMInfo->ptMaxPosition.x, pMMInfo->ptMaxPosition.y, pMMInfo->ptMaxSize.x, pMMInfo->ptMaxSize.y);
 			break;
 		}
+		case WM_CHAR: {
+			OnKeyChar(wParam, lParam);
+			break;
+		}
 		case  WM_IME_STARTCOMPOSITION://
 		{
 			if (m_inputControl) {
 				HIMC hIMC = ImmGetContext(Hwnd());
-				COMPOSITIONFORM cpf{ 0 };
-				cpf.dwStyle = CFS_POINT;
-				Control* input = m_inputControl;
-				Rect rect = input->GetCareRect();
-				Rect inputRect = input->GetClientRect();
+				Rect rect = m_inputControl->GetCareRect();
+				Rect inputRect = m_inputControl->GetClientRect();
 				int	x = inputRect.X + rect.X;
-				int y = inputRect.Y + rect.Y + rect.Height;
-				if (y == m_rectClient.Height) {
-					y -= 1;//神奇!如果输入位置和等于窗口的高 那么输入法就会跑到左上角去
-				}
+				int y = inputRect.Y + rect.Y;
+
+				COMPOSITIONFORM cpf = {};
+				cpf.dwStyle = CFS_POINT;
 				cpf.ptCurrentPos.x = x;
 				cpf.ptCurrentPos.y = y;
 				ImmSetCompositionWindow(hIMC, &cpf);
@@ -493,30 +494,29 @@ namespace ezui {
 			}
 			break;
 		}
-		//case WM_IME_COMPOSITION:
-		//{
-		//	if (lParam & GCS_RESULTSTR) {
-		//		HIMC hImc = ImmGetContext(Hwnd());
-		//		if (hImc) {
-		//			LONG bytes = ImmGetCompositionStringW(hImc, GCS_RESULTSTR, nullptr, 0);
-		//			if (bytes > 0) {
-		//				std::wstring committed(bytes / sizeof(wchar_t), L'\0');
-		//				ImmGetCompositionStringW(hImc, GCS_RESULTSTR,
-		//					(WCHAR*)committed.data(), bytes);
-		//				for (auto& it : committed) {
-		//					OnKeyChar((WPARAM)it, NULL);
-		//				}
-		//			}
-		//			ImmReleaseContext(Hwnd(), hImc);
-		//		}
-		//	}
-		//	return 0;
-		// 	break;
-		//}
-		//case WM_IME_ENDCOMPOSITION: {
-		//	return 0;
-		//	break;
-		//}
+		case WM_IME_COMPOSITION:
+		{
+			if (lParam & GCS_RESULTSTR) {
+				HIMC hImc = ImmGetContext(Hwnd());
+				if (hImc) {
+					LONG bytes = ImmGetCompositionStringW(hImc, GCS_RESULTSTR, nullptr, 0);
+					if (bytes > 0) {
+						std::wstring committed;
+						committed.resize(bytes / sizeof(wchar_t) + 1);
+						ImmGetCompositionStringW(hImc, GCS_RESULTSTR, (WCHAR*)committed.data(), bytes);
+						for (auto& it : committed) {
+							OnKeyChar((WPARAM)it, NULL);
+						}
+					}
+					ImmReleaseContext(Hwnd(), hImc);
+					return 0;
+				}
+			}
+			break;
+		}
+		case WM_IME_ENDCOMPOSITION: {
+			break;
+		}
 		case WM_ERASEBKGND: {
 			break;
 		}
@@ -624,10 +624,6 @@ namespace ezui {
 				return TRUE;
 			}
 			break;
-		}
-		case WM_CHAR: {
-			OnKeyChar(wParam, lParam);
-			return 0;
 		}
 		case WM_KEYDOWN:
 		{

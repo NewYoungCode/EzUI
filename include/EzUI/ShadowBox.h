@@ -6,10 +6,10 @@ namespace ezui {
 	class UI_EXPORT ShadowBox
 	{
 	private:
-		Size m_bufSize;
+		Size m_lastSize;
 		Bitmap* m_bufBitmap = NULL;
-		Rect m_clipRect;
 		HWND m_hWnd = NULL;
+		HWND m_mainHWnd = NULL;
 		WORD m_radius = 0;
 		WindowData* m_publicData = NULL;
 	private:
@@ -18,10 +18,10 @@ namespace ezui {
 	protected:
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	public:
-		ShadowBox(int width, int height, HWND OwnerWnd);//构造函数
+		ShadowBox(int width, int height, HWND mainHwnd);//构造函数
 		virtual ~ShadowBox();
 		//在父窗口发生改变的时候更新阴影区域
-		virtual void Update(int _marginWidth, int radius);
+		virtual void Update(int shadowMargin, int radius);
 		const HWND Hwnd();
 	};
 };
