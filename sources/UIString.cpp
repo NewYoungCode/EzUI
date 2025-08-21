@@ -3,7 +3,7 @@ namespace ezui {
 
 	namespace ui_text {
 		//-----------------------------------------------Copy Start-----------------------------------------------
-	/*	size_t String::utf8Length() const {
+		size_t String::utf8Length() const {
 			auto* p = this->c_str();
 			size_t pos = 0, count = 0;
 			while (p[pos] && pos < this->size()) {
@@ -13,7 +13,7 @@ namespace ezui {
 				++pos;
 			}
 			return count;
-		}*/
+		}
 		String::String() {}
 		String::~String() {}
 		String::String(const String& _right)noexcept :std::string(_right) {}

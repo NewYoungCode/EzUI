@@ -22,6 +22,8 @@ namespace ezui {
 			String(const char* szbuf)noexcept;
 			String(const wchar_t* szbuf)noexcept;
 			String(const std::wstring& wstr)noexcept;
+			//返回utf8字符个数
+			size_t utf8Length() const;
 			std::wstring unicode() const;
 			std::string ansi() const;
 			void erase(char _ch);
