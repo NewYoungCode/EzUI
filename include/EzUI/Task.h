@@ -29,7 +29,7 @@ namespace ezui {
 		// 唤醒等待的线程(唤醒单个线程)
 		void Notify();
 		// 可选条件的等待(不可以多个线程使用此函数)
-		void Wait(const std::function<bool()>& condition_cb = nullptr);
+		void Wait(const std::function<bool()>& condition_cb = NULL);
 		// 锁定互斥锁
 		void Lock();
 		// 解锁互斥锁

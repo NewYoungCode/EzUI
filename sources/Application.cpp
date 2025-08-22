@@ -83,7 +83,7 @@ namespace ezui {
 				L"",               // 窗口名（无用）
 				0,                 // 样式设为 0（无 WS_VISIBLE）
 				0, 0, 0, 0,        // 尺寸全为 0
-				nullptr, nullptr, ezui::__EzUI__HINSTANCE, nullptr
+				NULL, NULL, ezui::__EzUI__HINSTANCE, NULL
 			);
 		}
 	}

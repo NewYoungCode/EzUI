@@ -17,7 +17,7 @@ namespace ezui {
 		Init();
 	}
 	void ScrollBar::Init() {
-		Style.ForeColor = Color(205, 205, 205);//the bar default backgroundcolor
+		Style.ForeColor = Color(205, 205, 205);//默认滑块颜色
 		SetSize({ 10,10 });
 	}
 	ScrollBar::~ScrollBar() {}

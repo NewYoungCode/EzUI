@@ -30,7 +30,6 @@ namespace ezui {
 		float GetFontSize()const;
 		const std::wstring& GetFontFamily()const;
 		IDWriteTextFormat* Get() const;
-		Font& operator=(const Font& _copy);
 		bool operator==(const Font& _right);
 		virtual ~Font();
 	};
@@ -58,9 +57,7 @@ namespace ezui {
 
 	class UI_EXPORT TextLayout {
 	private:
-		TextLayout() = delete;
 		TextLayout(const TextLayout& rightValue) = delete;
-		TextLayout& operator=(const TextLayout& rightValue) = delete;
 		IDWriteTextLayout* value = NULL;
 		void SetTextAlign(TextAlign textAlign);
 		std::wstring m_fontFamily;
@@ -221,9 +218,7 @@ namespace ezui {
 		PointF m_rotatePoint;
 		float m_angle = 0;
 	private:
-		DXRender() = delete;
 		DXRender(const DXRender& rightValue) = delete;
-		DXRender& operator=(const DXRender&) = delete;
 	public:
 		ID2D1SolidColorBrush* GetBrush();
 		ID2D1StrokeStyle* GetStrokeStyle();

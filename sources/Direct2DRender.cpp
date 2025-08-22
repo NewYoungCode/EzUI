@@ -63,12 +63,8 @@ namespace ezui {
 	Font::Font(const Font& rightValue) {
 		Copy(rightValue);
 	}
-	Font& Font::operator=(const Font& rightValue) {
-		Copy(rightValue);
-		return *this;
-	}
 	bool Font::operator==(const Font& _right) {
-		if (_right.GetFontFamily() == this->GetFontFamily() && _right.GetFontSize() == this->GetFontSize()) {
+		if (_right.GetFontFamily() == this->GetFontFamily() && (std::fabs(_right.GetFontSize() - this->GetFontSize()) < 1e-6f)) {
 			return true;
 		}
 		return false;
@@ -335,15 +331,15 @@ namespace ezui {
 		src->GetSize(&w, &h);
 		WICRect rect = { 0,0,(INT)w,(INT)h };
 
-		IWICBitmapLock* lockSrc = nullptr;
-		IWICBitmapLock* lockDst = nullptr;
+		IWICBitmapLock* lockSrc = NULL;
+		IWICBitmapLock* lockDst = NULL;
 
 		if (SUCCEEDED(src->Lock(&rect, WICBitmapLockRead, &lockSrc)) &&
 			SUCCEEDED(dst->Lock(&rect, WICBitmapLockWrite, &lockDst)))
 		{
 			UINT cbBufferSrc = 0, cbBufferDst = 0;
-			BYTE* pSrc = nullptr;
-			BYTE* pDst = nullptr;
+			BYTE* pSrc = NULL;
+			BYTE* pDst = NULL;
 			lockSrc->GetDataPointer(&cbBufferSrc, &pSrc);
 			lockDst->GetDataPointer(&cbBufferDst, &pDst);
 
@@ -358,11 +354,11 @@ namespace ezui {
 	void ClearRegion(IWICBitmap* bmp, const WICRect& rect) {
 		if (!bmp) return;
 
-		IWICBitmapLock* lock = nullptr;
+		IWICBitmapLock* lock = NULL;
 		if (SUCCEEDED(bmp->Lock(&rect, WICBitmapLockWrite, &lock)))
 		{
 			UINT cbBuffer = 0;
-			BYTE* pData = nullptr;
+			BYTE* pData = NULL;
 			lock->GetDataPointer(&cbBuffer, &pData);
 			memset(pData, 0, cbBuffer); // 全部置 0（透明）
 		}
@@ -374,11 +370,11 @@ namespace ezui {
 
 		// 锁定整个画布
 		WICRect fullRect{ 0, 0, (INT)CanvasWidth, (INT)CanvasHeight };
-		IWICBitmapLock* lock = nullptr;
+		IWICBitmapLock* lock = NULL;
 		if (FAILED(canvas->Lock(&fullRect, WICBitmapLockWrite, &lock))) return;
 
 		UINT cbBuffer = 0;
-		BYTE* pDst = nullptr;
+		BYTE* pDst = NULL;
 		lock->GetDataPointer(&cbBuffer, &pDst);
 
 		UINT canvasStride = CanvasWidth * 4;
@@ -441,7 +437,7 @@ namespace ezui {
 		UINT height = Height();
 
 		// 创建全尺寸画布
-		IWICBitmap* canvas = nullptr;
+		IWICBitmap* canvas = NULL;
 		D2D::g_ImageFactory->CreateBitmap(
 			width, height,
 			GUID_WICPixelFormat32bppPBGRA,
@@ -449,7 +445,7 @@ namespace ezui {
 			&canvas);
 
 		// 备份画布（用于 disposal=3）
-		IWICBitmap* prevCanvas = nullptr;
+		IWICBitmap* prevCanvas = NULL;
 		D2D::g_ImageFactory->CreateBitmap(
 			width, height,
 			GUID_WICPixelFormat32bppPBGRA,
@@ -458,11 +454,11 @@ namespace ezui {
 
 		for (UINT i = 0; i < fCount; i++)
 		{
-			IWICBitmapFrameDecode* srcFrame = nullptr;
+			IWICBitmapFrameDecode* srcFrame = NULL;
 			m_bitmapdecoder->GetFrame(i, &srcFrame);
 
 			// 元数据读取器
-			IWICMetadataQueryReader* metaReader = nullptr;
+			IWICMetadataQueryReader* metaReader = NULL;
 			srcFrame->GetMetadataQueryReader(&metaReader);
 
 			// 延时
@@ -500,9 +496,9 @@ namespace ezui {
 			}
 
 			// 转换帧格式
-			IWICFormatConverter* converter = nullptr;
+			IWICFormatConverter* converter = NULL;
 			D2D::g_ImageFactory->CreateFormatConverter(&converter);
-			converter->Initialize(srcFrame, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, nullptr, 0.f, WICBitmapPaletteTypeCustom);
+			converter->Initialize(srcFrame, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.f, WICBitmapPaletteTypeCustom);
 
 			// 帧矩形
 			WICRect rect = GetFrameRect(metaReader);
@@ -511,7 +507,7 @@ namespace ezui {
 			CopyFrameToCanvas(converter, canvas, width, height, rect);
 
 			// 存一份当前画布的完整副本
-			IWICBitmap* frameCopy = nullptr;
+			IWICBitmap* frameCopy = NULL;
 			D2D::g_ImageFactory->CreateBitmapFromSource(canvas, WICBitmapCacheOnLoad, &frameCopy);
 			GifFrame gf = { frameCopy, delayMs };
 			m_frames.push_back(gf);
@@ -767,7 +763,7 @@ namespace ezui {
 		bool isFullCircle = fabsf(endAngle - startAngle) >= 359.999f;
 		if (isFullCircle) {
 			// 方法2：直接使用椭圆几何（更高效）
-			ID2D1EllipseGeometry* pEllipse = nullptr;
+			ID2D1EllipseGeometry* pEllipse = NULL;
 			D2D1_ELLIPSE ellipse{ center, radiusX, radiusY };
 			D2D::g_Direct2dFactory->CreateEllipseGeometry(&ellipse, &pEllipse);
 			//赋值
@@ -780,10 +776,10 @@ namespace ezui {
 			float endRad = endAngle * (3.1415926f / 180.0f);
 
 			// 3. 创建路径几何
-			ID2D1PathGeometry* pGeometry = nullptr;
+			ID2D1PathGeometry* pGeometry = NULL;
 			D2D::g_Direct2dFactory->CreatePathGeometry(&pGeometry);
 
-			ID2D1GeometrySink* pSink = nullptr;
+			ID2D1GeometrySink* pSink = NULL;
 			pGeometry->Open(&pSink);
 			// 4. 计算弧线起点和终点
 			D2D1_POINT_2F startPoint = {
@@ -1007,7 +1003,7 @@ namespace ezui {
 					dashStyle,                          // 设置虚线样式为常规虚线
 					0.0f                                 // 自定义虚线的间隔（不需要）
 				),
-				nullptr, 0, &m_pStrokeStyle);
+				NULL, 0, &m_pStrokeStyle);
 		}
 	}
 	void DXRender::DrawTextLayout(const TextLayout& textLayout, const PointF& startLacation) {

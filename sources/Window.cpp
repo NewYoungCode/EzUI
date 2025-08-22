@@ -499,7 +499,7 @@ namespace ezui {
 			if (lParam & GCS_RESULTSTR) {
 				HIMC hImc = ImmGetContext(Hwnd());
 				if (hImc) {
-					LONG bytes = ImmGetCompositionStringW(hImc, GCS_RESULTSTR, nullptr, 0);
+					LONG bytes = ImmGetCompositionStringW(hImc, GCS_RESULTSTR, NULL, 0);
 					if (bytes > 0) {
 						std::wstring committed;
 						committed.resize(bytes / sizeof(wchar_t) + 1);

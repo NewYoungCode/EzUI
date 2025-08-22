@@ -57,11 +57,6 @@ namespace ezui {
 		Shell_NotifyIconW(NIM_ADD, &m_nid);
 	}
 
-	void NotifyIcon::SetIcon(short id)
-	{
-		SetIcon(::LoadIcon(m_hInstance, MAKEINTRESOURCE(id)));//加载图标
-	}
-
 	void NotifyIcon::SetIcon(HICON icon)
 	{
 		m_nid.hIcon = icon;

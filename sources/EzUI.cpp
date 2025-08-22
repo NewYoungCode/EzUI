@@ -229,12 +229,12 @@ namespace ezui {
 
 	void InstallFont(const UIString& fontFileName) {
 		auto ret = ::AddFontResourceW(fontFileName.unicode().c_str());
-		::SystemParametersInfoW(SPI_SETNONCLIENTMETRICS, 0, nullptr, SPIF_SENDCHANGE);//刷新
+		::SystemParametersInfoW(SPI_SETNONCLIENTMETRICS, 0, NULL, SPIF_SENDCHANGE);//刷新
 	}
 
 	void UnstallFont(const UIString& fontFileName) {
 		auto ret = ::RemoveFontResourceW(fontFileName.unicode().c_str());
-		::SystemParametersInfoW(SPI_SETNONCLIENTMETRICS, 0, nullptr, SPIF_SENDCHANGE);//刷新
+		::SystemParametersInfoW(SPI_SETNONCLIENTMETRICS, 0, NULL, SPIF_SENDCHANGE);//刷新
 	}
 
 	bool CopyToClipboard(int uFormat, void* pData, size_t size, HWND hWnd) {
