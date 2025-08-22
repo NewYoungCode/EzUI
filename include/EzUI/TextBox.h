@@ -18,7 +18,7 @@ namespace ezui {
 		bool m_focus = false;//是否具有焦点中
 		Point m_point_Start;//开始选中的位置
 		Point m_point_End;//结束位置
-		std::list<Rect> m_selectRects;//选中的字符矩形
+		std::vector<RectF> m_selectRects;//选中的字符矩形
 		Rect m_careRect;//光标位置
 		Font* m_font = NULL;//字体
 		TextLayout* m_textLayout = NULL;//字体布局

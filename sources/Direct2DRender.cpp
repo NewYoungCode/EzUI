@@ -71,20 +71,21 @@ namespace ezui {
 	}
 	void TextLayout::GetMetrics()
 	{
-		if (value) {
-			value->GetMetrics(&m_textMetrics);
+		if (m_textLayout) {
+			m_textLayout->GetMetrics(&m_textMetrics);
 		}
 	}
 	//TextLayout
 	TextLayout::TextLayout(const std::wstring& text, const Font& font, const SizeF& maxSize, TextAlign textAlign) {
+		this->m_unicodeSize = text.size();
 		this->m_fontSize = font.GetFontSize();
 		this->m_fontFamily = font.GetFontFamily();
-		D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), font.Get(), (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &value);
-		if (value == NULL)return;
+		D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), font.Get(), (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &m_textLayout);
+		if (m_textLayout == NULL)return;
 		SetTextAlign(textAlign);
 	}
 	IDWriteTextLayout* TextLayout::Get() const {
-		return value;
+		return m_textLayout;
 	}
 	Point TextLayout::HitTestPoint(const Point& pt, int* _textPos, BOOL* _isTrailingHit, int* fontHeight) {
 		int& textPos = *_textPos;
@@ -93,7 +94,7 @@ namespace ezui {
 		BOOL isInside;
 		{
 			FLOAT x = (FLOAT)pt.X, y = (FLOAT)pt.Y;
-			value->HitTestPoint(
+			m_textLayout->HitTestPoint(
 				(FLOAT)x,
 				(FLOAT)y,
 				&isTrailingHit,
@@ -116,7 +117,7 @@ namespace ezui {
 		BOOL isInside;
 		{
 			FLOAT x = (FLOAT)pt.X, y = (FLOAT)pt.Y;
-			value->HitTestPoint(
+			m_textLayout->HitTestPoint(
 				(FLOAT)x,
 				(FLOAT)y,
 				&isTrailingHit,
@@ -134,10 +135,10 @@ namespace ezui {
 	}
 
 	Point TextLayout::HitTestTextPosition(int textPos, BOOL isTrailingHit) {
-		if (value == NULL)return Point{ 0,0 };
+		if (m_textLayout == NULL)return Point{ 0,0 };
 		DWRITE_HIT_TEST_METRICS hitTestMetrics;
 		FLOAT X, Y;
-		value->HitTestTextPosition(textPos, isTrailingHit, &X, &Y, &hitTestMetrics);
+		m_textLayout->HitTestTextPosition(textPos, isTrailingHit, &X, &Y, &hitTestMetrics);
 		return Point((int)(X + 0.5), (int)(Y + 0.5));
 	}
 	const std::wstring& TextLayout::GetFontFamily()
@@ -148,7 +149,7 @@ namespace ezui {
 		this->GetMetrics();
 		FLOAT width = m_textMetrics.widthIncludingTrailingWhitespace;
 		FLOAT height = m_textMetrics.height;
-		return  Size{ (int)(width + 1) ,(int)(height + 1) };
+		return  Size{ (int)(width + 1) ,(int)(height + 1) };//加1是为了向上取整
 	}
 	float TextLayout::GetFontSize()
 	{
@@ -174,20 +175,57 @@ namespace ezui {
 		return m_textMetrics.lineCount;
 	}
 
-	Rect TextLayout::GetLineBox(int lineIndex) {
-		UINT lineCount = GetLineCount();
-		//// 获取每一行的宽高
-		DWRITE_LINE_METRICS* hitTestMetrics = new DWRITE_LINE_METRICS[lineCount]{ 0 };
-		FLOAT x = 0;
-		FLOAT y = 0;
-		value->GetLineMetrics(hitTestMetrics, lineCount, &lineCount);
-		float count = 0;
-		for (UINT32 i = 0; i < lineCount; i++)
-		{
-			auto it = hitTestMetrics[i];
+#undef min
+#undef max
+	const std::vector<RectF>& TextLayout::GetLineRects() {
+		//如果unicode个数为0 且获取过m_lineRects 则直接返回不执行获取操作
+		if (!m_textLayout || m_unicodeSize == 0 || !m_lineRects.empty()) {
+			return m_lineRects;
 		}
-		delete[] hitTestMetrics;
-		return Rect();
+		UINT lineCount = GetLineCount();
+		//获取每行 metrics
+		std::vector<DWRITE_LINE_METRICS> lineMetrics(lineCount);
+		auto hr = m_textLayout->GetLineMetrics(lineMetrics.data(), lineCount, &lineCount);
+		if (FAILED(hr)) {
+			return m_lineRects;
+		}
+		//遍历每一行，计算对应矩形
+		UINT32 textPos = 0;
+		for (UINT32 i = 0; i < lineCount; i++) {
+			auto& lm = lineMetrics[i];
+			if (lm.length == 0) { // 空行
+				textPos += lm.length;
+				continue;
+			}
+			//给一个足够大的 buffer，存放 hit test 的矩形
+			std::vector<DWRITE_HIT_TEST_METRICS> metrics(lm.length);
+			UINT32 actualCount = 0;
+
+			hr = m_textLayout->HitTestTextRange(
+				textPos, lm.length, // 这一行的字符范围
+				0.0f, 0.0f,         // offsetX, offsetY
+				metrics.data(), (UINT32)metrics.size(),
+				&actualCount
+			);
+
+			if (SUCCEEDED(hr) && actualCount > 0) {
+				float minX = metrics[0].left;
+				float maxX = metrics[0].left + metrics[0].width;
+				float top = metrics[0].top;
+				float bottom = top + metrics[0].height;
+
+				for (UINT32 j = 1; j < actualCount; j++) {
+					auto& m = metrics[j];
+					minX = std::min(minX, m.left);
+					maxX = std::max(maxX, m.left + m.width);
+					top = std::min(top, m.top);
+					bottom = std::max(bottom, m.top + m.height);
+				}
+				m_lineRects.push_back(RectF(minX, top, maxX - minX, bottom - top));
+			}
+			textPos += lm.length; //下一行的起始字符
+		}
+		return m_lineRects;
 	}
 
 	void TextLayout::SetTextAlign(TextAlign textAlign) {
@@ -197,26 +235,26 @@ namespace ezui {
 #define	__Right DWRITE_TEXT_ALIGNMENT_TRAILING
 #define	__Middle DWRITE_PARAGRAPH_ALIGNMENT_CENTER
 #define __Center DWRITE_TEXT_ALIGNMENT_CENTER
-		if (value == NULL)return;
+		if (m_textLayout == NULL)return;
 		//垂直对其方式
 		if (((int)textAlign & (int)VAlign::Top) == (int)VAlign::Top) {
-			value->SetParagraphAlignment(__Top);
+			m_textLayout->SetParagraphAlignment(__Top);
 		}
 		if (((int)textAlign & (int)VAlign::Mid) == (int)VAlign::Mid) {
-			value->SetParagraphAlignment(__Middle);
+			m_textLayout->SetParagraphAlignment(__Middle);
 		}
 		if (((int)textAlign & (int)VAlign::Bottom) == (int)VAlign::Bottom) {
-			value->SetParagraphAlignment(__Bottom);
+			m_textLayout->SetParagraphAlignment(__Bottom);
 		}
 		//水平对其方式
 		if (((int)textAlign & (int)HAlign::Left) == (int)HAlign::Left) {
-			value->SetTextAlignment(__Left);
+			m_textLayout->SetTextAlignment(__Left);
 		}
 		if (((int)textAlign & (int)HAlign::Center) == (int)HAlign::Center) {
-			value->SetTextAlignment(__Center);
+			m_textLayout->SetTextAlignment(__Center);
 		}
 		if (((int)textAlign & (int)HAlign::Right) == (int)HAlign::Right) {
-			value->SetTextAlignment(__Right);
+			m_textLayout->SetTextAlignment(__Right);
 		}
 #undef __Top 
 #undef __Bottom 
@@ -228,12 +266,12 @@ namespace ezui {
 	void TextLayout::SetUnderline(int pos, int count)
 	{
 		if (count > 0) {
-			value->SetUnderline(TRUE, { (UINT32)pos,(UINT32)count });
+			m_textLayout->SetUnderline(TRUE, { (UINT32)pos,(UINT32)count });
 		}
 	}
 	TextLayout::~TextLayout() {
-		if (value) {
-			SafeRelease(&value);
+		if (m_textLayout) {
+			SafeRelease(&m_textLayout);
 		}
 	}
 	//DXImage

@@ -64,9 +64,12 @@ namespace ezui {
 		Invalidate();//刷新
 	}
 
+#undef max
+#undef min
 	void TextBox::BuildSelectedRect() {
 		m_selectRects.clear();
 		if (m_textLayout) {
+			//获取起点和终点
 			Point point1, point2;
 			if ((m_A_TextPos + m_A_isTrailingHit) < (m_B_TextPos + m_B_isTrailingHit)) {
 				point1 = m_textLayout->HitTestTextPosition(m_A_TextPos, m_A_isTrailingHit);
@@ -76,16 +79,37 @@ namespace ezui {
 				point2 = m_textLayout->HitTestTextPosition(m_A_TextPos, m_A_isTrailingHit);
 				point1 = m_textLayout->HitTestTextPosition(m_B_TextPos, m_B_isTrailingHit);
 			}
-			if (point1.Y != point2.Y) {//多行
-				Rect rect1(point1.X, point1.Y, m_fontBox.Width - point1.X, m_textLayout->GetFontHeight());
-				Rect rect2(0, point2.Y, point2.X, m_textLayout->GetFontHeight());
-				Rect rect3(0, rect1.GetBottom(), m_fontBox.Width, rect2.GetTop() - rect1.GetBottom());
-				m_selectRects.push_back(rect1);
-				m_selectRects.push_back(rect3);
-				m_selectRects.push_back(rect2);
-			}
-			else {
-				m_selectRects.push_back(Rect(point1.X, point1.Y, point2.X - point1.X, m_textLayout->GetFontHeight()));
+			// 中心偏移用于 hit test 保证在行内
+			float offsetY = m_textLayout->GetFontHeight() / 2.0f;
+			point1.Y += offsetY;
+			point2.Y += offsetY;
+
+			// 获取每行矩形
+			auto lineRects = m_textLayout->GetLineRects();
+
+			for (auto& lr : lineRects) {
+				// 首行
+				if (point1.Y >= lr.Y && point1.Y <= lr.Y + lr.Height) {
+					if (point2.Y <= lr.Y + lr.Height) {
+						// 同一行
+						float width = std::max(0.0f, float(point2.X - point1.X));
+						m_selectRects.push_back(Rect(point1.X, lr.Y, width, lr.Height));
+					}
+					else {
+						// 跨行首行 从 point1 到行末
+						float width = std::max(0.0f, lr.X + lr.Width - point1.X);
+						m_selectRects.push_back(Rect(point1.X, lr.Y, width, lr.Height));
+					}
+				}
+				// 末行
+				else if (point2.Y >= lr.Y && point2.Y <= lr.Y + lr.Height) {
+					float width = std::max(0.0f, point2.X - lr.X);
+					m_selectRects.push_back(Rect(lr.X, lr.Y, width, lr.Height));
+				}
+				// 中间整行
+				else if (point1.Y < lr.Y && point2.Y > lr.Y + lr.Height) {
+					m_selectRects.push_back(lr);
+				}
 			}
 		}
 	}
@@ -202,6 +226,14 @@ namespace ezui {
 		__super::OnKeyDown(arg);
 		WPARAM wParam = arg.wParam;
 		LPARAM lParam = arg.lParam;
+
+		//判断是否按下shift+enter
+		if (IsMultiLine() && (GetKeyState(VK_SHIFT) & 0x8000) && wParam == VK_RETURN) {
+			InsertUnicode(L"\n");//插入换行符
+			Analysis();//分析字符串
+			Invalidate();//刷新
+			return;
+		}
 		//判断是否按下Ctrl键
 		if (GetKeyState(VK_CONTROL) & 0x8000) {
 			do

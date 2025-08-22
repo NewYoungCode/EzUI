@@ -57,10 +57,12 @@ namespace ezui {
 	class UI_EXPORT TextLayout {
 	private:
 		TextLayout(const TextLayout& rightValue) = delete;
-		IDWriteTextLayout* value = NULL;
+		IDWriteTextLayout* m_textLayout = NULL;
 		void SetTextAlign(TextAlign textAlign);
 		std::wstring m_fontFamily;
-		DWRITE_TEXT_METRICS m_textMetrics{ 0 };
+		DWRITE_TEXT_METRICS m_textMetrics = {};
+		std::vector<RectF> m_lineRects;
+		int m_unicodeSize = 0;
 		float m_fontSize = 0;
 	public:
 		void GetMetrics();
@@ -72,8 +74,10 @@ namespace ezui {
 		float GetFontSize();
 		int Width();
 		int Height();
-		Size GetFontBox();//获取文字绘制的时候占用多少行
-		Rect GetLineBox(int lineIndex);
+		//获取文本整体的占用空间
+		Size GetFontBox();
+		//获取每行文字的矩形位置
+		const std::vector<RectF>& GetLineRects();
 		int GetFontHeight();//获取字体高度
 		int GetLineCount();//获取一共有多少行
 		IDWriteTextLayout* Get() const;
