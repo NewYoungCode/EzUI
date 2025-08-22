@@ -304,7 +304,7 @@ namespace ezui {
 
 		if (!m_multiLine) {//单行编辑框
 			m_font->Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
-			m_textLayout = new TextLayout(*drawText, *m_font, SizeF{ __MAXFLOAT,(float)Height() }, TextAlign::MiddleLeft);
+			m_textLayout = new TextLayout(*drawText, *m_font, SizeF{ EZUI_FLOAT_MAX,(float)Height() }, TextAlign::MiddleLeft);
 			m_fontBox = m_textLayout->GetFontBox();
 			if (m_fontBox.Width < this->Width()) {
 				m_scrollX = 0;
@@ -315,7 +315,7 @@ namespace ezui {
 		}
 		else {//多行编辑框
 			m_font->Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_WRAP);
-			m_textLayout = new TextLayout(*drawText, *m_font, SizeF{ (float)Width(),__MAXFLOAT }, TextAlign::TopLeft);
+			m_textLayout = new TextLayout(*drawText, *m_font, SizeF{ (float)Width(),EZUI_FLOAT_MAX }, TextAlign::TopLeft);
 			m_fontBox = m_textLayout->GetFontBox();
 		}
 		if (drawText != &this->m_text) {

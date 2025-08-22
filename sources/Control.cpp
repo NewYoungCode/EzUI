@@ -13,7 +13,7 @@ namespace ezui {
 		return value != 0;
 	}
 	inline bool __IsValid(float value) {
-		return std::abs(value) > 1e-6f;
+		return std::abs(value) > EZUI_FLOAT_EPSILON;
 	}
 	inline bool __IsValid(const Image* value) {
 		return value != NULL;
@@ -537,7 +537,7 @@ namespace ezui {
 	int Control::GetFixedWidth()
 	{
 		if (Parent) {
-			if (m_rateSize.Width > 1e-6f) {
+			if (m_rateSize.Width > EZUI_FLOAT_EPSILON) {
 				m_fixedSize.Width = Parent->Width() * m_rateSize.Width + 0.5;
 			}
 		}
@@ -546,7 +546,7 @@ namespace ezui {
 	int Control::GetFixedHeight()
 	{
 		if (Parent) {
-			if (m_rateSize.Height > 1e-6f) {
+			if (m_rateSize.Height > EZUI_FLOAT_EPSILON) {
 				m_fixedSize.Height = Parent->Height() * m_rateSize.Height + 0.5;
 			}
 		}
@@ -675,10 +675,10 @@ namespace ezui {
 
 			if (Parent) {
 				//设置了宽高百分比的控件
-				if (it->m_rateSize.Width > 1e-6f) {
+				if (it->m_rateSize.Width > EZUI_FLOAT_EPSILON) {
 					it->SetFixedWidth(Parent->Width() * m_rateSize.Width);
 				}
-				if (it->m_rateSize.Height > 1e-6f) {
+				if (it->m_rateSize.Height > EZUI_FLOAT_EPSILON) {
 					it->SetFixedWidth(Parent->Height() * m_rateSize.Height);
 				}
 			}

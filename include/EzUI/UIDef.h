@@ -82,7 +82,9 @@ inline HCURSOR LoadCursor(HINSTANCE hInstance, LPCTSTR lpCursorName) {
 
 #endif // _WINDLL
 
-#define EZUI_WINDOW_CLASS L"EzUI_Window"
-#define EZUI_INVOKER_WINDOW_CLASS L"EzUI_InvokerWindow"
+#define EZUI_WINDOW_CLASS L"EzUI_Window" //基础窗口类名
+#define EZUI_INVOKER_WINDOW_CLASS L"EzUI_InvokerWindow" //用于线程同步的窗口类名
+#define EZUI_FLOAT_MAX 16777216.0f //最后一个可以精确表示的整数
+#define EZUI_FLOAT_EPSILON 1e-6f  // 浮点误差阈值
 //下面的渲染方式只能选一个
 #define USED_DIRECT2D 1  //DX绘制 性能好 内存占用高

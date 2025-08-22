@@ -122,8 +122,8 @@ namespace ezui {
 			if (fontSize == 0)return;
 			Font font(GetFontFamily(), fontSize);
 
-			int maxWidth = IsAutoWidth() ? __MAXFLOAT : Width() - this->TextMargin.GetHSpace();
-			int maxHeight = IsAutoHeight() ? __MAXFLOAT : Height() - this->TextMargin.GetVSpace();
+			int maxWidth = IsAutoWidth() ? EZUI_FLOAT_MAX : Width() - this->TextMargin.GetHSpace();
+			int maxHeight = IsAutoHeight() ? EZUI_FLOAT_MAX : Height() - this->TextMargin.GetVSpace();
 
 			TextLayout text(this->m_wstr, font, SizeF(maxWidth, maxHeight));
 			Size box = text.GetFontBox();

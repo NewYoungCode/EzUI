@@ -17,8 +17,8 @@ namespace ezui {
 		IDWriteFactory* g_WriteFactory = NULL;
 		IWICImagingFactory* g_ImageFactory = NULL;
 	}
-#define __FloatRate 0.003921568627451
-#define __To_D2D_COLOR_F(color) D2D_COLOR_F{FLOAT(color.GetR() * __FloatRate), FLOAT(color.GetG() * __FloatRate), FLOAT(color.GetB() * __FloatRate),FLOAT(color.GetA() * __FloatRate)}
+#define __COLOR_SCALE 0.003921569f
+#define __To_D2D_COLOR_F(color) D2D_COLOR_F{FLOAT(color.GetR() * __COLOR_SCALE), FLOAT(color.GetG() * __COLOR_SCALE), FLOAT(color.GetB() * __COLOR_SCALE),FLOAT(color.GetA() * __COLOR_SCALE)}
 #define __To_D2D_RectF(rect) D2D_RECT_F{(FLOAT)rect.X,(FLOAT)rect.Y,(FLOAT)rect.GetRight(),(FLOAT)rect.GetBottom() }
 #define __To_D2D_PointF(pt)  D2D1_POINT_2F{(FLOAT)pt.X,(FLOAT)pt.Y}
 
@@ -64,7 +64,7 @@ namespace ezui {
 		Copy(rightValue);
 	}
 	bool Font::operator==(const Font& _right) {
-		if (_right.GetFontFamily() == this->GetFontFamily() && (std::fabs(_right.GetFontSize() - this->GetFontSize()) < 1e-6f)) {
+		if (_right.GetFontFamily() == this->GetFontFamily() && (std::fabs(_right.GetFontSize() - this->GetFontSize()) < EZUI_FLOAT_EPSILON)) {
 			return true;
 		}
 		return false;
