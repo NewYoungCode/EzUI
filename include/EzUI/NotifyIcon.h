@@ -2,19 +2,22 @@
 #include "Menu.h"
 #include <shellapi.h>
 namespace ezui {
-	class UI_EXPORT  NotifyIcon
+	//系统托盘类
+	class UI_EXPORT NotifyIcon :public Object
 	{
+	private:
+		Menu* m_menu = NULL;
+		NOTIFYICONDATAW m_nid = {};
+		WindowData m_publicData;
+	protected:
+		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	public:
-		HMODULE m_hInstance;
-		HWND m_hwnd;
-		NOTIFYICONDATAW m_nid;
-		Menu* m_menu;
-		std::function<bool(UINT)> MessageCallback = NULL;
-	public:
-		//需要自定义一个WIN32消息来供此类使用
-		NotifyIcon();
+		//事件处理 只会返回鼠标事件
+		std::function<void(const MouseEventArgs&)> EventHandler = NULL;
+		NotifyIcon(Object* parentObj = NULL);
 		void SetIcon(HICON icon);
-		void SetText(const UIString& text);
+		//设置鼠标悬停时显示的提示文本
+		void SetTips(const UIString& text);
 		void SetMenu(Menu* menu);
 		void ShowBalloonTip(const UIString& title, const UIString& msg, int timeOut = 1000);
 		virtual ~NotifyIcon();

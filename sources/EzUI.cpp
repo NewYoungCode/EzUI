@@ -1,5 +1,6 @@
 #include "EzUI.h"
 #include "Bitmap.h"
+#include <gdiplus.h>
 #pragma comment(lib,"Shlwapi.lib")
 #pragma comment(lib,"Uuid.lib")
 #pragma comment(lib, "comctl32.lib")
@@ -235,6 +236,26 @@ namespace ezui {
 	bool IsFloatEqual(float num1, float num2)
 	{
 		return std::fabsf(num1 - num2) <= EZUI_FLOAT_EPSILON;
+	}
+
+	HICON LoadIconFromMemory(const char* pData, size_t size)
+	{
+		HICON hIcon = NULL;
+		HGLOBAL hMem = ::GlobalAlloc(GMEM_MOVEABLE, size);
+		void* pMem = ::GlobalLock(hMem);
+		::memcpy(pMem, pData, size);
+		::GlobalUnlock(hMem);
+		IStream* pStream = NULL;
+		if (::CreateStreamOnHGlobal(hMem, TRUE, &pStream) != S_OK) {
+			return NULL;
+		}
+		Gdiplus::Bitmap* bmp = Gdiplus::Bitmap::FromStream(pStream);
+		if (bmp && bmp->GetHICON(&hIcon) != Gdiplus::Ok) {
+			hIcon = NULL;
+		}
+		delete bmp;
+		pStream->Release();
+		return hIcon;
 	}
 
 	void InstallFont(const UIString& fontFileName) {

@@ -3,16 +3,33 @@ MainFrm::MainFrm() :Form(1020, 690)
 {
 	InitForm();
 	//托盘初始化
-	ntfi.SetText(L"酷苟音乐");
+	ntfi.SetTips(L"酷苟音乐");
 	ntfi.SetIcon(nullptr);//托盘图标
 
-	Menu* exitMenu = new Menu(L"退出");
-	exitMenu->Append(new Menu(L"打开主程序"));
+	Menu* menu = new Menu(&ntfi);
+	UINT_PTR id_open = menu->Append(L"打开主程序");
+	UINT_PTR id_exit = menu->Append(L"退出");
+	ntfi.SetMenu(menu);
 
-	ntfi.SetMenu(exitMenu);
-	ntfi.MessageCallback = [=](UINT menId)->bool {
-		int pause = 0;
-		return true;
+	menu->MouseClick = [=](UINT_PTR menuId) {
+		if (menuId == id_open) {
+			::ShowWindow(Hwnd(), SW_RESTORE);
+		}
+		if (menuId == id_exit) {
+			Application::Exit();
+		}
+		};
+
+	//加载ico图标
+	std::string fileData;
+	Application::GetResource("res/icon.ico", &fileData);
+	HICON icon = LoadIconFromMemory(fileData.c_str(), fileData.size());
+	ntfi.SetIcon(icon);
+
+	ntfi.EventHandler = [=](const MouseEventArgs& args)->void {
+		if (args.EventType == Event::OnMouseDoubleClick && args.Button == MouseButton::Left) {
+			::ShowWindow(Hwnd(), SW_RESTORE);
+		}
 		};
 
 	this->SetMiniSize({ 800,600 });

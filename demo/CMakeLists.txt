@@ -43,8 +43,19 @@ endfunction()
     #模仿酷狗音乐demo
     project(kugou)
     #主程序
-    file(GLOB src ./kugou/*.*)
+    file(GLOB src CONFIGURE_DEPENDS
+    "./kugou/*.h"
+    "./kugou/*.hpp"
+    "./kugou/*.c"
+    "./kugou/*.cpp"
+    "./kugou/*.rc"
+    )
     add_executable(kugou WIN32 ${src})
+
+    # 添加资源文件到"Res"筛选项下
+    file(GLOB_RECURSE res_files CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/kugou/res/*.*")
+    target_sources(kugou PRIVATE ${res_files})
+    source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/kugou/res" PREFIX "res" FILES ${res_files})
 
     target_include_directories(kugou PRIVATE  ${include})
     #添加常用库依赖

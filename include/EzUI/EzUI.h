@@ -53,7 +53,9 @@ namespace ezui {
 	//判断float是否为0(接近0)
 	extern UI_EXPORT bool IsFloatZero(float num);
 	//判断两个float是相等(两数是否接近)
-	extern UI_EXPORT bool IsFloatEqual(float num1,float num2);
+	extern UI_EXPORT bool IsFloatEqual(float num1, float num2);
+	//从内存中加载HICON
+	extern UI_EXPORT HICON LoadIconFromMemory(const char* icoData, size_t dataSize);
 	//装载字体
 	extern UI_EXPORT void InstallFont(const UIString& fontFileName);
 	//卸载字体
@@ -478,7 +480,7 @@ namespace ezui {
 		PtrManager<Object*> m_childObjects;
 	public:
 		//用户自定义数据
-		LONG_PTR Tag = NULL;
+		UINT_PTR Tag = NULL;
 	public:
 		Object(Object* parentObject = NULL);
 		virtual ~Object();

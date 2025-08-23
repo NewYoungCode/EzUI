@@ -2,23 +2,19 @@
 #include "EzUI.h"
 
 namespace ezui {
-
-	class UI_EXPORT Menu
+	//菜单类
+	class UI_EXPORT Menu :public Object
 	{
+	private:
+		HMENU m_hMenu = NULL;
 	public:
-		HMENU m_hMenu;
-		UIString m_text;
-		std::vector<UINT_PTR> m_list;
-		std::function<void(UINT_PTR)> Callback = NULL;
-	public:
-		Menu();
+		//菜单子项被选点击的回调事件 UINT:子项ID
+		std::function<void(UINT_PTR)> MouseClick = NULL;
+		Menu(Object* parentObj = NULL);
 		virtual ~Menu();
-		Menu(const UIString& text);
-		void Append(Menu* menu);
+		HMENU HMenu();
 		UINT_PTR Append(const UIString& text);
-		void Remove(UINT_PTR id);
-		void Clear();
-		void SetText(const UIString& text);
+		void Remove(const UINT_PTR id);
 	};
 
 };

@@ -1,60 +1,131 @@
 #include "NotifyIcon.h"
+#define TRAY_ICON_MSG WM_APP+1 // 自定义托盘消息
 
 namespace ezui {
-	bool __Init__RegeditClass__ = false;
-	LRESULT CALLBACK __NotifyIcon_WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+	bool g_bClassRegistered = false;
+	NotifyIcon::NotifyIcon(Object* parentObj) :Object(parentObj)
 	{
-		LONG_PTR USERDATA = GetWindowLongPtr(hwnd, GWLP_USERDATA);
-		NotifyIcon* ntfi = (NotifyIcon*)USERDATA;
-		do
-		{
-			if (ntfi == NULL)break;
-			if (message == WM_USER+1) {
-				if (ntfi->MessageCallback) {
-					ntfi->MessageCallback(lParam);
+		if (!g_bClassRegistered) {
+			::WNDCLASSEXW wcex = {};
+			wcex.cbSize = sizeof(wcex);
+			wcex.lpfnWndProc = [](HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)->LRESULT {
+				WindowData* wndData = (WindowData*)UI_GET_USERDATA(hwnd);
+				if (wndData && wndData->WndProc) {
+					return wndData->WndProc(hwnd, message, wParam, lParam);
 				}
-				if (lParam == WM_RBUTTONDOWN && ntfi->m_menu && ntfi->m_menu->m_hMenu) {
-					POINT           point;
-					GetCursorPos(&point);
-					SetForegroundWindow(hwnd);
-					TrackPopupMenu(ntfi->m_menu->m_hMenu, TPM_RIGHTBUTTON, point.x, point.y, 0, hwnd, NULL);
-				}
-				break;
-			}
-			if (message == WM_COMMAND) {
-				auto id = LOWORD(wParam);
-				if (ntfi->m_menu && ntfi->m_menu->Callback) {
-					ntfi->m_menu->Callback(id);
-				}
-				break;
-			}
-		} while (false);
-		return ::DefWindowProc(hwnd, message, wParam, lParam);
-	}
-
-	NotifyIcon::NotifyIcon()
-	{
-		::HINSTANCE hInstance = ezui::__EzUI__HINSTANCE;
-
-		if (!__Init__RegeditClass__) {
-			::WNDCLASSW    wc{ 0 };
-			wc.lpfnWndProc = __NotifyIcon_WndProc;//窗口过程
-			wc.hInstance = hInstance;//
-			wc.hCursor = ::LoadCursorW(NULL, IDC_ARROW);//光标
-			wc.lpszClassName = L"EzUI_NotifyIcon";//类名
-			RegisterClassW(&wc); //注册窗口
-			__Init__RegeditClass__ = true;
+				return ::DefWindowProc(hwnd, message, wParam, lParam);
+				};
+			wcex.hInstance = ezui::__EzUI__HINSTANCE;
+			wcex.lpszClassName = L"EzUI_NotifyIcon";
+			RegisterClassExW(&wcex);
+			g_bClassRegistered = true;
 		}
-		m_menu = NULL;
-		m_hInstance = hInstance;
-		m_hwnd = ::CreateWindowW(L"EzUI_NotifyIcon", L"EzUI_NotifyIcon", WS_OVERLAPPEDWINDOW,
-			0, 0, 10, 10, NULL, NULL, m_hInstance, NULL);
-		UI_SET_USERDATA(m_hwnd, this);
+		HWND hWnd = CreateWindowEx(0, L"EzUI_NotifyIcon", L"", 0, 0, 0, 0, 0, NULL, NULL, ezui::__EzUI__HINSTANCE, NULL);
+		this->SetHwnd(hWnd);
+		m_publicData.WndProc = [this](HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)->LRESULT {
+			return this->WndProc(uMsg, wParam, lParam);
+			};
+		UI_SET_USERDATA(hWnd, (LONG_PTR)&m_publicData);
 		m_nid.cbSize = sizeof(m_nid);//结构体长度
-		m_nid.hWnd = m_hwnd;//窗口句柄
-		m_nid.uCallbackMessage = WM_USER + 1;//消息处理，这里很重要，处理鼠标点击
+		m_nid.hWnd = hWnd;//窗口句柄
+		m_nid.uCallbackMessage = TRAY_ICON_MSG;//消息处理,这里很重要,处理鼠标点击
 		m_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 		Shell_NotifyIconW(NIM_ADD, &m_nid);
+	}
+
+	LRESULT NotifyIcon::WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
+		if (uMsg == TRAY_ICON_MSG) {
+			POINT point;
+			GetCursorPos(&point);
+			switch (LOWORD(lParam))
+			{
+			case WM_MOUSEMOVE: {
+				if (EventHandler) {
+					MouseEventArgs args(Event::OnMouseMove, { point.x, point.y }, MouseButton::None);
+					EventHandler(args);
+				}
+				break;
+			}
+			case WM_LBUTTONDOWN: {
+				if (EventHandler) {
+					MouseEventArgs args(Event::OnMouseDown, { point.x, point.y }, MouseButton::Left);
+					EventHandler(args);
+				}
+				break;
+			}
+			case WM_LBUTTONUP: {
+				if (EventHandler) {
+					MouseEventArgs args(Event::OnMouseUp, { point.x, point.y }, MouseButton::Left);
+					EventHandler(args);
+				}
+				break;
+			}
+			case WM_LBUTTONDBLCLK: {
+				if (EventHandler) {
+					MouseEventArgs args(Event::OnMouseDoubleClick, { point.x, point.y }, MouseButton::Left);
+					EventHandler(args);
+				}
+				break;
+			}
+			case WM_RBUTTONDOWN: {
+				if (this->EventHandler) {
+					MouseEventArgs args(Event::OnMouseDown, { point.x,point.y }, MouseButton::Right);
+					this->EventHandler(args);
+				}
+				if (m_menu) {
+					//如果设置了托盘菜单则弹出菜单
+					SetForegroundWindow(Hwnd());
+					TrackPopupMenu(m_menu->HMenu(), TPM_RIGHTBUTTON, point.x, point.y, 0, Hwnd(), NULL);
+				}
+				break;
+			}
+			case WM_RBUTTONUP: {
+				if (EventHandler) {
+					MouseEventArgs args(Event::OnMouseUp, { point.x, point.y }, MouseButton::Right);
+					EventHandler(args);
+				}
+				break;
+			}
+			case WM_RBUTTONDBLCLK: {
+				if (EventHandler) {
+					MouseEventArgs args(Event::OnMouseDoubleClick, { point.x, point.y }, MouseButton::Right);
+					EventHandler(args);
+				}
+				break;
+			}
+			case WM_MBUTTONDOWN: {
+				if (EventHandler) {
+					MouseEventArgs args(Event::OnMouseDown, { point.x, point.y }, MouseButton::Middle);
+					EventHandler(args);
+				}
+				break;
+			}
+			case WM_MBUTTONUP: {
+				if (EventHandler) {
+					MouseEventArgs args(Event::OnMouseUp, { point.x, point.y }, MouseButton::Middle);
+					EventHandler(args);
+				}
+				break;
+			}
+			case WM_MBUTTONDBLCLK: {
+				if (EventHandler) {
+					MouseEventArgs args(Event::OnMouseDoubleClick, { point.x, point.y }, MouseButton::Middle);
+					EventHandler(args);
+				}
+				break;
+			}
+			default:
+				break;
+			}
+		}
+		else if (uMsg == WM_COMMAND) {
+			//菜单被点击
+			auto id = LOWORD(wParam);
+			if (m_menu && m_menu->MouseClick) {
+				m_menu->MouseClick(id);
+			}
+		}
+		return ::DefWindowProc(Hwnd(), uMsg, wParam, lParam);
 	}
 
 	void NotifyIcon::SetIcon(HICON icon)
@@ -68,7 +139,7 @@ namespace ezui {
 		this->m_menu = menu;
 	}
 
-	void NotifyIcon::SetText(const UIString& text)
+	void NotifyIcon::SetTips(const UIString& text)
 	{
 		wcscpy_s(m_nid.szTip, text.unicode().c_str());
 		Shell_NotifyIconW(NIM_MODIFY, &m_nid);
@@ -85,8 +156,9 @@ namespace ezui {
 
 	NotifyIcon::~NotifyIcon()
 	{
-		if (::IsWindow(m_hwnd)) {
-			::DestroyWindow(m_hwnd);
+		if (::IsWindow(Hwnd())) {
+			Shell_NotifyIconW(NIM_DELETE, &m_nid);
+			::DestroyWindow(Hwnd());
 		}
 	}
 };
