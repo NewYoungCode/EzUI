@@ -10,6 +10,8 @@
 #pragma comment(lib,"dwrite.lib")
 #pragma comment(lib,"d2d1.lib")
 #pragma comment(lib,"Windowscodecs.lib")
+#undef min
+#undef max
 namespace ezui {
 	ULONG_PTR g_GdiplusToken = NULL;
 	namespace D2D {

@@ -1,4 +1,6 @@
 #include "TextBox.h"
+#undef min
+#undef max
 namespace ezui {
 	TextBox::TextBox(Object* parentObject) :Control(parentObject)
 	{
