@@ -1,6 +1,4 @@
 #pragma once
-#include <sstream>
-#include <fstream>
 #include "Control.h"
 #include "Spacer.h"
 #include "HLayout.h"

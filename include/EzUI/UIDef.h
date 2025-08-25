@@ -12,6 +12,8 @@
 #include <functional>
 #include <thread>
 #include <mutex>
+#include <algorithm>
+#include <condition_variable>
 
 #include <windows.h>
 

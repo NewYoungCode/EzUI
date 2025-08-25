@@ -1,5 +1,5 @@
 #include "Resource.h"
-#include "ezui.h"
+#include "EzUI.h"
 namespace ezui {
 	Resource::ReadStream::ReadStream(HRSRC hRsrc) {
 		this->m_ptr = (char*)::LoadResource(ezui::__EzUI__HINSTANCE, hRsrc);

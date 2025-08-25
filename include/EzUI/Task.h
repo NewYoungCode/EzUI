@@ -1,6 +1,5 @@
 #pragma once
 #include "EzUI.h"
-#include <condition_variable>
 
 namespace ezui {
 	//互斥锁

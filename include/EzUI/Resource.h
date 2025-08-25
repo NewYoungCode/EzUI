@@ -1,6 +1,5 @@
 #pragma once
 #include "UIString.h"
-#include <ios>
 
 namespace ezui {
 	/// <summary>
