@@ -10,8 +10,6 @@ namespace ezui {
 		static void Exit(int exitCode = 0);
 		//获取程序启动路径
 		static UIString StartPath();
-		//获取资源
-		static bool GetResource(const UIString& fileName, std::string* outFileData);
 	public:
 		Application(HINSTANCE hInstance = NULL);
 		//使用本地文件名称或者资源中的名称加载资源包

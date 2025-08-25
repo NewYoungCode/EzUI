@@ -11,6 +11,7 @@ namespace ezui {
 		IFrame(Object* parentObject = NULL);
 		virtual ~IFrame();
 		void LoadXml(const UIString& fileName);
+		virtual Control* Add(Control* childCtl)override;
 		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue)override;
 		virtual bool OnNotify(Control* sender, EventArgs& args);
 		//获取UI管理器

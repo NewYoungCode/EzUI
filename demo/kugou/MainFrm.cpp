@@ -22,8 +22,7 @@ MainFrm::MainFrm() :Form(1020, 690)
 
 	//加载ico图标
 	std::string fileData;
-	Application::GetResource("res/icon.ico", &fileData);
-	HICON icon = LoadIconFromMemory(fileData.c_str(), fileData.size());
+	HICON icon = ezui::LoadIcon("res/icon.ico");
 	ntfi.SetIcon(icon);
 
 	ntfi.EventHandler = [=](const MouseEventArgs& args)->void {
@@ -38,7 +37,7 @@ void MainFrm::InitForm() {
 	this->SetResizable(true);
 	this->SetText(L"酷苟音乐");
 
-	umg.LoadXmlFile("res/xml/main.htm");
+	umg.LoadXml("res/xml/main.htm");
 	umg.SetupUI(this);
 
 	//设置窗口边框样式

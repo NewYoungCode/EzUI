@@ -136,6 +136,6 @@ bool LoginFrm::OnNotify(Control* sender, EventArgs& args)
 
 LoginFrm::LoginFrm(HWND owner) :LayeredWindow(300, 200, owner)
 {
-	umg.LoadXmlFile("res/xml/login.htm");
+	umg.LoadXml("res/xml/login.htm");
 	umg.SetupUI(this);
 }

@@ -94,7 +94,8 @@ const wchar_t* xml = LR"xml(
 void MainFrm::Init() {
 	this->SetText(L"EzUI资源打包器");
 	//ui.LoadXmlFile("main.html");
-	ui.LoadXmlData(xml);
+	UIString xmlData = xml;
+	ui.LoadXml(xmlData.c_str(), xmlData.size());
 	ui.SetupUI(this);
 	//第一页的控件
 	this->tab = (TabLayout*)this->FindControl("tab");

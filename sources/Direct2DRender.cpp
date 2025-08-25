@@ -663,14 +663,25 @@ namespace ezui {
 		SafeRelease(&geometrySink);
 	}
 
-	RectangleGeometry::RectangleGeometry(float x, float y, float width, float height) {
-		D2D_RECT_F rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) };
-		D2D::g_Direct2dFactory->CreateRectangleGeometry(rectF, (ID2D1RectangleGeometry**)&m_rgn);
+	void RectangleGeometry::Create(float x, float y, float width, float height, float _radius)
+	{
+		if (_radius > 0) {
+			float radius = GetMaxRadius(width, height, _radius);
+			D2D1_ROUNDED_RECT rectF{ x,y,(x + width),(y + height) ,radius ,radius };
+			D2D::g_Direct2dFactory->CreateRoundedRectangleGeometry(rectF, (ID2D1RoundedRectangleGeometry**)&m_rgn);
+		}
+		else {
+			D2D_RECT_F rectF{ x,y,(x + width),(y + height) };
+			D2D::g_Direct2dFactory->CreateRectangleGeometry(rectF, (ID2D1RectangleGeometry**)&m_rgn);
+		}
 	}
 	RectangleGeometry::RectangleGeometry(float x, float y, float width, float height, float _radius) {
-		float radius = GetMaxRadius(width, height, _radius);
-		D2D1_ROUNDED_RECT rectF{ (FLOAT)x,(FLOAT)y,(FLOAT)(x + width),(FLOAT)(y + height) ,radius ,radius };
-		D2D::g_Direct2dFactory->CreateRoundedRectangleGeometry(rectF, (ID2D1RoundedRectangleGeometry**)&m_rgn);
+		Create(x, y, width, height, _radius);
+	}
+	RectangleGeometry::RectangleGeometry(const RectF& _rect, float _radius)
+	{
+		float x = _rect.X, y = _rect.Y, width = _rect.Width, height = _rect.Height;
+		Create(x, y, width, height, _radius);
 	}
 	RectangleGeometry::RectangleGeometry(const RectF& _rect, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius)
 	{

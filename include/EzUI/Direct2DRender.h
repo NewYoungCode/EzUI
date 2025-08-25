@@ -141,9 +141,11 @@ namespace ezui {
 
 	//矩形(已经完成闭合)
 	class UI_EXPORT RectangleGeometry :public Geometry {
+	private:
+		void Create(float x, float y, float width, float height, float _radius);
 	public:
-		RectangleGeometry(float x, float y, float width, float height);
-		RectangleGeometry(float x, float y, float width, float height, float _radius);
+		RectangleGeometry(float x, float y, float width, float height, float _radius = 0);
+		RectangleGeometry(const RectF& _rect, float radius = 0);
 		RectangleGeometry(const RectF& _rect, float topLeftRadius, float topRightRadius, float bottomRightRadius, float bottomLeftRadius);
 		virtual ~RectangleGeometry() {};
 	};

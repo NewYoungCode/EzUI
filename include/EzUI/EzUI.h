@@ -11,6 +11,9 @@ Email:19980103ly@gmail.com/718987717@qq.com
 #include "RenderTypes.h"
 #include "Direct2DRender.h"
 
+#undef LoadCursor
+#undef LoadIcon
+
 namespace ezui {
 	struct MonitorInfo;
 	class Object;
@@ -54,8 +57,8 @@ namespace ezui {
 	extern UI_EXPORT bool IsFloatZero(float num);
 	//判断两个float是相等(两数是否接近)
 	extern UI_EXPORT bool IsFloatEqual(float num1, float num2);
-	//从内存中加载HICON
-	extern UI_EXPORT HICON LoadIconFromMemory(const char* icoData, size_t dataSize);
+	//加载HICON
+	extern UI_EXPORT HICON LoadIcon(const UIString& fileName);
 	//装载字体
 	extern UI_EXPORT void InstallFont(const UIString& fontFileName);
 	//卸载字体

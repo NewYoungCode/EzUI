@@ -17,7 +17,7 @@
 #include "EzUI/ComBoBox.h"
 #include "EzUI/CheckBox.h"
 #include "EzUI/radiobutton.h"
-
+#include "EzUI/TreeView.h"
 
 using namespace ezui;
 class MainFrm :public Window {
@@ -138,6 +138,15 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	cbox.AddItem(L"牛肉");
 	cbox.AddItem(L"猪肉");
 	cbox.SetCheck(0);
+
+
+	TreeView treeView;
+	mainLayout.Add(&treeView);
+	for (size_t i = 0; i < 20; i++)
+	{
+		treeView.AddNode("nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_"+std::to_string(i));
+	}
+
 
 	TextBox text;
 	text.SetParent(&mainLayout);

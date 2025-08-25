@@ -238,8 +238,16 @@ namespace ezui {
 		return std::fabsf(num1 - num2) <= EZUI_FLOAT_EPSILON;
 	}
 
-	HICON LoadIconFromMemory(const char* pData, size_t size)
+	HICON LoadIcon(const UIString& fileName)
 	{
+		std::string fileData;
+		if (!GetResource(fileName, &fileData)) {
+			return NULL;
+		}
+
+		const char* pData = fileData.c_str();
+		size_t size = fileData.size();
+
 		HICON hIcon = NULL;
 		HGLOBAL hMem = ::GlobalAlloc(GMEM_MOVEABLE, size);
 		void* pMem = ::GlobalLock(hMem);
@@ -317,29 +325,29 @@ namespace ezui {
 		return ret;
 	}
 
-	bool GetResource(const UIString& filename, std::string* out) {
-		bool ok = false;
-		do
-		{
-			FILE* file(0);
-			_wfopen_s(&file, filename.unicode().c_str(), L"rb");
-			if (file) {
-				std::ifstream fs(file);
-				fs.seekg(0, std::ios_base::end);
-				auto size = fs.tellg();
-				fs.seekg(0);
-				out->resize(static_cast<size_t>(size));
-				fs.read((char*)out->c_str(), static_cast<std::streamsize>(size));
-				fs.close();
-				::fclose(file);
-				ok = true;
-				break;
+	bool GetResource(const UIString& filename, std::string* outFileData)
+	{
+		outFileData->clear();
+		//本地文件中获取
+		std::wstring wstr = filename.unicode();
+		DWORD dwAttr = GetFileAttributesW(wstr.c_str());
+		if (dwAttr && (dwAttr != -1) && (dwAttr & FILE_ATTRIBUTE_ARCHIVE)) {
+			std::ifstream ifs(wstr, std::ios::binary);
+			ifs.seekg(0, std::ios::end);
+			auto size = ifs.tellg();
+			outFileData->resize(size);
+			ifs.seekg(0);
+			ifs.read((char*)outFileData->c_str(), size);
+			ifs.close();
+			return true;
+		}
+		//从资源中获取
+		if (ezui::__EzUI__Resource) {
+			if (ezui::__EzUI__Resource->GetFile(filename, outFileData)) {
+				return true;
 			}
-			if (__EzUI__Resource) {
-				ok = ezui::__EzUI__Resource->GetFile(filename, out);
-			}
-		} while (false);
-		return ok;
+		}
+		return false;
 	}
 
 #undef GetMonitorInfo

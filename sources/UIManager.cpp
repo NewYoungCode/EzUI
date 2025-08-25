@@ -300,16 +300,16 @@ namespace ezui {
 		}
 	}
 
-	void UIManager::LoadXmlFile(const UIString& fileName) {
+	void UIManager::LoadXml(const UIString& fileName) {
 		std::string data;
 		if (GetResource(fileName, &data)) {
-			LoadXmlData(data);
+			LoadXml(data.c_str(), data.size());
 		}
 	}
-	void UIManager::LoadXmlData(const UIString& xmlContent)
+	void UIManager::LoadXml(const char* fileData, size_t fileSize)
 	{
 		TiXmlDocument doc;
-		auto result = doc.Parse(xmlContent.c_str(), NULL, TiXmlEncoding::TIXML_ENCODING_UTF8);
+		auto result = doc.Parse(fileData, NULL, TiXmlEncoding::TIXML_ENCODING_UTF8);
 		//doc.Parse
 		TiXmlElement* element = doc.FirstChildElement();//read frist element
 		std::list<TiXmlElement*> controlNodes;
@@ -339,7 +339,7 @@ namespace ezui {
 		//加载样式
 		this->SetStyleSheet(styleStr);
 	}
-	void UIManager::LoadStyleFile(const UIString& fileName)
+	void UIManager::LoadStyle(const UIString& fileName)
 	{
 		std::string data;
 		if (!GetResource(fileName, &data)) {

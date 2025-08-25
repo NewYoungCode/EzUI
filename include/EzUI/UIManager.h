@@ -56,13 +56,13 @@ namespace ezui {
 		void SetupUI(Window* window);
 		void SetupUI(Control* parentCtl);
 		//从文件中加载布局
-		void LoadXmlFile(const UIString& fileName);
-		//从字符串中加载布局
-		void LoadXmlData(const UIString& xmlContent);
+		void LoadXml(const UIString& fileName);
+		//从内存加载布局
+		void LoadXml(const char* fileData, size_t fileSize);
 		//设置样式表
 		void SetStyleSheet(const UIString& styleContent);
 		//从文件中加载样式
-		void LoadStyleFile(const UIString& fileName);
+		void LoadStyle(const UIString& fileName);
 		//获取根节点控件
 		Control* GetRoot();
 		//释放由本此对象创建的控件

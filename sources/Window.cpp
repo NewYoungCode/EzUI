@@ -218,10 +218,6 @@ namespace ezui {
 		m_maxSize = size;
 		m_maxSize.Scale(this->m_publicData->Scale);
 	}
-	void Window::SetIcon(short id)
-	{
-		SetIcon(::LoadIcon(::ezui::__EzUI__HINSTANCE, MAKEINTRESOURCE(id)));//
-	}
 	void Window::SetIcon(HICON icon)
 	{
 		::SendMessage(Hwnd(), WM_SETICON, ICON_SMALL, (LPARAM)icon);
@@ -229,6 +225,7 @@ namespace ezui {
 	void Window::SetLayout(ezui::Control* layout) {
 		ASSERT(layout);
 		m_layout = layout;
+		m_layout->Parent = NULL;
 		m_layout->SetHwnd(Hwnd());
 
 		if (m_layout->Style.FontFamily.empty()) {

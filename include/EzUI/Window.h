@@ -152,9 +152,6 @@ namespace ezui {
 		void SetMaxSize(const Size& size);
 
 		//设置窗口icon
-		void SetIcon(short id);
-
-		//设置窗口icon
 		void SetIcon(HICON icon);
 
 		//设置窗口主布局

@@ -209,6 +209,31 @@ namespace ezui {
 			return Equals(right);
 		}
 
+		__EzUI__Rect& operator+=(T value) {
+			X -= value;
+			Y -= value;
+			Width += value * 2;
+			Height += value * 2;
+			return *this;
+		}
+		__EzUI__Rect& operator-=(T value) {
+			X += value;
+			Y += value;
+			Width -= value * 2;
+			Height -= value * 2;
+			return *this;
+		}
+		__EzUI__Rect operator+(T value) const {
+			__EzUI__Rect out = *this;
+			out += value;
+			return out;
+		}
+		__EzUI__Rect operator-(T value) const {
+			__EzUI__Rect out = *this;
+			out -= value;
+			return out;
+		}
+
 		bool Contains(T x,
 			T y) const
 		{

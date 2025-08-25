@@ -254,29 +254,4 @@ namespace ezui {
 		return UIString(wPath.data());
 	}
 
-	bool Application::GetResource(const UIString& filename, std::string* outFileData)
-	{
-		outFileData->clear();
-		//本地文件中获取
-		std::wstring wstr = filename.unicode();
-		DWORD dwAttr = GetFileAttributesW(wstr.c_str());
-		if (dwAttr && (dwAttr != -1) && (dwAttr & FILE_ATTRIBUTE_ARCHIVE)) {
-			std::ifstream ifs(wstr, std::ios::binary);
-			ifs.seekg(0, std::ios::end);
-			auto size = ifs.tellg();
-			outFileData->resize(size);
-			ifs.seekg(0);
-			ifs.read((char*)outFileData->c_str(), size);
-			ifs.close();
-			return true;
-		}
-		//从资源中获取
-		if (ezui::__EzUI__Resource) {
-			if (ezui::__EzUI__Resource->GetFile(filename, outFileData)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 };

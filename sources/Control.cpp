@@ -66,7 +66,15 @@ namespace ezui {
 	}
 
 	//构建边框信息并回调
-	inline void __MakeBorder(const UIString str, Border& bd, const std::function<void(float)>& callback) {
+	inline void __MakeBorder(UIString str, Border& bd, const std::function<void(float)>& callback) {
+		size_t pos1 = str.find('(');
+		size_t pos2 = str.find(')');
+		if (pos1 != std::string::npos && pos2 != std::string::npos && pos2 > pos1) {
+			//删除括号内的空格
+			std::string inside = str.substr(pos1 + 1, pos2 - pos1 - 1);
+			inside.erase(std::remove(inside.begin(), inside.end(), ' '), inside.end());
+			str = str.substr(0, pos1 + 1) + inside + str.substr(pos2);
+		}
 		auto values = str.split(" ");
 		for (auto& v : values) {
 			float num;
