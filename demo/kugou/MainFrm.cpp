@@ -40,6 +40,16 @@ void MainFrm::InitForm() {
 	umg.LoadXml("res/xml/main.htm");
 	umg.SetupUI(this);
 
+	//找到三个Frame
+	titleFrame = (IFrame*)this->FindControl("titleFrame");
+	centerFrame = (IFrame*)this->FindControl("centerFrame");
+	bottomFrame = (IFrame*)this->FindControl("bottomFrame");
+
+	//将这些Frame页的通知转到这个OnNotify中处理
+	titleFrame->Notify = centerFrame->Notify = bottomFrame->Notify = [this](Control* sender, EventArgs& args)->bool {
+		return this->OnNotify(sender, args);
+		};
+
 	//设置窗口边框样式
 	this->GetLayout()->Style.Border.Radius = 15;
 	this->GetLayout()->Style.Border.Color = Color(128, 128, 128, 100);
@@ -52,24 +62,24 @@ void MainFrm::InitForm() {
 	//加载本地播放过的音乐
 	listFile = new ConfigIni(Path::StartPath() + "\\list.ini");
 	//找到每一个控件先
-	mainLayout = FindControl("mainLayout");
-	tools = FindControl("tools");
-	centerLayout = FindControl("centerLayout");
-	centerLeft = FindControl("centerLeft");
-	mediaCtl = (TabLayout*)FindControl("mediaCtl");
-	labelTime = (Label*)FindControl("labelTime");
-	labelSinger = (Label*)FindControl("labelSinger");
-	playerBar2 = this->FindControl("playerBar2");
-	playerBar = this->FindControl("playerBar");
-	tabCtrl = (TabLayout*)FindControl("rightView");
-	vlistLocal = (VListView*)this->FindControl("playList");
-	vlistSearch = (VListView*)this->FindControl("searchList");
-	editSearch = (TextBox*)this->FindControl("searchEdit");
-	labelDeskLrc = (CheckBox*)this->FindControl("deskLrc");
+	mainLayout = this->FindControl("mainLayout");
+	tools = centerFrame->FindControl("tools");
+	centerLayout = centerFrame->FindControl("centerLayout");
+	centerLeft = centerFrame->FindControl("centerLeft");
+	mediaCtl = (TabLayout*)bottomFrame->FindControl("mediaCtl");
+	labelTime = (Label*)bottomFrame->FindControl("labelTime");
+	labelSinger = (Label*)bottomFrame->FindControl("labelSinger");
+	playerBar2 = bottomFrame->FindControl("playerBar2");
+	playerBar = bottomFrame->FindControl("playerBar");
+	tabCtrl = (TabLayout*)centerFrame->FindControl("rightView");
+	vlistLocal = (VListView*)centerFrame->FindControl("playList");
+	vlistSearch = (VListView*)centerFrame->FindControl("searchList");
+	editSearch = (TextBox*)titleFrame->FindControl("searchEdit");
+	labelDeskLrc = (CheckBox*)bottomFrame->FindControl("deskLrc");
 
 	player.Name = "player";
-	this->FindControl("vlcDock")->Add(&player);
-	this->FindControl("lrcView2")->Add(&lrcPanel);//添加歌词控件
+	centerFrame->FindControl("vlcDock")->Add(&player);
+	centerFrame->FindControl("lrcView2")->Add(&lrcPanel);//添加歌词控件
 
 	//创建桌面歌词视频窗口
 	deskTopWnd = new DesktopLrcFrm(&player);
@@ -280,7 +290,7 @@ bool MainFrm::PlaySong(const UIString& hash, Song& info)
 
 	playType = 1;//当前正在播放音乐
 
-	FindControl("lrcView")->SendEvent(Event::OnMouseDown);
+	centerFrame->FindControl("lrcView")->SendEvent(Event::OnMouseDown);
 
 	if (this->FindLocalSong(hash) == size_t(-1)) {
 		info.hash = hash;
@@ -310,7 +320,7 @@ bool MainFrm::PlaySong(const UIString& hash, Song& info)
 	//设置一些状态
 	this->nowSong = hash;
 	this->SetText(info.fileName);
-	((Label*)FindControl("songName"))->SetText(info.fileName);
+	((Label*)bottomFrame->FindControl("songName"))->SetText(info.fileName);
 	//系统托盘处弹出正在播放音乐的提示
 	ntfi.ShowBalloonTip(L"播放音乐", info.fileName, 2000);
 	//打开URL 准备开始播放音乐
@@ -330,7 +340,7 @@ void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 	if (wparam == VK_RETURN) {
 		global::page = 1;
 		global::nextPage = true;
-		FindControl("songView")->SendEvent(Event::OnMouseDown);
+		centerFrame->FindControl("songView")->SendEvent(Event::OnMouseDown);
 		UIString keyword = editSearch->GetText();
 		std::vector<Song> songs = global::SearchSongs(keyword);
 		vlistSearch->Clear(true);
@@ -447,7 +457,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 		}
 	} while (false);
 
-	return __super::OnNotify(sender, args);
+	return ezui::DefaultNotify(sender, args);
 }
 
 void MainFrm::OpenDesktopLrc()
@@ -532,11 +542,11 @@ void MainFrm::PlayMv(const UIString& mvhash, const UIString& songHash)
 
 	RequestNewImage(info);
 
-	FindControl("mvView")->SendEvent(Event::OnMouseDown);
+	centerFrame->FindControl("mvView")->SendEvent(Event::OnMouseDown);
 
 	this->SetText(info.SongName);
-	((Label*)FindControl("songName"))->SetText(info.SongName);
-	((Label*)FindControl("songName"))->Invalidate();
+	((Label*)bottomFrame->FindControl("songName"))->SetText(info.SongName);
+	((Label*)bottomFrame->FindControl("songName"))->Invalidate();
 
 	UIString filehash = songHash;
 	UIString lrcData = global::GetSongLrc(filehash);

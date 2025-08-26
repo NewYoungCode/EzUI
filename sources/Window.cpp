@@ -46,11 +46,16 @@ namespace ezui {
 			return this->WndProc(uMsg, wParam, lParam);
 			};
 		//创建窗口
-		HWND hWnd = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, EZUI_WINDOW_CLASS, EZUI_WINDOW_CLASS, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
+		m_hWnd = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, EZUI_WINDOW_CLASS, EZUI_WINDOW_CLASS, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
 			rect.X, rect.Y, rect.Width, rect.Height, owner, NULL, ezui::__EzUI__HINSTANCE, NULL);
-		//设置窗口句柄
-		this->SetHwnd(hWnd);
+
 		m_publicData->Window = this;
+		m_publicData->MoveWindow = [this]() {
+			this->MoveWindow();
+			};
+		m_publicData->TitleMoveWindow = [this]() {
+			this->TitleMoveWindow();
+			};
 
 		if (owner) {
 			this->CenterToWindow(owner);
@@ -88,24 +93,14 @@ namespace ezui {
 			}
 			};
 		m_publicData->SendNotify = [this](Control* sender, EventArgs& args)->bool {
-			IFrame* frame = NULL;
-			Control* parent = sender;
-			//依次往上父控件看看有没有当前控件是否在内联页面中
-			while (parent)
-			{
-				if (frame = dynamic_cast<IFrame*>(parent)) {
-					break;
-				}
-				parent = parent->Parent;
-			}
-			//如果当前控件存在与内联界面且事件通知处理器不为NULL的时候
+			IFrame* frame = sender->GetFrame();
+			//如果当前控件存在与内联界面且事件通知回调不为NULL的时候
 			if (frame) {
-				if (frame->OnNotify(sender, args)) {
-					return true;
+				bool bRet = frame->OnNotify(sender, args);
+				if (!bRet && frame->Notify) {
+					bRet = frame->Notify(sender, args);
 				}
-				if (frame->EventHandler) {
-					frame->EventHandler(sender, args);
-				}
+				return bRet;
 			}
 			return this->OnNotify(sender, args);
 			};
@@ -126,6 +121,10 @@ namespace ezui {
 		return this->m_layout->FindControl(objectName);
 	}
 
+	HWND Window::Hwnd()
+	{
+		return m_hWnd;
+	}
 	int Window::X() {
 		return GetWindowRect().X;
 	}
@@ -223,8 +222,8 @@ namespace ezui {
 		::SendMessage(Hwnd(), WM_SETICON, ICON_SMALL, (LPARAM)icon);
 	}
 	void Window::SetLayout(ezui::Control* layout) {
-		ASSERT(layout);
 		m_layout = layout;
+		if (!layout) return;
 		m_layout->Parent = NULL;
 		m_layout->SetHwnd(Hwnd());
 
@@ -646,7 +645,7 @@ namespace ezui {
 		}
 		case WM_DESTROY:
 		{
-			SetHwnd(NULL);
+			m_hWnd = NULL;
 			OnDestroy();
 			break;
 		}
@@ -805,6 +804,7 @@ namespace ezui {
 	}
 
 	Control* Window::HitTestControl(const Point clientPoint, Point* outPoint) {
+		if (!m_layout) return NULL;
 		*outPoint = clientPoint;
 		Control* outCtl = m_layout;
 	Find_Loop:
@@ -1044,7 +1044,9 @@ namespace ezui {
 		if (m_layout->GetScale() != m_publicData->Scale) {
 			this->OnDpiChange(m_publicData->Scale, Rect());
 		}
-		m_layout->SetRect(this->GetClientRect());
+		const Rect& rect = this->GetClientRect();
+		//m_layout->SetRect(rect);
+		m_layout->SetFixedSize(rect.GetSize());
 	}
 
 	void Window::OnClose(bool& bClose)
@@ -1091,8 +1093,9 @@ namespace ezui {
 		}
 	}
 
-	bool Window::IsWindow()const {
-		return true;
+	void Window::MoveWindow() {
+		::GetCursorPos(&m_dragPoint); // 获取屏幕坐标
+		m_moveWindow = true;
 	}
 	void Window::TitleMoveWindow() {
 		::ReleaseCapture();
@@ -1117,70 +1120,6 @@ namespace ezui {
 	}
 	bool Window::OnNotify(Control* sender, EventArgs& args) {
 
-		switch (args.EventType)
-		{
-		case Event::OnMouseDoubleClick: {
-			if (sender->Action == ControlAction::Title) {
-				if (::IsZoomed(Hwnd())) {
-					this->ShowNormal();
-				}
-				else {
-					this->ShowMaximized();
-				}
-			}
-			break;
-		}
-		case Event::OnMouseDown: {
-			if (sender->Action == ControlAction::MoveWindow) {
-				GetCursorPos(&m_dragPoint); // 获取屏幕坐标
-				m_moveWindow = true;
-				break;
-			}
-			if (sender->Action == ControlAction::Title) {
-				TitleMoveWindow();
-				break;
-			}
-			if (sender->Action == ControlAction::Mini) {
-				this->ShowMinimized();
-				break;
-			}
-			if (sender->Action == ControlAction::Max) {
-				if (!IsMaximized()) {
-					this->ShowMaximized();
-				}
-				else {
-					this->ShowNormal();
-				}
-				break;
-			}
-			if (sender->Action == ControlAction::Close) {
-				MouseEventArgs args(Event::OnMouseLeave);
-				this->DispatchEvent(sender, args);
-				this->Close();
-				break;
-			}
-			UIString tabName = sender->GetAttribute("tablayout");
-			if (!tabName.empty()) {
-				auto ctls = sender->Parent->FindControl("tablayout", tabName);
-				TabLayout* tabLayout = dynamic_cast<TabLayout*>(FindControl(tabName));
-				if (tabLayout && sender->Parent) {
-					int pos = 0;
-					for (auto& it : ctls)
-					{
-						if (it == sender) {
-							tabLayout->SlideToPage(pos);
-							tabLayout->Invalidate();
-							break;
-						}
-						++pos;
-					}
-				}
-			}
-			break;
-		}
-		default:
-			break;
-		}
 		return false;
 	}
 };

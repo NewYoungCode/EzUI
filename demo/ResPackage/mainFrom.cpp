@@ -245,7 +245,7 @@ bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 			}
 		}
 	}
-	return __super::OnNotify(sd, args);
+	return ezui::DefaultNotify(sd, args);
 }
 void MainFrm::OnResFileChange(UIString& resFile)
 {

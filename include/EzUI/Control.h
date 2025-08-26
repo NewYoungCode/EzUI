@@ -5,6 +5,10 @@ namespace ezui {
 	class UI_EXPORT Control :public Object
 	{
 	private:
+
+		//顶层窗口句柄
+		HWND m_hWnd = NULL;
+
 		// 控件是否已经被移除或释放
 		bool* m_bRemove = NULL;
 
@@ -265,6 +269,9 @@ namespace ezui {
 
 		//获取公共数据
 		WindowData* GetPublicData();
+
+		//获取上层Frame容器
+		IFrame* GetFrame();
 	public:
 
 		// 构造函数 可传入父对象(由父对象自动管理内存)
@@ -287,6 +294,12 @@ namespace ezui {
 
 		//分离图片(解除跟随释放)
 		void Detach(Image* img);
+
+		//窗口句柄
+		HWND Hwnd();
+
+		//设置窗口句柄
+		void SetHwnd(HWND hWnd);
 
 		// 以下函数请保证在父控件布局已完成的情况下使用，使用 ResumeLayout() 执行布局
 		// 获取 X 坐标

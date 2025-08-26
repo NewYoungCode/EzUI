@@ -7,6 +7,7 @@ namespace ezui {
 	{
 	private:
 		Size m_lastSize;
+		int m_lastShadowMargin = 0;
 		Bitmap* m_bufBitmap = NULL;
 		HWND m_hWnd = NULL;
 		HWND m_mainHWnd = NULL;

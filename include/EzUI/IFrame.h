@@ -3,16 +3,24 @@
 #include "UIManager.h"
 
 namespace ezui {
-	//内联页面
+	//内联页面 内部控件与外部隔离
 	class UI_EXPORT IFrame :public Control {
 	private:
-		UIManager m_umg;
+		UIManager m_umg;//内部UI管理器
+	private:
+		virtual Control* Add(Control* childCtl)override;
+		virtual void Remove(Control* childCtl, bool freeCtrl = false)override;
 	public:
+		//对外暴露消息通知回调
+		std::function<bool(Control*, EventArgs&)> Notify = NULL;
 		IFrame(Object* parentObject = NULL);
 		virtual ~IFrame();
+		//加载xml
 		void LoadXml(const UIString& fileName);
-		virtual Control* Add(Control* childCtl)override;
+		//设置唯一布局
+		void SetLayout(Control* ctrl);
 		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue)override;
+		//消息通知
 		virtual bool OnNotify(Control* sender, EventArgs& args);
 		//获取UI管理器
 		UIManager* GetUIManager();

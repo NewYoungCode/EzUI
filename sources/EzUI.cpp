@@ -1,14 +1,12 @@
 #include "EzUI.h"
 #include "Bitmap.h"
+#include "Control.h"
+#include "IFrame.h"
+#include "Window.h"
+#include "TabLayout.h"
 #include <gdiplus.h>
-#pragma comment(lib,"Shlwapi.lib")
-#pragma comment(lib,"Uuid.lib")
-#pragma comment(lib, "comctl32.lib")
-//#pragma comment(lib,"odbc32.lib")
-//#pragma comment(lib,"odbccp32.lib")
+#pragma comment(lib, "shlwapi.lib")
 #pragma comment(lib,"imm32.lib")
-#pragma comment(lib, "Msimg32.lib")
-//#pragma comment(lib,"Shcore.lib")
 namespace ezui {
 
 	HMODULE __EzUI__HINSTANCE = NULL;
@@ -434,6 +432,77 @@ namespace ezui {
 	{
 		::DestroyCursor(hCursor);
 	}
+	bool DefaultNotify(Control* sender, EventArgs& args) {
+		WindowData* winData = NULL;
+		if (!sender || !(winData = sender->GetPublicData())) {
+			return false;
+		}
+		auto* win = winData->Window;
+
+		switch (args.EventType)
+		{
+		case Event::OnMouseDoubleClick: {
+			if (sender->Action == ControlAction::Title) {
+				if (::IsZoomed(win->Hwnd())) {
+					win->ShowNormal();
+				}
+				else {
+					win->ShowMaximized();
+				}
+			}
+			break;
+		}
+		case Event::OnMouseDown: {
+			if (sender->Action == ControlAction::MoveWindow) {
+				winData->MoveWindow();
+				break;
+			}
+			if (sender->Action == ControlAction::Title) {
+				winData->TitleMoveWindow();
+				break;
+			}
+			if (sender->Action == ControlAction::Mini) {
+				win->ShowMinimized();
+				break;
+			}
+			if (sender->Action == ControlAction::Max) {
+				if (!win->IsMaximized()) {
+					win->ShowMaximized();
+				}
+				else {
+					win->ShowNormal();
+				}
+				break;
+			}
+			if (sender->Action == ControlAction::Close) {
+				win->Close();
+				break;
+			}
+			UIString tabName = sender->GetAttribute("tablayout");
+			if (!tabName.empty()) {
+				auto ctls = sender->Parent->FindControl("tablayout", tabName);
+				IFrame* frame = sender->GetFrame();
+				TabLayout* tabLayout = dynamic_cast<TabLayout*>(frame ? frame->FindControl(tabName) : win->FindControl(tabName));
+				if (tabLayout && sender->Parent) {
+					int pos = 0;
+					for (auto& it : ctls)
+					{
+						if (it == sender) {
+							tabLayout->SlideToPage(pos);
+							tabLayout->Invalidate();
+							break;
+						}
+						++pos;
+					}
+				}
+			}
+			break;
+		}
+		default:
+			break;
+		}
+		return false;
+	}
 
 	void ControlStyle::Scale(float scale)
 	{
@@ -454,20 +523,9 @@ namespace ezui {
 	{
 		if (parentObject) {
 			parentObject->Attach(this);
-			this->SetHwnd(parentObject->Hwnd());
 		}
 	}
 	Object::~Object() {
-	}
-
-
-	void Object::SetHwnd(HWND hWnd)
-	{
-		this->m_hWnd = hWnd;
-	}
-	HWND Object::Hwnd()
-	{
-		return this->m_hWnd;
 	}
 
 	void Object::SetAttribute(const UIString& attrName, const UIString& attrValue) {

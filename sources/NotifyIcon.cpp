@@ -20,14 +20,13 @@ namespace ezui {
 			RegisterClassExW(&wcex);
 			g_bClassRegistered = true;
 		}
-		HWND hWnd = CreateWindowEx(0, L"EzUI_NotifyIcon", L"", 0, 0, 0, 0, 0, NULL, NULL, ezui::__EzUI__HINSTANCE, NULL);
-		this->SetHwnd(hWnd);
+		m_hWnd = CreateWindowEx(0, L"EzUI_NotifyIcon", L"", 0, 0, 0, 0, 0, NULL, NULL, ezui::__EzUI__HINSTANCE, NULL);
 		m_publicData.WndProc = [this](HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)->LRESULT {
 			return this->WndProc(uMsg, wParam, lParam);
 			};
-		UI_SET_USERDATA(hWnd, (LONG_PTR)&m_publicData);
+		UI_SET_USERDATA(m_hWnd, (LONG_PTR)&m_publicData);
 		m_nid.cbSize = sizeof(m_nid);//结构体长度
-		m_nid.hWnd = hWnd;//窗口句柄
+		m_nid.hWnd = m_hWnd;//窗口句柄
 		m_nid.uCallbackMessage = TRAY_ICON_MSG;//消息处理,这里很重要,处理鼠标点击
 		m_nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 		Shell_NotifyIconW(NIM_ADD, &m_nid);
@@ -74,8 +73,8 @@ namespace ezui {
 				}
 				if (m_menu) {
 					//如果设置了托盘菜单则弹出菜单
-					SetForegroundWindow(Hwnd());
-					TrackPopupMenu(m_menu->HMenu(), TPM_RIGHTBUTTON, point.x, point.y, 0, Hwnd(), NULL);
+					SetForegroundWindow(m_hWnd);
+					TrackPopupMenu(m_menu->HMenu(), TPM_RIGHTBUTTON, point.x, point.y, 0, m_hWnd, NULL);
 				}
 				break;
 			}
@@ -125,7 +124,7 @@ namespace ezui {
 				m_menu->MouseClick(id);
 			}
 		}
-		return ::DefWindowProc(Hwnd(), uMsg, wParam, lParam);
+		return ::DefWindowProc(m_hWnd, uMsg, wParam, lParam);
 	}
 
 	void NotifyIcon::SetIcon(HICON icon)
@@ -156,9 +155,9 @@ namespace ezui {
 
 	NotifyIcon::~NotifyIcon()
 	{
-		if (::IsWindow(Hwnd())) {
+		if (::IsWindow(m_hWnd)) {
 			Shell_NotifyIconW(NIM_DELETE, &m_nid);
-			::DestroyWindow(Hwnd());
+			::DestroyWindow(m_hWnd);
 		}
 	}
 };

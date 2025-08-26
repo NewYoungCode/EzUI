@@ -26,9 +26,18 @@ namespace ezui {
 	}
 	Control* IFrame::Add(Control* childCtrl)
 	{
+		//IFrame下只允许有一个控件并且会随着IFrame拉伸
+		this->Clear();
 		auto* ctrl = __super::Add(childCtrl);
 		childCtrl->SetDockStyle(DockStyle::Fill);
 		return ctrl;
+	}
+	void IFrame::Remove(Control* childCtl, bool freeCtrl)
+	{
+		__super::Remove(childCtl, freeCtrl);
+	}
+	void IFrame::SetLayout(Control* ctrl) {
+		this->Add(ctrl);
 	}
 	bool IFrame::OnNotify(Control* sender, EventArgs& args) {
 		return false;

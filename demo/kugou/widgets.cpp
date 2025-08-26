@@ -131,7 +131,7 @@ bool LoginFrm::OnNotify(Control* sender, EventArgs& args)
 		}
 	} while (false);
 
-	return __super::OnNotify(sender, args);
+	return ezui::DefaultNotify(sender, args);
 }
 
 LoginFrm::LoginFrm(HWND owner) :LayeredWindow(300, 200, owner)

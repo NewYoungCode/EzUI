@@ -6,6 +6,7 @@ namespace ezui {
 	class UI_EXPORT NotifyIcon :public Object
 	{
 	private:
+		HWND m_hWnd = NULL;
 		Menu* m_menu = NULL;
 		NOTIFYICONDATAW m_nid = {};
 		WindowData m_publicData;

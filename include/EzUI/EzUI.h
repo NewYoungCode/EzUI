@@ -19,6 +19,7 @@ namespace ezui {
 	class Object;
 	class EventArgs;
 	class ControlStyle;
+	class IFrame;
 	class Control;
 	class Window;
 	class Spacer;
@@ -85,6 +86,8 @@ namespace ezui {
 	extern UI_EXPORT HCURSOR LoadCursor(const UIString& fileName);
 	//释放光标
 	extern UI_EXPORT void FreeCursor(HCURSOR hCursor);
+	//默认处理OnNotify函数(处理一些控件的基础行为)
+	extern UI_EXPORT bool DefaultNotify(Control* sender, EventArgs& args);
 
 	class UI_EXPORT Color :public ezui::__EzUI__Color {
 	public:
@@ -157,6 +160,10 @@ namespace ezui {
 		std::function<bool(Control*, EventArgs&)> SendNotify = NULL;//
 		//清空控件标记等等...
 		std::function<void(Control*)> CleanControl = NULL;
+		//内部移动窗口的函数
+		std::function<void()> MoveWindow = NULL;
+		//内部使用标题部分移动窗口的函数
+		std::function<void()> TitleMoveWindow = NULL;
 		//处理消息过程的回调函数
 		std::function<LRESULT(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)> WndProc = NULL;
 
@@ -472,13 +479,11 @@ namespace ezui {
 		}
 	};
 
-	//所有控件和窗口的基类
+	//常用对象基类
 	class UI_EXPORT Object {
 	private:
 		//属性集合
 		std::map<UIString, UIString> m_attrs;
-		//如果该对象是窗口则为窗口句柄 反之是所属窗口句柄
-		HWND m_hWnd = NULL;
 		// 管理子对象的释放
 		PtrManager<Object*> m_childObjects;
 	public:
@@ -487,13 +492,7 @@ namespace ezui {
 	public:
 		Object(Object* parentObject = NULL);
 		virtual ~Object();
-		//是否为窗口
-		virtual bool IsWindow() const { return false; }
 	public:
-		//设置窗口句柄
-		virtual void SetHwnd(HWND hWnd);
-		//如果该对象是窗口则返回窗口句柄 反之返回所属窗口句柄
-		virtual HWND Hwnd();
 		//设置属性
 		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue);
 		//获取属性

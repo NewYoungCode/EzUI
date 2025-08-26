@@ -13,6 +13,13 @@ class MainFrm :
 	public Form
 {
 private:
+	//标题Frame
+	IFrame* titleFrame;
+	//窗口中间部分Frame
+	IFrame* centerFrame;
+	//窗口底部Frame
+	IFrame* bottomFrame;
+
 	std::vector<Song> songLsit;
 	//no new 不需要释放
 	NotifyIcon ntfi;

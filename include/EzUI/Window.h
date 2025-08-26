@@ -20,6 +20,8 @@ namespace ezui {
 		Control* m_inputControl = NULL;
 		//窗口公共数据
 		WindowData* m_publicData = NULL;
+		//窗口句柄
+		HWND m_hWnd = NULL;
 		//鼠标跟踪
 		bool m_bTracking = false;
 		//鼠标是否在里面
@@ -55,14 +57,14 @@ namespace ezui {
 		Window& operator=(const Window&) = delete;
 		bool IsInWindow(Control& pControl, Control& it);
 		void Init(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
+		//仅移动窗口
+		void MoveWindow();
+		//鼠标按下以标题栏方式移动窗口
+		void TitleMoveWindow();
 		//在窗口中使用基于客户区的鼠标位置寻找可命中的控件 
 		Control* HitTestControl(const Point clientPoint, Point* outPoint);
 		bool DispatchEvent(Control* ctrl, const EventArgs& args);
 	protected:
-		//是否为窗口
-		bool IsWindow() const;
-		//鼠标按下以标题栏方式移动窗口
-		void TitleMoveWindow();
 		//当dpi发生更改时
 		virtual void OnDpiChange(float systemScale, const Rect& newRect);
 		//鼠标移动时发生
@@ -107,6 +109,7 @@ namespace ezui {
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	public:
 		Window(int width, int height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
+
 		virtual ~Window();
 
 		//使用id寻找控件
@@ -114,6 +117,9 @@ namespace ezui {
 
 		//获取公共数据
 		WindowData* GetPublicData();
+
+		//窗口句柄
+		HWND Hwnd();
 
 		//获取窗口X坐标
 		int X();

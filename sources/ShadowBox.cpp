@@ -127,11 +127,12 @@ namespace ezui {
 		Rect shadowRect(mainWinRect.X - shadowMargin, mainWinRect.Y - shadowMargin, mainWinRect.Width + shadowMargin * 2, mainWinRect.Height + shadowMargin * 2);
 		::MoveWindow(m_hWnd, shadowRect.X, shadowRect.Y, shadowRect.Width, shadowRect.Height, FALSE);
 		//只有在大小发生改变或者圆角改变的时候才回去重新生成新的窗口阴影贴上去
-		if (mainWinSize.Equals(m_lastSize) && m_radius == radius) {
+		if (mainWinSize.Equals(m_lastSize) && m_radius == radius && m_lastShadowMargin == shadowMargin) {
 			return;
 		}
-		m_radius = radius;//新窗口圆角值
-		m_lastSize = mainWinSize;//新的阴影大小
+		m_lastShadowMargin = shadowMargin;//记录最后一次窗口阴影大小
+		m_radius = radius;//记录最后一次窗口圆角值
+		m_lastSize = mainWinSize;//记录最后一次阴影大小
 		if (m_bufBitmap) {
 			delete m_bufBitmap;
 			m_bufBitmap = NULL;

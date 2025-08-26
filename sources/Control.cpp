@@ -1,6 +1,7 @@
 #include "Control.h"
 #include "ScrollBar.h"
 #include "Spacer.h"
+#include "IFrame.h"
 
 namespace ezui {
 	inline bool __IsValid(int value) {
@@ -224,6 +225,21 @@ namespace ezui {
 	WindowData* Control::GetPublicData()
 	{
 		return (WindowData*)UI_GET_USERDATA(Hwnd());
+	}
+
+	IFrame* Control::GetFrame()
+	{
+		IFrame* frame = NULL;
+		Control* parent = this;
+		//依次往上父控件看看有没有当前控件是否在内联页面中
+		while (parent)
+		{
+			if (frame = dynamic_cast<IFrame*>(parent)) {
+				break;
+			}
+			parent = parent->Parent;
+		}
+		return frame;
 	}
 
 	Control::Control(Object* parentObject) :Object(parentObject)
@@ -465,6 +481,16 @@ namespace ezui {
 		}
 		return NULL;
 	}
+
+	HWND Control::Hwnd()
+	{
+		return m_hWnd;
+	}
+	void Control::SetHwnd(HWND hWnd)
+	{
+		m_hWnd = hWnd;
+	}
+
 	int Control::X()
 	{
 		return m_rect.X;
@@ -1001,9 +1027,13 @@ namespace ezui {
 			args.PushLayer(Rect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height));
 		}
 #endif 
+
+		bool bHandle = false;
 		auto* publicData = GetPublicData();
 		//调用公共函数,如果那边不拦截,就开始绘制自身基本上下文
-		bool bHandle = publicData->SendNotify(this, args);
+		if (publicData && (this->EventFilter & Event::OnPaint) == Event::OnPaint) {
+			bHandle = publicData->SendNotify(this, args);
+		}
 		if (!bHandle) {
 			this->OnPaint(args);
 		}
@@ -1266,6 +1296,9 @@ namespace ezui {
 			if (it->Name == ctlName) {
 				return it;
 			}
+			if (dynamic_cast<IFrame*>(it)) {
+				continue;//对IFrame内的控件进行隔离
+			}
 			auto ctl = it->FindControl(ctlName);
 			if (ctl) return ctl;
 		}
@@ -1281,6 +1314,9 @@ namespace ezui {
 		{
 			if (it->GetAttribute(attrName) == attrValue) {
 				ctls.push_back(it);
+			}
+			if (dynamic_cast<IFrame*>(it)) {
+				continue;//对IFrame内的控件进行隔离
 			}
 			auto _ctls = it->FindControl(attrName, attrValue);
 			for (auto& it2 : _ctls) {

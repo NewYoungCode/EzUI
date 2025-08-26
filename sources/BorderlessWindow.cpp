@@ -48,7 +48,8 @@ namespace ezui {
 	void BorderlessWindow::UpdateShadowBox() {
 		if (m_shadowBox) {
 			auto* mainLayout = this->GetLayout();
-			m_shadowBox->Update(m_shadowWeight * this->GetScale(), (mainLayout ? mainLayout->GetBorderTopLeftRadius() : 0));
+			int shadowWeight = m_shadowWeight;
+			m_shadowBox->Update(shadowWeight * this->GetScale(), (mainLayout ? mainLayout->GetBorderTopLeftRadius() : 0));
 		}
 	}
 	void BorderlessWindow::CloseShadowBox()
@@ -90,10 +91,13 @@ namespace ezui {
 			break;
 		}
 		case WM_ACTIVATE: {
-			this->UpdateShadowBox();
-			break;
-		}
-		case WM_ACTIVATEAPP: {
+			auto state = LOWORD(wParam);
+			if (state == WA_ACTIVE || state == WA_CLICKACTIVE) {
+				// 窗口激活
+			}
+			else if (state == WA_INACTIVE) {
+				// 窗口失活
+			}
 			this->UpdateShadowBox();
 			break;
 		}
