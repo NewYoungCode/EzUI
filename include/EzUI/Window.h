@@ -107,6 +107,8 @@ namespace ezui {
 		virtual bool OnNotify(Control* sender, EventArgs& args);
 		//处理消息队列的
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
+		//获取阴影窗口句柄
+		virtual HWND GetShadowHwnd();
 	public:
 		Window(int width, int height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
 

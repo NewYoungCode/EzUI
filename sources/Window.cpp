@@ -304,6 +304,7 @@ namespace ezui {
 			m_ownerWnd = ::GetWindow(Hwnd(), GW_OWNER);
 		}
 		if (m_ownerWnd) {
+			SetWindowLongPtr(this->GetShadowHwnd(), GWLP_HWNDPARENT, (LONG_PTR)m_ownerWnd);//解决拥有窗口情况下阴影显示问题
 			::EnableWindow(m_ownerWnd, FALSE);
 		}
 		this->Show();
@@ -312,6 +313,9 @@ namespace ezui {
 		{
 			::TranslateMessage(&msg);
 			::DispatchMessage(&msg);
+		}
+		if (m_ownerWnd) {
+			SetWindowLongPtr(this->GetShadowHwnd(), GWLP_HWNDPARENT, (LONG_PTR)Hwnd());//解决拥有窗口情况下阴影显示问题
 		}
 		if (m_ownerWnd && ::IsWindow(m_ownerWnd)) {
 			::SetActiveWindow(m_ownerWnd);
@@ -405,6 +409,11 @@ namespace ezui {
 		this->DispatchEvent(ctl, args);
 		m_inputControl = ctl;
 		m_focusControl = ctl;
+	}
+
+	HWND Window::GetShadowHwnd()
+	{
+		return NULL;
 	}
 
 	WindowData* Window::GetPublicData()

@@ -45,6 +45,14 @@ namespace ezui {
 		return this->m_bResize;
 	}
 
+	HWND BorderlessWindow::GetShadowHwnd()
+	{
+		if (m_shadowBox) {
+			return m_shadowBox->Hwnd();
+		}
+		return NULL;
+	}
+
 	void BorderlessWindow::UpdateShadowBox() {
 		if (m_shadowBox) {
 			auto* mainLayout = this->GetLayout();

@@ -18,6 +18,7 @@ namespace ezui {
 		virtual void OnMove(const Point& location) override;
 		virtual void OnSize(const Size& sz) override;
 		virtual void OnDpiChange(float systemScale, const Rect& newRect);//当dpi发生更改时
+		virtual HWND GetShadowHwnd()override;//获取阴影窗口句柄
 	public:
 		//设置阴影宽度
 		void SetShadow(int weight);
