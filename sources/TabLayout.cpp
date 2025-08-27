@@ -11,7 +11,7 @@ namespace ezui {
 		m_timer->Tick = [this](Timer* sender) {
 
 			HWND hWnd = this->Hwnd();
-			BeginInvoke([this, hWnd,sender]() {
+			BeginInvoke([this, hWnd, sender]() {
 				if (!::IsWindow(hWnd))return;
 
 				m_stepAcc += m_stepPerFrame;
@@ -161,5 +161,15 @@ namespace ezui {
 	int TabLayout::GetPageIndex()
 	{
 		return m_pageIndex;
+	}
+
+	void TabLayout::OnChildPaint(PaintEventArgs& args)
+	{
+		ViewControls.clear();
+		Control* currPage = this->GetPage();
+		if (currPage) {//仅绘制当前页
+			ViewControls.push_back(currPage);
+			currPage->SendEvent(args);
+		}
 	}
 };

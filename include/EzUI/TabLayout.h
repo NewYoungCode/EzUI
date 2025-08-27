@@ -13,7 +13,7 @@ namespace ezui {
 	{
 	private:
 		int m_pageIndex = 0;
-		Timer *m_timer;
+		Timer* m_timer;
 		int m_offset = 0;
 		int m_nowOffset = 0;
 		std::vector<int> m_initial;
@@ -25,6 +25,7 @@ namespace ezui {
 	protected:
 		virtual void OnLayout()override;
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
+		virtual void OnChildPaint(PaintEventArgs& args)override;
 	public:
 		TabLayout(Object* parentObject = NULL);
 		virtual ~TabLayout();

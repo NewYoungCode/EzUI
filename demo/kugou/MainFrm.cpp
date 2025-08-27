@@ -89,27 +89,31 @@ void MainFrm::InitForm() {
 		mainLayout->Style.BackImage->SizeMode = ImageSizeMode::Cover;
 	}
 
-	//加载左侧播放过的音乐
-	for (auto& item : listFile->GetSections()) {
+	for (size_t i = 0; i < 1; i++)
+	{
+		//加载左侧播放过的音乐
+		for (auto& item : listFile->GetSections()) {
 
-		listFile->SetSection(item);
-		UIString name = listFile->ReadString("name");
-		int  dur = listFile->ReadInt("dur");
-		UIString  singer = listFile->ReadString("singer");
-		LocalItem* it = new LocalItem(name, global::toTimeStr(dur));
-		it->SetAttribute("FileHash", item);
-		it->SetAttribute("SingerName", singer);
-		it->SetTips(name);
+			listFile->SetSection(item);
+			UIString name = listFile->ReadString("name");
+			int  dur = listFile->ReadInt("dur");
+			UIString  singer = listFile->ReadString("singer");
+			LocalItem* it = new LocalItem(name, global::toTimeStr(dur));
+			it->SetAttribute("FileHash", item);
+			it->SetAttribute("SingerName", singer);
+			it->SetTips(name);
 
-		Song s;
-		s.SongName = listFile->ReadString("name");
-		s.hash = item;
-		s.Duration = listFile->ReadInt("dur");
-		s.SingerName = listFile->ReadString("singer");
+			Song s;
+			s.SongName = listFile->ReadString("name");
+			s.hash = item;
+			s.Duration = listFile->ReadInt("dur");
+			s.SingerName = listFile->ReadString("singer");
 
-		songLsit.push_back(s);
-		vlistLocal->Add(it);
+			songLsit.push_back(s);
+			vlistLocal->Add(it);
+		}
 	}
+
 	//滚动条滚动事件 滚动条滚动到底部加载剩余音乐
 	vlistSearch->GetScrollBar()->Scroll = [=](ScrollBar* sb, float pos, Event type)->void {
 		if (type == Event::OnMouseWheel) {

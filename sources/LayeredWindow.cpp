@@ -10,7 +10,7 @@ namespace ezui {
 	{
 		//初始化全局绘制计时器
 		if (g_layeredWndTimer.Tick == NULL) {
-			g_layeredWndTimer.Interval = 1;
+			g_layeredWndTimer.Interval = 2;
 			g_layeredWndTimer.Tick = [](Timer* t) {
 				t->Stop();
 				Invoke([]() {

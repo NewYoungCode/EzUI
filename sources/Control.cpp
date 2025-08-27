@@ -253,8 +253,8 @@ namespace ezui {
 		for (auto& it : m_controls) {
 			if (rect.IntersectsWith(it->GetRect())) {
 				ViewControls.push_back(it);
+				it->SendEvent(args);
 			}
-			it->SendEvent(args);
 		}
 	}
 	void Control::OnPaint(PaintEventArgs& args)
@@ -1182,7 +1182,7 @@ namespace ezui {
 			}
 			++pos;
 		}
-		return size_t(-1);
+		return -1;
 	}
 	Control* Control::Add(Control* ctl) {
 #ifdef _DEBUG
@@ -1813,7 +1813,9 @@ namespace ezui {
 			ControlStyle& sytle = this->GetStyle(state);//获取对应状态下的Style
 			for (auto& it : attrs) {
 				size_t pos = it.find(":");
-				if (pos == -1)continue;
+				if (pos == std::string::npos) {
+					continue;
+				}
 				UIString key = it.substr(0, pos);
 				UIString value = it.substr(pos + 1);
 				key = key.trim();//去除前后空格

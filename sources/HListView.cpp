@@ -78,10 +78,11 @@ namespace ezui {
 				ViewControls.push_back(it);
 			}
 			if (it->X() >= Width()) {
-				//当控件超出容器底部将不再派发绘制事件 但是仍然要进行布局
-				if (it->IsAutoWidth() && it->GetLayoutState() == LayoutState::Pend) {
-					it->RefreshLayout();
-				}
+				break;
+				////当控件超出容器底部将不再派发绘制事件 但是仍然要进行布局
+				//if (it->IsAutoWidth() && it->GetLayoutState() == LayoutState::Pend) {
+				//	it->RefreshLayout();
+				//}
 			}
 			else {
 				it->SendEvent(args);
