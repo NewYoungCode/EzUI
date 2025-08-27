@@ -20,7 +20,7 @@ namespace ezui {
 			RegisterClassExW(&wcex);
 			g_bClassRegistered = true;
 		}
-		m_hWnd = CreateWindowEx(0, L"EzUI_NotifyIcon", L"", 0, 0, 0, 0, 0, NULL, NULL, ezui::__EzUI__HINSTANCE, NULL);
+		m_hWnd = CreateWindowEx(WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW, L"EzUI_NotifyIcon", L"", 0, 0, 0, 0, 0, NULL, NULL, ezui::__EzUI__HINSTANCE, NULL);
 		m_publicData.WndProc = [this](HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)->LRESULT {
 			return this->WndProc(uMsg, wParam, lParam);
 			};

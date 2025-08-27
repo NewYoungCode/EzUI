@@ -1,6 +1,6 @@
 #include "BorderlessWindow.h"
 namespace ezui {
-	BorderlessWindow::BorderlessWindow(int width, int height, HWND owner, DWORD exStyle) : Window(width, height, owner, WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP, exStyle)
+	BorderlessWindow::BorderlessWindow(int width, int height, HWND owner, DWORD dwStyle, DWORD dwExStyle) : Window(width, height, owner, dwStyle | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_POPUP, dwExStyle)
 	{
 		//无边框
 		auto style = ::GetWindowLong(Hwnd(), GWL_STYLE);

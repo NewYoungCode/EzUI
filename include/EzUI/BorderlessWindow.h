@@ -22,7 +22,7 @@ namespace ezui {
 	public:
 		//设置阴影宽度
 		void SetShadow(int weight);
-		BorderlessWindow(int width, int height, HWND owner = NULL, DWORD exStyle = NULL);
+		BorderlessWindow(int width, int height, HWND owner = NULL, DWORD dwStyle = NULL, DWORD dwExStyle = NULL);
 		virtual ~BorderlessWindow();
 		//更新窗口阴影
 		void UpdateShadowBox();

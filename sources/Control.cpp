@@ -710,10 +710,10 @@ namespace ezui {
 			if (Parent) {
 				//设置了宽高百分比的控件
 				if (it->m_rateSize.Width > EZUI_FLOAT_EPSILON) {
-					it->SetFixedWidth(Parent->Width() * m_rateSize.Width);
+					it->SetFixedWidth(Parent->Width() * it->m_rateSize.Width);
 				}
 				if (it->m_rateSize.Height > EZUI_FLOAT_EPSILON) {
-					it->SetFixedWidth(Parent->Height() * m_rateSize.Height);
+					it->SetFixedHeight(Parent->Height() * it->m_rateSize.Height);
 				}
 			}
 
@@ -1445,7 +1445,7 @@ namespace ezui {
 		if (Invalidate()) {
 			auto* publicData = GetPublicData();
 			if (publicData) {
-				publicData->UpdateWindow();//立即更新全部无效区域
+				publicData->Refresh();//立即更新全部无效区域
 			}
 		}
 	}

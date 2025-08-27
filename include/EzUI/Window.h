@@ -56,7 +56,7 @@ namespace ezui {
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
 		bool IsInWindow(Control& pControl, Control& it);
-		void Init(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle);//初始窗口
+		void Init(int width, int height, HWND owner, DWORD dStyle, DWORD  dwExStyle);//初始窗口
 		//仅移动窗口
 		void MoveWindow();
 		//鼠标按下以标题栏方式移动窗口
@@ -110,7 +110,7 @@ namespace ezui {
 		//获取阴影窗口句柄
 		virtual HWND GetShadowHwnd();
 	public:
-		Window(int width, int height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD ExStyle = NULL);
+		Window(int width, int height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD dwExStyle = NULL);
 
 		virtual ~Window();
 
@@ -158,6 +158,9 @@ namespace ezui {
 
 		//设置窗口最大size
 		void SetMaxSize(const Size& size);
+
+		//设置绝对宽高
+		void SetFixedSize(const Size& size);
 
 		//设置窗口icon
 		void SetIcon(HICON icon);

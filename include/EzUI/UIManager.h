@@ -33,6 +33,7 @@ namespace ezui {
 			XmlNode(Control* ctl, const UIString& tagName) :m_ctl(ctl), m_tagName(tagName) {}
 		};
 	private:
+		std::vector<Control*> m_rootNode;//根节点列表
 		std::list<XmlNode> m_controls;
 		std::list<UIManager::Style> m_styles;
 		void LoadControl(void* node, Control* control);
@@ -62,7 +63,7 @@ namespace ezui {
 		//从文件中加载样式
 		void LoadStyle(const UIString& fileName);
 		//获取根节点控件
-		Control* GetRoot();
+		Control* GetRoot(int index = 0);
 		//释放由本此对象创建的控件
 		void Free(Control** ctl);
 	};

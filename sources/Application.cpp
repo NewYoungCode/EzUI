@@ -78,7 +78,7 @@ namespace ezui {
 			wcex.lpszClassName = EZUI_INVOKER_WINDOW_CLASS;
 			RegisterClassExW(&wcex);
 			ezui::__EzUI_MessageWnd = CreateWindowEx(
-				0,                 // 无特殊扩展样式
+				WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW,
 				EZUI_INVOKER_WINDOW_CLASS,         // 上面注册的类名
 				L"",               // 窗口名（无用）
 				0,                 // 样式设为 0（无 WS_VISIBLE）

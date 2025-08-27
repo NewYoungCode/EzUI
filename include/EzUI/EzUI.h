@@ -155,7 +155,7 @@ namespace ezui {
 		//使一个区域无效
 		std::function<void(const Rect&)> InvalidateRect = NULL;
 		//立即更新全部无效区域
-		std::function<void()> UpdateWindow = NULL;
+		std::function<void()> Refresh = NULL;
 		//通知函数
 		std::function<bool(Control*, EventArgs&)> SendNotify = NULL;//
 		//清空控件标记等等...

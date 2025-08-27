@@ -60,7 +60,7 @@ namespace ezui {
 	void TileListView::Offset(int offset) {
 		int _contentWidth = 0;
 		int _contentHeight = 0;
-		const int& maxWith = this->Width();
+		int maxWith = this->Width();
 		int maxHeight = 0;//每行最高的那个
 		int x = 0;
 		int y = offset;

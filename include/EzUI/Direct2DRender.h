@@ -199,7 +199,6 @@ namespace ezui {
 		int Height();
 		virtual WORD NextFrame()override;
 		DXImage* Clone();
-		DXImage() {}
 		virtual ~DXImage();
 	};
 

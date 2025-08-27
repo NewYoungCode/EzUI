@@ -334,6 +334,7 @@ namespace ezui {
 			UIString tagName = element->Value();
 			Control* control = BuildControl(element);//先加载根节点
 			this->RegisterControl(control, tagName);
+			m_rootNode.push_back(control);//存入根节点集合
 			LoadControl(element, control);//加载子节点
 		}
 		//加载样式
@@ -379,9 +380,10 @@ namespace ezui {
 			delete it.m_ctl;
 		}
 	}
-	Control* UIManager::GetRoot() {
-		if (!m_controls.empty()) {
-			return m_controls.rbegin()->m_ctl;
+
+	Control* UIManager::GetRoot(int index) {
+		if (index >= 0 && index < m_rootNode.size()) {
+			return m_rootNode[index];
 		}
 		return NULL;
 	}

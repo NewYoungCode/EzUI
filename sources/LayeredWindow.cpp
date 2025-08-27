@@ -6,7 +6,7 @@ namespace ezui {
 	Timer g_layeredWndTimer;
 
 	//WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT
-	LayeredWindow::LayeredWindow(int width, int height, HWND owner) :BorderlessWindow(width, height, owner, WS_EX_LAYERED)
+	LayeredWindow::LayeredWindow(int width, int height, HWND owner, DWORD dwStyle, DWORD dwExStyle) :BorderlessWindow(width, height, owner, dwStyle, dwExStyle | WS_EX_LAYERED)
 	{
 		//初始化全局绘制计时器
 		if (g_layeredWndTimer.Tick == NULL) {
@@ -28,7 +28,7 @@ namespace ezui {
 			//标记窗口无效区域
 			this->InvalidateRect(rect);
 			};
-		publicData->UpdateWindow = [this]()->void {
+		publicData->Refresh = [this]()->void {
 			//立即更新窗口中的无效区域
 			this->Paint();
 			};

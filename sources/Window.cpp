@@ -5,9 +5,9 @@
 
 namespace ezui {
 
-	Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  ExStyle)
+	Window::Window(int width, int height, HWND owner, DWORD dStyle, DWORD  dwExStyle)
 	{
-		Init(width, height, owner, dStyle, ExStyle);//设置基本数据
+		Init(width, height, owner, dStyle, dwExStyle);//设置基本数据
 	}
 
 	Window::~Window()
@@ -20,7 +20,7 @@ namespace ezui {
 		}
 	}
 
-	void Window::Init(int width, int height, HWND owner, DWORD dStyle, DWORD  exStyle)
+	void Window::Init(int width, int height, HWND owner, DWORD dStyle, DWORD  dwExStyle)
 	{
 		this->m_publicData = new WindowData;
 		Rect rect(0, 0, width, height);
@@ -46,7 +46,7 @@ namespace ezui {
 			return this->WndProc(uMsg, wParam, lParam);
 			};
 		//创建窗口
-		m_hWnd = ::CreateWindowExW(exStyle | WS_EX_ACCEPTFILES, EZUI_WINDOW_CLASS, EZUI_WINDOW_CLASS, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
+		m_hWnd = ::CreateWindowExW(dwExStyle | WS_EX_ACCEPTFILES, EZUI_WINDOW_CLASS, EZUI_WINDOW_CLASS, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
 			rect.X, rect.Y, rect.Width, rect.Height, owner, NULL, ezui::__EzUI__HINSTANCE, NULL);
 
 		m_publicData->Window = this;
@@ -64,7 +64,7 @@ namespace ezui {
 			this->CenterToScreen();
 		}
 
-		if ((exStyle & WS_EX_LAYERED) != WS_EX_LAYERED) {
+		if ((dwExStyle & WS_EX_LAYERED) != WS_EX_LAYERED) {
 			m_publicData->InvalidateRect = [this](const Rect& rect)->void {
 				RECT r;
 				r.left = rect.GetLeft();
@@ -73,15 +73,8 @@ namespace ezui {
 				r.bottom = rect.GetBottom();
 				::InvalidateRect(Hwnd(), &r, FALSE);
 				};
-			m_publicData->UpdateWindow = [this]()->void {
-				RECT updateRect;
-				while (::GetUpdateRect(Hwnd(), &updateRect, FALSE))
-				{
-					Rect rect(updateRect);
-					if (!rect.IsEmptyArea()) {
-						::UpdateWindow(Hwnd());
-					}
-				}
+			m_publicData->Refresh = [this]()->void {
+				UpdateWindow(Hwnd());
 				};
 		}
 		m_publicData->CleanControl = [this](Control* delControl)->void {
@@ -217,6 +210,12 @@ namespace ezui {
 		m_maxSize = size;
 		m_maxSize.Scale(this->m_publicData->Scale);
 	}
+	void Window::SetFixedSize(const Size& size)
+	{
+		this->SetMiniSize(size);
+		this->SetMaxSize(size);
+		this->SetSize(size);
+	}
 	void Window::SetIcon(HICON icon)
 	{
 		::SendMessage(Hwnd(), WM_SETICON, ICON_SMALL, (LPARAM)icon);
@@ -304,7 +303,6 @@ namespace ezui {
 			m_ownerWnd = ::GetWindow(Hwnd(), GW_OWNER);
 		}
 		if (m_ownerWnd) {
-			SetWindowLongPtr(this->GetShadowHwnd(), GWLP_HWNDPARENT, (LONG_PTR)m_ownerWnd);//解决拥有窗口情况下阴影显示问题
 			::EnableWindow(m_ownerWnd, FALSE);
 		}
 		this->Show();
@@ -313,9 +311,6 @@ namespace ezui {
 		{
 			::TranslateMessage(&msg);
 			::DispatchMessage(&msg);
-		}
-		if (m_ownerWnd) {
-			SetWindowLongPtr(this->GetShadowHwnd(), GWLP_HWNDPARENT, (LONG_PTR)Hwnd());//解决拥有窗口情况下阴影显示问题
 		}
 		if (m_ownerWnd && ::IsWindow(m_ownerWnd)) {
 			::SetActiveWindow(m_ownerWnd);
@@ -346,7 +341,7 @@ namespace ezui {
 	}
 	void Window::Refresh()
 	{
-		m_publicData->UpdateWindow();
+		m_publicData->Refresh();
 	}
 
 	void Window::CenterToScreen()
@@ -381,8 +376,8 @@ namespace ezui {
 			return;
 		}
 		Rect rect = this->GetWindowRect();
-		const int& width = rect.Width;
-		const int& height = rect.Height;
+		int width = rect.Width;
+		int height = rect.Height;
 		//基于父窗口的中心点
 		RECT ownerRECT;
 		::GetWindowRect(wnd, &ownerRECT);
@@ -767,10 +762,10 @@ namespace ezui {
 	}
 
 	void Window::DoPaint(HDC winHDC, const Rect& rePaintRect) {
-#define COUNT_ONPAINT 0
-#if COUNT_ONPAINT
-		auto t1 = ::GetTickCount64();
-#endif // COUNT_ONPAINT
+#define COUNT_DOPAINT 0
+#if COUNT_DOPAINT
+		auto start = std::chrono::steady_clock::now();
+#endif // COUNT_DOPAINT
 #if USED_DIRECT2D
 		DXRender graphics(winHDC, 0, 0, GetClientRect().Width, GetClientRect().Height);
 		PaintEventArgs args(graphics);
@@ -781,12 +776,15 @@ namespace ezui {
 		args.InvalidRectangle = rePaintRect;
 		OnPaint(args);
 #endif
-#if COUNT_ONPAINT
-		char buf[512]{ 0 };
-		sprintf(buf, "Time:%ld DC:%p OnPaint Count(%d) Rect(%d,%d,%d,%d) %dms \n", ::GetTickCount64(), winHDC, args.PublicData->PaintCount, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height, ::GetTickCount64() - t1);
+#if COUNT_DOPAINT
+		auto end = std::chrono::steady_clock::now();
+		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+		auto now = std::chrono::system_clock::now();
+		auto ts = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+		char buf[256]{ 0 };
+		sprintf(buf, "ts:(%lld) elapsed:(%lldms) count:(%d) rect:[%d,%d,%d,%d]\n", ts, static_cast<long long>(elapsed), args.PublicData->PaintCount, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height);
 		OutputDebugStringA(buf);
-#endif // COUNT_ONPAINT
-
+#endif // COUNT_DOPAINT
 	}
 
 	void Window::OnPaint(PaintEventArgs& arg)
@@ -1054,8 +1052,8 @@ namespace ezui {
 			this->OnDpiChange(m_publicData->Scale, Rect());
 		}
 		const Rect& rect = this->GetClientRect();
-		//m_layout->SetRect(rect);
-		m_layout->SetFixedSize(rect.GetSize());
+		m_layout->SetRect(rect);
+		//m_layout->SetFixedSize(rect.GetSize());
 	}
 
 	void Window::OnClose(bool& bClose)

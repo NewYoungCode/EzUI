@@ -5,7 +5,7 @@ namespace ezui {
 	ShadowBox::ShadowBox(int width, int height, HWND mainHwnd)
 	{
 		m_mainHWnd = mainHwnd;
-		DWORD dwFlags = WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TRANSPARENT;
+		DWORD dwFlags = WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT;
 		m_hWnd = CreateWindowExW(dwFlags, EZUI_WINDOW_CLASS, L"EzUI_ShadowWindow", WS_POPUP, 0, 0, width, height, NULL, NULL, ezui::__EzUI__HINSTANCE, NULL);
 		ASSERT(m_hWnd);
 		this->m_publicData = new WindowData;
@@ -109,6 +109,11 @@ namespace ezui {
 			::ShowWindow(m_hWnd, SW_HIDE);
 			return;
 		}
+
+		HWND ownerHWnd = ::GetWindow(m_mainHWnd, GW_OWNER);
+		//解决拥有窗口情况下阴影显示问题
+		SetWindowLongPtr(Hwnd(), GWLP_HWNDPARENT, (LONG_PTR)(ownerHWnd ? ownerHWnd : NULL));
+
 		::ShowWindow(m_hWnd, SW_SHOW);
 		::SetWindowPos(m_hWnd, m_mainHWnd, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 

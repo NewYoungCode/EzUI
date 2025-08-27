@@ -24,7 +24,7 @@ namespace ezui {
 	public:
 		//窗口透明度
 		float Opacity = 1.0f;
-		LayeredWindow(int width, int height, HWND owner = NULL);
+		LayeredWindow(int width, int height, HWND owner = NULL, DWORD dwStyle = NULL, DWORD dwExStyle = NULL);
 		virtual ~LayeredWindow();
 	};
 };
