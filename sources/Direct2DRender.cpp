@@ -40,7 +40,7 @@ namespace ezui {
 		ASSERT(!(fontSize == 0));
 		this->m_fontFamily = fontFamily;
 		this->m_fontSize = fontSize;
-		D2D::g_WriteFactory->CreateTextFormat(fontFamily.c_str(), NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, (FLOAT)this->m_fontSize, L"", &m_value);
+		D2D::g_WriteFactory->CreateTextFormat(fontFamily.c_str(), NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, m_fontSize, L"", &m_value);
 	}
 	Font::~Font() {
 		if (m_value && !m_ref) {
@@ -82,7 +82,7 @@ namespace ezui {
 		this->m_unicodeSize = text.size();
 		this->m_fontSize = font.GetFontSize();
 		this->m_fontFamily = font.GetFontFamily();
-		D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), font.Get(), (FLOAT)maxSize.Width, (FLOAT)maxSize.Height, &m_textLayout);
+		D2D::g_WriteFactory->CreateTextLayout(text.c_str(), text.size(), font.Get(), maxSize.Width, maxSize.Height, &m_textLayout);
 		if (m_textLayout == NULL)return;
 		SetTextAlign(textAlign);
 	}
@@ -770,7 +770,7 @@ namespace ezui {
 	}
 
 	void Geometry::AddLine(const PointF& endPoint) {
-		D2D1_POINT_2F p = { (float)endPoint.X, (float)endPoint.Y };
+		D2D1_POINT_2F p{ endPoint.X, endPoint.Y };
 		m_pSink->AddLine(p);
 	}
 	void Geometry::BeginFigure(const PointF& startPoint, D2D1_FIGURE_BEGIN figureBegin) {
@@ -943,9 +943,9 @@ namespace ezui {
 	}
 	float GetMaxRadius(float width, float height, float _radius)
 	{
-		float radius = (float)_radius;//半径
+		float radius = _radius;//半径
 		float diameter = radius * 2;//直径
-		if (width > height || width == height) {
+		if (width > height || (std::fabs(width - height) < EZUI_FLOAT_EPSILON)) {
 			if (diameter > height) {
 				radius = height / 2.0f;
 			}
@@ -1058,38 +1058,33 @@ namespace ezui {
 		}
 	}
 	void DXRender::DrawTextLayout(const TextLayout& textLayout, const PointF& startLacation) {
-		m_render->DrawTextLayout(D2D1_POINT_2F{ (float)(startLacation.X) ,(float)(startLacation.Y) }, textLayout.Get(), GetBrush());
+		m_render->DrawTextLayout(D2D1_POINT_2F{ startLacation.X ,startLacation.Y }, textLayout.Get(), GetBrush());
 	}
-	void DXRender::DrawString(const std::wstring& text, const  RectF& _rect, ezui::TextAlign textAlign) {
-		const auto& rect = _rect;
+	void DXRender::DrawString(const std::wstring& text, const  RectF& rect, ezui::TextAlign textAlign) {
 		TextLayout textLayout(text, *m_font, { rect.Width, rect.Height }, textAlign);
-		this->DrawTextLayout(textLayout, { _rect.X,_rect.Y });
+		this->DrawTextLayout(textLayout, { rect.X,rect.Y });
 	}
-	void DXRender::DrawLine(const PointF& _A, const PointF& _B, float width) {
-		const auto& A = _A;
-		const auto& B = _B;
-		m_render->DrawLine(D2D1_POINT_2F{ (float)A.X,(float)A.Y }, D2D1_POINT_2F{ (float)B.X,(float)B.Y }, GetBrush(), (FLOAT)width, GetStrokeStyle());
+	void DXRender::DrawLine(const PointF& A, const PointF& B, float width) {
+		m_render->DrawLine(D2D1_POINT_2F{ A.X,A.Y }, D2D1_POINT_2F{ B.X,B.Y }, GetBrush(), width, GetStrokeStyle());
 	}
 
-	void DXRender::DrawRectangle(const RectF& _rect, float _radius, float width)
+	void DXRender::DrawRectangle(const RectF& rect, float _radius, float width)
 	{
-		const auto& rect = _rect;
 		if (_radius > 0) {
-			float radius = GetMaxRadius(_rect.Width, _rect.Height, (float)_radius);
-			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), (float)radius, (float)radius };
-			m_render->DrawRoundedRectangle(roundRect, GetBrush(), (FLOAT)width, GetStrokeStyle());
+			float radius = GetMaxRadius(rect.Width, rect.Height, _radius);
+			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), radius, radius };
+			m_render->DrawRoundedRectangle(roundRect, GetBrush(), width, GetStrokeStyle());
 		}
 		else {
-			m_render->DrawRectangle(__To_D2D_RectF(rect), GetBrush(), (FLOAT)width, GetStrokeStyle());
+			m_render->DrawRectangle(__To_D2D_RectF(rect), GetBrush(), width, GetStrokeStyle());
 		}
 	}
 
 
-	void DXRender::FillRectangle(const RectF& _rect, float _radius) {
-		const auto& rect = _rect;
+	void DXRender::FillRectangle(const RectF& rect, float _radius) {
 		if (_radius > 0) {
-			float radius = GetMaxRadius(_rect.Width, _rect.Height, (float)_radius);
-			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), (float)radius, (float)radius };
+			float radius = GetMaxRadius(rect.Width, rect.Height, _radius);
+			D2D1_ROUNDED_RECT roundRect{ __To_D2D_RectF(rect), radius, radius };
 			m_render->FillRoundedRectangle(roundRect, GetBrush());
 		}
 		else {
@@ -1135,7 +1130,7 @@ namespace ezui {
 		pSink->AddBezier(bzr);
 		pSink->EndFigure(D2D1_FIGURE_END_OPEN);
 		pSink->Close();
-		m_render->DrawGeometry(pathGeometry, GetBrush(), (FLOAT)width, GetStrokeStyle());
+		m_render->DrawGeometry(pathGeometry, GetBrush(), width, GetStrokeStyle());
 		SafeRelease(&pathGeometry);
 		SafeRelease(&pSink);
 	}
@@ -1251,7 +1246,7 @@ namespace ezui {
 	}
 	void DXRender::DrawGeometry(ID2D1Geometry* geometry, float width)
 	{
-		m_render->DrawGeometry(geometry, GetBrush(), (FLOAT)width, this->GetStrokeStyle());
+		m_render->DrawGeometry(geometry, GetBrush(), width, this->GetStrokeStyle());
 	}
 	void DXRender::FillGeometry(ID2D1Geometry* geometry)
 	{
