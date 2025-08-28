@@ -253,8 +253,8 @@ namespace ezui {
 		for (auto& it : m_controls) {
 			if (rect.IntersectsWith(it->GetRect())) {
 				ViewControls.push_back(it);
-				it->SendEvent(args);
 			}
+			it->SendEvent(args);
 		}
 	}
 	void Control::OnPaint(PaintEventArgs& args)
@@ -1097,7 +1097,7 @@ namespace ezui {
 		this->m_scale = arg.Scale;
 
 		bool needScale = false;
-		if (scale != 1.0f) {
+		if (!IsFloatEqual(scale, 1.0f)) {
 			needScale = true;
 			int fw = this->GetFixedWidth() * scale + 0.5;
 			int fh = this->GetFixedHeight() * scale + 0.5;
@@ -1119,6 +1119,7 @@ namespace ezui {
 			this->Style.Scale(scale);
 			this->ActiveStyle.Scale(scale);
 			this->HoverStyle.Scale(scale);
+			this->DisabledStyle.Scale(scale);
 		}
 
 		for (auto& it : GetControls()) {
@@ -1586,6 +1587,8 @@ namespace ezui {
 	}
 	void Control::OnMouseDown(const MouseEventArgs& args)
 	{
+		m_pressed = true;
+
 		this->State = ControlState::Active;
 		if (ActiveStyle.Cursor) {
 			::SetCursor(ActiveStyle.Cursor);
@@ -1596,12 +1599,16 @@ namespace ezui {
 	}
 	void Control::OnMouseUp(const MouseEventArgs& args)
 	{
+		m_pressed = false;
+
 		if (!(this->EventPassThrough & Event::OnMouseUp)) {
 			this->Invalidate();
 		}
 	}
 	void Control::OnMouseLeave(const MouseEventArgs& args)
 	{
+		m_pressed = false;
+
 		this->State = ControlState::Static;
 		if (!(this->EventPassThrough & Event::OnMouseLeave)) {
 			this->Invalidate();
@@ -1823,5 +1830,9 @@ namespace ezui {
 				this->SetStyle(sytle, key, value);//去应用每一行样式
 			}
 		}
+	}
+	bool Control::IsPressed()
+	{
+		return m_pressed;
 	}
 };

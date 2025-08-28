@@ -12,6 +12,9 @@ namespace ezui {
 		// 控件是否已经被移除或释放
 		bool* m_bRemove = NULL;
 
+		//控件是否被为按住状态
+		bool m_pressed = false;
+
 		// 控件是否启用，禁止状态下鼠标键盘消息将不可用
 		bool m_enabled = true;
 
@@ -517,6 +520,9 @@ namespace ezui {
 
 		//传入状态并分析样式字符串
 		virtual void SetStyleSheet(ControlState state, const UIString& styleStr);
+
+		//控件是否被按住
+		bool IsPressed();
 	};
 
 };

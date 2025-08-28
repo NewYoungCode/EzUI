@@ -22,7 +22,7 @@ namespace ezui {
 		return m_checked;
 	}
 	void CheckBox::OnDpiChange(const DpiChangeEventArgs& args) {
-		if (args.Scale != this->GetScale()) {
+		if (!ezui::IsFloatEqual(args.Scale, this->GetScale())) {
 			this->CheckedStyle.Scale(args.Scale / this->GetScale());
 		}
 		__super::OnDpiChange(args);

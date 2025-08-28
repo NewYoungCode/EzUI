@@ -54,8 +54,6 @@ namespace ezui {
 	extern UI_VAR_EXPORT HWND __EzUI_MessageWnd;//用于UI通讯的隐形窗口
 	extern UI_VAR_EXPORT const std::list<ezui::MonitorInfo> __EzUI__MonitorInfos;//所有监视器信息
 
-	//判断float是否为0(接近0)
-	extern UI_EXPORT bool IsFloatZero(float num);
 	//判断两个float是相等(两数是否接近)
 	extern UI_EXPORT bool IsFloatEqual(float num1, float num2);
 	//加载HICON

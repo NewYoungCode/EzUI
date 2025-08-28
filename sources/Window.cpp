@@ -87,11 +87,11 @@ namespace ezui {
 			};
 		m_publicData->SendNotify = [this](Control* sender, EventArgs& args)->bool {
 			IFrame* frame = sender->GetFrame();
-			//如果当前控件存在与内联界面且事件通知回调不为NULL的时候
+			//如果当前控件存在与内联页面且事件通知回调不为NULL的时候
 			if (frame) {
-				bool bRet = frame->OnNotify(sender, args);
-				if (!bRet && frame->Notify) {
-					bRet = frame->Notify(sender, args);
+				bool bRet = frame->Notify ? frame->Notify(sender, args) : false;
+				if (!bRet) {
+					bRet = frame->OnNotify(sender, args);
 				}
 				return bRet;
 			}
@@ -1126,7 +1126,6 @@ namespace ezui {
 		}
 	}
 	bool Window::OnNotify(Control* sender, EventArgs& args) {
-
-		return false;
+		return ezui::DefaultNotify(sender, args);
 	}
 };

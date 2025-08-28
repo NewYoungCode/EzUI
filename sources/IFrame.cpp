@@ -40,6 +40,6 @@ namespace ezui {
 		this->Add(ctrl);
 	}
 	bool IFrame::OnNotify(Control* sender, EventArgs& args) {
-		return false;
+		return ezui::DefaultNotify(sender, args);
 	}
 }

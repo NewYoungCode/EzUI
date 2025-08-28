@@ -226,11 +226,6 @@ namespace ezui {
 		return NULL;
 	}
 
-	bool IsFloatZero(float num)
-	{
-		return std::abs(num) <= EZUI_FLOAT_EPSILON;
-	}
-
 	bool IsFloatEqual(float num1, float num2)
 	{
 		return std::fabsf(num1 - num2) <= EZUI_FLOAT_EPSILON;
