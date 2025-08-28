@@ -338,10 +338,19 @@ namespace ezui {
 
 		if (!m_multiLine) {//单行编辑框
 			m_font->Get()->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
-			m_textLayout = new TextLayout(*drawText, *m_font, SizeF{ EZUI_FLOAT_MAX,(float)Height() }, TextAlign::MiddleLeft);
+			bool bAlignLeft = (int(this->TextAlign) & int(HAlign::Left));
+			float width = bAlignLeft ? EZUI_FLOAT_MAX : Width();
+			m_textLayout = new TextLayout(*drawText, *m_font, SizeF{ width,(float)Height() }, this->TextAlign);
 			m_fontBox = m_textLayout->GetFontBox();
 			if (m_fontBox.Width < this->Width()) {
 				m_scrollX = 0;
+			}
+			if (!bAlignLeft && m_fontBox.Width > this->Width()) {
+				ezui::TextAlign tmp = this->TextAlign;
+				tmp = ezui::TextAlign((int)tmp & ~(int)HAlign::Center);
+				tmp = ezui::TextAlign((int)tmp & ~(int)HAlign::Right);
+				tmp = ezui::TextAlign((int)tmp | (int)HAlign::Left);
+				m_textLayout->SetTextAlign(tmp);
 			}
 			if (m_fontBox.Width > this->Width() && m_scrollX + m_fontBox.Width < this->Width()) {
 				m_scrollX = this->Width() - m_fontBox.Width;
@@ -597,6 +606,34 @@ namespace ezui {
 		__super::SetAttribute(key, value);
 		do
 		{
+			if (key == "valign") {
+				this->TextAlign = ezui::TextAlign((int)this->TextAlign & ~(int)VAlign::Top);
+				this->TextAlign = ezui::TextAlign((int)this->TextAlign & ~(int)VAlign::Mid);
+				this->TextAlign = ezui::TextAlign((int)this->TextAlign & ~(int)VAlign::Bottom);
+				VAlign v = VAlign::Mid;
+				if (value == "top") {
+					v = VAlign::Top;
+				}
+				else if (value == "bottom") {
+					v = VAlign::Bottom;
+				}
+				this->TextAlign = ezui::TextAlign((int)this->TextAlign | (int)v);
+				break;
+			}
+			if (key == "halign") {
+				this->TextAlign = ezui::TextAlign((int)this->TextAlign & ~(int)HAlign::Left);
+				this->TextAlign = ezui::TextAlign((int)this->TextAlign & ~(int)HAlign::Center);
+				this->TextAlign = ezui::TextAlign((int)this->TextAlign & ~(int)HAlign::Right);
+				HAlign h = HAlign::Center;
+				if (value == "left") {
+					h = HAlign::Left;
+				}
+				else if (value == "right") {
+					h = HAlign::Right;
+				}
+				this->TextAlign = ezui::TextAlign((int)this->TextAlign | (int)h);
+				break;
+			}
 			if (key == "passwordchar") {
 				this->SetPasswordChar(value);
 				break;
@@ -649,7 +686,7 @@ namespace ezui {
 			Color placeholderColor = fontColor;
 			placeholderColor.SetA(fontColor.GetA() * 0.6);
 			e.Graphics.SetColor(placeholderColor);
-			e.Graphics.DrawString(m_placeholder, RectF(0, 0, (float)Width(), (float)Height()), m_multiLine ? TextAlign::TopLeft : TextAlign::MiddleLeft);
+			e.Graphics.DrawString(m_placeholder, RectF(0, 0, (float)Width(), (float)Height()), m_multiLine ? TextAlign::TopLeft : this->TextAlign);
 		}
 
 		if (m_selectRects.size() > 0) {
@@ -676,8 +713,13 @@ namespace ezui {
 				RectF rect(m_careRect.X, m_careRect.Y, m_careRect.Width, m_careRect.Height);
 				rect.X += m_scrollX;//偏移
 				rect.Y += m_scrollY;
-				if (rect.X == this->Width()) {//如果刚好处于边界
-					rect.X = this->Width() - 1 * this->GetScale();
+				if (ezui::IsFloatEqual(rect.X, 0.0f)) {
+					//如果光标刚好在边框起始位置
+					rect.X = (1 * this->GetScale());
+				}
+				else if (ezui::IsFloatEqual(rect.X, this->Width())) {
+					//如果光标刚好在边框末尾
+					rect.X = this->Width() - (1 * this->GetScale());
 				}
 				rect.Width = rect.Width * this->GetScale();
 				e.Graphics.SetColor(fontColor);

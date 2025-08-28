@@ -58,7 +58,6 @@ namespace ezui {
 	private:
 		TextLayout(const TextLayout& rightValue) = delete;
 		IDWriteTextLayout* m_textLayout = NULL;
-		void SetTextAlign(TextAlign textAlign);
 		std::wstring m_fontFamily;
 		DWRITE_TEXT_METRICS m_textMetrics = {};
 		std::vector<RectF> m_lineRects;
@@ -81,6 +80,7 @@ namespace ezui {
 		int GetFontHeight();//获取字体高度
 		int GetLineCount();//获取一共有多少行
 		IDWriteTextLayout* Get() const;
+		void SetTextAlign(TextAlign textAlign);
 		void SetUnderline(int pos = 0, int count = 0);
 		virtual ~TextLayout();
 	};

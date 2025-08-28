@@ -39,6 +39,9 @@ namespace ezui {
 		std::wstring m_placeholder;//placeholder懂得都懂 (在没有文字的情况下显示的文字)
 		std::wstring m_passwordChar;
 		bool m_readOnly = false;//是否只读
+	public:
+		//文字对其方式(针对单行输入框有效)
+		TextAlign TextAlign = TextAlign::MiddleLeft;
 	private:
 		void Init();
 		void InsertUnicode(const std::wstring& str);//插入unicode文字内部使用

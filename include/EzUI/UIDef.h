@@ -81,3 +81,30 @@
 #define EZUI_FLOAT_EPSILON 1e-6f  // 浮点误差阈值
 //下面的渲染方式只能选一个
 #define USED_DIRECT2D 1  //DX绘制 性能好 内存占用高
+
+//生成枚举类常用操作符
+#define EZUI_ENUM_OPERATORS(ENUM_TYPE, BASE_TYPE)         \
+inline ENUM_TYPE operator|(ENUM_TYPE a, ENUM_TYPE b) {           \
+    return static_cast<ENUM_TYPE>(static_cast<BASE_TYPE>(a) | static_cast<BASE_TYPE>(b)); \
+}                                                           \
+inline ENUM_TYPE operator&(ENUM_TYPE a, ENUM_TYPE b) {           \
+    return static_cast<ENUM_TYPE>(static_cast<BASE_TYPE>(a) & static_cast<BASE_TYPE>(b)); \
+}                                                            \
+inline ENUM_TYPE operator~(ENUM_TYPE a) {                        \
+    return static_cast<ENUM_TYPE>(~static_cast<BASE_TYPE>(a));   \
+}                                                              \
+inline ENUM_TYPE operator^(ENUM_TYPE a, ENUM_TYPE b) {           \
+    return static_cast<ENUM_TYPE>(static_cast<BASE_TYPE>(a) ^ static_cast<BASE_TYPE>(b)); \
+}                                                               \
+inline ENUM_TYPE& operator|=(ENUM_TYPE& a, ENUM_TYPE b) {        \
+    a = a | b;                                                   \
+    return a;                                                    \
+}                                                              \
+inline ENUM_TYPE& operator&=(ENUM_TYPE& a, ENUM_TYPE b) {        \
+    a = a & b;                                                   \
+    return a;                                                    \
+}                                                               \
+inline ENUM_TYPE& operator^=(ENUM_TYPE& a, ENUM_TYPE b) {        \
+    a = a ^ b;                                                   \
+    return a;                                                    \
+}

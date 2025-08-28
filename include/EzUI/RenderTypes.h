@@ -651,6 +651,8 @@ namespace ezui {
 		Center = Align_Center,
 		Right = Align_Right
 	};
+	EZUI_ENUM_OPERATORS(HAlign, int);
+
 	/// <summary>
 	/// 垂直状态下的对其方式
 	/// </summary>
@@ -660,8 +662,10 @@ namespace ezui {
 		Mid = Align_Mid,
 		Bottom = Align_Bottom
 	};
+	EZUI_ENUM_OPERATORS(VAlign, int);
 
-	enum class __Align :int {
+	//对齐方式
+	enum class Align :int {
 		//
 		// 摘要: 
 		//     内容在垂直方向上顶部对齐，在水平方向上左边对齐。
@@ -699,11 +703,12 @@ namespace ezui {
 		//     内容在垂直方向上底边对齐，在水平方向上右边对齐。
 		BottomRight = (int)VAlign::Bottom | (int)HAlign::Right
 	};
+	EZUI_ENUM_OPERATORS(Align, int);
 
-	typedef __Align TextAlign;
+	typedef Align TextAlign;
 
-	enum class FontStyle :int {
-		NORMAL = 0
+	enum class FontStyle {
+		NORMAL
 		/* DWRITE_FONT_STYLE_NORMAL
 		字体样式 ：正常。
 		DWRITE_FONT_STYLE_OBLIQUE

@@ -172,13 +172,13 @@ namespace ezui {
 
 	};
 
-	enum class LayoutState :byte {
+	enum class LayoutState {
 		//无状态 (无需布局)
-		None = 1,
+		None,
 		//挂起中
-		Pend = 2,
+		Pend,
 		//布局中
-		Layouting = 4
+		Layouting
 	};
 	enum Event :long long {
 		None = 1,
@@ -227,26 +227,7 @@ namespace ezui {
 		Hover = 16,//鼠标悬浮
 		Active = 32//鼠标按住
 	};
-	inline ControlState operator|(ControlState left, ControlState right)
-	{
-		return (ControlState)((int)left | (int)right);
-	}
-	inline ControlState operator&(ControlState a, ControlState b) {
-		return (ControlState)((int)a & (int)b);
-	}
-	inline ControlState operator~(ControlState a) {
-		return (ControlState)(~(int)a);
-	}
-	inline ControlState& operator|=(ControlState& left, ControlState right) {
-		left = left | right;
-		return left;
-	}
-	inline ControlState& operator&=(ControlState& left, ControlState right) {
-		left = left & right;
-		return left;
-	}
-
-
+	EZUI_ENUM_OPERATORS(ControlState, int);
 
 	enum class DockStyle {
 		// 摘要:

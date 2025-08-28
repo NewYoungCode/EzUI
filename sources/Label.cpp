@@ -77,10 +77,6 @@ namespace ezui {
 				this->TextAlign = ezui::TextAlign((int)this->TextAlign | (int)v);
 				break;
 			}
-			if (key == "ellipsis") {
-				this->SetElidedText(value);
-				break;
-			}
 			if (key == "halign") {
 				this->TextAlign = ezui::TextAlign((int)this->TextAlign & ~(int)HAlign::Left);
 				this->TextAlign = ezui::TextAlign((int)this->TextAlign & ~(int)HAlign::Center);
@@ -105,7 +101,10 @@ namespace ezui {
 				this->m_underlineCount = std::atoi(value.substr(pos + 1, pos).c_str());
 				break;
 			}
-
+			if (key == "ellipsis") {
+				this->SetElidedText(value);
+				break;
+			}
 		} while (false);
 		__super::SetAttribute(key, value);
 	}
