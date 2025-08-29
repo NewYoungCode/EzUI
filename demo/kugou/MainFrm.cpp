@@ -252,7 +252,15 @@ void MainFrm::DownLoadImage(UIString singers, UIString headImageUrl)
 			WebClient wc2;
 			auto code = wc2.HttpGet(bkurl, &fileData, 5);
 			if (code == 200) {
-				bkImg = new Image(fileData.c_str(), fileData.size());
+				Image* img = new Image(1020, 690);
+				{
+					Image* tmp = new Image(fileData.c_str(), fileData.size());
+					tmp->SizeMode = ImageSizeMode::Cover;
+					DXRender render(img);
+					render.DrawImage(tmp, RectF(0, 0, img->Width(), img->Height()));
+					delete tmp;
+				}
+				bkImg = img;
 				bkImg->SizeMode = ImageSizeMode::Cover;
 			}
 		}
