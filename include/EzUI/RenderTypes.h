@@ -2,6 +2,123 @@
 #include <Windows.h>
 
 namespace ezui {
+	//size模式
+	enum class SizeMode {
+		//图片强行拉伸完全填充控件
+		//不裁剪,图片变形
+		Stretch,
+		//图片缩放后完全填充控件
+		//图片会裁剪, 保持比例裁剪和控件同大小
+		Cover,
+		//图片缩放后完整居中显示在控件上 
+		//控件会留白
+		Fit,
+		//图片保持原尺寸, 
+		//如果图片小于控件: 控件留白,
+		//如果图片大于控件: 控件边界外的部分被裁剪
+		Original
+	};
+	typedef SizeMode ImageSizeMode;
+
+#if 1
+#define Align_Top  1
+#define Align_Bottom  2
+#define Align_Left  4
+#define Align_Right  8
+#define Align_Mid  16
+#define Align_Center  32
+#else //GDI
+#define Align_Top  DT_TOP
+#define Align_Bottom  DT_BOTTOM
+#define Align_Left  DT_LEFT
+#define Align_Right  DT_RIGHT
+#define Align_Mid   DT_VCENTER
+#define Align_Center   DT_CENTER
+#endif
+	/// <summary>
+	/// 水平状态下的对齐方式
+	/// </summary>
+	enum class HAlign :int
+	{
+		Left = Align_Left,
+		Center = Align_Center,
+		Right = Align_Right
+	};
+	EZUI_ENUM_OPERATORS(HAlign, int);
+
+	/// <summary>
+	/// 垂直状态下的对齐方式
+	/// </summary>
+	enum class VAlign :int
+	{
+		Top = Align_Top,
+		Mid = Align_Mid,
+		Bottom = Align_Bottom
+	};
+	EZUI_ENUM_OPERATORS(VAlign, int);
+
+	//包含垂直与水平对齐方式
+	enum class Align :int {
+		//
+		// 摘要: 
+		//     内容在垂直方向上顶部对齐，在水平方向上左边对齐。
+		TopLeft = (int)VAlign::Top | (int)HAlign::Left,
+		//
+		// 摘要: 
+		//     内容在垂直方向上顶部对齐，在水平方向上居中对齐。
+		TopCenter = (int)VAlign::Top | (int)HAlign::Center,
+		//
+		// 摘要: 
+		//     内容在垂直方向上顶部对齐，在水平方向上右边对齐。
+		TopRight = (int)VAlign::Top | (int)HAlign::Right,
+		//
+		// 摘要: 
+		//     内容在垂直方向上中间对齐，在水平方向上左边对齐。
+		MiddleLeft = (int)VAlign::Mid | (int)HAlign::Left,
+		//
+		// 摘要: 
+		//     内容在垂直方向上中间对齐，在水平方向上居中对齐。
+		MiddleCenter = (int)VAlign::Mid | (int)HAlign::Center,
+		//
+		// 摘要: 
+		//     内容在垂直方向上中间对齐，在水平方向上右边对齐。
+		MiddleRight = (int)VAlign::Mid | (int)HAlign::Right,
+		//
+		// 摘要: 
+		//     内容在垂直方向上底边对齐，在水平方向上左边对齐。
+		BottomLeft = (int)VAlign::Bottom | (int)HAlign::Left,
+		//
+		// 摘要: 
+		//     内容在垂直方向上底边对齐，在水平方向上居中对齐。
+		BottomCenter = (int)VAlign::Bottom | (int)HAlign::Center,
+		//
+		// 摘要: 
+		//     内容在垂直方向上底边对齐，在水平方向上右边对齐。
+		BottomRight = (int)VAlign::Bottom | (int)HAlign::Right
+	};
+	EZUI_ENUM_OPERATORS(Align, int);
+
+	typedef Align TextAlign;
+
+	enum class FontStyle {
+		NORMAL
+		/* DWRITE_FONT_STYLE_NORMAL
+		字体样式 ：正常。
+		DWRITE_FONT_STYLE_OBLIQUE
+		字体样式 ：倾斜。
+		DWRITE_FONT_STYLE_ITALIC
+		字体样式 ：斜体。 */
+	};
+
+	//描边样式
+	enum class StrokeStyle
+	{
+		None,//无
+		Solid,//实线
+		Dash//虚线
+	};
+
+
 	template<typename T>
 	class __EzUI__Size
 	{
@@ -478,8 +595,31 @@ namespace ezui {
 	typedef  __EzUI__Line<int> Line;
 	typedef  __EzUI__Line<float> LineF;
 	typedef  __EzUI__Size<int> Size;
-	typedef  __EzUI__Size<float> SizeF;
 	typedef  __EzUI__Rect<int> Rect;
+
+	class SizeF :public __EzUI__Size<float> {
+	public:
+		SizeF()
+		{
+			Width = Height = 0;
+		}
+		SizeF(float width,
+			float height)
+		{
+			Width = width;
+			Height = height;
+		}
+		SizeF(const SizeF& __Size)
+		{
+			Width = __Size.Width;
+			Height = __Size.Height;
+		}
+		SizeF(const Size& __Size)
+		{
+			Width = (float)__Size.Width;
+			Height = (float)__Size.Height;
+		}
+	};
 
 	class RectF :public __EzUI__Rect<float> {
 	public:
@@ -514,6 +654,58 @@ namespace ezui {
 			Height = (Height * scale);
 			return *this;
 		}
+		//转换
+		static RectF Transformation(SizeMode sizeMode, const RectF& container, const SizeF& contentSize) {
+			if (sizeMode == SizeMode::Stretch) {
+				return container;
+			}
+			//容器数据
+			float containerWidth = container.Width;
+			float containerHeight = container.Height;
+			float containerRatio = containerWidth / containerHeight;//宽高比
+			//内容数据
+			float contentWidth = contentSize.Width;
+			float contentHeight = contentSize.Height;
+			float contentRatio = contentWidth / contentHeight; //宽高比
+
+			if (sizeMode == SizeMode::Fit) {
+				if (containerRatio < contentRatio) {
+					float zoomHeight = containerWidth / contentWidth * contentHeight;
+					float y = (containerHeight - zoomHeight) / 2.0f + container.Y;
+					return RectF(container.X, y, containerWidth, zoomHeight);
+				}
+				else {
+					float zoomWidth = containerHeight / contentHeight * contentWidth;
+					float x = (containerWidth - zoomWidth) / 2.0f + container.X;
+					return RectF(x, container.Y, zoomWidth, containerHeight);
+				}
+			}
+			if (sizeMode == SizeMode::Cover) {
+				if (containerRatio < contentRatio) {
+					//1000 670 容器大小
+					//1000 300 内容大小
+					//2233 670     缩放后的内容大小 
+					float zoomWidth = containerHeight / contentHeight * contentWidth;//内容应该这么宽才对
+					float x = (zoomWidth - containerWidth) / 2.0f;
+					return RectF(container.X - x, container.Y, zoomWidth, containerHeight);
+				}
+				else {
+					//1000 600 容器大小
+					//400  600 内容大小
+					//1000 1500     缩放后的内容大小 
+					float zoomHeight = containerWidth / contentWidth * contentHeight;//内容应该这么高才对
+					float y = (zoomHeight - containerHeight) / 2.0f;
+					return RectF(container.X, container.Y - y, containerWidth, zoomHeight);
+				}
+			}
+			//按照内容原大小居中显示
+			if (sizeMode == SizeMode::Original) {
+				float x = (container.Width - contentSize.Width) / 2.0f;
+				float y = (container.Height - contentSize.Height) / 2.0f;
+				return RectF(x, y, contentSize.Width, contentSize.Height);
+			}
+			return container;
+		}
 		virtual ~RectF() {};
 	};
 
@@ -546,39 +738,10 @@ namespace ezui {
 		}
 	};
 
-	enum class ImageSizeMode {
-
-		//图片强行拉伸完全填充控件
-		//不裁剪,图片变形
-		Stretch,
-
-		//图片缩放后完全填充控件
-		//图片会裁剪, 保持比例裁剪和控件同大小
-		Cover,
-
-		//图片缩放后完整居中显示在控件上 
-		//控件会留白
-		Fit,
-
-		//图片保持原尺寸, 
-		//如果图片小于控件: 控件留白,
-		//如果图片大于控件: 控件边界外的部分被裁剪
-		Original
-	};
-
-
-	//描边样式
-	enum class StrokeStyle
-	{
-		None,//无
-		Solid,//实线
-		Dash//虚线
-	};
-
 	/// <summary>
 	/// 描述边框的一些信息
 	/// </summary>
-	class  Border {
+	class Border {
 	public:
 		WORD Left = 0;//左边边框大小
 		WORD Top = 0;//顶部边框大小
@@ -627,95 +790,7 @@ namespace ezui {
 			BottomLeftRadius = WORD(BottomLeftRadius * scale + 0.5);
 		}
 	};
-#if 1
-#define Align_Top  1
-#define Align_Bottom  2
-#define Align_Left  4
-#define Align_Right  8
-#define Align_Mid  16
-#define Align_Center  32
-#else //GDI
-#define Align_Top  DT_TOP
-#define Align_Bottom  DT_BOTTOM
-#define Align_Left  DT_LEFT
-#define Align_Right  DT_RIGHT
-#define Align_Mid   DT_VCENTER
-#define Align_Center   DT_CENTER
-#endif
-	/// <summary>
-	/// 水平状态下的对其方式
-	/// </summary>
-	enum class HAlign :int
-	{
-		Left = Align_Left,
-		Center = Align_Center,
-		Right = Align_Right
-	};
-	EZUI_ENUM_OPERATORS(HAlign, int);
 
-	/// <summary>
-	/// 垂直状态下的对其方式
-	/// </summary>
-	enum class VAlign :int
-	{
-		Top = Align_Top,
-		Mid = Align_Mid,
-		Bottom = Align_Bottom
-	};
-	EZUI_ENUM_OPERATORS(VAlign, int);
-
-	//对齐方式
-	enum class Align :int {
-		//
-		// 摘要: 
-		//     内容在垂直方向上顶部对齐，在水平方向上左边对齐。
-		TopLeft = (int)VAlign::Top | (int)HAlign::Left,
-		//
-		// 摘要: 
-		//     内容在垂直方向上顶部对齐，在水平方向上居中对齐。
-		TopCenter = (int)VAlign::Top | (int)HAlign::Center,
-		//
-		// 摘要: 
-		//     内容在垂直方向上顶部对齐，在水平方向上右边对齐。
-		TopRight = (int)VAlign::Top | (int)HAlign::Right,
-		//
-		// 摘要: 
-		//     内容在垂直方向上中间对齐，在水平方向上左边对齐。
-		MiddleLeft = (int)VAlign::Mid | (int)HAlign::Left,
-		//
-		// 摘要: 
-		//     内容在垂直方向上中间对齐，在水平方向上居中对齐。
-		MiddleCenter = (int)VAlign::Mid | (int)HAlign::Center,
-		//
-		// 摘要: 
-		//     内容在垂直方向上中间对齐，在水平方向上右边对齐。
-		MiddleRight = (int)VAlign::Mid | (int)HAlign::Right,
-		//
-		// 摘要: 
-		//     内容在垂直方向上底边对齐，在水平方向上左边对齐。
-		BottomLeft = (int)VAlign::Bottom | (int)HAlign::Left,
-		//
-		// 摘要: 
-		//     内容在垂直方向上底边对齐，在水平方向上居中对齐。
-		BottomCenter = (int)VAlign::Bottom | (int)HAlign::Center,
-		//
-		// 摘要: 
-		//     内容在垂直方向上底边对齐，在水平方向上右边对齐。
-		BottomRight = (int)VAlign::Bottom | (int)HAlign::Right
-	};
-	EZUI_ENUM_OPERATORS(Align, int);
-
-	typedef Align TextAlign;
-
-	enum class FontStyle {
-		NORMAL
-		/* DWRITE_FONT_STYLE_NORMAL
-		字体样式 ：正常。
-		DWRITE_FONT_STYLE_OBLIQUE
-		字体样式 ：倾斜。
-		DWRITE_FONT_STYLE_ITALIC
-		字体样式 ：斜体。 */
-	};
 
 	class IImage {
 	protected:
@@ -735,57 +810,4 @@ namespace ezui {
 		virtual WORD NextFrame() = 0;
 	};
 
-	inline RectF Transformation(ImageSizeMode imageSizeMode, const RectF& rect, const Size& imgSize) {
-
-		if (imageSizeMode == ImageSizeMode::Stretch) {
-			return rect;
-		}
-
-		//客户端数据
-		float clientWidth = rect.Width;
-		float clientHeight = rect.Height;
-		float clientRate = clientWidth / clientHeight;
-		//图片数据
-		float imgWidth = (float)imgSize.Width;
-		float imgHeight = (float)imgSize.Height;
-		float imgRate = imgWidth / imgHeight;
-
-		if (imageSizeMode == ImageSizeMode::Fit) {
-			if (clientRate < imgRate) {
-				float zoomHeight = clientWidth / imgWidth * imgHeight;
-				float y = (clientHeight - zoomHeight) / 2.0f + rect.Y;
-				return RectF(rect.X, y, clientWidth, zoomHeight);
-			}
-			else {
-				float zoomWidth = clientHeight / imgHeight * imgWidth;
-				float x = (clientWidth - zoomWidth) / 2.0f + rect.X;
-				return RectF(x, rect.Y, zoomWidth, clientHeight);
-			}
-		}
-		if (imageSizeMode == ImageSizeMode::Cover) {
-			if (clientRate < imgRate) {
-				//1000 670 客户端
-				//1000 300 图片
-				//2233 670     缩放后的图片大小 
-				float zoomWidth = clientHeight / imgHeight * imgWidth;//图片应该这么宽才对
-				float x = (zoomWidth - clientWidth) / 2.0f;
-				return RectF(rect.X - x, rect.Y, zoomWidth, clientHeight);
-			}
-			else {
-				//1000 600 客户端
-				//400  600 图片
-				//1000 1500     缩放后的图片大小 
-				float zoomHeight = clientWidth / imgWidth * imgHeight;//图片应该这么高才对
-				float y = (zoomHeight - clientHeight) / 2.0f;
-				return RectF(rect.X, rect.Y - y, clientWidth, zoomHeight);
-			}
-		}
-		//按照图片原大小居中显示
-		if (imageSizeMode == ImageSizeMode::Original) {
-			float x = (rect.Width - imgSize.Width) / 2.0f;
-			float y = (rect.Height - imgSize.Height) / 2.0f;
-			return RectF(x, y, (float)imgSize.Width, (float)imgSize.Height);
-		}
-		return rect;
-	}
 };

@@ -13,6 +13,22 @@ namespace ezui {
 		std::function<void(Timer*)> Tick = NULL;
 		int Interval = 0;
 	public:
+		//Timeout干啥的不用我多说什么了吧
+		template<class Func, class... Args>
+		static void Timeout(int msec, Func&& f, Args&& ...args) {
+			std::function<void()>* func = new std::function<void()>(std::bind(f, args...));
+			Timer* timer = new Timer;
+			timer->Interval = 0;
+			timer->Tick = [msec, func](Timer* t) {
+				t->Stop();
+				Sleep(msec);
+				(*func)();
+				delete func;
+				t->DeleteLater();
+				};
+			timer->Start();
+		};
+	public:
 		Timer(Object* parentObject = NULL);
 		bool IsStopped();
 		void Start();

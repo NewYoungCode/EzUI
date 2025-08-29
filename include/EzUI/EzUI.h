@@ -484,6 +484,8 @@ namespace ezui {
 		virtual Object* Attach(Object* obj);
 		//分离对象(解除跟随释放)
 		virtual void Detach(Object* obj);
+		//延迟删除
+		void DeleteLater();
 	};
 
 	//原理采用PostMessage

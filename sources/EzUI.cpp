@@ -564,6 +564,13 @@ namespace ezui {
 		m_childObjects.Remove(obj);
 	}
 
+	void Object::DeleteLater()
+	{
+		BeginInvoke([this]() {
+			delete this;
+			});
+	}
+
 	void PaintEventArgs::PushLayer(const Geometry& dxGeometry) {
 		this->Graphics.PushLayer(dxGeometry);
 		m_layers.push_back(false);

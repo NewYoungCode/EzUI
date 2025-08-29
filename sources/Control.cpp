@@ -1149,15 +1149,6 @@ namespace ezui {
 		}
 	}
 
-	Control* Control::Attach(Control* ctrl)
-	{
-		__super::Attach(ctrl);
-		return ctrl;
-	}
-	void Control::Detach(Control* ctrl)
-	{
-		__super::Detach(ctrl);
-	}
 
 	Image* Control::Attach(Image* img)
 	{

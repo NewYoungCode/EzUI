@@ -52,6 +52,8 @@ namespace ezui {
 		HWND m_ownerWnd = NULL;
 		//窗口布局
 		Control* m_layout = NULL;
+		// 管理图片的释放
+		PtrManager<Image*> m_imgs;
 	private:
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
@@ -243,5 +245,16 @@ namespace ezui {
 		//给指定控件为焦点控件
 		void SetFocus(Control* ctl);
 
+		//绑定对象(跟随释放)
+		using Object::Attach;
+
+		//分离对象(解除跟随释放)
+		using Object::Detach;
+
+		//绑定图片(跟随释放)
+		Image* Attach(Image* img);
+
+		//分离图片(解除跟随释放)
+		void Detach(Image* img);
 	};
 };

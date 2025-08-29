@@ -1200,7 +1200,7 @@ namespace ezui {
 		}
 		else {
 			//不限制绘制区域 根据imageSizeMode属性进行坐标转换
-			realRendRect = ezui::Transformation(imageSizeMode, rect, imgSize);
+			realRendRect = RectF::Transformation(imageSizeMode, rect, SizeF(imgSize.Width, imgSize.Height));
 		}
 		//开始绘制
 		D2D_RECT_F drawRectF = __To_D2D_RectF(realRendRect);

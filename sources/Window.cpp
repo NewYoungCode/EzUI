@@ -89,10 +89,7 @@ namespace ezui {
 			IFrame* frame = sender->GetFrame();
 			//如果当前控件存在与内联页面且事件通知回调不为NULL的时候
 			if (frame) {
-				bool bRet = frame->Notify ? frame->Notify(sender, args) : false;
-				if (!bRet) {
-					bRet = frame->OnNotify(sender, args);
-				}
+				bool bRet = frame->OnNotify(sender, args);
 				return bRet;
 			}
 			return this->OnNotify(sender, args);
@@ -404,6 +401,16 @@ namespace ezui {
 		this->DispatchEvent(ctl, args);
 		m_inputControl = ctl;
 		m_focusControl = ctl;
+	}
+
+	Image* Window::Attach(Image* img)
+	{
+		m_imgs.Add(img);
+		return img;
+	}
+	void Window::Detach(Image* img)
+	{
+		m_imgs.Remove(img);
 	}
 
 	HWND Window::GetShadowHwnd()
@@ -781,9 +788,8 @@ namespace ezui {
 		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 		auto now = std::chrono::system_clock::now();
 		auto ts = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
-		char buf[256]{ 0 };
-		sprintf(buf, "ts:(%lld) elapsed:(%lldms) count:(%d) rect:[%d,%d,%d,%d]\n", ts, static_cast<long long>(elapsed), args.PublicData->PaintCount, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height);
-		OutputDebugStringA(buf);
+		UIString log = UIString("ts:(%lld) elapsed:(%lldms) count:(%d) rect:[%d,%d,%d,%d]\n").format(ts, static_cast<long long>(elapsed), args.PublicData->PaintCount, rePaintRect.X, rePaintRect.Y, rePaintRect.Width, rePaintRect.Height);
+		OutputDebugStringA(log.c_str());
 #endif // COUNT_DOPAINT
 	}
 

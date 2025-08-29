@@ -286,11 +286,11 @@ namespace ezui {
 		// 销毁控件内所有弹簧
 		void DestroySpacers();
 
-		//绑定控件(跟随释放)
-		Control* Attach(Control* ctrl);
+		//绑定对象(跟随释放)
+		using Object::Attach;
 
-		//分离控件(解除跟随释放)
-		void Detach(Control* ctrl);
+		//分离对象(解除跟随释放)
+		using Object::Detach;
 
 		//绑定图片(跟随释放)
 		Image* Attach(Image* img);
