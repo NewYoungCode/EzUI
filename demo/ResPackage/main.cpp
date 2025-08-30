@@ -21,10 +21,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		UIString packageDir = args[index + 1];
 		UIString outFile = args[index + 2];
 
-		UIString log = UIString("package: %s -> %s \n").format(packageDir.c_str(), outFile.c_str()).ansi();
+		UIString log = UIString("packaging... %s -> %s \n").format(packageDir.c_str(), outFile.c_str()).ansi();
 		printf(log.c_str());
-		Resource::Package(packageDir, outFile);
-		printf("package done!\n");
+		bool bRet = Resource::Package(packageDir, outFile);
+		if (bRet) {
+			printf("package succeeded !");
+		}
+		else {
+			printf("package failed !");
+		}
 		return 0;
 	}
 

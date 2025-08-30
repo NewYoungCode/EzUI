@@ -682,7 +682,7 @@ namespace ezui {
 		}
 		const Color& fontColor = GetForeColor();
 		e.Graphics.SetFont(fontFamily, fontSize);
-		if (m_text.empty()) {
+		if (m_text.empty() && !m_focus) {
 			Color placeholderColor = fontColor;
 			placeholderColor.SetA(fontColor.GetA() * 0.6);
 			e.Graphics.SetColor(placeholderColor);

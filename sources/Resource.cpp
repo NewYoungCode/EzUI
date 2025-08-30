@@ -1,6 +1,45 @@
 #include "Resource.h"
 #include "EzUI.h"
 namespace ezui {
+	//判断文件是否存在
+	bool DirectoryExists(const UIString& directoryNme) {
+		DWORD dwAttr = GetFileAttributesW(directoryNme.unicode().c_str());
+		if (dwAttr == DWORD(-1)) {
+			return false;
+		}
+		if (dwAttr & FILE_ATTRIBUTE_DIRECTORY)
+		{
+			return true;
+		}
+		return false;
+	}
+	//寻找指定目录以及目录下的所有文件
+	void FindFilesRecursively(const std::wstring& path, std::list<std::wstring>* result) {
+		WIN32_FIND_DATAW findData;
+		HANDLE findHandle = FindFirstFileW((path + L"/*").c_str(), &findData);
+		if (findHandle == INVALID_HANDLE_VALUE) {
+			return;
+		}
+		do
+		{
+			if (findData.cFileName[0] == L'.') {
+				continue;
+			}
+			if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+				// 如果是目录，递归查找该目录  
+				std::wstring newPath = path + L"/" + findData.cFileName;
+				FindFilesRecursively(newPath, result);
+			}
+			else {
+				std::wstring newPath = path + L"/" + findData.cFileName;
+				result->push_back(newPath);
+			}
+		} while (FindNextFileW(findHandle, &findData));
+		FindClose(findHandle);
+	}
+}
+
+namespace ezui {
 	Resource::ReadStream::ReadStream(HRSRC hRsrc) {
 		this->m_ptr = (char*)::LoadResource(ezui::__EzUI__HINSTANCE, hRsrc);
 		this->m_count = ::SizeofResource(ezui::__EzUI__HINSTANCE, hRsrc);
@@ -48,39 +87,17 @@ namespace ezui {
 		}
 	}
 
-	//寻找指定目录以及目录下的所有文件
-	void __Resource__FindFilesRecursively(const std::wstring& path, std::list<std::wstring>* result) {
-		WIN32_FIND_DATAW findData;
-		HANDLE findHandle = FindFirstFileW((path + L"/*").c_str(), &findData);
-		if (findHandle == INVALID_HANDLE_VALUE) {
-			return;
-		}
-		do
-		{
-			if (findData.cFileName[0] == L'.') {
-				continue;
-			}
-			if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-				// 如果是目录，递归查找该目录  
-				std::wstring newPath = path + L"/" + findData.cFileName;
-				__Resource__FindFilesRecursively(newPath, result);
-			}
-			else {
-				std::wstring newPath = path + L"/" + findData.cFileName;
-				result->push_back(newPath);
-			}
-		} while (FindNextFileW(findHandle, &findData));
-		FindClose(findHandle);
-	}
-	void  Resource::Package(const UIString& dir, const UIString& outFile, const std::function<void(const UIString&, int, int)>& packCallback) {
-
-		if (dir.empty()) {
-			ASSERT(!"DirName is Empty !");
+	bool Resource::Package(const UIString& dir, const UIString& outFile, const std::function<void(const UIString&, int, int)>& packCallback) {
+		if (dir.empty() || !DirectoryExists(dir)) {
+			std::wstring err = UIString("Error: Invalid directory: \"%s\"\n").format(dir.c_str()).unicode();
+			OutputDebugStringW(err.c_str());
+			ASSERT(!"Invalid directory !");
+			return false;
 		}
 
 		std::list<Entry> items;
 		std::list<std::wstring> files;
-		__Resource__FindFilesRecursively(dir.unicode(), &files);
+		FindFilesRecursively(dir.unicode(), &files);
 		std::streamsize headOffset = sizeof(std::streamsize);
 		std::ofstream ofs(outFile.unicode(), std::ios::binary);
 		ofs.seekp(headOffset);
@@ -140,6 +157,7 @@ namespace ezui {
 		ofs.write((char*)(&headOffset), sizeof(headOffset));
 		ofs.flush();
 		ofs.close();
+		return ofs.good();
 	}
 
 	void Resource::UnPackage() {

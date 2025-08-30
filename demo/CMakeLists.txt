@@ -24,21 +24,27 @@ add_executable(ResPackage WIN32 ${src} )
 target_include_directories(ResPackage PRIVATE  ${include})
 target_link_libraries(ResPackage PRIVATE EzUI)
 
-# 定义函数: 添加资源打包任务并关联到指定项目
-function(add_resource_package TARGET_NAME INPUT_DIR OUTPUT_FILE)
-    # 定义始终运行的伪目标
-    add_custom_target(
-        ${TARGET_NAME}_ResPackage  # 更简洁的目标命名
-        COMMAND ${CMAKE_SOURCE_DIR}/ResPackage.exe -package ${CMAKE_CURRENT_SOURCE_DIR}/${INPUT_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${OUTPUT_FILE}
-        COMMENT "Packaging resources for ${TARGET_NAME}..."
+
+#仿QQ登录界面
+project(QQ)
+    #主程序
+file(GLOB src CONFIGURE_DEPENDS
+    "./QQ/*.h"
+    "./QQ/*.hpp"
+    "./QQ/*.c"
+    "./QQ/*.cpp"
+    "./QQ/*.rc"
     )
-    # 将目标归类到专用文件夹
-    set_target_properties(${TARGET_NAME}_ResPackage PROPERTIES
-        FOLDER "EzUIBuildUtilities"  # 在VS中归类到指定文件夹
-    )
-    # 主目标依赖伪目标
-    add_dependencies(${TARGET_NAME} ${TARGET_NAME}_ResPackage)
-endfunction()
+add_executable(QQ WIN32 ${src})
+target_include_directories(QQ PRIVATE  ${include})
+target_link_libraries(QQ PRIVATE EzUI)
+# 添加资源文件到"Res"筛选项下
+file(GLOB_RECURSE res_files CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/QQ/res/*.*")
+target_sources(QQ PRIVATE ${res_files})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/QQ/res" PREFIX "res" FILES ${res_files})
+add_resource_package(QQ ./QQ/res ./QQ/QQ.res)
+
+
 
     #模仿酷狗音乐demo
     project(kugou)

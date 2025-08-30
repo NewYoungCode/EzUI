@@ -35,7 +35,7 @@ namespace ezui {
 		const std::list<Entry> Items;
 		bool IsGood();
 		//对资源目录进行打包
-		static void Package(const UIString& dir, const UIString& outFile, const std::function<void(const UIString&, int, int)>& packCallback = NULL);
+		static bool Package(const UIString& dir, const UIString& outFile, const std::function<void(const UIString&, int, int)>& packCallback = NULL);
 	public:
 		virtual ~Resource();
 		//从本地文件创建资源对象
