@@ -16,6 +16,7 @@ file(GLOB src helloWorld/*.*)
 add_executable(helloWorld WIN32 ${src})
 target_include_directories(helloWorld PRIVATE  ${include})
 target_link_libraries(helloWorld PRIVATE EzUI)
+set_property(TARGET helloWorld PROPERTY FOLDER "demo")
 
 #资源打包器
 project(ResPackage)
@@ -43,7 +44,7 @@ file(GLOB_RECURSE res_files CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/QQ/re
 target_sources(QQ PRIVATE ${res_files})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/QQ/res" PREFIX "res" FILES ${res_files})
 add_resource_package(QQ ./QQ/res ./QQ/QQ.res)
-
+set_property(TARGET QQ PROPERTY FOLDER "demo")
 
 
     #模仿酷狗音乐demo
@@ -71,6 +72,7 @@ add_resource_package(QQ ./QQ/res ./QQ/QQ.res)
     target_link_directories(kugou PRIVATE ./kugou/lib/${ARCH_NAME}/Common)
     target_link_directories(kugou PRIVATE ./kugou/lib/${ARCH_NAME}/vlc)
 
+    set_property(TARGET kugou PROPERTY FOLDER "demo")
     #添加引用
     target_link_libraries(kugou PRIVATE EzUI)
     #解决 "模块对于 SAFESEH 映像是不安全的" 的报错

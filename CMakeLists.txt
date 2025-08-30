@@ -25,21 +25,21 @@ endif()
 target_include_directories(EzUI PRIVATE ./include/EzUI)
 set_target_properties(EzUI PROPERTIES LINKER_LANGUAGE CXX)
 
-
 # 定义函数: 添加资源打包任务并关联到指定项目
 function(add_resource_package TARGET_NAME INPUT_DIR OUTPUT_FILE)
+    set (ProjectName  ${TARGET_NAME}_EzUI_ResourcePackager)
     # 定义始终运行的伪目标
     add_custom_target(
-        ${TARGET_NAME}_ResPackage  # 更简洁的目标命名
+        ${ProjectName}  # 更简洁的目标命名
         COMMAND ${CMAKE_SOURCE_DIR}/ResPackage.exe -package ${CMAKE_CURRENT_SOURCE_DIR}/${INPUT_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/${OUTPUT_FILE}
         COMMENT "Packaging resources for ${TARGET_NAME}..."
     )
     # 将目标归类到专用文件夹
-    set_target_properties(${TARGET_NAME}_ResPackage PROPERTIES
-        FOLDER "EzUIBuildUtilities"  # 在VS中归类到指定文件夹
+    set_target_properties(${ProjectName} PROPERTIES
+        FOLDER "CMakePredefinedTargets"  # 在VS中归类到指定文件夹
     )
     # 主目标依赖伪目标
-    add_dependencies(${TARGET_NAME} ${TARGET_NAME}_ResPackage)
+    add_dependencies(${TARGET_NAME} ${ProjectName})
 endfunction()
 
 #添加子项目
