@@ -6,8 +6,8 @@ namespace ezui {
 	{
 		m_timer = new Timer(this);
 		m_timer->Tick = [this](Timer* t) {
-			ULONGLONG now = ::GetTickCount64();
-			ULONGLONG delta = now - m_lastTime;
+			auto now = std::chrono::steady_clock::now();
+			auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - m_lastTime).count();
 			m_lastTime = now;
 
 			m_currValue += m_speedPerMs * delta;
@@ -51,7 +51,7 @@ namespace ezui {
 		float distance = m_endValue - m_startValue;
 		m_speedPerMs = distance / durationMs;
 
-		m_lastTime = ::GetTickCount64(); //记录开始时间
+		m_lastTime = std::chrono::steady_clock::now(); //记录开始时间
 		m_timer->Interval = 1000 / fps; //频率
 		m_timer->Start();
 	}

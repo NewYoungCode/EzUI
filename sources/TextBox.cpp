@@ -385,7 +385,7 @@ namespace ezui {
 		m_careRect.X = pt.X;
 		m_careRect.Y = pt.Y;
 		m_careRect.Height = m_textLayout->GetFontHeight();
-		m_careRect.Width = 1;
+		m_careRect.Width = 1 * this->GetScale();
 
 		if (!m_multiLine) {
 			//使光标一直在输入框内
@@ -680,13 +680,16 @@ namespace ezui {
 			m_font = new Font(fontFamily, fontSize);
 			Analysis();
 		}
-		const Color& fontColor = GetForeColor();
+		Color fontColor = GetForeColor();
 		e.Graphics.SetFont(fontFamily, fontSize);
-		if (m_text.empty() && !m_focus) {
-			Color placeholderColor = fontColor;
-			placeholderColor.SetA(fontColor.GetA() * 0.6);
-			e.Graphics.SetColor(placeholderColor);
-			e.Graphics.DrawString(m_placeholder, RectF(0, 0, (float)Width(), (float)Height()), m_multiLine ? TextAlign::TopLeft : this->TextAlign);
+		if (m_text.empty()) {
+			bool bAlignCenter = (int(this->TextAlign) & int(HAlign::Center));
+			if ((!bAlignCenter) || (bAlignCenter && !m_focus)) {//避免光标和placeholder重叠
+				Color placeholderColor = fontColor;
+				placeholderColor.SetA(fontColor.GetA() * 0.6);
+				e.Graphics.SetColor(placeholderColor);
+				e.Graphics.DrawString(m_placeholder, RectF(0, 0, (float)Width(), (float)Height()), m_multiLine ? TextAlign::TopLeft : this->TextAlign);
+			}
 		}
 
 		if (m_selectRects.size() > 0) {
@@ -713,13 +716,9 @@ namespace ezui {
 				RectF rect(m_careRect.X, m_careRect.Y, m_careRect.Width, m_careRect.Height);
 				rect.X += m_scrollX;//偏移
 				rect.Y += m_scrollY;
-				if (ezui::IsFloatEqual(rect.X, 0.0f)) {
-					//如果光标刚好在边框起始位置
-					rect.X = (1 * this->GetScale());
-				}
-				else if (ezui::IsFloatEqual(rect.X, this->Width())) {
+				if (ezui::IsFloatEqual(rect.X, this->Width())) {
 					//如果光标刚好在边框末尾
-					rect.X = this->Width() - (1 * this->GetScale());
+					rect.X = this->Width() - rect.Width;
 				}
 				rect.Width = rect.Width * this->GetScale();
 				e.Graphics.SetColor(fontColor);

@@ -1011,7 +1011,7 @@ namespace ezui {
 	}
 	void DXRender::SetFont(const std::wstring& fontFamily, float fontSize) {
 		if (m_font != NULL) {
-			if (m_font->GetFontFamily() == fontFamily && m_font->GetFontSize() == fontSize) {
+			if (m_font->GetFontFamily() == fontFamily && (std::fabs(m_font->GetFontSize() - fontSize) < EZUI_FLOAT_EPSILON)) {
 				return;
 			}
 			delete m_font;

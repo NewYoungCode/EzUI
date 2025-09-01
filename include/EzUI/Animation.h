@@ -11,7 +11,7 @@ namespace ezui {
 		float m_endValue = 0;
 		float m_currValue = 0;
 		float m_speedPerMs = 0;
-		ULONGLONG m_lastTime = 0;
+		std::chrono::steady_clock::time_point m_lastTime;
 	public:
 		//当值更改的时候发生的事件(请绑定此函数进行回调,请自行线程同步)
 		std::function<void(float)> ValueChanged;

@@ -25,10 +25,10 @@ namespace ezui {
 					}
 
 					//当等待时间过长(超过100毫秒) 将等待时间拆分为片段
-					auto start = ::GetTickCount64();
+					auto start = std::chrono::steady_clock::now();
 					if (this->Interval > 100) {
 						while (!this->m_bExit) {
-							auto elapsed = ::GetTickCount64() - start;
+							auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
 							if (elapsed >= this->Interval) {
 								break;
 							}

@@ -264,7 +264,7 @@ namespace ezui {
 	}
 	void Control::OnBackgroundPaint(PaintEventArgs& e)
 	{
-		const Color& backgroundColor = this->GetBackColor();
+		Color backgroundColor = this->GetBackColor();
 		Image* backgroundImage = this->GetBackImage();
 
 		if (backgroundColor.GetValue() != 0) {
@@ -283,8 +283,7 @@ namespace ezui {
 	}
 	void Control::OnBorderPaint(PaintEventArgs& e, const Border& border)
 	{
-		const Color& borderColor = border.Color;
-		if (borderColor.GetValue() == 0) return;//边框无效颜色不绘制
+		if (border.Color.GetValue() == 0) return;//边框无效颜色不绘制
 		if (border.Style == StrokeStyle::None)return;//未指定边框风格 不允许绘制
 		int borderLeft = border.Left;
 		int borderTop = border.Top;
@@ -301,7 +300,7 @@ namespace ezui {
 		if (topLeftRadius == 0 && topRightRadius == 0 && bottomLeftRadius == 0 && bottomRightRadius == 0) {
 			bool hasBorder = borderLeft || borderTop || borderRight || borderBottom;
 			if (!hasBorder) return;//边框为0不绘制
-			e.Graphics.SetColor(borderColor);
+			e.Graphics.SetColor(border.Color);
 			if (borderLeft > 0) {
 				float half = borderLeft / 2.0f;
 				e.Graphics.DrawLine(PointF{ half, 0 }, PointF{ half, (float)Height() }, borderLeft);
@@ -325,7 +324,7 @@ namespace ezui {
 			int maxBorder = value1 > value2 ? value1 : value2;
 			if (maxBorder <= 0) return;
 			float half = maxBorder / 2.0f;
-			e.Graphics.SetColor(borderColor);
+			e.Graphics.SetColor(border.Color);
 
 #define max(a,b)  (((a) > (b)) ? (a) : (b))
 			// 减去半个边框宽度，确保所有边线和圆角都在控件内

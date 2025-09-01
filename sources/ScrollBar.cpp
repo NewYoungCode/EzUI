@@ -54,7 +54,7 @@ namespace ezui {
 		__super::OnForePaint(args);
 		//绘制滑块
 		RectF sliderRect = GetSliderRect();
-		const Color& color = GetForeColor();
+		Color color = GetForeColor();
 		if (color.GetValue() != 0) {
 			args.Graphics.SetColor(color);
 			args.Graphics.FillRectangle(sliderRect, GetBorderTopLeftRadius());
