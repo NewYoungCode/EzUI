@@ -64,7 +64,8 @@ namespace ezui {
 		//鼠标按下以标题栏方式移动窗口
 		void TitleMoveWindow();
 		//在窗口中使用基于客户区的鼠标位置寻找可命中的控件 
-		Control* HitTestControl(const Point clientPoint, Point* outPoint);
+		Control* HitTestControl(Point clientPoint, Point* outPoint);
+		//派发事件
 		bool DispatchEvent(Control* ctrl, const EventArgs& args);
 	protected:
 		//当dpi发生更改时

@@ -2,6 +2,9 @@
 #include "Control.h"
 namespace ezui {
 
+	Spacer::Spacer() {
+		this->SetHitTestVisible(false);
+	};
 	Spacer::~Spacer() {};
 
 	VSpacer::VSpacer() {};

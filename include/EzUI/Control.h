@@ -71,6 +71,9 @@ namespace ezui {
 
 		// dock 样式
 		DockStyle m_dock = DockStyle::None;
+
+		// 控件是否可以被命中(值为false情况下就是穿透效果)
+		bool m_hitTestEnabled = true;
 	protected:
 		// 基于控件中的可见控件集合
 		Controls ViewControls;
@@ -104,9 +107,6 @@ namespace ezui {
 
 		// 添加到主窗口通知函数中可拦截的事件
 		Event EventFilter = Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnKeyChar | Event::OnKeyDown | Event::OnKeyUp;
-
-		// 控件可被穿透的事件
-		Event EventPassThrough = Event::None;
 
 		// 事件处理器
 		std::function<void(Control*, EventArgs&)> EventHandler = NULL;
@@ -258,8 +258,8 @@ namespace ezui {
 		// 获取旋转角度
 		float GetAngle(ControlState _state = ControlState::None);
 
-		// 获取当前控件的鼠标光标（可继承）
-		virtual HCURSOR GetHCursor();
+		//获取当前控件的鼠标光标
+		virtual HCURSOR GetCursor(ControlState _state = ControlState::None);
 
 		// 获取前景颜色
 		Color GetForeColor(ControlState _state = ControlState::None);
@@ -502,6 +502,12 @@ namespace ezui {
 
 		// 获取控件可见性状态
 		virtual bool IsVisible();
+
+		//设置控件是否可以被鼠标命中(false则是鼠标穿透效果)
+		void SetHitTestVisible(bool bEnable);
+
+		//控件是否可以被命中
+		bool IsHitTestVisible();
 
 		//隐藏控件
 		void Hide();

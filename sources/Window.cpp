@@ -491,7 +491,13 @@ namespace ezui {
 				Rect inputRect = m_inputControl->GetClientRect();
 				int	x = inputRect.X + rect.X;
 				int y = inputRect.Y + rect.Y;
-
+				auto winRect = this->GetWindowRect();
+				if (x >= winRect.Width) {
+					x = winRect.Width - 1;
+				}
+				if (y >= winRect.Height) {
+					y = winRect.Height - 1;
+				}
 				COMPOSITIONFORM cpf = {};
 				cpf.dwStyle = CFS_POINT;
 				cpf.ptCurrentPos.x = x;
@@ -661,35 +667,6 @@ namespace ezui {
 			break;
 		}
 		case WM_SETCURSOR: {
-			if (::IsWindowEnabled(Hwnd())) {
-				POINT p1{ 0 };
-				::GetCursorPos(&p1);
-				::ScreenToClient(Hwnd(), &p1);
-				Point point{ p1.x,p1.y };
-				Point relativePoint;
-				Control* outCtl = this->HitTestControl(point, &relativePoint);//找到当前控件的位置
-				if (outCtl && outCtl->IsEnabled()) {
-					Control* pCtl = outCtl;
-					if ((pCtl->EventPassThrough & Event::OnHover)) {
-						while (pCtl)
-						{
-							auto cursor = pCtl->GetHCursor();
-							if (cursor) {
-								::SetCursor(cursor);
-								return TRUE;
-							}
-							pCtl = pCtl->Parent;
-						}
-					}
-					else {
-						auto cursor = pCtl->GetHCursor();
-						if (cursor) {
-							::SetCursor(cursor);
-							return TRUE;
-						}
-					}
-				}
-			}
 			break;
 		}
 		case WM_MOUSEHOVER: {
@@ -816,7 +793,7 @@ namespace ezui {
 		return true;
 	}
 
-	Control* Window::HitTestControl(const Point clientPoint, Point* outPoint) {
+	Control* Window::HitTestControl(Point clientPoint, Point* outPoint) {
 		if (!m_layout) return NULL;
 		*outPoint = clientPoint;
 		Control* outCtl = m_layout;
@@ -853,23 +830,37 @@ namespace ezui {
 				auto ctlRect = it.GetClientRect();
 				(*outPoint).X = clientPoint.X - ctlRect.X;
 				(*outPoint).Y = clientPoint.Y - ctlRect.Y;
+				if (!outCtl->IsHitTestVisible()) {
+					//如果控件未开启命中测试则跳过该控件
+					continue;
+				}
 				goto Find_Loop;
 			}
 		}
-		//如果控件是弹簧的情况下直接穿透
-		if (dynamic_cast<Spacer*>(outCtl) && outCtl->Parent) {
-			return  outCtl->Parent;
+		//当命中控件未开启命中测试 偏移到父控件
+		while (true)
+		{
+			if (!outCtl->IsHitTestVisible() && outCtl->Parent) {
+				(*outPoint).X += outCtl->X();
+				(*outPoint).Y += outCtl->Y();
+				outCtl = outCtl->Parent;
+			}
+			else {
+				break;
+			}
 		}
-		//鼠标键盘的事件是可以穿透的(这样做貌似不是很好)
-	/*	if ((outCtl->EventPassThrough & Event::OnMouseEvent || outCtl->EventPassThrough & Event::OnKeyBoardEvent) && outCtl->Parent) {
-			return outCtl->Parent;
-		}*/
 		return outCtl;
 	}
 
 	bool Window::DispatchEvent(Control* ctrl, const EventArgs& args)
 	{
 		if (ctrl) {
+			if (args.EventType == Event::OnMouseMove || args.EventType == Event::OnMouseDown) {
+				auto cursor = ctrl->GetCursor();
+				if (cursor) {
+					::SetCursor(cursor);
+				}
+			}
 			return ctrl->SendEvent(args);
 		}
 		return false;

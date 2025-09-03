@@ -520,4 +520,13 @@ namespace ezui {
 		return true;
 	}
 
+	//统计函数耗时
+	template<class Func, class... Args>
+	int64_t StopWatch(Func&& f, Args&& ...args) {
+		auto beginTime = std::chrono::steady_clock::now();
+		std::forward<Func>(f)(std::forward<Args>(args)...);
+		auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - beginTime).count();
+		return delta;
+	}
+
 };

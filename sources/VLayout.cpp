@@ -1,6 +1,6 @@
 #include "VLayout.h"
 namespace ezui {
-	VLayout::VLayout(Object* parentObject):Control(parentObject)
+	VLayout::VLayout(Object* parentObject) :Control(parentObject)
 	{
 	}
 	VLayout::~VLayout()
@@ -40,23 +40,25 @@ namespace ezui {
 
 			maxBottom += it->Margin.Top;
 			int	width = it->GetFixedWidth();
-			if (width == 0) {
-				width = this->Width() - it->Margin.GetHSpace();
-			}
-
 			int x = it->X();
 
-			//if (!IsAutoWidth()) {
-			if (ContentAlign == HAlign::Left) {
+			if (width == 0) {
+				//当控件未指定绝对宽度的时候
+				width = this->Width() - it->Margin.GetHSpace();
 				x = it->Margin.Left;
 			}
-			else  if (ContentAlign == HAlign::Center) {
-				x = int((this->Width() * 1.0 - width) / 2.0f + 0.5);
+			else {
+				//当控件指定了绝对宽度的时候
+				if (ContentAlign == HAlign::Left) {
+					x = it->Margin.Left;
+				}
+				else  if (ContentAlign == HAlign::Center) {
+					x = int((this->Width() * 1.0 - width) / 2.0f + 0.5);
+				}
+				else if (ContentAlign == HAlign::Right) {
+					x = this->Width() - it->Margin.Right - width;
+				}
 			}
-			else if (ContentAlign == HAlign::Right) {
-				x = this->Width() - it->Margin.Right - width;
-			}
-			//}
 
 			if (it->GetFixedHeight() > 0 || it->IsAutoHeight()) {
 				it->SetRect({ x, (int)maxBottom,width, it->GetFixedHeight() });

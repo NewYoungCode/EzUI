@@ -153,7 +153,7 @@ namespace ezui {
 		blend.BlendFlags = 0;
 		blend.AlphaFormat = AC_SRC_ALPHA;
 		blend.SourceConstantAlpha = 255;
-		::UpdateLayeredWindow(m_hWnd, NULL, NULL, &size, m_bufBitmap->GetHDC(), &point, 0, &blend, ULW_ALPHA);//。。。。。。更新分层窗口
+		::UpdateLayeredWindow(m_hWnd, NULL, NULL, &size, m_bufBitmap->GetDC(), &point, 0, &blend, ULW_ALPHA);//。。。。。。更新分层窗口
 	}
 	const HWND ShadowBox::Hwnd()
 	{

@@ -121,7 +121,7 @@ void MainFrm::InitForm() {
 		}
 		};
 	//可穿透父控件
-	playerBar2->EventPassThrough = Event::OnHover | Event::OnActive | Event::OnMouseDown;
+	playerBar2->SetHitTestVisible(false);
 	//创建启动一个实时获取歌曲进度以及状态
 	timer = new Timer;
 	timer->Interval = 10;

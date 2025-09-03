@@ -10,6 +10,13 @@ namespace ezui {
 		if (str == NULL) return "";
 		return str;
 	}
+
+	std::map<UIString, std::function<Control* ()>> g_createFunc;
+	void RegisterControl(const UIString& ctrlName, const std::function<Control* ()>& create_cb) {
+		if (!ctrlName.empty() && create_cb) {
+			g_createFunc[ctrlName.toLower()] = create_cb;
+		}
+	}
 };
 
 namespace ezui {
@@ -200,6 +207,15 @@ namespace ezui {
 		Control* ctl = NULL;
 		do
 		{
+			//优先匹配全局自定义控件
+			for (auto& it : g_createFunc) {
+				if (it.first == tagName) {
+					ctl = it.second();
+					if (ctl) {
+						break;
+					}
+				}
+			}
 			if (tagName == "control" || tagName == "layout" || tagName == "box") {
 				ctl = new Control;
 				break;
@@ -274,10 +290,6 @@ namespace ezui {
 			}
 
 		} while (false);
-		//自定义控件
-		if (ctl == NULL && ControlBuilder) {
-			ctl = ControlBuilder(tagName_);
-		}
 		return ctl;
 	}
 	UIManager::UIManager()

@@ -31,6 +31,9 @@ namespace ezui {
 	inline bool __IsValid(StrokeStyle value) {
 		return value != StrokeStyle::None;
 	}
+	inline bool __IsValid(HCURSOR value) {
+		return value != NULL;
+	}
 
 	//是否是像素单位
 	inline bool __IsPx(const UIString& num, float& outNum) {
@@ -120,14 +123,17 @@ namespace ezui {
 			}\
 		}\
 		if(this->IsEnabled()){ \
-			if ((_state & ControlState::Hover) == ControlState::Hover) {\
-				_##_filed = this->GetStyle(ControlState::Hover).##_filed;\
-				if (__IsValid(_##_filed)) {\
-					return _##_filed;\
-				}\
-			}\
 			if ((_state & ControlState::Active) == ControlState::Active) {\
 				_##_filed = this->GetStyle(ControlState::Active).##_filed;\
+				if (__IsValid(_##_filed)) {\
+					return _##_filed;\
+				}else{\
+					_##_filed = this->GetStyle(ControlState::Hover).##_filed;\
+					if (__IsValid(_##_filed)) return _##_filed;\
+				}\
+			}\
+			if ((_state & ControlState::Hover) == ControlState::Hover) {\
+				_##_filed = this->GetStyle(ControlState::Hover).##_filed;\
 				if (__IsValid(_##_filed)) {\
 					return _##_filed;\
 				}\
@@ -161,12 +167,17 @@ namespace ezui {
 			if (__IsValid(_##_filed))return _##_filed;\
 		}\
 		if(this->IsEnabled()){ \
-			if ((_state & ControlState::Hover) == ControlState::Hover) {\
-				_##_filed = this->GetStyle(ControlState::Hover).##_filed;\
-				if (__IsValid(_##_filed))return _##_filed;\
-			}\
 			if ((_state & ControlState::Active) == ControlState::Active) {\
 				_##_filed = this->GetStyle(ControlState::Active).##_filed;\
+				if (__IsValid(_##_filed)){\
+					return _##_filed;\
+				}else{\
+					_##_filed = this->GetStyle(ControlState::Hover).##_filed; \
+					if (__IsValid(_##_filed))return _##_filed; \
+				}\
+			}\
+			if ((_state & ControlState::Hover) == ControlState::Hover) {\
+				_##_filed = this->GetStyle(ControlState::Hover).##_filed;\
 				if (__IsValid(_##_filed))return _##_filed;\
 			}\
 		}else {\
@@ -186,12 +197,17 @@ namespace ezui {
 			if (__IsValid(_##_filed)) return _##_filed;\
 		}\
 		if(this->IsEnabled()){ \
-			if ((_state & ControlState::Hover) == ControlState::Hover) {\
-				_##_filed = this->GetStyle(ControlState::Hover).##_filed1.##_filed;\
-				if (__IsValid(_##_filed)) return _##_filed;\
-			}\
 			if ((_state & ControlState::Active) == ControlState::Active) {\
 				_##_filed = this->GetStyle(ControlState::Active).##_filed1.##_filed;\
+				if (__IsValid(_##_filed)){\
+					return _##_filed;\
+				}else{\
+					_##_filed = this->GetStyle(ControlState::Hover).##_filed1.##_filed;\
+					if (__IsValid(_##_filed)) return _##_filed;\
+				}\
+			}\
+			if ((_state & ControlState::Hover) == ControlState::Hover) {\
+				_##_filed = this->GetStyle(ControlState::Hover).##_filed1.##_filed;\
 				if (__IsValid(_##_filed)) return _##_filed;\
 			}\
 		}else {\
@@ -217,6 +233,7 @@ namespace ezui {
 	UI_STYLE_BINDFUNC(Image*, ForeImage);
 	UI_STYLE_BINDFUNC(Image*, BackImage);
 	UI_STYLE_BINDFUNC(float, Angle);
+	UI_STYLE_BINDFUNC(HCURSOR, Cursor);
 
 	UI_SUPER_STYLE_BINDFUNC(int, FontSize);
 	UI_SUPER_STYLE_BINDFUNC(Color, ForeColor);
@@ -457,7 +474,7 @@ namespace ezui {
 			}
 			if (attrName == "event") {
 				if (attrValue == "none") {
-					this->EventPassThrough = Event::OnMouseEvent | Event::OnKeyBoardEvent;
+					this->SetHitTestVisible(false);
 				}
 				break;
 			}
@@ -470,15 +487,6 @@ namespace ezui {
 	float Control::GetScale()
 	{
 		return this->m_scale;
-	}
-	HCURSOR Control::GetHCursor() {
-		if (this->HoverStyle.Cursor != NULL) {
-			return this->HoverStyle.Cursor;
-		}
-		else if (this->Style.Cursor != NULL) {
-			return this->Style.Cursor;
-		}
-		return NULL;
 	}
 
 	HWND Control::Hwnd()
@@ -907,10 +915,6 @@ namespace ezui {
 		do
 		{
 			KeyboardEventArgs& args = (KeyboardEventArgs&)_args;
-			if ((this->EventPassThrough & args.EventType) == args.EventType && this->Parent) {//检查鼠标穿透
-				KeyboardEventArgs copy_args = args;
-				this->Parent->SendEvent(copy_args);//如果设置了穿透就直接发送给上一层控件
-			}
 			switch (args.EventType)
 			{
 			case Event::OnKeyChar: {
@@ -969,12 +973,6 @@ namespace ezui {
 				break;
 			}
 		} while (false);
-		if ((this->EventPassThrough & args.EventType) == args.EventType && this->Parent) {//检查鼠标穿透
-			MouseEventArgs copy_args = args;
-			copy_args.Location.X += this->X();
-			copy_args.Location.Y += this->Y();
-			this->Parent->SendEvent(copy_args);//如果设置了穿透就发送给上一层控件
-		}
 	}
 	void Control::OnPaintBefore(PaintEventArgs& args) {
 		this->SetHwnd(args.HWND);
@@ -1414,6 +1412,14 @@ namespace ezui {
 		this->Invalidate();
 	}
 
+	void Control::SetHitTestVisible(bool bEnable) {
+		m_hitTestEnabled = bEnable;
+	}
+
+	bool Control::IsHitTestVisible() {
+		return m_hitTestEnabled;
+	}
+
 	bool Control::Invalidate() {
 		auto* publicData = GetPublicData();
 		if (publicData) {
@@ -1571,38 +1577,26 @@ namespace ezui {
 	void Control::OnMouseEnter(const MouseEventArgs& args)
 	{
 		this->State = ControlState::Hover;
-		if (!(this->EventPassThrough & Event::OnMouseEnter)) {
-			this->Invalidate();
-		}
+		this->Invalidate();
 	}
 	void Control::OnMouseDown(const MouseEventArgs& args)
 	{
-		m_pressed = true;
-
+		this->m_pressed = true;
 		this->State = ControlState::Active;
-		if (ActiveStyle.Cursor) {
-			::SetCursor(ActiveStyle.Cursor);
-		}
-		if (!(this->EventPassThrough & Event::OnMouseDown)) {
-			this->Invalidate();
-		}
+		this->Invalidate();
 	}
 	void Control::OnMouseUp(const MouseEventArgs& args)
 	{
-		m_pressed = false;
+		this->m_pressed = false;
 
-		if (!(this->EventPassThrough & Event::OnMouseUp)) {
-			this->Invalidate();
-		}
+		this->Invalidate();
 	}
 	void Control::OnMouseLeave(const MouseEventArgs& args)
 	{
-		m_pressed = false;
-
+		this->m_pressed = false;
 		this->State = ControlState::Static;
-		if (!(this->EventPassThrough & Event::OnMouseLeave)) {
-			this->Invalidate();
-		}
+
+		this->Invalidate();
 
 	}
 	void Control::OnKeyChar(const KeyboardEventArgs& args) {
@@ -1642,11 +1636,8 @@ namespace ezui {
 			}
 			if (key == "pointer-events") {
 				if (value == "none") {
-					//忽略鼠标事件 将直接穿透
-					this->EventPassThrough = this->EventPassThrough | Event::OnMouseEvent | Event::OnKeyBoardEvent;
-				}
-				else if (value == "auto") {
-					this->EventPassThrough = Event::None;
+					//忽略鼠标键盘事件 将直接穿透
+					this->SetHitTestVisible(false);
 				}
 				break;
 			}

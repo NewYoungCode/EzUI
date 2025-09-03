@@ -32,23 +32,26 @@ namespace ezui {
 
 			maxRight += it->Margin.Left;
 			int height = it->GetFixedHeight();
-			if (height == 0) {
-				height = this->Height() - it->Margin.GetVSpace();
-			}
-
 			int y = it->Y();
 
-			//if (!IsAutoHeight()) {
-			if (ContentAlign == VAlign::Top) {
+			if (height == 0) {
+				//当控件未指定绝对高度的时候
+				height = this->Height() - it->Margin.GetVSpace();
 				y = it->Margin.Top;
 			}
-			else  if (ContentAlign == VAlign::Mid) {
-				y = int((this->Height() * 1.0 - height) / 2.0f + 0.5);
+			else {
+				//当控件指定了绝对高度的时候
+				if (ContentAlign == VAlign::Top) {
+					y = it->Margin.Top;
+				}
+				else  if (ContentAlign == VAlign::Mid) {
+					y = int((this->Height() * 1.0 - height) / 2.0f + 0.5);
+				}
+				else  if (ContentAlign == VAlign::Bottom) {
+					y = this->Height() - it->Margin.Bottom - height;
+				}
 			}
-			else  if (ContentAlign == VAlign::Bottom) {
-				y = this->Height() - it->Margin.Bottom - height;
-			}
-			//}
+
 			if (it->GetFixedWidth() > 0 || it->IsAutoWidth()) {
 				it->SetRect({ (int)maxRight ,y,it->GetFixedWidth() ,height });
 				maxRight += it->Width();
@@ -66,7 +69,7 @@ namespace ezui {
 			this->SetContentSize({ (int)(maxRight + 0.5) ,contentHeight });
 		}
 	}
-	HLayout::HLayout(Object* parentObject):Control(parentObject)
+	HLayout::HLayout(Object* parentObject) :Control(parentObject)
 	{
 	}
 	HLayout::~HLayout()

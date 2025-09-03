@@ -6,7 +6,7 @@ LocalItem::LocalItem(const UIString& _songName, const UIString& _songTime) {
 	del.SetFixedSize({ 20,20 });
 	del.Style.Cursor = LoadCursor(Cursor::HAND);
 	del.Name = "dellocal";
-	del.EventPassThrough = Event::OnHover;
+	del.SetHitTestVisible(false);
 
 	this->Name = "songItem";
 
@@ -16,7 +16,7 @@ LocalItem::LocalItem(const UIString& _songName, const UIString& _songTime) {
 	songName.TextAlign = TextAlign::MiddleLeft;
 	songName.SetTips("child_" + _songName);
 	//穿透事件
-	songName.EventPassThrough = time.EventPassThrough = Event::OnHover | Event::OnActive | Event::OnMouseDoubleClick;
+	songName.SetHitTestVisible(false);
 	songName.HoverStyle.FontSize = 15;
 
 	time.HoverStyle.Angle = 180;
@@ -65,17 +65,17 @@ SearchItem::SearchItem(const Song& s) {
 	songName.SetElidedText("...");
 	songName.SetText(s.SongName);
 	songName.TextAlign = TextAlign::MiddleLeft;
-	songName.EventPassThrough = Event::OnHover | Event::OnMouseDoubleClick;
+	songName.SetHitTestVisible(false);
 	songName.HoverStyle.ForeColor = Color(200, 100, 1);
 	AlbumName.SetFixedWidth(180);
 	AlbumName.SetText(s.AlbumName);
 	AlbumName.TextAlign = TextAlign::MiddleLeft;
 	AlbumName.Style.Cursor = LoadCursor(Cursor::HAND);
 	AlbumName.Style.ForeColor = Color(150, 150, 150);
-	AlbumName.EventPassThrough = Event::OnHover;
+	AlbumName.SetHitTestVisible(false);
 
 	mv.SetFixedWidth(35);
-	mv.EventPassThrough = Event::OnHover;
+	mv.SetHitTestVisible(false);
 	if (!s.MvHash.empty()) {
 		mv.SetAttribute("mvhash", s.MvHash);
 		mv.Style.ForeImage = Image::Make(L"res/imgs/mvicon.png");;
@@ -83,13 +83,13 @@ SearchItem::SearchItem(const Song& s) {
 		mv.Style.Cursor = LoadCursor(Cursor::HAND);
 	}
 	else {
-		mv.EventPassThrough = Event::OnHover | Event::OnMouseDoubleClick;
+		mv.SetHitTestVisible(false);
 	}
 
 	time.SetFixedWidth(60);
 	time.SetText(global::toTimeStr(s.Duration));
 	time.TextAlign = TextAlign::MiddleLeft;
-	time.EventPassThrough = Event::OnHover | Event::OnMouseDoubleClick;
+	time.SetHitTestVisible(false);
 	time.Style.ForeColor = Color(150, 150, 150);
 
 	del.SetFixedWidth(33);

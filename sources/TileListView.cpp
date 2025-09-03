@@ -61,7 +61,7 @@ namespace ezui {
 	void TileListView::Offset(int offset) {
 		int _contentWidth = 0;
 		int _contentHeight = 0;
-		int maxWith = this->Width();
+		int maxWidth = this->Width();
 		int maxHeight = 0;//每行最高的那个
 		int x = 0;
 		int y = offset;
@@ -71,9 +71,8 @@ namespace ezui {
 				continue;
 			}
 			Control& it = *_it;
-			int _x = it.Margin.Left + it.Width();
-
-			if (x + _x > maxWith) {
+			int itemWidth = it.Width() + it.Margin.GetHSpace();
+			if (x + itemWidth > maxWidth) {
 				//换行
 				x = 0;
 				y += maxHeight;
@@ -84,11 +83,11 @@ namespace ezui {
 			int newX = x;//设置X坐标
 			int newY = y + it.Margin.Top;//设置Y坐标+上边距
 			it.SetRect(Rect(newX, newY, it.Width(), it.Height()));
-			int itemSpace = it.Height() + it.Margin.GetVSpace();//当前控件垂直占用的空间
-			if (maxHeight < itemSpace) {
-				maxHeight = itemSpace;
+			int itemHeight = it.Height() + it.Margin.GetVSpace();//当前控件垂直占用的空间
+			if (maxHeight < itemHeight) {
+				maxHeight = itemHeight;
 			}
-			x += it.Margin.Right + it.Width();//右边距
+			x += (it.Width() + it.Margin.Right);//右边距
 			_contentHeight = y + maxHeight;
 			//计算最大宽度
 			int _width = it.X() + it.Width();

@@ -180,7 +180,7 @@ public:
 		size.SetText(GetFileSize(fileSize));
 		this->Add(&size);
 
-		name.EventPassThrough = size.EventPassThrough = Event::OnHover | Event::OnActive | Event::OnMouseDoubleClick;
+		name.SetHitTestVisible(false);
 
 		this->HoverStyle.BackColor = Color(100, 100, 100, 50);
 		this->Style.FontSize = 13;

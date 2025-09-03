@@ -47,9 +47,6 @@ namespace ezui {
 		//当解析到一个节点的时候发生
 		virtual Control* OnBuildControl(const UIString& nodeName);
 	public:
-		//绑定生成控件的回调函数(用于自定义控件)
-		std::function<Control* (const UIString& nodeName)> ControlBuilder;
-	public:
 		UIManager();
 		virtual ~UIManager();
 		void SetupUI(Window* window);
@@ -67,5 +64,11 @@ namespace ezui {
 		//释放由本此对象创建的控件
 		void Free(Control** ctl);
 	};
-
+	//注册自定义控件
+	void RegisterControl(const UIString& ctrlName, const std::function<Control* ()>& create_cb);
+	//注册自定义控件
+	template<typename T>
+	void RegisterControl(const UIString& ctrlName) {
+		RegisterControl(ctrlName, []() -> Control* { return new T; });
+	}
 };

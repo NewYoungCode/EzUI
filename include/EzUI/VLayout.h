@@ -12,7 +12,6 @@ namespace ezui {
 	public:
 		VLayout(Object* parentObject = NULL);
 		virtual ~VLayout();
-
 	};
 	using VBox = VLayout;
 };

@@ -38,7 +38,7 @@ namespace ezui {
 	}
 	Bitmap::Bitmap(HDC dc, const Rect& rect) {
 		Create(rect.Width, rect.Height);
-		::BitBlt(this->GetHDC(), 0, 0, rect.Width, rect.Height, dc, rect.X, rect.Y, SRCCOPY);
+		::BitBlt(this->GetDC(), 0, 0, rect.Width, rect.Height, dc, rect.X, rect.Y, SRCCOPY);
 	}
 	void Bitmap::Create(int width, int height) {
 		m_width = width;
@@ -54,7 +54,7 @@ namespace ezui {
 		bmih.biSizeImage = width * height * 4;
 		m_bmp = ::CreateDIBSection(NULL, &m_bmpInfo, DIB_RGB_COLORS, (void**)&m_point, NULL, 0);
 		::memset(m_point, 0, bmih.biSizeImage);
-		this->GetHDC();
+		this->GetDC();
 	}
 	int Bitmap::Width()const {
 		return m_width;
@@ -110,7 +110,7 @@ namespace ezui {
 	{
 		return this->m_bmp;
 	}
-	HDC Bitmap::GetHDC() {
+	HDC Bitmap::GetDC() {
 		if (!m_hdc) {
 			m_hdc = ::CreateCompatibleDC(NULL);
 			::SelectObject(m_hdc, m_bmp);

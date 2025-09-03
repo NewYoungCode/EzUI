@@ -96,7 +96,7 @@ namespace ezui {
 			BeginPaint(&invalidateRect);
 			if ((m_winBitmap && !invalidateRect.IsEmptyArea())) {
 				m_winBitmap->Earse(invalidateRect);//清除背景
-				HDC winHDC = m_winBitmap->GetHDC();
+				HDC winHDC = m_winBitmap->GetDC();
 #if 1
 				//不使用双缓冲
 				DoPaint(winHDC, invalidateRect);
