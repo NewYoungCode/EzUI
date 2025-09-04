@@ -39,10 +39,12 @@ namespace ezui {
 	void IFrame::SetLayout(Control* ctrl) {
 		this->Add(ctrl);
 	}
-	bool IFrame::OnNotify(Control* sender, EventArgs& args) {
-		if (this->Notify) {
-			return this->Notify(sender, args);
+	void IFrame::OnNotify(Control* sender, EventArgs& args) {
+		if (this->NotifyHandler) {
+			this->NotifyHandler(sender, args);
 		}
-		return ezui::DefaultNotify(sender, args);
+		else {
+			ezui::DefaultNotify(sender, args);
+		}
 	}
 }

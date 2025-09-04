@@ -40,7 +40,7 @@ public:
 	void OnPackDirChange();
 	void OnClose(bool& close)  override;
 	bool FileExists(const UIString& fileName);
-	bool OnNotify(Control* sender, EventArgs& args)override;
+	void OnNotify(Control* sender, EventArgs& args)override;
 	void OnResFileChange(UIString& resFile);
 	virtual LRESULT WndProc(UINT msg, WPARAM wp, LPARAM lp);
 	virtual ~MainFrm();

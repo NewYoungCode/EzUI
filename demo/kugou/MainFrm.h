@@ -44,7 +44,7 @@ private:
 protected:
 	virtual void OnClose(bool& bClose) override;
 	virtual void OnKeyDown(WPARAM wparam, LPARAM lParam)override;
-	virtual bool OnNotify(Control* sender, EventArgs& args)override;
+	virtual void OnNotify(Control* sender, EventArgs& args)override;
 	virtual void OnPaint(PaintEventArgs& args)override;
 private:
 	//打开/关闭桌面歌词

@@ -85,7 +85,7 @@ namespace ezui {
 	//释放光标
 	extern UI_EXPORT void FreeCursor(HCURSOR hCursor);
 	//默认处理OnNotify函数(处理一些控件的基础行为)
-	extern UI_EXPORT bool DefaultNotify(Control* sender, EventArgs& args);
+	extern UI_EXPORT void DefaultNotify(Control* sender, EventArgs& args);
 
 	class UI_EXPORT Color :public ezui::__EzUI__Color {
 	public:
@@ -155,7 +155,7 @@ namespace ezui {
 		//立即更新全部无效区域
 		std::function<void()> Refresh = NULL;
 		//通知函数
-		std::function<bool(Control*, EventArgs&)> SendNotify = NULL;//
+		std::function<void(Control*, EventArgs&)> SendNotify = NULL;//
 		//清空控件标记等等...
 		std::function<void(Control*)> CleanControl = NULL;
 		//内部移动窗口的函数
@@ -348,21 +348,21 @@ namespace ezui {
 	//坐标发生改变
 	class UI_EXPORT MoveEventArgs :public EventArgs {
 	public:
-		const ezui::Point& Location;
+		const ezui::Point Location;
 		MoveEventArgs(const ezui::Point& location) :EventArgs(Event::OnMove), Location(location) {}
 		virtual ~MoveEventArgs() {}
 	};
 	//大小发生改变
 	class UI_EXPORT SizeEventArgs :public EventArgs {
 	public:
-		const ezui::Size& Size;
+		const ezui::Size Size;
 		SizeEventArgs(const ezui::Size& size) :EventArgs(Event::OnSize), Size(size) {}
 		virtual ~SizeEventArgs() {}
 	};
 	//dpi发生变化
 	class UI_EXPORT DpiChangeEventArgs :public EventArgs {
 	public:
-		float Scale = 1;
+		float Scale = 1.0f;
 		DpiChangeEventArgs(float scale) :EventArgs(Event::OnDpiChange), Scale(scale) {}
 		virtual ~DpiChangeEventArgs() {}
 	};

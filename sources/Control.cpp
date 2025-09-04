@@ -746,28 +746,26 @@ namespace ezui {
 		}
 		this->EndLayout();
 	}
-	bool Control::SendEvent(const EventArgs& arg)
+	void Control::SendEvent(const EventArgs& arg)
 	{
-		return this->OnEvent((EventArgs&)arg);
+		this->OnEvent((EventArgs&)arg);
 	}
-	bool Control::OnEvent(EventArgs& arg)
+	void Control::OnEvent(EventArgs& arg)
 	{
-		// 禁用状态下拦截鼠标或键盘事件
 		if (!this->IsEnabled() && ((arg.EventType & Event::OnMouseEvent) == arg.EventType || (arg.EventType & Event::OnKeyBoardEvent) == arg.EventType))
 		{
-			return false; // 拦截，不再传递
+			// 禁用状态下拦截鼠标或键盘事件
+			return;
 		}
-
 		bool isRemove = false;
 		this->m_bRemove = &isRemove;
 		do
 		{
-			if (arg.EventType == Event::OnPaint && !IsVisible()) {
-				break;
-			}
 			if (arg.EventType == Event::OnPaint) {
-				this->OnPaintBefore((PaintEventArgs&)arg);
-				break;
+				if (IsVisible()) {
+					this->OnPaintBefore((PaintEventArgs&)arg);
+				}
+				return; //绘制消息特殊直接return
 			}
 			if (arg.EventType == Event::OnMove) {
 				this->OnMove((MoveEventArgs&)arg);
@@ -798,33 +796,27 @@ namespace ezui {
 				break;
 			}
 		} while (false);
+
 		do
 		{
-			auto* publicData = GetPublicData();
-			if (publicData && ((this->EventFilter & arg.EventType) == arg.EventType)) {
-				if (arg.EventType != Event::OnPaint) {
-					bool bHandle = publicData->SendNotify(this, (EventArgs&)arg);
-					if (bHandle) {
-						//如果处理过了则不需要继续往下派发
-						break;
-					}
-					if (isRemove) {
-						break;
-					}
+			if (isRemove) break;//控件已被删除 不在继续下发通知
+			//发送给控件自身事件处理器(如果用户绑定了此回调函数,则不再进入主窗口的OnNotify函数)
+			if (this->EventHandler) {
+				this->EventHandler(this, arg);
+				if (isRemove) break;
+			}
+			if ((this->NotifyFlags & arg.EventType) == arg.EventType) {
+				//向最外层通知事件
+				auto* publicData = this->GetPublicData();
+				if (publicData && publicData->SendNotify) {
+					publicData->SendNotify(this, arg);
 				}
 			}
 		} while (false);
+
 		if (!isRemove) {
-			//通用事件处理 ps:绘制函数比较特殊(在其他地方处理)
-			if (this->EventHandler && (arg.EventType != Event::OnPaint)) {
-				this->EventHandler(this, arg);
-			}
-			if (!isRemove) {
-				this->m_bRemove = NULL;
-				return true;
-			};
-		}
-		return false;
+			this->m_bRemove = NULL;
+		};
 	}
 
 	bool Control::ApplyStyleProperty(const UIString& key, const UIString& value) {
@@ -946,6 +938,7 @@ namespace ezui {
 				break;
 			}
 			case Event::OnMouseEnter: {
+				this->State = ControlState::Hover;
 				OnMouseEnter(args);
 				break;
 			}
@@ -958,14 +951,19 @@ namespace ezui {
 				break;
 			}
 			case Event::OnMouseDown: {
+				this->m_pressed = true;
+				this->State = ControlState::Active;
 				OnMouseDown(args);
 				break;
 			}
 			case Event::OnMouseUp: {
+				this->m_pressed = false;
 				OnMouseUp(args);
 				break;
 			}
 			case Event::OnMouseLeave: {
+				this->m_pressed = false;
+				this->State = ControlState::Static;
 				OnMouseLeave(args);
 				break;
 			}
@@ -1024,17 +1022,15 @@ namespace ezui {
 			args.PushLayer(Rect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height));
 		}
 #endif 
-
-		bool bHandle = false;
-		auto* publicData = GetPublicData();
-		//调用公共函数,如果那边不拦截,就开始绘制自身基本上下文
-		if (publicData && (this->EventFilter & Event::OnPaint) == Event::OnPaint) {
-			bHandle = publicData->SendNotify(this, args);
-		}
-		if (!bHandle) {
-			this->OnPaint(args);
+		WindowData* publicData = NULL;
+		if ((this->NotifyFlags & Event::OnPaint) == Event::OnPaint) {
+			publicData = this->GetPublicData();
+			if (publicData) {
+				publicData->SendNotify(this, args);
+			}
 		}
 
+		this->OnPaint(args);
 		//绘制子控件
 		this->OnChildPaint(args);
 		//绘制滚动条
@@ -1052,7 +1048,7 @@ namespace ezui {
 		args.PopLayer();//弹出纹理层
 
 #ifdef _DEBUG
-		if (publicData->Debug) {
+		if ((publicData = this->GetPublicData()) && publicData->Debug) {
 			float width = 1 * this->GetScale();
 			Color color = publicData->DebugColor;
 			color.SetA(127);
@@ -1576,28 +1572,19 @@ namespace ezui {
 	}
 	void Control::OnMouseEnter(const MouseEventArgs& args)
 	{
-		this->State = ControlState::Hover;
 		this->Invalidate();
 	}
 	void Control::OnMouseDown(const MouseEventArgs& args)
 	{
-		this->m_pressed = true;
-		this->State = ControlState::Active;
 		this->Invalidate();
 	}
 	void Control::OnMouseUp(const MouseEventArgs& args)
 	{
-		this->m_pressed = false;
-
 		this->Invalidate();
 	}
 	void Control::OnMouseLeave(const MouseEventArgs& args)
 	{
-		this->m_pressed = false;
-		this->State = ControlState::Static;
-
 		this->Invalidate();
-
 	}
 	void Control::OnKeyChar(const KeyboardEventArgs& args) {
 	}

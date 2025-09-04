@@ -105,9 +105,8 @@ namespace ezui {
 		// 父控件指针
 		Control* Parent = NULL;
 
-		// 添加到主窗口通知函数中可拦截的事件
-		Event EventFilter = Event::OnMouseDoubleClick | Event::OnMouseWheel | Event::OnMouseEnter | Event::OnMouseMove | Event::OnMouseDown | Event::OnMouseUp | Event::OnMouseLeave | Event::OnKeyChar | Event::OnKeyDown | Event::OnKeyUp;
-
+		//是否添加到所在窗口/IFrame中的OnNotify函数中
+		Event NotifyFlags = Event::OnMouseEvent | Event::OnKeyBoardEvent;
 		// 事件处理器
 		std::function<void(Control*, EventArgs&)> EventHandler = NULL;
 
@@ -122,7 +121,7 @@ namespace ezui {
 		void ComputeClipRect();
 
 		// 所有事件优先进入此函数(内部处理)
-		bool OnEvent(EventArgs& arg);
+		void OnEvent(EventArgs& arg);
 
 	protected:
 		//属性或者css样式都适用(css样式和属性都可以设置这些,只对静态样式生效)
@@ -429,7 +428,7 @@ namespace ezui {
 		virtual ScrollBar* GetScrollBar();
 
 		// 派发事件（如鼠标单击事件等...）返回true则事件成功派发 返回false代表派发途中当前控件已被释放
-		bool SendEvent(const EventArgs& arg);
+		void SendEvent(const EventArgs& arg);
 
 		// 设置控件属性
 		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue);

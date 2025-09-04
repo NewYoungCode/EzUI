@@ -109,7 +109,7 @@ SearchItem::SearchItem(const Song& s) {
 	Add(new HSpacer(5));
 }
 
-bool LoginFrm::OnNotify(Control* sender, EventArgs& args)
+void LoginFrm::OnNotify(Control* sender, EventArgs& args)
 {
 	do
 	{
@@ -130,8 +130,7 @@ bool LoginFrm::OnNotify(Control* sender, EventArgs& args)
 			}
 		}
 	} while (false);
-
-	return ezui::DefaultNotify(sender, args);
+	ezui::DefaultNotify(sender, args);
 }
 
 LoginFrm::LoginFrm(HWND owner) :LayeredWindow(300, 200, owner)

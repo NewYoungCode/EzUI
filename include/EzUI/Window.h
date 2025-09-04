@@ -54,6 +54,9 @@ namespace ezui {
 		Control* m_layout = NULL;
 		// 管理图片的释放
 		PtrManager<Image*> m_imgs;
+	public:
+		//对外暴露消息通知回调
+		std::function<void(Control*, EventArgs&)> NotifyHandler = NULL;
 	private:
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
@@ -66,7 +69,7 @@ namespace ezui {
 		//在窗口中使用基于客户区的鼠标位置寻找可命中的控件 
 		Control* HitTestControl(Point clientPoint, Point* outPoint);
 		//派发事件
-		bool DispatchEvent(Control* ctrl, const EventArgs& args);
+		void SendEvent(Control* ctrl, const EventArgs& args);
 	protected:
 		//当dpi发生更改时
 		virtual void OnDpiChange(float systemScale, const Rect& newRect);
@@ -107,7 +110,7 @@ namespace ezui {
 		//失去输入焦点时发生
 		virtual void OnKillFocus(HWND hWnd);
 		//鼠标 键盘 重绘 会进入此函数,如果返回true则事件将不再交给sender控件处理 将忽略类似OnMouseDown... Notiify事件处理器...
-		virtual bool OnNotify(Control* sender, EventArgs& args);
+		virtual void OnNotify(Control* sender, EventArgs& args);
 		//处理消息队列的
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 		//获取阴影窗口句柄

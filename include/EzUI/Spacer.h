@@ -2,7 +2,7 @@
 #include "Control.h"
 
 namespace ezui {
-	//添加弹簧无需用户手动释放,
+	//添加弹簧无需用户手动释放(不可在栈上创建弹簧对象)
 	class UI_EXPORT Spacer :public Control {
 	public:
 		Spacer();
@@ -10,18 +10,14 @@ namespace ezui {
 	};
 	//具有绝对高度的 的弹簧
 	class UI_EXPORT VSpacer :public Spacer {
-	private:
-		VSpacer();
 	public:
 		virtual ~VSpacer();
-		VSpacer(int fixedHeight);
+		VSpacer(int fixedHeight = 0);
 	};
 	//具有绝对宽度的 的弹簧
 	class UI_EXPORT HSpacer :public Spacer {
-	private:
-		HSpacer();
 	public:
 		virtual ~HSpacer();
-		HSpacer(int fixedWidth);
+		HSpacer(int fixedWidth = 0);
 	};
 };

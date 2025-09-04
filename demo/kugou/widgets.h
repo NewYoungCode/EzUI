@@ -30,7 +30,7 @@ public:
 class LoginFrm :public LayeredWindow {
 	UIManager umg;
 protected:
-	virtual bool OnNotify(Control* sender, EventArgs& args)override;
+	virtual void OnNotify(Control* sender, EventArgs& args)override;
 public:
 	//保存用户名
 	UIString m_userName;

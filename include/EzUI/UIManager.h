@@ -64,6 +64,8 @@ namespace ezui {
 		//释放由本此对象创建的控件
 		void Free(Control** ctl);
 	};
+	//注册基础控件
+	void InitControls();
 	//注册自定义控件
 	void RegisterControl(const UIString& ctrlName, const std::function<Control* ()>& create_cb);
 	//注册自定义控件

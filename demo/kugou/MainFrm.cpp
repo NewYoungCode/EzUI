@@ -46,8 +46,8 @@ void MainFrm::InitForm() {
 	bottomFrame = (IFrame*)this->FindControl("bottomFrame");
 
 	//将这些Frame页的通知转到这个OnNotify中处理
-	titleFrame->Notify = centerFrame->Notify = bottomFrame->Notify = [this](Control* sender, EventArgs& args)->bool {
-		return this->OnNotify(sender, args);
+	titleFrame->NotifyHandler = centerFrame->NotifyHandler = bottomFrame->NotifyHandler = [this](Control* sender, EventArgs& args)->void {
+		this->OnNotify(sender, args);
 		};
 
 	//设置窗口边框样式
@@ -129,8 +129,8 @@ void MainFrm::InitForm() {
 		TimerTick();
 		};
 	//添加一些事件到窗口中的OnNotify函数进行拦截
-	player.EventFilter = player.EventFilter | Event::OnPaint;
-	mainLayout->EventFilter = mainLayout->EventFilter | Event::OnPaint;
+	player.NotifyFlags = player.NotifyFlags | Event::OnPaint;
+	mainLayout->NotifyFlags = mainLayout->NotifyFlags | Event::OnPaint;
 	//播放视频的时候每一帧的回调
 	player.PlayingCallback = [&](Bitmap* bitmap)->void {
 		BeginInvoke([&]() {
@@ -364,14 +364,14 @@ void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 	}
 	__super::OnKeyDown(wparam, lParam);
 }
-bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
+void MainFrm::OnNotify(Control* sender, EventArgs& args) {
 	do {
 		if (args.EventType == Event::OnPaint) {
 			if (sender == &player) {
 				if (tabCtrl->GetPageIndex() == 2) {
 					break;
 				}
-				return true;
+				return;
 			}
 			if (playType == 2 && sender == mainLayout && player.BuffBitmap) {
 				if (tabCtrl->GetPageIndex() == 1) {
@@ -379,7 +379,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 					Image img(player.BuffBitmap->GetHBITMAP());
 					img.SizeMode = ImageSizeMode::Cover;
 					arg.Graphics.DrawImage(&img, mainLayout->GetRect());
-					return  true;
+					return;
 				}
 				else if (deskTopWnd->IsVisible()) {
 					deskTopWnd->Invalidate();
@@ -437,7 +437,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				}
 				delete songItem;
 				vlistLocal->Invalidate();
-				return true;
+				return;
 			}
 			if (sender->GetAttribute("tablayout") == "rightView") {
 				size_t pos = sender->Parent->IndexOf(sender);
@@ -468,8 +468,7 @@ bool MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			}
 		}
 	} while (false);
-
-	return ezui::DefaultNotify(sender, args);
+	ezui::DefaultNotify(sender, args);
 }
 
 void MainFrm::OpenDesktopLrc()

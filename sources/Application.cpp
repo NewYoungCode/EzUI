@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "LayeredWindow.h"
+#include "UIManager.h"
 #include <CommCtrl.h>
 
 #undef FindResource
@@ -189,6 +190,8 @@ namespace ezui {
 			}
 		}
 		RenderInitialize();//初始化图形绘制库 D2D/GDI/GDI+
+
+		InitControls();//注册基础控件
 	}
 	//销毁所有窗口
 	void DestroyAllWindows() {

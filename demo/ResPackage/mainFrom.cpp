@@ -167,7 +167,7 @@ bool MainFrm::FileExists(const UIString& fileName) {
 	}
 	return false;
 }
-bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
+void MainFrm::OnNotify(Control* sd, EventArgs& args) {
 	if (args.EventType == Event::OnMouseDown) {
 		if (sd->Name == "btnBrowserDir") {
 			UIString dir = ShowFolderDialog(Hwnd(), "", "");
@@ -245,7 +245,7 @@ bool MainFrm::OnNotify(Control* sd, EventArgs& args) {
 			}
 		}
 	}
-	return ezui::DefaultNotify(sd, args);
+	ezui::DefaultNotify(sd, args);
 }
 void MainFrm::OnResFileChange(UIString& resFile)
 {

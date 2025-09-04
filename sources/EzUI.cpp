@@ -427,10 +427,10 @@ namespace ezui {
 	{
 		::DestroyCursor(hCursor);
 	}
-	bool DefaultNotify(Control* sender, EventArgs& args) {
+	void DefaultNotify(Control* sender, EventArgs& args) {
 		WindowData* winData = NULL;
 		if (!sender || !(winData = sender->GetPublicData())) {
-			return false;
+			return;
 		}
 		auto* win = winData->Window;
 
@@ -496,7 +496,6 @@ namespace ezui {
 		default:
 			break;
 		}
-		return false;
 	}
 
 	void ControlStyle::Scale(float scale)

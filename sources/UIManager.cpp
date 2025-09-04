@@ -17,6 +17,50 @@ namespace ezui {
 			g_createFunc[ctrlName.toLower()] = create_cb;
 		}
 	}
+	void InitControls()
+	{
+		RegisterControl<Control>("control");
+		RegisterControl<Control>("layout");
+		RegisterControl<Control>("box");
+
+		RegisterControl<VListView>("vlist");
+		RegisterControl<VListView>("vlistview");
+
+		RegisterControl<HListView>("hlist");
+		RegisterControl<HListView>("hlistview");
+
+		RegisterControl<VLayout>("vlayout");
+		RegisterControl<VLayout>("vbox");
+
+		RegisterControl<HLayout>("hlayout");
+		RegisterControl<HLayout>("hbox");
+
+		RegisterControl<TileListView>("tilelist");
+		RegisterControl<TileListView>("tilelistview");
+
+		RegisterControl<TabLayout>("tablayout");
+
+		RegisterControl<Spacer>("spacer");
+		RegisterControl<VSpacer>("vspacer");
+		RegisterControl<HSpacer>("hspacer");
+		
+		RegisterControl<Label>("label");
+		RegisterControl<Button>("button");
+		RegisterControl<RadioButton>("radiobutton");
+		RegisterControl<CheckBox>("checkbox");
+
+		RegisterControl<ComboBox>("combobox");
+		RegisterControl<ComboBox>("select");
+
+		RegisterControl<TextBox>("edit");
+		RegisterControl<TextBox>("textbox");
+		RegisterControl<TextBox>("input");
+
+		RegisterControl<PictureBox>("img");
+		RegisterControl<PictureBox>("pictureBox");
+
+		RegisterControl<IFrame>("iframe");
+	}
 };
 
 namespace ezui {
@@ -204,93 +248,16 @@ namespace ezui {
 	}
 	Control* UIManager::OnBuildControl(const UIString& tagName_) {
 		UIString tagName = tagName_.toLower();
-		Control* ctl = NULL;
-		do
-		{
-			//优先匹配全局自定义控件
-			for (auto& it : g_createFunc) {
-				if (it.first == tagName) {
-					ctl = it.second();
-					if (ctl) {
-						break;
-					}
+		//优先匹配全局自定义控件
+		for (auto& it : g_createFunc) {
+			if (it.first == tagName) {
+				Control* ctrl = it.second();
+				if (ctrl) {
+					return ctrl;
 				}
 			}
-			if (tagName == "control" || tagName == "layout" || tagName == "box") {
-				ctl = new Control;
-				break;
-			}
-			if (tagName == "vlist" || tagName == "vlistview") {
-				ctl = new VListView;
-				break;
-			}
-			if (tagName == "hlist" || tagName == "hlistview") {
-				ctl = new HListView;
-				break;
-			}
-			if (tagName == "vlayout" || tagName == "vbox") {
-				ctl = new VLayout;
-				break;
-			}
-			if (tagName == "hlayout" || tagName == "hbox") {
-				ctl = new HLayout;
-				break;
-			}
-			if (tagName == "tilelist" || tagName == "tilelistview") {
-				ctl = new TileListView;
-				break;
-			}
-			if (tagName == "tablayout") {
-				ctl = new TabLayout;
-				break;
-			}
-			if (tagName == "spacer") {
-				ctl = new Spacer();
-				break;
-			}
-			if (tagName == "vspacer") {
-				ctl = new VSpacer(0);
-				break;
-			}
-			if (tagName == "hspacer") {
-				ctl = new HSpacer(0);
-				break;
-			}
-			if (tagName == "label") {
-				ctl = new Label;
-				break;
-			}
-			if (tagName == "button") {
-				ctl = new Button;
-				break;
-			}
-			if (tagName == "radiobutton") {
-				ctl = new RadioButton;
-				break;
-			}
-			if (tagName == "checkbox") {
-				ctl = new CheckBox;
-				break;
-			}
-			if (tagName == "combobox" || tagName == "select") {
-				ctl = new ComboBox;
-				break;
-			}
-			if (tagName == "edit" || tagName == "textbox" || tagName == "input") {
-				ctl = new TextBox;
-				break;
-			}
-			if (tagName == "img" || tagName == "pictureBox") {
-				ctl = new PictureBox;
-				break;
-			}
-			if (tagName == "iframe") {
-				ctl = new IFrame;
-				break;
-			}
-
-		} while (false);
-		return ctl;
+		}
+		return NULL;
 	}
 	UIManager::UIManager()
 	{

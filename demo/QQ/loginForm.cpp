@@ -5,7 +5,7 @@ LoginForm::LoginForm() :LayeredWindow(320, 448)
 	umg.LoadXml("res/loginForm.htm");//加载xml里面的控件与样式
 	umg.SetupUI(this);
 }
-bool LoginForm::OnNotify(Control* sender, EventArgs& args)
+void LoginForm::OnNotify(Control* sender, EventArgs& args)
 {
 	if (args.EventType == Event::OnMouseDown) {
 		if (sender->Name == "btnLogin") {
@@ -14,7 +14,7 @@ bool LoginForm::OnNotify(Control* sender, EventArgs& args)
 			CheckBox* ckbox = (CheckBox*)FindControl("ckbox");
 			if (!ckbox->GetCheck()) {
 				::MessageBox(Hwnd(), L"请阅读协议并勾选!", L"提示", MB_OK);
-				return __super::OnNotify(sender, args);
+				return;
 			}
 			UIString user = editUser->GetText();
 			UIString pwd = editpwd->GetText();
@@ -32,7 +32,7 @@ bool LoginForm::OnNotify(Control* sender, EventArgs& args)
 			::ShellExecuteA(0, "open", sender->GetAttribute("url").c_str(), "", "", SW_SHOW);
 		}
 	}
-	return __super::OnNotify(sender, args);
+	__super::OnNotify(sender, args);
 }
 
 void LoginForm::OnClose(bool& bClose)

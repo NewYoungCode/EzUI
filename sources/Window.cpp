@@ -85,14 +85,15 @@ namespace ezui {
 				m_inputControl = NULL;
 			}
 			};
-		m_publicData->SendNotify = [this](Control* sender, EventArgs& args)->bool {
+		m_publicData->SendNotify = [this](Control* sender, EventArgs& args)->void {
 			IFrame* frame = sender->GetFrame();
-			//如果当前控件存在与内联页面且事件通知回调不为NULL的时候
+			//如果当前控件存在与内联页面
 			if (frame) {
-				bool bRet = frame->OnNotify(sender, args);
-				return bRet;
+				frame->OnNotify(sender, args);
 			}
-			return this->OnNotify(sender, args);
+			else {
+				this->OnNotify(sender, args);
+			}
 			};
 
 		//绑定窗口的数据
@@ -248,7 +249,7 @@ namespace ezui {
 			}
 		}
 		if (m_layout->GetScale() != this->GetScale()) {
-			this->DispatchEvent(m_layout, DpiChangeEventArgs(this->GetScale()));
+			this->SendEvent(m_layout, DpiChangeEventArgs(this->GetScale()));
 		}
 		m_layout->SetRect(this->GetClientRect());
 	}
@@ -395,10 +396,10 @@ namespace ezui {
 		}
 		if (m_inputControl) {
 			KillFocusEventArgs args(ctl);
-			this->DispatchEvent(m_inputControl, args);
+			this->SendEvent(m_inputControl, args);
 		}
 		FocusEventArgs args(m_inputControl);
-		this->DispatchEvent(ctl, args);
+		this->SendEvent(ctl, args);
 		m_inputControl = ctl;
 		m_focusControl = ctl;
 	}
@@ -773,7 +774,7 @@ namespace ezui {
 	void Window::OnPaint(PaintEventArgs& arg)
 	{
 		if (m_layout) {
-			this->DispatchEvent(m_layout, arg);
+			this->SendEvent(m_layout, arg);
 		}
 	}
 
@@ -852,18 +853,18 @@ namespace ezui {
 		return outCtl;
 	}
 
-	bool Window::DispatchEvent(Control* ctrl, const EventArgs& args)
+	void Window::SendEvent(Control* ctrl, const EventArgs& args)
 	{
 		if (ctrl) {
+			//设置鼠标样式
 			if (args.EventType == Event::OnMouseMove || args.EventType == Event::OnMouseDown) {
-				auto cursor = ctrl->GetCursor();
+				auto cursor = ctrl->GetCursor(args.EventType == Event::OnMouseDown ? ControlState::Active : ControlState::None);
 				if (cursor) {
 					::SetCursor(cursor);
 				}
 			}
-			return ctrl->SendEvent(args);
+			ctrl->SendEvent(args);
 		}
-		return false;
 	}
 
 	void Window::OnMouseHover(const Point& point) {
@@ -889,7 +890,7 @@ namespace ezui {
 		if (m_inputControl && m_mouseDown) { //按住移动的控件
 			auto ctlRect = m_inputControl->GetClientRect();
 			MouseEventArgs args(Event::OnMouseMove, { point.X - ctlRect.X ,point.Y - ctlRect.Y });
-			this->DispatchEvent(m_inputControl, args);
+			this->SendEvent(m_inputControl, args);
 			return;
 		}
 
@@ -900,25 +901,22 @@ namespace ezui {
 
 		//触发上一个
 		if (m_focusControl != newCtl) {
-			bool ok = true;
 			if (m_focusControl) {
 				MouseEventArgs args(Event::OnMouseLeave);
 				auto rect = m_focusControl->GetClientRect();
 				args.Location.X = point.X - rect.X;
 				args.Location.Y = point.Y - rect.Y;
-				ok = this->DispatchEvent(m_focusControl, args);
+				this->SendEvent(m_focusControl, args);
 			}
 			//触发MouseEnter
 			args.EventType = Event::OnMouseEnter;
-			ok = this->DispatchEvent(newCtl, args);
-			if (ok) {
-				m_focusControl = newCtl;
-			}
+			this->SendEvent(newCtl, args);
+			m_focusControl = newCtl;
 		}
 		//触发命中的MouseMove
 		if (m_focusControl) {
 			args.EventType = Event::OnMouseMove;
-			this->DispatchEvent(m_focusControl, args);
+			this->SendEvent(m_focusControl, args);
 		}
 
 	}
@@ -926,7 +924,7 @@ namespace ezui {
 	{
 		if (m_focusControl) {
 			MouseEventArgs args(Event::OnMouseLeave);
-			this->DispatchEvent(m_focusControl, args);
+			this->SendEvent(m_focusControl, args);
 		}
 		m_focusControl = NULL;
 		m_mouseDown = false;
@@ -940,7 +938,7 @@ namespace ezui {
 			MouseEventArgs args(Event::OnMouseDoubleClick);
 			args.Button = mbtn;
 			args.Location = relativePoint;
-			this->DispatchEvent(outCtl, args);
+			this->SendEvent(outCtl, args);
 		}
 	}
 
@@ -960,7 +958,7 @@ namespace ezui {
 			MouseEventArgs args(Event::OnMouseDown);
 			args.Button = mbtn;
 			args.Location = relativePoint;
-			this->DispatchEvent(m_inputControl, args);
+			this->SendEvent(m_inputControl, args);
 		}
 		//获取按下按钮和按下的时差
 		auto time_now = ::GetTickCount64();//记录鼠标按下的当前时间
@@ -989,7 +987,7 @@ namespace ezui {
 			//触发抬起事件
 			{
 				args.EventType = Event::OnMouseUp;
-				this->DispatchEvent(m_inputControl, args);
+				this->SendEvent(m_inputControl, args);
 
 			}
 			if (m_inputControl) {
@@ -1002,7 +1000,7 @@ namespace ezui {
 				else {
 					args.EventType = Event::OnMouseLeave;//触发鼠标离开事件
 				}
-				this->DispatchEvent(m_inputControl, args);
+				this->SendEvent(m_inputControl, args);
 			}
 		}
 	}
@@ -1013,7 +1011,7 @@ namespace ezui {
 			MouseEventArgs args(Event::OnMouseWheel);
 			args.Location = point;
 			args.ZDelta = zDelta;
-			this->DispatchEvent(m_focusControl, args);
+			this->SendEvent(m_focusControl, args);
 		}
 		ScrollBar* scrollBar = NULL;
 		if (m_focusControl && m_focusControl->GetScrollBar() && m_focusControl->GetScrollBar()->Scrollable()) {
@@ -1032,7 +1030,7 @@ namespace ezui {
 			MouseEventArgs args(Event::OnMouseWheel);
 			args.Location = point;
 			args.ZDelta = zDelta;
-			this->DispatchEvent(scrollBar, args);
+			this->SendEvent(scrollBar, args);
 		}
 	}
 
@@ -1065,21 +1063,21 @@ namespace ezui {
 	{
 		if (m_inputControl) { //
 			KeyboardEventArgs args(Event::OnKeyChar, wParam, lParam);
-			this->DispatchEvent(m_inputControl, args);
+			this->SendEvent(m_inputControl, args);
 			return;
 		}
 	}
 	void Window::OnKeyDown(WPARAM wParam, LPARAM lParam) {
 		if (m_inputControl) { //
 			KeyboardEventArgs args(Event::OnKeyDown, wParam, lParam);
-			this->DispatchEvent(m_inputControl, args);
+			this->SendEvent(m_inputControl, args);
 			return;
 		}
 	}
 	void Window::OnKeyUp(WPARAM wParam, LPARAM lParam) {
 		if (m_inputControl) { //
 			KeyboardEventArgs args(Event::OnKeyUp, wParam, lParam);
-			this->DispatchEvent(m_inputControl, args);
+			this->SendEvent(m_inputControl, args);
 			return;
 		}
 	}
@@ -1092,7 +1090,7 @@ namespace ezui {
 	{
 		if (m_inputControl) { //窗口失去焦点
 			KillFocusEventArgs args(NULL);
-			this->DispatchEvent(m_inputControl, args);
+			this->SendEvent(m_inputControl, args);
 			m_inputControl = NULL;
 		}
 	}
@@ -1116,13 +1114,18 @@ namespace ezui {
 		this->m_maxSize.Scale(newScale);
 		DpiChangeEventArgs arg(systemScale);
 		if (m_layout) {
-			this->DispatchEvent(m_layout, arg);
+			this->SendEvent(m_layout, arg);
 		}
 		if (!newRect.IsEmptyArea()) {
 			SetRect({ newRect.X, newRect.Y, newRect.Width, newRect.Height });
 		}
 	}
-	bool Window::OnNotify(Control* sender, EventArgs& args) {
-		return ezui::DefaultNotify(sender, args);
+	void Window::OnNotify(Control* sender, EventArgs& args) {
+		if (this->NotifyHandler) {
+			this->NotifyHandler(sender, args);
+		}
+		else {
+			ezui::DefaultNotify(sender, args);
+		}
 	}
 };
