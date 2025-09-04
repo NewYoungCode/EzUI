@@ -128,7 +128,7 @@ void MainFrm::InitForm() {
 	timer->Tick = [=](Timer*) {
 		TimerTick();
 		};
-	//添加一些事件到窗口中的OnNotify函数进行拦截
+	//添加一些事件到窗口中的OnNotify函数
 	player.NotifyFlags = player.NotifyFlags | Event::OnPaint;
 	mainLayout->NotifyFlags = mainLayout->NotifyFlags | Event::OnPaint;
 	//播放视频的时候每一帧的回调

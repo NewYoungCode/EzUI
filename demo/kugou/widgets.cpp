@@ -35,6 +35,24 @@ LocalItem::LocalItem(const UIString& _songName, const UIString& _songTime) {
 	Add(new HSpacer(15));
 	Add(&del);
 	Add(new HSpacer(10));
+
+	this->EventHandler = [this](Control* sd, EventArgs& args) {
+		if (args.EventType == Event::OnMouseMove) {
+			MouseEventArgs arg = (MouseEventArgs&)args;
+			if (del.IsVisible() && del.GetRect().Contains(arg.Location)) {
+				auto hCursor = del.GetCursor();
+				if (hCursor) {
+					::SetCursor(hCursor);
+				}
+			}
+		}
+		if (args.EventType == Event::OnMouseDown) {
+			MouseEventArgs arg = (MouseEventArgs&)args;
+			if (del.IsVisible() && del.GetRect().Contains(arg.Location)) {
+				del.SendEvent(args);
+			}
+		}
+		};
 }
 LocalItem::~LocalItem() {
 	if (del.Style.ForeImage) {
@@ -107,6 +125,24 @@ SearchItem::SearchItem(const Song& s) {
 	Add(new HSpacer(5));
 	Add(&time);
 	Add(new HSpacer(5));
+
+	this->EventHandler = [this](Control* sd, EventArgs& args) {
+		if (args.EventType == Event::OnMouseMove) {
+			MouseEventArgs arg = (MouseEventArgs&)args;
+			if (mv.IsVisible() && mv.GetRect().Contains(arg.Location)) {
+				auto hCursor = mv.GetCursor();
+				if (hCursor) {
+					::SetCursor(hCursor);
+				}
+			}
+		}
+		if (args.EventType == Event::OnMouseDown) {
+			MouseEventArgs arg = (MouseEventArgs&)args;
+			if (mv.IsVisible() && mv.GetRect().Contains(arg.Location)) {
+				mv.SendEvent(args);
+			}
+		}
+		};
 }
 
 void LoginFrm::OnNotify(Control* sender, EventArgs& args)

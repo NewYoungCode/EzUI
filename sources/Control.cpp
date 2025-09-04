@@ -1022,6 +1022,8 @@ namespace ezui {
 			args.PushLayer(Rect(_ClipRect.X - clientRect.X, _ClipRect.Y - clientRect.Y, _ClipRect.Width, _ClipRect.Height));
 		}
 #endif 
+		this->OnPaint(args);
+		//通知到主窗口OnNotify或者IFrame的OnNotify函数中
 		WindowData* publicData = NULL;
 		if ((this->NotifyFlags & Event::OnPaint) == Event::OnPaint) {
 			publicData = this->GetPublicData();
@@ -1029,8 +1031,10 @@ namespace ezui {
 				publicData->SendNotify(this, args);
 			}
 		}
-
-		this->OnPaint(args);
+		//通知到自身控件的处理器
+		if (this->EventHandler) {
+			this->EventHandler(this, args);
+		}
 		//绘制子控件
 		this->OnChildPaint(args);
 		//绘制滚动条
@@ -1042,9 +1046,6 @@ namespace ezui {
 		border.Color = GetBorderColor();
 		border.Style = GetBorderStyle();
 		this->OnBorderPaint(args, border);//绘制边框
-		if (this->EventHandler) {
-			this->EventHandler(this, args);
-		}
 		args.PopLayer();//弹出纹理层
 
 #ifdef _DEBUG
