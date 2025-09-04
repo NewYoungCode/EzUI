@@ -110,14 +110,13 @@ namespace ezui {
 			break;
 		}
 		case WM_SHOWWINDOW: {
-			//窗口的可见状态标志未被设置
+			//窗口的可见状态标志被设置(此时窗口还未真正生效)
 			if (wParam == TRUE) {
 				//SHOW WINDOWS
 			}
 			else {
 				//HIDE WINDOWS
 			}
-			this->UpdateShadowBox();
 			break;
 		}
 		case WM_NCHITTEST:

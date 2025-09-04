@@ -9,7 +9,7 @@
     </hbox>
 
     <!--<spacer height="40"></spacer>-->
-    <label margin-top="30" id="headImg" size="80,80"></label>
+    <label margin-top="30" id="headImg" size="80,80" action="move"></label>
 
     <!-- 账号输入框 -->
     <hbox margin-top="25" size="258,42" style="border-radius:5px;background-color:white;">
@@ -34,7 +34,7 @@
         <button url="www.bing.com" width="auto" style="color: #2D77E5" text="QQ隐私保护指引"></button>
     </hbox>
 
-    <button margin-top="15" size="258,38" id="btnLogin" text="登录" style="background-color: #97D6FF;color:white;border-radius:8px"> </button>
+    <button margin-top="15" size="258,38" id="btnLogin" text="登录"> </button>
 
 
     <!-- 扫码登陆/更多选项 -->
@@ -72,5 +72,15 @@
 
         #ckbox:checked {
             background-image: url(res/check_1.png);
+        }
+
+    #btnLogin {
+        background-color: #0099FF;
+        color: white;
+        border-radius: 8px;
+    }
+        /*登录按钮鼠标悬浮时候的外观*/
+        #btnLogin:hover {
+            background-color: #008DEB;
         }
 </style>

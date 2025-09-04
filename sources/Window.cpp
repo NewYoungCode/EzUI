@@ -317,7 +317,6 @@ namespace ezui {
 		return m_closeCode;
 	}
 	void Window::Hide() {
-		this->Refresh();//隐藏窗口前先刷新一下窗口中的画面(清除残留画面)
 		::ShowWindow(Hwnd(), SW_HIDE);
 	}
 	bool Window::IsVisible() {
@@ -574,6 +573,11 @@ namespace ezui {
 			break;
 		}
 		case WM_SHOWWINDOW: {
+			//窗口即将被隐藏
+			if (wParam == FALSE) {
+				OnMouseLeave();//触发鼠标从窗口中移出事件
+				Refresh();//前先刷新一下窗口中的画面(清除残留画面)
+			}
 			break;
 		}
 		case WM_WINDOWPOSCHANGED: {
