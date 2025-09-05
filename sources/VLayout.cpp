@@ -3,6 +3,18 @@ namespace ezui {
 	VLayout::VLayout(Object* parentObject) :Control(parentObject)
 	{
 	}
+	void VLayout::SetAttribute(const UIString& key, const UIString& value)
+	{
+		if (key == "halign" || key == "align") {
+			if (value == "left") {
+				ContentAlign = HAlign::Left;
+			}
+			else if (value == "right") {
+				ContentAlign = HAlign::Right;
+			}
+		}
+		__super::SetAttribute(key, value);
+	}
 	VLayout::~VLayout()
 	{
 	}

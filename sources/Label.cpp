@@ -63,7 +63,7 @@ namespace ezui {
 	void Label::SetAttribute(const UIString& key, const UIString& value) {
 		do
 		{
-			if (key == "valign") {
+			if (key == "valign" || key == "align") {
 				this->TextAlign = ezui::TextAlign((int)this->TextAlign & ~(int)VAlign::Top);
 				this->TextAlign = ezui::TextAlign((int)this->TextAlign & ~(int)VAlign::Mid);
 				this->TextAlign = ezui::TextAlign((int)this->TextAlign & ~(int)VAlign::Bottom);
@@ -77,7 +77,7 @@ namespace ezui {
 				this->TextAlign = ezui::TextAlign((int)this->TextAlign | (int)v);
 				break;
 			}
-			if (key == "halign") {
+			if (key == "halign" || key == "align") {
 				this->TextAlign = ezui::TextAlign((int)this->TextAlign & ~(int)HAlign::Left);
 				this->TextAlign = ezui::TextAlign((int)this->TextAlign & ~(int)HAlign::Center);
 				this->TextAlign = ezui::TextAlign((int)this->TextAlign & ~(int)HAlign::Right);

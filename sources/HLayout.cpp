@@ -1,5 +1,17 @@
 #include "HLayout.h"
 namespace ezui {
+	void HLayout::SetAttribute(const UIString& key, const UIString& value)
+	{
+		if (key == "valign" || key == "align") {
+			if (value == "top") {
+				ContentAlign = VAlign::Top;
+			}
+			else if (value == "bottom") {
+				ContentAlign = VAlign::Bottom;
+			}
+		}
+		__super::SetAttribute(key, value);
+	}
 	void HLayout::OnLayout()
 	{
 		int contentHeight = 0;

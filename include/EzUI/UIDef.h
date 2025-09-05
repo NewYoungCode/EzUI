@@ -14,6 +14,7 @@
 #include <chrono>
 #include <mutex>
 #include <algorithm>
+#include <atomic>
 #include <condition_variable>
 
 #include <windows.h>

@@ -4,30 +4,31 @@ namespace ezui {
 	{
 	}
 	bool Timer::IsStopped() {
-		return m_bPause;
+		return m_bPause.load();
 	}
 	void Timer::Start() {
 		if (m_task == NULL) {
+			m_event = CreateEvent(NULL, FALSE, FALSE, NULL);  // 创建事件对象
 			m_bExit = false;
 			m_task = new Task([this]() {
+				//等待信号与条件的lambda函数
+				const auto wait = [this]() {
+					while (!(this->m_bExit || !(this->m_bPause.load()))) {
+						WaitForSingleObject(m_event, INFINITE);
+					}
+					};
 				while (true)
 				{
-					{
-						m_condv.Wait([this]() {
-							return this->m_bExit || !this->m_bPause;
-							});
-						m_condv.Lock();
-						if (this->m_bExit) {
-							m_condv.Unlock();
-							break;
-						}
-						m_condv.Unlock();
+					wait();//等待信号与条件
+
+					if (this->m_bExit) {
+						break;//退出循环
 					}
 
 					//当等待时间过长(超过100毫秒) 将等待时间拆分为片段
 					auto start = std::chrono::steady_clock::now();
 					if (this->Interval > 100) {
-						while (!this->m_bExit) {
+						while (!(this->m_bExit)) {
 							auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
 							if (elapsed >= this->Interval) {
 								break;
@@ -42,7 +43,7 @@ namespace ezui {
 					}
 
 					if (this->m_bExit) {
-						break;
+						break;//退出循环
 					}
 
 					if (this->Tick) {
@@ -51,26 +52,26 @@ namespace ezui {
 				}
 				});
 		}
-		{
-			m_condv.Lock();
-			m_bPause = false;
-			m_condv.Unlock();
+		//通知计时器继续运行
+		m_bPause.store(false);
+		if (m_event) {
+			SetEvent(m_event);  // 设置事件, 唤醒等待的线程
 		}
-		m_condv.Notify();
 	}
 	void Timer::Stop() {
-		{
-			m_condv.Lock();
-			m_bPause = true;//暂停
-			m_condv.Unlock();
-		}
-		m_condv.Notify();
+		//暂停计时器的运行
+		m_bPause.store(true);
 	}
 	Timer::~Timer() {
 		m_bExit = true;
-		m_condv.Notify();
+		if (m_event) {
+			SetEvent(m_event);  // 设置事件, 唤醒等待的线程
+		}
 		if (m_task) {
-			delete m_task;
+			delete m_task; //结束掉轮询任务
+		}
+		if (m_event) {
+			CloseHandle(m_event);  // 关闭句柄, 释放资源
 		}
 	}
 };

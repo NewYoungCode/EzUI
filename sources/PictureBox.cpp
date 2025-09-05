@@ -24,12 +24,7 @@ namespace ezui {
 		if (Image) {
 			arg.Graphics.DrawImage(Image, RectF(0, 0, (float)Width(), (float)Height()));
 			if (Image->FrameCount() > 1) {
-				if (m_timer->IsStopped()) {
-					m_timer->Start();
-				}
-			}
-			else {
-				m_timer->Stop();
+				m_timer->Start();
 			}
 		}
 		__super::OnForePaint(arg);

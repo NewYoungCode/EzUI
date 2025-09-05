@@ -988,24 +988,9 @@ namespace ezui {
 			MouseEventArgs args(Event::None);
 			args.Button = mbtn;
 			args.Location = { point.X - ctlRect.X,point.Y - ctlRect.Y };
-			//触发抬起事件
-			{
-				args.EventType = Event::OnMouseUp;
-				this->SendEvent(m_inputControl, args);
-
-			}
-			if (m_inputControl) {
-				POINT p1{ 0 };
-				::GetCursorPos(&p1);
-				::ScreenToClient(Hwnd(), &p1);
-				if (ctlRect.Contains(p1.x, p1.y) && ::GetForegroundWindow() == Hwnd()) {
-					args.EventType = Event::OnMouseEnter;//触发鼠标悬浮事件
-				}
-				else {
-					args.EventType = Event::OnMouseLeave;//触发鼠标离开事件
-				}
-				this->SendEvent(m_inputControl, args);
-			}
+			//触发鼠标抬起事件
+			args.EventType = Event::OnMouseUp;
+			this->SendEvent(m_inputControl, args);
 		}
 	}
 	void Window::OnMouseWheel(int zDelta, const Point& point)

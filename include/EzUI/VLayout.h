@@ -11,6 +11,7 @@ namespace ezui {
 		virtual void OnLayout() override;
 	public:
 		VLayout(Object* parentObject = NULL);
+		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 		virtual ~VLayout();
 	};
 	using VBox = VLayout;
