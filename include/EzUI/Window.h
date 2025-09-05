@@ -50,8 +50,8 @@ namespace ezui {
 		Rect m_rectClient;
 		//所属窗口句柄
 		HWND m_ownerWnd = NULL;
-		//窗口布局
-		Control* m_layout = NULL;
+		//窗口根Frame(无需释放,生命周期跟随窗口)
+		IFrame* m_frame;
 		// 管理图片的释放
 		PtrManager<Image*> m_imgs;
 	public:
@@ -67,7 +67,7 @@ namespace ezui {
 		//鼠标按下以标题栏方式移动窗口
 		void TitleMoveWindow();
 		//在窗口中使用基于客户区的鼠标位置寻找可命中的控件 
-		Control* HitTestControl(Point clientPoint, Point* outPoint);
+		Control* HitTestControl(const Point& clientPoint, Point* outPoint);
 		//派发事件
 		void SendEvent(Control* ctrl, const EventArgs& args);
 	protected:
@@ -173,6 +173,12 @@ namespace ezui {
 
 		//设置窗口主布局
 		void SetLayout(ezui::Control* layout);
+
+		//从文件中加载布局
+		void LoadXml(const UIString& fileName);
+
+		//从内存加载布局
+		void LoadXml(const char* fileData, size_t fileSize);
 
 		//获取窗口主布局
 		Control* GetLayout();

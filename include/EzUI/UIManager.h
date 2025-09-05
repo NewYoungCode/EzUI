@@ -51,9 +51,9 @@ namespace ezui {
 		virtual ~UIManager();
 		void SetupUI(Window* window);
 		void SetupUI(Control* parentCtl);
-		//从文件中加载布局
+		//从文件中加载布局(不允许多次加载xml)
 		void LoadXml(const UIString& fileName);
-		//从内存加载布局
+		//从内存加载布局(不允许多次加载xml)
 		void LoadXml(const char* fileData, size_t fileSize);
 		//设置样式表
 		void SetStyleSheet(const UIString& styleContent);

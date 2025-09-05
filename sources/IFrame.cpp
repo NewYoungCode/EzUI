@@ -19,18 +19,21 @@ namespace ezui {
 	void IFrame::LoadXml(const UIString& fileName) {
 		m_umg.LoadXml(fileName);
 		m_umg.SetupUI(this);
-		if (this->GetControls().size() > 0) {
-			Control* root = this->GetControl(this->GetControls().size() - 1);
-			root->SetDockStyle(DockStyle::Fill);
-		}
+	}
+	void IFrame::LoadXml(const char* fileData, size_t fileSize) {
+		m_umg.LoadXml(fileData, fileSize);
+		m_umg.SetupUI(this);
 	}
 	Control* IFrame::Add(Control* childCtrl)
 	{
 		//IFrame下只允许有一个控件并且会随着IFrame拉伸
 		this->Clear();
-		auto* ctrl = __super::Add(childCtrl);
-		childCtrl->SetDockStyle(DockStyle::Fill);
-		return ctrl;
+		if (childCtrl) {
+			auto* ctrl = __super::Add(childCtrl);
+			childCtrl->SetDockStyle(DockStyle::Fill);
+			return ctrl;
+		}
+		return NULL;
 	}
 	void IFrame::Remove(Control* childCtl, bool freeCtrl)
 	{
@@ -38,6 +41,9 @@ namespace ezui {
 	}
 	void IFrame::SetLayout(Control* ctrl) {
 		this->Add(ctrl);
+	}
+	Control* IFrame::GetLayout() {
+		return this->GetControl(0);
 	}
 	void IFrame::OnNotify(Control* sender, EventArgs& args) {
 		if (this->NotifyHandler) {

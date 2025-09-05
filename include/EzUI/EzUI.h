@@ -154,8 +154,6 @@ namespace ezui {
 		std::function<void(const Rect&)> InvalidateRect = NULL;
 		//立即更新全部无效区域
 		std::function<void()> Refresh = NULL;
-		//通知函数
-		std::function<void(Control*, EventArgs&)> SendNotify = NULL;//
 		//清空控件标记等等...
 		std::function<void(Control*)> CleanControl = NULL;
 		//内部移动窗口的函数

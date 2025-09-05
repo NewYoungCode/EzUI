@@ -37,8 +37,7 @@ void MainFrm::InitForm() {
 	this->SetResizable(true);
 	this->SetText(L"酷苟音乐");
 
-	umg.LoadXml("res/xml/main.htm");
-	umg.SetupUI(this);
+	this->LoadXml("res/xml/main.htm");
 
 	//找到三个Frame
 	titleFrame = (IFrame*)this->FindControl("titleFrame");

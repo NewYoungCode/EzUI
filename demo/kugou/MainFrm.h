@@ -23,7 +23,6 @@ private:
 	std::vector<Song> songLsit;
 	//no new 不需要释放
 	NotifyIcon ntfi;
-	UIManager umg;
 	VlcPlayer player;
 	VListView* vlistLocal = NULL, * vlistSearch = NULL;
 	TextBox* editSearch;

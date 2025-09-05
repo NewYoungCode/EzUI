@@ -15,10 +15,14 @@ namespace ezui {
 		std::function<void(Control*, EventArgs&)> NotifyHandler = NULL;
 		IFrame(Object* parentObject = NULL);
 		virtual ~IFrame();
-		//加载xml
+		//从文件中加载xml
 		void LoadXml(const UIString& fileName);
+		//从内存中加载xml
+		void LoadXml(const char* fileData, size_t fileSize);
 		//设置唯一布局
 		void SetLayout(Control* ctrl);
+		//获取布局
+		Control* GetLayout();
 		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue)override;
 		//消息通知
 		virtual void OnNotify(Control* sender, EventArgs& args);

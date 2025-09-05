@@ -49,6 +49,30 @@ namespace ezui {
 		m_hWnd = ::CreateWindowExW(dwExStyle | WS_EX_ACCEPTFILES, EZUI_WINDOW_CLASS, EZUI_WINDOW_CLASS, WS_CLIPSIBLINGS | WS_CLIPCHILDREN | dStyle,
 			rect.X, rect.Y, rect.Width, rect.Height, owner, NULL, ezui::__EzUI__HINSTANCE, NULL);
 
+		//创建主Frame
+		m_frame = new IFrame(this);
+		m_frame->SetHwnd(m_hWnd);
+		NONCLIENTMETRICS ncm = {};
+		ncm.cbSize = sizeof(NONCLIENTMETRICS);
+		if (SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0)) {
+			m_frame->Style.FontFamily = ncm.lfMessageFont.lfFaceName;
+			// 获取菜单字体的高度(点数)
+			int fontHeightInPoints = std::abs(ncm.lfMenuFont.lfHeight) / this->GetScale() + 0.5;
+			m_frame->Style.FontSize = fontHeightInPoints;
+		}
+		//获取系统默认字体颜色
+		auto sysForeColor = GetSysColor(COLOR_WINDOWTEXT);
+		m_frame->Style.ForeColor = Color(GetRValue(sysForeColor), GetGValue(sysForeColor), GetBValue(sysForeColor));
+		//非layered窗口 必须设置背景色
+		if (((::GetWindowLongPtr(Hwnd(), GWL_EXSTYLE) & WS_EX_LAYERED) == 0)) {
+			auto sysBackColor = GetSysColor(COLOR_WINDOW);
+			m_frame->Style.BackColor = Color(GetRValue(sysBackColor), GetGValue(sysBackColor), GetBValue(sysBackColor));
+		}
+		//主Frame的OnNotify函数转到此窗口
+		m_frame->NotifyHandler = [this](Control* sender, EventArgs& args) {
+			this->OnNotify(sender, args);
+			};
+
 		m_publicData->Window = this;
 		m_publicData->MoveWindow = [this]() {
 			this->MoveWindow();
@@ -85,16 +109,6 @@ namespace ezui {
 				m_inputControl = NULL;
 			}
 			};
-		m_publicData->SendNotify = [this](Control* sender, EventArgs& args)->void {
-			IFrame* frame = sender->GetFrame();
-			//如果当前控件存在与内联页面
-			if (frame) {
-				frame->OnNotify(sender, args);
-			}
-			else {
-				this->OnNotify(sender, args);
-			}
-			};
 
 		//绑定窗口的数据
 		UI_SET_USERDATA(Hwnd(), this->m_publicData);
@@ -106,10 +120,11 @@ namespace ezui {
 
 	Control* Window::FindControl(const UIString& objectName)
 	{
-		if (!m_layout) {
-			return NULL;
+		Control* layout = this->m_frame->GetLayout();
+		if (layout) {
+			return layout->FindControl(objectName);
 		}
-		return this->m_layout->FindControl(objectName);
+		return NULL;
 	}
 
 	HWND Window::Hwnd()
@@ -219,45 +234,22 @@ namespace ezui {
 		::SendMessage(Hwnd(), WM_SETICON, ICON_SMALL, (LPARAM)icon);
 	}
 	void Window::SetLayout(ezui::Control* layout) {
-		m_layout = layout;
-		if (!layout) return;
-		m_layout->Parent = NULL;
-		m_layout->SetHwnd(Hwnd());
-
-		if (m_layout->Style.FontFamily.empty()) {
-			NONCLIENTMETRICS ncm = {};
-			ncm.cbSize = sizeof(NONCLIENTMETRICS);
-			if (SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0)) {
-				//LOGFONTW lf = ncm.lfMessageFont;
-				//HFONT hFont = CreateFontIndirectW(&lf);
-				//lf.lfFaceName 就是系统 UI 默认字体名
-				// hFont 就是可以直接用的字体句柄
-				m_layout->Style.FontFamily = ncm.lfMessageFont.lfFaceName;
-			}
-		}
-		if (m_layout->Style.FontSize == 0) {
-			m_layout->Style.FontSize = 12;
-		}
-		if (m_layout->Style.ForeColor.GetValue() == 0) {
-			m_layout->Style.ForeColor = Color::Black;
-		}
-		if (m_layout->Style.BackColor.GetValue() == 0) {
-			LONG_PTR exStyle = ::GetWindowLongPtr(Hwnd(), GWL_EXSTYLE);
-			bool isLayered = ((exStyle & WS_EX_LAYERED) != 0);
-			if (!isLayered) {//非layered窗口 主布局控件必须设置背景色
-				m_layout->Style.BackColor = Color::White;
-			}
-		}
-		if (m_layout->GetScale() != this->GetScale()) {
-			this->SendEvent(m_layout, DpiChangeEventArgs(this->GetScale()));
-		}
-		m_layout->SetRect(this->GetClientRect());
+		m_frame->SetLayout(layout);
 	}
 
 	Control* Window::GetLayout()
 	{
-		return this->m_layout;
+		return this->m_frame->GetLayout();
 	}
+
+	void Window::LoadXml(const UIString& fileName) {
+		m_frame->LoadXml(fileName);
+	}
+
+	void Window::LoadXml(const char* fileData, size_t fileSize) {
+		m_frame->LoadXml(fileData, fileSize);
+	}
+
 	void Window::Close(int code) {
 		m_closeCode = code;
 		::SendMessage(Hwnd(), WM_CLOSE, 0, 0);
@@ -268,7 +260,6 @@ namespace ezui {
 	}
 	void Window::Show()
 	{
-		ASSERT(m_layout);
 		::ShowWindow(Hwnd(), SW_SHOW);
 	}
 	void Window::Show(int cmdShow)
@@ -777,9 +768,7 @@ namespace ezui {
 
 	void Window::OnPaint(PaintEventArgs& arg)
 	{
-		if (m_layout) {
-			this->SendEvent(m_layout, arg);
-		}
+		this->SendEvent(m_frame, arg);
 	}
 
 	bool Window::IsInWindow(Control& pControl, Control& it) {
@@ -798,10 +787,11 @@ namespace ezui {
 		return true;
 	}
 
-	Control* Window::HitTestControl(Point clientPoint, Point* outPoint) {
-		if (!m_layout) return NULL;
-		*outPoint = clientPoint;
-		Control* outCtl = m_layout;
+	Control* Window::HitTestControl(const Point& clientPoint, Point* outPoint) {
+		Control* outCtl = m_frame->GetLayout();
+		if (outCtl == NULL)return NULL;
+		outPoint->X = clientPoint.X;
+		outPoint->Y = clientPoint.Y;
 	Find_Loop:
 		ScrollBar* scrollBar = outCtl->GetScrollBar();
 		if (scrollBar && scrollBar->GetClientRect().Contains(clientPoint)) {
@@ -1029,15 +1019,11 @@ namespace ezui {
 
 	void Window::OnSize(const Size& sz)
 	{
-		if (!m_layout) {
-			return;
-		}
-		if (m_layout->GetScale() != m_publicData->Scale) {
+		if (!IsFloatEqual(m_frame->GetScale(), m_publicData->Scale)) {
 			this->OnDpiChange(m_publicData->Scale, Rect());
 		}
 		const Rect& rect = this->GetClientRect();
-		m_layout->SetRect(rect);
-		//m_layout->SetFixedSize(rect.GetSize());
+		m_frame->SetRect(rect);
 	}
 
 	void Window::OnClose(bool& bClose)
@@ -1102,9 +1088,7 @@ namespace ezui {
 		this->m_miniSize.Scale(newScale);
 		this->m_maxSize.Scale(newScale);
 		DpiChangeEventArgs arg(systemScale);
-		if (m_layout) {
-			this->SendEvent(m_layout, arg);
-		}
+		this->SendEvent(m_frame, arg);
 		if (!newRect.IsEmptyArea()) {
 			SetRect({ newRect.X, newRect.Y, newRect.Width, newRect.Height });
 		}

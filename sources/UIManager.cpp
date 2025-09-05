@@ -287,6 +287,9 @@ namespace ezui {
 	}
 	void UIManager::LoadXml(const char* fileData, size_t fileSize)
 	{
+		if (!m_rootNode.empty()) {
+			ASSERT(!"XML cannot be loaded repeatedly!");
+		}
 		TiXmlDocument doc;
 		auto result = doc.Parse(fileData, NULL, TiXmlEncoding::TIXML_ENCODING_UTF8);
 		//doc.Parse

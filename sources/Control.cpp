@@ -806,10 +806,10 @@ namespace ezui {
 				if (isRemove) break;
 			}
 			if ((this->NotifyFlags & arg.EventType) == arg.EventType) {
-				//向最外层通知事件
-				auto* publicData = this->GetPublicData();
-				if (publicData && publicData->SendNotify) {
-					publicData->SendNotify(this, arg);
+				//向Frame层通知事件
+				IFrame* frame = this->GetFrame();
+				if (frame) {
+					frame->OnNotify(this, arg);
 				}
 			}
 		} while (false);
@@ -1026,9 +1026,10 @@ namespace ezui {
 		//通知到主窗口OnNotify或者IFrame的OnNotify函数中
 		WindowData* publicData = NULL;
 		if ((this->NotifyFlags & Event::OnPaint) == Event::OnPaint) {
-			publicData = this->GetPublicData();
-			if (publicData) {
-				publicData->SendNotify(this, args);
+			//向Frame层通知事件
+			IFrame* frame = this->GetFrame();
+			if (frame) {
+				frame->OnNotify(this, args);
 			}
 		}
 		//通知到自身控件的处理器
