@@ -239,9 +239,9 @@ namespace ezui {
 	UI_SUPER_STYLE_BINDFUNC(Color, ForeColor);
 	UI_SUPER_STYLE_BINDFUNC(std::wstring, FontFamily);
 
-	WindowData* Control::GetPublicData()
+	WindowContext* Control::GetWindowContext()
 	{
-		return (WindowData*)UI_GET_USERDATA(Hwnd());
+		return (WindowContext*)UI_GET_USERDATA(Hwnd());
 	}
 
 	IFrame* Control::GetFrame()
@@ -1025,7 +1025,7 @@ namespace ezui {
 #endif 
 		this->OnPaint(args);
 		//通知到主窗口OnNotify或者IFrame的OnNotify函数中
-		WindowData* publicData = NULL;
+		WindowContext* publicData = NULL;
 		if ((this->NotifyFlags & Event::OnPaint) == Event::OnPaint) {
 			//向Frame层通知事件
 			IFrame* frame = this->GetFrame();
@@ -1051,7 +1051,7 @@ namespace ezui {
 		args.PopLayer();//弹出纹理层
 
 #ifdef _DEBUG
-		if ((publicData = this->GetPublicData()) && publicData->Debug) {
+		if ((publicData = this->GetWindowContext()) && publicData->Debug) {
 			float width = 1 * this->GetScale();
 			Color color = publicData->DebugColor;
 			color.SetA(127);
@@ -1135,7 +1135,7 @@ namespace ezui {
 		if (Parent && !Parent->IsDestroying()) {
 			Parent->Remove(this);
 		}
-		auto* publicData = GetPublicData();
+		auto* publicData = GetWindowContext();
 		//清除绑定信息
 		if (publicData) {
 			publicData->CleanControl(this);
@@ -1257,7 +1257,7 @@ namespace ezui {
 		for (auto& it : m_controls) {
 			it->OnRemove();
 		}
-		auto* publicData = GetPublicData();
+		auto* publicData = GetWindowContext();
 		if (publicData) {
 			publicData->CleanControl(this);
 		}
@@ -1411,7 +1411,7 @@ namespace ezui {
 	}
 
 	bool Control::Invalidate() {
-		auto* publicData = GetPublicData();
+		auto* publicData = GetWindowContext();
 		if (publicData) {
 			if (Parent && this->IsPendLayout()) {
 				return Parent->Invalidate();
@@ -1430,7 +1430,7 @@ namespace ezui {
 	}
 	void Control::Refresh() {
 		if (Invalidate()) {
-			auto* publicData = GetPublicData();
+			auto* publicData = GetWindowContext();
 			if (publicData) {
 				publicData->Refresh();//立即更新全部无效区域
 			}

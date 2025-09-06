@@ -267,7 +267,7 @@ namespace ezui {
 		int GetFontSize(ControlState _state = ControlState::None);
 
 		//获取公共数据
-		WindowData* GetPublicData();
+		WindowContext* GetWindowContext();
 
 		//获取上层Frame容器
 		IFrame* GetFrame();

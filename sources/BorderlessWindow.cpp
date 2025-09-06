@@ -33,7 +33,7 @@ namespace ezui {
 			}
 		}
 		//对边框进行新DPI适配
-		float newScale = systemScale / GetPublicData()->Scale;
+		float newScale = systemScale / GetWindowContext()->Scale;
 		__super::OnDpiChange(systemScale, newRect);
 	}
 

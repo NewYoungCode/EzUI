@@ -23,7 +23,7 @@ namespace ezui {
 		//添加到全局绘制队列
 		g_layeredWnds.push_back(this);
 		//获取公共数据
-		auto* publicData = this->GetPublicData();
+		auto* publicData = this->GetWindowContext();
 		publicData->InvalidateRect = [this](const Rect& rect) ->void {
 			//标记窗口无效区域
 			this->InvalidateRect(rect);

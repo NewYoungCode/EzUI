@@ -135,7 +135,9 @@ namespace ezui {
 		//是否为主显示器
 		bool Primary = false;
 	};
-	struct WindowData {
+
+	//窗口公共数据
+	struct WindowContext {
 		//缩放率
 		float Scale = 1.0f;
 		//单次绘图数量
@@ -162,12 +164,6 @@ namespace ezui {
 		std::function<void()> TitleMoveWindow = NULL;
 		//处理消息过程的回调函数
 		std::function<LRESULT(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)> WndProc = NULL;
-
-#ifdef _DEBUG
-		virtual ~WindowData() {
-		}
-#endif
-
 	};
 
 	enum class LayoutState {
@@ -372,7 +368,7 @@ namespace ezui {
 	public:
 		PaintEventArgs(const PaintEventArgs&) = delete;
 		PaintEventArgs& operator=(const PaintEventArgs&) = delete;
-		WindowData* PublicData = NULL;
+		WindowContext* PublicData = NULL;
 		::HWND HWND = NULL;
 		HDC DC = NULL;
 		ezui::DXRender& Graphics;//画家

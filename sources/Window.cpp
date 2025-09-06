@@ -27,7 +27,7 @@ namespace ezui {
 
 	void Window::Init(int width, int height, HWND owner, DWORD dStyle, DWORD  dwExStyle)
 	{
-		this->m_publicData = new WindowData;
+		this->m_publicData = new WindowContext;
 		Rect rect(0, 0, width, height);
 
 		POINT cursorPos;
@@ -412,7 +412,7 @@ namespace ezui {
 		return NULL;
 	}
 
-	WindowData* Window::GetPublicData()
+	WindowContext* Window::GetWindowContext()
 	{
 		return m_publicData;
 	}

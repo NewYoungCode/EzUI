@@ -12,7 +12,7 @@ namespace ezui {
 		HWND m_hWnd = NULL;
 		HWND m_mainHWnd = NULL;
 		WORD m_radius = 0;
-		WindowData* m_publicData = NULL;
+		WindowContext* m_publicData = NULL;
 	private:
 		void SetAplpha(int x, int y, BYTE a, float radius);
 		bool SetShadow(int m_Width, int m_Height, int iSize, float radius);

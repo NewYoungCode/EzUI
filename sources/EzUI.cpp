@@ -428,8 +428,8 @@ namespace ezui {
 		::DestroyCursor(hCursor);
 	}
 	void DefaultNotify(Control* sender, EventArgs& args) {
-		WindowData* winData = NULL;
-		if (!sender || !(winData = sender->GetPublicData())) {
+		WindowContext* winData = NULL;
+		if (!sender || !(winData = sender->GetWindowContext())) {
 			return;
 		}
 		auto* win = winData->Window;

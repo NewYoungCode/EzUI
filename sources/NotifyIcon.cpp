@@ -9,7 +9,7 @@ namespace ezui {
 			::WNDCLASSEXW wcex = {};
 			wcex.cbSize = sizeof(wcex);
 			wcex.lpfnWndProc = [](HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)->LRESULT {
-				WindowData* wndData = (WindowData*)UI_GET_USERDATA(hwnd);
+				WindowContext* wndData = (WindowContext*)UI_GET_USERDATA(hwnd);
 				if (wndData && wndData->WndProc) {
 					return wndData->WndProc(hwnd, message, wParam, lParam);
 				}

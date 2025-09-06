@@ -9,7 +9,7 @@ namespace ezui {
 		HWND m_hWnd = NULL;
 		Menu* m_menu = NULL;
 		NOTIFYICONDATAW m_nid = {};
-		WindowData m_publicData;
+		WindowContext m_publicData;
 	protected:
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	public:
