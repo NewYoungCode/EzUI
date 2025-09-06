@@ -54,7 +54,7 @@ namespace ezui {
 	}
 
 	void BorderlessWindow::UpdateShadowBox() {
-		if (m_shadowBox) {
+		if (m_shadowBox && ::IsWindow(m_shadowBox->Hwnd())) {
 			auto* mainLayout = this->GetLayout();
 			int shadowWeight = m_shadowWeight;
 			m_shadowBox->Update(shadowWeight * this->GetScale(), (mainLayout ? mainLayout->GetBorderTopLeftRadius() : 0));

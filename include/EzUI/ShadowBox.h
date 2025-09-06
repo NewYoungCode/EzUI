@@ -23,6 +23,6 @@ namespace ezui {
 		virtual ~ShadowBox();
 		//在父窗口发生改变的时候更新阴影区域
 		virtual void Update(int shadowMargin, int radius);
-		const HWND Hwnd();
+		HWND Hwnd();
 	};
 };

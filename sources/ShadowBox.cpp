@@ -155,14 +155,16 @@ namespace ezui {
 		blend.SourceConstantAlpha = 255;
 		::UpdateLayeredWindow(m_hWnd, NULL, NULL, &size, m_bufBitmap->GetDC(), &point, 0, &blend, ULW_ALPHA);//。。。。。。更新分层窗口
 	}
-	const HWND ShadowBox::Hwnd()
+	HWND ShadowBox::Hwnd()
 	{
 		return m_hWnd;
 	}
 	ShadowBox::~ShadowBox()
 	{
 		if (::IsWindow(Hwnd())) {
-			::DestroyWindow(Hwnd());
+			HWND hwnd = m_hWnd;//复制一份
+			m_hWnd = NULL;//置零
+			::DestroyWindow(hwnd);//销毁
 		}
 		if (m_bufBitmap) {
 			delete m_bufBitmap;

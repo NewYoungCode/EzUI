@@ -27,9 +27,6 @@ namespace ezui {
 		// 子控件集合
 		Controls m_controls;
 
-		// 存储弹簧控件的集合
-		Controls m_spacers;
-
 		// 管理图片的释放
 		PtrManager<Image*> m_imgs;
 
@@ -281,9 +278,6 @@ namespace ezui {
 
 		// 析构函数
 		virtual ~Control();
-
-		// 销毁控件内所有弹簧
-		void DestroySpacers();
 
 		//绑定对象(跟随释放)
 		using Object::Attach;

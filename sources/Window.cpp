@@ -12,11 +12,16 @@ namespace ezui {
 
 	Window::~Window()
 	{
-		if (Hwnd()) {
-			::DestroyWindow(Hwnd());
+		if (::IsWindow(Hwnd())) {
+			HWND hwnd = m_hWnd;//复制一份
+			m_hWnd = NULL;//置零
+			::DestroyWindow(hwnd);
 		}
 		if (m_publicData) {
 			delete m_publicData;
+		}
+		if (m_frame) {
+			delete m_frame;
 		}
 	}
 
@@ -50,7 +55,7 @@ namespace ezui {
 			rect.X, rect.Y, rect.Width, rect.Height, owner, NULL, ezui::__EzUI__HINSTANCE, NULL);
 
 		//创建主Frame
-		m_frame = new IFrame(this);
+		m_frame = new IFrame;
 		m_frame->SetHwnd(m_hWnd);
 		NONCLIENTMETRICS ncm = {};
 		ncm.cbSize = sizeof(NONCLIENTMETRICS);
@@ -254,10 +259,7 @@ namespace ezui {
 		m_closeCode = code;
 		::SendMessage(Hwnd(), WM_CLOSE, 0, 0);
 	}
-	void Window::Destroy()
-	{
-		::DestroyWindow(Hwnd());
-	}
+	
 	void Window::Show()
 	{
 		::ShowWindow(Hwnd(), SW_SHOW);

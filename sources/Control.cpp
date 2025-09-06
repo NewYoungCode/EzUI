@@ -1133,17 +1133,7 @@ namespace ezui {
 		if (publicData) {
 			publicData->CleanControl(this);
 		}
-		//释放弹簧
-		DestroySpacers();
 	}
-	void Control::DestroySpacers() {
-		for (auto itor = m_spacers.begin(); itor != m_spacers.end(); /* no increment */)
-		{
-			this->Remove(*itor, true);  // 移除弹簧控件 并且释放控件 
-			itor = m_spacers.begin();   // 获取新的迭代器
-		}
-	}
-
 
 	Image* Control::Attach(Image* img)
 	{
@@ -1179,7 +1169,7 @@ namespace ezui {
 		}
 #endif
 		if (dynamic_cast<Spacer*>(ctl)) {
-			m_spacers.push_back(ctl);
+			this->Attach(ctl);
 		}
 		m_controls.push_back(ctl);
 		ctl->SetHwnd(this->Hwnd());
@@ -1204,7 +1194,7 @@ namespace ezui {
 		}
 #endif
 		if (dynamic_cast<Spacer*>(ctl)) {
-			m_spacers.push_back(ctl);
+			this->Attach(ctl);
 		}
 		size_t i = 0;
 		auto itor = m_controls.begin();
@@ -1251,11 +1241,6 @@ namespace ezui {
 		}
 		//子对象存在相同的对象也要跟随移除
 		this->Detach(ctl);
-		//如果是弹簧控件 顺便把弹簧容器中的item也移除
-		auto itorSpacer = ::std::find(m_spacers.begin(), m_spacers.end(), ctl);
-		if (itorSpacer != m_spacers.end()) {
-			m_spacers.erase(itorSpacer);
-		}
 	}
 	void Control::OnRemove()
 	{
@@ -1556,7 +1541,6 @@ namespace ezui {
 		}
 		this->ViewControls.clear();//清空可见控件
 		this->m_controls.clear();//清空子控件集合
-		this->m_spacers.clear();//清空弹簧
 		this->TryPendLayout();//挂起布局
 		ScrollBar* scrollBar = this->GetScrollBar();
 		if (scrollBar) {

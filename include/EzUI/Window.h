@@ -50,8 +50,8 @@ namespace ezui {
 		Rect m_rectClient;
 		//所属窗口句柄
 		HWND m_ownerWnd = NULL;
-		//窗口根Frame(无需释放,生命周期跟随窗口)
-		IFrame* m_frame;
+		//窗口根Frame
+		IFrame* m_frame = NULL;
 		// 管理图片的释放
 		PtrManager<Image*> m_imgs;
 	public:
@@ -218,9 +218,6 @@ namespace ezui {
 
 		//关闭窗口 exitCode为退出代码
 		void Close(int exitCode = 0);
-
-		//直接销毁窗口
-		void Destroy();
 
 		//模态窗口方式显示窗口(会阻塞) 请务必在窗口构造函数中传入owner窗口句柄
 		virtual int ShowModal(bool disableOnwer = true);
