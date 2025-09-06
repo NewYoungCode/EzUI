@@ -46,8 +46,6 @@ namespace ezui {
 	protected:
 		//当解析到一个节点的时候发生
 		virtual Control* OnBuildControl(const UIString& nodeName);
-		//获取根节点控件
-		Control* GetRoot(int index = 0);
 	public:
 		UIManager();
 		virtual ~UIManager();
@@ -61,8 +59,8 @@ namespace ezui {
 		void SetStyleSheet(const UIString& styleContent);
 		//从文件中加载样式
 		void LoadStyle(const UIString& fileName);
-		//释放由本此对象创建的控件
-		void Free(Control** ctl);
+		//清除加载xml留下的控件和样式
+		void Clear();
 	};
 	//注册基础控件
 	void InitControls();

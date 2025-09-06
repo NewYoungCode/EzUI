@@ -1128,6 +1128,9 @@ namespace ezui {
 	}
 	Control::~Control()
 	{
+		if (Parent && !Parent->IsDestroying()) {
+			Parent->Remove(this);
+		}
 		auto* publicData = GetPublicData();
 		//清除绑定信息
 		if (publicData) {

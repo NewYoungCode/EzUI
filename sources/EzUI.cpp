@@ -520,6 +520,8 @@ namespace ezui {
 		}
 	}
 	Object::~Object() {
+		m_bIsDestroying = true;
+		m_childObjects.Clear();
 	}
 
 	void Object::SetAttribute(const UIString& attrName, const UIString& attrValue) {
@@ -561,6 +563,11 @@ namespace ezui {
 	void Object::Detach(Object* obj)
 	{
 		m_childObjects.Remove(obj);
+	}
+
+	bool Object::IsDestroying()
+	{
+		return m_bIsDestroying;
 	}
 
 	void Object::DeleteLater()

@@ -43,7 +43,7 @@ namespace ezui {
 		RegisterControl<Spacer>("spacer");
 		RegisterControl<VSpacer>("vspacer");
 		RegisterControl<HSpacer>("hspacer");
-		
+
 		RegisterControl<Label>("label");
 		RegisterControl<Button>("button");
 		RegisterControl<RadioButton>("radiobutton");
@@ -242,8 +242,8 @@ namespace ezui {
 	void UIManager::RegisterControl(Control* ctl, const UIString& tagNamee)
 	{
 		//弹簧需要交给控件自行处理
-		if (dynamic_cast<Spacer*>(ctl) == NULL) {
-			this->m_controls.emplace_front(ctl, tagNamee);
+		if (!dynamic_cast<Spacer*>(ctl)) {
+			this->m_controls.push_back({ ctl, tagNamee });
 		}
 	}
 	Control* UIManager::OnBuildControl(const UIString& tagName_) {
@@ -264,18 +264,17 @@ namespace ezui {
 	}
 	void UIManager::SetupUI(Window* window)
 	{
-		Control* root = GetRoot();
-		if (root && !root->GetSize().Empty()) {
-			window->SetSize(root->GetSize());
-			window->CenterToScreen();
+		if (!m_rootNode.empty()) {
+			Control* root = m_rootNode[0];
+			window->SetLayout(root);
 		}
-		window->SetLayout(root);
 	}
 	void UIManager::SetupUI(Control* parentCtl)
 	{
-		if (GetRoot()) {
-			parentCtl->Add(GetRoot());
-			GetRoot()->SetDockStyle(DockStyle::Fill);
+		if (!m_rootNode.empty()) {
+			Control* root = m_rootNode[0];
+			parentCtl->Clear();
+			parentCtl->Add(root);
 		}
 	}
 
@@ -287,9 +286,7 @@ namespace ezui {
 	}
 	void UIManager::LoadXml(const char* fileData, size_t fileSize)
 	{
-		if (!m_rootNode.empty()) {
-			ASSERT(!"XML cannot be loaded repeatedly!");
-		}
+		this->Clear();//清理旧的控件和样式
 		TiXmlDocument doc;
 		auto result = doc.Parse(fileData, NULL, TiXmlEncoding::TIXML_ENCODING_UTF8);
 		//doc.Parse
@@ -345,29 +342,20 @@ namespace ezui {
 			}
 		}
 	}
-	void UIManager::Free(Control** ctl)
-	{
-		for (auto itor = m_controls.begin(); itor != m_controls.end(); ++itor)
+
+	void UIManager::Clear() {
+		for (auto itor = m_controls.rbegin(); itor != m_controls.rend(); ++itor)
 		{
-			if (itor->m_ctl == *ctl) {
-				delete* ctl;
-				*ctl = NULL;
-				m_controls.erase(itor);
-				break;
-			}
+			Control* ctrl = itor->m_ctl;
+			delete ctrl;
 		}
-	}
-	UIManager::~UIManager() {
-		for (auto& it : m_controls) {
-			delete it.m_ctl;
-		}
+		m_rootNode.clear();
+		m_controls.clear();
+		m_styles.clear();
 	}
 
-	Control* UIManager::GetRoot(int index) {
-		if (index >= 0 && index < m_rootNode.size()) {
-			return m_rootNode[index];
-		}
-		return NULL;
+	UIManager::~UIManager() {
+		this->Clear();
 	}
 
 };

@@ -430,29 +430,27 @@ namespace ezui {
 	public:
 		PtrManager() {}
 		virtual ~PtrManager() {
-			for (auto& obj : m_ptrs) {
-				delete obj;
-			}
+			this->Clear();
 		}
 		void Add(const T& v) {
 			if (v) {
 				m_ptrs.push_back(v);
 			}
 		}
-		void Remove(const T& v/*, bool bFree = false*/) {
+		void Remove(const T& v) {
 			auto it = std::find(m_ptrs.begin(), m_ptrs.end(), v);
 			if (it != m_ptrs.end()) {
-				/*if (bFree) {
-					delete(*it);
-				}*/
 				m_ptrs.erase(it);
 			}
 		}
 		void Clear() {
-			for (auto& obj : m_ptrs) {
-				delete obj;
+			auto itor = m_ptrs.begin();
+			while (itor != m_ptrs.end())
+			{
+				T item = *itor;
+				itor = m_ptrs.erase(itor); // erase 返回下一个有效迭代器
+				delete item;
 			}
-			m_ptrs.clear();
 		}
 	};
 
@@ -463,9 +461,14 @@ namespace ezui {
 		std::map<UIString, UIString> m_attrs;
 		// 管理子对象的释放
 		PtrManager<Object*> m_childObjects;
+		//是否正在被销毁
+		bool m_bIsDestroying = false;
 	public:
 		//用户自定义数据
 		UINT_PTR Tag = NULL;
+	protected:
+		//对象是否正在被销毁(预防析构降级导致控件访问报错)
+		bool IsDestroying();
 	public:
 		Object(Object* parentObject = NULL);
 		virtual ~Object();

@@ -37,7 +37,11 @@ void MainFrm::InitForm() {
 	this->SetResizable(true);
 	this->SetText(L"酷苟音乐");
 
-	this->LoadXml("res/xml/main.htm");
+	while (true)
+	{
+		this->LoadXml("res/xml/main.htm");
+		break;
+	}
 
 	//找到三个Frame
 	titleFrame = (IFrame*)this->FindControl("titleFrame");
