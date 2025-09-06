@@ -1129,6 +1129,9 @@ namespace ezui {
 	}
 	Control::~Control()
 	{
+		for (auto& it : m_controls) {
+			it->Parent = NULL;//告诉孩子们爸爸已经没了
+		}
 		if (Parent && !Parent->IsDestroying()) {
 			Parent->Remove(this);
 		}
