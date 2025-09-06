@@ -251,7 +251,8 @@ namespace ezui {
 		//依次往上父控件看看有没有当前控件是否在内联页面中
 		while (parent)
 		{
-			if (frame = dynamic_cast<IFrame*>(parent)) {
+			if (parent->IsFrame()) {
+				frame = (IFrame*)parent;
 				break;
 			}
 			parent = parent->Parent;
@@ -1154,7 +1155,7 @@ namespace ezui {
 		int pos = 0;
 		for (auto itor = pControls.begin(); itor != pControls.end(); ++itor)
 		{
-			if (dynamic_cast<Spacer*>(*itor)) {
+			if ((*itor)->IsSpacer()) {
 				continue;
 			}
 			if ((*itor) == childCtl) {
@@ -1171,7 +1172,7 @@ namespace ezui {
 			ASSERT(!"The control already exists and cannot be added repeatedly");
 		}
 #endif
-		if (dynamic_cast<Spacer*>(ctl)) {
+		if (ctl->IsSpacer()) {
 			this->Attach(ctl);
 		}
 		m_controls.push_back(ctl);
@@ -1196,7 +1197,7 @@ namespace ezui {
 			}
 		}
 #endif
-		if (dynamic_cast<Spacer*>(ctl)) {
+		if (ctl->IsSpacer()) {
 			this->Attach(ctl);
 		}
 		size_t i = 0;
@@ -1271,7 +1272,7 @@ namespace ezui {
 			if (it->Name == ctlName) {
 				return it;
 			}
-			if (dynamic_cast<IFrame*>(it)) {
+			if (it->IsFrame()) {
 				continue;//对IFrame内的控件进行隔离
 			}
 			auto ctl = it->FindControl(ctlName);
@@ -1290,7 +1291,7 @@ namespace ezui {
 			if (it->GetAttribute(attrName) == attrValue) {
 				ctls.push_back(it);
 			}
-			if (dynamic_cast<IFrame*>(it)) {
+			if (it->IsFrame()) {
 				continue;//对IFrame内的控件进行隔离
 			}
 			auto _ctls = it->FindControl(attrName, attrValue);
@@ -1531,24 +1532,32 @@ namespace ezui {
 
 	void Control::Clear(bool freeChilds)
 	{
-		auto temp = m_controls;
-		for (auto itor = temp.begin(); itor != temp.end(); ++itor)
+		auto itor = m_controls.begin();
+		while (itor != m_controls.end())//循环清除控件
 		{
 			Control* it = *itor;
+			itor = m_controls.erase(itor); //erase返回下一个有效迭代器
 			it->OnRemove();
 			if (freeChilds) {
-				//子对象存在相同的对象也要跟随移除
-				this->Detach(it);
+				this->Detach(it);//子对象存在相同的对象也要跟随移除
 				delete it;
 			}
 		}
+
 		this->ViewControls.clear();//清空可见控件
-		this->m_controls.clear();//清空子控件集合
 		this->TryPendLayout();//挂起布局
 		ScrollBar* scrollBar = this->GetScrollBar();
 		if (scrollBar) {
 			scrollBar->Reset();
 		}
+	}
+	bool Control::IsSpacer()
+	{
+		return false;
+	}
+	bool Control::IsFrame()
+	{
+		return false;
 	}
 	void Control::OnMouseMove(const MouseEventArgs& args)
 	{

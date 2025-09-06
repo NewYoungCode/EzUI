@@ -996,13 +996,13 @@ namespace ezui {
 		}
 		ScrollBar* scrollBar = NULL;
 		if (m_focusControl && m_focusControl->GetScrollBar() && m_focusControl->GetScrollBar()->Scrollable()) {
-			scrollBar = dynamic_cast<ScrollBar*>(m_focusControl->GetScrollBar());
+			scrollBar = m_focusControl->GetScrollBar();
 		}
 		Control* pControl = m_focusControl;
 		while (scrollBar == NULL && pControl)
 		{
 			if (pControl->GetScrollBar() && pControl->GetScrollBar()->Scrollable()) {
-				scrollBar = dynamic_cast<ScrollBar*>(pControl->GetScrollBar());
+				scrollBar = pControl->GetScrollBar();
 				break;
 			}
 			pControl = pControl->Parent;

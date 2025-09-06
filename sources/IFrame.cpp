@@ -6,6 +6,10 @@ namespace ezui {
 	IFrame::~IFrame()
 	{
 	}
+	bool IFrame::IsFrame()
+	{
+		return true;
+	}
 	UIManager* IFrame::GetUIManager()
 	{
 		return &m_umg;

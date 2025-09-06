@@ -490,6 +490,12 @@ namespace ezui {
 		// 清空所有子控件，freeChilds 决定是否释放子控件内存
 		virtual void Clear(bool freeChilds);
 
+		//是否为弹簧控件
+		virtual bool IsSpacer();
+
+		//是否为Frame
+		virtual bool IsFrame();
+
 		// 设置控件可见性
 		virtual void SetVisible(bool flag);
 

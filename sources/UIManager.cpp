@@ -242,7 +242,7 @@ namespace ezui {
 	void UIManager::RegisterControl(Control* ctl, const UIString& tagNamee)
 	{
 		//弹簧需要交给控件自行处理
-		if (!dynamic_cast<Spacer*>(ctl)) {
+		if (!ctl->IsSpacer()) {
 			this->m_controls.push_back({ ctl, tagNamee });
 		}
 	}

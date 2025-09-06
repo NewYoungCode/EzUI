@@ -8,13 +8,15 @@ namespace ezui {
 	private:
 		UIManager m_umg;//内部UI管理器
 	private:
-		virtual Control* Add(Control* childCtl)override;
-		virtual void Remove(Control* childCtl, bool freeCtrl = false)override;
+		virtual Control* Add(Control* childCtl)override final;
+		virtual void Remove(Control* childCtl, bool freeCtrl = false)override final;
 	public:
 		//对外暴露消息通知回调
 		std::function<void(Control*, EventArgs&)> NotifyHandler = NULL;
 		IFrame(Object* parentObject = NULL);
 		virtual ~IFrame();
+		//是否为Frame
+		virtual bool IsFrame()override final;
 		//从文件中加载xml
 		void LoadXml(const UIString& fileName);
 		//从内存中加载xml

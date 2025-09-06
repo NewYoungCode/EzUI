@@ -4,7 +4,11 @@ namespace ezui {
 
 	Spacer::Spacer() {
 		this->SetHitTestVisible(false);
-	};
+	}
+	bool Spacer::IsSpacer()
+	{
+		return true;
+	}
 	Spacer::~Spacer() {};
 
 	VSpacer::~VSpacer() {};
