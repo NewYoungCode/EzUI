@@ -19,8 +19,6 @@ namespace ezui {
 		virtual bool IsFrame()override final;
 		//从文件中加载xml
 		void LoadXml(const UIString& fileName);
-		//从内存中加载xml
-		void LoadXml(const char* fileData, size_t fileSize);
 		//设置唯一布局
 		void SetLayout(Control* ctrl);
 		//获取布局

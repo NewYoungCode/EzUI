@@ -177,11 +177,11 @@ namespace ezui {
 		//从文件中加载布局
 		void LoadXml(const UIString& fileName);
 
-		//从内存加载布局
-		void LoadXml(const char* fileData, size_t fileSize);
-
 		//获取窗口主布局
 		Control* GetLayout();
+
+		//获取窗口Frame
+		IFrame* GetFrame();
 
 		//设置窗口标题
 		void SetText(const UIString& text);

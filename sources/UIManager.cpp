@@ -284,11 +284,11 @@ namespace ezui {
 			LoadXml(data.c_str(), data.size());
 		}
 	}
-	void UIManager::LoadXml(const char* fileData, size_t fileSize)
+	void UIManager::LoadXml(const char* data, size_t dataCount)
 	{
 		this->Clear();//清理旧的控件和样式
 		TiXmlDocument doc;
-		auto result = doc.Parse(fileData, NULL, TiXmlEncoding::TIXML_ENCODING_UTF8);
+		auto result = doc.Parse(data, NULL, TiXmlEncoding::TIXML_ENCODING_UTF8);
 		//doc.Parse
 		TiXmlElement* element = doc.FirstChildElement();//read frist element
 		std::list<TiXmlElement*> controlNodes;
@@ -317,7 +317,7 @@ namespace ezui {
 			LoadControl(element, control);//加载子节点
 		}
 		//加载样式
-		this->SetStyleSheet(styleStr);
+		this->LoadStyle(styleStr.c_str(), styleStr.size());
 	}
 	void UIManager::LoadStyle(const UIString& fileName)
 	{
@@ -325,14 +325,14 @@ namespace ezui {
 		if (!GetResource(fileName, &data)) {
 			return;
 		}
-		this->SetStyleSheet(data);
+		this->LoadStyle(data.c_str(), data.size());
 	}
-	void UIManager::SetStyleSheet(const UIString& styleContent)
+	void UIManager::LoadStyle(const char* data, size_t dataCount)
 	{
-		UIString data = styleContent;
+		UIString styleStr(data, dataCount);
 		std::list<UIManager::Style> styles;
 		//分析出样式
-		this->AnalysisStyle(data, &styles);
+		this->AnalysisStyle(styleStr, &styles);
 		//保存样式到全局
 		this->m_styles.splice(this->m_styles.end(), styles);  // 把 styles 的所有元素移动到 this->_styles 末尾
 		if (!this->m_styles.empty()) {

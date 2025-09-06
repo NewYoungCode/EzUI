@@ -42,23 +42,24 @@ namespace ezui {
 		void RegisterControl(Control* ctl, const UIString& tagNamee);
 		void AnalysisStyle(const UIString& styleStr, std::list<UIManager::Style>* out);//分析样式
 		void ApplyStyle(Control* ctl, const std::list<UIManager::Style>& selectors, const UIString& tagName);
-		//应用样式(为控件应用所有样式)
 	protected:
 		//当解析到一个节点的时候发生
 		virtual Control* OnBuildControl(const UIString& nodeName);
 	public:
 		UIManager();
 		virtual ~UIManager();
+		//设置UI
 		void SetupUI(Window* window);
+		//设置UI
 		void SetupUI(Control* parentCtl);
-		//从文件中加载布局(不允许多次加载xml)
+		//从文件中加载布局
 		void LoadXml(const UIString& fileName);
-		//从内存加载布局(不允许多次加载xml)
-		void LoadXml(const char* fileData, size_t fileSize);
-		//设置样式表
-		void SetStyleSheet(const UIString& styleContent);
+		//从内存加载布局
+		void LoadXml(const char* data, size_t dataCount);
 		//从文件中加载样式
 		void LoadStyle(const UIString& fileName);
+		//从内存加载样式
+		void LoadStyle(const char* data, size_t dataCount);
 		//清除加载xml留下的控件和样式
 		void Clear();
 	};

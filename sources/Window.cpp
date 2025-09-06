@@ -247,12 +247,13 @@ namespace ezui {
 		return this->m_frame->GetLayout();
 	}
 
-	void Window::LoadXml(const UIString& fileName) {
-		m_frame->LoadXml(fileName);
+	IFrame* Window::GetFrame()
+	{
+		return this->m_frame;
 	}
 
-	void Window::LoadXml(const char* fileData, size_t fileSize) {
-		m_frame->LoadXml(fileData, fileSize);
+	void Window::LoadXml(const UIString& fileName) {
+		m_frame->LoadXml(fileName);
 	}
 
 	void Window::Close(int code) {

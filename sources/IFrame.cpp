@@ -24,10 +24,6 @@ namespace ezui {
 		m_umg.LoadXml(fileName);
 		m_umg.SetupUI(this);
 	}
-	void IFrame::LoadXml(const char* fileData, size_t fileSize) {
-		m_umg.LoadXml(fileData, fileSize);
-		m_umg.SetupUI(this);
-	}
 	Control* IFrame::Add(Control* childCtrl)
 	{
 		//IFrame下只允许有一个控件并且会随着IFrame拉伸
