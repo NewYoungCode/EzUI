@@ -1,12 +1,12 @@
 #pragma once
 #include "EzUI.h"
-#include "UIManager.h"
+#include "UILoader.h"
 
 namespace ezui {
 	//内联页面 内部控件与外部隔离
 	class UI_EXPORT IFrame :public Control {
 	private:
-		UIManager m_umg;//内部UI管理器
+		UILoader m_umg;//内部UI管理器
 	private:
 		virtual Control* Add(Control* childCtl)override final;
 		virtual void Remove(Control* childCtl, bool freeCtrl = false)override final;
@@ -27,6 +27,6 @@ namespace ezui {
 		//消息通知
 		virtual void OnNotify(Control* sender, EventArgs& args);
 		//获取UI管理器
-		UIManager* GetUIManager();
+		UILoader* GetUILoader();
 	};
 };

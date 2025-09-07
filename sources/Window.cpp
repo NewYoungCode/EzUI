@@ -808,8 +808,8 @@ namespace ezui {
 		}
 
 		const ControlCollection* pTemp;
-		if (outCtl->GetViewControls().size() > 0) {
-			pTemp = &outCtl->GetViewControls();
+		if (outCtl->GetCachedViewControls().size() > 0) {
+			pTemp = &outCtl->GetCachedViewControls();
 		}
 		else {
 			pTemp = (ControlCollection*)(&(outCtl->GetControls()));
@@ -838,10 +838,10 @@ namespace ezui {
 		//当命中控件未开启命中测试 偏移到父控件
 		while (true)
 		{
-			if (!outCtl->IsHitTestVisible() && outCtl->Parent) {
+			if (!outCtl->IsHitTestVisible() && outCtl->GetParent()) {
 				(*outPoint).X += outCtl->X();
 				(*outPoint).Y += outCtl->Y();
-				outCtl = outCtl->Parent;
+				outCtl = outCtl->GetParent();
 			}
 			else {
 				break;
@@ -1006,7 +1006,7 @@ namespace ezui {
 				scrollBar = pControl->GetScrollBar();
 				break;
 			}
-			pControl = pControl->Parent;
+			pControl = pControl->GetParent();
 		}
 		if (scrollBar) {
 			MouseEventArgs args(Event::OnMouseWheel);

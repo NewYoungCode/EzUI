@@ -8,7 +8,7 @@ namespace ezui {
 		__super::OnMouseDown(arg);
 		SetCheck(true);
 		if (GetCheck() == true) {
-			for (auto& it : Parent->GetControls()) {
+			for (auto& it : GetParent()->GetControls()) {
 				RadioButton* rbtn = dynamic_cast<RadioButton*>(it);
 				if (rbtn && rbtn != this && rbtn->GetCheck() == true) {
 					rbtn->SetCheck(false);

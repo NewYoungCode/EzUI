@@ -18,28 +18,22 @@
 #include "UIStyle.h"
 
 namespace ezui {
-	//主窗口中的内联页面类
-	class UI_EXPORT UIManager {
-	public:
-		struct XmlNode {
-			Control* m_ctl;
-			UIString m_tagName;
-		public:
-			XmlNode(Control* ctl, const UIString& tagName) :m_ctl(ctl), m_tagName(tagName) {}
-		};
+	struct XmlNode;
+	//UI加载器
+	class UI_EXPORT UILoader :public Object {
 	private:
 		std::vector<Control*> m_rootNode;//根节点列表
 		std::list<XmlNode> m_controls;
 		void LoadControl(void* node, Control* control);
 		Control* BuildControl(void* node);//内部函数
 		//记录XML中的控件到管理器 管理器释放的时候 由管理器加载的控件将自动释放
-		void RegisterControl(Control* ctl, const UIString& tagNamee);
+		void AttachControl(Control* ctl, const UIString& tagNamee);
 	protected:
-		//当解析到一个节点的时候发生
+		//当解析到一个节点需要创建控件的时候发生
 		virtual Control* OnBuildControl(const UIString& nodeName);
 	public:
-		UIManager();
-		virtual ~UIManager();
+		UILoader(Object* ownerObject = NULL);
+		virtual ~UILoader();
 		//设置UI
 		void SetupUI(Window* window);
 		//设置UI
@@ -48,11 +42,9 @@ namespace ezui {
 		void LoadXml(const UIString& fileName);
 		//从内存加载布局
 		void LoadXml(const char* data, size_t dataCount);
-		//从文件中加载样式
-		void LoadStyle(const UIString& fileName);
-		//从内存加载样式
-		void LoadStyle(const char* data, size_t dataCount);
-		//清除加载xml留下的控件和样式
+		//获取根控件
+		Control* GetRoot();
+		//释放加载进来的控件
 		void Clear();
 	};
 	//注册基础控件

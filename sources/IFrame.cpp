@@ -10,7 +10,7 @@ namespace ezui {
 	{
 		return true;
 	}
-	UIManager* IFrame::GetUIManager()
+	UILoader* IFrame::GetUILoader()
 	{
 		return &m_umg;
 	}

@@ -6,9 +6,9 @@ namespace ezui {
 	VScrollBar::~VScrollBar() { }
 	void VScrollBar::ScrollTo(Control* ctl)
 	{
-		if (ctl && ctl->Parent && ctl->Parent == this->Parent) {
-			if (ctl->Parent->IsPendLayout()) {
-				ctl->Parent->RefreshLayout();
+		if (ctl && ctl->GetParent() && ctl->GetParent() == this->GetParent()) {
+			if (ctl->GetParent()->IsPendLayout()) {
+				ctl->GetParent()->RefreshLayout();
 			}
 			//控件的矩形位置
 			const Rect& ctlRect = ctl->GetRect();
@@ -38,8 +38,8 @@ namespace ezui {
 	}
 	void VScrollBar::GetInfo(int* viewLength, int* contentLength, int* scrollBarLength)
 	{
-		*viewLength = this->Parent->Height();
-		*contentLength = this->Parent->GetContentSize().Height;
+		*viewLength = this->GetParent()->Height();
+		*contentLength = this->GetParent()->GetContentSize().Height;
 		*scrollBarLength = Height();
 	}
 	void VScrollBar::ParentSize(const Size& size) {

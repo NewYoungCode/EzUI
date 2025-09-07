@@ -3,7 +3,7 @@
 #include "EzUI/TextBox.h"
 #include "EzUI/BorderlessWindow.h"
 #include "EzUI/Application.h"
-#include "EzUI/UIManager.h"
+#include "EzUI/UILoader.h"
 #include "EzUI/HLayout.h"
 #include "EzUI/Label.h"
 #include "EzUI/VListView.h"

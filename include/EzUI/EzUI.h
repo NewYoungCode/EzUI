@@ -15,20 +15,36 @@ Email:19980103ly@gmail.com/718987717@qq.com
 #undef LoadIcon
 
 namespace ezui {
+	class Object;
+	enum class Cursor : ULONG_PTR;
 	struct MonitorInfo;
 	struct Style;
-	class Object;
 	class EventArgs;
 	class ControlStyle;
-	class IFrame;
-	class Control;
+	class Bitmap;
 	class Window;
+
+	class Control;
+	class IFrame;
 	class Spacer;
 	class ScrollBar;
 	class VScrollBar;
 	class HScrollBar;
-	class Bitmap;
-	enum class Cursor :ULONG_PTR;
+	class TabLayout;
+	class TextBox;
+	class TileListView;
+	class TreeView;
+	class VLayout;
+	class VListView;
+	class Button;
+	class CheckBox;
+	class ComboBox;
+	class HLayout;
+	class HListView;
+	class Label;
+	class PagedListView;
+	class PictureBox;
+	class RadioButton;
 
 #if 1
 	typedef std::vector<Control*> ControlCollection;//控件集合

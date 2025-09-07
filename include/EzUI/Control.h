@@ -4,8 +4,12 @@
 namespace ezui {
 	class UI_EXPORT Control :public Object
 	{
+		friend class HListView;
+		friend class VListView;
+		friend class TabLayout;
+		friend class TileListView;
+		friend class TextBox;
 	private:
-
 		//顶层窗口句柄
 		HWND m_hWnd = NULL;
 
@@ -74,9 +78,13 @@ namespace ezui {
 
 		//存储的样式集合
 		std::list<ezui::Style> m_styles;
-	protected:
+
 		// 基于控件中的可见控件集合
-		ControlCollection ViewControls;
+		ControlCollection m_viewControls;
+
+		// 父控件指针
+		Control* m_parent = NULL;
+	protected:
 		// 控件当前状态
 		ControlState State = ControlState::Static;
 	public:
@@ -102,14 +110,11 @@ namespace ezui {
 		// 鼠标按下样式
 		ControlStyle ActiveStyle;
 
-		// 父控件指针
-		Control* Parent = NULL;
-
 		//是否添加到所在窗口/IFrame中的OnNotify函数中
 		Event NotifyFlags = Event::OnMouseEvent | Event::OnKeyBoardEvent;
+
 		// 事件处理器
 		std::function<void(Control*, EventArgs&)> EventHandler = NULL;
-
 	private:
 		// 禁止拷贝构造
 		Control(const Control&) = delete;
@@ -444,9 +449,12 @@ namespace ezui {
 		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue);
 
 		// 获取当前可见的子控件集合
-		const ControlCollection& GetViewControls();
+		const ControlCollection& GetCachedViewControls();
 
-		// 获取所有子控件（不建议直接修改）
+		//获取父控件
+		Control* GetParent();
+
+		// 获取所有子控件集合
 		const ControlCollection& GetControls();
 
 		// 使用下标获取控件，自动跳过 spacer 类控件
@@ -489,10 +497,16 @@ namespace ezui {
 		bool IsEnabled();
 
 		// 在指定位置插入子控件
-		virtual void Insert(int pos, Control* childCtl);
+		virtual Control* Insert(int pos, Control* childCtl);
 
 		// 添加控件到末尾（如果是弹簧控件，在释放时将自动销毁）
-		virtual Control* Add(Control* childCtl);
+		virtual Control* Add(Control* childCtrl);
+
+		//解析xml字符串并添加到控件集合末尾
+		virtual Control* Append(const UIString& xmlStr);
+
+		//解析xml字符串并添加到控件集合第一位
+		virtual Control* Prepend(const UIString& xmlStr);
 
 		// 移除控件，freeCtrl 标志是否释放控件内存
 		virtual void Remove(Control* childCtl, bool freeCtrl = false);

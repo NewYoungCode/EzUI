@@ -114,6 +114,7 @@ void MainFrm::InitForm() {
 
 			songLsit.push_back(s);
 			vlistLocal->Add(it);
+			vlistLocal->Append(L"<label text=\"测试xml加载文字\" style=\"width:100px;height:20px;font-size:12px;\" />");
 		}
 	}
 
@@ -431,7 +432,7 @@ void MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				break;
 			}
 			if (sender->Name == "dellocal") {
-				LocalItem* songItem = (LocalItem*)sender->Parent;
+				LocalItem* songItem = (LocalItem*)sender->GetParent();
 				vlistLocal->Remove(songItem);
 
 				UIString hash = songItem->GetAttribute("FileHash");
@@ -443,7 +444,7 @@ void MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				return;
 			}
 			if (sender->GetAttribute("tablayout") == "rightView") {
-				size_t pos = sender->Parent->IndexOf(sender);
+				size_t pos = sender->GetParent()->IndexOf(sender);
 				if (pos == 0) {
 					OpenSongView();
 				}
@@ -458,7 +459,7 @@ void MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			if (!sender->GetAttribute("mvhash").empty()) {
 				timer->Stop();
 				UIString mvhash = sender->GetAttribute("mvhash");
-				UIString songHash = sender->Parent->GetAttribute("FileHash");
+				UIString songHash = sender->GetParent()->GetAttribute("FileHash");
 				PlayMv(mvhash, songHash);
 				break;
 			}

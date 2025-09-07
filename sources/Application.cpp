@@ -1,6 +1,6 @@
 #include "Application.h"
 #include "LayeredWindow.h"
-#include "UIManager.h"
+#include "UILoader.h"
 #include <CommCtrl.h>
 
 #undef FindResource

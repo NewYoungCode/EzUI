@@ -146,13 +146,13 @@ namespace ezui {
 		if (__IsValid(_##_filed)) {\
 				return _##_filed; \
 		}\
-		Control* parentCtrl = this->Parent; \
+		Control* parentCtrl = this->GetParent(); \
 		while (parentCtrl){ \
 			_##_filed = parentCtrl->GetStyle(ControlState::Static).##_filed; \
 			if (__IsValid(_##_filed)) {\
 				break; \
 			}\
-			parentCtrl = parentCtrl->Parent; \
+			parentCtrl = parentCtrl->GetParent(); \
 		}\
 		return _##_filed; \
 	}\
@@ -255,7 +255,7 @@ namespace ezui {
 				frame = (IFrame*)parent;
 				break;
 			}
-			parent = parent->Parent;
+			parent = parent->m_parent;
 		}
 		return frame;
 	}
@@ -265,12 +265,12 @@ namespace ezui {
 	}
 	void Control::OnChildPaint(PaintEventArgs& args)
 	{
-		ViewControls.clear();
+		m_viewControls.clear();
 		//绘制子控件
 		Rect rect(0, 0, Width(), Height());
 		for (auto& it : m_controls) {
 			if (rect.IntersectsWith(it->GetRect())) {
-				ViewControls.push_back(it);
+				m_viewControls.push_back(it);
 			}
 			it->SendEvent(args);
 		}
@@ -380,6 +380,11 @@ namespace ezui {
 			if (this->ApplyStyleProperty(attrName, attrValue)) {
 				break;
 			}
+			if (attrName == "style") {
+				//加载内联样式
+				this->SetStyleSheet(ControlState::Static, attrValue);
+				break;
+			}
 			if (attrName == "name" || attrName == "id") {
 				this->Name = attrValue;
 				break;
@@ -481,10 +486,15 @@ namespace ezui {
 			}
 		} while (false);
 	}
-	const ControlCollection& Control::GetViewControls()
+	const ControlCollection& Control::GetCachedViewControls()
 	{
-		return this->ViewControls;
+		return this->m_viewControls;
 	}
+
+	Control* Control::GetParent() {
+		return m_parent;
+	}
+
 	float Control::GetScale()
 	{
 		return this->m_scale;
@@ -559,15 +569,15 @@ namespace ezui {
 	void Control::SetRateWidth(float rateWidth)
 	{
 		m_rateSize.Width = rateWidth;
-		if (Parent) {
-			SetFixedWidth(Parent->Width() * rateWidth);
+		if (m_parent) {
+			SetFixedWidth(m_parent->Width() * rateWidth);
 		}
 	}
 	void Control::SetRateHeight(float rateHeight)
 	{
 		m_rateSize.Height = rateHeight;
-		if (Parent) {
-			SetFixedHeight(Parent->Height() * rateHeight);
+		if (m_parent) {
+			SetFixedHeight(m_parent->Height() * rateHeight);
 		}
 	}
 	void Control::SetFixedSize(const Size& size)
@@ -578,18 +588,18 @@ namespace ezui {
 	}
 	int Control::GetFixedWidth()
 	{
-		if (Parent) {
+		if (m_parent) {
 			if (m_rateSize.Width > EZUI_FLOAT_EPSILON) {
-				m_fixedSize.Width = Parent->Width() * m_rateSize.Width + 0.5;
+				m_fixedSize.Width = m_parent->Width() * m_rateSize.Width + 0.5;
 			}
 		}
 		return m_fixedSize.Width;
 	}
 	int Control::GetFixedHeight()
 	{
-		if (Parent) {
+		if (m_parent) {
 			if (m_rateSize.Height > EZUI_FLOAT_EPSILON) {
-				m_fixedSize.Height = Parent->Height() * m_rateSize.Height + 0.5;
+				m_fixedSize.Height = m_parent->Height() * m_rateSize.Height + 0.5;
 			}
 		}
 		return m_fixedSize.Height;
@@ -615,7 +625,7 @@ namespace ezui {
 		const Rect& rect = GetRect();
 		int x = rect.X;
 		int y = rect.Y;
-		while ((pCtrl = pCtrl->Parent))
+		while ((pCtrl = pCtrl->m_parent))
 		{
 			x += pCtrl->X();
 			y += pCtrl->Y();
@@ -637,8 +647,8 @@ namespace ezui {
 	}
 	void Control::SetDockStyle(const DockStyle& dockStyle)
 	{
-		if (dockStyle != this->m_dock && Parent) {
-			Parent->TryPendLayout();
+		if (dockStyle != this->m_dock && m_parent) {
+			m_parent->TryPendLayout();
 		}
 		this->m_dock = dockStyle;
 	}
@@ -690,9 +700,9 @@ namespace ezui {
 			this->SetFixedHeight(m_contentSize.Height);
 			this->EndLayout();
 			this->RefreshLayout();
-			if (Parent) {
-				Parent->RefreshLayout();
-				Parent->Invalidate();
+			if (m_parent) {
+				m_parent->RefreshLayout();
+				m_parent->Invalidate();
 			}
 			return;
 		}
@@ -700,9 +710,9 @@ namespace ezui {
 			this->SetFixedWidth(m_contentSize.Width);
 			this->EndLayout();
 			this->RefreshLayout();
-			if (Parent) {
-				Parent->RefreshLayout();
-				Parent->Invalidate();
+			if (m_parent) {
+				m_parent->RefreshLayout();
+				m_parent->Invalidate();
 			}
 			return;
 		}
@@ -715,13 +725,13 @@ namespace ezui {
 		int _height;
 		for (auto& it : GetControls()) {
 
-			if (Parent) {
+			if (m_parent) {
 				//设置了宽高百分比的控件
 				if (it->m_rateSize.Width > EZUI_FLOAT_EPSILON) {
-					it->SetFixedWidth(Parent->Width() * it->m_rateSize.Width);
+					it->SetFixedWidth(m_parent->Width() * it->m_rateSize.Width);
 				}
 				if (it->m_rateSize.Height > EZUI_FLOAT_EPSILON) {
-					it->SetFixedHeight(Parent->Height() * it->m_rateSize.Height);
+					it->SetFixedHeight(m_parent->Height() * it->m_rateSize.Height);
 				}
 			}
 
@@ -1130,10 +1140,10 @@ namespace ezui {
 	Control::~Control()
 	{
 		for (auto& it : m_controls) {
-			it->Parent = NULL;//告诉孩子们爸爸已经没了
+			it->m_parent = NULL;//告诉孩子们爸爸已经没了
 		}
-		if (Parent && !Parent->IsDestroying()) {
-			Parent->Remove(this);
+		if (m_parent && !m_parent->IsDestroying()) {
+			m_parent->Remove(this);
 		}
 		auto* publicData = GetWindowContext();
 		//清除绑定信息
@@ -1181,7 +1191,7 @@ namespace ezui {
 		}
 		m_controls.push_back(ctl);
 		ctl->SetHwnd(this->Hwnd());
-		ctl->Parent = this;
+		ctl->m_parent = this;
 
 		if (ctl->GetScale() != this->GetScale()) {
 			ctl->SendEvent(DpiChangeEventArgs(this->GetScale()));
@@ -1191,7 +1201,7 @@ namespace ezui {
 		this->TryPendLayout();//添加控件需要将布局重新挂起
 		return ctl;
 	}
-	void Control::Insert(int pos, Control* ctl)
+	Control* Control::Insert(int pos, Control* ctl)
 	{
 #ifdef _DEBUG
 		{
@@ -1220,16 +1230,30 @@ namespace ezui {
 			m_controls.insert(itor, ctl);
 		}
 		ctl->SetHwnd(this->Hwnd());
-		ctl->Parent = this;
+		ctl->m_parent = this;
 		if (ctl->GetScale() != this->GetScale()) {
 			ctl->SendEvent(DpiChangeEventArgs(this->GetScale()));
 		}
 		ctl->TryPendLayout();
 		this->TryPendLayout();//添加控件需要将布局重新挂起
+		return ctl;
 	}
 	void Control::SetParent(Control* parentCtl)
 	{
 		parentCtl->Add(this);
+	}
+
+	Control* Control::Append(const UIString& xmlStr) {
+		UILoader* loader = new UILoader(this);
+		loader->LoadXml(xmlStr.c_str(), xmlStr.size());
+		return this->Add(loader->GetRoot());
+	}
+
+	Control* Control::Prepend(const UIString& xmlStr)
+	{
+		UILoader* loader = new UILoader(this);
+		loader->LoadXml(xmlStr.c_str(), xmlStr.size());
+		return this->Insert(0, loader->GetRoot());
 	}
 
 	void Control::Remove(Control* ctl, bool freeCtrl)
@@ -1240,9 +1264,9 @@ namespace ezui {
 			ctl->OnRemove();
 			this->TryPendLayout();//移除控件需要将布局重新挂起
 			m_controls.erase(itor);
-			auto itor2 = ::std::find(ViewControls.begin(), ViewControls.end(), ctl);
-			if (itor2 != ViewControls.end()) {
-				ViewControls.erase(itor2);
+			auto itor2 = ::std::find(m_viewControls.begin(), m_viewControls.end(), ctl);
+			if (itor2 != m_viewControls.end()) {
+				m_viewControls.erase(itor2);
 			}
 			if (freeCtrl) {
 				delete ctl;
@@ -1385,8 +1409,8 @@ namespace ezui {
 	}
 
 	void Control::SetVisible(bool flag) {
-		if (flag != this->m_bVisible && this->Parent) {
-			this->Parent->TryPendLayout();
+		if (flag != this->m_bVisible && this->m_parent) {
+			this->m_parent->TryPendLayout();
 		}
 		this->m_bVisible = flag;
 	}
@@ -1415,12 +1439,12 @@ namespace ezui {
 	bool Control::Invalidate() {
 		auto* publicData = GetWindowContext();
 		if (publicData) {
-			if (Parent && this->IsPendLayout()) {
-				return Parent->Invalidate();
+			if (m_parent && this->IsPendLayout()) {
+				return m_parent->Invalidate();
 			}
 			float angle = this->GetAngle();
-			if (!(angle == 0 || angle == 180) && Parent) {
-				return Parent->Invalidate();
+			if (!(angle == 0 || angle == 180) && m_parent) {
+				return m_parent->Invalidate();
 			}
 			if (publicData) {
 				Rect _InvalidateRect = GetClientRect();
@@ -1447,7 +1471,7 @@ namespace ezui {
 	void Control::ApplyParentStyles()
 	{
 		//依次往父控件找(找到合适的样式就应用上)
-		Control* parent = this->Parent;
+		Control* parent = this->m_parent;
 		while (parent) {
 			if (!parent->m_styles.empty()) {
 				ezui::ApplyStyle(this, parent->m_styles);
@@ -1455,7 +1479,7 @@ namespace ezui {
 			if (parent->IsFrame()) {
 				break;// 找到第一个 Frame 后就停止,不再继续向上
 			}
-			parent = parent->Parent;
+			parent = parent->m_parent;
 		}
 	}
 	void Control::SetStyleSheet(const UIString& styleStr)
@@ -1489,8 +1513,8 @@ namespace ezui {
 	}
 	void Control::SetAutoWidth(bool flag)
 	{
-		if (flag != this->m_bAutoWidth && Parent) {
-			Parent->TryPendLayout();
+		if (flag != this->m_bAutoWidth && m_parent) {
+			m_parent->TryPendLayout();
 		}
 		if (flag && Width() == 0) {
 			m_rect.Width = 1;
@@ -1503,8 +1527,8 @@ namespace ezui {
 	}
 	void Control::SetAutoHeight(bool flag)
 	{
-		if (flag != this->m_bAutoHeight && Parent) {
-			Parent->TryPendLayout();
+		if (flag != this->m_bAutoHeight && m_parent) {
+			m_parent->TryPendLayout();
 		}
 		if (flag && Height() == 0) {
 			m_rect.Height = 1;
@@ -1525,9 +1549,9 @@ namespace ezui {
 	}
 	void Control::ComputeClipRect()
 	{
-		if (Parent) {
+		if (m_parent) {
 			Rect& ClipRectRef = *(Rect*)(&this->m_viewRect);//引用父控件的裁剪区域
-			Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->m_viewRect);//自身和父控件对比较裁剪区域
+			Rect::Intersect(ClipRectRef, this->GetClientRect(), m_parent->m_viewRect);//自身和父控件对比较裁剪区域
 		}
 		else {
 			Rect& ClipRectRef = *(Rect*)(&this->m_viewRect);
@@ -1557,7 +1581,7 @@ namespace ezui {
 			if (pControl == this || pControl == this->GetScrollBar()) {
 				return true;
 			}
-			pControl = pControl->Parent;
+			pControl = pControl->m_parent;
 		}
 		return false;
 	}
@@ -1581,7 +1605,7 @@ namespace ezui {
 			}
 		}
 
-		this->ViewControls.clear();//清空可见控件
+		this->m_viewControls.clear();//清空可见控件
 		this->TryPendLayout();//挂起布局
 		ScrollBar* scrollBar = this->GetScrollBar();
 		if (scrollBar) {
@@ -1639,8 +1663,8 @@ namespace ezui {
 	void Control::OnSize(const SizeEventArgs& arg)
 	{
 		this->TryPendLayout();//将自己挂起
-		if (Parent) {
-			Parent->TryPendLayout();//将父控件挂起
+		if (m_parent) {
+			m_parent->TryPendLayout();//将父控件挂起
 		}
 	}
 	ScrollBar* Control::GetScrollBar()

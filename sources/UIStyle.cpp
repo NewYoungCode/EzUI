@@ -117,11 +117,13 @@ namespace ezui {
 			UIString selectName = UIString("#%s").format(ctl->Name.c_str());
 			ezui::ApplyStyle(ctl, selectName, selectors);
 		}
-		{//加载内联样式 优先级最高
-			UIString sytle_static = ctl->GetAttribute("style");//内联样式语法
-			if (!sytle_static.empty()) { //内联样式只允许描述静态效果
-				ctl->SetStyleSheet(ControlState::Static, sytle_static);
-			}
-		}
+
+		//由于框架大改 暂时弃用
+		//{//加载内联样式 优先级最高
+		//	UIString sytle_static = ctl->GetAttribute("style");//内联样式语法
+		//	if (!sytle_static.empty()) { //内联样式只允许描述静态效果
+		//		ctl->SetStyleSheet(ControlState::Static, sytle_static);
+		//	}
+		//}
 	}
 };

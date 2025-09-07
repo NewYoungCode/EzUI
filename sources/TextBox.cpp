@@ -14,7 +14,7 @@ namespace ezui {
 	void TextBox::Init()
 	{
 		this->GetScrollBar()->SetWidth(5);
-		this->GetScrollBar()->Parent = this;
+		this->GetScrollBar()->m_parent = this;
 		this->GetScrollBar()->OffsetCallback = [=](int offset) {
 			this->Offset(offset);
 			};

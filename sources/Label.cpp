@@ -129,14 +129,14 @@ namespace ezui {
 			this->SetContentSize(box);
 			if (IsAutoWidth()) {
 				this->SetFixedWidth(box.Width + this->TextMargin.GetHSpace());
-				if (Parent) {
-					Parent->RefreshLayout();
+				if (GetParent()) {
+					GetParent()->RefreshLayout();
 				}
 			}
 			if (IsAutoHeight()) {
 				this->SetFixedHeight(box.Height + this->TextMargin.GetVSpace());
-				if (Parent) {
-					Parent->RefreshLayout();
+				if (GetParent()) {
+					GetParent()->RefreshLayout();
 				}
 			}
 		}

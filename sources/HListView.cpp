@@ -4,7 +4,7 @@ namespace ezui {
 	void HListView::Init()
 	{
 		this->GetScrollBar()->SetWidth(Width());//滚动条宽度
-		this->GetScrollBar()->Parent = this;
+		this->GetScrollBar()->m_parent = this;
 		this->GetScrollBar()->OffsetCallback = [this](int offsetValue)->void {
 			if (this->GetScrollBar()->ScrollPos() >= 1) {
 				NextPage();
@@ -70,12 +70,12 @@ namespace ezui {
 	}
 
 	void HListView::OnChildPaint(PaintEventArgs& args) {
-		ViewControls.clear();
+		m_viewControls.clear();
 		//绘制子控件
 		auto rect = Rect(0, 0, Width(), Height());
 		for (auto& it : GetControls()) {
 			if (rect.IntersectsWith(it->GetRect())) {
-				ViewControls.push_back(it);
+				m_viewControls.push_back(it);
 			}
 			if (it->X() >= Width()) {
 				break;

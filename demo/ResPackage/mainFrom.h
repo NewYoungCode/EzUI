@@ -6,12 +6,12 @@
 #include "EzUI/Resource.h"
 #include "EzUI/Task.h"
 #include "EzUI/HLayout.h"
-#include "EzUI/UIManager.h"
+#include "EzUI/UILoader.h"
 using namespace ezui;
 
 class MainFrm :public Window {
 	Task* task = NULL;
-	UIManager ui;
+	UILoader ui;
 	//选项卡
 	TabLayout* tab;
 

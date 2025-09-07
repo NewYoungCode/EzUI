@@ -137,12 +137,10 @@ namespace ezui {
 		m_timer->Start();
 	}
 
-
-
 	void TabLayout::SetPage(Control* ctl)
 	{
 #ifdef _DEBUG
-		ASSERT(ctl->Parent == this);
+		ASSERT(ctl->m_parent == this);
 #endif // _DEBUG
 		this->m_pageIndex = this->IndexOf(ctl);
 		this->TryPendLayout();
@@ -165,10 +163,10 @@ namespace ezui {
 
 	void TabLayout::OnChildPaint(PaintEventArgs& args)
 	{
-		ViewControls.clear();
+		m_viewControls.clear();
 		Control* currPage = this->GetPage();
 		if (currPage) {//仅绘制当前页
-			ViewControls.push_back(currPage);
+			m_viewControls.push_back(currPage);
 			currPage->SendEvent(args);
 		}
 	}

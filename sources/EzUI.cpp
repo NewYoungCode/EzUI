@@ -475,10 +475,10 @@ namespace ezui {
 			}
 			UIString tabName = sender->GetAttribute("tablayout");
 			if (!tabName.empty()) {
-				auto ctls = sender->Parent->FindControl("tablayout", tabName);
+				auto ctls = sender->GetParent()->FindControl("tablayout", tabName);
 				IFrame* frame = sender->GetFrame();
 				TabLayout* tabLayout = dynamic_cast<TabLayout*>(frame ? frame->FindControl(tabName) : win->FindControl(tabName));
-				if (tabLayout && sender->Parent) {
+				if (tabLayout && sender->GetParent()) {
 					int pos = 0;
 					for (auto& it : ctls)
 					{

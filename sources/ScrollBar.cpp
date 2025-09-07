@@ -68,9 +68,9 @@ namespace ezui {
 	}
 
 	void ScrollBar::ScrollTo(float scrollRate) {
-		if (Parent == NULL) return;
-		if (Parent->IsPendLayout()) {
-			Parent->RefreshLayout();
+		if (GetParent() == NULL) return;
+		if (GetParent()->IsPendLayout()) {
+			GetParent()->RefreshLayout();
 		}
 		int offset = scrollRate * this->m_overflowLength;
 		ScrollTo(-offset, Event::None);
@@ -83,9 +83,9 @@ namespace ezui {
 	}
 
 	void ScrollBar::ScrollTo(int offset, const Event& type) {
-		if (Parent == NULL) return;
-		if (Parent->IsPendLayout()) {
-			Parent->RefreshLayout();
+		if (GetParent() == NULL) return;
+		if (GetParent()->IsPendLayout()) {
+			GetParent()->RefreshLayout();
 		}
 		//if (!Scrollable()) {
 		//	return;
@@ -114,7 +114,7 @@ namespace ezui {
 			OffsetCallback(this->m_offset);
 			SyncInfo();
 		}
-		Parent->Invalidate();
+		GetParent()->Invalidate();
 		//Parent->Refresh();//可以用Refresh,这样滚动的时候的时候显得丝滑
 		if (Scroll) {
 			Scroll(this, (double)this->m_offset / (-this->m_overflowLength), type);
@@ -122,9 +122,9 @@ namespace ezui {
 	}
 	void ScrollBar::SyncInfo()
 	{
-		if (Parent == NULL)return;
-		if (Parent->IsPendLayout()) {
-			Parent->RefreshLayout();
+		if (GetParent() == NULL)return;
+		if (GetParent()->IsPendLayout()) {
+			GetParent()->RefreshLayout();
 		}
 		int scrollBarLength;
 		this->GetInfo(&this->m_viewLength, &this->m_contentLength, &scrollBarLength);
