@@ -1185,13 +1185,13 @@ namespace ezui {
 			ASSERT(!"The control already exists and cannot be added repeatedly");
 		}
 #endif
-		this->ApplyParentStyles();//样式匹配
 		if (ctl->IsSpacer()) {//是否为弹簧控件
 			this->Attach(ctl);
 		}
 		m_controls.push_back(ctl);
 		ctl->SetHwnd(this->Hwnd());
 		ctl->m_parent = this;
+		ctl->ApplyParentStyles();//样式匹配
 
 		if (ctl->GetScale() != this->GetScale()) {
 			ctl->SendEvent(DpiChangeEventArgs(this->GetScale()));
@@ -1211,7 +1211,6 @@ namespace ezui {
 			}
 		}
 #endif
-		this->ApplyParentStyles();//样式匹配
 		if (ctl->IsSpacer()) {//是否为弹簧控件
 			this->Attach(ctl);
 		}
@@ -1231,6 +1230,8 @@ namespace ezui {
 		}
 		ctl->SetHwnd(this->Hwnd());
 		ctl->m_parent = this;
+		ctl->ApplyParentStyles();//样式匹配
+
 		if (ctl->GetScale() != this->GetScale()) {
 			ctl->SendEvent(DpiChangeEventArgs(this->GetScale()));
 		}
@@ -1244,16 +1245,32 @@ namespace ezui {
 	}
 
 	Control* Control::Append(const UIString& xmlStr) {
-		UILoader* loader = new UILoader(this);
+		UILoader* loader = new UILoader;
 		loader->LoadXml(xmlStr.c_str(), xmlStr.size());
-		return this->Add(loader->GetRoot());
+		Control* rootCtrl = loader->GetRoot();
+		if (rootCtrl) {//创建控件成功
+			rootCtrl->Attach(loader);//把loader绑定到rootCtrl控件中跟随释放(解决xml创建控件自动释放的问题)
+		}
+		else {
+			delete loader;
+			return NULL;
+		}
+		return this->Add(rootCtrl);
 	}
 
 	Control* Control::Prepend(const UIString& xmlStr)
 	{
-		UILoader* loader = new UILoader(this);
+		UILoader* loader = new UILoader;
 		loader->LoadXml(xmlStr.c_str(), xmlStr.size());
-		return this->Insert(0, loader->GetRoot());
+		Control* rootCtrl = loader->GetRoot();
+		if (rootCtrl) {//创建控件成功
+			rootCtrl->Attach(loader);//把loader绑定到rootCtrl控件中跟随释放(解决xml创建控件自动释放的问题)
+		}
+		else {
+			delete loader;
+			return NULL;
+		}
+		return this->Insert(0, rootCtrl);
 	}
 
 	void Control::Remove(Control* ctl, bool freeCtrl)
@@ -1471,7 +1488,7 @@ namespace ezui {
 	void Control::ApplyParentStyles()
 	{
 		//依次往父控件找(找到合适的样式就应用上)
-		Control* parent = this->m_parent;
+		Control* parent = this;
 		while (parent) {
 			if (!parent->m_styles.empty()) {
 				ezui::ApplyStyle(this, parent->m_styles);
@@ -1479,7 +1496,7 @@ namespace ezui {
 			if (parent->IsFrame()) {
 				break;// 找到第一个 Frame 后就停止,不再继续向上
 			}
-			parent = parent->m_parent;
+			parent = parent->GetParent();
 		}
 	}
 	void Control::SetStyleSheet(const UIString& styleStr)

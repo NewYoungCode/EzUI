@@ -84,13 +84,29 @@ namespace ezui {
 		}
 		//设置控件属性
 		TiXmlAttribute* attr = node->FirstAttribute();
+		//内联样式
+		UIString inlineStyle;
 		do
 		{
 			if (!attr)break;
 			UIString attrName = attr->Name();
-			UIString attrValue(attr->Value());
-			ctl->SetAttribute(attrName, attrValue);
+			UIString attrValue = attr->Value();
+			if (attrName == "style") {//暂时跳过内联样式
+				inlineStyle = attrValue;//存储内联样式
+			}
+			else {
+				ctl->SetAttribute(attrName, attrValue);
+			}
 		} while ((attr = attr->Next()));
+		//为根控件挂载样式
+		if (m_first) {
+			ctl->SetStyleSheet(m_styleStr);
+			m_first = false;
+		}
+		//最后应用内联样式
+		if (!inlineStyle.empty()) {
+			ctl->SetAttribute("style", inlineStyle);
+		}
 		return ctl;
 	}
 	void UILoader::LoadControl(void* _node, Control* control) {
@@ -101,17 +117,17 @@ namespace ezui {
 		{
 			UIString tagName = fristChild->Value();
 			Control* ctl = BuildControl(fristChild);
+			control->Add(ctl);
 			this->AttachControl(ctl, tagName);
 			LoadControl(fristChild, ctl);
-			control->Add(ctl);
 			TiXmlElement* nextChild = fristChild->NextSiblingElement();
 			while (nextChild)//然后寻找兄弟
 			{
 				UIString tagName = nextChild->Value();
 				Control* ctl2 = BuildControl(nextChild);
+				control->Add(ctl2);
 				this->AttachControl(ctl2, tagName);
 				LoadControl(nextChild, ctl2);
-				control->Add(ctl2);
 				nextChild = nextChild->NextSiblingElement();
 			}
 		}
@@ -166,8 +182,6 @@ namespace ezui {
 		//doc.Parse
 		TiXmlElement* element = doc.FirstChildElement();//read frist element
 		std::list<TiXmlElement*> controlNodes;
-		//存储样式
-		UIString styleStr;
 		//先处理样式
 		do
 		{
@@ -175,7 +189,7 @@ namespace ezui {
 			if (element->ValueTStr() == "style") {// if element is style
 				const char* szStr = element->GetText();
 				if (szStr) {
-					styleStr = szStr;
+					this->m_styleStr = szStr;//存储样式
 				}
 			}
 			else { //if no style , must be Control
@@ -190,13 +204,13 @@ namespace ezui {
 			m_rootNode.push_back(control);//存入根节点集合
 			LoadControl(element, control);//加载子节点
 		}
-		//为控件加载样式
-		if (!m_rootNode.empty()) {
-			m_rootNode[0]->SetStyleSheet(styleStr);
-			/*从新读取style属性加载内联样式(感觉不是很合适这样做)
-			UIString str = m_rootNode[0]->GetAttribute("style");
-			m_rootNode[0]->SetStyleSheet(ControlState::Static, str);*/
-		}
+		////为控件加载样式(根控件向下应用样式) //弃用
+		//if (!m_rootNode.empty()) {
+		//	m_rootNode[0]->SetStyleSheet(m_styleStr);
+		//	//从新读取style属性加载内联样式(不应该这么做)
+		//	UIString str = m_rootNode[0]->GetAttribute("style");
+		//	m_rootNode[0]->SetStyleSheet(ControlState::Static, str);
+		//}
 	}
 
 	Control* UILoader::GetRoot()
@@ -211,10 +225,14 @@ namespace ezui {
 		for (auto itor = m_controls.rbegin(); itor != m_controls.rend(); ++itor)
 		{
 			Control* ctrl = itor->m_ctl;
-			delete ctrl;
+			if (!ctrl->IsDestroying()) {
+				delete ctrl;
+			}
 		}
 		m_rootNode.clear();
 		m_controls.clear();
+		m_styleStr.clear();
+		m_first = true;
 	}
 
 	UILoader::UILoader(Object* ownerObject) :Object(ownerObject)

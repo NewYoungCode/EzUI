@@ -22,6 +22,8 @@ namespace ezui {
 	//UI加载器
 	class UI_EXPORT UILoader :public Object {
 	private:
+		bool m_first = true;//内部用
+		UIString m_styleStr;//内部用
 		std::vector<Control*> m_rootNode;//根节点列表
 		std::list<XmlNode> m_controls;
 		void LoadControl(void* node, Control* control);

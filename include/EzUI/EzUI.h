@@ -482,9 +482,6 @@ namespace ezui {
 	public:
 		//用户自定义数据
 		UINT_PTR Tag = NULL;
-	protected:
-		//对象是否正在被销毁(预防析构降级导致控件访问报错)
-		bool IsDestroying();
 	public:
 		Object(Object* parentObject = NULL);
 		virtual ~Object();
@@ -501,6 +498,8 @@ namespace ezui {
 		virtual Object* Attach(Object* obj);
 		//分离对象(解除跟随释放)
 		virtual void Detach(Object* obj);
+		//对象是否正在被销毁(预防析构降级导致控件访问报错)
+		bool IsDestroying();
 		//延迟删除
 		void DeleteLater();
 	};
