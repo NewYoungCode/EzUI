@@ -71,6 +71,9 @@ namespace ezui {
 
 		// 控件是否可以被命中(值为false情况下就是穿透效果)
 		bool m_hitTestEnabled = true;
+
+		//存储的样式集合
+		std::list<ezui::Style> m_styles;
 	protected:
 		// 基于控件中的可见控件集合
 		Controls ViewControls;
@@ -120,9 +123,22 @@ namespace ezui {
 		// 所有事件优先进入此函数(内部处理)
 		void OnEvent(EventArgs& arg);
 
+		//递归子控件给匹配成功的样式应用上
+		void ApplyChildStyles(const std::list<ezui::Style>& styles);
+
+		//向上匹配样式(直到所属的Frame层)
+		void ApplyParentStyles();
 	protected:
 		//属性或者css样式都适用(css样式和属性都可以设置这些,只对静态样式生效)
 		virtual bool ApplyStyleProperty(const UIString& key, const UIString& value);
+
+		/// <summary>
+		/// 为当前控件的指定状态设置单个样式属性
+		/// </summary>
+		/// <param name="style">目标状态样式对象,例如 this->HoverStyle</param>
+		/// <param name="key">样式键名,例如 "font-size"</param>
+		/// <param name="value">样式值,例如 "13px"</param>
+		virtual void SetStyle(ControlStyle& style, const UIString& key, const UIString& value);
 
 		// 设置内容宽度，仅限子类使用
 		virtual void SetContentWidth(int width);
@@ -520,11 +536,18 @@ namespace ezui {
 		// 立即强制刷新控件区域并更新无效区域（且立即触发布局）
 		virtual void Refresh();
 
-		//传入Style的引用 处理key value
-		virtual void SetStyle(ControlStyle& style, const UIString& key, const UIString& value);
-
-		//传入状态并分析样式字符串
+		/// <summary>
+		/// 为当前控件的指定状态批量设置样式（使用分号分隔）
+		/// </summary>
+		/// <param name="state">控件状态,例如 ControlState::Hover</param>
+		/// <param name="styleStr">样式字符串,例如 "font-size: 13px; color: #ffffff;"</param>
 		virtual void SetStyleSheet(ControlState state, const UIString& styleStr);
+
+		/// <summary>
+		/// 设置样式集合,并自动匹配应用到符合条件的子控件
+		/// </summary>
+		/// <param name="styleStr">样式字符串,例如 "#btn:hover { font-size:13px; }"</param>
+		virtual void SetStyleSheet(const UIString& styleStr);
 
 		//控件是否被按住
 		bool IsPressed();

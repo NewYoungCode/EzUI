@@ -16,6 +16,7 @@ Email:19980103ly@gmail.com/718987717@qq.com
 
 namespace ezui {
 	struct MonitorInfo;
+	struct Style;
 	class Object;
 	class EventArgs;
 	class ControlStyle;

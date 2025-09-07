@@ -824,11 +824,11 @@ namespace ezui {
 		do
 		{
 			if (key == "x") {
-				this->SetLocation({ (int)__ToFloat(value) ,this->Y() });
+				this->SetLocation({ (int)(__ToFloat(value) * this->GetScale() + 0.5) ,this->Y() });
 				break;
 			}
 			if (key == "y") {
-				this->SetLocation({ this->X(),(int)__ToFloat(value) });
+				this->SetLocation({ this->X(),(int)(__ToFloat(value) * this->GetScale() + 0.5) });
 				break;
 			}
 			if (key == "width") {
@@ -840,7 +840,7 @@ namespace ezui {
 						this->SetRateWidth(__ToFloat(value));//基于父控件的百分比
 					}
 					else {
-						this->SetFixedWidth(__ToFloat(value));//如果单独设置了宽高那就是绝对宽高了
+						this->SetFixedWidth(__ToFloat(value) * this->GetScale() + 0.5);//如果单独设置了宽高那就是绝对宽高了
 					}
 				}
 				break;
@@ -854,43 +854,43 @@ namespace ezui {
 						this->SetRateHeight(__ToFloat(value));//基于父控件的百分比
 					}
 					else {
-						this->SetFixedHeight(__ToFloat(value));//如果单独设置了宽高那就是绝对宽高了
+						this->SetFixedHeight(__ToFloat(value) * this->GetScale() + 0.5);//如果单独设置了宽高那就是绝对宽高了
 					}
 				}
 				break;
 			}
 			if (key == "margin-left") {
-				this->Margin.Left = __ToFloat(value);
+				this->Margin.Left = __ToFloat(value) * this->GetScale() + 0.5;
 				break;
 			}
 			if (key == "margin-top") {
-				this->Margin.Top = __ToFloat(value);
+				this->Margin.Top = __ToFloat(value) * this->GetScale() + 0.5;
 				break;
 			}
 			if (key == "margin-right") {
-				this->Margin.Right = __ToFloat(value);
+				this->Margin.Right = __ToFloat(value) * this->GetScale() + 0.5;
 				break;
 			}
 			if (key == "margin-bottom") {
-				this->Margin.Bottom = __ToFloat(value);
+				this->Margin.Bottom = __ToFloat(value) * this->GetScale() + 0.5;
 				break;
 			}
 			if (key == "margin") {//遵循web前端的规则
 				auto strs = value.replace(' ', ',').split(",");//去掉空格并转为数组
 				if (strs.size() == 1) {
-					this->Margin = __ToFloat(strs[0]);
+					this->Margin = __ToFloat(strs[0]) * this->GetScale() + 0.5;
 					break;
 				}
 				if (strs.size() == 2) {
-					this->Margin.Top = this->Margin.Bottom = __ToFloat(strs[0]);
-					this->Margin.Left = this->Margin.Right = __ToFloat(strs[1]);
+					this->Margin.Top = this->Margin.Bottom = __ToFloat(strs[0]) * this->GetScale() + 0.5;
+					this->Margin.Left = this->Margin.Right = __ToFloat(strs[1]) * this->GetScale() + 0.5;
 					break;
 				}
 				if (strs.size() == 4) {
-					this->Margin.Top = __ToFloat(strs[0]);
-					this->Margin.Right = __ToFloat(strs[1]);
-					this->Margin.Bottom = __ToFloat(strs[2]);
-					this->Margin.Left = __ToFloat(strs[3]);
+					this->Margin.Top = __ToFloat(strs[0]) * this->GetScale() + 0.5;
+					this->Margin.Right = __ToFloat(strs[1]) * this->GetScale() + 0.5;
+					this->Margin.Bottom = __ToFloat(strs[2]) * this->GetScale() + 0.5;
+					this->Margin.Left = __ToFloat(strs[3]) * this->GetScale() + 0.5;
 					break;
 				}
 				break;
@@ -1175,7 +1175,8 @@ namespace ezui {
 			ASSERT(!"The control already exists and cannot be added repeatedly");
 		}
 #endif
-		if (ctl->IsSpacer()) {
+		this->ApplyParentStyles();//样式匹配
+		if (ctl->IsSpacer()) {//是否为弹簧控件
 			this->Attach(ctl);
 		}
 		m_controls.push_back(ctl);
@@ -1200,7 +1201,8 @@ namespace ezui {
 			}
 		}
 #endif
-		if (ctl->IsSpacer()) {
+		this->ApplyParentStyles();//样式匹配
+		if (ctl->IsSpacer()) {//是否为弹簧控件
 			this->Attach(ctl);
 		}
 		size_t i = 0;
@@ -1436,6 +1438,38 @@ namespace ezui {
 			}
 		}
 	}
+	void Control::ApplyChildStyles(const std::list<ezui::Style>& styles) {
+		ezui::ApplyStyle(this, styles);      // 先对当前子控件应用
+		for (auto& child : this->m_controls) {
+			child->ApplyChildStyles(styles); // 再递归应用到子控件的子控件
+		}
+	}
+	void Control::ApplyParentStyles()
+	{
+		//依次往父控件找(找到合适的样式就应用上)
+		Control* parent = this->Parent;
+		while (parent) {
+			if (!parent->m_styles.empty()) {
+				ezui::ApplyStyle(this, parent->m_styles);
+			}
+			if (parent->IsFrame()) {
+				break;// 找到第一个 Frame 后就停止,不再继续向上
+			}
+			parent = parent->Parent;
+		}
+	}
+	void Control::SetStyleSheet(const UIString& styleStr)
+	{
+		std::list<ezui::Style> styles;
+		//分析出样式
+		ezui::AnalysisStyle(styleStr, &styles);
+		//先应用样式
+		if (!styles.empty()) {
+			ApplyChildStyles(styles);  // 递归应用到所有子控件
+		}
+		//保存样式到控件
+		m_styles.splice(m_styles.end(), styles);  // 把 styles 的所有元素移动到 this->Styles 末尾
+	}
 	Rect Control::GetCareRect()
 	{
 		return Rect();
@@ -1663,11 +1697,11 @@ namespace ezui {
 					auto pxs = value.split(" ");
 					float x = 0;
 					__IsPx(pxs[0], x);
-					style.BackImage->DrawPosition.X = x;
+					style.BackImage->DrawPosition.X = x * this->GetScale() + 0.5;
 
 					float y = 0;
 					__IsPx(pxs[1], y);
-					style.BackImage->DrawPosition.Y = y;
+					style.BackImage->DrawPosition.Y = y * this->GetScale() + 0.5;
 				}
 				break;
 			}
@@ -1715,27 +1749,27 @@ namespace ezui {
 				break;
 			}
 			if (key == "border-radius") {
-				style.Border.Radius = __ToFloat(value);
+				style.Border.Radius = __ToFloat(value) * this->GetScale() + 0.5;
 				break;
 			}
 			if (key == "border-top-left-radius") {
-				style.Border.TopLeftRadius = __ToFloat(value);
+				style.Border.TopLeftRadius = __ToFloat(value) * this->GetScale() + 0.5;
 				break;
 			}
 			if (key == "border-top-right-radius") {
-				style.Border.TopRightRadius = __ToFloat(value);
+				style.Border.TopRightRadius = __ToFloat(value) * this->GetScale() + 0.5;
 				break;
 			}
 			if (key == "border-bottom-right-radius") {
-				style.Border.BottomRightRadius = __ToFloat(value);
+				style.Border.BottomRightRadius = __ToFloat(value) * this->GetScale() + 0.5;
 				break;
 			}
 			if (key == "border-bottom-left-radius") {
-				style.Border.BottomLeftRadius = __ToFloat(value);
+				style.Border.BottomLeftRadius = __ToFloat(value) * this->GetScale() + 0.5;
 				break;
 			}
 			if (key == "font-size") {
-				style.FontSize = __ToFloat(value);
+				style.FontSize = __ToFloat(value) * this->GetScale() + 0.5;
 				break;
 			}
 			if (key == "font-family") {
@@ -1744,46 +1778,50 @@ namespace ezui {
 				break;
 			}
 			if (key == "border-width") {
-				style.Border = __ToFloat(value);
+				style.Border = __ToFloat(value) * this->GetScale() + 0.5;
 				break;
 			}
 			if (key == "border") {
-				__MakeBorder(value, style.Border, [&style](float num) {
-					style.Border.Left = num;
-					style.Border.Top = num;
-					style.Border.Right = num;
-					style.Border.Bottom = num;
+				__MakeBorder(value, style.Border, [&style, this](float num) {
+					style.Border.Left = num * this->GetScale() + 0.5;
+					style.Border.Top = num * this->GetScale() + 0.5;
+					style.Border.Right = num * this->GetScale() + 0.5;
+					style.Border.Bottom = num * this->GetScale() + 0.5;
 					});
 				break;
 			}
 			if (key == "border-left") {
-				__MakeBorder(value, style.Border, [&style](float num) {
-					style.Border.Left = num;
+				__MakeBorder(value, style.Border, [&style, this](float num) {
+					style.Border.Left = num * this->GetScale() + 0.5;
 					});
 				break;
 			}
 			if (key == "border-top") {
-				__MakeBorder(value, style.Border, [&style](float num) {
-					style.Border.Top = num;
+				__MakeBorder(value, style.Border, [&style, this](float num) {
+					style.Border.Top = num * this->GetScale() + 0.5;
 					});
 				break;
 			}
 			if (key == "border-right") {
-				__MakeBorder(value, style.Border, [&style](float num) {
-					style.Border.Right = num;
+				__MakeBorder(value, style.Border, [&style, this](float num) {
+					style.Border.Right = num * this->GetScale() + 0.5;
 					});
 				break;
 			}
 			if (key == "border-bottom") {
-				__MakeBorder(value, style.Border, [&style](float num) {
-					style.Border.Bottom = num;
+				__MakeBorder(value, style.Border, [&style, this](float num) {
+					style.Border.Bottom = num * this->GetScale() + 0.5;
 					});
 				break;
 			}
 		} while (false);
 	}
-	void Control::SetStyleSheet(ControlState state, const UIString& styleStr)
+	void Control::SetStyleSheet(ControlState state, const UIString& styleListStr)
 	{
+		UIString styleStr = styleListStr.trim();
+		if (styleStr.find("{") == 0 && styleStr.rfind("}") == (styleStr.size() - 1)) {
+			styleStr = styleStr.substr(1, styleStr.size() - 2);//去除括号
+		}
 		auto attrs = styleStr.split(";");//分割每一行样式
 		if (!attrs.empty()) {
 			ControlStyle& sytle = this->GetStyle(state);//获取对应状态下的Style
