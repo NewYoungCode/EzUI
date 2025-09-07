@@ -807,12 +807,12 @@ namespace ezui {
 			}
 		}
 
-		const Controls* pTemp;
+		const ControlCollection* pTemp;
 		if (outCtl->GetViewControls().size() > 0) {
 			pTemp = &outCtl->GetViewControls();
 		}
 		else {
-			pTemp = (Controls*)(&(outCtl->GetControls()));
+			pTemp = (ControlCollection*)(&(outCtl->GetControls()));
 		}
 
 		for (auto itor = pTemp->rbegin(); itor != pTemp->rend(); ++itor) {

@@ -481,7 +481,7 @@ namespace ezui {
 			}
 		} while (false);
 	}
-	const Controls& Control::GetViewControls()
+	const ControlCollection& Control::GetViewControls()
 	{
 		return this->ViewControls;
 	}
@@ -1285,9 +1285,9 @@ namespace ezui {
 		}
 		return NULL;
 	}
-	Controls Control::FindControl(const UIString& attrName, const UIString& attrValue)
+	ControlCollection Control::FindControl(const UIString& attrName, const UIString& attrValue)
 	{
-		Controls ctls;
+		ControlCollection ctls;
 		if (attrName.empty() || attrValue.empty()) {
 			return ctls;
 		}
@@ -1327,9 +1327,9 @@ namespace ezui {
 		}
 		return NULL;
 	}
-	Controls Control::FindChild(const UIString& attrName, const UIString& attrValue)
+	ControlCollection Control::FindChild(const UIString& attrName, const UIString& attrValue)
 	{
-		Controls ctls;
+		ControlCollection ctls;
 		if (attrName.empty() || attrValue.empty()) {
 			return ctls;
 		}
@@ -1534,7 +1534,7 @@ namespace ezui {
 			ClipRectRef = this->GetClientRect();
 		}
 	}
-	const Controls& Control::GetControls()
+	const ControlCollection& Control::GetControls()
 	{
 		return m_controls;
 	}

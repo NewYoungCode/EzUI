@@ -25,13 +25,16 @@ namespace ezui {
 	class Window;
 	class Spacer;
 	class ScrollBar;
+	class VScrollBar;
+	class HScrollBar;
 	class Bitmap;
 	enum class Cursor :ULONG_PTR;
 
 #if 1
-	typedef std::vector<Control*> Controls;
+	typedef std::vector<Control*> ControlCollection;//控件集合
 #else
-	class UI_EXPORT Controls :public std::list<Control*> {
+	//控件集合
+	class UI_EXPORT ControlCollection :public std::list<Control*> {
 	public:
 		//不要频繁使用此函数
 		inline	Control* operator[](size_t right_pos)const
@@ -45,7 +48,7 @@ namespace ezui {
 			}
 			return NULL;
 		}
-	};
+};
 #endif
 
 	//全局资源句柄

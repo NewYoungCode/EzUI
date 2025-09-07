@@ -3,7 +3,9 @@
 
 namespace ezui {
 	class UI_EXPORT ScrollBar :public Control {
-	protected:
+		friend class VScrollBar;
+		friend class HScrollBar;
+	private:
 		//鼠标是否已经按下
 		bool m_mouseDown = false;
 		//上一次鼠标命中的坐标

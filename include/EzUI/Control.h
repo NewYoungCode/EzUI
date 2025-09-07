@@ -25,7 +25,7 @@ namespace ezui {
 		float m_scale = 1.0f;
 
 		// 子控件集合
-		Controls m_controls;
+		ControlCollection m_controls;
 
 		// 管理图片的释放
 		PtrManager<Image*> m_imgs;
@@ -76,7 +76,7 @@ namespace ezui {
 		std::list<ezui::Style> m_styles;
 	protected:
 		// 基于控件中的可见控件集合
-		Controls ViewControls;
+		ControlCollection ViewControls;
 		// 控件当前状态
 		ControlState State = ControlState::Static;
 	public:
@@ -444,10 +444,10 @@ namespace ezui {
 		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue);
 
 		// 获取当前可见的子控件集合
-		const Controls& GetViewControls();
+		const ControlCollection& GetViewControls();
 
 		// 获取所有子控件（不建议直接修改）
-		const Controls& GetControls();
+		const ControlCollection& GetControls();
 
 		// 使用下标获取控件，自动跳过 spacer 类控件
 		Control* GetControl(int pos);
@@ -462,7 +462,7 @@ namespace ezui {
 		Control* FindControl(const UIString& ctlName);
 
 		// 根据属性查找所有匹配控件（包括自身）
-		Controls FindControl(const UIString& attrName, const UIString& attrValue);
+		ControlCollection FindControl(const UIString& attrName, const UIString& attrValue);
 
 		// 根据属性查找第一个匹配控件（包括自身）
 		Control* FindSingleControl(const UIString& attrName, const UIString& attrValue);
@@ -471,7 +471,7 @@ namespace ezui {
 		Control* FindChild(const UIString& ctlName);
 
 		// 根据属性查找所有匹配的子控件（仅限直接子集）
-		Controls FindChild(const UIString& attrName, const UIString& attrValue);
+		ControlCollection FindChild(const UIString& attrName, const UIString& attrValue);
 
 		// 根据属性查找第一个匹配的子控件（仅限直接子集）
 		Control* FindSingleChild(const UIString& attrName, const UIString& attrValue);
