@@ -483,7 +483,7 @@ namespace ezui {
 		//用户自定义数据
 		UINT_PTR Tag = NULL;
 	public:
-		Object(Object* parentObject = NULL);
+		Object(Object* ownerObject = NULL);
 		virtual ~Object();
 	public:
 		//设置属性

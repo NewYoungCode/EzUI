@@ -297,7 +297,7 @@ namespace ezui {
 	public:
 
 		// 构造函数 可传入父对象(由父对象自动管理内存)
-		Control(Object* parentObject = NULL);
+		Control(Object* ownerObject = NULL);
 
 		// 析构函数
 		virtual ~Control();

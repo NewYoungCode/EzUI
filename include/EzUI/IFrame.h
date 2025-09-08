@@ -13,7 +13,7 @@ namespace ezui {
 	public:
 		//对外暴露消息通知回调
 		std::function<void(Control*, EventArgs&)> NotifyHandler = NULL;
-		IFrame(Object* parentObject = NULL);
+		IFrame(Object* ownerObject = NULL);
 		virtual ~IFrame();
 		//是否为Frame
 		virtual bool IsFrame()override final;

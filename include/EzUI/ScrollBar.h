@@ -63,7 +63,7 @@ namespace ezui {
 		bool Scrollable();
 		//当父控件发生内容发生改变 请调用刷新滚动条
 		void RefreshScroll();
-		ScrollBar(Object* parentObject = NULL);
+		ScrollBar(Object* ownerObject = NULL);
 		virtual ~ScrollBar();
 	};
 };

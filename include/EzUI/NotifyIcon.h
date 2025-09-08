@@ -15,7 +15,7 @@ namespace ezui {
 	public:
 		//事件处理 只会返回鼠标事件
 		std::function<void(const MouseEventArgs&)> EventHandler = NULL;
-		NotifyIcon(Object* parentObj = NULL);
+		NotifyIcon(Object* ownerObject = NULL);
 		void SetIcon(HICON icon);
 		//设置鼠标悬停时显示的提示文本
 		void SetTips(const UIString& text);

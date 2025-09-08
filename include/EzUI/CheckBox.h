@@ -21,7 +21,7 @@ namespace ezui {
 		virtual void OnMouseUp(const MouseEventArgs& args)override;
 		virtual	void OnMouseLeave(const MouseEventArgs& args)override;
 	public:
-		CheckBox(Object* parentObject = NULL);
+		CheckBox(Object* ownerObject = NULL);
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 		//设置选中状态
 		virtual void SetCheck(bool checked);

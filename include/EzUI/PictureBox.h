@@ -13,7 +13,7 @@ namespace ezui {
 	public:
 		//图片(支持gif图自动播放)
 		Image* Image = NULL;
-		PictureBox(Object* parentObject = NULL);
+		PictureBox(Object* ownerObject = NULL);
 		virtual ~PictureBox();
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 	};

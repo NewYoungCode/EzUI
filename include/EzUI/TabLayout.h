@@ -27,7 +27,7 @@ namespace ezui {
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 		virtual void OnChildPaint(PaintEventArgs& args)override;
 	public:
-		TabLayout(Object* parentObject = NULL);
+		TabLayout(Object* ownerObject = NULL);
 		virtual ~TabLayout();
 		virtual void Remove(Control* ctl, bool freeCtl = false)override;
 		virtual Control* Add(Control* childCtl)override;

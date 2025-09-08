@@ -10,7 +10,7 @@ namespace ezui {
 	protected:
 		virtual void OnLayout() override;
 	public:
-		VLayout(Object* parentObject = NULL);
+		VLayout(Object* ownerObject = NULL);
 		// 添加一个弹簧控件:
 		// - 传入 fixedHeight > 0,则作为固定高度的空白,位不可伸缩
 		// - 传入 fixedHeight == 0,则作为可拉伸的弹簧,占据剩余空间

@@ -12,7 +12,7 @@ namespace ezui {
 		virtual void OnMouseMove(const MouseEventArgs& arg)override;
 		virtual void GetInfo(int* viewLength, int* contentLength, int* scrollBarLength)override;
 	public:
-		VScrollBar(Object* parentObject = NULL);
+		VScrollBar(Object* ownerObject = NULL);
 		virtual ~VScrollBar();
 		virtual void ScrollTo(Control* ctl)override;
 		virtual void ParentSize(const Size& size)override;

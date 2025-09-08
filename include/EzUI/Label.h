@@ -20,7 +20,7 @@ namespace ezui {
 		//文字对齐方式
 		TextAlign TextAlign = TextAlign::MiddleCenter;
 	public:
-		Label(Object* parentObject = NULL);
+		Label(Object* ownerObject = NULL);
 		virtual ~Label();
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 		virtual void RefreshLayout() override;
