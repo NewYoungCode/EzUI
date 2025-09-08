@@ -3,7 +3,7 @@
 
 namespace ezui {
 	bool g_bClassRegistered = false;
-	NotifyIcon::NotifyIcon(Object* parentObj) :Object(parentObj)
+	NotifyIcon::NotifyIcon(Object* ownerObject) :Object(ownerObject)
 	{
 		if (!g_bClassRegistered) {
 			::WNDCLASSEXW wcex = {};

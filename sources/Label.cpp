@@ -1,6 +1,6 @@
 #include "Label.h"
 namespace ezui {
-	Label::Label(Object* parentObject) :Control(parentObject)
+	Label::Label(Object* ownerObject) :Control(ownerObject)
 	{
 	}
 	Label::~Label() {}

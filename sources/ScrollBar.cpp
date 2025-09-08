@@ -12,7 +12,7 @@ namespace ezui {
 		__super::OnMouseLeave(arg);
 		m_mouseDown = false;
 	}
-	ScrollBar::ScrollBar(Object* parentObject) :Control(parentObject)
+	ScrollBar::ScrollBar(Object* ownerObject) :Control(ownerObject)
 	{
 		Init();
 	}

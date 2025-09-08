@@ -1,7 +1,7 @@
 #include "VLayout.h"
 #include "Spacer.h"
 namespace ezui {
-	VLayout::VLayout(Object* parentObject) :Control(parentObject)
+	VLayout::VLayout(Object* ownerObject) :Control(ownerObject)
 	{
 	}
 	void VLayout::AddSpacer(int fixedHeight)

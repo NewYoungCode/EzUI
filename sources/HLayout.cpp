@@ -86,7 +86,7 @@ namespace ezui {
 			this->SetContentSize({ (int)(maxRight + 0.5) ,contentHeight });
 		}
 	}
-	HLayout::HLayout(Object* parentObject) :Control(parentObject)
+	HLayout::HLayout(Object* ownerObject) :Control(ownerObject)
 	{
 	}
 	HLayout::~HLayout()

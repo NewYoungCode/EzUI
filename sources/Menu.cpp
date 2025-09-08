@@ -7,7 +7,7 @@ namespace ezui {
 		return g_nextId;
 	}
 
-	Menu::Menu(Object* parentObj) : Object(parentObj)
+	Menu::Menu(Object* ownerObject) : Object(ownerObject)
 	{
 		m_hMenu = ::CreatePopupMenu(); // 创建空菜单
 	}

@@ -63,7 +63,7 @@ namespace ezui {
 			}
 			};
 	}
-	ComboBox::ComboBox(Object* parentObject) :HLayout(parentObject)
+	ComboBox::ComboBox(Object* ownerObject) :HLayout(ownerObject)
 	{
 		Init();
 	}

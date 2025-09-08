@@ -1,6 +1,6 @@
 #include "Timer.h"
 namespace ezui {
-	Timer::Timer(Object* parentObject) :Object(parentObject)
+	Timer::Timer(Object* ownerObject) :Object(ownerObject)
 	{
 	}
 	bool Timer::IsStopped() {

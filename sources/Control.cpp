@@ -260,7 +260,7 @@ namespace ezui {
 		return frame;
 	}
 
-	Control::Control(Object* parentObject) :Object(parentObject)
+	Control::Control(Object* ownerObject) :Object(ownerObject)
 	{
 	}
 	void Control::OnChildPaint(PaintEventArgs& args)

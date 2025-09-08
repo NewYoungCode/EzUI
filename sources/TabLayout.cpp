@@ -1,7 +1,7 @@
 #include "TabLayout.h"
 
 namespace ezui {
-	TabLayout::TabLayout(Object* parentObject) :Control(parentObject)
+	TabLayout::TabLayout(Object* ownerObject) :Control(ownerObject)
 	{
 		Init();
 	}

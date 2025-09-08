@@ -2,7 +2,7 @@
 #undef min
 #undef max
 namespace ezui {
-	TextBox::TextBox(Object* parentObject) :Control(parentObject)
+	TextBox::TextBox(Object* ownerObject) :Control(ownerObject)
 	{
 		Init();
 	}

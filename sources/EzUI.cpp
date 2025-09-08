@@ -513,10 +513,10 @@ namespace ezui {
 		}
 	}
 
-	Object::Object(Object* parentObject)
+	Object::Object(Object* ownerObject)
 	{
-		if (parentObject) {
-			parentObject->Attach(this);
+		if (ownerObject) {
+			ownerObject->Attach(this);
 		}
 	}
 	Object::~Object() {

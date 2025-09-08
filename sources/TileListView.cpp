@@ -14,7 +14,7 @@ namespace ezui {
 			};
 	}
 
-	TileListView::TileListView(Object* parentObject) :PagedListView(parentObject)
+	TileListView::TileListView(Object* ownerObject) :PagedListView(ownerObject)
 	{
 		Init();
 	}
