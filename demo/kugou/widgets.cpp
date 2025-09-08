@@ -29,12 +29,12 @@ LocalItem::LocalItem(const UIString& _songName, const UIString& _songTime) {
 	ActiveStyle.BackColor = Color(255, 230, 230, 100);
 	ActiveStyle.FontSize = 10;
 
-	Add(new HSpacer(15));
-	Add(&songName);
-	Add(&time);
-	Add(new HSpacer(15));
-	Add(&del);
-	Add(new HSpacer(10));
+	AddChild(new HSpacer(15));
+	AddChild(&songName);
+	AddChild(&time);
+	AddChild(new HSpacer(15));
+	AddChild(&del);
+	AddChild(new HSpacer(10));
 
 	this->EventHandler = [this](Control* sd, EventArgs& args) {
 		if (args.EventType == Event::OnMouseMove) {
@@ -117,14 +117,14 @@ SearchItem::SearchItem(const Song& s) {
 	del.Style.BackImage = img;
 	del.Margin = 8;
 
-	Add(new HSpacer(15));
-	Add(&songName);
-	Add(&AlbumName);
-	Add(&mv);
-	Add(&del);
-	Add(new HSpacer(5));
-	Add(&time);
-	Add(new HSpacer(5));
+	AddChild(new HSpacer(15));
+	AddChild(&songName);
+	AddChild(&AlbumName);
+	AddChild(&mv);
+	AddChild(&del);
+	AddChild(new HSpacer(5));
+	AddChild(&time);
+	AddChild(new HSpacer(5));
 
 	this->EventHandler = [this](Control* sd, EventArgs& args) {
 		if (args.EventType == Event::OnMouseMove) {

@@ -81,8 +81,8 @@ void MainFrm::InitForm() {
 	labelDeskLrc = (CheckBox*)bottomFrame->FindControl("deskLrc");
 
 	player.Name = "player";
-	centerFrame->FindControl("vlcDock")->Add(&player);
-	centerFrame->FindControl("lrcView2")->Add(&lrcPanel);//添加歌词控件
+	centerFrame->FindControl("vlcDock")->AddChild(&player);
+	centerFrame->FindControl("lrcView2")->AddChild(&lrcPanel);//添加歌词控件
 
 	//创建桌面歌词视频窗口
 	deskTopWnd = new DesktopLrcFrm(&player);
@@ -113,7 +113,7 @@ void MainFrm::InitForm() {
 			s.SingerName = listFile->ReadString("singer");
 
 			songLsit.push_back(s);
-			vlistLocal->Add(it);
+			vlistLocal->AddChild(it);
 			vlistLocal->Append(L"<label text=\"测试xml加载文字\" style=\"width:100px;height:20px;font-size:12px;\" />");
 		}
 	}
@@ -318,7 +318,7 @@ bool MainFrm::PlaySong(const UIString& hash, Song& info)
 		item->SetAttribute("SingerName", info.SingerName);
 
 		//添加到左侧音乐列表
-		vlistLocal->Add(item);
+		vlistLocal->AddChild(item);
 		vlistLocal->RefreshLayout();
 		vlistLocal->GetScrollBar()->ScrollTo(item);
 		vlistLocal->Invalidate();
@@ -362,7 +362,7 @@ void MainFrm::OnKeyDown(WPARAM wparam, LPARAM lParam)
 		vlistSearch->Clear(true);
 		for (auto& it : songs) {
 			SearchItem* sit = new SearchItem(it);
-			vlistSearch->Add(sit);
+			vlistSearch->AddChild(sit);
 		}
 		vlistSearch->Invalidate();
 	}
@@ -643,14 +643,14 @@ void MainFrm::NextPage(float scrollPos) {
 		std::vector<Song> songs = global::SearchSongs(keyword);
 		for (auto& it : songs) {
 			SearchItem* sit = new SearchItem(it);
-			vlistSearch->Add(sit);
+			vlistSearch->AddChild(sit);
 		}
 		if (!global::nextPage) {
 			Label* end = new Label;
 			end->SetFixedHeight(35);
 			end->Style.BackColor = Color(254, 249, 229);
 			end->SetText(L"已经没有更多数据");
-			vlistSearch->Add(end);
+			vlistSearch->AddChild(end);
 		}
 		vlistSearch->Invalidate();
 	}

@@ -117,7 +117,7 @@ namespace ezui {
 		{
 			UIString tagName = fristChild->Value();
 			Control* ctl = BuildControl(fristChild);
-			control->Add(ctl);
+			control->AddChild(ctl);
 			this->AttachControl(ctl, tagName);
 			LoadControl(fristChild, ctl);
 			TiXmlElement* nextChild = fristChild->NextSiblingElement();
@@ -125,7 +125,7 @@ namespace ezui {
 			{
 				UIString tagName = nextChild->Value();
 				Control* ctl2 = BuildControl(nextChild);
-				control->Add(ctl2);
+				control->AddChild(ctl2);
 				this->AttachControl(ctl2, tagName);
 				LoadControl(nextChild, ctl2);
 				nextChild = nextChild->NextSiblingElement();
@@ -164,7 +164,7 @@ namespace ezui {
 		if (!m_rootNode.empty()) {
 			Control* root = m_rootNode[0];
 			parentCtl->m_controls.clear();//清除子控件
-			parentCtl->Add(root);
+			parentCtl->AddChild(root);
 		}
 	}
 

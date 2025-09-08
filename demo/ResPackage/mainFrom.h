@@ -174,11 +174,11 @@ public:
 		name.TextAlign = TextAlign::MiddleLeft;
 		name.SetText(" " + fileName);
 		name.SetElidedText("...");
-		this->Add(&name);
+		this->AddChild(&name);
 
 		size.SetFixedWidth(100);
 		size.SetText(GetFileSize(fileSize));
-		this->Add(&size);
+		this->AddChild(&size);
 
 		name.SetHitTestVisible(false);
 

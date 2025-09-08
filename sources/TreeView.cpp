@@ -6,7 +6,7 @@ namespace ezui {
 	{
 		m_vList.SetAutoWidth(true);
 		m_vList.SetDockStyle(DockStyle::Vertical);
-		this->Add(&m_vList);
+		this->AddChild(&m_vList);
 	}
 
 	void TreeView::AddNode(const UIString& nodeName)
@@ -15,7 +15,7 @@ namespace ezui {
 		label->TextAlign = TextAlign::MiddleLeft;
 		label->SetText(nodeName);
 		label->SetAutoSize(true);
-		m_vList.Add(label);
+		m_vList.AddChild(label);
 	}
 
 	TreeView::~TreeView()

@@ -30,7 +30,7 @@ namespace ezui {
 		TabLayout(Object* parentObject = NULL);
 		virtual ~TabLayout();
 		virtual void Remove(Control* ctl, bool freeCtl = false)override;
-		virtual Control* Add(Control* childCtl)override;
+		virtual Control* AddChild(Control* childCtl)override;
 		//设置当前显示页
 		void SetPageIndex(int index);
 		//动画方式滑动到某一页

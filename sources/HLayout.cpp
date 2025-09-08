@@ -15,7 +15,7 @@ namespace ezui {
 	}
 	void HLayout::AddSpacer(int fixedWidth)
 	{
-		this->Add(new HSpacer(fixedWidth));
+		this->AddChild(new HSpacer(fixedWidth));
 	}
 	void HLayout::OnLayout()
 	{

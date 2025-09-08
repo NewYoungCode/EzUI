@@ -46,7 +46,7 @@ namespace ezui {
 		ControlCollection ctls;
 		this->GetPage(m_pageIndex, &ctls);
 		for (auto& it : ctls) {
-			this->Add(it);
+			this->AddChild(it);
 		}
 		this->Invalidate();
 	}

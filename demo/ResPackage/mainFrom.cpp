@@ -267,7 +267,7 @@ void MainFrm::OnResFileChange(UIString& resFile)
 			listFiles->Clear(true);
 			for (auto& item : res->Items) {
 				FileItem* fileItem = new FileItem(item.Name, item.Size);
-				listFiles->Add(fileItem);
+				listFiles->AddChild(fileItem);
 			}
 			listFiles->Invalidate();
 			this->editResFile->SetText(resFile);

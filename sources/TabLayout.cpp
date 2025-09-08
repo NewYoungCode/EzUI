@@ -83,9 +83,9 @@ namespace ezui {
 		this->EndLayout();
 	}
 
-	Control* TabLayout::Add(Control* childCtl)
+	Control* TabLayout::AddChild(Control* childCtl)
 	{
-		auto ret = __super::Add(childCtl);
+		auto ret = __super::AddChild(childCtl);
 		this->TryPendLayout();
 		return ret;
 	}

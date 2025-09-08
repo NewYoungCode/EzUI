@@ -10,7 +10,7 @@ namespace ezui {
 	class UI_EXPORT ComboBox :public HLayout {
 	private:
 		//添加选项请使用AddItem
-		virtual Control* Add(Control* childCtl)override;
+		virtual Control* AddChild(Control* childCtl)override;
 		//移除选项请使用RemoveItem
 		virtual void Remove(Control* childCtl, bool freeCtrl)override;
 	private:
