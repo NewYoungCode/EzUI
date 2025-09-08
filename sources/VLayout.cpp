@@ -6,7 +6,7 @@ namespace ezui {
 	}
 	void VLayout::AddSpacer(int fixedHeight)
 	{
-		this->AddChild(new VSpacer(fixedHeight));
+		this->Add(new VSpacer(fixedHeight));
 	}
 	void VLayout::SetAttribute(const UIString& key, const UIString& value)
 	{

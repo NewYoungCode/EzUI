@@ -1,9 +1,9 @@
 #include "ComboBox.h"
 
 namespace ezui {
-	Control* ComboBox::AddChild(Control* childCtl)
+	Control* ComboBox::Add(Control* childCtl)
 	{
-		return __super::AddChild(childCtl);
+		return __super::Add(childCtl);
 	}
 	void ComboBox::Remove(Control* childCtl, bool freeCtrl)
 	{
@@ -12,8 +12,8 @@ namespace ezui {
 	void ComboBox::Init()
 	{
 		this->m_textBox.SetReadOnly(true);
-		this->AddChild(&m_textBox);
-		this->AddChild(&m_UpDown);
+		this->Add(&m_textBox);
+		this->Add(&m_UpDown);
 
 		m_UpDown.EventHandler = [&](Control* sd, EventArgs& arg)->void {
 			if (arg.EventType == Event::OnPaint) {
@@ -98,7 +98,7 @@ namespace ezui {
 		Label* lb = new Label;
 		lb->SetDockStyle(DockStyle::Horizontal);
 		lb->SetText(text);
-		m_list.AddChild(lb);
+		m_list.Add(lb);
 		lb->HoverStyle.BackColor = Color::Gray;
 		lb->HoverStyle.ForeColor = Color::White;
 

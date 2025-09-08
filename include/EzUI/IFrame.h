@@ -8,7 +8,7 @@ namespace ezui {
 	private:
 		UILoader m_umg;//内部UI管理器
 	private:
-		virtual Control* AddChild(Control* childCtl)override final;
+		virtual Control* Add(Control* childCtl)override final;
 		virtual void Remove(Control* childCtl, bool freeCtrl = false)override final;
 	public:
 		//对外暴露消息通知回调

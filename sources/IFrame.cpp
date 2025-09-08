@@ -24,12 +24,12 @@ namespace ezui {
 		m_umg.LoadXml(fileName);
 		m_umg.SetupUI(this);
 	}
-	Control* IFrame::AddChild(Control* childCtrl)
+	Control* IFrame::Add(Control* childCtrl)
 	{
 		//IFrame下只允许有一个控件并且会随着IFrame拉伸
 		this->m_controls.clear();//清除子控件
 		if (childCtrl) {
-			auto* ctrl = __super::AddChild(childCtrl);
+			auto* ctrl = __super::Add(childCtrl);
 			childCtrl->SetDockStyle(DockStyle::Fill);
 			return ctrl;
 		}
@@ -40,7 +40,7 @@ namespace ezui {
 		__super::Remove(childCtl, freeCtrl);
 	}
 	void IFrame::SetLayout(Control* ctrl) {
-		this->AddChild(ctrl);
+		this->Add(ctrl);
 	}
 	Control* IFrame::GetLayout() {
 		return this->GetControl(0);

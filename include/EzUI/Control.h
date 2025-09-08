@@ -499,10 +499,10 @@ namespace ezui {
 		bool IsEnabled();
 
 		// 在指定位置插入子控件
-		virtual Control* InsertChild(int pos, Control* childCtl);
+		virtual Control* Insert(int pos, Control* childCtl);
 
 		// 添加控件到末尾（如果是弹簧控件，在释放时将自动销毁）
-		virtual Control* AddChild(Control* childCtrl);
+		virtual Control* Add(Control* childCtrl);
 
 		//解析xml字符串并添加到控件集合末尾
 		virtual Control* Append(const UIString& xmlStr);

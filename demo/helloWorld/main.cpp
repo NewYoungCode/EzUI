@@ -39,7 +39,7 @@ public:
 			ck->CheckedStyle.BackImage = Image::Make("headImg.jpg");
 			ck->SetText("aaa" + std::to_string(i));
 
-			main->AddChild(ck);
+			main->Add(ck);
 		}
 
 		SetLayout(main);
@@ -123,7 +123,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 				frm.ShowModal();
 			}
 			};
-		list.AddChild(lb);
+		list.Add(lb);
 	}
 
 	ComboBox cbox;
@@ -141,7 +141,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 
 
 	TreeView treeView;
-	mainLayout.AddChild(&treeView);
+	mainLayout.Add(&treeView);
 	for (size_t i = 0; i < 20; i++)
 	{
 		treeView.AddNode("nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_"+std::to_string(i));

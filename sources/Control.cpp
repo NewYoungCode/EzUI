@@ -1172,7 +1172,7 @@ namespace ezui {
 		}
 		return -1;
 	}
-	Control* Control::AddChild(Control* ctl) {
+	Control* Control::Add(Control* ctl) {
 #ifdef _DEBUG
 		auto itor = std::find(m_controls.begin(), m_controls.end(), ctl);
 		if (itor != m_controls.end()) {
@@ -1195,7 +1195,7 @@ namespace ezui {
 		this->TryPendLayout();//添加控件需要将布局重新挂起
 		return ctl;
 	}
-	Control* Control::InsertChild(int pos, Control* ctl)
+	Control* Control::Insert(int pos, Control* ctl)
 	{
 #ifdef _DEBUG
 		{
@@ -1235,7 +1235,7 @@ namespace ezui {
 	}
 	void Control::SetParent(Control* parentCtl)
 	{
-		parentCtl->AddChild(this);
+		parentCtl->Add(this);
 	}
 
 	Control* Control::Append(const UIString& xmlStr) {
@@ -1249,7 +1249,7 @@ namespace ezui {
 			delete loader;
 			return NULL;
 		}
-		return this->AddChild(rootCtrl);
+		return this->Add(rootCtrl);
 	}
 
 	Control* Control::Prepend(const UIString& xmlStr)
@@ -1264,7 +1264,7 @@ namespace ezui {
 			delete loader;
 			return NULL;
 		}
-		return this->InsertChild(0, rootCtrl);
+		return this->Insert(0, rootCtrl);
 	}
 
 	void Control::Remove(Control* ctl, bool freeCtrl)
