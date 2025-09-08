@@ -79,7 +79,7 @@ namespace ezui {
 		ctl = this->OnBuildControl(tagName);
 		if (ctl == NULL) {
 			UIString text = UIString("unknow element \"%s\"").format(tagName.c_str());
-			::MessageBoxA(NULL, text.c_str(), "UIManager Erro", MB_OK);
+			::MessageBoxA(NULL, text.c_str(), "UILoader Erro", MB_OK);
 			ctl = new Control;
 		}
 		//设置控件属性
@@ -163,7 +163,7 @@ namespace ezui {
 	{
 		if (!m_rootNode.empty()) {
 			Control* root = m_rootNode[0];
-			parentCtl->Clear();
+			parentCtl->m_controls.clear();//清除子控件
 			parentCtl->Add(root);
 		}
 	}

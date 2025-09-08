@@ -9,6 +9,8 @@ namespace ezui {
 		friend class TabLayout;
 		friend class TileListView;
 		friend class TextBox;
+		friend class UILoader;
+		friend class IFrame;
 	private:
 		//顶层窗口句柄
 		HWND m_hWnd = NULL;

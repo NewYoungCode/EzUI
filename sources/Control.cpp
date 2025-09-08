@@ -1139,12 +1139,6 @@ namespace ezui {
 	}
 	Control::~Control()
 	{
-		for (auto& it : m_controls) {
-			it->m_parent = NULL;//告诉孩子们爸爸已经没了
-		}
-		if (m_parent && !m_parent->IsDestroying()) {
-			m_parent->Remove(this);
-		}
 		auto* publicData = GetWindowContext();
 		//清除绑定信息
 		if (publicData) {
@@ -1278,9 +1272,9 @@ namespace ezui {
 		//寻找控件看是否包含
 		auto itor = ::std::find(m_controls.begin(), m_controls.end(), ctl);
 		if (itor != m_controls.end()) {
+			m_controls.erase(itor);
 			ctl->OnRemove();
 			this->TryPendLayout();//移除控件需要将布局重新挂起
-			m_controls.erase(itor);
 			auto itor2 = ::std::find(m_viewControls.begin(), m_viewControls.end(), ctl);
 			if (itor2 != m_viewControls.end()) {
 				m_viewControls.erase(itor2);
@@ -1488,7 +1482,7 @@ namespace ezui {
 	void Control::ApplyParentStyles()
 	{
 		//依次往父控件找(找到合适的样式就应用上)
-		Control* parent = this;
+		Control* parent = this->GetParent();
 		while (parent) {
 			if (!parent->m_styles.empty()) {
 				ezui::ApplyStyle(this, parent->m_styles);
@@ -1497,6 +1491,12 @@ namespace ezui {
 				break;// 找到第一个 Frame 后就停止,不再继续向上
 			}
 			parent = parent->GetParent();
+		}
+		// 对子控件也应用一遍
+		for (auto& child : m_controls) {
+			if (child) {
+				child->ApplyParentStyles();
+			}
 		}
 	}
 	void Control::SetStyleSheet(const UIString& styleStr)

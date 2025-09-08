@@ -1,4 +1,5 @@
 #include "HLayout.h"
+#include "Spacer.h"
 namespace ezui {
 	void HLayout::SetAttribute(const UIString& key, const UIString& value)
 	{
@@ -11,6 +12,10 @@ namespace ezui {
 			}
 		}
 		__super::SetAttribute(key, value);
+	}
+	void HLayout::AddSpacer(int fixedWidth)
+	{
+		this->Add(new HSpacer(fixedWidth));
 	}
 	void HLayout::OnLayout()
 	{
