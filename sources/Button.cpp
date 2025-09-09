@@ -5,7 +5,7 @@ namespace ezui {
 	{
 		Style.Cursor = LoadCursor(Cursor::HAND);
 	}
-	Button::Button(Object* ownerObject):Label(ownerObject)
+	Button::Button(Object* parentObject):Label(parentObject)
 	{
 		Init();
 	}

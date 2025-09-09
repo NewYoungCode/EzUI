@@ -19,7 +19,7 @@ namespace ezui {
 		//具有键盘焦点的控件
 		Control* m_inputControl = NULL;
 		//窗口公共数据
-		WindowContext* m_publicData = NULL;
+		WindowData* m_publicData = NULL;
 		//窗口句柄
 		HWND m_hWnd = NULL;
 		//鼠标跟踪
@@ -124,7 +124,7 @@ namespace ezui {
 		Control* FindControl(const UIString& objectName);
 
 		//获取公共数据
-		WindowContext* GetWindowContext();
+		WindowData* GetPublicData();
 
 		//窗口句柄
 		HWND Hwnd();
@@ -177,11 +177,11 @@ namespace ezui {
 		//从文件中加载布局
 		void LoadXml(const UIString& fileName);
 
+		//从内存加载布局
+		void LoadXml(const char* fileData, size_t fileSize);
+
 		//获取窗口主布局
 		Control* GetLayout();
-
-		//获取窗口Frame
-		IFrame* GetFrame();
 
 		//设置窗口标题
 		void SetText(const UIString& text);

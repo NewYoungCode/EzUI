@@ -1,6 +1,6 @@
 #include "RadioButton.h"
 namespace ezui {
-	RadioButton::RadioButton(Object* ownerObject):CheckBox(ownerObject)
+	RadioButton::RadioButton(Object* parentObject):CheckBox(parentObject)
 	{
 	}
 	void RadioButton::OnMouseDown(const MouseEventArgs& arg)
@@ -8,7 +8,7 @@ namespace ezui {
 		__super::OnMouseDown(arg);
 		SetCheck(true);
 		if (GetCheck() == true) {
-			for (auto& it : GetParent()->GetControls()) {
+			for (auto& it : Parent->GetControls()) {
 				RadioButton* rbtn = dynamic_cast<RadioButton*>(it);
 				if (rbtn && rbtn != this && rbtn->GetCheck() == true) {
 					rbtn->SetCheck(false);

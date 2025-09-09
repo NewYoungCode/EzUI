@@ -37,11 +37,7 @@ void MainFrm::InitForm() {
 	this->SetResizable(true);
 	this->SetText(L"酷苟音乐");
 
-	while (true)
-	{
-		this->LoadXml("res/xml/main.htm");
-		break;
-	}
+	this->LoadXml("res/xml/main.htm");
 
 	//找到三个Frame
 	titleFrame = (IFrame*)this->FindControl("titleFrame");
@@ -114,7 +110,6 @@ void MainFrm::InitForm() {
 
 			songLsit.push_back(s);
 			vlistLocal->Add(it);
-			vlistLocal->Append(L"<label text=\"测试xml加载文字\" style=\"width:100px;height:20px;font-size:12px;\" />");
 		}
 	}
 
@@ -432,7 +427,7 @@ void MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				break;
 			}
 			if (sender->Name == "dellocal") {
-				LocalItem* songItem = (LocalItem*)sender->GetParent();
+				LocalItem* songItem = (LocalItem*)sender->Parent;
 				vlistLocal->Remove(songItem);
 
 				UIString hash = songItem->GetAttribute("FileHash");
@@ -444,7 +439,7 @@ void MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				return;
 			}
 			if (sender->GetAttribute("tablayout") == "rightView") {
-				size_t pos = sender->GetParent()->IndexOf(sender);
+				size_t pos = sender->Parent->IndexOf(sender);
 				if (pos == 0) {
 					OpenSongView();
 				}
@@ -459,7 +454,7 @@ void MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			if (!sender->GetAttribute("mvhash").empty()) {
 				timer->Stop();
 				UIString mvhash = sender->GetAttribute("mvhash");
-				UIString songHash = sender->GetParent()->GetAttribute("FileHash");
+				UIString songHash = sender->Parent->GetAttribute("FileHash");
 				PlayMv(mvhash, songHash);
 				break;
 			}

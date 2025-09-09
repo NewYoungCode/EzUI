@@ -7,7 +7,7 @@ namespace ezui {
 	private:
 		VListView m_vList;
 	public:
-		TreeView(Object* ownerObject = NULL);
+		TreeView(Object* parentObj = NULL);
 		void AddNode(const UIString& nodeName);
 		virtual ~TreeView();
 	};

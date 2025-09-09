@@ -72,7 +72,7 @@ namespace ezui {
 	public:
 		std::function<void(const UIString&)> TextChanged = NULL;
 	public:
-		TextBox(Object* ownerObject = NULL);
+		TextBox(Object* parentObject = NULL);
 		virtual ~TextBox();
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 		//获取焦点所在光标位置

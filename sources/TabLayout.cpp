@@ -1,7 +1,7 @@
 #include "TabLayout.h"
 
 namespace ezui {
-	TabLayout::TabLayout(Object* ownerObject) :Control(ownerObject)
+	TabLayout::TabLayout(Object* parentObject) :Control(parentObject)
 	{
 		Init();
 	}
@@ -137,10 +137,12 @@ namespace ezui {
 		m_timer->Start();
 	}
 
+
+
 	void TabLayout::SetPage(Control* ctl)
 	{
 #ifdef _DEBUG
-		ASSERT(ctl->m_parent == this);
+		ASSERT(ctl->Parent == this);
 #endif // _DEBUG
 		this->m_pageIndex = this->IndexOf(ctl);
 		this->TryPendLayout();
@@ -163,10 +165,10 @@ namespace ezui {
 
 	void TabLayout::OnChildPaint(PaintEventArgs& args)
 	{
-		m_viewControls.clear();
+		ViewControls.clear();
 		Control* currPage = this->GetPage();
 		if (currPage) {//仅绘制当前页
-			m_viewControls.push_back(currPage);
+			ViewControls.push_back(currPage);
 			currPage->SendEvent(args);
 		}
 	}

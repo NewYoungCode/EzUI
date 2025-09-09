@@ -4,14 +4,8 @@
 namespace ezui {
 	class UI_EXPORT Control :public Object
 	{
-		friend class HListView;
-		friend class VListView;
-		friend class TabLayout;
-		friend class TileListView;
-		friend class TextBox;
-		friend class UILoader;
-		friend class IFrame;
 	private:
+
 		//顶层窗口句柄
 		HWND m_hWnd = NULL;
 
@@ -31,7 +25,7 @@ namespace ezui {
 		float m_scale = 1.0f;
 
 		// 子控件集合
-		ControlCollection m_controls;
+		Controls m_controls;
 
 		// 管理图片的释放
 		PtrManager<Image*> m_imgs;
@@ -77,16 +71,9 @@ namespace ezui {
 
 		// 控件是否可以被命中(值为false情况下就是穿透效果)
 		bool m_hitTestEnabled = true;
-
-		//存储的样式集合
-		std::list<ezui::Style> m_styles;
-
-		// 基于控件中的可见控件集合
-		ControlCollection m_viewControls;
-
-		// 父控件指针
-		Control* m_parent = NULL;
 	protected:
+		// 基于控件中的可见控件集合
+		Controls ViewControls;
 		// 控件当前状态
 		ControlState State = ControlState::Static;
 	public:
@@ -112,11 +99,14 @@ namespace ezui {
 		// 鼠标按下样式
 		ControlStyle ActiveStyle;
 
+		// 父控件指针
+		Control* Parent = NULL;
+
 		//是否添加到所在窗口/IFrame中的OnNotify函数中
 		Event NotifyFlags = Event::OnMouseEvent | Event::OnKeyBoardEvent;
-
 		// 事件处理器
 		std::function<void(Control*, EventArgs&)> EventHandler = NULL;
+
 	private:
 		// 禁止拷贝构造
 		Control(const Control&) = delete;
@@ -130,22 +120,9 @@ namespace ezui {
 		// 所有事件优先进入此函数(内部处理)
 		void OnEvent(EventArgs& arg);
 
-		//递归子控件给匹配成功的样式应用上
-		void ApplyChildStyles(const std::list<ezui::Style>& styles);
-
-		//向上匹配样式(直到所属的Frame层)
-		void ApplyParentStyles();
 	protected:
 		//属性或者css样式都适用(css样式和属性都可以设置这些,只对静态样式生效)
 		virtual bool ApplyStyleProperty(const UIString& key, const UIString& value);
-
-		/// <summary>
-		/// 为当前控件的指定状态设置单个样式属性
-		/// </summary>
-		/// <param name="style">目标状态样式对象,例如 this->HoverStyle</param>
-		/// <param name="key">样式键名,例如 "font-size"</param>
-		/// <param name="value">样式值,例如 "13px"</param>
-		virtual void SetStyle(ControlStyle& style, const UIString& key, const UIString& value);
 
 		// 设置内容宽度，仅限子类使用
 		virtual void SetContentWidth(int width);
@@ -290,14 +267,14 @@ namespace ezui {
 		int GetFontSize(ControlState _state = ControlState::None);
 
 		//获取公共数据
-		WindowContext* GetWindowContext();
+		WindowData* GetPublicData();
 
 		//获取上层Frame容器
 		IFrame* GetFrame();
 	public:
 
 		// 构造函数 可传入父对象(由父对象自动管理内存)
-		Control(Object* ownerObject = NULL);
+		Control(Object* parentObject = NULL);
 
 		// 析构函数
 		virtual ~Control();
@@ -451,13 +428,10 @@ namespace ezui {
 		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue);
 
 		// 获取当前可见的子控件集合
-		const ControlCollection& GetCachedViewControls();
+		const Controls& GetViewControls();
 
-		//获取父控件
-		Control* GetParent();
-
-		// 获取所有子控件集合
-		const ControlCollection& GetControls();
+		// 获取所有子控件（不建议直接修改）
+		const Controls& GetControls();
 
 		// 使用下标获取控件，自动跳过 spacer 类控件
 		Control* GetControl(int pos);
@@ -472,7 +446,7 @@ namespace ezui {
 		Control* FindControl(const UIString& ctlName);
 
 		// 根据属性查找所有匹配控件（包括自身）
-		ControlCollection FindControl(const UIString& attrName, const UIString& attrValue);
+		Controls FindControl(const UIString& attrName, const UIString& attrValue);
 
 		// 根据属性查找第一个匹配控件（包括自身）
 		Control* FindSingleControl(const UIString& attrName, const UIString& attrValue);
@@ -481,7 +455,7 @@ namespace ezui {
 		Control* FindChild(const UIString& ctlName);
 
 		// 根据属性查找所有匹配的子控件（仅限直接子集）
-		ControlCollection FindChild(const UIString& attrName, const UIString& attrValue);
+		Controls FindChild(const UIString& attrName, const UIString& attrValue);
 
 		// 根据属性查找第一个匹配的子控件（仅限直接子集）
 		Control* FindSingleChild(const UIString& attrName, const UIString& attrValue);
@@ -499,16 +473,10 @@ namespace ezui {
 		bool IsEnabled();
 
 		// 在指定位置插入子控件
-		virtual Control* Insert(int pos, Control* childCtl);
+		virtual void Insert(int pos, Control* childCtl);
 
 		// 添加控件到末尾（如果是弹簧控件，在释放时将自动销毁）
-		virtual Control* Add(Control* childCtrl);
-
-		//解析xml字符串并添加到控件集合末尾
-		virtual Control* Append(const UIString& xmlStr);
-
-		//解析xml字符串并添加到控件集合第一位
-		virtual Control* Prepend(const UIString& xmlStr);
+		virtual Control* Add(Control* childCtl);
 
 		// 移除控件，freeCtrl 标志是否释放控件内存
 		virtual void Remove(Control* childCtl, bool freeCtrl = false);
@@ -521,12 +489,6 @@ namespace ezui {
 
 		// 清空所有子控件，freeChilds 决定是否释放子控件内存
 		virtual void Clear(bool freeChilds);
-
-		//是否为弹簧控件
-		virtual bool IsSpacer();
-
-		//是否为Frame
-		virtual bool IsFrame();
 
 		// 设置控件可见性
 		virtual void SetVisible(bool flag);
@@ -552,18 +514,11 @@ namespace ezui {
 		// 立即强制刷新控件区域并更新无效区域（且立即触发布局）
 		virtual void Refresh();
 
-		/// <summary>
-		/// 为当前控件的指定状态批量设置样式（使用分号分隔）
-		/// </summary>
-		/// <param name="state">控件状态,例如 ControlState::Hover</param>
-		/// <param name="styleStr">样式字符串,例如 "font-size: 13px; color: #ffffff;"</param>
-		virtual void SetStyleSheet(ControlState state, const UIString& styleStr);
+		//传入Style的引用 处理key value
+		virtual void SetStyle(ControlStyle& style, const UIString& key, const UIString& value);
 
-		/// <summary>
-		/// 设置样式集合,并自动匹配应用到符合条件的子控件
-		/// </summary>
-		/// <param name="styleStr">样式字符串,例如 "#btn:hover { font-size:13px; }"</param>
-		virtual void SetStyleSheet(const UIString& styleStr);
+		//传入状态并分析样式字符串
+		virtual void SetStyleSheet(ControlState state, const UIString& styleStr);
 
 		//控件是否被按住
 		bool IsPressed();

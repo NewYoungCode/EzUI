@@ -2,7 +2,7 @@
 #include "Label.h"
 namespace ezui {
 
-	TreeView::TreeView(Object* ownerObject) :HListView(ownerObject)
+	TreeView::TreeView(Object* parentObj) :HListView(parentObj)
 	{
 		m_vList.SetAutoWidth(true);
 		m_vList.SetDockStyle(DockStyle::Vertical);

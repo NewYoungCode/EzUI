@@ -8,7 +8,7 @@ namespace ezui {
 		DWORD dwFlags = WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW | WS_EX_TRANSPARENT;
 		m_hWnd = CreateWindowExW(dwFlags, EZUI_WINDOW_CLASS, L"EzUI_ShadowWindow", WS_POPUP, 0, 0, width, height, NULL, NULL, ezui::__EzUI__HINSTANCE, NULL);
 		ASSERT(m_hWnd);
-		this->m_publicData = new WindowContext;
+		this->m_publicData = new WindowData;
 		//绑定消息过程
 		m_publicData->WndProc = [this](HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) ->LRESULT {
 			return this->WndProc(uMsg, wParam, lParam);

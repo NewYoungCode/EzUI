@@ -30,7 +30,7 @@ namespace ezui {
 			timer->Start();
 		};
 	public:
-		Timer(Object* ownerObject = NULL);
+		Timer(Object* parentObject = NULL);
 		bool IsStopped();
 		void Start();
 		void Stop();

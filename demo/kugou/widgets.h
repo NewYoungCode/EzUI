@@ -28,7 +28,7 @@ public:
 
 //登录窗口
 class LoginFrm :public LayeredWindow {
-	UILoader umg;
+	UIManager umg;
 protected:
 	virtual void OnNotify(Control* sender, EventArgs& args)override;
 public:

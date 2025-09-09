@@ -1,5 +1,5 @@
 #pragma once
-#include "UILoader.h"
+#include "UIManager.h"
 
 namespace ezui {
 	//控件选择器(多功能选择器暂时未完善)

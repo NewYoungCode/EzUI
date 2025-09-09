@@ -3,13 +3,13 @@
 
 namespace ezui {
 	bool g_bClassRegistered = false;
-	NotifyIcon::NotifyIcon(Object* ownerObject) :Object(ownerObject)
+	NotifyIcon::NotifyIcon(Object* parentObj) :Object(parentObj)
 	{
 		if (!g_bClassRegistered) {
 			::WNDCLASSEXW wcex = {};
 			wcex.cbSize = sizeof(wcex);
 			wcex.lpfnWndProc = [](HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)->LRESULT {
-				WindowContext* wndData = (WindowContext*)UI_GET_USERDATA(hwnd);
+				WindowData* wndData = (WindowData*)UI_GET_USERDATA(hwnd);
 				if (wndData && wndData->WndProc) {
 					return wndData->WndProc(hwnd, message, wParam, lParam);
 				}

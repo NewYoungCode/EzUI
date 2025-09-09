@@ -2,7 +2,7 @@
 #undef min
 #undef max
 namespace ezui {
-	TextBox::TextBox(Object* ownerObject) :Control(ownerObject)
+	TextBox::TextBox(Object* parentObject) :Control(parentObject)
 	{
 		Init();
 	}
@@ -14,7 +14,7 @@ namespace ezui {
 	void TextBox::Init()
 	{
 		this->GetScrollBar()->SetWidth(5);
-		this->GetScrollBar()->m_parent = this;
+		this->GetScrollBar()->Parent = this;
 		this->GetScrollBar()->OffsetCallback = [=](int offset) {
 			this->Offset(offset);
 			};

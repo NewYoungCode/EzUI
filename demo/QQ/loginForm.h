@@ -12,7 +12,7 @@
 #include "EzUI/HListView.h"//水平带滚动条列表
 #include "EzUI/TileListView.h"//瓦片列表
 #include "EzUI/LayeredWindow.h"//分层窗口类
-#include "ezui/UILoader.h"//ui管理类(使用xml生成控件)
+#include "ezui/UIManager.h"//ui管理类(使用xml生成控件)
 
 #pragma comment(lib,"ezui.lib")
 using namespace ezui;
@@ -26,7 +26,7 @@ class LoginForm :public Form
 {
 private:
 	//ui管理类
-	UILoader umg;
+	UIManager umg;
 protected:
 	virtual void OnNotify(Control* sender, EventArgs& args)override;//重载事件通知
 	virtual void OnClose(bool& close)override;//当窗口关闭的时候

@@ -1,8 +1,8 @@
 #include "Animation.h"
 namespace ezui {
 
-	Animation::Animation(Object* ownerObject)
-		: Object(ownerObject)
+	Animation::Animation(Object* parentObject)
+		: Object(parentObject)
 	{
 		m_timer = new Timer(this);
 		m_timer->Tick = [this](Timer* t) {

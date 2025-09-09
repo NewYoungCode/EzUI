@@ -3,7 +3,7 @@ namespace ezui {
 	void VListView::Init()
 	{
 		this->GetScrollBar()->SetHeight(Height());//滚动条宽度
-		this->GetScrollBar()->m_parent = this;
+		this->GetScrollBar()->Parent = this;
 		this->GetScrollBar()->OffsetCallback = [this](int offsetValue)->void {
 			if (this->GetScrollBar()->ScrollPos() >= 1) {
 				NextPage();
@@ -11,7 +11,7 @@ namespace ezui {
 			this->Offset(offsetValue);
 			};
 	}
-	VListView::VListView(Object* ownerObject) :PagedListView(ownerObject)
+	VListView::VListView(Object* parentObject) :PagedListView(parentObject)
 	{
 		Init();
 	}
@@ -72,12 +72,12 @@ namespace ezui {
 	}
 
 	void VListView::OnChildPaint(PaintEventArgs& args) {
-		m_viewControls.clear();
+		ViewControls.clear();
 		//绘制子控件
 		auto rect = Rect(0, 0, Width(), Height());
 		for (auto& it : GetControls()) {
 			if (rect.IntersectsWith(it->GetRect())) {
-				m_viewControls.push_back(it);
+				ViewControls.push_back(it);
 			}
 			if (it->Y() >= Height()) {
 				break;

@@ -1,6 +1,6 @@
 #include "Label.h"
 namespace ezui {
-	Label::Label(Object* ownerObject) :Control(ownerObject)
+	Label::Label(Object* parentObject) :Control(parentObject)
 	{
 	}
 	Label::~Label() {}
@@ -129,14 +129,14 @@ namespace ezui {
 			this->SetContentSize(box);
 			if (IsAutoWidth()) {
 				this->SetFixedWidth(box.Width + this->TextMargin.GetHSpace());
-				if (GetParent()) {
-					GetParent()->RefreshLayout();
+				if (Parent) {
+					Parent->RefreshLayout();
 				}
 			}
 			if (IsAutoHeight()) {
 				this->SetFixedHeight(box.Height + this->TextMargin.GetVSpace());
-				if (GetParent()) {
-					GetParent()->RefreshLayout();
+				if (Parent) {
+					Parent->RefreshLayout();
 				}
 			}
 		}

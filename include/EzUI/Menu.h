@@ -10,7 +10,7 @@ namespace ezui {
 	public:
 		//菜单子项被选点击的回调事件 UINT:子项ID
 		std::function<void(UINT_PTR)> MouseClick = NULL;
-		Menu(Object* ownerObject = NULL);
+		Menu(Object* parentObj = NULL);
 		virtual ~Menu();
 		HMENU HMenu();
 		UINT_PTR Append(const UIString& text);

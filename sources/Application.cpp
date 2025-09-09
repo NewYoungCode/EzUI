@@ -1,6 +1,6 @@
 #include "Application.h"
 #include "LayeredWindow.h"
-#include "UILoader.h"
+#include "UIManager.h"
 #include <CommCtrl.h>
 
 #undef FindResource
@@ -49,10 +49,10 @@ namespace ezui {
 				g_hWnds.erase(itor);
 			}
 		}
-		WindowContext* winCtx = (WindowContext*)UI_GET_USERDATA(hWnd);
+		WindowData* wndData = (WindowData*)UI_GET_USERDATA(hWnd);
 		//执行消息过程
-		if (winCtx && winCtx->WndProc) {
-			return winCtx->WndProc(hWnd, message, wParam, lParam);
+		if (wndData && wndData->WndProc) {
+			return wndData->WndProc(hWnd, message, wParam, lParam);
 		}
 		return ::DefWindowProc(hWnd, message, wParam, lParam);
 	}

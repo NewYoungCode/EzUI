@@ -1,6 +1,6 @@
 #include "PictureBox.h"
 namespace ezui {
-	PictureBox::PictureBox(Object* ownerObject) :Control(ownerObject)
+	PictureBox::PictureBox(Object* parentObject) :Control(parentObject)
 	{
 		Init();
 	}

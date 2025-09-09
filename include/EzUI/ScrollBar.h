@@ -3,9 +3,7 @@
 
 namespace ezui {
 	class UI_EXPORT ScrollBar :public Control {
-		friend class VScrollBar;
-		friend class HScrollBar;
-	private:
+	protected:
 		//鼠标是否已经按下
 		bool m_mouseDown = false;
 		//上一次鼠标命中的坐标
@@ -63,7 +61,7 @@ namespace ezui {
 		bool Scrollable();
 		//当父控件发生内容发生改变 请调用刷新滚动条
 		void RefreshScroll();
-		ScrollBar(Object* ownerObject = NULL);
+		ScrollBar(Object* parentObject = NULL);
 		virtual ~ScrollBar();
 	};
 };

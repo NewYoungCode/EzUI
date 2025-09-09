@@ -428,8 +428,8 @@ namespace ezui {
 		::DestroyCursor(hCursor);
 	}
 	void DefaultNotify(Control* sender, EventArgs& args) {
-		WindowContext* winData = NULL;
-		if (!sender || !(winData = sender->GetWindowContext())) {
+		WindowData* winData = NULL;
+		if (!sender || !(winData = sender->GetPublicData())) {
 			return;
 		}
 		auto* win = winData->Window;
@@ -475,10 +475,10 @@ namespace ezui {
 			}
 			UIString tabName = sender->GetAttribute("tablayout");
 			if (!tabName.empty()) {
-				auto ctls = sender->GetParent()->FindControl("tablayout", tabName);
+				auto ctls = sender->Parent->FindControl("tablayout", tabName);
 				IFrame* frame = sender->GetFrame();
 				TabLayout* tabLayout = dynamic_cast<TabLayout*>(frame ? frame->FindControl(tabName) : win->FindControl(tabName));
-				if (tabLayout && sender->GetParent()) {
+				if (tabLayout && sender->Parent) {
 					int pos = 0;
 					for (auto& it : ctls)
 					{
@@ -513,15 +513,13 @@ namespace ezui {
 		}
 	}
 
-	Object::Object(Object* ownerObject)
+	Object::Object(Object* parentObject)
 	{
-		if (ownerObject) {
-			ownerObject->Attach(this);
+		if (parentObject) {
+			parentObject->Attach(this);
 		}
 	}
 	Object::~Object() {
-		m_bIsDestroying = true;
-		m_childObjects.Clear();
 	}
 
 	void Object::SetAttribute(const UIString& attrName, const UIString& attrValue) {
@@ -563,11 +561,6 @@ namespace ezui {
 	void Object::Detach(Object* obj)
 	{
 		m_childObjects.Remove(obj);
-	}
-
-	bool Object::IsDestroying()
-	{
-		return m_bIsDestroying;
 	}
 
 	void Object::DeleteLater()

@@ -30,7 +30,6 @@ namespace ezui {
 		}
 		String::String(const std::string& str)noexcept :std::string(str) {}
 		String::String(const char* szbuf)noexcept :std::string(szbuf) {}
-		String::String(const char* pStr, size_t count) noexcept :std::string(pStr, count) {}
 		String::String(const wchar_t* szbuf)noexcept {
 			if (szbuf == NULL)return;
 			UnicodeToUTF8(szbuf, this);

@@ -8,7 +8,7 @@ namespace ezui {
 	private:
 		void Init();
 	public:
-		Button(Object* ownerObject = NULL);
+		Button(Object* parentObject = NULL);
 		virtual ~Button();
 	};
 };

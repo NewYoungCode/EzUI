@@ -146,13 +146,13 @@ namespace ezui {
 		if (__IsValid(_##_filed)) {\
 				return _##_filed; \
 		}\
-		Control* parentCtrl = this->GetParent(); \
+		Control* parentCtrl = this->Parent; \
 		while (parentCtrl){ \
 			_##_filed = parentCtrl->GetStyle(ControlState::Static).##_filed; \
 			if (__IsValid(_##_filed)) {\
 				break; \
 			}\
-			parentCtrl = parentCtrl->GetParent(); \
+			parentCtrl = parentCtrl->Parent; \
 		}\
 		return _##_filed; \
 	}\
@@ -239,9 +239,9 @@ namespace ezui {
 	UI_SUPER_STYLE_BINDFUNC(Color, ForeColor);
 	UI_SUPER_STYLE_BINDFUNC(std::wstring, FontFamily);
 
-	WindowContext* Control::GetWindowContext()
+	WindowData* Control::GetPublicData()
 	{
-		return (WindowContext*)UI_GET_USERDATA(Hwnd());
+		return (WindowData*)UI_GET_USERDATA(Hwnd());
 	}
 
 	IFrame* Control::GetFrame()
@@ -251,26 +251,25 @@ namespace ezui {
 		//依次往上父控件看看有没有当前控件是否在内联页面中
 		while (parent)
 		{
-			if (parent->IsFrame()) {
-				frame = (IFrame*)parent;
+			if (frame = dynamic_cast<IFrame*>(parent)) {
 				break;
 			}
-			parent = parent->m_parent;
+			parent = parent->Parent;
 		}
 		return frame;
 	}
 
-	Control::Control(Object* ownerObject) :Object(ownerObject)
+	Control::Control(Object* parentObject) :Object(parentObject)
 	{
 	}
 	void Control::OnChildPaint(PaintEventArgs& args)
 	{
-		m_viewControls.clear();
+		ViewControls.clear();
 		//绘制子控件
 		Rect rect(0, 0, Width(), Height());
 		for (auto& it : m_controls) {
 			if (rect.IntersectsWith(it->GetRect())) {
-				m_viewControls.push_back(it);
+				ViewControls.push_back(it);
 			}
 			it->SendEvent(args);
 		}
@@ -380,11 +379,6 @@ namespace ezui {
 			if (this->ApplyStyleProperty(attrName, attrValue)) {
 				break;
 			}
-			if (attrName == "style") {
-				//加载内联样式
-				this->SetStyleSheet(ControlState::Static, attrValue);
-				break;
-			}
 			if (attrName == "name" || attrName == "id") {
 				this->Name = attrValue;
 				break;
@@ -486,15 +480,10 @@ namespace ezui {
 			}
 		} while (false);
 	}
-	const ControlCollection& Control::GetCachedViewControls()
+	const Controls& Control::GetViewControls()
 	{
-		return this->m_viewControls;
+		return this->ViewControls;
 	}
-
-	Control* Control::GetParent() {
-		return m_parent;
-	}
-
 	float Control::GetScale()
 	{
 		return this->m_scale;
@@ -569,15 +558,15 @@ namespace ezui {
 	void Control::SetRateWidth(float rateWidth)
 	{
 		m_rateSize.Width = rateWidth;
-		if (m_parent) {
-			SetFixedWidth(m_parent->Width() * rateWidth);
+		if (Parent) {
+			SetFixedWidth(Parent->Width() * rateWidth);
 		}
 	}
 	void Control::SetRateHeight(float rateHeight)
 	{
 		m_rateSize.Height = rateHeight;
-		if (m_parent) {
-			SetFixedHeight(m_parent->Height() * rateHeight);
+		if (Parent) {
+			SetFixedHeight(Parent->Height() * rateHeight);
 		}
 	}
 	void Control::SetFixedSize(const Size& size)
@@ -588,18 +577,18 @@ namespace ezui {
 	}
 	int Control::GetFixedWidth()
 	{
-		if (m_parent) {
+		if (Parent) {
 			if (m_rateSize.Width > EZUI_FLOAT_EPSILON) {
-				m_fixedSize.Width = m_parent->Width() * m_rateSize.Width + 0.5;
+				m_fixedSize.Width = Parent->Width() * m_rateSize.Width + 0.5;
 			}
 		}
 		return m_fixedSize.Width;
 	}
 	int Control::GetFixedHeight()
 	{
-		if (m_parent) {
+		if (Parent) {
 			if (m_rateSize.Height > EZUI_FLOAT_EPSILON) {
-				m_fixedSize.Height = m_parent->Height() * m_rateSize.Height + 0.5;
+				m_fixedSize.Height = Parent->Height() * m_rateSize.Height + 0.5;
 			}
 		}
 		return m_fixedSize.Height;
@@ -625,7 +614,7 @@ namespace ezui {
 		const Rect& rect = GetRect();
 		int x = rect.X;
 		int y = rect.Y;
-		while ((pCtrl = pCtrl->m_parent))
+		while ((pCtrl = pCtrl->Parent))
 		{
 			x += pCtrl->X();
 			y += pCtrl->Y();
@@ -647,8 +636,8 @@ namespace ezui {
 	}
 	void Control::SetDockStyle(const DockStyle& dockStyle)
 	{
-		if (dockStyle != this->m_dock && m_parent) {
-			m_parent->TryPendLayout();
+		if (dockStyle != this->m_dock && Parent) {
+			Parent->TryPendLayout();
 		}
 		this->m_dock = dockStyle;
 	}
@@ -700,9 +689,9 @@ namespace ezui {
 			this->SetFixedHeight(m_contentSize.Height);
 			this->EndLayout();
 			this->RefreshLayout();
-			if (m_parent) {
-				m_parent->RefreshLayout();
-				m_parent->Invalidate();
+			if (Parent) {
+				Parent->RefreshLayout();
+				Parent->Invalidate();
 			}
 			return;
 		}
@@ -710,9 +699,9 @@ namespace ezui {
 			this->SetFixedWidth(m_contentSize.Width);
 			this->EndLayout();
 			this->RefreshLayout();
-			if (m_parent) {
-				m_parent->RefreshLayout();
-				m_parent->Invalidate();
+			if (Parent) {
+				Parent->RefreshLayout();
+				Parent->Invalidate();
 			}
 			return;
 		}
@@ -725,13 +714,13 @@ namespace ezui {
 		int _height;
 		for (auto& it : GetControls()) {
 
-			if (m_parent) {
+			if (Parent) {
 				//设置了宽高百分比的控件
 				if (it->m_rateSize.Width > EZUI_FLOAT_EPSILON) {
-					it->SetFixedWidth(m_parent->Width() * it->m_rateSize.Width);
+					it->SetFixedWidth(Parent->Width() * it->m_rateSize.Width);
 				}
 				if (it->m_rateSize.Height > EZUI_FLOAT_EPSILON) {
-					it->SetFixedHeight(m_parent->Height() * it->m_rateSize.Height);
+					it->SetFixedHeight(Parent->Height() * it->m_rateSize.Height);
 				}
 			}
 
@@ -834,11 +823,11 @@ namespace ezui {
 		do
 		{
 			if (key == "x") {
-				this->SetLocation({ (int)(__ToFloat(value) * this->GetScale() + 0.5) ,this->Y() });
+				this->SetLocation({ (int)__ToFloat(value) ,this->Y() });
 				break;
 			}
 			if (key == "y") {
-				this->SetLocation({ this->X(),(int)(__ToFloat(value) * this->GetScale() + 0.5) });
+				this->SetLocation({ this->X(),(int)__ToFloat(value) });
 				break;
 			}
 			if (key == "width") {
@@ -850,7 +839,7 @@ namespace ezui {
 						this->SetRateWidth(__ToFloat(value));//基于父控件的百分比
 					}
 					else {
-						this->SetFixedWidth(__ToFloat(value) * this->GetScale() + 0.5);//如果单独设置了宽高那就是绝对宽高了
+						this->SetFixedWidth(__ToFloat(value));//如果单独设置了宽高那就是绝对宽高了
 					}
 				}
 				break;
@@ -864,43 +853,43 @@ namespace ezui {
 						this->SetRateHeight(__ToFloat(value));//基于父控件的百分比
 					}
 					else {
-						this->SetFixedHeight(__ToFloat(value) * this->GetScale() + 0.5);//如果单独设置了宽高那就是绝对宽高了
+						this->SetFixedHeight(__ToFloat(value));//如果单独设置了宽高那就是绝对宽高了
 					}
 				}
 				break;
 			}
 			if (key == "margin-left") {
-				this->Margin.Left = __ToFloat(value) * this->GetScale() + 0.5;
+				this->Margin.Left = __ToFloat(value);
 				break;
 			}
 			if (key == "margin-top") {
-				this->Margin.Top = __ToFloat(value) * this->GetScale() + 0.5;
+				this->Margin.Top = __ToFloat(value);
 				break;
 			}
 			if (key == "margin-right") {
-				this->Margin.Right = __ToFloat(value) * this->GetScale() + 0.5;
+				this->Margin.Right = __ToFloat(value);
 				break;
 			}
 			if (key == "margin-bottom") {
-				this->Margin.Bottom = __ToFloat(value) * this->GetScale() + 0.5;
+				this->Margin.Bottom = __ToFloat(value);
 				break;
 			}
 			if (key == "margin") {//遵循web前端的规则
 				auto strs = value.replace(' ', ',').split(",");//去掉空格并转为数组
 				if (strs.size() == 1) {
-					this->Margin = __ToFloat(strs[0]) * this->GetScale() + 0.5;
+					this->Margin = __ToFloat(strs[0]);
 					break;
 				}
 				if (strs.size() == 2) {
-					this->Margin.Top = this->Margin.Bottom = __ToFloat(strs[0]) * this->GetScale() + 0.5;
-					this->Margin.Left = this->Margin.Right = __ToFloat(strs[1]) * this->GetScale() + 0.5;
+					this->Margin.Top = this->Margin.Bottom = __ToFloat(strs[0]);
+					this->Margin.Left = this->Margin.Right = __ToFloat(strs[1]);
 					break;
 				}
 				if (strs.size() == 4) {
-					this->Margin.Top = __ToFloat(strs[0]) * this->GetScale() + 0.5;
-					this->Margin.Right = __ToFloat(strs[1]) * this->GetScale() + 0.5;
-					this->Margin.Bottom = __ToFloat(strs[2]) * this->GetScale() + 0.5;
-					this->Margin.Left = __ToFloat(strs[3]) * this->GetScale() + 0.5;
+					this->Margin.Top = __ToFloat(strs[0]);
+					this->Margin.Right = __ToFloat(strs[1]);
+					this->Margin.Bottom = __ToFloat(strs[2]);
+					this->Margin.Left = __ToFloat(strs[3]);
 					break;
 				}
 				break;
@@ -1035,7 +1024,7 @@ namespace ezui {
 #endif 
 		this->OnPaint(args);
 		//通知到主窗口OnNotify或者IFrame的OnNotify函数中
-		WindowContext* publicData = NULL;
+		WindowData* publicData = NULL;
 		if ((this->NotifyFlags & Event::OnPaint) == Event::OnPaint) {
 			//向Frame层通知事件
 			IFrame* frame = this->GetFrame();
@@ -1061,7 +1050,7 @@ namespace ezui {
 		args.PopLayer();//弹出纹理层
 
 #ifdef _DEBUG
-		if ((publicData = this->GetWindowContext()) && publicData->Debug) {
+		if ((publicData = this->GetPublicData()) && publicData->Debug) {
 			float width = 1 * this->GetScale();
 			Color color = publicData->DebugColor;
 			color.SetA(127);
@@ -1139,7 +1128,7 @@ namespace ezui {
 	}
 	Control::~Control()
 	{
-		auto* publicData = GetWindowContext();
+		auto* publicData = GetPublicData();
 		//清除绑定信息
 		if (publicData) {
 			publicData->CleanControl(this);
@@ -1162,7 +1151,7 @@ namespace ezui {
 		int pos = 0;
 		for (auto itor = pControls.begin(); itor != pControls.end(); ++itor)
 		{
-			if ((*itor)->IsSpacer()) {
+			if (dynamic_cast<Spacer*>(*itor)) {
 				continue;
 			}
 			if ((*itor) == childCtl) {
@@ -1179,13 +1168,12 @@ namespace ezui {
 			ASSERT(!"The control already exists and cannot be added repeatedly");
 		}
 #endif
-		if (ctl->IsSpacer()) {//是否为弹簧控件
+		if (dynamic_cast<Spacer*>(ctl)) {
 			this->Attach(ctl);
 		}
 		m_controls.push_back(ctl);
 		ctl->SetHwnd(this->Hwnd());
-		ctl->m_parent = this;
-		ctl->ApplyParentStyles();//样式匹配
+		ctl->Parent = this;
 
 		if (ctl->GetScale() != this->GetScale()) {
 			ctl->SendEvent(DpiChangeEventArgs(this->GetScale()));
@@ -1195,7 +1183,7 @@ namespace ezui {
 		this->TryPendLayout();//添加控件需要将布局重新挂起
 		return ctl;
 	}
-	Control* Control::Insert(int pos, Control* ctl)
+	void Control::Insert(int pos, Control* ctl)
 	{
 #ifdef _DEBUG
 		{
@@ -1205,7 +1193,7 @@ namespace ezui {
 			}
 		}
 #endif
-		if (ctl->IsSpacer()) {//是否为弹簧控件
+		if (dynamic_cast<Spacer*>(ctl)) {
 			this->Attach(ctl);
 		}
 		size_t i = 0;
@@ -1223,48 +1211,16 @@ namespace ezui {
 			m_controls.insert(itor, ctl);
 		}
 		ctl->SetHwnd(this->Hwnd());
-		ctl->m_parent = this;
-		ctl->ApplyParentStyles();//样式匹配
-
+		ctl->Parent = this;
 		if (ctl->GetScale() != this->GetScale()) {
 			ctl->SendEvent(DpiChangeEventArgs(this->GetScale()));
 		}
 		ctl->TryPendLayout();
 		this->TryPendLayout();//添加控件需要将布局重新挂起
-		return ctl;
 	}
 	void Control::SetParent(Control* parentCtl)
 	{
 		parentCtl->Add(this);
-	}
-
-	Control* Control::Append(const UIString& xmlStr) {
-		UILoader* loader = new UILoader;
-		loader->LoadXml(xmlStr.c_str(), xmlStr.size());
-		Control* rootCtrl = loader->GetRoot();
-		if (rootCtrl) {//创建控件成功
-			rootCtrl->Attach(loader);//把loader绑定到rootCtrl控件中跟随释放(解决xml创建控件自动释放的问题)
-		}
-		else {
-			delete loader;
-			return NULL;
-		}
-		return this->Add(rootCtrl);
-	}
-
-	Control* Control::Prepend(const UIString& xmlStr)
-	{
-		UILoader* loader = new UILoader;
-		loader->LoadXml(xmlStr.c_str(), xmlStr.size());
-		Control* rootCtrl = loader->GetRoot();
-		if (rootCtrl) {//创建控件成功
-			rootCtrl->Attach(loader);//把loader绑定到rootCtrl控件中跟随释放(解决xml创建控件自动释放的问题)
-		}
-		else {
-			delete loader;
-			return NULL;
-		}
-		return this->Insert(0, rootCtrl);
 	}
 
 	void Control::Remove(Control* ctl, bool freeCtrl)
@@ -1272,12 +1228,12 @@ namespace ezui {
 		//寻找控件看是否包含
 		auto itor = ::std::find(m_controls.begin(), m_controls.end(), ctl);
 		if (itor != m_controls.end()) {
-			m_controls.erase(itor);
 			ctl->OnRemove();
 			this->TryPendLayout();//移除控件需要将布局重新挂起
-			auto itor2 = ::std::find(m_viewControls.begin(), m_viewControls.end(), ctl);
-			if (itor2 != m_viewControls.end()) {
-				m_viewControls.erase(itor2);
+			m_controls.erase(itor);
+			auto itor2 = ::std::find(ViewControls.begin(), ViewControls.end(), ctl);
+			if (itor2 != ViewControls.end()) {
+				ViewControls.erase(itor2);
 			}
 			if (freeCtrl) {
 				delete ctl;
@@ -1294,7 +1250,7 @@ namespace ezui {
 		for (auto& it : m_controls) {
 			it->OnRemove();
 		}
-		auto* publicData = GetWindowContext();
+		auto* publicData = GetPublicData();
 		if (publicData) {
 			publicData->CleanControl(this);
 		}
@@ -1312,7 +1268,7 @@ namespace ezui {
 			if (it->Name == ctlName) {
 				return it;
 			}
-			if (it->IsFrame()) {
+			if (dynamic_cast<IFrame*>(it)) {
 				continue;//对IFrame内的控件进行隔离
 			}
 			auto ctl = it->FindControl(ctlName);
@@ -1320,9 +1276,9 @@ namespace ezui {
 		}
 		return NULL;
 	}
-	ControlCollection Control::FindControl(const UIString& attrName, const UIString& attrValue)
+	Controls Control::FindControl(const UIString& attrName, const UIString& attrValue)
 	{
-		ControlCollection ctls;
+		Controls ctls;
 		if (attrName.empty() || attrValue.empty()) {
 			return ctls;
 		}
@@ -1331,7 +1287,7 @@ namespace ezui {
 			if (it->GetAttribute(attrName) == attrValue) {
 				ctls.push_back(it);
 			}
-			if (it->IsFrame()) {
+			if (dynamic_cast<IFrame*>(it)) {
 				continue;//对IFrame内的控件进行隔离
 			}
 			auto _ctls = it->FindControl(attrName, attrValue);
@@ -1362,9 +1318,9 @@ namespace ezui {
 		}
 		return NULL;
 	}
-	ControlCollection Control::FindChild(const UIString& attrName, const UIString& attrValue)
+	Controls Control::FindChild(const UIString& attrName, const UIString& attrValue)
 	{
-		ControlCollection ctls;
+		Controls ctls;
 		if (attrName.empty() || attrValue.empty()) {
 			return ctls;
 		}
@@ -1420,8 +1376,8 @@ namespace ezui {
 	}
 
 	void Control::SetVisible(bool flag) {
-		if (flag != this->m_bVisible && this->m_parent) {
-			this->m_parent->TryPendLayout();
+		if (flag != this->m_bVisible && this->Parent) {
+			this->Parent->TryPendLayout();
 		}
 		this->m_bVisible = flag;
 	}
@@ -1448,14 +1404,14 @@ namespace ezui {
 	}
 
 	bool Control::Invalidate() {
-		auto* publicData = GetWindowContext();
+		auto* publicData = GetPublicData();
 		if (publicData) {
-			if (m_parent && this->IsPendLayout()) {
-				return m_parent->Invalidate();
+			if (Parent && this->IsPendLayout()) {
+				return Parent->Invalidate();
 			}
 			float angle = this->GetAngle();
-			if (!(angle == 0 || angle == 180) && m_parent) {
-				return m_parent->Invalidate();
+			if (!(angle == 0 || angle == 180) && Parent) {
+				return Parent->Invalidate();
 			}
 			if (publicData) {
 				Rect _InvalidateRect = GetClientRect();
@@ -1467,49 +1423,11 @@ namespace ezui {
 	}
 	void Control::Refresh() {
 		if (Invalidate()) {
-			auto* publicData = GetWindowContext();
+			auto* publicData = GetPublicData();
 			if (publicData) {
 				publicData->Refresh();//立即更新全部无效区域
 			}
 		}
-	}
-	void Control::ApplyChildStyles(const std::list<ezui::Style>& styles) {
-		ezui::ApplyStyle(this, styles);      // 先对当前子控件应用
-		for (auto& child : this->m_controls) {
-			child->ApplyChildStyles(styles); // 再递归应用到子控件的子控件
-		}
-	}
-	void Control::ApplyParentStyles()
-	{
-		//依次往父控件找(找到合适的样式就应用上)
-		Control* parent = this->GetParent();
-		while (parent) {
-			if (!parent->m_styles.empty()) {
-				ezui::ApplyStyle(this, parent->m_styles);
-			}
-			if (parent->IsFrame()) {
-				break;// 找到第一个 Frame 后就停止,不再继续向上
-			}
-			parent = parent->GetParent();
-		}
-		// 对子控件也应用一遍
-		for (auto& child : m_controls) {
-			if (child) {
-				child->ApplyParentStyles();
-			}
-		}
-	}
-	void Control::SetStyleSheet(const UIString& styleStr)
-	{
-		std::list<ezui::Style> styles;
-		//分析出样式
-		ezui::AnalysisStyle(styleStr, &styles);
-		//先应用样式
-		if (!styles.empty()) {
-			ApplyChildStyles(styles);  // 递归应用到所有子控件
-		}
-		//保存样式到控件
-		m_styles.splice(m_styles.end(), styles);  // 把 styles 的所有元素移动到 this->Styles 末尾
 	}
 	Rect Control::GetCareRect()
 	{
@@ -1530,8 +1448,8 @@ namespace ezui {
 	}
 	void Control::SetAutoWidth(bool flag)
 	{
-		if (flag != this->m_bAutoWidth && m_parent) {
-			m_parent->TryPendLayout();
+		if (flag != this->m_bAutoWidth && Parent) {
+			Parent->TryPendLayout();
 		}
 		if (flag && Width() == 0) {
 			m_rect.Width = 1;
@@ -1544,8 +1462,8 @@ namespace ezui {
 	}
 	void Control::SetAutoHeight(bool flag)
 	{
-		if (flag != this->m_bAutoHeight && m_parent) {
-			m_parent->TryPendLayout();
+		if (flag != this->m_bAutoHeight && Parent) {
+			Parent->TryPendLayout();
 		}
 		if (flag && Height() == 0) {
 			m_rect.Height = 1;
@@ -1566,16 +1484,16 @@ namespace ezui {
 	}
 	void Control::ComputeClipRect()
 	{
-		if (m_parent) {
+		if (Parent) {
 			Rect& ClipRectRef = *(Rect*)(&this->m_viewRect);//引用父控件的裁剪区域
-			Rect::Intersect(ClipRectRef, this->GetClientRect(), m_parent->m_viewRect);//自身和父控件对比较裁剪区域
+			Rect::Intersect(ClipRectRef, this->GetClientRect(), Parent->m_viewRect);//自身和父控件对比较裁剪区域
 		}
 		else {
 			Rect& ClipRectRef = *(Rect*)(&this->m_viewRect);
 			ClipRectRef = this->GetClientRect();
 		}
 	}
-	const ControlCollection& Control::GetControls()
+	const Controls& Control::GetControls()
 	{
 		return m_controls;
 	}
@@ -1598,7 +1516,7 @@ namespace ezui {
 			if (pControl == this || pControl == this->GetScrollBar()) {
 				return true;
 			}
-			pControl = pControl->m_parent;
+			pControl = pControl->Parent;
 		}
 		return false;
 	}
@@ -1610,32 +1528,24 @@ namespace ezui {
 
 	void Control::Clear(bool freeChilds)
 	{
-		auto itor = m_controls.begin();
-		while (itor != m_controls.end())//循环清除控件
+		auto temp = m_controls;
+		for (auto itor = temp.begin(); itor != temp.end(); ++itor)
 		{
 			Control* it = *itor;
-			itor = m_controls.erase(itor); //erase返回下一个有效迭代器
 			it->OnRemove();
 			if (freeChilds) {
-				this->Detach(it);//子对象存在相同的对象也要跟随移除
+				//子对象存在相同的对象也要跟随移除
+				this->Detach(it);
 				delete it;
 			}
 		}
-
-		this->m_viewControls.clear();//清空可见控件
+		this->ViewControls.clear();//清空可见控件
+		this->m_controls.clear();//清空子控件集合
 		this->TryPendLayout();//挂起布局
 		ScrollBar* scrollBar = this->GetScrollBar();
 		if (scrollBar) {
 			scrollBar->Reset();
 		}
-	}
-	bool Control::IsSpacer()
-	{
-		return false;
-	}
-	bool Control::IsFrame()
-	{
-		return false;
 	}
 	void Control::OnMouseMove(const MouseEventArgs& args)
 	{
@@ -1680,8 +1590,8 @@ namespace ezui {
 	void Control::OnSize(const SizeEventArgs& arg)
 	{
 		this->TryPendLayout();//将自己挂起
-		if (m_parent) {
-			m_parent->TryPendLayout();//将父控件挂起
+		if (Parent) {
+			Parent->TryPendLayout();//将父控件挂起
 		}
 	}
 	ScrollBar* Control::GetScrollBar()
@@ -1738,11 +1648,11 @@ namespace ezui {
 					auto pxs = value.split(" ");
 					float x = 0;
 					__IsPx(pxs[0], x);
-					style.BackImage->DrawPosition.X = x * this->GetScale() + 0.5;
+					style.BackImage->DrawPosition.X = x;
 
 					float y = 0;
 					__IsPx(pxs[1], y);
-					style.BackImage->DrawPosition.Y = y * this->GetScale() + 0.5;
+					style.BackImage->DrawPosition.Y = y;
 				}
 				break;
 			}
@@ -1790,27 +1700,27 @@ namespace ezui {
 				break;
 			}
 			if (key == "border-radius") {
-				style.Border.Radius = __ToFloat(value) * this->GetScale() + 0.5;
+				style.Border.Radius = __ToFloat(value);
 				break;
 			}
 			if (key == "border-top-left-radius") {
-				style.Border.TopLeftRadius = __ToFloat(value) * this->GetScale() + 0.5;
+				style.Border.TopLeftRadius = __ToFloat(value);
 				break;
 			}
 			if (key == "border-top-right-radius") {
-				style.Border.TopRightRadius = __ToFloat(value) * this->GetScale() + 0.5;
+				style.Border.TopRightRadius = __ToFloat(value);
 				break;
 			}
 			if (key == "border-bottom-right-radius") {
-				style.Border.BottomRightRadius = __ToFloat(value) * this->GetScale() + 0.5;
+				style.Border.BottomRightRadius = __ToFloat(value);
 				break;
 			}
 			if (key == "border-bottom-left-radius") {
-				style.Border.BottomLeftRadius = __ToFloat(value) * this->GetScale() + 0.5;
+				style.Border.BottomLeftRadius = __ToFloat(value);
 				break;
 			}
 			if (key == "font-size") {
-				style.FontSize = __ToFloat(value) * this->GetScale() + 0.5;
+				style.FontSize = __ToFloat(value);
 				break;
 			}
 			if (key == "font-family") {
@@ -1819,50 +1729,46 @@ namespace ezui {
 				break;
 			}
 			if (key == "border-width") {
-				style.Border = __ToFloat(value) * this->GetScale() + 0.5;
+				style.Border = __ToFloat(value);
 				break;
 			}
 			if (key == "border") {
-				__MakeBorder(value, style.Border, [&style, this](float num) {
-					style.Border.Left = num * this->GetScale() + 0.5;
-					style.Border.Top = num * this->GetScale() + 0.5;
-					style.Border.Right = num * this->GetScale() + 0.5;
-					style.Border.Bottom = num * this->GetScale() + 0.5;
+				__MakeBorder(value, style.Border, [&style](float num) {
+					style.Border.Left = num;
+					style.Border.Top = num;
+					style.Border.Right = num;
+					style.Border.Bottom = num;
 					});
 				break;
 			}
 			if (key == "border-left") {
-				__MakeBorder(value, style.Border, [&style, this](float num) {
-					style.Border.Left = num * this->GetScale() + 0.5;
+				__MakeBorder(value, style.Border, [&style](float num) {
+					style.Border.Left = num;
 					});
 				break;
 			}
 			if (key == "border-top") {
-				__MakeBorder(value, style.Border, [&style, this](float num) {
-					style.Border.Top = num * this->GetScale() + 0.5;
+				__MakeBorder(value, style.Border, [&style](float num) {
+					style.Border.Top = num;
 					});
 				break;
 			}
 			if (key == "border-right") {
-				__MakeBorder(value, style.Border, [&style, this](float num) {
-					style.Border.Right = num * this->GetScale() + 0.5;
+				__MakeBorder(value, style.Border, [&style](float num) {
+					style.Border.Right = num;
 					});
 				break;
 			}
 			if (key == "border-bottom") {
-				__MakeBorder(value, style.Border, [&style, this](float num) {
-					style.Border.Bottom = num * this->GetScale() + 0.5;
+				__MakeBorder(value, style.Border, [&style](float num) {
+					style.Border.Bottom = num;
 					});
 				break;
 			}
 		} while (false);
 	}
-	void Control::SetStyleSheet(ControlState state, const UIString& styleListStr)
+	void Control::SetStyleSheet(ControlState state, const UIString& styleStr)
 	{
-		UIString styleStr = styleListStr.trim();
-		if (styleStr.find("{") == 0 && styleStr.rfind("}") == (styleStr.size() - 1)) {
-			styleStr = styleStr.substr(1, styleStr.size() - 2);//去除括号
-		}
 		auto attrs = styleStr.split(";");//分割每一行样式
 		if (!attrs.empty()) {
 			ControlStyle& sytle = this->GetStyle(state);//获取对应状态下的Style

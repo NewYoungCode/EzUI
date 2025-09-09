@@ -15,42 +15,22 @@ Email:19980103ly@gmail.com/718987717@qq.com
 #undef LoadIcon
 
 namespace ezui {
-	class Object;
-	enum class Cursor : ULONG_PTR;
 	struct MonitorInfo;
-	struct Style;
+	class Object;
 	class EventArgs;
 	class ControlStyle;
-	class Bitmap;
-	class Window;
-
-	class Control;
 	class IFrame;
+	class Control;
+	class Window;
 	class Spacer;
 	class ScrollBar;
-	class VScrollBar;
-	class HScrollBar;
-	class TabLayout;
-	class TextBox;
-	class TileListView;
-	class TreeView;
-	class VLayout;
-	class VListView;
-	class Button;
-	class CheckBox;
-	class ComboBox;
-	class HLayout;
-	class HListView;
-	class Label;
-	class PagedListView;
-	class PictureBox;
-	class RadioButton;
+	class Bitmap;
+	enum class Cursor :ULONG_PTR;
 
 #if 1
-	typedef std::vector<Control*> ControlCollection;//控件集合
+	typedef std::vector<Control*> Controls;
 #else
-	//控件集合
-	class UI_EXPORT ControlCollection :public std::list<Control*> {
+	class UI_EXPORT Controls :public std::list<Control*> {
 	public:
 		//不要频繁使用此函数
 		inline	Control* operator[](size_t right_pos)const
@@ -64,7 +44,7 @@ namespace ezui {
 			}
 			return NULL;
 		}
-};
+	};
 #endif
 
 	//全局资源句柄
@@ -155,9 +135,7 @@ namespace ezui {
 		//是否为主显示器
 		bool Primary = false;
 	};
-
-	//窗口公共数据
-	struct WindowContext {
+	struct WindowData {
 		//缩放率
 		float Scale = 1.0f;
 		//单次绘图数量
@@ -184,6 +162,12 @@ namespace ezui {
 		std::function<void()> TitleMoveWindow = NULL;
 		//处理消息过程的回调函数
 		std::function<LRESULT(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)> WndProc = NULL;
+
+#ifdef _DEBUG
+		virtual ~WindowData() {
+		}
+#endif
+
 	};
 
 	enum class LayoutState {
@@ -388,7 +372,7 @@ namespace ezui {
 	public:
 		PaintEventArgs(const PaintEventArgs&) = delete;
 		PaintEventArgs& operator=(const PaintEventArgs&) = delete;
-		WindowContext* PublicData = NULL;
+		WindowData* PublicData = NULL;
 		::HWND HWND = NULL;
 		HDC DC = NULL;
 		ezui::DXRender& Graphics;//画家
@@ -446,27 +430,29 @@ namespace ezui {
 	public:
 		PtrManager() {}
 		virtual ~PtrManager() {
-			this->Clear();
+			for (auto& obj : m_ptrs) {
+				delete obj;
+			}
 		}
 		void Add(const T& v) {
 			if (v) {
 				m_ptrs.push_back(v);
 			}
 		}
-		void Remove(const T& v) {
+		void Remove(const T& v/*, bool bFree = false*/) {
 			auto it = std::find(m_ptrs.begin(), m_ptrs.end(), v);
 			if (it != m_ptrs.end()) {
+				/*if (bFree) {
+					delete(*it);
+				}*/
 				m_ptrs.erase(it);
 			}
 		}
 		void Clear() {
-			auto itor = m_ptrs.begin();
-			while (itor != m_ptrs.end())
-			{
-				T item = *itor;
-				itor = m_ptrs.erase(itor); // erase 返回下一个有效迭代器
-				delete item;
+			for (auto& obj : m_ptrs) {
+				delete obj;
 			}
+			m_ptrs.clear();
 		}
 	};
 
@@ -477,13 +463,11 @@ namespace ezui {
 		std::map<UIString, UIString> m_attrs;
 		// 管理子对象的释放
 		PtrManager<Object*> m_childObjects;
-		//是否正在被销毁
-		bool m_bIsDestroying = false;
 	public:
 		//用户自定义数据
 		UINT_PTR Tag = NULL;
 	public:
-		Object(Object* ownerObject = NULL);
+		Object(Object* parentObject = NULL);
 		virtual ~Object();
 	public:
 		//设置属性
@@ -498,8 +482,6 @@ namespace ezui {
 		virtual Object* Attach(Object* obj);
 		//分离对象(解除跟随释放)
 		virtual void Detach(Object* obj);
-		//对象是否正在被销毁(预防析构降级导致控件访问报错)
-		bool IsDestroying();
 		//延迟删除
 		void DeleteLater();
 	};

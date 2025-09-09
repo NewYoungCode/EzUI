@@ -63,7 +63,7 @@ namespace ezui {
 			}
 			};
 	}
-	ComboBox::ComboBox(Object* ownerObject) :HLayout(ownerObject)
+	ComboBox::ComboBox(Object* parentObject) :HLayout(parentObject)
 	{
 		Init();
 	}
@@ -104,7 +104,7 @@ namespace ezui {
 
 		lb->EventHandler = [&](Control* sd, const EventArgs& args) ->void {
 			if (args.EventType == Event::OnMouseDown) {
-				m_index = sd->GetParent()->IndexOf(sd);
+				m_index = sd->Parent->IndexOf(sd);
 				m_textBox.SetText(((Label*)sd)->GetText());
 				m_textBox.Invalidate();
 				m_menuWnd->Hide();

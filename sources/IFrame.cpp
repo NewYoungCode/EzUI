@@ -1,16 +1,12 @@
 #include "IFrame.h"
 namespace ezui {
-	IFrame::IFrame(Object* ownerObject) :Control(ownerObject)
+	IFrame::IFrame(Object* parentObject) :Control(parentObject)
 	{
 	}
 	IFrame::~IFrame()
 	{
 	}
-	bool IFrame::IsFrame()
-	{
-		return true;
-	}
-	UILoader* IFrame::GetUILoader()
+	UIManager* IFrame::GetUIManager()
 	{
 		return &m_umg;
 	}
@@ -24,10 +20,14 @@ namespace ezui {
 		m_umg.LoadXml(fileName);
 		m_umg.SetupUI(this);
 	}
+	void IFrame::LoadXml(const char* fileData, size_t fileSize) {
+		m_umg.LoadXml(fileData, fileSize);
+		m_umg.SetupUI(this);
+	}
 	Control* IFrame::Add(Control* childCtrl)
 	{
 		//IFrame下只允许有一个控件并且会随着IFrame拉伸
-		this->m_controls.clear();//清除子控件
+		this->Clear();
 		if (childCtrl) {
 			auto* ctrl = __super::Add(childCtrl);
 			childCtrl->SetDockStyle(DockStyle::Fill);

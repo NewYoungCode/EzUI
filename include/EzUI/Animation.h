@@ -15,7 +15,7 @@ namespace ezui {
 	public:
 		//当值更改的时候发生的事件(请绑定此函数进行回调,请自行线程同步)
 		std::function<void(float)> ValueChanged;
-		Animation(Object* ownerObject = NULL);
+		Animation(Object* parentObject = NULL);
 		virtual ~Animation();
 		void SetStartValue(float value);
 		void SetEndValue(float value);

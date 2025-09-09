@@ -1,7 +1,7 @@
 #include "HScrollBar.h"
 
 namespace ezui {
-	HScrollBar::HScrollBar(Object* ownerObject):ScrollBar(ownerObject)
+	HScrollBar::HScrollBar(Object* parentObj):ScrollBar(parentObj)
 	{
 	}
 	HScrollBar::~HScrollBar() {}
@@ -18,9 +18,9 @@ namespace ezui {
 	}
 	void HScrollBar::ScrollTo(Control* ctl)
 	{
-		if (ctl && ctl->GetParent() && ctl->GetParent() == this->GetParent()) {
-			if (ctl->GetParent()->IsPendLayout()) {
-				ctl->GetParent()->RefreshLayout();
+		if (ctl && ctl->Parent && ctl->Parent == this->Parent) {
+			if (ctl->Parent->IsPendLayout()) {
+				ctl->Parent->RefreshLayout();
 			}
 			//控件的矩形位置
 			const Rect& ctlRect = ctl->GetRect();
@@ -38,8 +38,8 @@ namespace ezui {
 	}
 	void HScrollBar::GetInfo(int* viewLength, int* contentLength, int* scrollBarLength)
 	{
-		*viewLength = this->GetParent()->Width();
-		*contentLength = this->GetParent()->GetContentSize().Width;
+		*viewLength = this->Parent->Width();
+		*contentLength = this->Parent->GetContentSize().Width;
 		*scrollBarLength = Width();
 	}
 	void HScrollBar::ParentSize(const Size& size) {

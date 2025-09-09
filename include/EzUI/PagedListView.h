@@ -19,19 +19,19 @@ namespace ezui {
 		int m_pageIndex = 0;
 		int m_pageTotal = 0;
 		int m_pageSize = 0;
-		ControlCollection m_items;
+		Controls m_items;
 	public:
-		PagedListView(Object* ownerObject = NULL);
+		PagedListView(Object* parentObject = NULL);
 		virtual ~PagedListView();
 		//页面需要加载下一页的时候发生
 		std::function<bool(PagedListView*, int)> NextPaging = NULL;
-		void SetPageInfo(const ControlCollection& items, int pageSize);
+		void SetPageInfo(const Controls& items, int pageSize);
 		/// <summary>
 		/// 获取某页的item集合
 		/// </summary>
 		/// <param name="index">1~N</param>
 		/// <param name="outCtls">输出集合</param>
-		void GetPage(int index, ControlCollection* outCtls);
+		void GetPage(int index, Controls* outCtls);
 		virtual void NextPage();
 		virtual void Clear() override;
 		virtual void Clear(bool freeChilds) override;

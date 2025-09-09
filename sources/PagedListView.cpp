@@ -1,7 +1,7 @@
 #include "PagedListView.h"
 namespace ezui {
 
-	void PagedListView::SetPageInfo(const ControlCollection& items, int pageSize)
+	void PagedListView::SetPageInfo(const Controls& items, int pageSize)
 	{
 		this->m_pageIndex = 0;
 		this->m_pageSize = pageSize;
@@ -10,7 +10,7 @@ namespace ezui {
 		this->NextPage();
 	}
 
-	void PagedListView::GetPage(int pageIndex, ControlCollection* outCtls)
+	void PagedListView::GetPage(int pageIndex, Controls* outCtls)
 	{
 		if (outCtls) {
 			outCtls->clear();
@@ -43,7 +43,7 @@ namespace ezui {
 			return;
 		}
 		++m_pageIndex;
-		ControlCollection ctls;
+		Controls ctls;
 		this->GetPage(m_pageIndex, &ctls);
 		for (auto& it : ctls) {
 			this->Add(it);

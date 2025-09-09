@@ -20,7 +20,6 @@ namespace ezui {
 			String& operator=(String&& _right)noexcept;
 			String(const std::string& str)noexcept;
 			String(const char* szbuf)noexcept;
-			String(const char* pStr, size_t count)noexcept;
 			String(const wchar_t* szbuf)noexcept;
 			String(const std::wstring& wstr)noexcept;
 			//返回utf8字符个数

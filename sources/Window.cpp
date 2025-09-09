@@ -27,7 +27,7 @@ namespace ezui {
 
 	void Window::Init(int width, int height, HWND owner, DWORD dStyle, DWORD  dwExStyle)
 	{
-		this->m_publicData = new WindowContext;
+		this->m_publicData = new WindowData;
 		Rect rect(0, 0, width, height);
 
 		POINT cursorPos;
@@ -247,13 +247,12 @@ namespace ezui {
 		return this->m_frame->GetLayout();
 	}
 
-	IFrame* Window::GetFrame()
-	{
-		return this->m_frame;
-	}
-
 	void Window::LoadXml(const UIString& fileName) {
 		m_frame->LoadXml(fileName);
+	}
+
+	void Window::LoadXml(const char* fileData, size_t fileSize) {
+		m_frame->LoadXml(fileData, fileSize);
 	}
 
 	void Window::Close(int code) {
@@ -412,7 +411,7 @@ namespace ezui {
 		return NULL;
 	}
 
-	WindowContext* Window::GetWindowContext()
+	WindowData* Window::GetPublicData()
 	{
 		return m_publicData;
 	}
@@ -807,12 +806,12 @@ namespace ezui {
 			}
 		}
 
-		const ControlCollection* pTemp;
-		if (outCtl->GetCachedViewControls().size() > 0) {
-			pTemp = &outCtl->GetCachedViewControls();
+		const Controls* pTemp;
+		if (outCtl->GetViewControls().size() > 0) {
+			pTemp = &outCtl->GetViewControls();
 		}
 		else {
-			pTemp = (ControlCollection*)(&(outCtl->GetControls()));
+			pTemp = (Controls*)(&(outCtl->GetControls()));
 		}
 
 		for (auto itor = pTemp->rbegin(); itor != pTemp->rend(); ++itor) {
@@ -838,10 +837,10 @@ namespace ezui {
 		//当命中控件未开启命中测试 偏移到父控件
 		while (true)
 		{
-			if (!outCtl->IsHitTestVisible() && outCtl->GetParent()) {
+			if (!outCtl->IsHitTestVisible() && outCtl->Parent) {
 				(*outPoint).X += outCtl->X();
 				(*outPoint).Y += outCtl->Y();
-				outCtl = outCtl->GetParent();
+				outCtl = outCtl->Parent;
 			}
 			else {
 				break;
@@ -997,16 +996,16 @@ namespace ezui {
 		}
 		ScrollBar* scrollBar = NULL;
 		if (m_focusControl && m_focusControl->GetScrollBar() && m_focusControl->GetScrollBar()->Scrollable()) {
-			scrollBar = m_focusControl->GetScrollBar();
+			scrollBar = dynamic_cast<ScrollBar*>(m_focusControl->GetScrollBar());
 		}
 		Control* pControl = m_focusControl;
 		while (scrollBar == NULL && pControl)
 		{
 			if (pControl->GetScrollBar() && pControl->GetScrollBar()->Scrollable()) {
-				scrollBar = pControl->GetScrollBar();
+				scrollBar = dynamic_cast<ScrollBar*>(pControl->GetScrollBar());
 				break;
 			}
-			pControl = pControl->GetParent();
+			pControl = pControl->Parent;
 		}
 		if (scrollBar) {
 			MouseEventArgs args(Event::OnMouseWheel);
