@@ -454,121 +454,72 @@ namespace ezui {
 	class __EzUI__Color
 	{
 	protected:
-		DWORD BGRA = 0;
+		uint32_t BGRA = 0;
 	public:
 		__EzUI__Color() {}
 		__EzUI__Color(
-			const BYTE& r,
-			const BYTE& g,
-			const BYTE& b,
-			const BYTE& a = 255)
+			const uint8_t& r,
+			const uint8_t& g,
+			const uint8_t& b,
+			const uint8_t& a = 255)
 		{
-			((BYTE*)&BGRA)[0] = b;
-			((BYTE*)&BGRA)[1] = g;
-			((BYTE*)&BGRA)[2] = r;
-			((BYTE*)&BGRA)[3] = a;
+			BGRA |= static_cast<uint32_t>(b);         // 蓝色占最低8位
+			BGRA |= static_cast<uint32_t>(g) << 8;    // 绿色占第2字节
+			BGRA |= static_cast<uint32_t>(r) << 16;   // 红色占第3字节
+			BGRA |= static_cast<uint32_t>(a) << 24;   // Alpha 占最高字节
 		}
-		__EzUI__Color(DWORD bgra)
+		__EzUI__Color(uint32_t bgra)
 		{
 			BGRA = bgra;
 		}
 		virtual ~__EzUI__Color() {}
-		BYTE GetR() const
-		{
-			return ((BYTE*)&BGRA)[2];
+		uint8_t GetR() const {
+			return (BGRA >> 16) & 0xFF;
 		}
-		BYTE GetG() const
-		{
-			return ((BYTE*)&BGRA)[1];
+		uint8_t GetG() const {
+			return (BGRA >> 8) & 0xFF;
 		}
-		BYTE GetB() const
-		{
-			return ((BYTE*)&BGRA)[0];
+		uint8_t GetB() const {
+			return BGRA & 0xFF;
 		}
-		BYTE GetA() const
-		{
-			return ((BYTE*)&BGRA)[3];
+		uint8_t GetA() const {
+			return (BGRA >> 24) & 0xFF;
 		}
-		DWORD GetValue() const
+		uint32_t GetValue() const
 		{
 			return BGRA;
 		}
-		void SetValue(DWORD bgra)
+		void SetValue(uint32_t bgra)
 		{
 			BGRA = bgra;
 		}
-		void SetR(BYTE value) {
-			((BYTE*)&BGRA)[2] = value;
+		void SetR(uint8_t value) {
+			BGRA = (BGRA & 0xFF00FFFF) | (uint32_t(value) << 16);
 		}
-		void SetG(BYTE value) {
-			((BYTE*)&BGRA)[1] = value;
+		void SetG(uint8_t value) {
+			BGRA = (BGRA & 0xFFFF00FF) | (uint32_t(value) << 8);
 		}
-		void SetB(BYTE value) {
-			((BYTE*)&BGRA)[0] = value;
+		void SetB(uint8_t value) {
+			BGRA = (BGRA & 0xFFFFFF00) | uint32_t(value);
 		}
-		void SetA(BYTE value) {
-			((BYTE*)&BGRA)[3] = value;
+		void SetA(uint8_t value) {
+			BGRA = (BGRA & 0x00FFFFFF) | (uint32_t(value) << 24);
 		}
+
 	public:
 		// Common color constants (BGRA format)
-		enum : DWORD
+		enum : uint32_t
 		{
 			Transparent = 0x00000000, // 全透明
-
-			Black = 0xFF000000,       // 黑色
-			White = 0xFFFFFFFF,       // 白色
-			Gray = 0xFF808080,        // 灰色
-			LightGray = 0xFFD3D3D3,   // 浅灰色
-			DarkGray = 0xFFA9A9A9,    // 深灰色
-
-			Red = 0xFFFF0000,         // 红色
-			DarkRed = 0xFF8B0000,     // 深红色
-			LightCoral = 0xFFF08080,  // 浅珊瑚红
-			Tomato = 0xFFFF6347,      // 番茄色
-			Crimson = 0xFFDC143C,     // 猩红色
-
-			Green = 0xFF00FF00,       // 绿色
-			Lime = 0xFF00FF00,        // 酸橙绿（亮绿）
-			DarkGreen = 0xFF006400,   // 深绿色
-			LawnGreen = 0xFF7CFC00,   // 草坪绿
-			PaleGreen = 0xFF98FB98,   // 苍绿色
-
-			Blue = 0xFF0000FF,        // 蓝色
-			RoyalBlue = 0xFF4169E1,   // 皇家蓝
-			DodgerBlue = 0xFF1E90FF,  // 道奇蓝
-			DeepSkyBlue = 0xFF00BFFF, // 深天蓝
-			LightBlue = 0xFFADD8E6,   // 浅蓝色
-
-			Yellow = 0xFF00FFFF,      // 黄色
-			Gold = 0xFFFFD700,        // 金色
-			LightYellow = 0xFFFFFFE0, // 浅黄色
-			Khaki = 0xFFF0E68C,       // 卡其色
-
-			Orange = 0xFFFFA500,      // 橙色
-			DarkOrange = 0xFFFF8C00,  // 深橙色
-			Coral = 0xFFFF7F50,       // 珊瑚色
-			Salmon = 0xFFFA8072,      // 鲑鱼色
-
-			Purple = 0xFF800080,      // 紫色
-			MediumPurple = 0xFF9370DB,// 中紫色
-			Indigo = 0xFF4B0082,      // 靛青色
-			Violet = 0xFFEE82EE,      // 紫罗兰
-			Plum = 0xFFDDA0DD,        // 李子紫
-
-			Cyan = 0xFF00FFFF,        // 青色
-			Teal = 0xFF808000,        // 水鸭色（G+B）
-			Aqua = 0xFF00FFFF,        // 浅绿色（水色）
-
-			Turquoise = 0xFF40E0D0,   // 绿松石色
-
-			Brown = 0xFFA52A2A,       // 棕色
-			Maroon = 0xFF800000,      // 栗色（褐红）
-			Tan = 0xFFD2B48C,         // 茶色
-			Beige = 0xFFF5F5DC,       // 米色
-
-			Navy = 0xFF000080,        // 藏青色
-			Olive = 0xFF808000,       // 橄榄色
-			Silver = 0xFFC0C0C0       // 银色
+			Red = 0xFFFF0000,     // 红色
+			Yellow = 0xFFFFFF00,  // 黄色
+			Blue = 0xFF0000FF,    // 蓝色
+			Black = 0xFF000000,   // 黑色
+			White = 0xFFFFFFFF,   // 白色
+			Green = 0xFF008000,   // 绿色
+			Orange = 0xFFFFA500,  // 橙色
+			Purple = 0xFF800080,  // 紫色
+			Gray = 0xFF808080     // 灰色
 		};
 	};
 
@@ -709,93 +660,71 @@ namespace ezui {
 		virtual ~RectF() {};
 	};
 
+	//可以控制值开关的模板类
+	template<typename T>
+	class Value {
+		bool m_enable = false;
+		T m_value{};
+	public:
+		Value() = default;
+		Value(const T& value) : m_value(value), m_enable(true) {}
+		Value& operator=(const T& value) {
+			m_value = value;
+			m_enable = true;
+			return *this;
+		}
+		Value(const Value& rightValue)
+			: m_value(rightValue.m_value), m_enable(rightValue.m_enable) {
+		}
+		Value& operator=(const Value& rightValue) {
+			if (this != &rightValue) {
+				m_value = rightValue.m_value;
+				m_enable = rightValue.m_enable;
+			}
+			return *this;
+		}
+		void Set(const T& value) { m_value = value; }
+		void SetEnabled(bool bEnable) { m_enable = bEnable; }
+		bool IsEnabled() const { return m_enable; }
+		operator T() const { return m_enable ? m_value : T{}; }
+		T& operator->() { return m_value; }
+	};
+
+
 	struct Distance {
 	public:
-		WORD Left, Top, Right, Bottom;
+		int16_t Left, Top, Right, Bottom;
 		Distance() {
 			Left = Top = Right = Bottom = 0;
 		}
-		Distance(WORD distanceAll) {
+		Distance(int16_t distanceAll) {
 			Left = Top = Right = Bottom = distanceAll;
 		}
-		Distance& operator=(WORD distanceAll) {
+		Distance& operator=(int16_t distanceAll) {
 			Left = Top = Right = Bottom = distanceAll;
 			return *this;
 		}
 		void Scale(float scale) {
-			Top = WORD(Top * scale + 0.5);
-			Bottom = WORD(Bottom * scale + 0.5);
-			Left = WORD(Left * scale + 0.5);
-			Right = WORD(Right * scale + 0.5);
+			Top = int16_t(Top * scale + 0.5);
+			Bottom = int16_t(Bottom * scale + 0.5);
+			Left = int16_t(Left * scale + 0.5);
+			Right = int16_t(Right * scale + 0.5);
 		}
 		//获取垂直所占空间
-		WORD GetVSpace() {
+		int16_t GetVSpace() const {
 			return Top + Bottom;
 		}
 		//获取水平所占空间
-		WORD GetHSpace() {
+		int16_t GetHSpace() const {
 			return Left + Right;
-		}
-	};
-
-	/// <summary>
-	/// 描述边框的一些信息
-	/// </summary>
-	class Border {
-	public:
-		WORD Left = 0;//左边边框大小
-		WORD Top = 0;//顶部边框大小
-		WORD Right = 0;//右边边框大小
-		WORD Bottom = 0;//底部边框大小
-		WORD TopLeftRadius = 0;
-		WORD TopRightRadius = 0;
-		WORD BottomRightRadius = 0;
-		WORD BottomLeftRadius = 0;
-		__EzUI__Color Color;
-		StrokeStyle Style = StrokeStyle::None;
-	public:
-		class Radius {
-			Border& Border;
-		public:
-			Radius(ezui::Border& bd) :Border(bd) {}
-			//对四个角度同时设置半径大小
-			Radius& operator=(WORD radius) {
-				Border.TopLeftRadius = radius;
-				Border.TopRightRadius = radius;
-				Border.BottomRightRadius = radius;
-				Border.BottomLeftRadius = radius;
-				return *this;
-			}
-		};
-	public:
-		Border::Radius Radius = (*this);
-	public:
-		Border() {}
-		//对四个边设置大小
-		Border& operator=(WORD borderWidth) {
-			Left = borderWidth;
-			Top = borderWidth;
-			Right = borderWidth;
-			Bottom = borderWidth;
-			return *this;
-		}
-		void Scale(float scale) {
-			Left = WORD(Left * scale + 0.5);
-			Top = WORD(Top * scale + 0.5);
-			Right = WORD(Right * scale + 0.5);
-			Bottom = WORD(Bottom * scale + 0.5);
-			TopLeftRadius = WORD(TopLeftRadius * scale + 0.5);
-			TopRightRadius = WORD(TopRightRadius * scale + 0.5);
-			BottomRightRadius = WORD(BottomRightRadius * scale + 0.5);
-			BottomLeftRadius = WORD(BottomLeftRadius * scale + 0.5);
 		}
 	};
 
 
 	class IImage {
 	protected:
-		WORD m_frameCount = 0;//总帧数
-		WORD m_framePos = 0;//当前帧率索引
+		int m_frameCount = 0;//总帧数
+		int m_framePos = 0;//当前帧率索引
 	public:
 		Rect Clip;//取出图像部分区域进行绘制
 		Point DrawPosition;//绘制在owner矩形坐标
@@ -803,11 +732,11 @@ namespace ezui {
 		ImageSizeMode SizeMode = ImageSizeMode::Fit;// 图像显示模式
 	public:
 		virtual ~IImage() {}
-		WORD FrameCount() {
+		int FrameCount() {
 			return m_frameCount;
 		}
 		//跳转到下一帧 并且获取下一帧的延迟
-		virtual WORD NextFrame() = 0;
+		virtual int NextFrame() = 0;
 	};
 
 };

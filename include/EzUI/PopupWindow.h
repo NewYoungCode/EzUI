@@ -9,12 +9,12 @@ namespace ezui {
 	/// </summary>
 	class UI_EXPORT PopupWindow :public LayeredWindow {
 	private:
-		Control* m_ownerCtl = NULL;
+		bool isShowModal = false;
 	protected:
 		virtual void OnKillFocus(HWND hWnd) override;
 	public:
-		PopupWindow(int width, int height, HWND ownerHwnd);
-		PopupWindow(int width, int height, Control* ownerCtl = NULL);
+		//弹出的窗口在拥有窗口前面 ownerHwnd为NULL则置顶窗口
+		PopupWindow(int width, int height, HWND ownerHwnd = NULL);
 		virtual void Show()override;
 		virtual int ShowModal(bool disableOnwer = false)override;
 		virtual ~PopupWindow();

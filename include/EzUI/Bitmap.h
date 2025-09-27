@@ -9,7 +9,7 @@ namespace ezui {
 		int m_height = 0;
 		HBITMAP m_bmp = NULL;
 		HDC m_hdc = NULL;
-		byte* m_point = NULL;
+		uint8_t* m_point = NULL;
 		BITMAPINFO m_bmpInfo;
 		Bitmap(const Bitmap& hBitmap) = delete;
 		void operator=(const Bitmap& hBitmap) = delete;
@@ -23,7 +23,7 @@ namespace ezui {
 		Bitmap(HDC dc, const Rect& rect);
 		void SetPixel(int x, int y, const Color& color);
 		Color GetPixel(int x, int y)const;
-		byte* GetPixel();
+		uint8_t* GetPixel();
 		void Earse(const Rect& rect);//抹除矩形内容
 		HBITMAP GetHBITMAP();
 		HDC GetDC();

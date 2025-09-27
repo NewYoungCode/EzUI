@@ -33,12 +33,13 @@ namespace ezui {
 		int m_scrollY = 0;//用于y轴滚动
 		int m_lastX = 0;//上一个x位置
 		int m_lastY = 0;//上一个y位置 
-		Timer* m_timer;//用于光标闪烁
+		Timer m_timer;//用于光标闪烁
 		bool m_bCareShow = false;//用于光标闪烁
 		int m_maxLen = -1;//最大文字数量
 		std::wstring m_placeholder;//placeholder懂得都懂 (在没有文字的情况下显示的文字)
 		std::wstring m_passwordChar;
 		bool m_readOnly = false;//是否只读
+		std::shared_ptr<std::atomic<bool>> m_alive;
 	public:
 		//文字对其方式(针对单行输入框有效)
 		TextAlign TextAlign = TextAlign::MiddleLeft;
@@ -72,20 +73,20 @@ namespace ezui {
 	public:
 		std::function<void(const UIString&)> TextChanged = NULL;
 	public:
-		TextBox(Object* parentObject = NULL);
+		TextBox(Object* ownerObject = NULL);
 		virtual ~TextBox();
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 		//获取焦点所在光标位置
 		virtual Rect GetCareRect()override;
 		//分析字符串
 		void Analysis();
-		//在当前光标中插入文字
+		//在当前光标中插入文字(可触发文字更改事件)
 		void Insert(const UIString& str);
 		//获取输入框文字
 		const UIString GetText();
 		//获取滚动条
 		virtual ScrollBar* GetScrollBar()override;
-		//设置文字
+		//设置文字(不会触发文字更改事件)
 		void SetText(const UIString& text);
 		//是否多行显示
 		bool IsMultiLine();

@@ -10,16 +10,18 @@ namespace ezui {
 	class UI_EXPORT ComboBox :public HLayout {
 	private:
 		//添加选项请使用AddItem
-		virtual Control* Add(Control* childCtl)override;
+		virtual Control* AddChild(Control* childCtl)override;
 		//移除选项请使用RemoveItem
-		virtual void Remove(Control* childCtl, bool freeCtrl)override;
+		virtual void RemoveChild(Control* childCtl, bool freeCtrl)override;
 	private:
 		//下拉菜单选项
 		class MenuContent :public PopupWindow {
 		public:
+			Control* m_ownerCtrl;
 			Control* m_hittestCtl;
 			MenuContent(Control* ownerCtl, Control* hittestCtl);
 			virtual void OnKillFocus(HWND wnd) override;
+			virtual void Show() override;
 			virtual ~MenuContent();
 		};
 	private:
@@ -36,7 +38,7 @@ namespace ezui {
 	protected:
 		virtual void OnLayout()override;
 	public:
-		ComboBox(Object* parentObject = NULL);
+		ComboBox(Object* ownerObject = NULL);
 		//获取选中的文字
 		UIString GetText();
 		//获取选中的下标

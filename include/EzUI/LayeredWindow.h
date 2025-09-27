@@ -13,10 +13,10 @@ namespace ezui {
 	private:
 		std::list<Rect> m_invalidateRect;
 		Bitmap* m_winBitmap = NULL;
-		void UpdateLayeredWindow(HDC hdc);
-		void BeginPaint(Rect* rect);
+		void UpdateLayeredWindow(HDC hdc, const Rect& rePaintRect);
+		void BeginPaint(std::vector<Rect>* outRect);
 		void EndPaint();
-		void Paint();
+		bool Paint();
 	protected:
 		virtual void OnSize(const Size& sz)override;
 		void InvalidateRect(const Rect& rect);

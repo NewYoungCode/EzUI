@@ -13,8 +13,11 @@ namespace ezui {
 		float m_shadowScale = 1.0f;
 		//是否支持缩放
 		bool m_bResize = false;
+		//是否第一次已经绘制
+		bool isFirstPaint = false;
 	protected:
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
+		virtual void DoPaint(HDC winDC, const Rect& rePaint)override;
 		virtual void OnMove(const Point& location) override;
 		virtual void OnSize(const Size& sz) override;
 		virtual void OnDpiChange(float systemScale, const Rect& newRect);//当dpi发生更改时

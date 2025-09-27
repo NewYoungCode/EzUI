@@ -9,13 +9,13 @@ namespace ezui {
 		HWND m_hWnd = NULL;
 		Menu* m_menu = NULL;
 		NOTIFYICONDATAW m_nid = {};
-		WindowData m_publicData;
+		WindowContext m_publicData;
 	protected:
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	public:
 		//事件处理 只会返回鼠标事件
 		std::function<void(const MouseEventArgs&)> EventHandler = NULL;
-		NotifyIcon(Object* parentObj = NULL);
+		NotifyIcon(Object* ownerObject = NULL);
 		void SetIcon(HICON icon);
 		//设置鼠标悬停时显示的提示文本
 		void SetTips(const UIString& text);

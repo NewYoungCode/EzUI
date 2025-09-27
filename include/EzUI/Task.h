@@ -1,41 +1,76 @@
 #pragma once
 #include "EzUI.h"
-
 namespace ezui {
-	//互斥锁
-	class UI_EXPORT Mutex {
-	private:
-		CRITICAL_SECTION m_mtx;  // 互斥锁
-		bool m_bLocked;
-		Mutex(const Mutex&) = delete;
-	public:
-		Mutex();
-		virtual ~Mutex();
-		// 锁定互斥锁
-		void Lock();
-		// 解锁互斥锁
-		void UnLock();
-	};
-	//带互斥锁的条件变量类
-	class UI_EXPORT ConditionVariable {
-	private:
-		HANDLE m_codv = NULL;     // 事件对象（模拟条件变量）
-		Mutex m_mtx;              // 锁对象
-		ConditionVariable(const ConditionVariable&) = delete;
-	public:
-		ConditionVariable();
-		virtual ~ConditionVariable();
-		// 唤醒等待的线程(唤醒单个线程)
-		void Notify();
-		// 可选条件的等待(不可以多个线程使用此函数)
-		void Wait(const std::function<bool()>& condition_cb = NULL);
-		// 锁定互斥锁
-		void Lock();
-		// 解锁互斥锁
-		void Unlock();
-	};
-};
+	namespace detail {
+		//互斥锁
+		class UI_EXPORT mutex {
+		private:
+			CRITICAL_SECTION m_mtx;  // 互斥锁
+			bool m_bLocked;
+			mutex(const mutex&) = delete;
+		public:
+			mutex();
+			virtual ~mutex();
+			// 锁定互斥锁
+			void lock();
+			// 解锁互斥锁
+			void unlock();
+		};
 
+		template<typename Mutex>
+		class unique_lock {
+			Mutex& m_mtx;
+		public:
+			explicit unique_lock(Mutex& mtx) : m_mtx(mtx) {
+				m_mtx.lock();
+			}
+			void lock() {
+				m_mtx.lock();
+			}
+			void unlock() {
+				m_mtx.unlock();
+			}
+			~unique_lock() {
+				unlock();
+			}
+			// 禁止拷贝
+			unique_lock(const unique_lock&) = delete;
+			unique_lock& operator=(const unique_lock&) = delete;
+			// 支持移动
+			unique_lock(unique_lock&& other) noexcept : m_mtx(other.m_mtx) {}
+			unique_lock& operator=(unique_lock&&) = delete;
+		};
+
+		//带互斥锁的条件变量类
+		class UI_EXPORT condition_variable {
+		private:
+			HANDLE m_codv = NULL;     // 事件对象（模拟条件变量）
+			condition_variable(const condition_variable&) = delete;
+		public:
+			condition_variable();
+			virtual ~condition_variable();
+			// 唤醒等待的线程(唤醒单个线程)
+			void notify_one();
+			// 可选条件的等待(不可以多个线程使用此函数)
+			void wait(unique_lock<mutex>& lock, const std::function<bool()>& condition_cb);
+			//不想多说 懂得都懂
+			bool wait_until(unique_lock<mutex>& lock, const std::chrono::steady_clock::time_point& abs_time, const std::function<bool()>& condition_cb);
+		};
+	};
+
+#if 0
+	using condition_variable = std::condition_variable;
+	using mutex = std::mutex;
+	template<typename T>
+	using unique_lock = std::unique_lock<T>;
+#else //兼容在高版本工具集编译时候对win7的支持
+	using condition_variable = detail::condition_variable;
+	using mutex = detail::mutex;
+	template<typename T>
+	using unique_lock = detail::unique_lock<T>;
+#endif // 1
+
+};
 namespace ezui {
 	class UI_EXPORT Task {
 		bool m_finished = false;

@@ -7,6 +7,7 @@ namespace ezui {
 		public PagedListView
 	{
 	private:
+		HAlign m_contentAlign = HAlign::Center;
 		VScrollBar m_vScrollBar;
 		void Init();
 		//对控件进行偏移
@@ -15,8 +16,10 @@ namespace ezui {
 		virtual void OnLayout()override;
 		virtual void OnChildPaint(PaintEventArgs& args)override;
 	public:
-		VListView(Object* parentObject = NULL);
+		VListView(Object* ownerObject = NULL);
 		virtual ~VListView();
+		void SetContentAlign(HAlign contentAlign);
+		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 		virtual ScrollBar* GetScrollBar() override;
 	};
 };

@@ -1,9 +1,12 @@
 #pragma once
 #include "Control.h"
-
+#include "Animation.h"
 namespace ezui {
 	class UI_EXPORT ScrollBar :public Control {
-	protected:
+		friend class VScrollBar;
+		friend class HScrollBar;
+		friend class Control;
+	private:
 		//鼠标是否已经按下
 		bool m_mouseDown = false;
 		//上一次鼠标命中的坐标
@@ -26,6 +29,8 @@ namespace ezui {
 		//int _old_viewLength = 0;
 		//int _old_contentLength = 0;
 		//int _old_offset = 0;
+		float m_velocity = 0;  // 当前滚动速度
+		Animation m_amt;//动画
 	private:
 		void Init();
 	public:
@@ -41,8 +46,10 @@ namespace ezui {
 		virtual void OnMouseLeave(const MouseEventArgs& arg) override;
 		virtual void OnMouseWheel(const MouseEventArgs& arg)override;
 		virtual void GetInfo(int* viewLength, int* contentLength, int* scrollBarLength) = 0;
+		virtual void OnParentSize(const Size& parentSize) = 0;
 		void ScrollTo(int offset, const Event& type);
-		void SyncInfo();
+		//刷新滚动条状态,根据内容长度和视口长度重新计算滑块参数
+		void Recalc();
 	public:
 		//滚动到指定控件可见位置
 		virtual void ScrollTo(Control* ctl) = 0;
@@ -52,7 +59,6 @@ namespace ezui {
 		float ScrollPos();
 		//获取滑块的矩形
 		virtual Rect GetSliderRect() = 0;//
-		virtual void ParentSize(const Size& parentSize) = 0;
 		//滚动条是否已经绘制且显示
 		bool IsDraw();
 		//重置滚动条数据到起点(不执行重绘)
@@ -61,7 +67,7 @@ namespace ezui {
 		bool Scrollable();
 		//当父控件发生内容发生改变 请调用刷新滚动条
 		void RefreshScroll();
-		ScrollBar(Object* parentObject = NULL);
+		ScrollBar(Object* ownerObject = NULL);
 		virtual ~ScrollBar();
 	};
 };

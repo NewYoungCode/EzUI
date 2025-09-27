@@ -20,13 +20,15 @@ namespace ezui {
 		Font() = delete;
 		std::wstring m_fontFamily;
 		float m_fontSize = 0;
+		int m_fontWeight = 0;
 		IDWriteTextFormat* m_value = NULL;
 		bool m_ref = false;
 		void Copy(const Font& _copy);
 	public:
 		Font(const Font& _copy);
-		Font(const std::wstring& fontFamily, float fontSize);
+		Font(const std::wstring& fontFamily, float fontSize, int fontweight = 0);
 		float GetFontSize()const;
+		float GetFontWeight()const;
 		const std::wstring& GetFontFamily()const;
 		IDWriteTextFormat* Get() const;
 		bool operator==(const Font& _right);
@@ -179,13 +181,14 @@ namespace ezui {
 		int m_width = 0;
 		int m_height = 0;
 		ID2D1Bitmap* m_d2dBitmap = NULL;
+		void* m_lastRender = NULL;
 	private:
 		void CreateFormStream(IStream* istram);
 		void CreateFromFile(const std::wstring& file);
 		void Init();
 	public:
 		bool Visible = true;
-		void DecodeOfRender(ID2D1RenderTarget* render);
+		void CreateD2DBitmap(ID2D1RenderTarget* render);
 		//如果HBITMAP带有透明通道 确保传入的图像颜色值已经与 Alpha 通道预乘
 		DXImage(HBITMAP hBitmap);
 		DXImage(IStream* istram);
@@ -197,7 +200,7 @@ namespace ezui {
 		IWICBitmap* GetIWICBitmap();
 		int Width();
 		int Height();
-		virtual WORD NextFrame()override;
+		virtual int NextFrame()override;
 		DXImage* Clone();
 		virtual ~DXImage();
 	};
@@ -220,7 +223,11 @@ namespace ezui {
 		ID2D1StrokeStyle* m_pStrokeStyle = NULL;
 		Point m_offset;
 		PointF m_rotatePoint;
-		float m_angle = 0;
+		float m_angle = std::numeric_limits<float>::quiet_NaN();
+		Size m_size;
+		HWND m_hwnd = NULL;
+		HDC m_hdc = NULL;
+		bool m_begin = false;
 	private:
 		DXRender(const DXRender& rightValue) = delete;
 	public:
@@ -228,9 +235,14 @@ namespace ezui {
 		ID2D1StrokeStyle* GetStrokeStyle();
 	public:
 		DXRender(DXImage* dxImage);
-		DXRender(HDC dc, int x, int y, int width, int height);//创建dx绘图对象
+		DXRender(HDC dc, int width, int height);//创建dx绘图对象
+		DXRender(HWND hWnd, int width, int height);//创建dx绘图对象
+		void BeginDraw();
+		void EndDraw();
 		virtual ~DXRender();
-		void SetFont(const std::wstring& fontFamily, float fontSize);//必须先调用
+		//如果此对象是由HDC创建的则重置大小时需要传入HDC,如果是使用HWND的则无需传入HDC
+		void ReSize(int width, int height, HDC dc = NULL);
+		void SetFont(const std::wstring& fontFamily, float fontSize, int fontWeight = 0);//必须先调用
 		void SetFont(const Font& _copy_font);//必须先调用
 		void SetColor(const __EzUI__Color& color);//会之前必须调用
 		void SetStrokeStyle(StrokeStyle strokeStyle = StrokeStyle::Solid);//设置样式 虚线/实线
@@ -240,7 +252,7 @@ namespace ezui {
 		void DrawRectangle(const RectF& _rect, float _radius = 0, float width = 1);//绘制矩形
 		void FillRectangle(const RectF& _rect, float _radius = 0);
 		//填充矩形
-		void PushLayer(const Geometry& dxGeometry);
+		void PushLayer(const Geometry& dxGeometry, float opacity = 1.0f);
 		void PopLayer();
 		void PushAxisAlignedClip(const RectF& rectBounds);
 		void PopAxisAlignedClip();
@@ -261,7 +273,7 @@ namespace ezui {
 		void FillGeometry(ID2D1Geometry* path);
 		void DrawGeometry(Geometry* path, float width = 1);
 		void FillGeometry(Geometry* path);
-		void Flush();
+		HRESULT Flush();
 		ID2D1DCRenderTarget* Get();//获取原生DX对象
 	};
 };

@@ -15,44 +15,99 @@ Email:19980103ly@gmail.com/718987717@qq.com
 #undef LoadIcon
 
 namespace ezui {
-	struct MonitorInfo;
 	class Object;
+	enum class Cursor : ULONG_PTR;
+	struct MonitorInfo;
+	struct Style;
 	class EventArgs;
 	class ControlStyle;
-	class IFrame;
-	class Control;
+	class Bitmap;
 	class Window;
+
+	class Control;
+	class Frame;
 	class Spacer;
 	class ScrollBar;
-	class Bitmap;
-	enum class Cursor :ULONG_PTR;
+	class VScrollBar;
+	class HScrollBar;
+	class TabLayout;
+	class TextBox;
+	class TileListView;
+	class TreeView;
+	class VLayout;
+	class VListView;
+	class Button;
+	class CheckBox;
+	class ComboBox;
+	class HLayout;
+	class HListView;
+	class Label;
+	class PagedListView;
+	class PictureBox;
+	class RadioButton;
 
 #if 1
-	typedef std::vector<Control*> Controls;
-#else
-	class UI_EXPORT Controls :public std::list<Control*> {
+	//控件集合
+	class UI_EXPORT ControlCollection : public std::vector<Control*> {
 	public:
-		//不要频繁使用此函数
-		inline	Control* operator[](size_t right_pos)const
-		{
-			size_t pos = 0;
-			for (auto& it : *this) {
-				if (pos == right_pos) {
-					return it;
-				}
-				++pos;
+		ControlCollection() = default;
+		~ControlCollection() = default;
+		//返回集合中的第一个控件
+		Control* First() {
+			return this->empty() ? NULL : this->front();
+		}
+		//返回集合中的最后一个控件
+		Control* Last() {
+			return this->empty() ? NULL : this->back();
+		}
+		//移除元素
+		void Remove(Control* ctrl) {
+			auto itor = std::find(this->begin(), this->end(), ctrl);
+			if (itor != this->end()) {
+				this->erase(itor);
 			}
-			return NULL;
+		}
+		//检查元素是否存在
+		bool Contains(Control* ctrl) {
+			auto itor = std::find(this->begin(), this->end(), ctrl);
+			return itor != this->end();
 		}
 	};
+#else
+	// 控件集合
+	class UI_EXPORT ControlCollection : public std::list<Control*> {
+	public:
+		ControlCollection() = default;
+		~ControlCollection() = default;
+		// 慎用 链表不适合随机访问，下标越大，遍历越慢 O(n)
+		Control* operator[](size_t index) const {
+			if (index >= this->size()) {
+				return NULL;
+			}
+			auto it = this->begin();
+			std::advance(it, index); // 高效移动迭代器
+			return *it;
+		}
+		//返回集合中的第一个控件
+		Control* First() const {
+			return this->empty() ? NULL : this->front();
+		}
+		//返回集合中的最后一个控件
+		Control* Last() const {
+			return this->empty() ? NULL : this->back();
+		}
+	};
+
 #endif
 
-	//全局资源句柄
-	extern UI_VAR_EXPORT HMODULE __EzUI__HINSTANCE;//全局实例
-	extern UI_VAR_EXPORT Resource* __EzUI__Resource;//文件中的全局资源句柄
-	extern UI_VAR_EXPORT DWORD __EzUI__ThreadId;//UI的线程Id
-	extern UI_VAR_EXPORT HWND __EzUI_MessageWnd;//用于UI通讯的隐形窗口
-	extern UI_VAR_EXPORT const std::list<ezui::MonitorInfo> __EzUI__MonitorInfos;//所有监视器信息
+	namespace detail {
+		//全局资源句柄
+		extern UI_VAR_EXPORT HMODULE __EzUI__HINSTANCE;//全局实例
+		extern UI_VAR_EXPORT Resource* __EzUI__Resource;//文件中的全局资源句柄
+		extern UI_VAR_EXPORT DWORD __EzUI__ThreadId;//UI的线程Id
+		extern UI_VAR_EXPORT HWND __EzUI_MessageWnd;//用于UI通讯的隐形窗口
+		extern UI_VAR_EXPORT const std::list<ezui::MonitorInfo> __EzUI__MonitorInfos;//所有监视器信息
+	};
 
 	//判断两个float是相等(两数是否接近)
 	extern UI_EXPORT bool IsFloatEqual(float num1, float num2);
@@ -90,13 +145,70 @@ namespace ezui {
 	class UI_EXPORT Color :public ezui::__EzUI__Color {
 	public:
 		Color(const ezui::__EzUI__Color& copy) { this->BGRA = copy.GetValue(); }
-		Color(const DWORD& rgba = 0) :ezui::__EzUI__Color(rgba) {}
-		Color(BYTE r, BYTE g, BYTE b, BYTE a = 255) :ezui::__EzUI__Color(r, g, b, a) {}
+		Color(const uint32_t& bgra = 0) :ezui::__EzUI__Color(bgra) {}
+		Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) :ezui::__EzUI__Color(r, g, b, a) {}
 	public:
 		//构建一个Color
 		static Color Make(const UIString& colorStr, bool* isGood = NULL);
 		virtual ~Color() {}
 	};
+
+
+	/// <summary>
+	/// 描述边框的一些信息
+	/// </summary>
+	class Border {
+	public:
+		Value<int16_t> Left;//左边边框大小
+		Value<int16_t> Top;//顶部边框大小
+		Value<int16_t> Right;//右边边框大小
+		Value<int16_t> Bottom;//底部边框大小
+		Value<int16_t> TopLeftRadius;
+		Value<int16_t> TopRightRadius;
+		Value<int16_t> BottomRightRadius;
+		Value<int16_t> BottomLeftRadius;
+		Value<Color> Color;
+		Value<StrokeStyle> Style = StrokeStyle::None;
+	public:
+		class Radius {
+			Border& Border;
+		public:
+			Radius(ezui::Border& bd) :Border(bd) {}
+			//对四个角度同时设置半径大小
+			Radius& operator=(Value<int16_t> radius) {
+				Border.TopLeftRadius = radius;
+				Border.TopRightRadius = radius;
+				Border.BottomRightRadius = radius;
+				Border.BottomLeftRadius = radius;
+				return *this;
+			}
+		};
+	public:
+		Border::Radius Radius = (*this);
+	public:
+		Border() {
+			this->Style.SetEnabled(false);
+		}
+		//对四个边设置大小
+		Border& operator=(Value<int16_t> borderWidth) {
+			Left = borderWidth;
+			Top = borderWidth;
+			Right = borderWidth;
+			Bottom = borderWidth;
+			return *this;
+		}
+		void Scale(float scale) {
+			Left.Set(Left * scale + 0.5);
+			Top.Set(Top * scale + 0.5);
+			Right.Set(Right * scale + 0.5);
+			Bottom.Set(Bottom * scale + 0.5);
+			TopLeftRadius.Set(TopLeftRadius * scale + 0.5);
+			TopRightRadius.Set(TopRightRadius * scale + 0.5);
+			BottomRightRadius.Set(BottomRightRadius * scale + 0.5);
+			BottomLeftRadius.Set(BottomLeftRadius * scale + 0.5);
+		}
+	};
+
 
 #if USED_DIRECT2D
 	class UI_EXPORT Image :public DXImage {
@@ -135,11 +247,17 @@ namespace ezui {
 		//是否为主显示器
 		bool Primary = false;
 	};
-	struct WindowData {
+
+	//窗口公共数据
+	struct WindowContext {
 		//缩放率
 		float Scale = 1.0f;
 		//单次绘图数量
-		int PaintCount = 0;
+		int DrawControlCount = 0;
+		//上一帧绘制时间
+		unsigned long long LastFrameTime = 0;
+		//一秒内绘制次数
+		int DrawFrameCount = 0;
 #ifdef _DEBUG
 		//是否开启debug模式
 		bool Debug = false;
@@ -162,12 +280,8 @@ namespace ezui {
 		std::function<void()> TitleMoveWindow = NULL;
 		//处理消息过程的回调函数
 		std::function<LRESULT(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)> WndProc = NULL;
-
-#ifdef _DEBUG
-		virtual ~WindowData() {
-		}
-#endif
-
+		//设置焦点控件
+		std::function<void(Control*)> SetFocus = NULL;
 	};
 
 	enum class LayoutState {
@@ -178,36 +292,33 @@ namespace ezui {
 		//布局中
 		Layouting
 	};
-	enum Event :long long {
-		None = 1,
-		OnMouseWheel = 2,
-		OnMouseEnter = 4,
-		OnMouseMove = 8,
-		OnMouseLeave = 16,
-		OnMouseDoubleClick = 32,
-		OnMouseDown = 64,
-		OnMouseUp = 128,
-		OnKeyDown = 256,
-		OnKeyUp = 512,
-		OnPaint = 1024,
-		OnFocus = 2048,
-		OnKillFocus = 4096,
-		OnKeyChar = 8192,
-		OnMove = 16384,
-		OnSize = 32768,
-		OnRect = 65536,
-		OnDpiChange = 131072,
+	enum class Event :long long {
+		None = 0,
+		OnMouseWheel = 1,
+		OnMouseEnter = 2,
+		OnMouseMove = 4,
+		OnMouseLeave = 8,
+		OnMouseDoubleClick = 16,
+		OnMouseDown = 32,
+		OnMouseUp = 64,
+		OnKeyDown = 128,
+		OnKeyUp = 256,
+		OnPaint = 512,
+		OnFocus = 1024,
+		OnKillFocus = 2048,
+		OnKeyChar = 4096,
+		OnMove = 8192,
+		OnSize = 16384,
+		OnRect = 32768,
+		OnDpiChange = 65536,
 		OnActive = OnMouseDown | OnMouseUp,
 		OnHover = OnMouseEnter | OnMouseLeave,
 		OnMouseDrag = OnMouseDown | OnMouseMove,
 		OnMouseEvent = OnMouseWheel | OnMouseEnter | OnMouseMove | OnMouseLeave | OnMouseDoubleClick | OnMouseDown | OnMouseUp,
 		OnKeyBoardEvent = OnKeyDown | OnKeyUp | OnKeyChar
 	};
-	//重载枚举的 | 运算符
-	inline Event operator|(Event left, Event right)
-	{
-		return static_cast<Event>(static_cast<long long>(left) | static_cast<long long>(right));
-	}
+	EZUI_ENUM_OPERATORS(Event, long long);
+
 	//控件行为
 	enum class ControlAction {
 		None,
@@ -223,24 +334,11 @@ namespace ezui {
 		Disabled = 4,//禁用状态
 		Checked = 8,//选中状态
 		Hover = 16,//鼠标悬浮
-		Active = 32//鼠标按住
+		Active = 32,//鼠标按住
+		Focus = 64//具有焦点时
 	};
 	EZUI_ENUM_OPERATORS(ControlState, int);
 
-	enum class DockStyle {
-		// 摘要:
-		//未设置
-		None,
-		// 摘要:
-		//在父控件中 左右保持
-		Horizontal,
-		// 摘要:
-		//在父控件中 上下保持
-		Vertical,
-		// 摘要:
-		// 铺满整个父控件
-		Fill
-	};
 	enum class MouseButton {
 		// 摘要: 
 		  //     未曾按下鼠标按钮。
@@ -372,7 +470,7 @@ namespace ezui {
 	public:
 		PaintEventArgs(const PaintEventArgs&) = delete;
 		PaintEventArgs& operator=(const PaintEventArgs&) = delete;
-		WindowData* PublicData = NULL;
+		WindowContext* PublicData = NULL;
 		::HWND HWND = NULL;
 		HDC DC = NULL;
 		ezui::DXRender& Graphics;//画家
@@ -382,7 +480,7 @@ namespace ezui {
 		//添加裁剪(速度较快)
 		void PushLayer(const Rect& rectBounds);
 		//添加异形裁剪 比较耗性能,但是可以异形抗锯齿裁剪
-		void PushLayer(const Geometry& dxGeometry);
+		void PushLayer(const Geometry& dxGeometry, float opacity);
 		//弹出最后一个裁剪
 		void PopLayer();
 		//放入一个偏移
@@ -395,29 +493,35 @@ namespace ezui {
 	public:
 		//边框信息
 		ezui::Border Border;
-		//整体不透明度
-		//UI_Float Opacity;
 		//背景颜色
-		Color BackColor = 0;
+		Value<Color> BackColor;
 		//背景图片 如果指定的图片被删除 请必须将此置零
-		Image* BackImage = NULL;
+		Value<Image*> BackImage;
 		//前景图片 如果指定的图片被删除 请必须将此置零
-		Image* ForeImage = NULL;
+		Value<Image*> ForeImage;
 		//字体名称 具有继承性
-		std::wstring FontFamily;
+		Value<std::wstring> FontFamily;
 		//字体大小 具有继承性
-		int FontSize = 0;
+		Value<int> FontSize;
+		//字体粗度 值范围1~999 如需加粗一般为700即可 具有继承性值
+		Value<int> FontWeight;
 		//前景颜色  具有继承性
-		Color ForeColor;
+		Value<Color> ForeColor;
 		//鼠标样式
-		HCURSOR Cursor = NULL;
-		//旋转范围 0~360
-		float Angle = 0;
+		Value<HCURSOR> Cursor;
+		//正数角度(0~ 360) -> 逆时针旋转
+		//负数角度(0~ -360) -> 顺时针旋转
+		Value<float> Angle;
+		//透明度(0~1.0)
+		Value<float> Opacity;
 	private:
 		void operator=(const ControlStyle& right) {} //禁止直接赋值 因为这样会导致 Color执行拷贝使得Color变得不合法的有效
 		ControlStyle(const ControlStyle& right) {} //禁止拷贝 
 	public:
-		ControlStyle() {}
+		ControlStyle() {
+			Angle.Set(std::numeric_limits<float>::quiet_NaN());
+			Opacity.Set(std::numeric_limits<float>::quiet_NaN());
+		}
 		virtual ~ControlStyle() {}
 		void Scale(float scale);
 	};
@@ -430,29 +534,27 @@ namespace ezui {
 	public:
 		PtrManager() {}
 		virtual ~PtrManager() {
-			for (auto& obj : m_ptrs) {
-				delete obj;
-			}
+			this->Clear();
 		}
 		void Add(const T& v) {
 			if (v) {
 				m_ptrs.push_back(v);
 			}
 		}
-		void Remove(const T& v/*, bool bFree = false*/) {
+		void Remove(const T& v) {
 			auto it = std::find(m_ptrs.begin(), m_ptrs.end(), v);
 			if (it != m_ptrs.end()) {
-				/*if (bFree) {
-					delete(*it);
-				}*/
 				m_ptrs.erase(it);
 			}
 		}
 		void Clear() {
-			for (auto& obj : m_ptrs) {
-				delete obj;
+			auto itor = m_ptrs.begin();
+			while (itor != m_ptrs.end())
+			{
+				T item = *itor;
+				itor = m_ptrs.erase(itor); // erase 返回下一个有效迭代器
+				delete item;
 			}
-			m_ptrs.clear();
 		}
 	};
 
@@ -463,11 +565,13 @@ namespace ezui {
 		std::map<UIString, UIString> m_attrs;
 		// 管理子对象的释放
 		PtrManager<Object*> m_childObjects;
+		//是否正在被销毁
+		bool m_bIsDestroying = false;
 	public:
 		//用户自定义数据
 		UINT_PTR Tag = NULL;
 	public:
-		Object(Object* parentObject = NULL);
+		Object(Object* ownerObject = NULL);
 		virtual ~Object();
 	public:
 		//设置属性
@@ -482,6 +586,8 @@ namespace ezui {
 		virtual Object* Attach(Object* obj);
 		//分离对象(解除跟随释放)
 		virtual void Detach(Object* obj);
+		//对象是否正在被销毁(预防析构降级导致控件访问报错)
+		bool IsDestroying();
 		//延迟删除
 		void DeleteLater();
 	};
@@ -489,7 +595,7 @@ namespace ezui {
 	//原理采用PostMessage
 	template<class Func, class... Args>
 	bool BeginInvoke(Func&& f, Args&& ...args) {
-		HWND hWnd = ezui::__EzUI_MessageWnd;
+		HWND hWnd = ezui::detail::__EzUI_MessageWnd;
 		if (hWnd == NULL || !::IsWindow(hWnd)) {
 			return false;
 		}
@@ -504,11 +610,11 @@ namespace ezui {
 	template<class Func, class... Args>
 	bool Invoke(Func&& f, Args&& ...args) {
 		std::function<void()> func(std::bind(std::forward<Func>(f), std::forward<Args>(args)...));
-		if (::GetCurrentThreadId() == ezui::__EzUI__ThreadId) {
+		if (::GetCurrentThreadId() == ezui::detail::__EzUI__ThreadId) {
 			func();
 			return true;
 		}
-		HWND hWnd = ezui::__EzUI_MessageWnd;
+		HWND hWnd = ezui::detail::__EzUI_MessageWnd;
 		if (hWnd == NULL || !::IsWindow(hWnd)) {
 			return false;
 		}

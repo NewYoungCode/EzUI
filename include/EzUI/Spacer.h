@@ -6,6 +6,7 @@ namespace ezui {
 	class UI_EXPORT Spacer :public Control {
 	public:
 		Spacer();
+		virtual bool IsSpacer()override final;
 		virtual ~Spacer();
 	};
 	//具有绝对高度的 的弹簧

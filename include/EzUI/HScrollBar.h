@@ -11,11 +11,11 @@ namespace ezui {
 		virtual void OnMouseDown(const MouseEventArgs& arg)override;
 		virtual void OnMouseMove(const MouseEventArgs& arg)override;
 		virtual void GetInfo(int* viewLength, int* contentLength, int* scrollBarLength)override;
+		virtual void OnParentSize(const Size& parentSize)override;
 	public:
-		HScrollBar(Object* parentObject = NULL);
+		HScrollBar(Object* ownerObject = NULL);
 		virtual ~HScrollBar();
 		virtual void ScrollTo(Control* ctl)override;
-		virtual void ParentSize(const Size& parentSize)override;
 		virtual Rect GetSliderRect()override;
 	};
 };

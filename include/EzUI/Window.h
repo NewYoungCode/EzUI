@@ -14,12 +14,13 @@ namespace ezui {
 	class UI_EXPORT Window :public Object
 	{
 	private:
+		DXRender* graphics = NULL;
 		//具有鼠标焦点的控件
 		Control* m_focusControl = NULL;
 		//具有键盘焦点的控件
 		Control* m_inputControl = NULL;
 		//窗口公共数据
-		WindowData* m_publicData = NULL;
+		WindowContext* m_publicData = NULL;
 		//窗口句柄
 		HWND m_hWnd = NULL;
 		//鼠标跟踪
@@ -51,7 +52,7 @@ namespace ezui {
 		//所属窗口句柄
 		HWND m_ownerWnd = NULL;
 		//窗口根Frame
-		IFrame* m_frame = NULL;
+		Frame* m_frame;
 		// 管理图片的释放
 		PtrManager<Image*> m_imgs;
 	public:
@@ -124,7 +125,7 @@ namespace ezui {
 		Control* FindControl(const UIString& objectName);
 
 		//获取公共数据
-		WindowData* GetPublicData();
+		WindowContext* GetWindowContext();
 
 		//窗口句柄
 		HWND Hwnd();
@@ -141,8 +142,8 @@ namespace ezui {
 		// 获取窗口高度
 		int Height();
 
-		//获取窗口基于显示器的矩形
-		const Rect& GetWindowRect();
+		//获取基于父窗口或显示器的矩形
+		const Rect& GetRect();
 
 		//获取客户区矩形
 		const Rect& GetClientRect();
@@ -177,11 +178,14 @@ namespace ezui {
 		//从文件中加载布局
 		void LoadXml(const UIString& fileName);
 
-		//从内存加载布局
-		void LoadXml(const char* fileData, size_t fileSize);
-
 		//获取窗口主布局
 		Control* GetLayout();
+
+		//设置Frame
+		void SetFrame(Frame* frame);
+
+		//获取窗口Frame
+		Frame* GetFrame();
 
 		//设置窗口标题
 		void SetText(const UIString& text);
