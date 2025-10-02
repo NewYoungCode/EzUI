@@ -51,20 +51,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	EnableCrashDumps();
 
-
-	int count = 0;
-	while (true)
-	{
-		Application app(hInstance);
-		app.EnableHighDpi();//启用高DPI
-		app.SetResource("my_res");//设定资源名称
-		MainForm mainFrm2(1014, 725);
-		count++;
-		OutputDebugStringA(UIString("%d\n").format(count).c_str());
-	}
-
-	//int x = 100 / std::atoi("0");
-	//printf("%d", x);
+	//测试内存泄露问题
+	//int count = 0;
+	//while (true)
+	//{
+	//	Application app(hInstance);
+	//	app.EnableHighDpi();//启用高DPI
+	//	app.SetResource("my_res");//设定资源名称
+	//	MainForm mainFrm2(1014, 725);
+	//	count++;
+	//	OutputDebugStringA(UIString("%d\n").format(count).c_str());
+	//}
 
 	//app类
 	Application app(hInstance);
@@ -75,14 +72,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	ezui::RegisterControl<SessionItem>("SessionItem");
 	ezui::RegisterControl<SessionFrame>("SessionFrame");
 
-	////创建登录创建
-	//LoginForm loginFrm;
-	//loginFrm.Show();
-	//loginFrm.CloseShadowBox();
+	//创建登录创建
+	LoginForm loginFrm;
+	if (loginFrm.ShowModal() != 1) {
+		//取消登录
+		return 0;
+	}
 
+	//登录成功加载主页面
 	MainForm mainFrm(1014, 725);
-
-	Animation* amt = new Animation(&mainFrm);
+	Animation* amt = new Animation(&mainFrm);//动画加载
 	amt->ValueChanged = [&mainFrm](float value) {
 		mainFrm.Opacity = value;
 		mainFrm.Invalidate();
@@ -93,7 +92,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	amt->SetStartValue(0);
 	amt->SetEndValue(1);
-	amt->Start(500);
+	amt->Start(1000);
 
 
 	//开始消息循环

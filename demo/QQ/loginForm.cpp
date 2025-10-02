@@ -20,9 +20,10 @@ void LoginForm::OnNotify(Control* sender, EventArgs& args)
 			UIString pwd = editpwd->GetText();
 			if (user == "718987717" && pwd == "123456") {
 				::MessageBox(Hwnd(), L"登录成功!", L"提示", MB_OK);
+				this->Close(1);
 			}
 			else {
-				::MessageBox(Hwnd(), L"用户名或密码错误!", L"提示", MB_OK);
+				::MessageBox(Hwnd(), L"用户名或密码错误!\n账号:718987717\n密码:123456", L"提示", MB_OK);
 			}
 		}
 		if (sender->Name == "btnExit") {
@@ -38,7 +39,6 @@ void LoginForm::OnNotify(Control* sender, EventArgs& args)
 void LoginForm::OnClose(bool& bClose)
 {
 	//bClose = false;
-	Application::Exit();
 }
 
 LoginForm::~LoginForm()
