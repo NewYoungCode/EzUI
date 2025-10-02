@@ -15,13 +15,18 @@ namespace ezui {
 	class UI_EXPORT PagedListView :
 		public Control
 	{
+		friend class VListView;
+		friend class HListView;
+		friend class TileListView;
 	private:
 		int m_pageIndex = 0;
 		int m_pageTotal = 0;
 		int m_pageSize = 0;
 		ControlCollection m_items;
-	public:
+	private:
+		//不允许外部直接使用PagedListView(此类为接口类)
 		PagedListView(Object* ownerObject = NULL);
+	public:
 		virtual ~PagedListView();
 		//页面需要加载下一页的时候发生
 		std::function<bool(PagedListView*, int)> NextPaging = NULL;

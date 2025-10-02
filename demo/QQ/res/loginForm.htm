@@ -1,0 +1,86 @@
+<vbox id="mainLayout" action="move">
+
+    <hbox height="20" margin-top="5" action="move">
+        <spacer></spacer>
+        <label size="20,20" style="background-image: url(res/setting.png)"></label>
+        <spacer width="10"></spacer>
+        <label id="btnExit" size="20,20" action="close" style="background-image: url(res/close.png)"></label>
+        <spacer width="10"></spacer>
+    </hbox>
+
+    <!--<spacer height="40"></spacer>-->
+    <label margin-top="30" id="headImg" size="80,80" action="move"></label>
+
+    <!-- 账号输入框 -->
+    <hbox margin-top="25" size="258,42" style="border-radius:5px;background-color:white;">
+        <spacer width="24"></spacer>
+        <input id="user" halign="center" placeholder="输入QQ号" />
+        <label size="24,24" margin-right="5" style="background-image:url(res/down.png)"></label>
+    </hbox>
+
+    <!-- 密码输入框 -->
+    <hbox margin-top="10" size="258,42" style="border-radius:5px;background-color:white;">
+        <spacer width="24"></spacer>
+        <input passwordchar="*" id="pwd" halign="center" placeholder="输入密码" />
+        <label size="15,15" margin-right="10" style="background-image:url(res/close.png)"></label>
+    </hbox>
+
+    <!-- 协议勾选 -->
+    <hbox size="258,42" margin-top="10" style="font-size:12px">
+        <checkbox size="18,18" id="ckbox"></checkbox>
+        <label width="auto" text="我已阅读并同意"></label>
+        <button url="www.baidu.com" width="auto" style="color: #2D77E5;cursor:pointer" text="服务协议"></button>
+        <label width="auto" text="和"></label>
+        <button url="www.bing.com" width="auto" style="color: #2D77E5" text="QQ隐私保护指引"></button>
+    </hbox>
+
+    <button margin-top="15" size="258,38" id="btnLogin" text="登录"> </button>
+
+
+    <!-- 扫码登陆/更多选项 -->
+    <hbox size="258,20" margin-top="40" style="font-size:14px">
+
+        <spacer></spacer>
+
+        <button width="auto" text="扫码登录" style="color: #2D77E5 "></button>
+
+        <label width="auto" text="|" margin="0,5,0,5" style="color: #E4DFEB"></label>
+
+        <button width="auto" text="更多选项" style="color: #2D77E5 "></button>
+
+        <spacer></spacer>
+
+    </hbox>
+
+</vbox>
+
+<style>
+    #mainLayout {
+        background-color: #E8F0FF;
+        font-size: 14px;
+    }
+
+    #headImg {
+        background-image: url(res/head.png);
+        border-radius: 80px;
+        border: 2px solid white;
+    }
+
+    #ckbox {
+        background-image: url(res/check.png);
+    }
+
+        #ckbox:checked {
+            background-image: url(res/check_1.png);
+        }
+
+    #btnLogin {
+        background-color: #0099FF;
+        color: white;
+        border-radius: 8px;
+    }
+        /*登录按钮鼠标悬浮时候的外观*/
+        #btnLogin:hover {
+            background-color: #008DEB;
+        }
+</style>

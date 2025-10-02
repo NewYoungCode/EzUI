@@ -32,11 +32,8 @@ namespace ezui {
 		bool m_first = true;//内部用
 		UIString m_styleStr;//内部用
 		std::vector<Control*> m_rootNode;//根节点列表
-		std::list<XmlNode> m_controls;
 		void LoadControl(void* node, Control* control);
 		Control* BuildControl(void* node);//内部函数
-		//记录XML中的控件到管理器 管理器释放的时候 由管理器加载的控件将自动释放
-		void AttachControl(Control* ctl, const UIString& tagNamee);
 	protected:
 		//当解析到一个节点需要创建控件的时候发生
 		virtual Control* OnBuildControl(const UIString& nodeName);

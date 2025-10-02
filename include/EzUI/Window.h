@@ -61,7 +61,7 @@ namespace ezui {
 	private:
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
-		bool IsInWindow(Control& pControl, Control& it);
+		bool IsInWindow(Control* pControl, Control* it);
 		void Init(int width, int height, HWND owner, DWORD dStyle, DWORD  dwExStyle);//初始窗口
 		//仅移动窗口
 		void MoveWindow();

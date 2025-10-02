@@ -1,13 +1,12 @@
 # EzUI 框架使用说明
-
 **EzUI 2.0** 是一个基于原生 Win32 消息机制和 Direct2D 的高性能桌面 UI 框架，具备强大的弹性布局、伪类样式支持和控件系统，目标是提供如 Web 前端般灵活、直观的界面开发体验。
 
 > 🚀 **新增与优化特性（2.0）**  
 > - 性能大幅提升，布局与绘制速度优化  
 > - 修复旧版本代码 bug 与潜在隐患  
 > - 布局新增精度补偿机制，解决间隙问题  
-> - 布局支持 `min-width` / `max-width` / `min-height` / `max-height`  
-> - 控件新增状态属性，提高可控性  
+> - 布局支持 `min-width` / `max-width` / `min-height` / `max-height`  新增SetPadding为布局器设置内边距 输入框设置文字内边距
+> - 控件新增状态属性，提高可控性  新增自身框架鼠标穿透且子控件不受影响
 > - 增强动画效果，提升用户体验  
 > - 支持高 DPI、分层窗口、响应式布局、CSS 风格皮肤、GIF 动画、控件组合与继承机制
 
@@ -43,7 +42,7 @@
 - **LayeredWindow.h**：分层窗口类，支持透明和异形窗口。
 - **Menu.h**：菜单控件及弹出菜单支持。
 - **NotifyIcon.h**：系统托盘图标控件。
-- **PagedListView.h**：分页列表控件。
+- **PagedListView.h**：分页列表控件。(不可以直接创建改对象)
 - **PictureBox.h**：图片显示控件。
 - **PopupWindow.h**：弹出窗口控件，失去焦点自动隐藏或关闭。
 - **RadioButton.h**：单选按钮控件。
@@ -226,6 +225,8 @@ EzUI 框架提供四种主要窗口类，用于不同的窗口类型和效果需
 | `rect` | 控件矩形区域，格式 `"x,y,width,height"`。 |
 | `margin` | 控件外边距，可使用单值、双值或四值，支持 web 风格语法（如 `"10"`, `"10 20"`, `"10 20 30 40"`）。 |
 | `margin-left` / `margin-top` / `margin-right` / `margin-bottom` | 分别设置控件的单侧外边距。 |
+|  `padding` | 控件内边距，可使用单值、双值或四值，支持 web 风格语法（如 `"10"`, `"10 20"`, `"10 20 30 40"`）。 |
+| `padding-left` / `padding-top` / `padding-right` / `padding-bottom` | 分别设置控件的单侧内边距。 |
 | `visible` | 控件可见性，`false` 隐藏控件。 |
 | `display` | 控件显示方式，`none` 隐藏控件，其他值显示控件。 |
 | `float` | 控件浮动，`true` 启用浮动布局。 |
@@ -274,6 +275,7 @@ Control 支持的样式属性包括：
 | x / y                                                                                                     | 控件位置                                                  |
 | width / height                                                                                            | 宽度 / 高度，可用百分比或 "auto"                                 |
 | margin / margin-left / margin-top / margin-right / margin-bottom                                          | 外边距，支持 CSS 写法                                         |
+| padding / padding-left / padding-top / padding-right / padding-bottom                                     | 控件内边距，支持 CSS 写法                                         |
 | display                                                                                                   | "none" 隐藏控件                                           |
 
 ### 样式示例
@@ -297,6 +299,15 @@ Control 支持的样式属性包括：
     border-radius:10px;
     border-color: #005a9e;
 }
+
+.check:focus { /*控件具有焦点时样式*/
+   border:2px solid gray;
+}
+
+.check:disabled { /*控件被禁用样式*/
+    border-color: baclk;
+	color:gray;
+}
 ```
 
 ---
@@ -310,11 +321,12 @@ Control 支持的样式属性包括：
 - 事件处理（Mouse/Keyboard/Focus/OnEvent/SendEvent 等）
 - 可见性与浮动管理（SetVisible/Show/Hide/SetFloat/IsFloat）
 - 光标管理（GetCursor, SetCursor）
-- 边距管理（SetMargin/GetMargin）
+- 外边距管理（SetMargin/GetMargin）
+- 内边距管理（SetPadding/GetPadding）
 - 内容尺寸管理（GetContentSize/SetContentWidth/SetContentHeight）
 - 滚动条支持（GetScrollBar）
 - 焦点控制（SetFocus）
-
+- 用户自定义数据 GetUserData()/SetUserData(void*userData)
 
 ### Control 类函数与属性补充说明
 
@@ -332,9 +344,9 @@ Control 支持的样式属性包括：
 
 | 方法 | 说明 |
 | ---- | ---- |
-| SetContentWidth(width) | 设置内容宽度（子类） |
-| SetContentHeight(height) | 设置内容高度（子类） |
-| SetContentSize(size) | 设置内容尺寸（子类） |
+| SetContentWidth(width) | 设置内容宽度 |
+| SetContentHeight(height) | 设置内容高度 |
+| SetContentSize(size) | 设置内容尺寸 |
 | OnLayout() | 控件布局逻辑，可重写 |
 | RefreshLayout() | 立即刷新布局 |
 | SetRect(rect) | 设置相对父控件矩形 |
@@ -355,7 +367,8 @@ Control 支持的样式属性包括：
 | SetVisible(flag) / IsVisible() | 设置/获取控件可见性 |
 | Show() / Hide() | 显示/隐藏控件 |
 | SetFloat(flag) / IsFloat() | 设置/获取控件浮动状态,浮动状态下控件不会参与布局 |
-| SetHitTestVisible(flag) / IsHitTestVisible() | 设置/获取鼠标穿透状态 |
+| SetHitTestVisible(flag) / IsHitTestVisible() | 设置/获取鼠标穿透状态(子控件一并穿透) |
+| void SetMouseTransparent(bool bFlag);//控件自身不参与命中测试 (自身鼠标穿透,但是子控件依旧可以参与命中测试)
 
 #### 子控件操作
 
@@ -570,6 +583,37 @@ xml中的用法:
 
 - 继承 Label  
 - 鼠标默认光标为手型  
+
+
+## ComboBox控件
+### xml用法
+```xml
+
+            <combobox height="30" width="120" style="border:1px solid green;">
+                <option value="0" text="-未选择-" style:hover="background-color:red" ></option>
+                <option value="12" text="-青菜-"  style:hover="background-color:red"  ></option>
+                <option value="13" text="-萝卜-"  style:hover="background-color:red" ></option>
+                <option value="14" selected="selected" text="-回锅肉-"  style:checked="background-color:black" style:hover="background-color:red" ></option>
+            </combobox>
+
+```
+### c++代码
+```cpp
+		//添加一个选项
+		ComboBox::Option* AddOption(const UIString& optionValue, const UIString& optionShowText);
+		//移除一个选项
+		void RemoveOption(const UIString& optionValue);
+		//移除全部选项
+		void RemoveAllOptions();
+		//获取选中的value(返回optionValue)
+		UIString GetValue();
+		//选中某个optionValue
+		bool SetValue(const UIString& optionValue);
+		//获取选中的文字
+		UIString GetText();
+		//获取承载选项的容器
+		VListView* GetOptionPanel();
+```
 
 
 ## 📖 学习 & 技术支持

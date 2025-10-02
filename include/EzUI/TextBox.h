@@ -44,6 +44,9 @@ namespace ezui {
 		//文字对其方式(针对单行输入框有效)
 		TextAlign TextAlign = TextAlign::MiddleLeft;
 	private:
+		int Width2();//内部使用(返回偏移后的宽度)
+		int Height2();//内部使用(返回偏移后的高度)
+		void CalcContentSize();//内部使用 计算和设置contentSize
 		void Init();
 		void InsertUnicode(const std::wstring& str);//插入unicode文字内部使用
 		bool DeleteRange();//删除选中内容

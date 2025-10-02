@@ -11,6 +11,9 @@ namespace ezui {
 		HScrollBar m_hScrollBar;
 		void Init();
 		void Offset(int offset);
+	public:
+		//布局完成的回调
+		std::function<void()> Layout = NULL;
 	protected:
 		virtual void OnLayout()override;
 		virtual void OnChildPaint(PaintEventArgs& args)override;

@@ -12,11 +12,8 @@ namespace ezui {
 		std::wstring m_ellipsisText;//文字溢出将显示的文字
 	protected:
 		virtual void OnForePaint(PaintEventArgs& args) override;
-		virtual void OnDpiChange(const DpiChangeEventArgs& args)override;
 		virtual void OnLayout()override;
 	public:
-		//基于控件的文字的边距
-		ezui::Distance TextMargin;
 		//文字对齐方式
 		TextAlign TextAlign = TextAlign::MiddleCenter;
 	public:

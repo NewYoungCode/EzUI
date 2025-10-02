@@ -6,7 +6,7 @@ namespace ezui {
 		class UI_EXPORT mutex {
 		private:
 			CRITICAL_SECTION m_mtx;  // 互斥锁
-			bool m_bLocked;
+			std::atomic<int> m_lockState = 0;
 			mutex(const mutex&) = delete;
 		public:
 			mutex();
@@ -15,6 +15,7 @@ namespace ezui {
 			void lock();
 			// 解锁互斥锁
 			void unlock();
+			bool isLocked();
 		};
 
 		template<typename Mutex>

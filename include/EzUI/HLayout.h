@@ -7,6 +7,9 @@ namespace ezui {
 	{
 	private:
 		VAlign m_contentAlign = VAlign::Mid;
+	public:
+		//布局完成的回调
+		std::function<void()> Layout = NULL;
 	protected:
 		void DistributeAutoWidths(std::vector<Control*> const& autoSizeCtrls, int availableWidth);
 		virtual void OnLayout()override;

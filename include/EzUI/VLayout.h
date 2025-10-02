@@ -7,6 +7,9 @@ namespace ezui {
 	{
 	private:
 		HAlign m_contentAlign = HAlign::Center;
+	public:
+		//布局完成的回调
+		std::function<void()> Layout = NULL;
 	protected:
 		void DistributeAutoHeights(std::vector<Control*> const& autoSizeCtrls, int availableHeight);
 		virtual void OnLayout() override;

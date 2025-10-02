@@ -26,9 +26,10 @@ namespace ezui {
 		//溢出容器的长度
 		int m_overflowLength = 0;
 
-		//int _old_viewLength = 0;
-		//int _old_contentLength = 0;
-		//int _old_offset = 0;
+		//滚动条最后一次滚动的值
+		int m_lastPos = 0;
+		//滚动条最后一次最大滚动的值
+		int m_lastMaxNum = 0;
 		float m_velocity = 0;  // 当前滚动速度
 		Animation m_amt;//动画
 	private:
@@ -36,8 +37,8 @@ namespace ezui {
 	public:
 		//滚动条计算出偏移之后的回调函数
 		std::function<void(int)> OffsetCallback = NULL;
-		//滚动事件 arg1:发送者 arg2:滚动百分比 arg3:滚动类型
-		std::function<void(ScrollBar*, float, Event)> Scroll = NULL;
+		//滚动事件 参数1: 滚动条当前值
+		std::function<void(int)> ValueChanged = NULL;
 	protected:
 		virtual void OnBackgroundPaint(PaintEventArgs& arg)override;
 		virtual void OnForePaint(PaintEventArgs& args) override;
@@ -47,16 +48,18 @@ namespace ezui {
 		virtual void OnMouseWheel(const MouseEventArgs& arg)override;
 		virtual void GetInfo(int* viewLength, int* contentLength, int* scrollBarLength) = 0;
 		virtual void OnParentSize(const Size& parentSize) = 0;
-		void ScrollTo(int offset, const Event& type);
+		void OffsetTo(int offset);
 		//刷新滚动条状态,根据内容长度和视口长度重新计算滑块参数
 		void Recalc();
 	public:
 		//滚动到指定控件可见位置
 		virtual void ScrollTo(Control* ctl) = 0;
-		//按照百分比滚动 0.0f~1.0f
-		void ScrollTo(float scrollRate);
-		//获取当前滚动到的位置 进度的百分比
-		float ScrollPos();
+		//滚动到某个值
+		void ScrollTo(int scrollValue);
+		//获取当前已滚动的值
+		virtual int GetValue();
+		//获取最大可滚动的值
+		virtual int GetMaxValue();
 		//获取滑块的矩形
 		virtual Rect GetSliderRect() = 0;//
 		//滚动条是否已经绘制且显示

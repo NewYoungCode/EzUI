@@ -1,0 +1,263 @@
+<hbox id="mainLayout" style="">
+    <vbox width="59" id="leftMenu">
+
+        <hbox height="20" margin-top="20">
+            <spacer></spacer>
+            <label size="20,20" style="background-image:url(res/QQ.png)"></label>
+            <label text="QQ" width="auto" style="font-weight:700"></label>
+            <spacer></spacer>
+        </hbox>
+
+        <!-- 无布局 -->
+        <control size="40,40" margin-top="20">
+            <label width="100%" height="100%" style="background-image:url(res/head.png);border-radius:40px">
+            </label>
+            <label size="10,10" x="28" y="28" style="background-color: #26E78B; border-radius: 5px;"></label>
+        </control>
+
+        <vbox>
+            <radiobutton tablayout="tab" class="btnMenu" margin-top="15">
+                <label rect="9,9,20,20" style="background-image:url(res/xinxi.png);pointer-events:none" event="none"></label>
+            </radiobutton>
+
+            <radiobutton tablayout="tab" class="btnMenu">
+                <label rect="9,9,20,20" style="background-image: url(res/lxr.png); pointer-events: none" event="none"></label>
+            </radiobutton>
+
+            <radiobutton tablayout="tab" class="btnMenu">
+                <label rect="9,9,20,20" style="background-image: url(res/kj.png); pointer-events: none" event="none"></label>
+            </radiobutton>
+        </vbox>
+
+        <spacer></spacer>
+
+        <radiobutton tablayout="tab" class="btnMenu">
+            <label rect="9,9,20,20" style="background-image: url(res/gd.png); pointer-events: none" event="none"></label>
+        </radiobutton>
+    </vbox>
+
+    <vbox width="320">
+        <!-- 搜索框 -->
+        <vbox height="64" style="background-color:white" action="title">
+            <spacer></spacer>
+            <hbox height="27">
+                <hbox width="253" margin-left="16" style="background-color: #F5F5F5;border-radius:3px">
+                    <label margin-left="5" size="14,14" style="background-image:url(res/search.png)"></label>
+                    <input style="margin-left:5px" placeholder="搜索" />
+                </hbox>
+                <button size="26,26" text="+" margin-left="16" style="border-radius: 5px;font-size:18px; color: #ACACAC; background-color: #F5F5F5"></button>
+            </hbox>
+            <spacer height="10"></spacer>
+        </vbox>
+        <!-- 选项卡控件 -->
+        <tablayout id="tab" tabindex="0">
+            <!-- 自定义控件SessionFrame -->
+            <!--<SessionFrame id="sessionFrame" src="res/xxx.htm"></SessionFrame>-->
+            <iframe id="sessionFrame" src="res/session.htm"></iframe>
+            <label text="我的联系人页面" style="background-color:#ff6a00"></label>
+        </tablayout>
+    </vbox>
+
+    <vbox>
+        <hbox height="27" id="title" action="title">
+
+            <spacer></spacer>
+
+            <button size="18,18" style="background-image:url(res/mini.png)" action="mini"></button>
+            <button size="18,18" margin-left="10" style="background-image:url(res/max.png)" action="max"></button>
+            <button size="18,18" margin-left="10" margin-right="10" style="background-image:url(res/close)" action="close"></button>
+
+        </hbox>
+
+        <hbox height="40">
+            <label action="title" margin-left="20px" height="40px" style="border-bottom: 1px #E9E9E9 solid; font-weight: 700; font-size: 16px" text="EzUI交流群(102)" align="left"></label>
+
+            <label size="auto" text="群文件"></label>
+
+            <label size="auto" margin-left="10px" margin-right="10px" text="群视频"></label>
+
+        </hbox>
+
+        <!-- 聊天列表 -->
+        <vlist id="charVList">
+
+            <combobox height="30" width="120" style="border:1px solid green;">
+                <option value="0" text="-未选择-"></option>
+                <option value="12" text="-青菜-"></option>
+                <option value="13" text="-萝卜-"></option>
+                <option value="14" selected="selected" text="-回锅肉-"></option>
+            </combobox>
+
+            <hbox width="100%" height="50px">
+                <label width="40" height="40" style="background-image:url(res/head.png);border-radius:40px"></label>
+                <vbox margin-left="10">
+                    <label align="left" text="群主"></label>
+                    <label style="border-radius:10px;border-top-left-radius:0px; background-color:green;color:white" text="如何呢 又能怎?"></label>
+                </vbox>
+                <spacer></spacer>
+            </hbox>
+            <hbox width="100%" height="50px">
+                <label width="40" height="40" style="background-image:url(res/head.png);border-radius:40px"></label>
+                <vbox margin-left="10">
+                    <label align="left" text="群主"></label>
+                    <label style="border-radius:10px;border-top-left-radius:0px; background-color:green;color:white" text="如何呢 又能怎?"></label>
+                </vbox>
+                <spacer></spacer>
+            </hbox>
+            <hbox width="100%" height="50px">
+                <spacer></spacer>
+
+                <vbox margin-left="10">
+                    <label align="right" text="群主"></label>
+                    <label style="border-radius:10px;border-top-right-radius:0px; background-color:green;color:white" text="如何呢 又能怎?"></label>
+                </vbox>
+                <label width="40" height="40" style="background-image:url(res/head.png);border-radius:40px"></label>
+            </hbox>
+            <hbox width="100%" height="50px">
+                <label width="40" height="40" style="background-image:url(res/head.png);border-radius:40px"></label>
+                <vbox margin-left="10">
+                    <label align="left" text="群主"></label>
+                    <label style="border-radius:10px;border-top-left-radius:0px; background-color:green;color:white" text="如何呢 又能怎?"></label>
+                </vbox>
+                <spacer></spacer>
+            </hbox>
+
+            <hbox width="100%" height="50px">
+                <spacer></spacer>
+
+                <vbox margin-left="10">
+                    <label align="right" text="群主"></label>
+                    <label style="border-radius:10px;border-top-right-radius:0px; background-color:green;color:white" text="如何呢 又能怎?"></label>
+                </vbox>
+                <label width="40" height="40" style="background-image:url(res/head.png);border-radius:40px"></label>
+            </hbox>
+            <hbox width="100%" height="50px">
+                <spacer></spacer>
+
+                <vbox margin-left="10">
+                    <label align="right" text="群主"></label>
+                    <label style="border-radius:10px;border-top-right-radius:0px; background-color:green;color:white" text="如何呢 又能怎?"></label>
+                </vbox>
+                <label width="40" height="40" style="background-image:url(res/head.png);border-radius:40px"></label>
+            </hbox>
+            <hbox width="100%" height="50px">
+                <label width="40" height="40" style="background-image:url(res/head.png);border-radius:40px"></label>
+                <vbox margin-left="10">
+                    <label align="left" text="群主"></label>
+                    <label style="border-radius:10px;border-top-left-radius:0px; background-color:green;color:white" text="如何呢 又能怎?"></label>
+                </vbox>
+                <spacer></spacer>
+            </hbox>
+
+            <hbox width="100%" height="50px">
+                <spacer></spacer>
+
+                <vbox margin-left="10">
+                    <label align="right" text="群主"></label>
+                    <label style="border-radius:10px;border-top-right-radius:0px; background-color:green;color:white" text="如何呢 又能怎?"></label>
+                </vbox>
+                <label width="40" height="40" style="background-image:url(res/head.png);border-radius:40px"></label>
+            </hbox>
+            <hbox width="100%" height="50px">
+                <spacer></spacer>
+
+                <vbox margin-left="10">
+                    <label align="right" text="群主"></label>
+                    <label style="border-radius:10px;border-top-right-radius:0px; background-color:green;color:white" text="如何呢 又能怎?"></label>
+                </vbox>
+                <label width="40" height="40" style="background-image:url(res/head.png);border-radius:40px"></label>
+            </hbox>
+            <hbox width="100%" height="50px">
+                <label width="40" height="40" style="background-image:url(res/head.png);border-radius:40px"></label>
+                <vbox margin-left="10">
+                    <label align="left" text="群主"></label>
+                    <label style="border-radius:10px;border-top-left-radius:0px; background-color:green;color:white" text="如何呢 又能怎?"></label>
+                </vbox>
+                <spacer></spacer>
+            </hbox>
+
+            <hbox width="100%" height="50px">
+                <spacer></spacer>
+
+                <vbox margin-left="10">
+                    <label align="right" text="群主"></label>
+                    <label style="border-radius:10px;border-top-right-radius:0px; background-color:green;color:white" text="如何呢 又能怎?"></label>
+                </vbox>
+                <label width="40" height="40" style="background-image:url(res/head.png);border-radius:40px"></label>
+            </hbox>
+            <hbox width="100%" height="50px">
+                <spacer></spacer>
+
+                <vbox margin-left="10">
+                    <label align="right" text="群主"></label>
+                    <label style="border-radius:10px;border-top-right-radius:0px; background-color:green;color:white" text="如何呢 又能怎?"></label>
+                </vbox>
+                <label width="40" height="40" style="background-image:url(res/head.png);border-radius:40px"></label>
+            </hbox>
+            <hbox width="100%" height="50px">
+                <label width="40" height="40" style="background-image:url(res/head.png);border-radius:40px"></label>
+                <vbox margin-left="10">
+                    <label align="left" text="群主"></label>
+                    <label style="border-radius:10px;border-top-left-radius:0px; background-color:green;color:white" text="如何呢 又能怎?"></label>
+                </vbox>
+                <spacer></spacer>
+            </hbox>
+
+            <hbox width="100%" height="50px">
+                <spacer></spacer>
+
+                <vbox margin-left="10">
+                    <label align="right" text="群主"></label>
+                    <label style="border-radius:10px;border-top-right-radius:0px; background-color:green;color:white" text="如何呢 又能怎?"></label>
+                </vbox>
+                <label width="40" height="40" style="background-image:url(res/head.png);border-radius:40px"></label>
+            </hbox>
+        </vlist>
+
+        <vbox height="207" style="border-top: 1px #E9E9E9 solid;">
+
+            <input margin="10" multiline="true" placeholder="请输入" />
+
+        </vbox>
+
+        <hbox height="30" margin-bottom="5px">
+            <spacer></spacer>
+            <button text="发送" size="100,30" style="background-color: #0099FF;color:white;border-radius:5px;margin-right:5px"></button>
+        </hbox>
+
+    </vbox>
+
+</hbox>
+
+<style>
+
+    #mainLayout {
+        background-color: #F2F2F2;
+        border-radius: 10px
+    }
+
+    #leftMenu {
+        background-color: #DBD9D5;
+    }
+
+    .btnMenu {
+        width: 38px;
+        height: 38px;
+        cursor: pointer;
+        margin-top: 8px;
+        border-radius: 10px;
+    }
+
+        .btnMenu:hover {
+            background-color: #D2D4D5;
+        }
+
+        .btnMenu:checked {
+            background-color: #D2D4D5;
+        }
+
+    #charVList::-webkit-scrollbar {
+        width: 7px;
+        border-radius: 7px;
+    }
+</style>

@@ -4,10 +4,14 @@
 #include "VListView.h"
 #include "PopupWindow.h"
 #include "HLayout.h"
+#include "RadioButton.h"
 
 namespace ezui {
 	//简易的下拉列表框
 	class UI_EXPORT ComboBox :public HLayout {
+	public:
+		//作为下拉框选项专用
+		using Option = RadioButton;
 	private:
 		//添加选项请使用AddItem
 		virtual Control* AddChild(Control* childCtl)override;
@@ -25,29 +29,40 @@ namespace ezui {
 			virtual ~MenuContent();
 		};
 	private:
+		void Init();
 		//下拉菜单窗口
 		MenuContent* m_menuWnd = NULL;
 		//选择之后显示的文本框
 		TextBox m_textBox;
 		//展开菜单的按钮
 		Label m_UpDown;
-
+		//存储选项的集合
 		VListView m_list;
-		int m_index = -1;
-		void Init();
+		//已选中的值
+		UIString m_value;
+	public:
+		//用户界面切换选项的时候发生的回调
+		std::function<void(const UIString&)> ValueChanged = NULL;
 	protected:
 		virtual void OnLayout()override;
+		void BindClick(Control* ctrl);
 	public:
 		ComboBox(Object* ownerObject = NULL);
+		virtual void SetAttribute(const UIString& attrKey, const UIString& attrValue)override;
+		//添加一个选项
+		ComboBox::Option* AddOption(const UIString& optionValue, const UIString& optionShowText);
+		//移除一个选项
+		void RemoveOption(const UIString& optionValue);
+		//移除全部选项
+		void RemoveAllOptions();
+		//获取选中的value(返回optionValue)
+		UIString GetValue();
+		//选中某个optionValue
+		bool SetValue(const UIString& optionValue);
 		//获取选中的文字
 		UIString GetText();
-		//获取选中的下标
-		int GetCheck();
-		//选中某个下标
-		bool SetCheck(int pos);
+		//获取承载选项的容器
+		VListView* GetOptionPanel();
 		virtual ~ComboBox();
-		//添加一个item并返回新item的下标
-		int AddItem(const UIString& text);
-		void RemoveItem(int index);
 	};
 };

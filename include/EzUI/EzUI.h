@@ -538,7 +538,10 @@ namespace ezui {
 		}
 		void Add(const T& v) {
 			if (v) {
-				m_ptrs.push_back(v);
+				auto itor = std::find(m_ptrs.begin(), m_ptrs.end(), v);
+				if (itor == m_ptrs.end()) {
+					m_ptrs.push_back(v);
+				}
 			}
 		}
 		void Remove(const T& v) {
@@ -567,13 +570,16 @@ namespace ezui {
 		PtrManager<Object*> m_childObjects;
 		//是否正在被销毁
 		bool m_bIsDestroying = false;
-	public:
 		//用户自定义数据
-		UINT_PTR Tag = NULL;
+		void* m_userData = NULL;
 	public:
 		Object(Object* ownerObject = NULL);
 		virtual ~Object();
 	public:
+		//设置用户自定义数据
+		void SetUserData(void* userData);
+		//获取用户自定义数据
+		void* GetUserData();
 		//设置属性
 		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue);
 		//获取属性

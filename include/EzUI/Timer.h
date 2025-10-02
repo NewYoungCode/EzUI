@@ -33,9 +33,9 @@ namespace ezui {
 				};
 			timer->Start();
 		};
-	private:
+	protected:
 		//负责等待
-		void WaitTime();
+		virtual void WaitTime();
 	public:
 		Timer(Object* ownerObject = NULL);
 		bool IsStopped();

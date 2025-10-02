@@ -89,6 +89,9 @@ namespace ezui {
 		// 控件是否可以被命中(值为false情况下就是穿透效果)
 		bool m_hitTestEnabled = true;
 
+		//控件自身不参与命中测试 (自身鼠标穿透,但是子控件依旧可以参与命中测试)
+		bool m_mouseTransparent = false;
+
 		//存储的样式集合
 		std::list<ezui::Style> m_styles;
 
@@ -104,9 +107,12 @@ namespace ezui {
 		// 外边距
 		// 当父控件为布局控件或列表控件时生效(不可为负数)
 		Distance m_margin;
+
+		// 控件内边距
+		Distance m_padding;
 	public:
 
-		// 控件的 ObjectName ID
+		// 控件的ObjectName(唯一ID) 
 		UIString Name;
 
 		// 控件行为
@@ -600,6 +606,12 @@ namespace ezui {
 		//控件是否可以被命中
 		bool IsHitTestVisible();
 
+		//控件自身不参与命中测试 (自身鼠标穿透,但是子控件依旧可以参与命中测试)
+		void SetMouseTransparent(bool bFlag);
+
+		//控件自身是否可以被鼠标穿透
+		bool IsMouseTransparent();
+
 		//隐藏控件
 		void Hide();
 
@@ -648,6 +660,36 @@ namespace ezui {
 
 		//获取基于父控件的边距信息；
 		const Distance& GetMargin();
+
+		// 设置控件四周的统一内边距
+		void SetPadding(int allPadding);
+
+		// 设置控件的上下、左右内边距
+		// topBottom - 上下边距
+		// leftRight - 左右边距
+		void SetPadding(int topBottom, int leftRight);
+
+		// 设置控件的上边距
+		void SetPaddingTop(int topPadding);
+
+		// 设置控件的左边距
+		void SetPaddingLeft(int leftPadding);
+
+		// 设置控件的右边距
+		void SetPaddingRight(int rightPadding);
+
+		// 设置控件的下边距
+		void SetPaddingBottom(int bottomPadding);
+
+		// 设置控件的四个方向内边距
+		// top    - 上边距
+		// right  - 右边距
+		// bottom - 下边距
+		// left   - 左边距
+		void SetPadding(int top, int right, int bottom, int left);
+
+		// 获取控件的内边距信息
+		const Distance& GetPadding();
 
 		//控件是否被按住
 		bool IsPressed();
