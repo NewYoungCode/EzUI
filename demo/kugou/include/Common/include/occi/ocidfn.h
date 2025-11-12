@@ -1,4 +1,4 @@
-/* Copyright (c) 1991, 2012, Oracle and/or its affiliates. 
+﻿/* Copyright (c) 1991, 2012, Oracle and/or its affiliates. 
 All rights reserved. */
 /*
    NAME

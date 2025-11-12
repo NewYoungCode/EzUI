@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright 2019 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the Apache License 2.0 (the "License").  You may not use

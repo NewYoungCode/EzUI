@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "global.h"
 class Lrc
 {
@@ -30,7 +30,6 @@ class LrcPanel :
 public:
 	LrcPanel();
 	virtual ~LrcPanel();
-	void Task();
 	void ChangePostion(int postion);
 
 	void OnBackgroundPaint(PaintEventArgs& arg)override;

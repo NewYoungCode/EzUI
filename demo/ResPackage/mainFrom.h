@@ -1,4 +1,4 @@
-#include "EzUI/Application.h"
+﻿#include "EzUI/Application.h"
 #include "EzUI/VLayout.h"
 #include "EzUI/TextBox.h"
 #include "EzUI/Button.h"
@@ -159,7 +159,7 @@ inline std::string GetFileSize(__int64 _KEY_FILE_SIZE) {
 	else {
 		ext = "BT";
 	}
-	disp_size = ui_text::ToString(KEY_FILE_SIZE, 2) + " " + ext;
+	disp_size = UIString::ToString(KEY_FILE_SIZE, 2) + " " + ext;
 	return disp_size;
 }
 
@@ -171,7 +171,7 @@ public:
 		this->SetFixedHeight(25);
 		this->SetRateWidth(1);
 
-		name.TextAlign = TextAlign::MiddleLeft;
+		name.SetTextAlign(TextAlign::MiddleLeft);
 		name.SetText(" " + fileName);
 		name.SetElidedText("...");
 		this->AddChild(&name);

@@ -1,4 +1,4 @@
-#ifndef CURLINC_TYPECHECK_GCC_H
+﻿#ifndef CURLINC_TYPECHECK_GCC_H
 #define CURLINC_TYPECHECK_GCC_H
 /***************************************************************************
  *                                  _   _ ____  _

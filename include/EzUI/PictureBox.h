@@ -1,11 +1,11 @@
-#pragma once
+﻿#pragma once
 #include "Control.h"
 #include "Timer.h"
 
 namespace ezui {
 	class UI_EXPORT PictureBox : public Control {
 	private:
-		Timer m_timer;
+		Timer* m_timer;
 		std::shared_ptr<std::atomic<bool>> m_alive;
 	private:
 		void Init();

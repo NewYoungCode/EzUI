@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Control.h"
 #include "ScrollBar.h"
 #include "Spacer.h"
@@ -13,16 +13,13 @@ namespace ezui {
 	/// </summary>
 	class UI_EXPORT Window :public Object
 	{
+		friend class BorderlessWindow;
+		friend class LayeredWindow;
 	private:
-		DXRender* graphics = NULL;
-		//具有鼠标焦点的控件
-		Control* m_focusControl = NULL;
-		//具有键盘焦点的控件
-		Control* m_inputControl = NULL;
-		//窗口公共数据
-		WindowContext* m_publicData = NULL;
-		//窗口句柄
-		HWND m_hWnd = NULL;
+		//上一次鼠标按下的按钮
+		MouseButton m_lastBtn = MouseButton::None;
+		//是否支持缩放
+		bool m_bResize = true;
 		//鼠标跟踪
 		bool m_bTracking = false;
 		//鼠标是否在里面
@@ -31,46 +28,61 @@ namespace ezui {
 		bool m_mouseDown = false;
 		//窗口移动
 		bool m_moveWindow = false;
+		//是否显示为模态窗口
+		bool m_isShowModal = false;
+		//是否为分层窗口
+		bool m_isLayeredWindow = false;
+		//当窗口关闭的时候退出代码
+		int m_closeCode = 0;
+		//当前窗口的绘图对象
+		Graphics* m_graphics = NULL;
+		//具有鼠标焦点的控件
+		Control* m_focusControl = NULL;
+		//具有键盘焦点的控件
+		Control* m_inputControl = NULL;
+		//窗口公共数据
+		WindowContext* m_windowContent = NULL;
+		//具有焦点的滚动条
+		ScrollBar* m_scrollBar = NULL;
+		//窗口句柄
+		HWND m_hWnd = NULL;
 		//记录鼠标坐标
 		POINT m_dragPoint;
+		//记录按下控件的偏移(防止鼠标按下控件移动时导致回路)
+		Point m_dragOffset;
 		//记录鼠标按下的坐标
 		Point m_downPoint;
 		//上一次鼠标按下的时间
 		ULONGLONG m_lastDownTime = 0;
-		//上一次鼠标按下的按钮
-		MouseButton m_lastBtn = MouseButton::None;
 		//窗口最小尺寸
 		Size m_miniSize;
 		//窗口最大尺寸
 		Size m_maxSize;
-		//当窗口关闭的时候退出代码
-		int m_closeCode = 0;
-		//基于桌面的坐标
-		Rect m_rect;
-		//客户绘图区域
-		Rect m_rectClient;
 		//所属窗口句柄
 		HWND m_ownerWnd = NULL;
 		//窗口根Frame
 		Frame* m_frame;
 		// 管理图片的释放
-		PtrManager<Image*> m_imgs;
+		detail::PtrManager<Image*> m_imgs;
+		// 标记是否已被释放
+		std::shared_ptr<bool> m_alive;
 	public:
 		//对外暴露消息通知回调
 		std::function<void(Control*, EventArgs&)> NotifyHandler = NULL;
 	private:
-		Window(const Window&) = delete;
-		Window& operator=(const Window&) = delete;
 		bool IsInWindow(Control* pControl, Control* it);
-		void Init(int width, int height, HWND owner, DWORD dStyle, DWORD  dwExStyle);//初始窗口
+		//创建与初始窗口
+		void Init(int width, int height, HWND owner, DWORD dStyle, DWORD  dwExStyle);
 		//仅移动窗口
 		void MoveWindow();
 		//鼠标按下以标题栏方式移动窗口
 		void TitleMoveWindow();
-		//在窗口中使用基于客户区的鼠标位置寻找可命中的控件 
-		Control* HitTestControl(const Point& clientPoint, Point* outPoint);
+		//重置焦点
+		void ReleaseFocusControls();
 		//派发事件
 		void SendEvent(Control* ctrl, const EventArgs& args);
+		//生成渲染器 渲染参数
+		virtual void DoPaint(HDC winDC, const Rect& rePaint);
 	protected:
 		//当dpi发生更改时
 		virtual void OnDpiChange(float systemScale, const Rect& newRect);
@@ -88,18 +100,20 @@ namespace ezui {
 		virtual void OnMouseDown(MouseButton mbtn, const Point& point);
 		//鼠标弹起时发生
 		virtual void OnMouseUp(MouseButton mbtn, const Point& point);
-		//生成渲染器 渲染参数
-		virtual void DoPaint(HDC winDC, const Rect& rePaint);
 		//渲染中
 		virtual void OnPaint(PaintEventArgs& arg);
 		//位置发生改变时发生
 		virtual void OnMove(const Point& point);
 		//大小发生改变时发生
 		virtual void OnSize(const Size& sz);
-		//当窗口收到WM_CLOSE消息时发生 
+		//当窗口关闭时发生 
 		virtual void OnClose(bool& bClose);
 		//当窗口销毁时发生
 		virtual void OnDestroy();
+		//当窗口显示时发生
+		virtual void OnShow();
+		//当窗口隐藏时发生
+		virtual void OnHide();
 		//字符消息
 		virtual void OnKeyChar(WPARAM wParam, LPARAM lParam);
 		//键盘按下
@@ -110,25 +124,38 @@ namespace ezui {
 		virtual void OnFocus(HWND hWnd);
 		//失去输入焦点时发生
 		virtual void OnKillFocus(HWND hWnd);
-		//鼠标 键盘 重绘 会进入此函数,如果返回true则事件将不再交给sender控件处理 将忽略类似OnMouseDown... Notiify事件处理器...
+		//默认情况下 鼠标/键盘 事件 会进入此函数
 		virtual void OnNotify(Control* sender, EventArgs& args);
 		//处理消息队列的
 		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
-		//获取阴影窗口句柄
-		virtual HWND GetShadowHwnd();
 	public:
-		Window(int width, int height, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD dwExStyle = NULL);
+		Window(int width = 0, int height = 0, HWND owner = NULL, DWORD dStyle = WS_OVERLAPPEDWINDOW, DWORD dwExStyle = NULL);
 
 		virtual ~Window();
+
+		//在窗口中使用基于客户区的鼠标位置寻找可命中的控件 
+		Control* HitTestControl(const Point& clientPoint, Point* outPoint);
 
 		//使用id寻找控件
 		Control* FindControl(const UIString& objectName);
 
 		//获取公共数据
-		WindowContext* GetWindowContext();
+		const WindowContext* GetWindowContext();
 
 		//窗口句柄
-		HWND Hwnd();
+		HWND GetWindowId();
+
+		// 将当前窗口在 Z-order 上置于指定窗口之上，但不激活自身
+		void SetTopAt(HWND hWndTarget);
+
+		//将当前窗口置于最顶部 不激活/不获取焦点
+		void Raise();
+
+		//设置所属窗口
+		void SetOwnerWindow(HWND ownerHwnd);
+
+		//获取所属窗口句柄
+		HWND GetOwnerWindow();
 
 		//获取窗口X坐标
 		int X();
@@ -142,11 +169,14 @@ namespace ezui {
 		// 获取窗口高度
 		int Height();
 
-		//获取基于父窗口或显示器的矩形
-		const Rect& GetRect();
+		//获取相对矩形位置(有父窗口则相对于父窗口 没有父窗口则相对于屏幕)
+		Rect GetRect();
+
+		//获取基于屏幕的矩形位置
+		Rect GetRectInScreen();
 
 		//获取客户区矩形
-		const Rect& GetClientRect();
+		Rect GetClientRect();
 
 		//获取当前窗口dpi缩放系数
 		float GetScale();
@@ -196,6 +226,12 @@ namespace ezui {
 		//设置与取消窗口置顶
 		void SetTopMost(bool top);
 
+		//是否支持调整大小
+		bool IsResizable();
+
+		//设置窗口调整大小的支持
+		void SetResizable(bool resize);
+
 		//是否全屏
 		bool IsFullScreen();
 
@@ -208,6 +244,9 @@ namespace ezui {
 		//窗口是否置顶
 		bool IsTopMost();
 
+		//是否显示为模态窗口
+		bool IsModal();
+
 		//操作窗口的显示
 		virtual void Show();
 
@@ -217,14 +256,19 @@ namespace ezui {
 		//隐藏窗口
 		virtual void Hide();
 
-		//正常显示窗口
-		void ShowNormal();
+		// 恢复窗口到正常状态（从最小化或最大化状态恢复）
+		void Restore();
 
 		//关闭窗口 exitCode为退出代码
 		void Close(int exitCode = 0);
 
-		//模态窗口方式显示窗口(会阻塞) 请务必在窗口构造函数中传入owner窗口句柄
-		virtual int ShowModal(bool disableOnwer = true);
+		//进入模态消息循环并阻塞当前线程 关闭窗口则退出循环
+		int Exec();
+
+		/// 以模态方式显示窗口（阻塞当前线程）
+		/// @param disableOwnerWindow 是否禁用所有者窗口 前置条件：必须设置有效的所有者窗口句柄
+		/// @return 窗口退出代码
+		virtual int ShowModal(bool disableOwnerWindow = false);
 
 		//最小化窗口
 		void ShowMinimized();
@@ -241,7 +285,13 @@ namespace ezui {
 		//设置窗口显示/隐藏
 		void SetVisible(bool flag);
 
-		//使区域无效(延迟刷新)
+		//窗口是否已启用
+		bool IsEnabled();
+
+		//设置启用/禁用窗口
+		void SetEnabled(bool bEnable);
+
+		//刷新窗口(标记无效区域延迟刷新)
 		void Invalidate();
 
 		//立即更新所有无效区域(立即刷新)
@@ -250,7 +300,7 @@ namespace ezui {
 		//居中到屏幕
 		void CenterToScreen();
 
-		//参考某个窗口进行居中
+		//基于某个窗口进行居中
 		void CenterToWindow(HWND wnd = NULL);
 
 		//给指定控件为焦点控件

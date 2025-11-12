@@ -1,4 +1,4 @@
-/*****************************************************************************
+﻿/*****************************************************************************
  * vlc_messages.h: messages interface
  * This library provides basic functions for threads to interact with user
  * interface, such as message output.

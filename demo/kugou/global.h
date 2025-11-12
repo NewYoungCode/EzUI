@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "EzUI/EzUI.h"
 #include "EzUI/TextBox.h"
 #include "EzUI/BorderlessWindow.h"

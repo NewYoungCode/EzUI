@@ -1,4 +1,4 @@
-/*****************************************************************************
+﻿/*****************************************************************************
  * vlc_http.h: Shared code for HTTP clients
  *****************************************************************************
  * Copyright (C) 2001-2008 VLC authors and VideoLAN
@@ -6,7 +6,7 @@
  *
  * Authors: Laurent Aimar <fenrir@via.ecp.fr>
  *          Christophe Massiot <massiot@via.ecp.fr>
- *          Rémi Denis-Courmont <rem # videolan.org>
+ *          RÃ©mi Denis-Courmont <rem # videolan.org>
  *          Antoine Cellerier <dionoea at videolan dot org>
  *
  * This program is free software; you can redistribute it and/or modify it

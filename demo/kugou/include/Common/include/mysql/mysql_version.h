@@ -1,4 +1,4 @@
-/* Copyright Abandoned 1996,1999 TCX DataKonsult AB & Monty Program KB
+﻿/* Copyright Abandoned 1996,1999 TCX DataKonsult AB & Monty Program KB
    & Detron HB, 1996, 1999-2004, 2007 MySQL AB.
    This file is public domain and comes with NO WARRANTY of any kind
 */

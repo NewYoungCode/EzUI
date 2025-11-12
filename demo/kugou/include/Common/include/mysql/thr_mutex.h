@@ -1,4 +1,4 @@
-#ifndef THR_MUTEX_INCLUDED
+﻿#ifndef THR_MUTEX_INCLUDED
 #define THR_MUTEX_INCLUDED
 
 /* Copyright (c) 2014, 2015, Oracle and/or its affiliates. All rights reserved.

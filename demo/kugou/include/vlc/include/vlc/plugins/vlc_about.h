@@ -1,4 +1,4 @@
-/* Automatically generated file - DO NOT EDIT */
+﻿/* Automatically generated file - DO NOT EDIT */
 static const char psz_license[] =
 "                    GNU GENERAL PUBLIC LICENSE\n"
 "                       Version 2, June 1991\n"

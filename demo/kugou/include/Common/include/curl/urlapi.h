@@ -1,4 +1,4 @@
-#ifndef CURLINC_URLAPI_H
+﻿#ifndef CURLINC_URLAPI_H
 #define CURLINC_URLAPI_H
 /***************************************************************************
  *                                  _   _ ____  _

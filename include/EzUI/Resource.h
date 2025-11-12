@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "UIString.h"
 
 namespace ezui {
@@ -14,10 +14,10 @@ namespace ezui {
 		};
 		//资源文件读取流
 		class UI_EXPORT ReadStream {
-			std::streampos m_pos = 0;
 			std::streamsize m_count = 0;
 			const char* m_ptr = NULL;
 			std::ifstream* m_ifs = NULL;
+			std::streampos m_pos = 0;
 		public:
 			ReadStream(HRSRC hRsrc);
 			ReadStream(const UIString& fileName);
@@ -28,9 +28,9 @@ namespace ezui {
 			virtual ~ReadStream();
 		};
 	private:
+		bool m_isGood = false;
 		ReadStream* m_rStream = NULL;
 		void UnPackage();
-		bool m_isGood = false;
 	public:
 		const std::list<Entry> Items;
 		bool IsGood();

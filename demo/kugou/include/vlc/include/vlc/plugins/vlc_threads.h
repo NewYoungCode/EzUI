@@ -1,4 +1,4 @@
-/*****************************************************************************
+﻿/*****************************************************************************
  * vlc_threads.h : threads implementation for the VideoLAN client
  * This header provides portable declarations for mutexes & conditions
  *****************************************************************************

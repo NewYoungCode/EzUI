@@ -1,4 +1,4 @@
-#include <cstdlib>
+﻿#include <cstdlib>
 
 namespace gzip {
 

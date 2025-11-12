@@ -1,4 +1,4 @@
-#ifndef _zip_H
+﻿#ifndef _zip_H
 #define _zip_H
 
 #pragma  warning (disable:4996) 

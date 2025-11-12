@@ -1,4 +1,6 @@
 <hbox id="centerLayout" style="background-color:rgb(255,255,255)">
+    <treeview id="treeview" padding="20" width="150" style="background-color:#a0b6e4;display:none">
+    </treeview>
 
     <vbox width="309" id="centerLeft">
         <hbox height="40" id="tools">
@@ -6,17 +8,19 @@
             <label underline="1,3" text="默认列表" halign="left" tablayout="leftList"></label>
         </hbox>
         <tablayout id="leftList">
-            <vlist id="playList"></vlist>
+            <vlist id="playList" padding="20"></vlist>
             <vlist id="downList"></vlist>
         </tablayout>
     </vbox>
     <vbox>
         <hbox height="40" style="border-bottom:1;border-color:rgb(221,221,221);">
             <spacer></spacer>
-            <radiobutton checked="true" class="check" width="54" text="乐库" tablayout="rightView" id="songView"></radiobutton>
-            <radiobutton width="54" class="check" text="歌词" tablayout="rightView" id="lrcView"></radiobutton>
-            <radiobutton width="54" class="check" text="MV" tablayout="rightView" id="mvView"></radiobutton>
-            <radiobutton width="54" class="check" text="直播" tablayout="rightView"></radiobutton>
+            <hbox width="auto">
+                <radiobutton checked="true" class="check" width="54" text="乐库" tablayout="rightView" id="songView"></radiobutton>
+                <radiobutton width="54" class="check" text="歌词" tablayout="rightView" id="lrcView"></radiobutton>
+                <radiobutton width="54" class="check" text="MV" tablayout="rightView" id="mvView"></radiobutton>
+                <radiobutton width="54" class="check" text="直播" tablayout="rightView"></radiobutton>
+            </hbox>
             <spacer></spacer>
         </hbox>
         <tablayout id="rightView">
@@ -71,8 +75,6 @@
     }
 
     .testLabel:hover {
-    
-        font-size:15px;
-    
+        font-size: 15px;
     }
 </style>

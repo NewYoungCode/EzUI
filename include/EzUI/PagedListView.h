@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Control.h"
 
 namespace ezui {
@@ -22,7 +22,7 @@ namespace ezui {
 		int m_pageIndex = 0;
 		int m_pageTotal = 0;
 		int m_pageSize = 0;
-		ControlCollection m_items;
+		ControlCollection& m_items;
 	private:
 		//不允许外部直接使用PagedListView(此类为接口类)
 		PagedListView(Object* ownerObject = NULL);

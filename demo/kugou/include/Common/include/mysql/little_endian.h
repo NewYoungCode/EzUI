@@ -1,4 +1,4 @@
-#ifndef LITTLE_ENDIAN_INCLUDED
+﻿#ifndef LITTLE_ENDIAN_INCLUDED
 #define LITTLE_ENDIAN_INCLUDED
 /* Copyright (c) 2012, 2015, Oracle and/or its affiliates. All rights reserved.
 

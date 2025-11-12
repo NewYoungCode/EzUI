@@ -1,4 +1,4 @@
-//
+﻿//
 //  base64 encoding and decoding with C++.
 //  Version: 2.rc.09 (release candidate)
 //

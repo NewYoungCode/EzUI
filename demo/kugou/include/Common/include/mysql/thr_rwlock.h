@@ -1,4 +1,4 @@
-#ifndef THR_RWLOCK_INCLUDED
+﻿#ifndef THR_RWLOCK_INCLUDED
 #define THR_RWLOCK_INCLUDED
 
 /* Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.

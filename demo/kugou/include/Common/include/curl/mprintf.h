@@ -1,4 +1,4 @@
-#ifndef CURLINC_MPRINTF_H
+﻿#ifndef CURLINC_MPRINTF_H
 #define CURLINC_MPRINTF_H
 /***************************************************************************
  *                                  _   _ ____  _

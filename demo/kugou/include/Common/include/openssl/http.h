@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright 2000-2021 The OpenSSL Project Authors. All Rights Reserved.
  * Copyright Siemens AG 2018-2020
  *

@@ -1,4 +1,4 @@
-/* DISABLE check_long_lines */
+﻿/* DISABLE check_long_lines */
 
 /* Copyright (c) 1996, 2016, Oracle and/or its affiliates. 
 All rights reserved.*/

@@ -1,4 +1,4 @@
-#include "mainFrom.h"
+﻿#include "mainFrom.h"
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
 	_In_ LPWSTR    lpCmdLine,
@@ -21,7 +21,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		UIString packageDir = args[index + 1];
 		UIString outFile = args[index + 2];
 
-		UIString log = UIString("packaging... %s -> %s \n").format(packageDir.c_str(), outFile.c_str()).ansi();
+		UIString log = UIString("packaging... %s -> %s \n").args(packageDir.c_str(), outFile.c_str()).ansi();
 		printf(log.c_str());
 		bool bRet = Resource::Package(packageDir, outFile);
 		if (bRet) {

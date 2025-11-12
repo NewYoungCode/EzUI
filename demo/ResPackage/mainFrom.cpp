@@ -1,4 +1,4 @@
-#include "mainFrom.h"
+﻿#include "mainFrom.h"
 #include "FileSystem.h"
 
 const wchar_t* xml = LR"xml(
@@ -14,7 +14,7 @@ const wchar_t* xml = LR"xml(
         <spacer height="10"></spacer>
         <label height="30" halign="left" text="请选择你要打包的目录 :"></label>
         <hbox height="30">
-          <textbox class="edit" id="editPackDir"></textbox>
+          <textbox padding-left="2" class="edit" id="editPackDir"></textbox>
           <spacer width="10"></spacer>
           <button class="btn" id="btnBrowserDir" width="100" text="浏览"></button>
         </hbox>
@@ -22,7 +22,7 @@ const wchar_t* xml = LR"xml(
         <spacer></spacer>
         <label height="30" halign="left" text="请选择输出目录 :"></label>
         <hbox height="30">
-          <textbox class="edit" id="editPackName"></textbox>
+          <textbox padding-left="2"  class="edit" id="editPackName"></textbox>
           <spacer width="10"></spacer>
           <button class="btn" id="btnSatrtPackage" width="100" text="开始打包"></button>
         </hbox>
@@ -37,7 +37,7 @@ const wchar_t* xml = LR"xml(
         <spacer height="10"></spacer>
         <label height="30" halign="left" text="请选择你要预览的文件 :"></label>
         <hbox height="30">
-          <textbox class="edit" readonly="true" id="editResFile"></textbox>
+          <textbox padding-left="2"  class="edit" readonly="true" id="editResFile"></textbox>
           <spacer width="10"></spacer>
           <button class="btn" id="btnBrowserFile" width="100" text="浏览"></button>
           <spacer width="10"></spacer>
@@ -104,7 +104,7 @@ void MainFrm::Init() {
 	this->btnSatrtPackage = (Button*)this->FindControl("btnSatrtPackage");
 	this->labelTipsErr = (Label*)this->FindControl("labelTipsErr");
 	this->labelTips = (Label*)this->FindControl("labelTips");
-	this->editPackDir->TextChanged = [=](const UIString text)->void {
+	this->editPackDir->TextChanged = [=](TextBox*, const UIString text)->void {
 		this->OnPackDirChange();
 		};
 
@@ -136,9 +136,9 @@ void MainFrm::OnPackDirChange()
 		labelTipsErr->Invalidate();
 	}
 
-	ui_text::Replace(&dir, "\"", "");
-	ui_text::Replace(&dir, "\\", "/");
-	ui_text::Replace(&dir, "//", "/");
+	detail::Replace(&dir, "\"", "");
+	detail::Replace(&dir, "\\", "/");
+	detail::Replace(&dir, "//", "/");
 	if (dir[dir.size() - 1] == '/') {
 		dir.erase(dir.size() - 1, 1);
 	}
@@ -170,7 +170,7 @@ bool MainFrm::FileExists(const UIString& fileName) {
 void MainFrm::OnNotify(Control* sd, EventArgs& args) {
 	if (args.EventType == Event::OnMouseDown) {
 		if (sd->Name == "btnBrowserDir") {
-			UIString dir = ShowFolderDialog(Hwnd(), "", "");
+			UIString dir = ShowFolderDialog(GetWindowId(), "", "");
 			if (!dir.empty()) {
 				this->editPackDir->SetText(dir);
 				this->editPackDir->Invalidate();
@@ -184,12 +184,12 @@ void MainFrm::OnNotify(Control* sd, EventArgs& args) {
 				UIString resFile = editPackName->GetText();
 
 				if (task && !task->IsStopped()) {
-					::MessageBoxW(Hwnd(), L"请等待上次任务完成!", L"失败", 0);
+					::MessageBoxW(GetWindowId(), L"请等待上次任务完成!", L"失败", 0);
 					break;
 				}
 
 				if (FileExists(resFile) && ::DeleteFileW(resFile.unicode().c_str()) == FALSE) {
-					::MessageBoxW(Hwnd(), L"文件已存在且无法覆盖!", L"失败", 0);
+					::MessageBoxW(GetWindowId(), L"文件已存在且无法覆盖!", L"失败", 0);
 					break;
 				}
 
@@ -199,7 +199,7 @@ void MainFrm::OnNotify(Control* sd, EventArgs& args) {
 				}
 
 				if (resFile.empty()) {
-					::MessageBoxW(Hwnd(), L"打包文件路径不正确!", L"失败", 0);
+					::MessageBoxW(GetWindowId(), L"打包文件路径不正确!", L"失败", 0);
 					break;
 				}
 
@@ -207,7 +207,7 @@ void MainFrm::OnNotify(Control* sd, EventArgs& args) {
 				labelTips->Invalidate();
 
 				task = new Task([resDir, resFile, this]() {
-					Resource::Package(resDir, resFile, [=](const UIString& file, int index, int count) {
+					bool ret = Resource::Package(resDir, resFile, [=](const UIString& file, int index, int count) {
 						Invoke([&]() {
 							int rate = (index + 1) * 1.0f / count * 100 + 0.5;
 							labelTips->SetText(UIString("(" + std::to_string(rate) + "%)") + UIString(L"正在打包\"") + file + "\"");
@@ -217,20 +217,25 @@ void MainFrm::OnNotify(Control* sd, EventArgs& args) {
 						});
 
 					Invoke([&]() {
-						labelTips->SetText(L"打包成功!");
-						labelTips->Invalidate();
-						::MessageBoxW(Hwnd(), L"打包成功!", L"成功", 0);
+						if (ret) {
+							labelTips->SetText(L"打包成功!");
+							labelTips->Invalidate();
+							::MessageBoxW(GetWindowId(), L"打包成功!", L"成功", 0);
+						}
+						else {
+							::MessageBoxW(GetWindowId(), L"打包错误!", L"失败", 0);
+						}
 						});
 					});
 
 			} while (false);
 		}
 		if (sd->Name == "btnBrowserFile") {
-			UIString resFile = ShowFileDialog(Hwnd());
+			UIString resFile = ShowFileDialog(GetWindowId());
 			OnResFileChange(resFile);
 		}
 		if (sd->Name == "btnUnPackage") {
-			UIString resDir = ShowFolderDialog(Hwnd());
+			UIString resDir = ShowFolderDialog(GetWindowId());
 			if (!resDir.empty() && PathExist(resDir)) {
 				for (auto& it : this->res->Items) {
 					UIString fileName = resDir + "/" + it.Name;
@@ -241,11 +246,11 @@ void MainFrm::OnNotify(Control* sd, EventArgs& args) {
 					this->res->GetFile(it, &data);
 					File::Write(data.c_str(), data.size(), fileName);
 				}
-				::MessageBoxW(Hwnd(), L"解压完成!", L"", 0);
+				::MessageBoxW(GetWindowId(), L"解压完成!", L"", 0);
 			}
 		}
 	}
-	ezui::DefaultNotify(sd, args);
+	__super::OnNotify(sd, args);
 }
 void MainFrm::OnResFileChange(UIString& resFile)
 {
@@ -254,7 +259,7 @@ void MainFrm::OnResFileChange(UIString& resFile)
 		if (FileExists(resFile)) {
 			Resource* newRes = new Resource(resFile);
 			if (!newRes->IsGood()) {
-				::MessageBoxW(Hwnd(), L"不是标准的资源文件", L"错误", 0);
+				::MessageBoxW(GetWindowId(), L"不是标准的资源文件", L"错误", 0);
 				delete newRes;
 				break;
 			}

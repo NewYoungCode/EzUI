@@ -1,4 +1,4 @@
-//WIN32 desktop application UI framework (2d graphical library:direct2d,后期可能会采用其他跨平台的2d图形库对整个UI框架进行跨平台)
+﻿//WIN32 desktop application UI framework (2d graphical library:direct2d,后期可能会采用其他跨平台的2d图形库对整个UI框架进行跨平台)
 
 //email:718987717@qq.com //qq群: 758485934
 
@@ -143,7 +143,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	mainLayout.AddChild(&treeView);
 	for (size_t i = 0; i < 20; i++)
 	{
-		treeView.AddNode("nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_" + std::to_string(i));
+		//treeView.AddNode("nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_nodeName_" + std::to_string(i));
 	}
 
 
@@ -160,7 +160,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmd
 	text.SetText(L"啊撒旦艰苦换个房间看电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方电视进\n口的方式但是几乎都是复活节过段时间韩国");
 	//text.HoverStyle.FontSize = 50;
 	//text.ActiveStyle.FontSize = 50;
-	text.GetScrollBar()->SetFixedWidth(20);
+	text.GetVScrollBar()->SetFixedWidth(20);
 
 	CheckBox btn;
 	btn.SetParent(&mainLayout);

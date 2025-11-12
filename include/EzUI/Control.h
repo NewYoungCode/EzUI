@@ -1,13 +1,31 @@
-#pragma once
+﻿#pragma once
 #include "EzUI.h"
 
 namespace ezui {
+	namespace detail {
+		//控件标志位
+		enum class Flags :int16_t {
+			Visible = 1,// 控件是否可见。此标志为 true 时,控件为显示状态
+			Float = 2,// 控件是否浮动
+			Pressed = 4,// 控件是否被为按住状态
+			HitTestEnabled = 8,// 控件是否可以被命中(值为false情况下就是穿透效果)
+			MouseTransparent = 16,// 控件自身不参与命中测试 (自身鼠标穿透,但是子控件依旧可以参与命中测试)
+			AutoWidth = 32,// 是否根据内容自动宽度
+			AutoHeight = 64,// 根据内容自动高度变化
+			LayoutPending = 128,//等待布局
+			InLayout = 256,//正在进行布局
+		};
+		EZUI_ENUM_OPERATORS(Flags, int16_t);
+	};
+
+	//所有控件基础类
 	class UI_EXPORT Control :public Object
 	{
 		friend class HListView;
 		friend class VListView;
 		friend class TabLayout;
 		friend class TileListView;
+		friend class TreeView;
 		friend class TextBox;
 		friend class UILoader;
 		friend class Frame;
@@ -17,133 +35,104 @@ namespace ezui {
 		friend class VLayout;
 		friend class HLayout;
 	private:
-		//顶层窗口句柄
-		HWND m_hWnd = NULL;
-
-		// 控件是否已经被移除或释放
-		bool* m_bRemove = NULL;
-
-		//控件是否被为按住状态
-		bool m_pressed = false;
-
-		// 控件是否可见。此标志为 true 时,控件为显示状态
-		bool m_bVisible = true;
-
-		//控件是否浮动
-		bool m_float = false;
-
-		// 当前控件的 DPI 缩放比例
-		float m_scale = 1.0f;
-
-		// 子控件集合
-		ControlCollection m_controls;
-
-		// 管理图片的释放
-		PtrManager<Image*> m_imgs;
-
-		// 布局状态
-		// AddControl、InsertControl、RemoveControl、OnSize 时此标志为挂起状态
-		// 调用 ResumeLayout 标志为布局中
-		// 调用 OnLayout() 之后标志为 None
-		ezui::LayoutState m_layoutState = ezui::LayoutState::None;
-
-		// 鼠标悬浮提示文字
-		UIString m_tipsText;
-
-		// 上一次位置
-		Point m_lastLocation;
-
-		// 上一次大小
-		Size m_lastSize;
-
-		// 是否根据内容自动宽度
-		bool m_bAutoWidth = false;
-
-		// 根据内容自动高度变化
-		bool m_bAutoHeight = false;
-
-		// 控件内容宽高
-		Size m_contentSize;
-
-		// 绝对尺寸
-		Size m_fixedSize;
-
-		//比例尺寸
-		SizeF m_rateSize;
-
-		//最小宽高
-		Size m_minSize;
-
-		//最大宽高
-		Size m_maxSize;
-
-		//基于父控件矩形区域
-		Rect m_realRect;
-
-		//基于客户端的矩形区域
-		Rect m_rectInClient;
-
-		//基于窗口剪裁过的区域
-		Rect m_viewClipRect;
-
-		// 控件是否可以被命中(值为false情况下就是穿透效果)
-		bool m_hitTestEnabled = true;
-
-		//控件自身不参与命中测试 (自身鼠标穿透,但是子控件依旧可以参与命中测试)
-		bool m_mouseTransparent = false;
-
-		//存储的样式集合
-		std::list<ezui::Style> m_styles;
-
-		// 基于控件中的可见控件集合
-		ControlCollection m_viewControls;
-
-		// 父控件指针
-		Control* m_parent = NULL;
-
-		// 控件当前状态
-		ControlState m_state = ControlState::Static;
-
-		// 外边距
-		// 当父控件为布局控件或列表控件时生效(不可为负数)
-		Distance m_margin;
-
-		// 控件内边距
-		Distance m_padding;
+		class ControlContent :public Object {
+		public:
+			// 当前控件的 DPI 缩放比例
+			float m_scale = 1.0f;
+			// 父控件指针
+			Control* m_parent = NULL;
+			// 控件标志集合（可见、可点击等）
+			detail::Flags m_flags = detail::Flags::Visible | detail::Flags::HitTestEnabled;
+			// 当前控件视觉状态
+			VisualState m_visualState = VisualState::Static;
+			// 控件对应的窗口句柄（顶层控件有效）
+			HWND m_hWnd = NULL;
+			// 外边距
+			Distance m_margin;
+			// 内边距
+			Distance m_padding;
+			// 上次绘制时的位置
+			Point m_lastLocation;
+			// 上次绘制时的尺寸
+			Size m_lastSize;
+			// 内容区域尺寸
+			Size m_contentSize;
+			// 固定尺寸（优先级高于自适应）
+			Size m_fixedSize;
+			// 按比例缩放尺寸
+			SizeF m_rateSize;
+			// 最小尺寸
+			Size m_minSize;
+			// 最大尺寸
+			Size m_maxSize;
+			// 实际绘制矩形（相对父控件）
+			Rect m_realRect;
+			// 在客户端坐标系中的矩形
+			Rect m_rectInClient;
+			// 可视裁剪矩形
+			Rect m_viewClipRect;
+			// 控件是否仍存活（用于异步安全）
+			std::shared_ptr<bool> m_alive;
+			// 子控件集合
+			ControlCollection m_controls;
+			// 当前可见区域内的控件集合
+			ControlCollection m_viewControls;
+			// 浮动控件集合（悬浮层）
+			ControlCollection m_floatCtrls;
+			// 提示文本
+			UIString m_tipsText;
+			// 控件名称(唯一名称)
+			UIString Name;
+			// 默认样式
+			ControlStyle Style;
+			// 获取焦点时样式
+			ControlStyle FocusStyle;
+			// 禁用时样式
+			ControlStyle DisabledStyle;
+			// 悬停时样式
+			ControlStyle HoverStyle;
+			// 按下时样式
+			ControlStyle ActiveStyle;
+			// 内部样式表集合
+			std::list<ezui::detail::Style> m_styles;
+			// 图像资源管理器
+			detail::PtrManager<Image*> m_imgs;
+			// 控件事件处理回调
+			std::function<void(Control*, EventArgs&)> EventHandler = NULL;
+			ControlContent(Object* ownerObj) :Object(ownerObj) {}
+			virtual ~ControlContent() {}
+		};
+	private:
+		//保存控件中占用内存过大的变量 用于分担栈内存占用
+		ControlContent* m_content = NULL;
 	public:
-
-		// 控件的ObjectName(唯一ID) 
-		UIString Name;
-
 		// 控件行为
 		ControlAction Action = ControlAction::None;
 
+		//是否添加到所在窗口/IFrame中的OnNotify函数中
+		Event NotifyFlags = Event::OnMouseEvent | Event::OnKeyEvent;
+
+		// 控件名称(唯一名称,同frame内不允许重复)
+		UIString& Name;
+
 		// 静态默认样式
-		ControlStyle Style;
+		ControlStyle& Style;
 
 		//具有焦点的时候的样式
-		ControlStyle FocusStyle;
+		ControlStyle& FocusStyle;
 
 		//禁用状态样式
-		ControlStyle DisabledStyle;
+		ControlStyle& DisabledStyle;
 
 		// 鼠标悬浮样式
-		ControlStyle HoverStyle;
+		ControlStyle& HoverStyle;
 
 		// 鼠标按下样式
-		ControlStyle ActiveStyle;
-
-		//是否添加到所在窗口/IFrame中的OnNotify函数中
-		Event NotifyFlags = Event::OnMouseEvent | Event::OnKeyBoardEvent;
+		ControlStyle& ActiveStyle;
 
 		// 事件处理器
-		std::function<void(Control*, EventArgs&)> EventHandler = NULL;
+		std::function<void(Control*, EventArgs&)>& EventHandler;
 	private:
-		// 禁止拷贝构造
-		Control(const Control&) = delete;
-
-		// 禁止赋值
-		Control& operator=(const Control&) = delete;
 
 		// 计算基于父控件的裁剪区域
 		void ComputeClipRect();
@@ -152,10 +141,19 @@ namespace ezui {
 		void OnEvent(EventArgs& arg);
 
 		//递归子控件给匹配成功的样式应用上
-		void ApplyChildStyles(const std::list<ezui::Style>& styles);
+		void ApplyChildStyles(const std::list<ezui::detail::Style>& styles);
 
 		//向上匹配样式(直到所属的Frame层)
 		void ApplyParentStyles();
+
+		//设置窗口句柄
+		void SetWindowId(HWND hWnd);
+
+		//计算带有策略的宽度
+		int CalcWidth();
+
+		//计算带有策略的度
+		int CalcHeight();
 	protected:
 		//属性或者css样式都适用(css样式和属性都可以设置这些,只对静态样式生效)
 		virtual bool ApplyStyleProperty(const UIString& key, const UIString& value);
@@ -166,7 +164,13 @@ namespace ezui {
 		/// <param name="style">目标状态样式对象,例如 this->HoverStyle</param>
 		/// <param name="key">样式键名,例如 "font-size"</param>
 		/// <param name="value">样式值,例如 "13px"</param>
-		virtual void SetStyle(ControlStyle& style, const UIString& key, const UIString& value);
+		virtual void SetStyle(ControlStyle* style, const UIString& key, const UIString& value);
+
+		// 获取当前控件状态下的样式信息(内部使用)
+		virtual ControlStyle* GetStyle(VisualState _state);
+
+		//获取当前控件的视觉状态
+		VisualState GetVisualState();
 
 		// 设置内容宽度，仅限子类使用
 		virtual void SetContentWidth(int width);
@@ -202,10 +206,13 @@ namespace ezui {
 		virtual void OnSize(const SizeEventArgs& arg);
 
 		// DPI 发生改变
-		virtual void OnDpiChange(const DpiChangeEventArgs& arg);
+		virtual void OnDpiChanged(const DpiChangedEventArgs& arg);
 
 		// 控件布局逻辑，需重写布局请重写此函数
 		virtual void OnLayout();
+
+		//处理单个浮动控件
+		virtual void OnLayoutFloatControl(Control* ctrl);
 
 		// 鼠标在控件上移动
 		virtual void OnMouseMove(const MouseEventArgs& arg);
@@ -232,95 +239,89 @@ namespace ezui {
 		virtual void OnMouseEvent(const MouseEventArgs& args);
 
 		// 键盘事件统一入口
-		virtual void OnKeyBoardEvent(const KeyboardEventArgs& _args);
+		virtual void OnKeyEvent(const KeyEventArgs& _args);
 
 		// 字符输入事件（WM_CHAR）
-		virtual void OnKeyChar(const KeyboardEventArgs& _args);
+		virtual void OnKeyChar(const KeyEventArgs& _args);
 
 		// 键盘按下事件（WM_KEYDOWN）
-		virtual void OnKeyDown(const KeyboardEventArgs& _args);
+		virtual void OnKeyDown(const KeyEventArgs& _args);
 
 		// 键盘弹起事件（WM_KEYUP）
-		virtual void OnKeyUp(const KeyboardEventArgs& _args);
+		virtual void OnKeyUp(const KeyEventArgs& _args);
 
 		// 获得焦点事件
 		virtual void OnFocus(const FocusEventArgs& _args);
 
 		// 失去焦点事件
-		virtual void OnKillFocus(const KillFocusEventArgs& _args);
+		virtual void OnKillFocus(const FocusEventArgs& _args);
 
 		// 被移除时执行的逻辑
 		virtual void OnRemove();
 
 	public:
-		// 获取当前控件状态下的样式信息
-		virtual ControlStyle& GetStyle(const ControlState& _state);
+		// 获取当前控件状态的左上圆角半径
+		Value<int16_t> GetBorderTopLeftRadius(VisualState _state = VisualState::Auto);
 
-		// 获取左上圆角半径
-		Value<int16_t> GetBorderTopLeftRadius(ControlState _state = ControlState::None);
+		// 获取当前控件状态的右上圆角半径
+		Value<int16_t> GetBorderTopRightRadius(VisualState _state = VisualState::Auto);
 
-		// 获取右上圆角半径
-		Value<int16_t> GetBorderTopRightRadius(ControlState _state = ControlState::None);
+		// 获取当前控件状态的右下圆角半径
+		Value<int16_t> GetBorderBottomRightRadius(VisualState _state = VisualState::Auto);
 
-		// 获取右下圆角半径
-		Value<int16_t> GetBorderBottomRightRadius(ControlState _state = ControlState::None);
+		// 获取当前控件状态的左下圆角半径
+		Value<int16_t> GetBorderBottomLeftRadius(VisualState _state = VisualState::Auto);
 
-		// 获取左下圆角半径
-		Value<int16_t> GetBorderBottomLeftRadius(ControlState _state = ControlState::None);
+		// 获取当前控件状态的左边框宽度
+		Value<int16_t> GetBorderLeft(VisualState _state = VisualState::Auto);
 
-		// 获取左边框宽度
-		Value<int16_t> GetBorderLeft(ControlState _state = ControlState::None);
+		// 获取当前控件状态的上边框宽度
+		Value<int16_t> GetBorderTop(VisualState _state = VisualState::Auto);
 
-		// 获取上边框宽度
-		Value<int16_t> GetBorderTop(ControlState _state = ControlState::None);
+		// 获取当前控件状态的右边框宽度
+		Value<int16_t> GetBorderRight(VisualState _state = VisualState::Auto);
 
-		// 获取右边框宽度
-		Value<int16_t> GetBorderRight(ControlState _state = ControlState::None);
+		// 获取当前控件状态的下边框宽度
+		Value<int16_t> GetBorderBottom(VisualState _state = VisualState::Auto);
 
-		// 获取下边框宽度
-		Value<int16_t> GetBorderBottom(ControlState _state = ControlState::None);
+		// 获取当前控件状态的边框颜色
+		Value<Color> GetBorderColor(VisualState _state = VisualState::Auto);
 
-		// 获取边框颜色
-		Value<Color> GetBorderColor(ControlState _state = ControlState::None);
+		//获取当前控件状态的边框样式
+		Value<BorderStyle> GetBorderStyle(VisualState _state = VisualState::Auto);
 
-		//获取边框样式
-		Value<StrokeStyle> GetBorderStyle(ControlState _state = ControlState::None);
+		// 获取当前控件状态的前景图片
+		Value<Image*> GetForeImage(VisualState _state = VisualState::Auto);
 
-		// 获取前景图片
-		Value<Image*> GetForeImage(ControlState _state = ControlState::None);
+		// 获取当前控件状态的背景图片
+		Value<Image*> GetBackImage(VisualState _state = VisualState::Auto);
 
-		// 获取背景图片
-		Value<Image*> GetBackImage(ControlState _state = ControlState::None);
+		// 获取当前控件状态的背景颜色
+		Value<Color> GetBackColor(VisualState _state = VisualState::Auto);
 
-		// 获取背景颜色
-		Value<Color> GetBackColor(ControlState _state = ControlState::None);
+		// 获取当前控件状态的旋转角度
+		Value<float> GetAngle(VisualState _state = VisualState::Auto);
 
-		// 获取旋转角度
-		Value<float> GetAngle(ControlState _state = ControlState::None);
+		// 获取当前控件状态的透明度
+		Value<float> GetOpacity(VisualState _state = VisualState::Auto);
 
-		// 获取透明度
-		Value<float> GetOpacity(ControlState _state = ControlState::None);
+		//获取当前控件状态的的鼠标光标
+		virtual Value<HCURSOR> GetCursor(VisualState _state = VisualState::Auto);
 
-		//获取当前控件的鼠标光标
-		virtual Value<HCURSOR> GetCursor(ControlState _state = ControlState::None);
+		// 获取当前控件状态的前景颜色
+		Value<Color> GetForeColor(VisualState _state = VisualState::Auto);
 
-		// 获取前景颜色
-		Value<Color> GetForeColor(ControlState _state = ControlState::None);
+		// 获取当前控件状态的字体 Family
+		Value<std::wstring> GetFontFamily(VisualState _state = VisualState::Auto);
 
-		// 获取字体 Family
-		Value<std::wstring> GetFontFamily(ControlState _state = ControlState::None);
+		// 获取当前控件状态的字体大小
+		Value<int> GetFontSize(VisualState _state = VisualState::Auto);
 
-		// 获取字体大小
-		Value<int> GetFontSize(ControlState _state = ControlState::None);
+		// 获取当前控件状态的字体粗度
+		Value<int> GetFontWeight(VisualState _state = VisualState::Auto);
 
-		// 获取字体粗度
-		Value<int> GetFontWeight(ControlState _state = ControlState::None);
-
-		//获取公共数据
-		WindowContext* GetWindowContext();
-
-		//获取上层Frame容器
-		Frame* GetFrame();
+		// 获取当前控件状态的字体样式
+		Value<FontStyle> GetFontStyle(VisualState _state = VisualState::Auto);
 	public:
 
 		// 构造函数 可传入父对象(由父对象自动管理内存)
@@ -341,11 +342,23 @@ namespace ezui {
 		//分离图片(解除跟随释放)
 		void Detach(Image* img);
 
-		//窗口句柄
-		HWND Hwnd();
+		//分离并且立即释放
+		void Free(Image* image);
 
-		//设置窗口句柄
-		void SetHwnd(HWND hWnd);
+		//分离并且立即释放
+		void Free(Object* obj);
+
+		//获取窗口句柄
+		HWND GetWindowId();
+
+		//获取主窗口实例
+		Window* GetWindow();
+
+		//获取主窗口中的公共数据
+		const WindowContext* GetWindowContext();
+
+		//获取当前控件所属的Frame容器
+		Frame* GetFrame();
 
 		// 以下函数请保证在父控件布局已完成的情况下使用，使用 ResumeLayout() 执行布局
 		// 获取 X 坐标
@@ -360,12 +373,6 @@ namespace ezui {
 		// 获取高度
 		int Height();
 
-		//计算带有策略的宽度
-		int CalcWidth();
-
-		//计算带有策略的度
-		int CalcHeight();
-
 		// 设置 X 坐标
 		void SetX(int X);
 
@@ -373,13 +380,13 @@ namespace ezui {
 		void SetY(int Y);
 
 		// 移动相对于父控件的位置
-		void SetLocation(const Point& pt);
+		void SetLocation(const Point& pt, bool isScaled = true);
 
 		// 设置控件大小（当重绘控件时不建议多次使用，影响性能，会调用 SetRect 函数）
-		void SetSize(const Size& size);
+		void SetSize(const Size& size, bool isScaled = true);
 
 		// 设置绝对宽高
-		void SetFixedSize(const Size& size);
+		void SetFixedSize(const Size& size, bool isScaled = true);
 
 		// 设置宽度（当重绘控件时不建议多次使用，影响性能，会调用 SetRect 函数）
 		void SetWidth(int width);
@@ -402,8 +409,13 @@ namespace ezui {
 		// 设置基于父控件百分比宽高(0.0f~1.0f)
 		void SetRateSize(const SizeF& size);
 
-		// 设置相对父控件矩形，返回实际的 rect
-		const Rect& SetRect(const Rect& rect);
+		/// <summary>
+		/// 设置相对父控件矩形，返回实际的 rect
+		/// </summary>
+		/// <param name="rect"></param>
+		/// <param name="isScaleSize">传入的矩形是否已经进行缩放过</param>
+		/// <returns></returns>
+		Rect SetRect(const Rect& rect, bool isScaled = true);
 
 		// 获取绝对宽度
 		int GetFixedWidth();
@@ -460,7 +472,7 @@ namespace ezui {
 		virtual void SetAutoSize(bool flag);
 
 		// 获取控件内容大小
-		virtual const Size& GetContentSize();
+		virtual Size GetContentSize();
 
 		// 获取控件大小
 		Size GetSize();
@@ -468,11 +480,15 @@ namespace ezui {
 		// 获取控件位置
 		Point GetLocation();
 
-		// 获取相对于父控件的矩形（布局计算后）
-		virtual const Rect& GetRect();
+		/// <summary>
+		/// 获取相对于父控件的矩形
+		/// </summary>
+		/// <param name="bNativeSize">是否获取未经dpi缩放的大小</param>
+		/// <returns>返回相对矩形位置</returns>
+		virtual Rect GetRect(bool isScaled = true);
 
 		// 获取基于客户端区域的矩形
-		Rect GetRectInClient();
+		Rect GetRectInWindow();
 
 		//获取控件基于屏幕的矩形位置
 		Rect GetRectInScreen();
@@ -480,19 +496,22 @@ namespace ezui {
 		//获取控件基于Frame层的矩形位置
 		Rect GetRectInFrame();
 
+		//控件是否已经进行dpi缩放处理
+		bool IsScaled();
+
 		// 获取控件的缩放系数
 		float GetScale();
 
+		//是否正在布局中
+		bool IsInLayout();
+
 		// 是否存在挂起的布局
-		bool IsPendLayout();
+		bool IsLayoutPending();
 
-		// 尝试挂起布局，返回当前布局状态
-		const LayoutState TryPendLayout();
+		// 标为为脏布局(将在合适的时机刷新布局)
+		bool InvalidateLayout();
 
-		// 获取当前布局状态
-		const LayoutState GetLayoutState();
-
-		// 结束当前布局（使其立即生效）
+		// 结束布局状态
 		void EndLayout();
 
 		// 立即强制刷新布局
@@ -504,10 +523,16 @@ namespace ezui {
 		// 获取提示文字
 		const UIString& GetTips();
 
-		// 获取控件的滚动条对象
+		// 获取控件的默认滚动条对象
 		virtual ScrollBar* GetScrollBar();
 
-		// 派发事件（如鼠标单击事件等...）返回true则事件成功派发 返回false代表派发途中当前控件已被释放
+		//获取垂直滚动条对象
+		virtual VScrollBar* GetVScrollBar();
+
+		//获取水平滚动条对象
+		virtual HScrollBar* GetHScrollBar();
+
+		// 派发事件（如鼠标单击事件等...）
 		void SendEvent(const EventArgs& arg);
 
 		// 设置控件属性
@@ -519,14 +544,17 @@ namespace ezui {
 		//获取父控件
 		Control* GetParent();
 
+		//获取全部类名
+		std::vector<UIString> GetClassList();
+
+		//是否包含某个类名
+		bool HasClass(const UIString& className);
+
 		// 获取所有子控件集合
 		const ControlCollection& GetControls();
 
-		// 使用下标获取控件，自动跳过 spacer 类控件
-		Control* GetControl(int pos);
-
-		// 是否包含指定控件（递归遍历所有子控件）
-		bool Contains(Control* ctrl);
+		// 使用下标获取控件
+		Control* GetControlAt(int pos);
 
 		// 获取指定子控件的索引
 		int IndexOf(Control* childCtl);
@@ -556,7 +584,7 @@ namespace ezui {
 		bool IsEnabled();
 
 		// 在指定位置插入子控件
-		virtual Control* InsertChild(int pos, Control* childCtl);
+		virtual Control* InsertAt(int pos, Control* childCtl);
 
 		// 添加控件到末尾（如果是弹簧控件，在释放时将自动销毁）
 		virtual Control* AddChild(Control* childCtrl);
@@ -575,6 +603,9 @@ namespace ezui {
 
 		// 设置控件的父控件
 		virtual void SetParent(Control* parentCtl);
+
+		//根据下标移除某个元素
+		void RemoveAt(int pos);
 
 		// 移除所有子控件
 		virtual void RemoveAll();
@@ -627,9 +658,9 @@ namespace ezui {
 		/// <summary>
 		/// 为当前控件的指定状态批量设置样式（使用分号分隔）
 		/// </summary>
-		/// <param name="state">控件状态,例如 ControlState::Hover</param>
 		/// <param name="styleStr">样式字符串,例如 "font-size: 13px; color: #ffffff;"</param>
-		virtual void SetStyleSheet(ControlState state, const UIString& styleStr);
+		/// <param name="state">控件状态,例如 ControlState::Hover</param>
+		virtual void SetStyleSheet(const UIString& styleStr, VisualState state);
 
 		/// <summary>
 		/// 设置样式集合,并自动匹配应用到符合条件的子控件
@@ -659,7 +690,7 @@ namespace ezui {
 		void SetMargin(int top, int right, int bottom, int left);
 
 		//获取基于父控件的边距信息；
-		const Distance& GetMargin();
+		Distance GetMargin();
 
 		// 设置控件四周的统一内边距
 		void SetPadding(int allPadding);
@@ -689,7 +720,7 @@ namespace ezui {
 		void SetPadding(int top, int right, int bottom, int left);
 
 		// 获取控件的内边距信息
-		const Distance& GetPadding();
+		Distance GetPadding();
 
 		//控件是否被按住
 		bool IsPressed();

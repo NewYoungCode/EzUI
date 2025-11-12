@@ -1,28 +1,22 @@
-#pragma once
+﻿#pragma once
 #include "UILoader.h"
 
 namespace ezui {
-	//控件选择器(多功能选择器暂时未完善)
+	//控件链式选择器
 	class UI_EXPORT UISelector
 	{
 	private:
-		Control* m_ctl = NULL;
-		Control* m_notCtl = NULL;
-		std::vector<Control*> m_ctls;
-		UISelector& NextName(const UIString& key) { return *this; };
-		UISelector& NextId(const UIString& key) { return *this; };
+		ControlCollection m_controls;//锁定的控件
 	public:
-		UISelector(const std::vector<Control*>& controls);
-		UISelector(const std::list<Control*>& controls);
-		UISelector(Control* control);
-		UISelector(Control* control, const UIString& mathStr);
+		UISelector(const ControlCollection& controls);
 		virtual ~UISelector();
-		UISelector& Css(const UIString& styleStr);
-		UISelector& CssHover(const UIString& styleStr);
-		UISelector& CssActive(const UIString& styleStr);
-		UISelector& Attr(const UIString& key, const UIString& value);
-		UISelector& Refresh();
+		//排除单个控件
 		UISelector& Not(Control* fiterCtl);
+		//排除一个集合中的全部控件
+		UISelector& Not(const ControlCollection& fiterControls);
+		//循环最终选定的控件
+		void Each(const std::function<void(Control* it)>& eachFunc);
 	};
+	//用于简便操作
 #define $ UISelector
 };

@@ -1,4 +1,4 @@
-#include "desktopLrcFrm.h"
+﻿#include "desktopLrcFrm.h"
 
 HWND GetDeskTopWnd() {
 
@@ -32,10 +32,10 @@ DesktopLrcFrm::DesktopLrcFrm(VlcPlayer* player) :_player(player), LayeredWindow(
 	this->CloseShadowBox();
 	//获取桌面的窗口句柄
 	HWND workWnd = GetDeskTopWnd();
-	::SetParent(Hwnd(), workWnd);
+	::SetParent(GetWindowId(), workWnd);
 	RECT workRect;
 	::GetClientRect(workWnd, &workRect);
-	::SetWindowPos(Hwnd(), NULL, workRect.left, workRect.top, workRect.left + workRect.right, workRect.top + workRect.bottom, SWP_NOZORDER | SWP_NOACTIVATE);
+	::SetWindowPos(GetWindowId(), NULL, workRect.left, workRect.top, workRect.left + workRect.right, workRect.top + workRect.bottom, SWP_NOZORDER | SWP_NOACTIVATE);
 	//设置窗口布局
 	_lrc.Style.FontSize = 20;
 	_lrc.Style.ForeColor = Color::White;

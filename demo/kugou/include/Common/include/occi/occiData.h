@@ -1,4 +1,4 @@
-/* Copyright (c) 2000, 2009, Oracle and/or its affiliates. 
+﻿/* Copyright (c) 2000, 2009, Oracle and/or its affiliates. 
 All rights reserved. */
    
 /* 

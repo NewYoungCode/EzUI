@@ -1,10 +1,10 @@
-/*****************************************************************************
+﻿/*****************************************************************************
  * libvlc_vlm.h:  libvlc_* new external API
  *****************************************************************************
  * Copyright (C) 1998-2008 VLC authors and VideoLAN
  * $Id: 26e5cbb5ee7968a21520af0b8f553a4a117d4f99 $
  *
- * Authors: Clément Stenac <zorglub@videolan.org>
+ * Authors: ClÃ©ment Stenac <zorglub@videolan.org>
  *          Jean-Paul Saman <jpsaman _at_ m2x _dot_ nl>
  *
  * This program is free software; you can redistribute it and/or modify it

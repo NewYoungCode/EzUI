@@ -1,15 +1,12 @@
-#pragma once
+﻿#pragma once
 #include "Control.h"
 
 namespace ezui {
-	class UI_EXPORT  HLayout :
+	class UI_EXPORT HLayout :
 		public Control
 	{
 	private:
-		VAlign m_contentAlign = VAlign::Mid;
-	public:
-		//布局完成的回调
-		std::function<void()> Layout = NULL;
+		VAlign m_contentAlign = VAlign::None;
 	protected:
 		void DistributeAutoWidths(std::vector<Control*> const& autoSizeCtrls, int availableWidth);
 		virtual void OnLayout()override;
@@ -20,6 +17,7 @@ namespace ezui {
 		// - 传入 fixedWidth == 0,则作为可拉伸的弹簧,占据剩余空间
 		void AddSpacer(int fixedWidth = 0);
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
+		//设置子控件的垂直对齐方式
 		void SetContentAlign(VAlign contentAlign);
 		virtual ~HLayout();
 	};

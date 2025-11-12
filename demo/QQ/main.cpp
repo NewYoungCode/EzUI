@@ -83,17 +83,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	MainForm mainFrm(1014, 725);
 	Animation* amt = new Animation(&mainFrm);//动画加载
 	amt->ValueChanged = [&mainFrm](float value) {
-		mainFrm.Opacity = value;
+		mainFrm.SetOpacity(value);
+		OutputDebugStringA(UIString("Opacity: %lf \n").args(value).c_str());
 		mainFrm.Invalidate();
 		};
-
-	mainFrm.Opacity = 0;
-	mainFrm.Show();
 
 	amt->SetStartValue(0);
 	amt->SetEndValue(1);
 	amt->Start(1000);
 
+	mainFrm.Show();
 
 	//开始消息循环
 	int code = app.Exec();

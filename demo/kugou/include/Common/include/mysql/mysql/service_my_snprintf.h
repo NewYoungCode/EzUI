@@ -1,4 +1,4 @@
-#ifndef MYSQL_SERVICE_MY_SNPRINTF_INCLUDED
+﻿#ifndef MYSQL_SERVICE_MY_SNPRINTF_INCLUDED
 #define MYSQL_SERVICE_MY_SNPRINTF_INCLUDED
 /* Copyright (c) 2009, 2015, Oracle and/or its affiliates. All rights reserved.
 

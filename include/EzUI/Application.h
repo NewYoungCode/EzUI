@@ -1,10 +1,16 @@
-#pragma once
+﻿#pragma once
 #include "Window.h"
 #include "Resource.h"
 
 namespace ezui {
+	//app类所有代码必须在Application实例化完成之后才可以创建窗口/控件...
 	class UI_EXPORT Application
 	{
+	private:
+		Application(const Application&) = delete;            // 禁止拷贝构造
+		Application& operator=(const Application&) = delete; // 禁止拷贝赋值
+		Application(Application&&) = delete;                 // 禁止移动构造
+		Application& operator=(Application&&) = delete;      // 禁止移动赋值
 	public:
 		//退出消息循环
 		static void Exit(int exitCode = 0);

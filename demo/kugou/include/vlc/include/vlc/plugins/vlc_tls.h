@@ -1,7 +1,7 @@
-/*****************************************************************************
+﻿/*****************************************************************************
  * vlc_tls.h: Transport Layer Security API
  *****************************************************************************
- * Copyright (C) 2004-2011 Rémi Denis-Courmont
+ * Copyright (C) 2004-2011 RÃ©mi Denis-Courmont
  * Copyright (C) 2005-2006 VLC authors and VideoLAN
  *
  * This program is free software; you can redistribute it and/or modify it

@@ -1,4 +1,4 @@
-#ifndef _unzip_H
+﻿#ifndef _unzip_H
 #define _unzip_H
 #pragma  warning (disable:4996) 
 

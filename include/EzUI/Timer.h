@@ -1,19 +1,27 @@
-#pragma once
+﻿#pragma once
 #include "EzUI.h"
 #include "Task.h"
 
 namespace ezui {
 
+	//精度稍高的倒数计时器
+	class UI_EXPORT WaitableTimer {
+		HANDLE m_hTimer = NULL;
+	public:
+		WaitableTimer();
+		void Wait(int milliseconds);
+		virtual ~WaitableTimer();
+	};
+
 	//使用线程的计时器 不与主进程同步(启动的时候就直接开始执行回调函数)
 	class UI_EXPORT Timer :public Object {
 		bool m_bExit = false;
 		bool m_bPause = true;
+		bool m_clockMode = false;
 		Task* m_task = NULL;
-		mutex m_mtx;
-		condition_variable m_condv;
-		std::chrono::steady_clock::time_point m_lastTickTime;
-		mutex m_mtx2;
-		condition_variable m_condv2;
+		mutex* m_mtx = NULL;
+		condition_variable* m_condv = NULL;
+		WaitableTimer* m_waitableTimer = NULL;
 	public:
 		std::function<void(Timer*)> Tick = NULL;
 		int Interval = 0;
@@ -33,31 +41,16 @@ namespace ezui {
 				};
 			timer->Start();
 		};
-	protected:
-		//负责等待
-		virtual void WaitTime();
 	public:
 		Timer(Object* ownerObject = NULL);
+		//是否采用时钟模式(启用之后,执行回调函数会较为频繁)
+		void SetClockMode(bool bEnable = true);
+		//负责等待
+		void Wait(int milliseconds);
 		bool IsStopped();
+		bool IsRunning();
 		void Start();
 		void Stop();
 		virtual ~Timer();
-	};
-
-	//高精度计时器
-	class UI_EXPORT TimerClock :public Object {
-		std::atomic<bool> m_stop = false;
-		std::chrono::steady_clock::time_point m_stopRequestTime;
-		UINT m_id = 0;
-		static void CALLBACK TimerProc(UINT uID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2);
-		void KillTimer();
-	public:
-		std::function<void(TimerClock*)> Tick = NULL;
-		int Interval = 1;
-		TimerClock(Object* ownerObject = NULL);
-		virtual ~TimerClock();
-		bool IsStopped()const;
-		void Stop();
-		void Start();
 	};
 };

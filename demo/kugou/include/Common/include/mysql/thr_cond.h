@@ -1,4 +1,4 @@
-#ifndef THR_COND_INCLUDED
+﻿#ifndef THR_COND_INCLUDED
 #define THR_COND_INCLUDED
 
 /* Copyright (c) 2014, 2016, Oracle and/or its affiliates. All rights reserved.

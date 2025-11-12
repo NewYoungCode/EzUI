@@ -1,4 +1,4 @@
-#ifndef CURLINC_CURLVER_H
+﻿#ifndef CURLINC_CURLVER_H
 #define CURLINC_CURLVER_H
 /***************************************************************************
  *                                  _   _ ____  _

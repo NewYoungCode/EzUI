@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 //
 //  base64 encoding and decoding with C++.
 //  Version: 2.rc.08 (release candidate)

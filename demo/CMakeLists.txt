@@ -1,8 +1,7 @@
-cmake_minimum_required(VERSION 3.0...9.0)
+﻿cmake_minimum_required(VERSION 3.0...9.0)
 
 #gui库的包含目录位置
 set(include ../include)
-
 
 
 

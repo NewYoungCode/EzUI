@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "global.h"
 #include "widgets.h"
 #include "vlcPlayer.h"

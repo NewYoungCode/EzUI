@@ -1,10 +1,10 @@
-#pragma once
+﻿#pragma once
 #include "Control.h"
 #include "Timer.h"
 #include "Animation.h"
 namespace ezui {
 	//滑动方向
-	enum class SlideDirection {
+	enum class SlideDirection :int16_t {
 		Horizontal,  // 横向滑动（比如从左滑到右）
 		Vertical     // 纵向滑动（比如从上滑到底）
 	};
@@ -12,15 +12,16 @@ namespace ezui {
 		public Control
 	{
 	private:
+		SlideDirection m_dlideDirection = SlideDirection::Horizontal;
 		int m_pageIndex = 0;
-		Animation m_amt;
+		Animation* m_amt;
 		std::vector<int> m_initial;
-		SlideDirection m_dlideDirection;
 		void Sort();
 		void Init();
 	protected:
 		virtual void OnLayout()override;
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
+		virtual void OnDpiChanged(const DpiChangedEventArgs& arg)override;
 	public:
 		TabLayout(Object* ownerObject = NULL);
 		virtual ~TabLayout();
@@ -29,7 +30,7 @@ namespace ezui {
 		//设置当前显示页
 		void SetPageIndex(int index);
 		//动画方式滑动到某一页
-		void SlideToPage(int index, SlideDirection dlideDirection = SlideDirection::Horizontal, int durationMs = 300);
+		void SlideToPage(int index, SlideDirection dlideDirection = SlideDirection::Horizontal, int durationMs = 200);
 		void SetPage(Control* ctrl);
 		Control* GetPage();
 		//获取当前页索引

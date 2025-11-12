@@ -1,4 +1,4 @@
-#ifdef __cplusplus
+﻿#ifdef __cplusplus
 #ifndef SERVICE_RULES_TABLE_INCLUDED
 #define SERVICE_RULES_TABLE_INCLUDED
 

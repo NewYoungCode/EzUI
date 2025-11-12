@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <random>
 class Random {
 	std::mt19937 randomer;

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "ezui/Application.h" //app类
 #include "EzUI/Window.h" //基础窗口类
 #include "EzUI/Button.h" //按钮

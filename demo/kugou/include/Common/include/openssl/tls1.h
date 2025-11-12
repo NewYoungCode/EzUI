@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright 1995-2024 The OpenSSL Project Authors. All Rights Reserved.
  * Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved
  * Copyright 2005 Nokia. All rights reserved.

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Label.h"
 
 namespace ezui {
@@ -10,18 +10,18 @@ namespace ezui {
 		bool m_checked = false;
 	public:
 		//选中样式
-		ControlStyle CheckedStyle;
+		ControlStyle& CheckedStyle;
 		//选中状态发送变化的回调函数
 		std::function<void(CheckBox* sender, bool checked)> CheckedChanged = NULL;
 	protected:
-		virtual ControlStyle& GetStyle(const ControlState& _state)override;
+		virtual ControlStyle* GetStyle(VisualState _state)override;
 		virtual void OnMouseDown(const MouseEventArgs& arg)override;
-		virtual void OnDpiChange(const DpiChangeEventArgs& args)override;
+		virtual void OnDpiChanged(const DpiChangedEventArgs& args)override;
 	public:
 		CheckBox(Object* ownerObject = NULL);
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
 		//设置选中状态
-		virtual void SetCheck(bool checked);
+		virtual void SetCheck(bool checked, bool triggerChangedEvent = false);
 		//获取选中状态
 		virtual bool GetCheck();
 		virtual ~CheckBox();

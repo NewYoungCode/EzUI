@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <map>
 #include <functional>
 #include <Windows.h>

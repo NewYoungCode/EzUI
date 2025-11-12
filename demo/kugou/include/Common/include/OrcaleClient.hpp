@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <iostream>
 #include <occi/occi.h>
 using namespace oracle::occi;

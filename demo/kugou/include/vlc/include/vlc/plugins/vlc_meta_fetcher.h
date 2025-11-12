@@ -1,7 +1,7 @@
-/*****************************************************************************
+﻿/*****************************************************************************
  * vlc_meta_fetcher.h
  *****************************************************************************
- * Copyright (C) 2009 Rémi Denis-Courmont
+ * Copyright (C) 2009 RÃ©mi Denis-Courmont
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "global.h"
 /// <summary>
 /// 左侧本地歌曲列表中的Item
@@ -28,7 +28,6 @@ public:
 
 //登录窗口
 class LoginFrm :public LayeredWindow {
-	UILoader umg;
 protected:
 	virtual void OnNotify(Control* sender, EventArgs& args)override;
 public:

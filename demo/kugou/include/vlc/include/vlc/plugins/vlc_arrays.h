@@ -1,11 +1,11 @@
-/*****************************************************************************
+﻿/*****************************************************************************
  * vlc_arrays.h : Arrays and data structures handling
  *****************************************************************************
  * Copyright (C) 1999-2004 VLC authors and VideoLAN
  * $Id: 91f540533b3144f00d1e74bd47dc34cf69598276 $
  *
  * Authors: Samuel Hocevar <sam@zoy.org>
- *          Clément Stenac <zorglub@videolan.org>
+ *          ClÃ©ment Stenac <zorglub@videolan.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by

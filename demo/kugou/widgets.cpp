@@ -1,4 +1,4 @@
-#include "widgets.h"
+﻿#include "widgets.h"
 
 LocalItem::LocalItem(const UIString& _songName, const UIString& _songTime) {
 
@@ -8,7 +8,7 @@ LocalItem::LocalItem(const UIString& _songName, const UIString& _songTime) {
 	del.Name = "dellocal";
 	del.SetHitTestVisible(false);
 
-	this->Name = "songItem";
+	//this->Name = "songItem";
 
 	this->Style.Cursor = LoadCursor(Cursor::HAND);
 	this->ActiveStyle.Cursor = LoadCursor(Cursor::HELP);
@@ -16,7 +16,7 @@ LocalItem::LocalItem(const UIString& _songName, const UIString& _songTime) {
 	songName.Name = "autosz";
 	songName.SetText(_songName);
 	songName.SetElidedText("...");//文本超出容器之外采用省略号
-	songName.TextAlign = TextAlign::MiddleLeft;
+	songName.SetTextAlign(TextAlign::MiddleLeft);
 	songName.SetTips("child_" + _songName);
 	//穿透事件
 	songName.SetHitTestVisible(false);
@@ -25,7 +25,7 @@ LocalItem::LocalItem(const UIString& _songName, const UIString& _songTime) {
 	time.HoverStyle.Angle = 180;
 	time.SetFixedWidth(50);
 	time.SetText(_songTime);
-	time.TextAlign = TextAlign::MiddleRight;
+	time.SetTextAlign(TextAlign::MiddleRight);
 
 	this->SetFixedHeight(33);
 	HoverStyle.BackColor = Color(230, 230, 230, 100);
@@ -86,12 +86,12 @@ SearchItem::SearchItem(const Song& s) {
 
 	songName.SetElidedText("...");
 	songName.SetText(s.SongName);
-	songName.TextAlign = TextAlign::MiddleLeft;
+	songName.SetTextAlign(TextAlign::MiddleLeft);
 	songName.SetHitTestVisible(false);
 	songName.HoverStyle.ForeColor = Color(200, 100, 1);
 	AlbumName.SetFixedWidth(180);
 	AlbumName.SetText(s.AlbumName);
-	AlbumName.TextAlign = TextAlign::MiddleLeft;
+	AlbumName.SetTextAlign(TextAlign::MiddleLeft);
 	AlbumName.Style.Cursor = LoadCursor(Cursor::HAND);
 	AlbumName.Style.ForeColor = Color(150, 150, 150);
 	AlbumName.SetHitTestVisible(false);
@@ -110,7 +110,7 @@ SearchItem::SearchItem(const Song& s) {
 
 	time.SetFixedWidth(60);
 	time.SetText(global::toTimeStr(s.Duration));
-	time.TextAlign = TextAlign::MiddleLeft;
+	time.SetTextAlign(TextAlign::MiddleLeft);
 	time.SetHitTestVisible(false);
 	time.Style.ForeColor = Color(150, 150, 150);
 
@@ -160,22 +160,21 @@ void LoginFrm::OnNotify(Control* sender, EventArgs& args)
 				TextBox* editPwd = (TextBox*)this->FindControl("password");
 				if (editUser->GetText() == "admin" && editPwd->GetText() == "123456") {
 					this->m_userName = editUser->GetText();
-					::MessageBoxW(Hwnd(), L"登录成功!", L"成功", MB_OK);
+					::MessageBoxW(GetWindowId(), L"登录成功!", L"成功", MB_OK);
 					this->Close(1);
 				}
 				else
 				{
-					::MessageBoxW(Hwnd(), L"用户名或密码错误!", L"失败", MB_OK);
+					::MessageBoxW(GetWindowId(), L"用户名或密码错误!", L"失败", MB_OK);
 				}
 				break;
 			}
 		}
 	} while (false);
-	ezui::DefaultNotify(sender, args);
+	__super::OnNotify(sender, args);
 }
 
 LoginFrm::LoginFrm(HWND owner) :LayeredWindow(300, 200, owner)
 {
-	umg.LoadXml("res/xml/login.htm");
-	umg.SetupUI(this);
+	this->LoadXml("res/xml/login.htm");
 }

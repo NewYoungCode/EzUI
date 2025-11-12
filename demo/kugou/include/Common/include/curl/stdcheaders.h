@@ -1,4 +1,4 @@
-#ifndef CURLINC_STDCHEADERS_H
+﻿#ifndef CURLINC_STDCHEADERS_H
 #define CURLINC_STDCHEADERS_H
 /***************************************************************************
  *                                  _   _ ____  _

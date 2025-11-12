@@ -1,4 +1,18 @@
-#include "mainFrm.h"
+﻿#include "mainFrm.h"
+#include "EzUI/TreeView.h"
+void AddTreeNodes(TreeNode* parent, int currentDepth, int maxDepth, int childrenPerNode) {
+	if (currentDepth >= maxDepth) return;
+
+	for (int i = 0; i < childrenPerNode; ++i) {
+		TreeNode* node = new TreeNode;
+		node->SetText(L">子节点 " + std::to_wstring(currentDepth) + L"-" + std::to_wstring(i));
+		node->SetMarginLeft(20);
+		//node->SetStyleSheet("border:1px gray solid;", ControlState::Static);
+		parent->AddNode(node);
+		// 递归生成下一层
+		AddTreeNodes(node, currentDepth + 1, maxDepth, childrenPerNode);
+	}
+}
 MainFrm::MainFrm() :Form(1020, 690)
 {
 	InitForm();
@@ -6,14 +20,14 @@ MainFrm::MainFrm() :Form(1020, 690)
 	ntfi.SetTips(L"酷苟音乐");
 	ntfi.SetIcon(nullptr);//托盘图标
 
-	Menu* menu = new Menu(&ntfi);
+	SystemMenu* menu = new SystemMenu(&ntfi);
 	UINT_PTR id_open = menu->Append(L"打开主程序");
 	UINT_PTR id_exit = menu->Append(L"退出");
 	ntfi.SetMenu(menu);
 
-	menu->MouseClick = [=](UINT_PTR menuId) {
+	menu->MenuClick = [=](UINT_PTR menuId) {
 		if (menuId == id_open) {
-			::ShowWindow(Hwnd(), SW_RESTORE);
+			this->Restore();
 		}
 		if (menuId == id_exit) {
 			Application::Exit();
@@ -27,11 +41,11 @@ MainFrm::MainFrm() :Form(1020, 690)
 
 	ntfi.EventHandler = [=](const MouseEventArgs& args)->void {
 		if (args.EventType == Event::OnMouseDoubleClick && args.Button == MouseButton::Left) {
-			::ShowWindow(Hwnd(), SW_RESTORE);
+			this->Restore();
 		}
 		};
 
-	this->SetMiniSize({ 800,600 });
+	//this->SetMiniSize({ 800,600 });
 }
 void MainFrm::InitForm() {
 	this->SetResizable(true);
@@ -114,13 +128,13 @@ void MainFrm::InitForm() {
 
 			songLsit.push_back(s);
 			vlistLocal->AddChild(it);
-			vlistLocal->Append(L"<label text=\"测试xml加载文字\" style=\"width:100px;height:20px;font-size:12px;\" />");
+			//vlistLocal->Append(L"<label text=\"测试xml加载文字\" style=\"width:100px;height:20px;font-size:12px;\" />");
 		}
 	}
 
 	//滚动条滚动事件 滚动条滚动到底部加载剩余音乐
-	vlistSearch->GetScrollBar()->ValueChanged = [=](int pos)->void {
-		if (pos>= vlistSearch->GetScrollBar()->GetMaxValue()) {
+	vlistSearch->GetScrollBar()->ValueChanged = [=](ScrollBar*, int pos)->void {
+		if (pos >= vlistSearch->GetScrollBar()->GetMaxValue()) {
 			NextPage(pos);
 		}
 		};
@@ -128,7 +142,7 @@ void MainFrm::InitForm() {
 	playerBar2->SetHitTestVisible(false);
 	//创建启动一个实时获取歌曲进度以及状态
 	timer = new Timer;
-	timer->Interval = 10;
+	timer->Interval = 100;
 	timer->Tick = [=](Timer*) {
 		TimerTick();
 		};
@@ -149,6 +163,15 @@ void MainFrm::InitForm() {
 	OpenSongView();
 
 	vlistLocal->GetScrollBar()->Name = "bar666";
+
+	// 树形菜单使用示例
+	TreeView* tv = (TreeView*)centerFrame->FindControl("treeview");
+	for (int r = 0; r < 10; ++r) { // 根节点数量
+		TreeNode* root = new TreeNode;
+		root->SetText(L">根节点");
+		tv->AddNode(root);
+		AddTreeNodes(root, 0, 5, 2); // 深度5，每个节点2个子节点
+	}
 }
 
 void MainFrm::OnPaint(PaintEventArgs& args) {
@@ -263,7 +286,7 @@ void MainFrm::DownLoadImage(UIString singers, UIString headImageUrl)
 				{
 					Image* tmp = new Image(fileData.c_str(), fileData.size());
 					tmp->SizeMode = ImageSizeMode::Cover;
-					DXRender render(img);
+					Graphics render(img);
 					render.DrawImage(tmp, RectF(0, 0, img->Width(), img->Height()));
 					delete tmp;
 				}
@@ -303,7 +326,7 @@ bool MainFrm::PlaySong(const UIString& hash, Song& info)
 	UIString errStr;
 	bool ret = global::GetSongInfo(hash, errStr, info);
 	if (!ret) {
-		::MessageBoxW(Hwnd(), errStr.unicode().c_str(), L"无法播放", MB_OK);
+		::MessageBoxW(GetWindowId(), errStr.unicode().c_str(), L"无法播放", MB_OK);
 		return false;
 	}
 
@@ -420,6 +443,7 @@ void MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			}
 			if (sender->Name == "deskLrc") {
 				OpenDesktopLrc();
+				::MessageBoxW(this->GetWindowId(), L"桌面歌词已开启", L"", MB_OK);
 				break;
 			}
 			if (sender->Name == "play") {
@@ -444,6 +468,7 @@ void MainFrm::OnNotify(Control* sender, EventArgs& args) {
 				}
 				delete songItem;
 				vlistLocal->Invalidate();
+				vlistLocal->RefreshLayout();
 				return;
 			}
 			if (sender->GetAttribute("tablayout") == "rightView") {
@@ -475,7 +500,7 @@ void MainFrm::OnNotify(Control* sender, EventArgs& args) {
 			}
 		}
 	} while (false);
-	ezui::DefaultNotify(sender, args);
+	__super::OnNotify(sender, args);
 }
 
 void MainFrm::OpenDesktopLrc()
@@ -491,27 +516,21 @@ void MainFrm::OpenDesktopLrc()
 void MainFrm::OpenLoginFrm(ezui::Control* sender)
 {
 	//测试代码
-	LoginFrm loginFrm(Hwnd());
+	LoginFrm loginFrm(GetWindowId());
 
 	//给窗口添加淡入效果
 	Animation* ant = new Animation(&loginFrm);
 	ant->SetStartValue(0.1);
 	ant->SetEndValue(1.0);
 	ant->ValueChanged = [&](double value) {
-		HWND hWnd = loginFrm.Hwnd();
-		BeginInvoke([&, value, hWnd] {
-			if (!::IsWindow(hWnd))return;
-			loginFrm.Opacity = value;//修改透明度
-			loginFrm.Invalidate();//刷新
-			});
+		loginFrm.SetOpacity(value);//修改透明度
+		loginFrm.Invalidate();//刷新
 		};
-	loginFrm.Opacity = 0.1;
 	ant->Start(300);//开始动画
 
 	int code = loginFrm.ShowModal(true);//阻塞函数内部进行消息循环
-
 	if (code == 1) {
-		UIString text = UIString(L"欢迎您,%s").format(loginFrm.m_userName.c_str());
+		UIString text = UIString(L"欢迎您,%s").args(loginFrm.m_userName.c_str());
 		((Label*)sender)->SetText(text);
 		sender->Invalidate();
 	}
@@ -529,7 +548,7 @@ void MainFrm::UpSong()
 		hash = songLsit[pos].hash;
 	}
 	auto ctrls = vlistLocal->FindChildren("FileHash", hash);
-	if (ctrls.size()>0) {
+	if (ctrls.size() > 0) {
 		auto it = *ctrls.begin();
 		vlistLocal->GetScrollBar()->ScrollTo(it);
 		it->SendEvent(MouseEventArgs(Event::OnMouseDoubleClick));

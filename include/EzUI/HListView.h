@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "PagedListView.h"
 #include "HScrollBar.h"
 
@@ -8,20 +8,18 @@ namespace ezui {
 	{
 	private:
 		VAlign m_contentAlign = VAlign::Mid;
-		HScrollBar m_hScrollBar;
+		HScrollBar* m_hScrollBar;
 		void Init();
 		void Offset(int offset);
-	public:
-		//布局完成的回调
-		std::function<void()> Layout = NULL;
 	protected:
 		virtual void OnLayout()override;
 		virtual void OnChildPaint(PaintEventArgs& args)override;
 	public:
 		HListView(Object* ownerObject = NULL);
 		virtual ~HListView();
+		//设置子控件的垂直对齐方式
 		void SetContentAlign(VAlign contentAlign);
 		virtual void SetAttribute(const UIString& key, const UIString& value)override;
-		virtual ScrollBar* GetScrollBar()override;
+		virtual HScrollBar* GetHScrollBar()override;
 	};
 };

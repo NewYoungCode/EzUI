@@ -1,4 +1,4 @@
-/*****************************************************************************
+﻿/*****************************************************************************
  * vlc_common.h: common definitions
  * Collection of useful common types and macros definitions
  *****************************************************************************
@@ -7,7 +7,7 @@
  * Authors: Samuel Hocevar <sam@via.ecp.fr>
  *          Vincent Seguin <seguin@via.ecp.fr>
  *          Gildas Bazin <gbazin@videolan.org>
- *          Rémi Denis-Courmont
+ *          RÃ©mi Denis-Courmont
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by

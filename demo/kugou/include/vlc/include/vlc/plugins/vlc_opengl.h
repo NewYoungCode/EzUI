@@ -1,8 +1,8 @@
-/*****************************************************************************
+﻿/*****************************************************************************
  * vlc_opengl.h: VLC GL API
  *****************************************************************************
  * Copyright (C) 2009 Laurent Aimar
- * Copyright (C) 2011 Rémi Denis-Courmont
+ * Copyright (C) 2011 RÃ©mi Denis-Courmont
  *
  * Authors: Laurent Aimar <fenrir _AT_ videolan _DOT_ org>
  *

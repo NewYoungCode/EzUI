@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "EzUI.h"
 
 namespace ezui {
@@ -10,15 +10,22 @@ namespace ezui {
 		HBITMAP m_bmp = NULL;
 		HDC m_hdc = NULL;
 		uint8_t* m_point = NULL;
-		BITMAPINFO m_bmpInfo;
-		Bitmap(const Bitmap& hBitmap) = delete;
-		void operator=(const Bitmap& hBitmap) = delete;
+		BITMAPINFO& m_bmpInfo;
+	private:
+		Bitmap(const Bitmap&) = delete;            // 禁止拷贝构造
+		Bitmap& operator=(const Bitmap&) = delete; // 禁止拷贝赋值
+		Bitmap(Bitmap&&) = delete;                 // 禁止移动构造
+		Bitmap& operator=(Bitmap&&) = delete;      // 禁止移动赋值
 	protected:
-		void Create(int width, int height);
+		void Create(int width, int height, bool zeroFill = false);
 	public:
 		int Width()const;
 		int Height()const;
-		//BGRA 32位图
+		/// <summary>
+		/// //BGRA 32位图
+		/// </summary>
+		/// <param name="width">位图的宽</param>
+		/// <param name="height">位图的高</param>
 		Bitmap(int width, int height);
 		Bitmap(HDC dc, const Rect& rect);
 		void SetPixel(int x, int y, const Color& color);

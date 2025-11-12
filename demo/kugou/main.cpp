@@ -1,4 +1,4 @@
-#include "global.h"
+﻿#include "global.h"
 #include "mainFrm.h"
 
 #include <DbgHelp.h>

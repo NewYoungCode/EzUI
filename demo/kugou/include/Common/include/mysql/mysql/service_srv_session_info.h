@@ -1,4 +1,4 @@
-#ifndef MYSQL_SERVICE_SRV_SESSION_INFO_INCLUDED
+﻿#ifndef MYSQL_SERVICE_SRV_SESSION_INFO_INCLUDED
 #define MYSQL_SERVICE_SRV_SESSION_INFO_INCLUDED
 /*  Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
 

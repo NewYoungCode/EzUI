@@ -1,4 +1,4 @@
-#include "FileSystem.h"
+﻿#include "FileSystem.h"
 namespace ezui {
 	namespace File {
 		bool Exists(const UIString& filename) {

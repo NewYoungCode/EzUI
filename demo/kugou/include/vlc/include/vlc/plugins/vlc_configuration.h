@@ -1,4 +1,4 @@
-/*****************************************************************************
+﻿/*****************************************************************************
  * vlc_configuration.h : configuration management module
  * This file describes the programming interface for the configuration module.
  * It includes functions allowing to declare, get or set configuration options.

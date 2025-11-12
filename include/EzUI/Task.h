@@ -1,13 +1,16 @@
-#pragma once
+﻿#pragma once
 #include "EzUI.h"
 namespace ezui {
 	namespace detail {
 		//互斥锁
 		class UI_EXPORT mutex {
 		private:
-			CRITICAL_SECTION m_mtx;  // 互斥锁
 			std::atomic<int> m_lockState = 0;
-			mutex(const mutex&) = delete;
+			CRITICAL_SECTION* m_mtx;  // 互斥锁
+			mutex(const mutex&) = delete;            // 禁止拷贝构造
+			mutex& operator=(const mutex&) = delete; // 禁止拷贝赋值
+			mutex(mutex&&) = delete;                 // 禁止移动构造
+			mutex& operator=(mutex&&) = delete;      // 禁止移动赋值
 		public:
 			mutex();
 			virtual ~mutex();
@@ -46,7 +49,10 @@ namespace ezui {
 		class UI_EXPORT condition_variable {
 		private:
 			HANDLE m_codv = NULL;     // 事件对象（模拟条件变量）
-			condition_variable(const condition_variable&) = delete;
+			condition_variable(const condition_variable&) = delete;            // 禁止拷贝构造
+			condition_variable& operator=(const condition_variable&) = delete; // 禁止拷贝赋值
+			condition_variable(condition_variable&&) = delete;                 // 禁止移动构造
+			condition_variable& operator=(condition_variable&&) = delete;      // 禁止移动赋值
 		public:
 			condition_variable();
 			virtual ~condition_variable();
@@ -75,10 +81,13 @@ namespace ezui {
 namespace ezui {
 	class UI_EXPORT Task {
 		bool m_finished = false;
-		std::thread* m_thread = NULL;
 		bool m_bJoin = false;
+		std::thread* m_thread = NULL;
 	private:
-		Task(const Task&) = delete;
+		Task(const Task&) = delete;            // 禁止拷贝构造
+		Task& operator=(const Task&) = delete; // 禁止拷贝赋值
+		Task(Task&&) = delete;                 // 禁止移动构造
+		Task& operator=(Task&&) = delete;      // 禁止移动赋值
 		void DoWork(std::function<void()>* func);
 	public:
 		template<class Func, class... Args>
@@ -104,7 +113,10 @@ namespace ezui {
 		std::mutex m_mtx2;
 		std::condition_variable m_codv2;
 	private:
-		TaskFactory(const TaskFactory&) = delete;
+		TaskFactory(const TaskFactory&) = delete;            // 禁止拷贝构造
+		TaskFactory& operator=(const TaskFactory&) = delete; // 禁止拷贝赋值
+		TaskFactory(TaskFactory&&) = delete;                 // 禁止移动构造
+		TaskFactory& operator=(TaskFactory&&) = delete;      // 禁止移动赋值
 	public:
 		TaskFactory(int maxTaskCount = 50);
 		//添加到任务队列中的末尾(先后顺序执行)

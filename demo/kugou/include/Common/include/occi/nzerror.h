@@ -1,4 +1,4 @@
-/* DISABLE check_long_lines  */
+﻿/* DISABLE check_long_lines  */
 
 /*
  * $Header: security_src/public/nzerror.h /st_ldap_client12.2.0.1.0/1 2016/07/26 20:35:41 jrpierre Exp $

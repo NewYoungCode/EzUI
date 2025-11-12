@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright 2002-2022 The OpenSSL Project Authors. All Rights Reserved.
  * Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved
  *

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <list>
 #include <vector>
@@ -16,8 +16,49 @@
 #include <algorithm>
 #include <atomic>
 #include <condition_variable>
+#include <limits>
+#include <cstdio>
 
 #include <windows.h>
+
+namespace ezui {
+	namespace detail {
+		inline void EZUI_OutputAssert(const wchar_t* expr, const wchar_t* file, int line)
+		{
+			const wchar_t* safeFile = file ? file : L"(unknown)";
+			const wchar_t* safeExpr = expr ? expr : L"(null expr)";
+			// 计算长度
+			int len = _snwprintf(NULL, 0, L"\n[ASSERT] %s(%d): %s\n\n", safeFile, line, safeExpr);
+			if (len < 0) len = 256; // fallback 防止不支持 0 输出的旧 CRT
+			// 分配缓冲区
+			size_t bufSize = static_cast<size_t>(len) + 1;
+			std::wstring buf(bufSize, L'\0');
+			// 格式化内容
+			_snwprintf(&buf[0], bufSize, L"\n[ASSERT] %s(%d): %s\n\n", safeFile, line, safeExpr);
+			// 输出到控制台
+			std::fwprintf(stderr, L"%s", buf.c_str());
+			std::fflush(stderr);
+			// 输出到调试器
+			OutputDebugStringW(buf.c_str());
+		}
+	};
+};
+
+#define ASSERT(expr) \
+    (void)( \
+        (!!(expr)) || \
+        ( \
+            (ezui::detail::EZUI_OutputAssert(L#expr, _CRT_WIDE(__FILE__), __LINE__), 0) || \
+            (DebugBreak(), 0) \
+        ) \
+    )
+
+#define ASSERT_MSG(msg_p_wchar_t) \
+    (void)( \
+        (ezui::detail::EZUI_OutputAssert(msg_p_wchar_t, _CRT_WIDE(__FILE__), __LINE__), 0) || \
+        (DebugBreak(), 0) \
+    )
+
 
 #ifndef GET_X_LPARAM
 #define GET_X_LPARAM(lp)  ((int)(short)LOWORD(lp))
@@ -26,14 +67,6 @@
 #ifndef GET_Y_LPARAM
 #define GET_Y_LPARAM(lp)  ((int)(short)HIWORD(lp))
 #endif // !GET_Y_LPARAM
-
-#ifndef ASSERT
-#ifdef _DEBUG
-#define ASSERT(expr)  _ASSERTE(expr)
-#else
-#define ASSERT(expr)  ((void)0)
-#endif
-#endif
 
 #ifndef GCL_HCURSOR
 #define GCL_HCURSOR -12
@@ -61,8 +94,9 @@
 #define WM_GUI_SYSTEM WM_USER
 #define WM_GUI_APP WM_APP 
 //扩展消息 在WM_GUI_SYSTEM消息中的wParam参数中体现
-#define WM_GUI_INVOKE 0x01
-#define WM_GUI_BEGININVOKE 0x02
+#define WM_GUI_LAYERED_PAINT 0x01
+#define WM_GUI_INVOKE 0x02
+#define WM_GUI_BEGININVOKE 0x03
 
 #ifdef _WINDLL
 
@@ -108,4 +142,15 @@ inline ENUM_TYPE& operator&=(ENUM_TYPE& a, ENUM_TYPE b) {        \
 inline ENUM_TYPE& operator^=(ENUM_TYPE& a, ENUM_TYPE b) {        \
     a = a ^ b;                                                   \
     return a;                                                    \
+}                                                                 \
+inline bool EnumExist(ENUM_TYPE flags, ENUM_TYPE flag) {          \
+    return (static_cast<BASE_TYPE>(flags) & static_cast<BASE_TYPE>(flag)) != 0; \
+}                                                                       \
+inline ENUM_TYPE& EnumAdd(ENUM_TYPE& flags, ENUM_TYPE flag) {\
+    flags = static_cast<ENUM_TYPE>(static_cast<BASE_TYPE>(flags) | static_cast<BASE_TYPE>(flag)); \
+    return flags;                                                        \
+}                                                                        \
+inline ENUM_TYPE& EnumRemove(ENUM_TYPE& flags, ENUM_TYPE flag) {\
+    flags = static_cast<ENUM_TYPE>(static_cast<BASE_TYPE>(flags) & ~static_cast<BASE_TYPE>(flag)); \
+    return flags;                                                        \
 }

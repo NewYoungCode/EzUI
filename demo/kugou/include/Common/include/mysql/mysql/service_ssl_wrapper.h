@@ -1,4 +1,4 @@
-#ifndef SSL_WRAPPER_INCLUDED
+﻿#ifndef SSL_WRAPPER_INCLUDED
 #define SSL_WRAPPER_INCLUDED
 
 /* Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.

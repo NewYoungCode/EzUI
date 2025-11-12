@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Control.h"
 #include "Spacer.h"
 #include "HLayout.h"
@@ -15,6 +15,8 @@
 #include "PictureBox.h"
 #include "Window.h"
 #include "ComboBox.h"
+#include "TreeView.h"
+
 #include "UIStyle.h"
 
 namespace ezui {
@@ -30,8 +32,8 @@ namespace ezui {
 		};
 	private:
 		bool m_first = true;//内部用
-		UIString m_styleStr;//内部用
-		std::vector<Control*> m_rootNode;//根节点列表
+		UIString& m_styleStr;//内部用
+		std::vector<Control*>& m_rootNode;//根节点列表
 		void LoadControl(void* node, Control* control);
 		Control* BuildControl(void* node);//内部函数
 	protected:
@@ -49,15 +51,21 @@ namespace ezui {
 		//获取根控件
 		Control* GetRoot();
 		//释放加载进来的控件
-		void Clear();
+		void CleanUp();
 	};
-	//注册基础控件
-	extern UI_EXPORT void InitControls();
-	//注册自定义控件
-	extern UI_EXPORT void RegisterControl(const UIString& ctrlName, const std::function<Control* ()>& create_cb);
-	//注册自定义控件
+
+	namespace detail {
+		//注册基础控件
+		extern UI_EXPORT void InitControls();
+		//注册自定义控件
+		extern UI_EXPORT void RegisterControl(const UIString& ctrlName, const std::function<Control* ()>& create_cb);
+	};
+
+	// 注册自定义控件。
+	// 注意：控件类 T 必须提供默认构造函数（即无参构造函数），
+	// 因为框架会通过 new T() 自动实例化控件对象。
 	template<typename T>
 	void RegisterControl(const UIString& ctrlName) {
-		RegisterControl(ctrlName, []() -> Control* { return new T; });
+		detail::RegisterControl(ctrlName, []() -> Control* { return new T; });
 	}
 };

@@ -1,4 +1,4 @@
-/*****************************************************************************
+﻿/*****************************************************************************
  * vlc_sout.h : stream output module
  *****************************************************************************
  * Copyright (C) 2002-2008 VLC authors and VideoLAN
@@ -8,7 +8,7 @@
  *          Laurent Aimar <fenrir@via.ecp.fr>
  *          Eric Petit <titer@videolan.org>
  *          Jean-Paul Saman <jpsaman #_at_# m2x.nl>
- *          Rémi Denis-Courmont
+ *          RÃ©mi Denis-Courmont
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by

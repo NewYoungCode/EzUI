@@ -1,4 +1,4 @@
-#include "vlcPlayer.h"
+﻿#include "vlcPlayer.h"
 void* lock_cb(void* opaque, void** planes)
 {
 	VlcPlayer* vp = (VlcPlayer*)opaque;

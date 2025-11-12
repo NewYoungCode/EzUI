@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "mainForm.h"
 
 MainForm::MainForm(int width, int height) :Form(width, height)
@@ -29,7 +29,7 @@ MainForm::MainForm(int width, int height) :Form(width, height)
 					</hbox>
 				</hbox>)xml";
 
-			xml = xml.format(i + 1);
+			xml = xml.args(i + 1);
 			Control* ctrl = sessionList->Append(xml);
 			this->Attach(ctrl);
 			sessionList->Invalidate();

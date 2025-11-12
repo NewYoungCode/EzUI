@@ -1,6 +1,9 @@
-#include "lrcPanel.h"
+﻿#include "lrcPanel.h"
 void LrcPanel::ChangePostion(int postion)
 {
+	if (this->GetRect().IsEmptyArea()) {
+		return;
+	}
 	for (auto _it = LrcList.rbegin(); _it != LrcList.rend(); _it++)
 	{
 		auto it = *_it;
@@ -9,9 +12,6 @@ void LrcPanel::ChangePostion(int postion)
 			break;
 		}
 	}
-	if (this->GetRect().IsEmptyArea()) {
-		return;
-	}
 	if (LrcNow == NULL) {
 		return;
 	}
@@ -19,46 +19,10 @@ void LrcPanel::ChangePostion(int postion)
 	offsetY = LrcNow->point.Y - VerticalCenter;
 }
 
-void LrcPanel::Task()
-{
-	if (this->GetRect().IsEmptyArea() || LrcNow == NULL) {
-		return;
-	}
-	offsetY = LrcNow->point.Y - VerticalCenter;
-	if (std::abs(offsetY) <= 1)
-	{
-		return;
-	}
-
-	auto v = std::abs(offsetY);
-	int v2 = v * 0.025;
-	if (v2 == 0) {
-		v2 = 1;
-	};
-
-	for (auto& item : LrcList)
-	{
-		Lrc* lrc = item;
-
-		if (offsetY < 0)
-		{
-			lrc->point.Y += v2;
-		}
-		else if (offsetY > 0)
-		{
-			lrc->point.Y -= v2;
-		}
-	}
-
-		BeginInvoke([=]() {
-			Invalidate();
-			});
-
-}
 void LrcPanel::OnBackgroundPaint(PaintEventArgs& arg) {
 
 	__super::OnBackgroundPaint(arg);
-	for (auto&& item : LrcList)
+	for (auto& item : LrcList)
 	{
 		Lrc& lrc = *item;
 		Rect rectangle(lrc.point.X, lrc.point.Y, Width(), (int)FontHeight);
@@ -110,7 +74,37 @@ LrcPanel::LrcPanel()
 	timer = new Timer;
 	timer->Interval = 2;
 	timer->Tick = [=](Timer*) {
-		Task();
+		BeginInvoke([=]() {
+			if (this->GetRect().IsEmptyArea() || LrcNow == NULL) {
+				return;
+			}
+			offsetY = LrcNow->point.Y - VerticalCenter;
+			if (std::abs(offsetY) <= 1)
+			{
+				return;
+			}
+
+			auto v = std::abs(offsetY);
+			int v2 = v * 0.025;
+			if (v2 == 0) {
+				v2 = 1;
+			};
+
+			for (auto& item : LrcList)
+			{
+				Lrc* lrc = item;
+
+				if (offsetY < 0)
+				{
+					lrc->point.Y += v2;
+				}
+				else if (offsetY > 0)
+				{
+					lrc->point.Y -= v2;
+				}
+			}
+			Invalidate();
+			});
 		};
 }
 
@@ -119,7 +113,7 @@ void LrcPanel::LoadLrc(const UIString& lrcData)
 	RemoveAll();
 	auto lrc = lrcData.split("\n");
 	auto gbk = lrcData.ansi();
-	for (auto&& it : lrc) {
+	for (auto& it : lrc) {
 		if (it.empty()) continue;
 		int pos1 = it.find("[");
 		int pos2 = it.find("]");

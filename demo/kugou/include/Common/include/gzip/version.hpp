@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 /// The major version number
 #define GZIP_VERSION_MAJOR 1

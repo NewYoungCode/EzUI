@@ -1,4 +1,4 @@
-/*
+﻿/*
  * $Header: ldap/public/ldap.h /main/36 2012/09/13 02:33:23 ravikum Exp $ 
  */
 

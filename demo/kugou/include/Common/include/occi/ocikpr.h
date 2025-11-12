@@ -1,4 +1,4 @@
-/* Copyright (c) 1991, 2005, Oracle. All rights reserved.  */
+﻿/* Copyright (c) 1991, 2005, Oracle. All rights reserved.  */
 /*
    NAME
      ocikpr.h - header of K & R compilers

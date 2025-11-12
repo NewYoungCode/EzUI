@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <unordered_map>
 
 template<class T1, class T2>
