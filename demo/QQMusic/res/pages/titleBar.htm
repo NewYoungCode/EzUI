@@ -1,0 +1,93 @@
+<hbox id="titleBarRoot" items-align="mid" action="title" style="padding: 0px 18px 0px 18px;">
+    <hbox width="84" height="30" items-align="mid" action="title">
+        <label id="titleBackBtn" width="30" height="30" text="" class="title-nav"></label>
+        <label id="titleHomeBtn" width="30" height="30" text="⌂" class="title-nav" style="margin: 0px 0px 0px 8px;"></label>
+    </hbox>
+
+    <hbox id="searchShell" width="248" height="34" items-align="mid" style="margin: 0px 0px 0px 14px;">
+        <label id="searchIcon" width="14" height="14" event="none"></label>
+        <textbox id="searchBox" height="28" placeholder="搜索音乐" class="search-box" style="margin: 0px 0px 0px 8px;"></textbox>
+    </hbox>
+
+    <label id="brandMark" width="28" height="28" text="♪" style="margin: 0px 0px 0px 14px;"></label>
+    <spacer></spacer>
+
+    <hbox width="92" height="24" items-align="mid">
+        <label width="24" height="24" text="0" action="mini" class="window-btn window-font"></label>
+        <label width="24" height="24" text="1" action="max" class="window-btn window-font" style="margin: 0px 0px 0px 10px;"></label>
+        <label width="24" height="24" text="r" action="close" class="window-btn window-font close-btn" style="margin: 0px 0px 0px 10px;"></label>
+    </hbox>
+</hbox>
+
+<style>
+    #titleBarRoot {
+        background-color: #1f1f1f;
+    }
+
+    .title-nav {
+        background-color: transparent;
+        border-radius: 15px;
+        color: #8a8a8a;
+        font-family: "Segoe UI Symbol";
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+        .title-nav:hover {
+            background-color: #2a2a2a;
+            color: #ffffff;
+        }
+
+    #titleBackBtn {
+        background-image: url(res/assets/back.png);
+    }
+
+    #searchShell {
+        background-color: #2b2b2b;
+        border-radius: 16px;
+        padding: 0px 12px 0px 12px;
+    }
+
+    #searchIcon {
+        background-image: url(res/assets/search.png);
+    }
+
+    .search-box {
+        background-color: transparent;
+        border: 0px solid transparent;
+        color: #f3f3f3;
+        font-size: 13px;
+    }
+
+    #brandMark {
+        background-color: transparent;
+        border: 1px solid #1be17d;
+        border-radius: 14px;
+        color: #1be17d;
+        font-size: 14px;
+        font-family: "Segoe UI Symbol";
+        font-weight: bold;
+    }
+
+    .window-font {
+        font-family: "Marlett";
+        font-size: 11px;
+    }
+
+    .window-btn {
+        background-color: transparent;
+        border-radius: 6px;
+        color: #8f8f8f;
+        cursor: pointer;
+    }
+
+        .window-btn:hover {
+            background-color: #2a2a2a;
+            color: #ffffff;
+        }
+
+    .close-btn:hover {
+        background-color: #cc4949;
+        color: #ffffff;
+    }
+</style>

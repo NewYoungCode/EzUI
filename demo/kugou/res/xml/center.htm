@@ -1,29 +1,60 @@
 <hbox id="centerLayout" style="background-color:rgb(255,255,255)">
-    <treeview id="treeview" padding="20" width="150" style="background-color:#a0b6e4;display:none">
-    </treeview>
+    <!--<datagridview columns="工号,姓名,部门,职位,状态,城市,入职日期,月薪"
+                  column-widths="90,100,140,120,90,100,120,110"
+                  column-aligns="center,left,left,left,center,left,center,right"
+                  header-height="40"
+                  row-height="34"
+                  cell-padding="10"
+                  empty-text="暂无数据"
+                  data="
+        E1001|张三|研发一组|高级工程师|在职|上海|2021-03-15|18500;
+        E1002|李四|产品中心|产品经理|在职|杭州|2020-07-21|19200;
+        E1003|王五|设计中心|UI设计师|请假|深圳|2022-01-10|15800;
+        E1004|赵六|市场部|投放专员|在职|广州|2021-11-08|13600;
+        E1005|孙七|研发二组|后端工程师|在职|北京|2019-06-17|22800;
+        E1006|周八|测试部|测试开发|在职|成都|2023-02-06|14900;
+        E1007|吴九|运维部|运维工程师|离职|武汉|2018-09-03|17100;
+        E1008|郑十|人事行政|招聘专员|在职|苏州|2022-08-19|11800;
+        E1009|钱一|财务部|财务分析师|在职|南京|2020-12-01|15400;
+        E1010|冯二|研发一组|前端工程师|在职|上海|2021-05-24|17600;
+        E1011|陈三|产品中心|数据产品经理|在职|北京|2019-10-14|21400;
+        E1012|褚四|客服部|客服主管|在职|西安|2020-04-09|12700;
+        E1013|卫五|设计中心|交互设计师|试用|杭州|2024-01-15|13200;
+        E1014|蒋六|研发二组|架构师|在职|深圳|2017-07-11|31500;
+        E1015|沈七|法务部|法务专员|在职|广州|2021-09-27|14500;
+        E1016|韩八|运营部|内容运营|在职|长沙|2023-06-05|12100;
+        E1017|杨九|数据平台|数据工程师|在职|成都|2022-03-22|19800;
+        E1018|朱十|采购部|采购主管|在职|天津|2019-01-18|16600;
+        E1019|秦一|研发三组|客户端工程师|在职|上海|2020-02-12|20900;
+        E1020|尤二|审计部|内审专员|调岗|北京|2021-08-30|15200
+    " />-->
 
     <vbox width="309" id="centerLeft">
         <hbox height="40" id="tools">
             <spacer width="15"></spacer>
-            <label underline="1,3" text="默认列表" halign="left" tablayout="leftList"></label>
+            <label underline="1,3" text="默认列表" text-align="left" tabcontrol="leftList"></label>
         </hbox>
-        <tablayout id="leftList">
-            <vlist id="playList" padding="20"></vlist>
+        <tabcontrol id="leftList">
+            <hbox>
+                <vlist id="playList" items-align="center"></vlist>
+                <!--<Slider value="10" width="15"></Slider>-->
+            </hbox>
+
             <vlist id="downList"></vlist>
-        </tablayout>
+        </tabcontrol>
     </vbox>
     <vbox>
-        <hbox height="40" style="border-bottom:1;border-color:rgb(221,221,221);">
+        <hbox height="40" style="border-bottom:1px;border-color:rgb(221,221,221);">
             <spacer></spacer>
             <hbox width="auto">
-                <radiobutton checked="true" class="check" width="54" text="乐库" tablayout="rightView" id="songView"></radiobutton>
-                <radiobutton width="54" class="check" text="歌词" tablayout="rightView" id="lrcView"></radiobutton>
-                <radiobutton width="54" class="check" text="MV" tablayout="rightView" id="mvView"></radiobutton>
-                <radiobutton width="54" class="check" text="直播" tablayout="rightView"></radiobutton>
+                <radiobutton checked="true" class="check" width="54" text="乐库" tabcontrol="rightView" id="songView"></radiobutton>
+                <radiobutton width="54" class="check" text="歌词" tabcontrol="rightView" id="lrcView"></radiobutton>
+                <radiobutton width="54" class="check" text="MV" tabcontrol="rightView" id="mvView"></radiobutton>
+                <radiobutton width="54" class="check" text="直播" tabcontrol="rightView"></radiobutton>
             </hbox>
             <spacer></spacer>
         </hbox>
-        <tablayout id="rightView">
+        <tabcontrol id="rightView">
             <vbox>
                 <hbox style="background-color: #F5F5F5; color: #888888 " height="32">
 
@@ -37,13 +68,18 @@
                 </hbox>
                 <vlist id="searchList" scrollbar="testBar"></vlist>
             </vbox>
-            <vbox id="lrcView2" style="font-size:16px"> </vbox>
-            <vbox id="vlcDock" style="background-color:#000000;"></vbox>
-
+            <vbox id="lrcView2" style="font-size:16px">
+                <!-- 歌词显示面板 -->
+                <lrcPanel id="lrcPanel"></lrcPanel>
+            </vbox>
+            <vbox id="vlcDock" style="background-color:#000000;">
+                <!-- vlc视频播放器 -->
+                <video id="player"> </video>
+            </vbox>
             <vbox class="aaa">
                 <img id="gif" src="res/imgs/gif2.gif" />
             </vbox>
-        </tablayout>
+        </tabcontrol>
     </vbox>
 </hbox>
 <style>
@@ -53,11 +89,11 @@
     }
 
     #icon {
-        fore-image: "res/imgs/icon.png";
+        background-image: url(res/imgs/icon.png);
     }
 
     #icon1 {
-        fore-image: "res/imgs/down.png";
+        background-image: url(res/imgs/down.png);
     }
 
     #testBar:hover {

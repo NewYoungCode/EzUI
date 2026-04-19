@@ -1,16 +1,26 @@
 ﻿#pragma once
-#include "EzUI/Control.h"
-#include "EzUI/BorderlessWindow.h"
-#include "EzUI/Label.h"
-#include "EzUI/Task.h"
 #include <mutex>
+
+#include "EzUI/EzUI.h"
 #ifdef _WIN32
 #include <basetsd.h>
 typedef SSIZE_T ssize_t;
 #endif
+
 #include "vlc/vlc.h"
-#pragma comment(lib,"libvlc.lib")
-#pragma comment(lib,"libvlccore.lib")
+
+#ifdef _WIN64
+
+#pragma comment(lib,"x64/vlc/libvlc.lib")
+#pragma comment(lib,"x64/vlc/libvlc.lib")
+
+#else
+
+#pragma comment(lib,"x86/vlc/libvlc.lib")
+#pragma comment(lib,"x86/vlc/libvlc.lib")
+
+#endif
+
 
 //封装用于播放视频的控件
 using namespace ezui;
@@ -20,18 +30,19 @@ private:
 	libvlc_instance_t* m_vlc = NULL;
 	libvlc_media_player_t* m_vlcplayer = NULL;
 	libvlc_time_t m_duration = 0;
-	Task * m_task = NULL;
+	Task* m_task = NULL;
 public:
-	mutex mtx;
+	std::mutex mtx;
+	Image* play_img = NULL;
+	std::mutex play_mtx;
 	unsigned int IMG_WIDTH = 0;
 	unsigned int IMG_HEIGHT = 0;
-	Bitmap* BuffBitmap = NULL;
-	std::function<void(Bitmap* bitmap)> PlayingCallback;
+	std::function<void(Image* bitmap)> PlayingCallback;
 protected:
 	void SetConfig();
-	virtual void OnBackgroundPaint(PaintEventArgs& args) override;
+	virtual void OnBackgroundPaint(PaintEventArgs* args) override;
 public:
-	VlcPlayer();
+	VlcPlayer(Object* ownerObj = NULL);
 	virtual ~VlcPlayer();
 	void OpenPath(const UIString& file);
 	void OpenUrl(const UIString& url);

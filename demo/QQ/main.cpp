@@ -72,19 +72,29 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	ezui::RegisterControl<SessionItem>("SessionItem");
 	ezui::RegisterControl<SessionFrame>("SessionFrame");
 
-	//创建登录创建
-	LoginForm loginFrm;
-	if (loginFrm.ShowModal() != 1) {
-		//取消登录
-		return 0;
+	bool skipLogin = false;
+	if (lpCmdLine != nullptr && wcsstr(lpCmdLine, L"--skip-login") != nullptr) {
+		skipLogin = true;
+	}
+
+	if (!skipLogin) {
+		//创建登录创建
+		LoginForm loginFrm;
+		loginFrm.CenterToScreen();
+		::SetForegroundWindow(loginFrm.GetWindowHandle());//设置为前景窗口
+		if (loginFrm.ShowModal() != 1) {
+			//取消登录
+			return 0;
+		}
 	}
 
 	//登录成功加载主页面
-	MainForm mainFrm(1014, 725);
+	MainForm mainFrm;
+	mainFrm.SetSize({ 1014,725 });
 	Animation* amt = new Animation(&mainFrm);//动画加载
 	amt->ValueChanged = [&mainFrm](float value) {
 		mainFrm.SetOpacity(value);
-		OutputDebugStringA(UIString("Opacity: %lf \n").args(value).c_str());
+		OutputDebugStringA(UIString("Opacity: " + std::to_string(value) + " \n").c_str());
 		mainFrm.Invalidate();
 		};
 
@@ -93,6 +103,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	amt->Start(1000);
 
 	mainFrm.Show();
+	mainFrm.CenterToScreen();
+	::SetForegroundWindow(mainFrm.GetWindowHandle());//设置为前景窗口
 
 	//开始消息循环
 	int code = app.Exec();

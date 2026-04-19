@@ -9,6 +9,24 @@
 
 #define USECURL 1 //是否使用curl 使用curl会导致库变得很大
 
+#ifdef  _WIN64
+
+#ifdef  NDEBUG
+#pragma comment (lib,"x64/libcurl.lib")
+#else
+#pragma comment (lib,"x64/libcurld.lib")
+#endif
+
+#else
+
+#ifdef NDEBUG
+#pragma comment (lib,"x86/libcurl.lib")
+#else
+#pragma comment (lib,"x86/libcurld.lib")
+#endif // !_DEBUG
+
+#endif
+
 #if USECURL
 namespace PostForm {
 	//字段类型
@@ -39,6 +57,9 @@ namespace PostForm {
 	};
 }
 
+//全局初始化curl
+extern int CurlGlobalInit();
+
 class WebClient
 {
 public:
@@ -57,14 +78,17 @@ private:
 	long CleanUp(void* curl, int code);
 	std::map<std::string, std::string> Header;
 	void* curl_header = NULL;//类型参见 curl_slist
+	std::string cookieStr;
+	std::map<std::string, std::string> Cookies;
 public:
-	std::string Cookies;
 	std::string Proxy;
 	WebClient();
 	virtual ~WebClient();
 	//取消请求/下载
 	void Cancel();
 	void AddHeader(const std::string& key, const std::string& value);
+	void AddCookie(const std::string& key, const std::string& value);
+	Text::String GetCookie()const;
 	void RemoveHeader(const std::string& key);
 	int HttpGet(const std::string& strUrl, std::string* response = NULL, int nTimeout = 60);
 	int HttpPost(const std::string& strUrl, const std::string& data = "", std::string* response = NULL, int nTimeout = 60);

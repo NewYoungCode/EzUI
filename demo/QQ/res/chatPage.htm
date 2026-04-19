@@ -1,0 +1,825 @@
+<hbox id="chatPage" class="pageShell" items-align="top left">
+    <vbox id="chatSidebar" class="subSidebar" width="250">
+        <hbox class="searchRow" height="54" items-align="mid left">
+            <hbox class="searchBox" width="132" height="32" items-align="mid left">
+                <label size="14,14" style="background-image:url(res/search.png);margin-left:12px" event="none"></label>
+                <input placeholder="搜索" style="margin-left:8px;margin-right:10px"></input>
+            </hbox>
+            <button class="plusBtn" text="+"></button>
+        </hbox>
+
+        <vlist id="sessionList" style="padding:8px 0px 10px 0px">
+            <hbox class="sessionItem">
+                <label class="avatar avatarBlue" text="群" event="none"></label>
+                <vbox width="124" items-align="top left" event="none" style="margin-left:12px">
+                    <label width="124" ellipsis="..." text="拯救苍平哥哥哥哥" align="left" style="font-size:15px;color:#1f1f1f"></label>
+                    <label width="124" ellipsis="..." text="管理员联想: 阿巴阿巴" align="left" style="font-size:12px;color:#8a8a8a;margin-top:4px"></label>
+                </vbox>
+                <vbox class="sessionMeta" event="none">
+                    <label class="sessionTime" text="22:00" event="none"></label>
+                </vbox>
+            </hbox>
+
+            <hbox class="sessionItem selected">
+                <label class="avatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                <vbox width="124" items-align="top left" event="none" style="margin-left:12px">
+                    <label width="124" ellipsis="..." text="EzUI交流群" align="left" style="font-size:15px;color:#1f1f1f"></label>
+                    <label width="124" ellipsis="..." text="早起的鸟儿被虫吃..." align="left" style="font-size:12px;color:#8a8a8a;margin-top:4px"></label>
+                </vbox>
+                <vbox class="sessionMeta" event="none">
+                    <label class="sessionTime" text="15:40" event="none"></label>
+                </vbox>
+            </hbox>
+
+            <hbox class="sessionItem">
+                <label class="avatar avatarDark" text="Y7" event="none"></label>
+                <vbox width="124" items-align="top left" event="none" style="margin-left:12px">
+                    <label width="124" ellipsis="..." text="拯救者Y7交流小组" align="left" style="font-size:15px;color:#1f1f1f"></label>
+                    <label width="124" ellipsis="..." text="七友: 没啥" align="left" style="font-size:12px;color:#8a8a8a;margin-top:4px"></label>
+                </vbox>
+                <vbox class="sessionMeta" event="none">
+                    <label class="sessionTime" text="22:54" event="none"></label>
+                    <spacer></spacer>
+                    <hbox class="sessionBadgeRow" items-align="mid right" event="none">
+                        <label class="badge" width="auto" text="3" event="none"></label>
+                    </hbox>
+                </vbox>
+            </hbox>
+
+            <hbox class="sessionItem">
+                <label class="avatar avatarPink" text="次" event="none"></label>
+                <vbox width="124" items-align="top left" event="none" style="margin-left:12px">
+                    <label width="124" ellipsis="..." text="&lt;§%ÁC..." align="left" style="font-size:15px;color:#1f1f1f"></label>
+                    <label width="124" ellipsis="..." text="😊 记不住惹: [图片]" align="left" style="font-size:12px;color:#8a8a8a;margin-top:4px"></label>
+                </vbox>
+                <vbox class="sessionMeta" event="none">
+                    <label class="sessionTime" text="22:53" event="none"></label>
+                </vbox>
+            </hbox>
+
+            <hbox class="sessionItem">
+                <label class="avatar avatarOrange" text="群" event="none"></label>
+                <vbox width="124" items-align="top left" event="none" style="margin-left:12px">
+                    <label width="124" ellipsis="..." text="群助手" align="left" style="font-size:15px;color:#1f1f1f"></label>
+                    <label width="124" ellipsis="..." text="1个群聊有新消息" align="left" style="font-size:12px;color:#8a8a8a;margin-top:4px"></label>
+                </vbox>
+                <vbox class="sessionMeta" event="none">
+                    <label class="sessionTime" text="22:39" event="none"></label>
+                </vbox>
+            </hbox>
+
+            <hbox class="sessionItem">
+                <label class="avatar avatarGreen" text="MB" event="none"></label>
+                <vbox width="124" items-align="top left" event="none" style="margin-left:12px">
+                    <label width="124" ellipsis="..." text="Miniblink交流组" align="left" style="font-size:15px;color:#1f1f1f"></label>
+                    <label width="124" ellipsis="..." text="谁杀了我的牛?..." align="left" style="font-size:12px;color:#8a8a8a;margin-top:4px"></label>
+                </vbox>
+                <vbox class="sessionMeta" event="none">
+                    <label class="sessionTime" text="22:37" event="none"></label>
+                    <spacer></spacer>
+                    <hbox class="sessionBadgeRow" items-align="mid right" event="none">
+                        <label class="badge" width="auto" text="42" event="none"></label>
+                    </hbox>
+                </vbox>
+            </hbox>
+        </vlist>
+    </vbox>
+
+    <vbox id="chatWorkspace">
+        <hbox class="pageHeader" height="64" items-align="mid left">
+            <label text="EzUI交流群 (124)" width="auto" style="font-size:18px;font-weight:700;color:#171717;margin-left:20px" event="none"></label>
+            <spacer></spacer>
+            <label class="headerTool" text="☎"></label>
+            <label class="headerTool" text="◫"></label>
+            <label class="headerTool" text="▣"></label>
+            <label class="headerTool" text="◎"></label>
+            <label class="headerTool" text="+"></label>
+            <label class="headerTool" text="⋯" style="margin-right:18px"></label>
+        </hbox>
+
+        <hbox id="chatBody">
+            <vbox id="chatMainColumn">
+                <vlist id="messageList" style="padding:16px 18px 12px 18px">
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="好好好 原来是我没注意。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="qq的bug" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow imageRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <control width="156" height="92" class="imageBubble" event="none">
+                                <label width="100%" height="100%" style="background-color:#4b5c7d;border-radius:16px" event="none"></label>
+                                <label width="100%" height="100%" text="图片" style="color:white;font-size:20px;font-weight:700" event="none"></label>
+                            </control>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="刚把子控件对齐逻辑重新过了一遍。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="那就好" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="之前真的是我把默认值看漏了。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="确实像框架层" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="现在 dump 和截图都能对上了。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="继续加数据" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="我顺手把列表项间距也收了一下。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="看着顺眼多了" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="聊天页这边再补点假消息吧。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="多补一点" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="行，先把滚动区域撑起来。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="最好有五十条" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="没问题，后面自查就更直观了。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="那就开始" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="EzUI 这套布局语义其实挺清楚的。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="写 skill 也要同步" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="已经补进去了，默认对齐也写严了。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="middle left 对吧" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="对，vbox 默认 top center。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="这样就不容易误用" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="你现在看到的消息都是静态假数据。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="demo 够用了" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="如果后面要做动态插入，也能沿用这套结构。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="先别加逻辑" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="嗯，先把界面打磨稳。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="继续" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="我还想把成员列表也再丰富一点。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="那个后面再说" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="行，那先只动聊天记录。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="保持简单" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="左侧会话列表和右侧消息区现在风格统一多了。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="看起来像样了" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="消息气泡的留白我也刻意没放太大。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="这样更像桌面端" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="对，太松会显得发飘。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="没错" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="现在主要是把滚动条内容撑满。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="方便测试" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="以后检查裁切和对齐会更直观。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="尤其长列表" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="是的，空数据太少不好判断问题。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="加到五十条差不多" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="这批消息我就先当成群聊记录放着。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="可以" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="群头像和昵称也先沿用现有资源。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="别额外加素材" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="放心，不会把 demo 弄复杂。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="稳" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+
+                    <hbox class="messageRow" items-align="top left">
+                        <label class="msgAvatar avatarWhite" text="沐" event="none"></label>
+                        <vbox width="398" items-align="top left" event="none" style="margin-left:10px">
+                            <hbox height="20" items-align="mid" event="none">
+                                <label text="框架使用者-咕气" width="auto" style="font-size:12px;color:#8e8e8e" event="none"></label>
+                                <label class="roleTag" text="LV51" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="补完之后你再看滚动手感会明显一点。" class="bubble bubbleLeft"></label>
+                        </vbox>
+                    </hbox>
+
+                    <hbox class="messageRow replyRow" items-align="top left">
+                        <spacer></spacer>
+                        <vbox width="199" items-align="top right" event="none" style="margin-right:10px">
+                            <hbox width="181" height="20" items-align="mid" event="none">
+                                <label class="roleTag roleTagOrange" text="LV100 群主" event="none"></label>
+                                <label text="早起的鸟儿被虫吃" width="auto" style="font-size:12px;color:#8e8e8e;margin-left:6px" event="none"></label>
+                            </hbox>
+                            <label size="auto" text="收到" class="bubble bubbleRight"></label>
+                        </vbox>
+                        <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                    </hbox>
+                </vlist>
+
+                <hbox id="chatTools" height="40" items-align="mid left">
+                    <label class="editorTool" text="☺"></label>
+                    <label class="editorTool" text="✂"></label>
+                    <label class="editorTool" text="⌄"></label>
+                    <label class="editorTool" text="◫"></label>
+                    <label class="editorTool" text="▣"></label>
+                    <label class="editorTool" text="◌"></label>
+                    <label class="editorTool" text="◔"></label>
+                    <label class="editorTool" text="◴"></label>
+                </hbox>
+
+                <vbox id="editorArea" height="160">
+                    <input multiline="true" placeholder="给大家发条消息吧..." style="margin:12px 14px 10px 14px"></input>
+                </vbox>
+
+                <hbox id="sendBar" height="54" items-align="mid">
+                    <spacer></spacer>
+                    <button id="sendBtn" text="发送"></button>
+                    <button id="sendDropBtn" text="∨"></button>
+                    <spacer width="18"></spacer>
+                </hbox>
+            </vbox>
+
+            <vbox id="chatInfoColumn" width="220">
+                <vbox class="noticeCard">
+                    <hbox height="42" items-align="mid" event="none">
+                        <label text="群公告" width="auto" style="font-size:15px;font-weight:700;color:#202020;margin-left:16px" event="none"></label>
+                        <spacer></spacer>
+                        <label text=">" width="auto" style="font-size:16px;color:#7a7a7a;margin-right:16px" event="none"></label>
+                    </hbox>
+                    <label width="188" text="遇到崩溃 bug 可以直接向群主反馈。框架地址开源地址: https://github.com/NewYoungCode/EzUI 软件开发 windows 客户端技术支持可联系群主"
+                           align="left"
+                           style="font-size:13px;color:#6d6d6d;margin-left:16px;margin-right:16px"
+                           ellipsis="..."></label>
+                </vbox>
+
+                <hbox class="memberHeader" height="44" items-align="mid">
+                    <label text="群聊成员 124" width="auto" style="font-size:15px;font-weight:700;color:#202020;margin-left:16px" event="none"></label>
+                    <spacer></spacer>
+                    <label text="⌕" width="auto" style="font-size:16px;color:#5a5a5a;margin-right:16px" event="none"></label>
+                </hbox>
+
+                <vlist id="memberList" style="padding:4px 10px 10px 10px">
+                    <hbox class="memberItem"><label class="memberAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label><label width="114" ellipsis="..." text="早起的鸟儿被虫吃" align="left" style="font-size:13px;color:#7d7d7d;margin-left:10px" event="none"></label><label class="roleTag roleTagOrange" text="群主" event="none"></label></hbox>
+                    <hbox class="memberItem"><label class="memberAvatar avatarGold" text="13" event="none"></label><label width="114" ellipsis="..." text="1335173466" align="left" style="font-size:13px;color:#7d7d7d;margin-left:10px" event="none"></label></hbox>
+                    <hbox class="memberItem"><label class="memberAvatar avatarOrange" text="A" event="none"></label><label width="114" ellipsis="..." text="Abcd" align="left" style="font-size:13px;color:#7d7d7d;margin-left:10px" event="none"></label></hbox>
+                    <hbox class="memberItem"><label class="memberAvatar avatarGray" text="Ac" event="none"></label><label width="114" ellipsis="..." text="Accustom" align="left" style="font-size:13px;color:#7d7d7d;margin-left:10px" event="none"></label></hbox>
+                    <hbox class="memberItem"><label class="memberAvatar avatarBlue" text="AE" event="none"></label><label width="114" ellipsis="..." text="Albert Einstein" align="left" style="font-size:13px;color:#7d7d7d;margin-left:10px" event="none"></label></hbox>
+                    <hbox class="memberItem"><label class="memberAvatar avatarGreen" text="all" event="none"></label><label width="114" ellipsis="..." text="all" align="left" style="font-size:13px;color:#7d7d7d;margin-left:10px" event="none"></label></hbox>
+                    <hbox class="memberItem"><label class="memberAvatar avatarBlue" text="A" event="none"></label><label width="114" ellipsis="..." text="Alone" align="left" style="font-size:13px;color:#7d7d7d;margin-left:10px" event="none"></label></hbox>
+                    <hbox class="memberItem"><label class="memberAvatar avatarGray" text="艾" event="none"></label><label width="114" ellipsis="..." text="艾欧尼亚" align="left" style="font-size:13px;color:#7d7d7d;margin-left:10px" event="none"></label></hbox>
+                </vlist>
+            </vbox>
+        </hbox>
+    </vbox>
+</hbox>
+
+<style>
+    #chatPage, .pageShell { background-color: white; }
+    .subSidebar { background-color: white; border-right: 1px solid #f0f0f0; }
+    .searchRow { margin: 0px 10px 0px 10px; }
+    .searchBox { background-color: #f5f6f8; border-radius: 16px; }
+    .plusBtn { width: 32px; height: 32px; margin-left: 10px; border: 0px solid #000000; border-radius: 16px; background-color: #f5f6f8; color: #a0a0a0; font-size: 20px; }
+    .plusBtn:hover { background-color: #ebedf2; }
+    .sessionItem { height: 74px; width: 100%; padding: 0px 14px 0px 14px; cursor: pointer; background-color: white; }
+    .sessionItem:hover { background-color: #f5f7fa; }
+    .sessionItem.selected { background-color: #f1f3f7; }
+    .sessionMeta { width: 44px; }
+    .sessionTime { width: 44px; height: 16px; color: #999999; font-size: 11px; text-align: top right; }
+    .sessionBadgeRow { width: 44px; height: 20px; }
+    .avatar { width: 42px; height: 42px; border-radius: 21px; color: white; font-size: 14px; font-weight: 700; text-align: mid center; }
+    .avatarImage { background-color: #dfe7f5; }
+    .avatarBlue { background-color: #2e85ff; }
+    .avatarDark { background-color: #202226; }
+    .avatarPink { background-color: #d39ae6; }
+    .avatarOrange { background-color: #ffab25; }
+    .avatarGreen { background-color: #5ab76c; }
+    .avatarGray { background-color: #c5c8d0; color: #4f5560; }
+    .avatarWhite { background-color: #f4f4f4; color: #2d2d2d; border: 1px solid #ececec; }
+    .avatarGold { background-color: #d3b37a; }
+    .badge { min-width: 20px; height: 20px; padding: 0px 6px 0px 6px; background-color: #d5d7dc; color: white; border-radius: 10px; font-size: 11px; text-align: mid center; }
+    .pageHeader { border-bottom: 1px solid #f0f0f0; }
+    .headerTool { width: 30px; height: 30px; margin-left: 4px; color: #3e434c; font-size: 18px; border-radius: 15px; text-align: mid center; cursor: pointer; }
+    .headerTool:hover { background-color: #f3f5f8; }
+    #chatMainColumn { border-right: 1px solid #f0f0f0; }
+    .messageRow { width: 100%; height: 72px; }
+    .replyRow { height: 86px; }
+    .imageRow { height: 126px; }
+    .msgAvatar { width: 36px; height: 36px; border-radius: 18px; text-align: mid center; font-size: 13px; font-weight: 700; }
+    .roleTag { width: auto; height: 18px; padding: 0px 6px 0px 6px; margin-left: 8px; background-color: #f1f1f1; color: #9a9a9a; border-radius: 9px; font-size: 11px; }
+    .roleTagOrange { background-color: #fff1e1; color: #ff9644; }
+    .bubble { padding: 10px 14px 10px 14px; border-radius: 16px; font-size: 15px; margin-top: 4px; }
+    .bubbleLeft { background-color: #f7f7f7; color: #1f1f1f; border-top-left-radius: 4px; }
+    .bubbleRight { background-color: #d9efff; color: #1f1f1f; border-top-right-radius: 4px; }
+    .imageBubble { margin-top: 6px; border-radius: 16px; }
+    #chatTools { border-top: 1px solid #f0f0f0; padding-left: 12px; }
+    .editorTool { width: 28px; height: 28px; margin-left: 4px; color: #2f2f2f; font-size: 16px; border-radius: 14px; text-align: mid center; }
+    .editorTool:hover { background-color: #f3f5f8; }
+    #sendBar { border-top: 1px solid #f0f0f0; }
+    #sendBtn { width: 92px; height: 34px; background-color: #138bff; color: white; border: 0px solid #000000; border-radius: 12px 0px 0px 12px; }
+    #sendDropBtn { width: 30px; height: 34px; background-color: #138bff; color: white; border: 0px solid #000000; border-left: 1px solid rgba(255,255,255,0.22); border-radius: 0px 12px 12px 0px; }
+    #sendBtn:hover, #sendDropBtn:hover { background-color: #0d7ae5; }
+    .noticeCard { width: 100%; border-bottom: 1px solid #f0f0f0; padding-bottom: 12px; }
+    .memberHeader { border-bottom: 1px solid #f0f0f0; }
+    .memberItem { height: 40px; width: 100%; border-radius: 10px; padding: 0px 8px 0px 8px; }
+    .memberItem:hover { background-color: #f7f8fa; }
+    .memberAvatar { width: 24px; height: 24px; border-radius: 12px; font-size: 10px; }
+    #sessionList::-webkit-scrollbar, #messageList::-webkit-scrollbar, #memberList::-webkit-scrollbar { width: 7px; border-radius: 7px; }
+</style>

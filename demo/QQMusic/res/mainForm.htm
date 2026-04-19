@@ -1,0 +1,163 @@
+<vbox size="1049, 690" id="windowRoot">
+    <tabcontrol id="rootTabs">
+        <hbox id="windowShell">
+            <vbox id="sidebar" width="230" style="padding: 14px 16px 14px 16px;">
+                <hbox height="40" items-align="mid">
+                    <label id="sidebarAvatar" width="32" height="32"></label>
+                    <vbox width="auto" height="auto" style="margin: 0px 0px 0px 10px;">
+                        <label width="auto" height="20" text="早起的虫子被鸟吃" class="profile-name" event="none"></label>
+                        <label width="auto" height="16" text="QQ Music Demo" class="profile-copy" event="none" style="margin: 2px 0px 0px 0px;"></label>
+                    </vbox>
+                </hbox>
+
+                <vbox id="sidebarBanner" height="82" style="margin: 14px 0px 0px 0px; padding: 14px 14px 14px 14px;">
+                    <label width="auto" height="18" text="默认进入主页" class="banner-title" event="none"></label>
+                    <label width="100%" height="auto" text="输入关键词进入搜索页，点击底部歌手头像或歌词入口会切到整窗歌词模式。" class="banner-copy" text-align="left" event="none" style="margin: 8px 0px 0px 0px;"></label>
+                </vbox>
+
+                <label width="100%" height="16" text="我的音乐" class="sidebar-caption" style="margin: 18px 0px 0px 0px;"></label>
+
+                <vbox height="auto" style="margin: 8px 0px 0px 0px;">
+                    <hbox id="navLike" height="44" items-align="mid" class="sidebar-row">
+                        <label width="18" height="18" text="❤" class="sidebar-icon" event="none"></label>
+                        <label id="navLikeText" width="auto" height="18" text="喜欢 0" class="sidebar-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                    </hbox>
+                    <hbox id="navRecent" height="44" items-align="mid" class="sidebar-row" style="margin: 4px 0px 0px 0px;">
+                        <label width="18" height="18" text="◴" class="sidebar-icon" event="none"></label>
+                        <label id="navRecentText" width="auto" height="18" text="最近播放 0" class="sidebar-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                    </hbox>
+                    <hbox id="navDownload" height="44" items-align="mid" class="sidebar-row" style="margin: 4px 0px 0px 0px;">
+                        <label width="18" height="18" text="↓" class="sidebar-icon" event="none"></label>
+                        <label id="navDownloadText" width="auto" height="18" text="本地下载 0" class="sidebar-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                    </hbox>
+                    <hbox id="navDaily" height="44" items-align="mid" class="sidebar-row" style="margin: 4px 0px 0px 0px;">
+                        <label width="18" height="18" text="◎" class="sidebar-icon" event="none"></label>
+                        <label id="navDailyText" width="auto" height="18" text="每日30首" class="sidebar-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                    </hbox>
+                </vbox>
+
+                <spacer></spacer>
+
+                <vbox id="sidebarFooter" height="72" style="padding: 12px 14px 12px 14px;">
+                    <label width="auto" height="16" text="当前模式" class="footer-title"></label>
+                    <label id="sidebarStatus" width="100%" height="auto" text="主页推荐已就绪" class="footer-copy" text-align="left" style="margin: 6px 0px 0px 0px;"></label>
+                </vbox>
+            </vbox>
+
+            <vbox id="mainShell" style="padding: 0px 10px 10px 0px;">
+                <iframe id="titleFrame" style="margin-top: 10px; border-radius: 14px 14px 0px 0px;" height="48" src="res/pages/titleBar.htm"></iframe>
+                <tabcontrol id="contentTabs" style="border-radius: 0px 0px 14px 14px; ">
+                    <iframe id="homeFrame" src="res/pages/home.htm"></iframe>
+                    <iframe id="searchFrame" src="res/pages/search.htm"></iframe>
+                    <iframe id="libraryFrame" src="res/pages/library.htm"></iframe>
+                </tabcontrol>
+                <iframe id="playerFrame" height="78" src="res/pages/playerDock.htm" style="margin: 8px 0px 0px 0px;"></iframe>
+            </vbox>
+        </hbox>
+
+        <iframe id="detailFrame" src="res/pages/detail.htm"></iframe>
+    </tabcontrol>
+</vbox>
+
+<style>
+    #windowRoot,
+    #rootTabs {
+        background-color: #171717;
+        font-family: "Microsoft YaHei UI";
+        color: #f6f6f6;
+    }
+
+    #windowShell {
+        background-color: #171717;
+        border: 1px solid #252525;
+    }
+
+    #sidebar {
+        background-color: #171717;
+    }
+
+    #mainShell {
+        background-color: transparent;
+    }
+
+    #sidebarAvatar {
+        background-color: #2d3135;
+        border-radius: 16px;
+        background-image: url(res/assets/headImg.jpg);
+    }
+
+    .profile-name {
+        color: #f5f5f5;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .profile-copy {
+        color: #8f8f8f;
+        font-size: 10px;
+    }
+
+    #sidebarBanner {
+        background-color: #1f2e28;
+        border-radius: 14px;
+        border: 1px solid #294135;
+    }
+
+    .banner-title {
+        color: #f8f8f8;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .banner-copy {
+        color: #c8d8cf;
+        font-size: 11px;
+    }
+
+    .sidebar-caption {
+        color: #7d7d7d;
+        font-size: 11px;
+    }
+
+    .sidebar-row {
+        background-color: transparent;
+        border-radius: 12px;
+        padding: 0px 12px 0px 12px;
+        cursor: pointer;
+    }
+
+        .sidebar-row:hover {
+            background-color: #212121;
+        }
+
+    .sidebar-row-disabled {
+        opacity: 0.65;
+    }
+
+    .sidebar-icon {
+        color: #dadada;
+        font-family: "Segoe UI Symbol";
+        font-size: 14px;
+    }
+
+    .sidebar-text {
+        color: #e5e5e5;
+        font-size: 13px;
+    }
+
+    #sidebarFooter {
+        background-color: #1f1f1f;
+        border: 1px solid #292929;
+        border-radius: 14px;
+    }
+
+    .footer-title {
+        color: #f3f3f3;
+        font-size: 12px;
+    }
+
+    .footer-copy {
+        color: #9e9e9e;
+        font-size: 11px;
+    }
+</style>

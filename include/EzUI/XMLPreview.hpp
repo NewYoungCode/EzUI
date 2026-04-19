@@ -1,13 +1,5 @@
-﻿#include "Window.h"
-#include "Application.h"
-#include "VLayout.h"
-#include "HLayout.h"
-#include "LayeredWindow.h"
-#include "TextBox.h"
-#include "Button.h"
-#include "Task.h"
-#include "Timer.h"
-#include "Frame.h"
+﻿#pragma once
+#include "EzUI.h"
 
 namespace ezui {
 	namespace detail {
@@ -108,7 +100,7 @@ namespace ezui {
 		//主窗口
 		class XMLPreview :public Window {
 		public:
-			Task* task = NULL;
+			Thread* task = NULL;
 			Label layout;
 			Window* previewWnd = NULL;
 			XMLPreview(int cx = 1200, int cy = 900);
@@ -121,9 +113,9 @@ namespace ezui {
 		};
 		//===========================================================================================================================================
 		//预览窗口
-		class PreviewForm :public Window {
+		class PreviewForm :public BorderlessWindow {
 			UIString m_path;
-			Task* task = NULL;
+			Thread* task = NULL;
 			std::string fileData;
 			bool exit = false;
 			std::string m_workDir;
@@ -142,13 +134,13 @@ namespace ezui {
 namespace ezui {
 	namespace detail {
 		//===========================================================================================================================================
-		PreviewForm::PreviewForm(const UIString& path) :Window(0, 0) {
-			LONG style = GetWindowLong(GetWindowId(), GWL_STYLE);
+		PreviewForm::PreviewForm(const UIString& path) :BorderlessWindow(0, 0) {
+			LONG style = GetWindowLongPtr(GetWindowHandle(), GWL_STYLE);
 			style &= ~WS_POPUP;      // 去掉 popup 样式
 			style |= WS_CHILD;       // 加上 child 样式
-			SetWindowLong(GetWindowId(), GWL_STYLE, style);
+			SetWindowLongPtr(GetWindowHandle(), GWL_STYLE, style);
 			this->m_path = path;
-			task = new Task([this]() {//创建任务监听文件修改
+			task = new Thread([this]() {//创建任务监听文件修改
 				while (!exit)
 				{
 					bool reLoad = false;//是否需要重新加载
@@ -158,16 +150,18 @@ namespace ezui {
 						reLoad = true;
 					}
 					if (reLoad) {
-						OutputDebugStringW(UIString(L"重新载入: %s\n").args(m_path.c_str()).unicode().c_str());
+						UIString out = UIString(L"重新载入: ") + m_path + "\n";
+						OutputDebugStringW(out.unicode().c_str());
 						Invoke([this]() {
 							//this->SetText(m_path);
 							this->LoadXml(m_path);
 							this->Invalidate();
 							});
 					}
-					Sleep(100);
+					SleepMs(100);
 				}
 				});
+			this->CloseShadow();//关闭阴影窗口
 		}
 		PreviewForm::~PreviewForm() {
 			exit = true;
@@ -184,24 +178,34 @@ namespace ezui {
 		}
 		inline void PreviewForm::OnSize(const Size& sz) {
 			__super::OnSize(sz);
-			UIString title = UIString("%s w:%d h:%d").args(this->m_path.c_str(), this->GetClientRect().Width, this->GetClientRect().Height);
+			UIString title = this->m_path +
+				" w:" + std::to_string(this->GetClientRect().Width) +
+				" h:" + std::to_string(this->GetClientRect().Height);
 			this->SetText(title);
 		}
 		//===========================================================================================================================================
-		inline XMLPreview::XMLPreview(int cx, int cy) :Window(cx, cy) {
+		inline XMLPreview::XMLPreview(int cx, int cy) :Window() {
 
 			layout.SetText(L"请将xml界面文件拖拽到此处。");
-			layout.Style.FontSize = 15;
+			layout.Style->FontSize = 15;
 
 			this->SetText(L"EzUI_XMLPreview");
 			this->SetLayout(&layout);
 
-			this->CenterToScreen();//屏幕居中
 			auto rectStr = ReadRegistryString("rect");
 			auto rects = rectStr.split(",");
-			if (rects.size() == 4) {
+			if (rects.size() == 6) {
 				Rect lastRc = Rect(std::atoi(rects[0].c_str()), std::atoi(rects[1].c_str()), std::atoi(rects[2].c_str()), std::atoi(rects[3].c_str()));
-				this->SetRect(lastRc);
+				float lastScale = std::atof(rects[4].c_str());
+				bool lastMaximized = std::atoi(rects[5].c_str());
+				this->SetRect(lastRc, lastScale);
+				if (lastMaximized) {
+					this->ShowMaximized();
+				}
+			}
+			else {
+				this->SetSize(Size(cx, cy));
+				this->CenterToScreen();//屏幕居中
 			}
 			//this->SetTopMost(true);
 		}
@@ -209,7 +213,7 @@ namespace ezui {
 		{
 			auto* wnd = new PreviewForm(xmlFile);
 			g_wnds.push_back(wnd);
-			::SetParent(wnd->GetWindowId(), GetWindowId());
+			::SetParent(wnd->GetWindowHandle(), GetWindowHandle());
 			int width = Width() * 0.5;
 			int height = Height() * 0.5;
 			int x = (Width() - width) / 2;
@@ -232,14 +236,26 @@ namespace ezui {
 		inline void XMLPreview::OnSize(const Size& sz) {
 			__super::OnSize(sz);
 			auto rc = this->GetRect();
-			UIString rectStr = UIString("%d,%d,%d,%d").args(rc.X, rc.Y, rc.Width, rc.Height);
+			UIString rectStr =
+				std::to_string(rc.X) + "," +
+				std::to_string(rc.Y) + "," +
+				std::to_string(rc.Width) + "," +
+				std::to_string(rc.Height) + "," +
+				std::to_string(this->GetScale()) + "," +
+				(this->IsMaximized() ? "1" : "0");
 			WriteRegistryString("rect", rectStr);
 		}
 		inline void XMLPreview::OnMove(const Point& pt)
 		{
 			__super::OnMove(pt);
 			auto rc = this->GetRect();
-			UIString rectStr = UIString("%d,%d,%d,%d").args(rc.X, rc.Y, rc.Width, rc.Height);
+			UIString rectStr =
+				std::to_string(rc.X) + "," +
+				std::to_string(rc.Y) + "," +
+				std::to_string(rc.Width) + "," +
+				std::to_string(rc.Height) + "," +
+				std::to_string(this->GetScale()) + "," +
+				(this->IsMaximized() ? "1" : "0");
 			WriteRegistryString("rect", rectStr);
 		}
 		inline void XMLPreview::OnClose(bool& b) {

@@ -19,7 +19,7 @@ void LrcPanel::ChangePostion(int postion)
 	offsetY = LrcNow->point.Y - VerticalCenter;
 }
 
-void LrcPanel::OnBackgroundPaint(PaintEventArgs& arg) {
+void LrcPanel::OnBackgroundPaint(PaintEventArgs* arg) {
 
 	__super::OnBackgroundPaint(arg);
 	for (auto& item : LrcList)
@@ -33,21 +33,21 @@ void LrcPanel::OnBackgroundPaint(PaintEventArgs& arg) {
 			float fontSize = 14 * this->GetScale();
 			if (LrcNow == &lrc)
 			{
-				arg.Graphics.SetColor(Color(211, 174, 87));
-				arg.Graphics.SetFont(GetFontFamily(), fontSize + 4);
-				arg.Graphics.DrawString(lrc.text.unicode(), rectangle, TextAlign::MiddleCenter);
+				arg->Graphics()->SetColor(Color(211, 174, 87));
+				arg->Graphics()->SetFont(GetFontFamily(), fontSize + (4 * this->GetScale()));
+				arg->Graphics()->DrawString(lrc.text.unicode(), rectangle, TextAlign::MiddleCenter);
 			}
 			else
 			{
-				arg.Graphics.SetColor(GetForeColor());
-				arg.Graphics.SetFont(GetFontFamily(), fontSize);
-				arg.Graphics.DrawString(lrc.text.unicode(), rectangle, TextAlign::MiddleCenter);
+				arg->Graphics()->SetColor(GetForeColor());
+				arg->Graphics()->SetFont(GetFontFamily(), fontSize);
+				arg->Graphics()->DrawString(lrc.text.unicode(), rectangle, TextAlign::MiddleCenter);
 			}
 		}
 	}
 }
 
-void LrcPanel::RemoveAll()
+void LrcPanel::ClearLrc()
 {
 	timer->Stop();
 	LrcNow = NULL;
@@ -69,11 +69,11 @@ LrcPanel::~LrcPanel()
 	}
 }
 
-LrcPanel::LrcPanel()
+LrcPanel::LrcPanel(Object* owner) :Control(owner)
 {
 	timer = new Timer;
-	timer->Interval = 2;
-	timer->Tick = [=](Timer*) {
+	timer->SetInterval(2);
+	timer->SetTickHandler([=](Timer*) {
 		BeginInvoke([=]() {
 			if (this->GetRect().IsEmptyArea() || LrcNow == NULL) {
 				return;
@@ -105,12 +105,12 @@ LrcPanel::LrcPanel()
 			}
 			Invalidate();
 			});
-		};
+		});
 }
 
 void LrcPanel::LoadLrc(const UIString& lrcData)
 {
-	RemoveAll();
+	ClearLrc();
 	auto lrc = lrcData.split("\n");
 	auto gbk = lrcData.ansi();
 	for (auto& it : lrc) {
@@ -128,7 +128,6 @@ void LrcPanel::LoadLrc(const UIString& lrcData)
 		LrcList.push_back(new Lrc(postion, text, Point(0, VerticalCenter)));
 		VerticalCenter += (FontHeight + marginVertical);
 	}
-
 	if (LrcList.size() > 0)
 	{
 		LrcNow = LrcList[0];//

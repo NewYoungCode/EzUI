@@ -3,8 +3,6 @@
 namespace global {
 
 	int pageSize = 50;
-	int page = 1;
-	bool nextPage = true;
 
 	UIString toTimeStr(long dur) {
 		UIString fen = std::to_string(dur / 60);
@@ -35,16 +33,17 @@ namespace global {
 		newUrl += "&userid=" + userid;
 		return wc.HttpGet(newUrl, &resp);
 	}
-	std::vector<Song> SearchSongs(const UIString& keyword) {
+	std::vector<Song> SearchSongs(const UIString& keyword, int page, bool* hasNextPage) {
 		char buf[999]{ 0 };
 		UIString resp;
-		sprintf(buf, "https://songsearch.kugou.com/song_search_v2?platform=WebFilter&pagesize=%d&page=%d&keyword=%s", pageSize, page, Util::UrlEncode(keyword).c_str());
-		HttpGet(buf, resp);
-		JsonValue json(resp);
+		sprintf(buf, "https://songsearch.kugou.com/song_search_v2?platform=WebFilter&pagesize=%d&page=%d&keyword=", pageSize, page);
+		UIString url = buf + Util::UrlEncode(keyword);
+		HttpGet(url, resp);
+		auto json = Json::Parse(resp);
 		int total = json["data"]["total"].asInt();
 		int pageCount = total * 1.0 / pageSize + 0.9;
-		if (page >= pageCount) {
-			nextPage = false;
+		if (hasNextPage) {
+			*hasNextPage = page < pageCount;
 		}
 		std::vector<Song> songs;
 		for (auto&& it : json["data"]["lists"]) {
@@ -65,7 +64,7 @@ namespace global {
 		UIString url = "http://krcs.kugou.com/search?ver=1&man=yes&client=mobi&keyword=&duration=&hash=" + hash + "&album_audio_id=" + AlbumID;
 		UIString resp;
 		HttpGet(url, resp);
-		JsonValue json(resp);
+		auto json = Json::Parse(resp);
 		if (json["status"].asInt() != 200 || json["candidates"].size() == 0) {
 			return UIString(L"[00:00.00]无歌词");
 		}
@@ -74,9 +73,9 @@ namespace global {
 		resp.clear();
 		url = "http://lyrics.kugou.com/download?ver=1&client=pc&id=" + id + "&accesskey=" + accesskey + "&fmt=lrc&charset=utf8";
 		HttpGet(url, resp);
-		JsonValue json2(resp);
+		auto json2 = Json::Parse(resp);
 		UIString base64Text = json2["content"].asString();
-		base64Text = base64_decode(base64Text);
+		base64Text = Util::Base64Decode(base64Text);
 		return base64Text;
 	}
 	bool GetSongInfo(const UIString& hash, UIString& errorInfo, Song& info)
@@ -86,7 +85,7 @@ namespace global {
 		UIString resp;
 		global::HttpGet(url, resp);
 		auto w = resp.unicode();
-		JsonValue json(resp);
+		auto json = Json::Parse(resp);
 		if (json["errcode"].asInt() != 0) {
 			errorInfo = UIString(json["error"].asString());
 			return false;
@@ -112,7 +111,7 @@ namespace global {
 		WebClient wc;
 		wc.HttpGet("http://m.kugou.com/app/i/mv.php?cmd=100&hash=" + mvhash + "&ismp3=1&ext=mp4", &resp);
 		auto w = resp.unicode();
-		JsonValue json(resp);
+		auto json = Json::Parse(resp);
 		std::vector<UIString> urls;
 		urls.reserve(6);
 		for (auto& it : json["mvdata"]) {
@@ -134,7 +133,7 @@ namespace global {
 		UIString resp;
 		WebClient wc;
 		wc.HttpGet(imageUrl, &resp, 5);
-		JsonValue json(resp);
+		auto json = Json::Parse(resp);
 		UIString bkurl;
 		//使用最清晰的图片
 		if (bkurl.empty()) {

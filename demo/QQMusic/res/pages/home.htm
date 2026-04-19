@@ -1,0 +1,311 @@
+<vbox id="homeRoot" items-align="top left" style="padding: 22px 28px 22px 28px;">
+    <hbox id="homeTopRow" height="30" items-align="middle left">
+        <label id="homeGreeting" width="auto" height="24" text="Hi 早起的虫子被鸟吃，今天想听点什么" class="section-title"></label>
+        <spacer></spacer>
+        <label id="homeReportLink" width="auto" height="28" text="查看你的听歌报告  >" class="ghost-link" text-align="center" style="padding: 0px 12px 0px 12px;"></label>
+    </hbox>
+
+    <label id="homeCurrentMeta" width="100%" height="auto" text="喜欢、最近播放和本地下载会在这里自动汇总，首页也会在启动时刷新推荐。" class="section-copy" text-align="left" style="margin: 14px 0px 0px 0px;"></label>
+
+    <hbox id="homeStatsRow" height="92" items-align="middle left" style="margin: 18px 0px 0px 0px;">
+        <vbox class="stat-card stat-card-like" width="228" height="92" items-align="top left" style="margin: 0px 12px 0px 0px; padding: 16px 16px 16px 16px;">
+            <label width="196" height="18" text="我的喜欢" class="stat-title" text-align="left"></label>
+            <spacer></spacer>
+            <label id="homeLikeCount" width="196" height="28" text="喜欢 0" class="stat-value" text-align="left"></label>
+        </vbox>
+
+        <vbox class="stat-card stat-card-recent" width="228" height="92" items-align="top left" style="margin: 0px 12px 0px 0px; padding: 16px 16px 16px 16px;">
+            <label width="196" height="18" text="最近播放" class="stat-title" text-align="left"></label>
+            <spacer></spacer>
+            <label id="homeRecentCount" width="196" height="28" text="最近播放 0" class="stat-value" text-align="left"></label>
+        </vbox>
+
+        <vbox class="stat-card stat-card-download" width="228" height="92" items-align="top left" style="padding: 16px 16px 16px 16px;">
+            <label width="196" height="18" text="本地下载" class="stat-title" text-align="left"></label>
+            <spacer></spacer>
+            <label id="homeDownloadCount" width="196" height="28" text="本地下载 0" class="stat-value" text-align="left"></label>
+        </vbox>
+    </hbox>
+
+    <tilelist id="homeTiles" class="home-tilelist" style="margin: 18px 0px 0px 0px; padding: 0px 4px 4px 0px;">
+        <hbox id="homeHeroCard" width="300" height="140" class="hero-card home-tile-card" items-align="middle left" style="margin: 0px 12px 12px 0px;">
+            <vbox event="none" width="172" items-align="top left" style="padding: 16px 0px 16px 16px;">
+                <hbox height="18" items-align="middle left" event="none">
+                    <label width="auto" height="18" text="为你推荐" class="hero-tag" event="none"></label>
+                    <label width="auto" height="18" text="启动自动刷新" class="hero-badge" event="none" style="margin: 0px 0px 0px 8px;"></label>
+                </hbox>
+                <label id="homeHeroTitle" width="164" height="24" ellipsis="..." text="Post To Be" class="hero-title" text-align="left" event="none" style="margin: 8px 0px 0px 0px;"></label>
+                <label id="homeHeroDesc" width="164" height="32" text="点击卡片进入推荐列表，启动后会自动刷新 50 首可播放歌曲。" class="hero-copy" text-align="left" event="none" style="margin: 6px 0px 0px 0px;"></label>
+                <spacer></spacer>
+                <label width="auto" height="18" text="打开推荐歌单  >" class="hero-link" event="none"></label>
+            </vbox>
+            <spacer></spacer>
+            <vbox event="none" width="86" items-align="middle center" style="margin: 0px 16px 0px 8px;">
+                <hbox event="none" width="82" height="82" items-align="middle center" class="hero-cover-shell">
+                    <label event="none" id="homeHeroCover" width="62" height="62" text="推荐" class="hero-cover" text-align="center"></label>
+                </hbox>
+                <label width="auto" height="14" text="今日入口" class="hero-subcopy" event="none" style="margin: 8px 0px 0px 0px;"></label>
+            </vbox>
+        </hbox>
+
+        <vbox id="homeCardSearch" width="136" height="140" items-align="top left" class="feature-card feature-card-search home-tile-card" style="margin: 0px 12px 12px 0px; padding: 12px 12px 12px 12px;">
+            <label width="112" height="60" class="feature-cover mini-cover-search" event="none"></label>
+            <label width="112" height="18" text="搜索歌曲" class="feature-title" text-align="left" event="none" style="margin: 10px 0px 0px 0px;"></label>
+            <label width="112" height="auto" text="从关键词开始。" class="feature-copy" text-align="left" event="none" style="margin: 4px 0px 0px 0px;"></label>
+        </vbox>
+
+        <vbox id="homeCardDaily" width="136" height="140" items-align="top left" class="feature-card feature-card-daily home-tile-card" style="margin: 0px 12px 12px 0px; padding: 12px 12px 12px 12px;">
+            <label width="112" height="60" class="feature-cover mini-cover-daily" event="none"></label>
+            <label width="112" height="18" text="每日 30 首" class="feature-title" text-align="left" event="none" style="margin: 10px 0px 0px 0px;"></label>
+            <label width="112" height="auto" text="每天刷新随机歌单。" class="feature-copy" text-align="left" event="none" style="margin: 4px 0px 0px 0px;"></label>
+        </vbox>
+
+        <vbox id="homeCardLike" width="136" height="140" items-align="top left" class="feature-card feature-card-like home-tile-card" style="margin: 0px 0px 12px 0px; padding: 12px 12px 12px 12px;">
+            <label width="112" height="60" class="feature-cover mini-cover-like" event="none"></label>
+            <label width="112" height="18" text="喜欢的歌" class="feature-title" text-align="left" event="none" style="margin: 10px 0px 0px 0px;"></label>
+            <label width="112" height="auto" text="回到已标记喜欢的歌。" class="feature-copy" text-align="left" event="none" style="margin: 4px 0px 0px 0px;"></label>
+        </vbox>
+
+        <vbox id="homeCardRecent" width="136" height="140" items-align="top left" class="feature-card feature-card-recent home-tile-card" style="margin: 0px 12px 0px 0px; padding: 12px 12px 12px 12px;">
+            <label width="112" height="60" class="feature-cover wide-cover-recent" event="none"></label>
+            <label width="112" height="18" text="最近播放" class="feature-title" text-align="left" event="none" style="margin: 10px 0px 0px 0px;"></label>
+            <label width="112" height="auto" text="继续回听最近内容。" class="feature-copy" text-align="left" event="none" style="margin: 4px 0px 0px 0px;"></label>
+        </vbox>
+
+        <vbox id="homeCardDownload" width="136" height="140" items-align="top left" class="feature-card feature-card-download home-tile-card" style="margin: 0px 12px 0px 0px; padding: 12px 12px 12px 12px;">
+            <label width="112" height="60" class="feature-cover wide-cover-download" event="none"></label>
+            <label width="112" height="18" text="本地下载" class="feature-title" text-align="left" event="none" style="margin: 10px 0px 0px 0px;"></label>
+            <label width="112" height="auto" text="查看下载歌曲。" class="feature-copy" text-align="left" event="none" style="margin: 4px 0px 0px 0px;"></label>
+        </vbox>
+
+        <vbox id="homeCardLyrics" width="136" height="140" items-align="top left" class="feature-card feature-card-lyrics home-tile-card" style="margin: 0px 12px 0px 0px; padding: 12px 12px 12px 12px;">
+            <label width="112" height="60" class="feature-cover wide-cover-lyrics" event="none"></label>
+            <label width="112" height="18" text="歌词模式" class="feature-title" text-align="left" event="none" style="margin: 10px 0px 0px 0px;"></label>
+            <label width="112" height="auto" text="切进大图和歌词视图。" class="feature-copy" text-align="left" event="none" style="margin: 4px 0px 0px 0px;"></label>
+        </vbox>
+
+        <vbox id="homeCardSearchMore" width="136" height="140" items-align="top left" class="feature-card feature-card-more home-tile-card" style="margin: 0px 0px 0px 0px; padding: 12px 12px 12px 12px;">
+            <label width="112" height="60" class="feature-cover wide-cover-more" event="none"></label>
+            <label width="112" height="18" text="继续搜索" class="feature-title" text-align="left" event="none" style="margin: 10px 0px 0px 0px;"></label>
+            <label width="112" height="auto" text="直接跳回搜索页。" class="feature-copy" text-align="left" event="none" style="margin: 4px 0px 0px 0px;"></label>
+        </vbox>
+    </tilelist>
+</vbox>
+
+<style>
+    #homeRoot {
+        background-color: #1f1f1f;
+    }
+
+    .section-title {
+        color: #f7f7f7;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .section-copy {
+        color: #9d9d9d;
+        font-size: 12px;
+    }
+
+    .ghost-link {
+        color: #d8ddd9;
+        font-size: 11px;
+        background-color: rgba(255,255,255,0.045);
+        border: 1px solid rgba(255,255,255,0.075);
+        border-radius: 14px;
+        cursor: pointer;
+    }
+
+    .home-tilelist {
+        background-color: transparent;
+        border: 0px solid transparent;
+    }
+
+    .stat-card,
+    .hero-card,
+    .feature-card {
+        border-radius: 18px;
+        cursor: pointer;
+    }
+
+    .stat-card {
+        background-color: #232323;
+        border: 1px solid #2f2f2f;
+    }
+
+    .stat-card-like {
+        background-color: #272125;
+        border-color: #3a2c34;
+    }
+
+    .stat-card-recent {
+        background-color: #21262a;
+        border-color: #2d3940;
+    }
+
+    .stat-card-download {
+        background-color: #202824;
+        border-color: #304038;
+    }
+
+    .stat-title {
+        color: #9fa3a7;
+        font-size: 11px;
+    }
+
+    .stat-value {
+        color: #f4f5f5;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .hero-card {
+        background-color: #355047;
+        border: 1px solid #4e6c63;
+    }
+
+    .hero-card:hover {
+        background-color: #3c5a50;
+    }
+
+    .hero-tag {
+        color: #a5e0bc;
+        font-size: 11px;
+        font-weight: bold;
+    }
+
+    .hero-badge {
+        color: #e9f6ee;
+        font-size: 10px;
+        background-color: rgba(255,255,255,0.12);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 9px;
+        padding: 0px 8px 0px 8px;
+    }
+
+    .hero-title {
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .hero-copy {
+        color: #d6e5de;
+        font-size: 10px;
+    }
+
+    .hero-link {
+        color: #f4faf6;
+        font-size: 11px;
+        font-weight: bold;
+    }
+
+    .hero-cover-shell {
+        background-color: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 16px;
+    }
+
+    .hero-cover {
+        background-color: #284239;
+        border: 1px solid #5b796d;
+        border-radius: 12px;
+        color: #f8fbf9;
+        font-size: 10px;
+        font-weight: bold;
+        padding: 8px;
+    }
+
+    .hero-subcopy {
+        color: #d2e6db;
+        font-size: 10px;
+    }
+
+    .feature-card {
+        background-color: #242424;
+        border: 1px solid #2f2f2f;
+    }
+
+    .feature-card:hover {
+        background-color: #2a2a2a;
+    }
+
+    .feature-card-search {
+        background-color: #2a2520;
+        border-color: #40352a;
+    }
+
+    .feature-card-daily {
+        background-color: #252523;
+        border-color: #393833;
+    }
+
+    .feature-card-like {
+        background-color: #292226;
+        border-color: #403038;
+    }
+
+    .feature-card-recent {
+        background-color: #22272a;
+        border-color: #313b41;
+    }
+
+    .feature-card-download {
+        background-color: #212722;
+        border-color: #304035;
+    }
+
+    .feature-card-lyrics {
+        background-color: #242329;
+        border-color: #343345;
+    }
+
+    .feature-card-more {
+        background-color: #232427;
+        border-color: #34373c;
+    }
+
+    .feature-cover {
+        border-radius: 14px;
+    }
+
+    .mini-cover-search {
+        background-image: url(res/assets/cover_oursong.png);
+    }
+
+    .mini-cover-like {
+        background-image: url(res/assets/cover_zhen.png);
+    }
+
+    .mini-cover-daily {
+        background-image: url(res/assets/cover_longli.png);
+    }
+
+    .wide-cover-recent {
+        background-image: url(res/assets/cover_love.png);
+    }
+
+    .wide-cover-download {
+        background-image: url(res/assets/cover_buchao.png);
+    }
+
+    .wide-cover-lyrics {
+        background-image: url(res/assets/cover_now55.png);
+    }
+
+    .wide-cover-more {
+        background-image: url(res/assets/cover_oursong.png);
+    }
+
+    .feature-title {
+        color: #f2f2f2;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .feature-copy {
+        color: #a3a3a3;
+        font-size: 10px;
+    }
+</style>

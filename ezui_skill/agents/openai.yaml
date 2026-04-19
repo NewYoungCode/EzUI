@@ -1,0 +1,4 @@
+interface:
+  display_name: "EzUI"
+  short_description: "帮助处理 EzUI 桌面界面设计、实现、调试与资源布局工作"
+  default_prompt: "使用 $ezui 为当前项目构建或优化一个 EzUI 桌面界面。"

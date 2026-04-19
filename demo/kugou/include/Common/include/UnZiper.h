@@ -2,6 +2,18 @@
 #include "Text.h"
 #include "FileSystem.h"
 
+// ---------------------------------------------------------------------------
+// ZipUtils  (zip/unzip for Win32 and Windows CE)
+// Original author: Lucian Wischik  (http://www.wischik.com/lu/programmer/zip_utils.html)
+// License: Public Domain
+//
+// This code is released into the public domain. You may freely use it in
+// commercial or non-commercial software, modify it, and redistribute it.
+// No attribution is required, though the original author appreciates mention.
+//
+// Based on zlib by Jean-loup Gailly and Mark Adler.
+// ---------------------------------------------------------------------------
+
 DECLARE_HANDLE(HZIP_U);
 
 struct ZipItem
@@ -31,7 +43,7 @@ public:
 	UnZiper(const char* fileData, unsigned int size, const std::string& password = "");
 	bool Find(const std::string& itemName, ZipItem* item);
 	bool Find(int index, ZipItem* item);
-	bool UnZipItem(const ZipItem& item, byte** data);
+	bool UnZipItem(const ZipItem& item, uint8_t** data);
 	int GetCount();
 	virtual ~UnZiper();
 public:
@@ -49,8 +61,14 @@ public:
 			}
 			else {
 				File::Delete(itemName);
-				byte* data = NULL;
+				uint8_t* data = NULL;
 				zip->UnZipItem(ze, &data);
+
+				Text::String dir = Path::GetDirectoryName(itemName);
+				if (!Directory::Exists(dir)) {
+					Directory::Create(dir);
+				}
+
 				std::ofstream ofs(itemName.unicode(), std::ios::binary);
 				ofs.write((char*)data, ze.unc_size);
 				ofs.flush();

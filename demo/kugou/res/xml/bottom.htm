@@ -1,33 +1,32 @@
-<hbox id="bottom">
-    <hbox width="256">
+<hbox id="bottom" items-align="mid">
+    <hbox width="256" items-align="mid">
         <spacer width="47"></spacer>
-        <label width="38" height="38" id="up"></label>
+        <button width="38" height="38" id="up"></button>
         <spacer width="18"></spacer>
-        <tablayout id="mediaCtl" width="46" height="46">
-            <label id="play"></label>
-            <label id="pause"></label>
-        </tablayout>
+        <tabcontrol id="mediaCtl" width="46" height="46">
+            <button id="play"></button>
+            <button id="pause"></button>
+        </tabcontrol>
         <spacer width="18"></spacer>
-        <label width="38" height="38" id="next"></label>
+        <button width="38" height="38" id="next"></button>
         <spacer width="24"></spacer>
     </hbox>
     <label id="labelSinger" width="53" height="53">
     </label>
     <spacer width="10"></spacer>
-    <vbox style="color:rgb(255,255,255)" class="a b  c  ddd">
-        <label id="songName" ellipsis="..." halign="left" text="酷🐕音乐xxx" height="40"></label>
-        <hbox id="playerBar" style="background-color: rgba(200,200,200,76);border-radius:5px" height="5">
-            <label id="playerBar2" style="background-color:#FFFEA1" width="5"></label>
-        </hbox>
+    <vbox style="color:rgb(255,255,255)" class="a b c ddd">
+        <label id="songName" text-align="left" ellipsis="..." halign="left" text="酷🐕音乐xxx" height="40"></label>
+        <Slider id="playerBar" style="background-color: rgb(255,255,255,50%); color: rgb(0, 122, 204)" height="10"></Slider>
     </vbox>
     <label id="labelTime" text="00:00/00:00" width="130" style="color:#ffffff"></label>
     <checkbox id="deskLrc" width="76" text="桌面歌词" style="color:#ffffff"></checkbox>
+
 </hbox>
 <style>
 
     #deskLrc {
         cursor: pointer;
-        /*border: 1px solid rgb(255,255,255);*/
+        border: 1px solid rgb(255,255,255);
     }
 
         #deskLrc:checked {
@@ -38,38 +37,38 @@
         border: 5px #ffd800;
         border-style: solid;
         border-radius: 20px;
-        background-image: "res/imgs/headImg.jpg";
+        background-image: url(res/imgs/headImg.jpg);
     }
 
     #up {
-        fore-image: "res/imgs/up.png";
+        background-image: url(res/imgs/up.png);
     }
 
         #up:hover {
-            fore-image: "res/imgs/up_1.png";
+            background-image: url(res/imgs/up_1.png);
         }
 
     #play {
-        fore-image: "res/imgs/play.png";
+        background-image: url(res/imgs/play.png);
     }
 
         #play:hover {
-            fore-image: "res/imgs/play_1.png";
+            background-image: url(res/imgs/play_1.png);
         }
 
     #pause {
-        fore-image: "res/imgs/pause.png";
+        background-image: url(res/imgs/pause.png);
     }
 
         #pause:hover {
-            fore-image: "res/imgs/pause_1.png";
+            background-image: url(res/imgs/pause_1.png);
         }
 
     #next {
-        fore-image: "res/imgs/next.png";
+        background-image: url(res/imgs/next.png);
     }
 
         #next:hover {
-            fore-image: "res/imgs/next_1.png";
+            background-image: url(res/imgs/next_1.png);
         }
 </style>

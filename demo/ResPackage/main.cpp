@@ -21,7 +21,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		UIString packageDir = args[index + 1];
 		UIString outFile = args[index + 2];
 
-		UIString log = UIString("packaging... %s -> %s \n").args(packageDir.c_str(), outFile.c_str()).ansi();
+		UIString log = "packaging..." + packageDir + " -> " + outFile + "\n";
 		printf(log.c_str());
 		bool bRet = Resource::Package(packageDir, outFile);
 		if (bRet) {
@@ -37,6 +37,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	app.EnableHighDpi();
 	MainFrm frm(lpCmdLine);
 	frm.Show();
+	frm.CenterToScreen();
+	::SetForegroundWindow(frm.GetWindowHandle());
 
 	return app.Exec();
 };

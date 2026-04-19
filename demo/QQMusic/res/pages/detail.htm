@@ -1,0 +1,191 @@
+<vbox id="detailRoot">
+    <hbox id="detailWindowBar" height="46" items-align="mid" action="title" style="padding: 12px 18px 0px 18px;">
+        <hbox id="detailBackBtn" width="34" height="34" items-align="center" class="detail-back">
+            <label width="12" height="12" class="detail-back-icon" event="none"></label>
+        </hbox>
+        <spacer></spacer>
+        <hbox width="96" height="24" items-align="mid">
+            <label width="22" height="22" text="0" action="mini" class="window-btn window-font"></label>
+            <label width="22" height="22" text="1" action="max" class="window-btn window-font" style="margin: 0px 0px 0px 10px;"></label>
+            <label width="22" height="22" text="r" action="close" class="window-btn window-font close-btn" style="margin: 0px 0px 0px 10px;"></label>
+        </hbox>
+    </hbox>
+
+    <hbox id="detailStage" style="margin: 12px 28px 0px 28px;">
+        <vbox items-align="mid">
+            <recordCover id="detailCover" width="280" height="280" class="detail-cover"></recordCover>
+        </vbox>
+
+        <vbox id="detailContent" items-align="left">
+            <hbox width="100%" height="auto" items-align="top">
+                <vbox height="auto" style="margin: 0px 8px 0px 0px;">
+                    <label id="detailTitle" width="100%" height="auto" text="还没有播放歌曲" class="detail-title" text-align="left"></label>
+                    <label id="detailSinger" width="100%" height="auto" text="等待选择一首歌" class="detail-singer clickable-singer" text-align="left" style="margin: 8px 0px 0px 0px;"></label>
+                    <label id="detailMeta" width="100%" height="auto" text="歌词页会完整占满整个窗口，并跟随播放进度自动滚动。" class="detail-copy" text-align="left" style="margin: 6px 0px 0px 0px;"></label>
+                </vbox>
+                <label width="42" height="22" text="VIP" class="vip-pill" style="margin: 4px 0px 0px 8px;"></label>
+            </hbox>
+
+            <hbox height="32" items-align="mid" style="margin: 16px 0px 0px 0px;">
+                <label id="detailLikeBtn" width="92" height="30" text="♥ 喜欢" class="action-pill action-pill-light"></label>
+                <label id="detailDownloadBtn" width="92" height="30" text="↓ 下载" class="action-pill action-pill-light" style="margin: 0px 0px 0px 14px;"></label>
+            </hbox>
+
+            <label id="detailStatus" width="100%" height="auto" text="播放歌曲后这里会显示当前状态。" class="detail-copy" text-align="left" style="margin: 14px 0px 0px 0px;"></label>
+
+            <lrcPanel id="detailLrc" style="margin: 18px 0px 0px 0px; background-color: rgba(255,255,255,0); border-radius: 20px; color: rgba(255,255,255,0.863);"></lrcPanel>
+        </vbox>
+    </hbox>
+
+    <hbox id="detailPlayerDock" height="82" items-align="mid" style="margin: 12px 18px 18px 18px; padding: 0px 18px 0px 18px;">
+        <spacer></spacer>
+
+        <vbox width="50%" height="auto" items-align="mid">
+            <hbox width="auto" height="34" items-align="mid">
+                <label id="detailPrevBtn" width="26" height="26" text="◀" class="player-nav-btn"></label>
+                <label id="detailPlayPauseBtn" width="42" height="30" text="▶" class="player-play-btn" style="margin: 0px 20px 0px 20px;"></label>
+                <label id="detailNextBtn" width="26" height="26" text="▶" class="player-nav-btn"></label>
+            </hbox>
+            <hbox width="100%" height="16" items-align="mid" style="margin: 6px 0px 0px 0px;">
+                <label id="detailElapsedLabel" width="34" height="14" text="00:00" class="detail-copy"></label>
+                <musicSeekBar id="detailProgressSlider" height="12" value="0" min="0" max="100" class="detail-progress-slider" style="margin: 0px 10px 0px 10px;"></musicSeekBar>
+                <label id="detailTotalLabel" width="34" height="14" text="00:00" class="detail-copy"></label>
+            </hbox>
+        </vbox>
+
+        <spacer></spacer>
+    </hbox>
+</vbox>
+
+<style>
+    #detailRoot {
+        background-color: #ede2db;
+    }
+
+    #detailPlayerDock {
+        background-color: rgba(255,255,255,0);
+        border: 1px solid rgba(255,255,255,0);
+        border-radius: 18px;
+    }
+
+    .detail-back {
+        background-color: rgba(255,255,255,0.047);
+        border: 1px solid rgba(255,255,255,0.071);
+        border-radius: 17px;
+        cursor: pointer;
+    }
+
+        .detail-back:hover {
+            background-color: rgba(255,255,255,0.094);
+            border-color: rgba(255,255,255,0.110);
+        }
+
+    .detail-back-icon {
+        background-image: url(res/assets/collapse.png);
+    }
+
+    .window-font {
+        font-family: "Marlett";
+        font-size: 11px;
+    }
+
+    .window-btn {
+        background-color: transparent;
+        border-radius: 6px;
+        color: rgba(255,255,255,0.737);
+        cursor: pointer;
+    }
+
+        .window-btn:hover {
+            background-color: rgba(255,255,255,0.165);
+            color: #ffffff;
+        }
+
+    .close-btn:hover {
+        background-color: #cc4949;
+        color: #ffffff;
+    }
+
+    .detail-cover {
+        background-color: rgba(255,255,255,0);
+        border: 0px solid rgba(255,255,255,0);
+        border-radius: 140px;
+    }
+
+    .detail-copy {
+        color: rgba(255,255,255,0.690);
+        font-size: 11px;
+    }
+
+    .detail-title {
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .detail-singer {
+        color: rgba(255,255,255,0.769);
+        font-size: 12px;
+    }
+
+    .clickable-singer {
+        cursor: pointer;
+    }
+
+        .clickable-singer:hover {
+            color: #ffffff;
+        }
+
+    .vip-pill {
+        background-color: rgba(26, 222, 127, 0.18);
+        border: 1px solid #1be17d;
+        border-radius: 11px;
+        color: #15b867;
+        font-size: 11px;
+    }
+
+    .action-pill {
+        background-color: rgba(255,255,255,0.063);
+        border: 1px solid rgba(255,255,255,0.188);
+        border-radius: 15px;
+        color: #ffffff;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+        .action-pill:hover {
+            background-color: rgba(255,255,255,0.102);
+        }
+
+    .action-pill-light {
+        background-color: rgba(26, 222, 127, 0.16);
+        border-color: rgba(26, 222, 127, 0.40);
+        color: #1e9f60;
+        font-weight: bold;
+    }
+
+    .player-nav-btn {
+        color: rgba(255,255,255,0.894);
+        font-family: "Segoe UI Symbol";
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .player-play-btn {
+        background-color: #19df7f;
+        border-radius: 15px;
+        color: #0c1b12;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+        .player-play-btn:hover {
+            background-color: #23e889;
+        }
+
+    .detail-progress-slider {
+        background-color: rgba(255,255,255,0.306);
+        color: #19d77f;
+    }
+</style>

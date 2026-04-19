@@ -1,0 +1,88 @@
+<vbox id="libraryRoot" style="padding: 20px 30px 16px 30px;">
+    <label id="libraryTitle" width="100%" height="auto" text="喜欢" class="page-title" text-align="left"></label>
+    <label id="libraryMeta" width="100%" height="auto" text="这里会展示持久化保存的歌曲列表。" class="page-copy" text-align="left" style="margin: 8px 0px 0px 0px;"></label>
+
+    <hbox height="34" items-align="mid" style="margin: 16px 0px 0px 0px;">
+        <label id="libraryPlayBtn" width="90" height="30" text="▶ 播放" class="action-pill action-pill-primary"></label>
+        <label id="libraryDownloadBtn" width="90" height="30" text="↓ 下载" class="action-pill" style="margin: 0px 0px 0px 14px;"></label>
+        <label id="libraryClearBtn" width="90" height="30" text="✕ 清空" class="action-pill" style="margin: 0px 0px 0px 14px;"></label>
+    </hbox>
+
+    <hbox height="24" items-align="mid" style="margin: 18px 0px 0px 0px;">
+        <label class="table-head-main" text="歌名/歌手" text-align="left"></label>
+        <label class="table-head-like" text=""></label>
+        <label class="table-head-album" text="专辑" text-align="left"></label>
+        <label class="table-head-time" text="时长"></label>
+    </hbox>
+
+    <vlist id="librarySongList" class="song-list" style="margin: 8px 0px 0px 0px; padding: 2px 0px 6px 0px;"></vlist>
+</vbox>
+
+<style>
+    #libraryRoot {
+        background-color: #1f1f1f;
+    }
+
+    .page-title {
+        color: #f6f6f6;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .page-copy {
+        color: #929292;
+        font-size: 12px;
+    }
+
+    .action-pill {
+        background-color: #353535;
+        border-radius: 15px;
+        color: #f4f4f4;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+        .action-pill:hover {
+            background-color: #404040;
+        }
+
+    .action-pill-primary {
+        background-color: #1ade80;
+        color: #0d1f14;
+        font-weight: bold;
+    }
+
+    .table-head-main,
+    .table-head-like,
+    .table-head-album,
+    .table-head-time {
+        color: #8a8a8a;
+        font-size: 12px;
+    }
+
+    .table-head-main {
+        padding: 0px 0px 0px 10px;
+    }
+
+    .table-head-like {
+        width: 42px;
+    }
+
+    .table-head-album {
+        width: 210px;
+    }
+
+    .table-head-time {
+        width: 66px;
+    }
+
+    .song-list {
+        background-color: transparent;
+    }
+
+    #librarySongList::-webkit-scrollbar {
+        border-radius: 10px;
+        width: 5px;
+        color: #8f8f8f;
+    }
+</style>

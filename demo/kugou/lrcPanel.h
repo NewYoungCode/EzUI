@@ -1,25 +1,23 @@
 ﻿#pragma once
 #include "global.h"
-class Lrc
-{
-public:
-	int postion;
-	UIString text;
-	Point point;
-	Lrc(int postionInt, const UIString& text, Point point)
-	{
-		this->postion = postionInt;
-		this->text = text;
-		this->point = point;
-	}
-	~Lrc() {
-		int a = 0;
-	}
-};
 
-class LrcPanel :
-	public Control
-{
+//歌词面板控件
+class LrcPanel : public Control {
+private:
+	struct Lrc
+	{
+		int postion;
+		UIString text;
+		Point point;
+	public:
+		Lrc(int postionInt, const UIString& text, const Point& point)
+		{
+			this->postion = postionInt;
+			this->text = text;
+			this->point = point;
+		}
+	};
+private:
 	float offsetY = 0;
 	Lrc* LrcNow = NULL;
 	Timer* timer = NULL;
@@ -27,13 +25,12 @@ class LrcPanel :
 	std::vector<Lrc*> LrcList;
 	int marginVertical = 40;
 	int FontHeight = 30;
+protected:
+	void OnBackgroundPaint(PaintEventArgs* arg)override;
 public:
-	LrcPanel();
+	LrcPanel(Object* owner = NULL);
 	virtual ~LrcPanel();
 	void ChangePostion(int postion);
-
-	void OnBackgroundPaint(PaintEventArgs& arg)override;
 	void LoadLrc(const UIString& lrcData);
-	void RemoveAll();
+	void ClearLrc();
 };
-

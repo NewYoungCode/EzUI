@@ -1,0 +1,114 @@
+﻿<vlist width="100%" height="100%" class="page" style="padding: 28px 30px 30px 30px;">
+    <label height="auto" text="Label" align="left" class="title"></label>
+    <label width="100%" height="auto" text="Label.h 是最基础的展示控件，头文件里直接给出了 text、underline、ellipsis 和对齐接口。补文档时要把自动尺寸、单行截断和对齐是否生效的条件一起讲清楚。" align="left" class="summary" style="margin: 10px 0px 0px 0px;"></label>
+    <hbox height="28" items-align="middle left" style="margin: 16px 0px 0px 0px;">
+        <label width="auto" height="26" text="头文件 Label.h" align="center" class="pill" style="margin: 0px 0px 0px 0px;"></label>
+        <label width="auto" height="26" text="基类 Control" align="center" class="pill-accent" style="margin: 0px 0px 0px 10px;"></label>
+        <label width="auto" height="26" text="标签 &lt;label&gt;" align="center" class="pill" style="margin: 0px 0px 0px 10px;"></label>
+    </hbox>
+    <hbox width="100%" height="auto" items-align="top left" style="margin: 22px 0px 0px 0px;">
+        <vbox width="520" height="auto" class="panel" style="padding: 18px 18px 18px 18px;">
+            <label height="18" text="Live Demo" align="left" class="panel-title"></label>
+            <label width="100%" height="auto" text="页面最外层统一由 vlist 承载滚动，内部示例和说明都回到普通布局容器，内容直接往下展开即可。" align="left" class="panel-subtitle" style="margin: 8px 0px 0px 0px;"></label>
+<vbox width="100%" height="auto" items-align="top left" style="margin: 14px 0px 0px 0px;">
+                <vbox width="100%" height="auto" class="demo-card">
+                    <label height="auto" text="Label 最适合承接清楚的文本层级。" align="left" class="hero-copy"></label>
+                    <label width="100%" height="auto" text="这是一段普通正文，用来演示较长说明在卡片里的换行和阅读节奏。标题、正文、注释往往都还是 Label，只是字号、颜色和高度策略不同。" align="left" class="body-copy" style="margin: 12px 0px 0px 0px;"></label>
+                    <label height="20" text="这是一条单行省略示例，当可用宽度不够时会自动截断自己。" ellipsis="..." align="left" class="muted-copy" style="margin: 16px 0px 0px 0px;"></label>
+                </vbox>
+                <vbox width="100%" height="auto" class="demo-card" style="margin: 14px 0px 0px 0px;">
+                    <label height="18" text="对齐与尺寸" align="left" class="demo-title"></label>
+                    <label width="100%" height="auto" text="Label 默认文字居中；想让对齐生效，需要控件在对应方向上有多余空间，而不是已经 auto 收紧。" align="left" class="demo-note" style="margin: 12px 0px 0px 0px;"></label>
+                </vbox>
+            </vbox>
+        </vbox>
+        <spacer width="18"></spacer>
+        <vbox width="350" height="auto" class="panel" style="padding: 18px 18px 18px 18px;">
+            <label height="18" text="头文件速查" align="left" class="panel-title"></label>
+            <label height="18" text="公开接口" align="left" class="section-title" style="margin: 16px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="SetText / GetText" align="left" class="api-line" style="margin: 12px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="SetElidedText(const UIString&amp; text)" align="left" class="api-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="SetUnderline(int pos, int count)" align="left" class="api-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="SetTextAlign(TextAlign textAlign) / GetTextAlign()" align="left" class="api-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="text、underline、ellipsis、align 都是头文件明示能力" align="left" class="api-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label height="18" text="适用场景" align="left" class="section-title" style="margin: 18px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="标题、正文说明、状态文字和单行截断文案。" align="left" class="body-line" style="margin: 12px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="列表行里的主标题、副标题、时间戳。" align="left" class="body-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="纯展示文本，不参与输入。" align="left" class="body-line" style="margin: 8px 0px 0px 0px;"></label>
+        </vbox>
+    </hbox>
+    <hbox width="100%" height="auto" items-align="top left" style="margin: 18px 0px 0px 0px;">
+        <vbox width="520" height="auto" class="panel" style="padding: 18px 18px 18px 18px;">
+            <label height="18" text="XML 写法" align="left" class="panel-title"></label>
+            <label width="100%" height="auto" text="挑最常抄的 XML 或 C++ 片段放在这里，直接对照头文件和当前页面即可复用。" align="left" class="panel-subtitle" style="margin: 8px 0px 0px 0px;"></label>
+            <vbox width="100%" height="auto" class="code-box" style="margin: 14px 0px 0px 0px;">
+            <label width="100%" height="auto" text="&lt;label height=&quot;auto&quot; text=&quot;这是一个标题&quot; class=&quot;hero-copy&quot;&gt;&lt;/label&gt;" align="left" class="code-line" style="margin: 12px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="&lt;label height=&quot;20&quot; text=&quot;超长文案&quot; ellipsis=&quot;...&quot; align=&quot;left&quot;&gt;&lt;/label&gt;" align="left" class="code-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="&lt;label text=&quot;链接中的下划线&quot; underline=&quot;0,2&quot;&gt;&lt;/label&gt;" align="left" class="code-line" style="margin: 8px 0px 0px 0px;"></label>
+            </vbox>
+        </vbox>
+        <spacer width="18"></spacer>
+        <vbox width="350" height="auto" class="panel" style="padding: 18px 18px 18px 18px;">
+            <label height="18" text="属性与提醒" align="left" class="panel-title"></label>
+            <label height="18" text="XML / 标签" align="left" class="section-title" style="margin: 16px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="text: 显示文字。" align="left" class="attr-line" style="margin: 12px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="underline: offset,length。" align="left" class="attr-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="ellipsis: 文字溢出后的替代文本。" align="left" class="attr-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="text-align : top | bottom | mid | left | right | center。" text-align="left" class="attr-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label height="18" text="使用提醒" align="left" class="section-title" style="margin: 18px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="大字号标题优先让高度 auto，避免裁切。" align="left" class="note-line" style="margin: 12px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="如果控件在某个方向上已经 auto 收紧，对齐不会产生明显变化。" align="left" class="note-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="需要单行截断时，给稳定高度再配合 ellipsis。" align="left" class="note-line" style="margin: 8px 0px 0px 0px;"></label>
+        </vbox>
+    </hbox>
+</vlist>
+
+<style>
+    .page { background-color: #10161F; color: #F4F7FD; }
+    .title { color: #F6FAFF; font-size: 32px; font-weight: bold; }
+    .summary { color: #A6B7CD; font-size: 14px; }
+    .pill { background-color: #192331; border: 1px solid #2F4258; border-radius: 13px; color: #DCE8FB; font-size: 12px; padding: 0px 12px 0px 12px; }
+    .pill-accent { background-color: #14324A; border: 1px solid #2F77A9; border-radius: 13px; color: #91D6FF; font-size: 12px; padding: 0px 12px 0px 12px; }
+    .panel { background-color: #151D29; border: 1px solid #283749; border-radius: 18px; }
+    .panel-title { color: #F5F8FF; font-size: 15px; font-weight: bold; }
+    .panel-subtitle { color: #7F91AA; font-size: 12px; }
+    .section-title { color: #8DD5FF; font-size: 13px; font-weight: bold; }
+    .body-line { color: #D6E0F0; font-size: 13px; }
+    .api-line { color: #E4ECF7; font-size: 13px; }
+    .attr-line { color: #D6E3F5; font-size: 13px; }
+    .note-line { color: #C5D2E4; font-size: 13px; }
+    .code-box { background-color: #0E141D; border: 1px solid #223145; border-radius: 14px; padding: 12px 14px 12px 14px; }
+    .code-line { color: #DFE7F6; font-size: 12px; font-family: Consolas; }
+    .demo-card { background-color: #0F1620; border: 1px solid #263549; border-radius: 14px; padding: 14px 14px 14px 14px; }
+    .demo-title { color: #81D1FF; font-size: 13px; font-weight: bold; }
+    .demo-text { color: #E7EEF9; font-size: 13px; }
+    .demo-note { color: #8E9DB3; font-size: 12px; }
+    .list-shell { background-color: #101722; border: 1px solid #26364A; border-radius: 14px; }
+    .surface { background-color: #121B26; border: 1px solid #26364A; border-radius: 12px; }
+    .surface-soft { background-color: #1B2533; border: 1px solid #2D3A4E; border-radius: 12px; }
+    .row-shell { background-color: #1A2432; border: 1px solid #29384D; border-radius: 12px; }
+    .tile-card { background-color: #202C3C; border: 1px solid #314359; border-radius: 14px; color: #EBF1FB; font-size: 13px; }
+    .input-shell { background-color: #0E141D; color: #E8F0FF; border: 1px solid #334257; border-radius: 10px; padding: 8px 12px 8px 12px; font-size: 13px; }
+    .choice { color: #EAF0FF; font-size: 13px; }
+    .choice:checked { color: #7DD3FF; font-size: 13px; }
+    .badge { background-color: #1F7CFF; color: #FFFFFF; border-radius: 14px; font-size: 12px; font-weight: bold; }
+    .info-chip { background-color: #223041; color: #DDE7F7; border-radius: 10px; font-size: 12px; padding: 0px 10px 0px 10px; }
+    .accent-chip { background-color: #16384E; border: 1px solid #285D7C; color: #9CDCFD; border-radius: 10px; font-size: 12px; padding: 0px 10px 0px 10px; }
+    .picture-shell { background-color: #0E141D; border: 1px solid #2A3950; border-radius: 12px; }
+    .frame-shell { background-color: #101722; border: 1px solid #2D4057; border-radius: 14px; }
+    .hero-copy { color: #F4F8FF; font-size: 22px; font-weight: bold; }
+    .body-copy { color: #D5E0F3; font-size: 13px; }
+    .muted-copy { color: #8C9CB2; font-size: 12px; }
+    .tab-page { background-color: #101722; border: 1px solid #27384D; border-radius: 12px; }
+    .tree-shell { background-color: #101722; border: 1px solid #27384D; border-radius: 12px; }
+    .combo-shell { background-color: #0E141D; color: #E8F0FF; border: 1px solid #334257; border-radius: 10px; }
+    .slider-theme { background-color: #2A3342; color: #7DD4FF; border-radius: 10px; }
+    .btn-primary { background-color: #1F83FF; color: #FFFFFF; border: 1px solid #1F83FF; border-radius: 10px; font-size: 13px; font-weight: bold; }
+    .btn-secondary { background-color: #283243; color: #EAF0FD; border: 1px solid #435269; border-radius: 10px; font-size: 13px; }
+    .btn-danger { background-color: #8E3142; color: #FFFFFF; border: 1px solid #B4475A; border-radius: 10px; font-size: 13px; }
+    .btn-quiet { background-color: #151C27; color: #CBD7E8; border: 1px solid #314054; border-radius: 10px; font-size: 13px; }
+    .readonly-shell { background-color: #1D2532; color: #95A7C2; }
+    .avatar { background-color: #1E80F7; color: #FFFFFF; border-radius: 19px; font-size: 14px; font-weight: bold; }
+    .rich-shell { background-color: #0E141D; border: 1px solid #27374B; border-radius: 12px; }
+
+</style>

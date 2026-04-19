@@ -1,0 +1,116 @@
+﻿<vlist width="100%" height="100%" class="page" style="padding: 28px 30px 30px 30px;">
+    <label height="auto" text="TileListView" align="left" class="title"></label>
+    <label width="100%" height="auto" text="TileListView.h 继承 PagedListView 并补上垂直滚动能力。它适合宫格式入口和素材卡片浏览，前提是卡片尺寸、节奏和内容密度足够统一。" align="left" class="summary" style="margin: 10px 0px 0px 0px;"></label>
+    <hbox height="28" items-align="middle left" style="margin: 16px 0px 0px 0px;">
+        <label width="auto" height="26" text="头文件 TileListView.h" align="center" class="pill" style="margin: 0px 0px 0px 0px;"></label>
+        <label width="auto" height="26" text="基类 PagedListView" align="center" class="pill-accent" style="margin: 0px 0px 0px 10px;"></label>
+        <label width="auto" height="26" text="标签 &lt;tilelist&gt; / &lt;tilelistview&gt;" align="center" class="pill" style="margin: 0px 0px 0px 10px;"></label>
+    </hbox>
+    <hbox width="100%" height="auto" items-align="top left" style="margin: 22px 0px 0px 0px;">
+        <vbox width="520" height="auto" class="panel" style="padding: 18px 18px 18px 18px;">
+            <label height="18" text="Live Demo" align="left" class="panel-title"></label>
+            <label width="100%" height="auto" text="页面最外层统一由 vlist 承载滚动，内部示例和说明都回到普通布局容器，内容直接往下展开即可。" align="left" class="panel-subtitle" style="margin: 8px 0px 0px 0px;"></label>
+<vbox width="100%" height="auto" items-align="top left" style="margin: 14px 0px 0px 0px;">
+                <vbox width="100%" height="auto" class="demo-card">
+                    <label height="18" text="宫格浏览" align="left" class="demo-title"></label>
+                    <tilelist height="176" class="list-shell" style="margin: 12px 0px 0px 0px; padding: 12px 12px 12px 12px;">
+                        <label width="136" height="72" text="模板 A" align="center" class="tile-card" style="margin: 0px 12px 12px 0px;"></label>
+                        <label width="136" height="72" text="模板 B" align="center" class="tile-card" style="margin: 0px 12px 12px 0px;"></label>
+                        <label width="136" height="72" text="模板 C" align="center" class="tile-card" style="margin: 0px 12px 12px 0px;"></label>
+                        <label width="136" height="72" text="模板 D" align="center" class="tile-card" style="margin: 0px 12px 12px 0px;"></label>
+                        <label width="136" height="72" text="模板 E" align="center" class="tile-card" style="margin: 0px 12px 12px 0px;"></label>
+                        <label width="136" height="72" text="模板 F" align="center" class="tile-card" style="margin: 0px 12px 12px 0px;"></label>
+                    </tilelist>
+                </vbox>
+            </vbox>
+        </vbox>
+        <spacer width="18"></spacer>
+        <vbox width="350" height="auto" class="panel" style="padding: 18px 18px 18px 18px;">
+            <label height="18" text="头文件速查" align="left" class="panel-title"></label>
+            <label height="18" text="公开接口" align="left" class="section-title" style="margin: 16px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="GetVScrollBar()" align="left" class="api-line" style="margin: 12px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="继承 PagedListView::SetPageInfo / GetPage / NextPage / NextPaging" align="left" class="api-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="内部按瓦片布局子控件，重点是统一 item 尺寸" align="left" class="api-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="标签别名：&lt;tilelist&gt; / &lt;tilelistview&gt;" align="left" class="api-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label height="18" text="适用场景" align="left" class="section-title" style="margin: 18px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="模板中心、素材库、组件入口、应用快捷方式。" align="left" class="body-line" style="margin: 12px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="适合一眼扫过的卡片型内容。" align="left" class="body-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="分页加载或滚动浏览的宫格集合。" align="left" class="body-line" style="margin: 8px 0px 0px 0px;"></label>
+        </vbox>
+    </hbox>
+    <hbox width="100%" height="auto" items-align="top left" style="margin: 18px 0px 0px 0px;">
+        <vbox width="520" height="auto" class="panel" style="padding: 18px 18px 18px 18px;">
+            <label height="18" text="XML 写法" align="left" class="panel-title"></label>
+            <label width="100%" height="auto" text="挑最常抄的 XML 或 C++ 片段放在这里，直接对照头文件和当前页面即可复用。" align="left" class="panel-subtitle" style="margin: 8px 0px 0px 0px;"></label>
+            <vbox width="100%" height="auto" class="code-box" style="margin: 14px 0px 0px 0px;">
+            <label width="100%" height="auto" text="&lt;tilelist height=&quot;168&quot; class=&quot;list-shell&quot;&gt;" align="left" class="code-line" style="margin: 12px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="  &lt;label width=&quot;120&quot; height=&quot;72&quot; text=&quot;模板 A&quot; class=&quot;tile-card&quot;&gt;&lt;/label&gt;" align="left" class="code-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="  &lt;label width=&quot;120&quot; height=&quot;72&quot; text=&quot;模板 B&quot; class=&quot;tile-card&quot;&gt;&lt;/label&gt;" align="left" class="code-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="&lt;/tilelist&gt;" align="left" class="code-line" style="margin: 8px 0px 0px 0px;"></label>
+            </vbox>
+        </vbox>
+        <spacer width="18"></spacer>
+        <vbox width="350" height="auto" class="panel" style="padding: 18px 18px 18px 18px;">
+            <label height="18" text="属性与提醒" align="left" class="panel-title"></label>
+            <label height="18" text="XML / 标签" align="left" class="section-title" style="margin: 16px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="常见做法是每个 tile 给固定宽高。" align="left" class="attr-line" style="margin: 12px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="滚动条对象来自 GetVScrollBar()。" align="left" class="attr-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="更适合入口型内容，不是层级型内容。" align="left" class="attr-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="别名：&lt;tilelist&gt; / &lt;tilelistview&gt;。" align="left" class="attr-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label height="18" text="使用提醒" align="left" class="section-title" style="margin: 18px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="所有卡片最好维持一致尺寸，浏览节奏才稳定。" align="left" class="note-line" style="margin: 12px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="hover、选中和禁用反馈建议在所有 tile 上统一。" align="left" class="note-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="如果信息有明显父子层级，优先考虑 TreeView 或分组列表。" align="left" class="note-line" style="margin: 8px 0px 0px 0px;"></label>
+        </vbox>
+    </hbox>
+</vlist>
+
+<style>
+    .page { background-color: #10161F; color: #F4F7FD; }
+    .title { color: #F6FAFF; font-size: 32px; font-weight: bold; }
+    .summary { color: #A6B7CD; font-size: 14px; }
+    .pill { background-color: #192331; border: 1px solid #2F4258; border-radius: 13px; color: #DCE8FB; font-size: 12px; padding: 0px 12px 0px 12px; }
+    .pill-accent { background-color: #14324A; border: 1px solid #2F77A9; border-radius: 13px; color: #91D6FF; font-size: 12px; padding: 0px 12px 0px 12px; }
+    .panel { background-color: #151D29; border: 1px solid #283749; border-radius: 18px; }
+    .panel-title { color: #F5F8FF; font-size: 15px; font-weight: bold; }
+    .panel-subtitle { color: #7F91AA; font-size: 12px; }
+    .section-title { color: #8DD5FF; font-size: 13px; font-weight: bold; }
+    .body-line { color: #D6E0F0; font-size: 13px; }
+    .api-line { color: #E4ECF7; font-size: 13px; }
+    .attr-line { color: #D6E3F5; font-size: 13px; }
+    .note-line { color: #C5D2E4; font-size: 13px; }
+    .code-box { background-color: #0E141D; border: 1px solid #223145; border-radius: 14px; padding: 12px 14px 12px 14px; }
+    .code-line { color: #DFE7F6; font-size: 12px; font-family: Consolas; }
+    .demo-card { background-color: #0F1620; border: 1px solid #263549; border-radius: 14px; padding: 14px 14px 14px 14px; }
+    .demo-title { color: #81D1FF; font-size: 13px; font-weight: bold; }
+    .demo-text { color: #E7EEF9; font-size: 13px; }
+    .demo-note { color: #8E9DB3; font-size: 12px; }
+    .list-shell { background-color: #101722; border: 1px solid #26364A; border-radius: 14px; }
+    .surface { background-color: #121B26; border: 1px solid #26364A; border-radius: 12px; }
+    .surface-soft { background-color: #1B2533; border: 1px solid #2D3A4E; border-radius: 12px; }
+    .row-shell { background-color: #1A2432; border: 1px solid #29384D; border-radius: 12px; }
+    .tile-card { background-color: #202C3C; border: 1px solid #314359; border-radius: 14px; color: #EBF1FB; font-size: 13px; }
+    .input-shell { background-color: #0E141D; color: #E8F0FF; border: 1px solid #334257; border-radius: 10px; padding: 8px 12px 8px 12px; font-size: 13px; }
+    .choice { color: #EAF0FF; font-size: 13px; }
+    .choice:checked { color: #7DD3FF; font-size: 13px; }
+    .badge { background-color: #1F7CFF; color: #FFFFFF; border-radius: 14px; font-size: 12px; font-weight: bold; }
+    .info-chip { background-color: #223041; color: #DDE7F7; border-radius: 10px; font-size: 12px; padding: 0px 10px 0px 10px; }
+    .accent-chip { background-color: #16384E; border: 1px solid #285D7C; color: #9CDCFD; border-radius: 10px; font-size: 12px; padding: 0px 10px 0px 10px; }
+    .picture-shell { background-color: #0E141D; border: 1px solid #2A3950; border-radius: 12px; }
+    .frame-shell { background-color: #101722; border: 1px solid #2D4057; border-radius: 14px; }
+    .hero-copy { color: #F4F8FF; font-size: 22px; font-weight: bold; }
+    .body-copy { color: #D5E0F3; font-size: 13px; }
+    .muted-copy { color: #8C9CB2; font-size: 12px; }
+    .tab-page { background-color: #101722; border: 1px solid #27384D; border-radius: 12px; }
+    .tree-shell { background-color: #101722; border: 1px solid #27384D; border-radius: 12px; }
+    .combo-shell { background-color: #0E141D; color: #E8F0FF; border: 1px solid #334257; border-radius: 10px; }
+    .slider-theme { background-color: #2A3342; color: #7DD4FF; border-radius: 10px; }
+    .btn-primary { background-color: #1F83FF; color: #FFFFFF; border: 1px solid #1F83FF; border-radius: 10px; font-size: 13px; font-weight: bold; }
+    .btn-secondary { background-color: #283243; color: #EAF0FD; border: 1px solid #435269; border-radius: 10px; font-size: 13px; }
+    .btn-danger { background-color: #8E3142; color: #FFFFFF; border: 1px solid #B4475A; border-radius: 10px; font-size: 13px; }
+    .btn-quiet { background-color: #151C27; color: #CBD7E8; border: 1px solid #314054; border-radius: 10px; font-size: 13px; }
+    .readonly-shell { background-color: #1D2532; color: #95A7C2; }
+    .avatar { background-color: #1E80F7; color: #FFFFFF; border-radius: 19px; font-size: 14px; font-weight: bold; }
+    .rich-shell { background-color: #0E141D; border: 1px solid #27374B; border-radius: 12px; }
+
+</style>

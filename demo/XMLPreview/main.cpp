@@ -10,6 +10,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	ezui::XMLPreview form;
 	form.Show();
+	::SetForegroundWindow(form.GetWindowHandle());//设置为前景窗口
 	form.SetTopMost(true);
 
 	return app.Exec();

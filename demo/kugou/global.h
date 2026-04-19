@@ -1,33 +1,29 @@
 ﻿#pragma once
 #include "EzUI/EzUI.h"
-#include "EzUI/TextBox.h"
-#include "EzUI/BorderlessWindow.h"
-#include "EzUI/Application.h"
-#include "EzUI/UILoader.h"
-#include "EzUI/HLayout.h"
-#include "EzUI/Label.h"
-#include "EzUI/VListView.h"
-#include "EzUI/VLayout.h"
-#include "EzUI/Button.h"
-#include "EzUI/TabLayout.h"
-#include "EzUI/NotifyIcon.h"
-#include "EzUI/LayeredWindow.h"
-#include "EzUI/Task.h"
-#include "EzUI/UISelector.h"
-#include "EzUI/Animation.h"
-#include "EzUI/Frame.h"
 
-#include "WebClient.h"
-#include "JsonValue.h"
+#include "Common.h"
 #include "Util.h"
-#include "base64.h"
-#include "ConfigIni.h"
 
-#ifdef _DEBUG
-#pragma comment(lib,"Debug/Common.lib")
+
+#ifdef _WIN64
+
+#ifdef NDEBUG
+#pragma comment(lib,"x64/Common.lib")
 #else
-#pragma comment(lib,"Release/Common.lib")
+#pragma comment(lib,"x64/Commond.lib")
 #endif
+
+#else
+
+#ifdef NDEBUG
+#pragma comment(lib,"x86/Common.lib")
+#else
+#pragma comment(lib,"x86/Commond.lib")
+#endif
+
+#endif
+
+
 
 #include <random>
 class Random {
@@ -64,15 +60,13 @@ struct Song {
 
 namespace global {
 	extern int pageSize;
-	extern int page;
-	extern bool nextPage;
 
 	//歌曲长度转字符串显示
 	extern UIString toTimeStr(long dur);
 	//http对酷狗api的请求
 	extern int HttpGet(const UIString& url, UIString& resp);
 	//根据关键字进行歌曲搜索
-	extern std::vector<Song> SearchSongs(const UIString& keyword);
+	extern std::vector<Song> SearchSongs(const UIString& keyword, int page, bool* hasNextPage = nullptr);
 	//使用歌曲的AlbumId寻找查找对应的歌词
 	extern UIString GetSongLrc(const UIString& hash, const UIString& AlbumID = "");
 	//获取歌曲信息

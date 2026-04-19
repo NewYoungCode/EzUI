@@ -1,0 +1,115 @@
+<hbox id="playerDockRoot" items-align="mid" style="padding: 0px 16px 0px 16px;">
+    <hbox id="dockInfoWrap" width="220" height="52" items-align="mid">
+        <label id="dockCover" width="44" height="44"></label>
+
+        <vbox id="dockMetaWrap" width="152" height="44" items-align="left" style="margin: 0px 0px 0px 12px;">
+            <label id="dockTitle" width="100%" height="20" text="等待播放" ellipsis="..." class="dock-title" text-align="left"></label>
+            <label id="dockSinger" width="100%" height="16" text="选择一首歌开始播放" ellipsis="..." class="dock-copy dock-singer" text-align="left" style="margin: 4px 0px 0px 0px;"></label>
+        </vbox>
+    </hbox>
+
+    <spacer></spacer>
+
+    <vbox id="playControls" width="320" height="auto" items-align="mid">
+        <hbox width="auto" height="30" items-align="mid">
+            <label id="prevBtn" width="26" height="26" text="◀" class="player-nav-btn"></label>
+            <label id="playPauseBtn" width="42" height="30" text="▶" class="player-play-btn" style="margin: 0px 20px 0px 20px;"></label>
+            <label id="nextBtn" width="26" height="26" text="▶" class="player-nav-btn"></label>
+        </hbox>
+        <hbox width="100%" height="16" items-align="mid" style="margin: 6px 0px 0px 0px;">
+            <label id="elapsedLabel" width="34" height="14" text="00:00" class="dock-copy"></label>
+            <musicSeekBar id="progressSlider" height="12" value="0" min="0" max="100" class="progress-slider" style="margin: 0px 10px 0px 10px;"></musicSeekBar>
+            <label id="totalLabel" width="34" height="14" text="00:00" class="dock-copy"></label>
+        </hbox>
+    </vbox>
+
+    <spacer></spacer>
+
+    <hbox id="dockActionWrap" width="220" height="22" items-align="mid">
+        <spacer></spacer>
+        <label id="dockLikeBtn" size="auto" text="♡" class="dock-mini-btn" style="margin: 0px 0px 0px 12px; font-size: 20px;"></label>
+        <label width="32" height="20" text="HQ" class="quality-pill" style="margin: 0px 0px 0px 14px;"></label>
+        <label id="dockDownloadBtn" width="20" height="20" text="↓" class="dock-tool" style="margin: 0px 0px 0px 14px;"></label>
+        <label id="dockDetailBtn" width="20" height="20" text="词" class="dock-tool" style="margin: 0px 0px 0px 14px;"></label>
+    </hbox>
+</hbox>
+
+<style>
+    #playerDockRoot {
+        background-color: #1c1c1c;
+        border-radius: 16px;
+        border: 1px solid #2a2a2a;
+    }
+
+    #dockCover {
+        border-radius: 22px;
+        background-color: #313131;
+        background-image: url(res/assets/headImg.jpg);
+        cursor: pointer;
+    }
+
+    .dock-title {
+        color: #f5f5f5;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .dock-copy {
+        color: #aaaaaa;
+        font-size: 10px;
+    }
+
+    .dock-singer {
+        cursor: pointer;
+    }
+
+        .dock-singer:hover {
+            color: #ffffff;
+        }
+
+    .dock-mini-btn,
+    .dock-tool,
+    .player-nav-btn {
+        color: #d0d0d0;
+        font-family: "Segoe UI Symbol";
+        cursor: pointer;
+    }
+
+    .dock-mini-btn {
+        font-size: 13px;
+    }
+
+    .player-nav-btn {
+        font-size: 14px;
+    }
+
+    .player-play-btn {
+        background-color: #19df7f;
+        border-radius: 15px;
+        color: #0c1b12;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+        .player-play-btn:hover {
+            background-color: #23e889;
+        }
+
+    .progress-slider {
+        background-color: rgba(255,255,255,0.72);
+        color: #19df7f;
+    }
+
+    .quality-pill {
+        background-color: transparent;
+        border: 1px solid #19df7f;
+        border-radius: 6px;
+        color: #19df7f;
+        font-size: 11px;
+    }
+
+    .dock-tool {
+        font-size: 14px;
+    }
+</style>

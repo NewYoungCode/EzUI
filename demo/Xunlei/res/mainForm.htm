@@ -1,0 +1,1109 @@
+<vbox id="windowRoot" size="1026, 682">
+    <hbox id="appShell">
+        <vbox id="rail" width="72" items-align="top center">
+            <label id="brandLogo" width="42" height="42" text="XL" style="margin: 16px 0px 0px 0px;"></label>
+
+            <vbox id="primaryNavGroup" width="100%" height="auto" items-align="top center" style="margin: 20px 0px 0px 0px;">
+                <radiobutton id="navDownload" width="52" height="72" checked="true" tabcontrol="rootTabs" class="primary-nav-item">
+                    <vbox width="100%" height="100%" items-align="mid center" event="none">
+                        <label width="18" height="18" text="↓" class="primary-nav-icon" event="none"></label>
+                        <label width="100%" height="14" text="下载" class="primary-nav-text" event="none" style="margin: 8px 0px 0px 0px;"></label>
+                    </vbox>
+                </radiobutton>
+
+                <radiobutton id="navCloud" width="52" height="72" tabcontrol="rootTabs" class="primary-nav-item" style="margin: 8px 0px 0px 0px;">
+                    <vbox width="100%" height="100%" items-align="mid center" event="none">
+                        <label width="18" height="18" text="☁" class="primary-nav-icon" event="none"></label>
+                        <label width="100%" height="14" text="云盘" class="primary-nav-text" event="none" style="margin: 8px 0px 0px 0px;"></label>
+                    </vbox>
+                </radiobutton>
+
+                <radiobutton id="navGame" width="52" height="72" tabcontrol="rootTabs" class="primary-nav-item" style="margin: 8px 0px 0px 0px;">
+                    <vbox width="100%" height="100%" items-align="mid center" event="none">
+                        <label width="18" height="18" text="G" class="primary-nav-icon" event="none"></label>
+                        <label width="100%" height="14" text="游戏" class="primary-nav-text" event="none" style="margin: 8px 0px 0px 0px;"></label>
+                    </vbox>
+                </radiobutton>
+
+                <radiobutton id="navVip" width="52" height="72" tabcontrol="rootTabs" class="primary-nav-item" style="margin: 8px 0px 0px 0px;">
+                    <vbox width="100%" height="100%" items-align="mid center" event="none">
+                        <label width="18" height="18" text="V" class="primary-nav-icon" event="none"></label>
+                        <label width="100%" height="14" text="会员" class="primary-nav-text" event="none" style="margin: 8px 0px 0px 0px;"></label>
+                    </vbox>
+                </radiobutton>
+
+                <radiobutton id="navMore" width="52" height="72" tabcontrol="rootTabs" class="primary-nav-item" style="margin: 8px 0px 0px 0px;">
+                    <vbox width="100%" height="100%" items-align="mid center" event="none">
+                        <label width="18" height="18" text="…" class="primary-nav-icon" event="none"></label>
+                        <label width="100%" height="14" text="更多" class="primary-nav-text" event="none" style="margin: 8px 0px 0px 0px;"></label>
+                    </vbox>
+                    <label width="8" height="8" x="36" y="12" class="rail-dot" event="none"></label>
+                </radiobutton>
+            </vbox>
+
+            <spacer></spacer>
+
+            <label id="railBottomBtn" width="38" height="38" text="+" style="margin: 0px 0px 14px 0px;"></label>
+        </vbox>
+
+        <vbox id="mainColumn">
+            <hbox id="topBar" height="58" items-align="mid left" action="title" style="padding: 0px 22px 0px 22px;">
+                <hbox id="searchShell" width="344" height="34" items-align="mid left">
+                    <label width="16" height="16" text="⌕" class="search-icon" event="none"></label>
+                    <textbox id="searchBox" height="28" placeholder="搜索全网、下载、云盘或收藏地址" class="search-box" style="margin: 0px 0px 0px 8px;"></textbox>
+                </hbox>
+
+                <spacer></spacer>
+
+                <label width="40" height="24" text="7天" class="vip-days" event="none"></label>
+
+                <control width="34" height="34" style="margin: 0px 0px 0px 14px;">
+                    <label width="100%" height="100%" text="Y" class="avatar-chip" event="none"></label>
+                    <label width="14" height="14" x="20" y="20" text="V" class="avatar-badge" event="none"></label>
+                </control>
+
+                <label width="84" height="28" text="开通会员" class="vip-open-btn" style="margin: 0px 0px 0px 12px;" event="none"></label>
+
+                <label width="28" height="28" text="◌" class="top-icon-btn" style="margin: 0px 0px 0px 14px;"></label>
+                <label width="28" height="28" text="≡" class="top-icon-btn" style="margin: 0px 0px 0px 8px;"></label>
+
+                <hbox width="92" height="24" items-align="mid left" style="margin: 0px 0px 0px 16px;">
+                    <label width="24" height="24" text="0" action="mini" class="window-btn window-font"></label>
+                    <label width="24" height="24" text="1" action="max" class="window-btn window-font" style="margin: 0px 0px 0px 10px;"></label>
+                    <label width="24" height="24" text="r" action="close" class="window-btn window-font close-btn" style="margin: 0px 0px 0px 10px;"></label>
+                </hbox>
+            </hbox>
+
+            <tabcontrol id="rootTabs">
+                <hbox>
+                    <vbox id="downloadSidebar" width="176" class="sub-sidebar">
+                        <label width="100%" height="24" text="我的下载" class="sub-sidebar-title" style="margin: 22px 0px 0px 0px;"></label>
+
+                        <vbox id="downloadNavGroup" width="100%" height="auto" style="margin: 14px 0px 0px 0px;">
+                            <radiobutton width="148" height="40" checked="true" tabcontrol="downloadTabs" class="subnav-item">
+                                <hbox width="100%" height="100%" items-align="mid left" event="none">
+                                    <label width="18" height="18" text="↓" class="subnav-icon" event="none"></label>
+                                    <label width="auto" height="18" text="下载中" class="subnav-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                                    <spacer></spacer>
+                                    <label width="auto" height="18" text="3" class="subnav-count" event="none"></label>
+                                </hbox>
+                            </radiobutton>
+
+                            <radiobutton width="148" height="40" tabcontrol="downloadTabs" class="subnav-item" style="margin: 6px 0px 0px 0px;">
+                                <hbox width="100%" height="100%" items-align="mid left" event="none">
+                                    <label width="18" height="18" text="○" class="subnav-icon" event="none"></label>
+                                    <label width="auto" height="18" text="已完成" class="subnav-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                                    <spacer></spacer>
+                                    <label width="auto" height="18" text="30" class="subnav-count" event="none"></label>
+                                </hbox>
+                            </radiobutton>
+
+                            <radiobutton width="148" height="40" tabcontrol="downloadTabs" class="subnav-item" style="margin: 6px 0px 0px 0px;">
+                                <hbox width="100%" height="100%" items-align="mid left" event="none">
+                                    <label width="18" height="18" text="☁" class="subnav-icon" event="none"></label>
+                                    <label width="auto" height="18" text="云添加" class="subnav-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                                    <spacer></spacer>
+                                    <label width="auto" height="18" text="24" class="subnav-count" event="none"></label>
+                                </hbox>
+                            </radiobutton>
+                        </vbox>
+
+                        <label class="side-divider" style="margin: 14px 0px 0px 0px;"></label>
+
+                        <label width="100%" height="18" text="常用" class="side-caption" style="margin: 18px 0px 0px 0px;"></label>
+
+                        <hbox width="148" height="36" items-align="mid left" class="side-link" style="margin: 12px 0px 0px 0px;">
+                            <label width="18" height="18" text="◔" class="side-link-icon" event="none"></label>
+                            <label width="auto" height="18" text="片库" class="side-link-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                        </hbox>
+
+                        <hbox width="148" height="36" items-align="mid left" class="side-link" style="margin: 6px 0px 0px 0px;">
+                            <label width="18" height="18" text="⇄" class="side-link-icon" event="none"></label>
+                            <label width="auto" height="18" text="三方网盘" class="side-link-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                        </hbox>
+
+                        <hbox width="148" height="36" items-align="mid left" class="side-link" style="margin: 6px 0px 0px 0px;">
+                            <label width="18" height="18" text="⌦" class="side-link-icon" event="none"></label>
+                            <label width="auto" height="18" text="回收站" class="side-link-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                        </hbox>
+
+                        <label class="side-divider" style="margin: 18px 0px 0px 0px;"></label>
+
+                        <hbox width="100%" height="18" items-align="mid left" style="margin: 18px 0px 0px 0px;">
+                            <label width="auto" height="18" text="私人空间" class="side-caption" event="none"></label>
+                            <label width="auto" height="18" text="◌" class="side-eye" event="none" style="margin: 0px 0px 0px 8px;"></label>
+                        </hbox>
+
+                        <hbox width="148" height="36" items-align="mid left" class="side-link" style="margin: 12px 0px 0px 0px;">
+                            <label width="18" height="18" text="⇩" class="side-link-icon" event="none"></label>
+                            <label width="auto" height="18" text="下载中" class="side-link-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                        </hbox>
+
+                        <hbox width="148" height="36" items-align="mid left" class="side-link" style="margin: 6px 0px 0px 0px;">
+                            <label width="18" height="18" text="⊙" class="side-link-icon" event="none"></label>
+                            <label width="auto" height="18" text="已完成" class="side-link-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                        </hbox>
+
+                        <spacer></spacer>
+                    </vbox>
+
+                    <tabcontrol id="downloadTabs">
+                        <vbox class="content-page" style="padding: 34px 30px 12px 40px;">
+                            <hbox height="34" items-align="mid left">
+                                <label width="auto" height="28" text="已暂停" class="page-title"></label>
+                                <spacer></spacer>
+                                <label width="32" height="32" text="↓" class="tool-btn"></label>
+                                <label width="32" height="32" text="≡" class="tool-btn" style="margin: 0px 0px 0px 10px;"></label>
+                                <label width="32" height="32" text="…" class="tool-btn" style="margin: 0px 0px 0px 10px;"></label>
+                                <label width="88" height="32" text="+ 新建" class="tool-btn-primary" style="margin: 0px 0px 0px 12px;"></label>
+                            </hbox>
+
+                            <vbox width="100%" height="auto" style="margin: 22px 0px 0px 0px;">
+                                <hbox class="download-item" items-align="mid left">
+                                    <label width="36" height="36" text="ZIP" class="file-icon icon-zip"></label>
+                                    <vbox height="auto" style="margin: 0px 0px 0px 14px;">
+                                        <label height="20" text="TB322FC_CN_OPEN_USER_Q00041.1_V_ZUXOS_1.1.11.263_ST_251105.7z" ellipsis="..." align="left" class="file-name"></label>
+                                        <label height="16" text="4.0MB/9.23GB" align="left" class="meta-text" style="margin: 8px 0px 0px 0px;"></label>
+                                        <control height="3" class="progress-track" style="margin: 10px 0px 0px 0px;">
+                                            <label width="42" height="100%" class="progress-fill" event="none"></label>
+                                        </control>
+                                    </vbox>
+                                    <label width="72" height="18" text="已暂停" align="right" class="status-text" event="none"></label>
+                                    <label width="24" height="24" text="↓" class="row-action" style="margin: 0px 0px 0px 20px;"></label>
+                                </hbox>
+
+                                <hbox class="download-item" items-align="mid left" style="margin: 18px 0px 0px 0px;">
+                                    <label width="36" height="36" text="ZIP" class="file-icon icon-zip"></label>
+                                    <vbox height="auto" style="margin: 0px 0px 0px 14px;">
+                                        <label height="20" text="TB320FC_ROW_OPEN_USER_Q00031.0_V_ZUI_17.0.313_ST_250808.zip" ellipsis="..." align="left" class="file-name"></label>
+                                        <label height="16" text="13.7MB/4.89GB" align="left" class="meta-text" style="margin: 8px 0px 0px 0px;"></label>
+                                        <control height="3" class="progress-track" style="margin: 10px 0px 0px 0px;">
+                                            <label width="64" height="100%" class="progress-fill" event="none"></label>
+                                        </control>
+                                    </vbox>
+                                    <label width="72" height="18" text="已暂停" align="right" class="status-text" event="none"></label>
+                                    <label width="24" height="24" text="↓" class="row-action" style="margin: 0px 0px 0px 20px;"></label>
+                                </hbox>
+
+                                <hbox class="download-item" items-align="mid left" style="margin: 18px 0px 0px 0px;">
+                                    <label width="36" height="36" text="ZIP" class="file-icon icon-zip"></label>
+                                    <vbox height="auto" style="margin: 0px 0px 0px 14px;">
+                                        <label height="20" text="TB321FU_ROW_OPEN_USER_Q00002.0_W_ZUI_17.5.10.031_ST_251125.zip" ellipsis="..." align="left" class="file-name"></label>
+                                        <label height="16" text="26.5MB/6.52GB" align="left" class="meta-text" style="margin: 8px 0px 0px 0px;"></label>
+                                        <control height="3" class="progress-track" style="margin: 10px 0px 0px 0px;">
+                                            <label width="81" height="100%" class="progress-fill" event="none"></label>
+                                        </control>
+                                    </vbox>
+                                    <label width="72" height="18" text="已暂停" align="right" class="status-text" event="none"></label>
+                                    <label width="24" height="24" text="↓" class="row-action" style="margin: 0px 0px 0px 20px;"></label>
+                                </hbox>
+                            </vbox>
+
+                            <spacer></spacer>
+
+                            <hbox height="24" items-align="mid left" class="footer-links">
+                                <label width="auto" height="18" text="下载计划" class="footer-link"></label>
+                                <label width="auto" height="18" text="远程下载" class="footer-link" style="margin: 0px 0px 0px 18px;"></label>
+                                <label width="auto" height="18" text="万能下载插件" class="footer-link" style="margin: 0px 0px 0px 18px;"></label>
+                                <label width="auto" height="18" text="下载检测" class="footer-link" style="margin: 0px 0px 0px 18px;"></label>
+                            </hbox>
+                        </vbox>
+
+                        <vbox class="content-page" style="padding: 34px 30px 12px 40px;">
+                            <hbox height="34" items-align="mid left">
+                                <label width="auto" height="28" text="已完成" class="page-title"></label>
+                                <spacer></spacer>
+                                <label width="32" height="32" text="开" class="tool-btn"></label>
+                                <label width="32" height="32" text="删" class="tool-btn" style="margin: 0px 0px 0px 10px;"></label>
+                                <label width="32" height="32" text="列" class="tool-btn" style="margin: 0px 0px 0px 10px;"></label>
+                                <label width="32" height="32" text="…" class="tool-btn" style="margin: 0px 0px 0px 10px;"></label>
+                                <label width="88" height="32" text="+ 新建" class="tool-btn-primary" style="margin: 0px 0px 0px 12px;"></label>
+                            </hbox>
+
+                            <vbox width="100%" height="auto" style="margin: 18px 0px 0px 0px;">
+                                <hbox class="completed-item completed-item-selected" items-align="mid left">
+                                    <label width="36" height="36" text="ZIP" class="file-icon icon-zip"></label>
+                                    <vbox height="auto" style="margin: 0px 0px 0px 14px;">
+                                        <label height="20" text="L70081_CN_SECURE_USER_Q00017.0_R_ZUI_12.5.591_ST_210514_qpst.zip" ellipsis="..." align="left" class="file-name-muted"></label>
+                                        <hbox height="16" items-align="mid left" style="margin: 8px 0px 0px 0px;">
+                                            <label width="auto" height="16" text="2026-03-19 19:50" class="meta-text" event="none"></label>
+                                            <label width="auto" height="16" text="3.92GB" class="meta-text" event="none" style="margin: 0px 0px 0px 18px;"></label>
+                                            <label width="auto" height="16" text="文件已移除" class="warn-text" event="none" style="margin: 0px 0px 0px 18px;"></label>
+                                        </hbox>
+                                    </vbox>
+                                    <label width="24" height="24" text="锁" class="row-action" style="margin: 0px 0px 0px 18px;"></label>
+                                    <label width="24" height="24" text="×" class="row-action" style="margin: 0px 0px 0px 10px;"></label>
+                                </hbox>
+
+                                <hbox class="completed-item" items-align="mid left" style="margin: 10px 0px 0px 0px;">
+                                    <label width="36" height="36" text="ZIP" class="file-icon icon-zip"></label>
+                                    <vbox height="auto" style="margin: 0px 0px 0px 14px;">
+                                        <label height="20" text="L70081_ROW_SECURE_USER_Q00017.0_R_ROW_12.5.188_ST_210819_qpst.zip" ellipsis="..." align="left" class="file-name-muted"></label>
+                                        <hbox height="16" items-align="mid left" style="margin: 8px 0px 0px 0px;">
+                                            <label width="auto" height="16" text="2026-03-19 17:37" class="meta-text" event="none"></label>
+                                            <label width="auto" height="16" text="3.14GB" class="meta-text" event="none" style="margin: 0px 0px 0px 18px;"></label>
+                                            <label width="auto" height="16" text="文件已移除" class="warn-text" event="none" style="margin: 0px 0px 0px 18px;"></label>
+                                        </hbox>
+                                    </vbox>
+                                    <label width="24" height="24" text="锁" class="row-action" style="margin: 0px 0px 0px 18px;"></label>
+                                    <label width="24" height="24" text="×" class="row-action" style="margin: 0px 0px 0px 10px;"></label>
+                                </hbox>
+
+                                <hbox class="completed-item" items-align="mid left" style="margin: 10px 0px 0px 0px;">
+                                    <label width="36" height="36" text="7Z" class="file-icon icon-7z"></label>
+                                    <vbox height="auto" style="margin: 0px 0px 0px 14px;">
+                                        <label height="20" text="y700-gen4-c16.7z" ellipsis="..." align="left" class="file-name"></label>
+                                        <hbox height="16" items-align="mid left" style="margin: 8px 0px 0px 0px;">
+                                            <label width="auto" height="16" text="2026-03-18 01:42" class="meta-text" event="none"></label>
+                                            <label width="auto" height="16" text="7.34GB" class="meta-text" event="none" style="margin: 0px 0px 0px 18px;"></label>
+                                        </hbox>
+                                    </vbox>
+                                    <label width="24" height="24" text="锁" class="row-action" style="margin: 0px 0px 0px 18px;"></label>
+                                    <label width="24" height="24" text="开" class="row-action" style="margin: 0px 0px 0px 10px;"></label>
+                                </hbox>
+
+                                <hbox class="completed-item" items-align="mid left" style="margin: 10px 0px 0px 0px;">
+                                    <label width="36" height="36" text="EXE" class="file-icon icon-exe"></label>
+                                    <vbox height="auto" style="margin: 0px 0px 0px 14px;">
+                                        <label height="20" text="360TS_Setup_11.0.0.1302.exe" ellipsis="..." align="left" class="file-name"></label>
+                                        <hbox height="16" items-align="mid left" style="margin: 8px 0px 0px 0px;">
+                                            <label width="auto" height="16" text="2026-02-17 19:17" class="meta-text" event="none"></label>
+                                            <label width="auto" height="16" text="109.45MB" class="meta-text" event="none" style="margin: 0px 0px 0px 18px;"></label>
+                                        </hbox>
+                                    </vbox>
+                                    <label width="24" height="24" text="锁" class="row-action" style="margin: 0px 0px 0px 18px;"></label>
+                                    <label width="24" height="24" text="开" class="row-action" style="margin: 0px 0px 0px 10px;"></label>
+                                </hbox>
+
+                                <hbox class="completed-item" items-align="mid left" style="margin: 10px 0px 0px 0px;">
+                                    <label width="36" height="36" text="ISO" class="file-icon icon-iso"></label>
+                                    <vbox height="auto" style="margin: 0px 0px 0px 14px;">
+                                        <label height="20" text="ubuntu-22.04.5-desktop-amd64.iso" ellipsis="..." align="left" class="file-name"></label>
+                                        <hbox height="16" items-align="mid left" style="margin: 8px 0px 0px 0px;">
+                                            <label width="auto" height="16" text="2026-02-17 12:54" class="meta-text" event="none"></label>
+                                            <label width="auto" height="16" text="4.44GB" class="meta-text" event="none" style="margin: 0px 0px 0px 18px;"></label>
+                                        </hbox>
+                                    </vbox>
+                                    <label width="24" height="24" text="锁" class="row-action" style="margin: 0px 0px 0px 18px;"></label>
+                                    <label width="24" height="24" text="开" class="row-action" style="margin: 0px 0px 0px 10px;"></label>
+                                </hbox>
+                            </vbox>
+
+                            <spacer></spacer>
+
+                            <hbox height="24" items-align="mid left" class="footer-links">
+                                <label width="auto" height="18" text="下载计划" class="footer-link"></label>
+                                <label width="auto" height="18" text="远程下载" class="footer-link" style="margin: 0px 0px 0px 18px;"></label>
+                                <label width="auto" height="18" text="万能下载插件" class="footer-link" style="margin: 0px 0px 0px 18px;"></label>
+                                <label width="auto" height="18" text="下载检测" class="footer-link" style="margin: 0px 0px 0px 18px;"></label>
+                            </hbox>
+                        </vbox>
+
+                        <vbox class="content-page" style="padding: 34px 30px 18px 40px;">
+                            <hbox height="34" items-align="mid left">
+                                <label width="auto" height="28" text="云添加" class="page-title"></label>
+                                <label width="auto" height="20" text="剩余云添加次数 2次 &gt;" class="page-accent" event="none" style="margin: 4px 0px 0px 12px;"></label>
+                                <spacer></spacer>
+                                <label width="32" height="32" text="…" class="tool-btn"></label>
+                                <label width="88" height="32" text="+ 新建" class="tool-btn-primary" style="margin: 0px 0px 0px 12px;"></label>
+                            </hbox>
+
+                            <vbox width="100%" height="auto" style="margin: 18px 0px 0px 0px;">
+                                <hbox class="cloud-add-item" items-align="mid left">
+                                    <label width="36" height="36" text="ZIP" class="file-icon icon-zip"></label>
+                                    <vbox height="auto" style="margin: 0px 0px 0px 14px;">
+                                        <label height="20" text="munch_images_OS1.0.8.0.ULMCNXM_20241216.0000.00_cn_69151f4fa0.tgz" ellipsis="..." align="left" class="file-name"></label>
+                                        <hbox height="16" items-align="mid left" style="margin: 8px 0px 0px 0px;">
+                                            <label width="auto" height="16" text="2025-04-05 13:33" class="meta-text" event="none"></label>
+                                            <label width="auto" height="16" text="5.98GB" class="meta-text" event="none" style="margin: 0px 0px 0px 18px;"></label>
+                                            <label width="auto" height="16" text="已就绪" class="ok-text" event="none" style="margin: 0px 0px 0px 18px;"></label>
+                                        </hbox>
+                                    </vbox>
+                                    <label width="24" height="24" text="开" class="row-action" style="margin: 0px 0px 0px 18px;"></label>
+                                    <label width="24" height="24" text="删" class="row-action" style="margin: 0px 0px 0px 10px;"></label>
+                                </hbox>
+
+                                <hbox class="cloud-add-item" items-align="mid left" style="margin: 12px 0px 0px 0px;">
+                                    <label width="36" height="36" text="EXE" class="file-icon icon-exe"></label>
+                                    <vbox height="auto" style="margin: 0px 0px 0px 14px;">
+                                        <label height="20" text="mu_visual_studio_professional_2017_version_15.3_x86_x64_11100064.exe" ellipsis="..." align="left" class="file-name"></label>
+                                        <hbox height="16" items-align="mid left" style="margin: 8px 0px 0px 0px;">
+                                            <label width="auto" height="16" text="2021-11-05 17:12" class="meta-text" event="none"></label>
+                                            <label width="auto" height="16" text="1.0MB" class="meta-text" event="none" style="margin: 0px 0px 0px 18px;"></label>
+                                            <label width="auto" height="16" text="已就绪" class="ok-text" event="none" style="margin: 0px 0px 0px 18px;"></label>
+                                        </hbox>
+                                    </vbox>
+                                    <label width="24" height="24" text="开" class="row-action" style="margin: 0px 0px 0px 18px;"></label>
+                                    <label width="24" height="24" text="删" class="row-action" style="margin: 0px 0px 0px 10px;"></label>
+                                </hbox>
+
+                                <hbox class="cloud-add-item" items-align="mid left" style="margin: 12px 0px 0px 0px;">
+                                    <label width="36" height="36" text="EXE" class="file-icon icon-soft"></label>
+                                    <vbox height="auto" style="margin: 0px 0px 0px 14px;">
+                                        <label height="20" text="Win320penSSL-3_0_0.exe" ellipsis="..." align="left" class="file-name-muted"></label>
+                                        <label height="16" text="云盘文件已删除" align="left" class="warn-text" style="margin: 8px 0px 0px 0px;"></label>
+                                    </vbox>
+                                    <label width="24" height="24" text="删" class="row-action" style="margin: 0px 0px 0px 18px;"></label>
+                                </hbox>
+
+                                <hbox class="cloud-add-item" items-align="mid left" style="margin: 12px 0px 0px 0px;">
+                                    <label width="36" height="36" text="EXE" class="file-icon icon-soft"></label>
+                                    <vbox height="auto" style="margin: 0px 0px 0px 14px;">
+                                        <label height="20" text="Win320penSSL-1_1_1L.exe" ellipsis="..." align="left" class="file-name-muted"></label>
+                                        <label height="16" text="云盘文件已删除" align="left" class="warn-text" style="margin: 8px 0px 0px 0px;"></label>
+                                    </vbox>
+                                    <label width="24" height="24" text="删" class="row-action" style="margin: 0px 0px 0px 18px;"></label>
+                                </hbox>
+
+                                <hbox class="cloud-add-item" items-align="mid left" style="margin: 12px 0px 0px 0px;">
+                                    <label width="36" height="36" text="?" class="file-icon icon-unknown"></label>
+                                    <vbox height="auto" style="margin: 0px 0px 0px 14px;">
+                                        <label height="20" text="attachment; filename=cmake-3.22.0-rc1-windows-i386.msi" ellipsis="..." align="left" class="file-name-muted"></label>
+                                        <label height="16" text="云盘文件已删除" align="left" class="warn-text" style="margin: 8px 0px 0px 0px;"></label>
+                                    </vbox>
+                                    <label width="24" height="24" text="删" class="row-action" style="margin: 0px 0px 0px 18px;"></label>
+                                </hbox>
+                            </vbox>
+                        </vbox>
+                    </tabcontrol>
+                </hbox>
+
+                <hbox>
+                    <vbox id="cloudSidebar" width="176" class="sub-sidebar">
+                        <label width="100%" height="24" text="我的云盘" class="sub-sidebar-title" style="margin: 22px 0px 0px 0px;"></label>
+
+                        <vbox id="cloudNavGroup" width="100%" height="auto" style="margin: 14px 0px 0px 0px;">
+                            <radiobutton width="148" height="40" checked="true" tabcontrol="cloudTabs" class="subnav-item">
+                                <hbox width="100%" height="100%" items-align="mid left" event="none">
+                                    <label width="18" height="18" text="⊡" class="subnav-icon" event="none"></label>
+                                    <label width="auto" height="18" text="全部文件" class="subnav-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                                    <spacer></spacer>
+                                    <label width="auto" height="18" text="∨" class="subnav-count" event="none"></label>
+                                </hbox>
+                            </radiobutton>
+
+                            <radiobutton width="148" height="40" tabcontrol="cloudTabs" class="subnav-item" style="margin: 6px 0px 0px 0px;">
+                                <hbox width="100%" height="100%" items-align="mid left" event="none">
+                                    <label width="18" height="18" text="◷" class="subnav-icon" event="none"></label>
+                                    <label width="auto" height="18" text="最近" class="subnav-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                                </hbox>
+                            </radiobutton>
+
+                            <radiobutton width="148" height="40" tabcontrol="cloudTabs" class="subnav-item" style="margin: 6px 0px 0px 0px;">
+                                <hbox width="100%" height="100%" items-align="mid left" event="none">
+                                    <label width="18" height="18" text="▶" class="subnav-icon" event="none"></label>
+                                    <label width="auto" height="18" text="视频" class="subnav-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                                </hbox>
+                            </radiobutton>
+
+                            <radiobutton width="148" height="40" tabcontrol="cloudTabs" class="subnav-item" style="margin: 6px 0px 0px 0px;">
+                                <hbox width="100%" height="100%" items-align="mid left" event="none">
+                                    <label width="18" height="18" text="▣" class="subnav-icon" event="none"></label>
+                                    <label width="auto" height="18" text="图片" class="subnav-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                                </hbox>
+                            </radiobutton>
+                        </vbox>
+
+                        <label class="side-divider" style="margin: 14px 0px 0px 0px;"></label>
+
+                        <label width="100%" height="18" text="常用" class="side-caption" style="margin: 18px 0px 0px 0px;"></label>
+
+                        <hbox width="148" height="36" items-align="mid left" class="side-link" style="margin: 12px 0px 0px 0px;">
+                            <label width="18" height="18" text="↻" class="side-link-icon" event="none"></label>
+                            <label width="auto" height="18" text="云盘转存" class="side-link-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                        </hbox>
+
+                        <hbox width="148" height="36" items-align="mid left" class="side-link" style="margin: 6px 0px 0px 0px;">
+                            <label width="18" height="18" text="⇪" class="side-link-icon" event="none"></label>
+                            <label width="auto" height="18" text="我的分享" class="side-link-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                        </hbox>
+
+                        <hbox width="148" height="36" items-align="mid left" class="side-link" style="margin: 6px 0px 0px 0px;">
+                            <label width="18" height="18" text="⌦" class="side-link-icon" event="none"></label>
+                            <label width="auto" height="18" text="回收站" class="side-link-text" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                        </hbox>
+
+                        <spacer></spacer>
+                    </vbox>
+
+                    <tabcontrol id="cloudTabs">
+                        <vbox class="content-page" style="padding: 34px 30px 18px 40px;">
+                            <hbox height="34" items-align="mid left">
+                                <label width="auto" height="28" text="全部文件" class="page-title"></label>
+                                <spacer></spacer>
+                                <label width="auto" height="20" text="共 5 项" class="table-meta" event="none"></label>
+                                <label width="32" height="32" text="传" class="tool-btn" style="margin: 0px 0px 0px 18px;"></label>
+                                <label width="32" height="32" text="列" class="tool-btn" style="margin: 0px 0px 0px 10px;"></label>
+                                <label width="88" height="32" text="+ 添加" class="tool-btn-primary" style="margin: 0px 0px 0px 12px;"></label>
+                            </hbox>
+
+                            <hbox class="table-header" items-align="mid left" style="margin: 26px 0px 0px 0px;">
+                                <label width="34" height="18" text="□" class="table-header-check" event="none"></label>
+                                <label height="18" text="文件名" class="table-header-text" align="left" event="none"></label>
+                                <label width="108" height="18" text="大小" class="table-header-text" align="center" event="none"></label>
+                                <label width="172" height="18" text="修改时间" class="table-header-text" align="center" event="none"></label>
+                            </hbox>
+
+                            <vbox width="100%" height="auto" style="margin: 12px 0px 0px 0px;">
+                                <hbox class="disk-row" items-align="mid left">
+                                    <label width="34" height="18" text="□" class="disk-check" event="none"></label>
+                                    <label width="34" height="34" text="DIR" class="file-icon icon-folder" event="none"></label>
+                                    <label height="20" text="我的转存" ellipsis="..." align="left" class="file-name" style="margin: 0px 0px 0px 14px;" event="none"></label>
+                                    <label width="108" height="18" text="-" class="disk-meta" event="none"></label>
+                                    <label width="172" height="18" text="2025-02-22 05:03" class="disk-meta" event="none"></label>
+                                </hbox>
+
+                                <hbox class="disk-row" items-align="mid left">
+                                    <label width="34" height="18" text="□" class="disk-check" event="none"></label>
+                                    <label width="34" height="34" text="DIR" class="file-icon icon-folder" event="none"></label>
+                                    <label height="20" text="我的资源" ellipsis="..." align="left" class="file-name" style="margin: 0px 0px 0px 14px;" event="none"></label>
+                                    <label width="108" height="18" text="-" class="disk-meta" event="none"></label>
+                                    <label width="172" height="18" text="2025-02-22 05:03" class="disk-meta" event="none"></label>
+                                </hbox>
+
+                                <hbox class="disk-row" items-align="mid left">
+                                    <label width="34" height="18" text="□" class="disk-check" event="none"></label>
+                                    <label width="34" height="34" text="DIR" class="file-icon icon-folder" event="none"></label>
+                                    <label height="20" text="充电" ellipsis="..." align="left" class="file-name" style="margin: 0px 0px 0px 14px;" event="none"></label>
+                                    <label width="108" height="18" text="-" class="disk-meta" event="none"></label>
+                                    <label width="172" height="18" text="2025-02-22 05:02" class="disk-meta" event="none"></label>
+                                </hbox>
+
+                                <hbox class="disk-row" items-align="mid left">
+                                    <label width="34" height="18" text="□" class="disk-check" event="none"></label>
+                                    <label width="34" height="34" text="ZIP" class="file-icon icon-zip" event="none"></label>
+                                    <label height="20" text="munch_images_OS1.0.8.0.ULMCNXM_20241216.0000.00..." ellipsis="..." align="left" class="file-name" style="margin: 0px 0px 0px 14px;" event="none"></label>
+                                    <label width="108" height="18" text="6.0GB" class="disk-meta" event="none"></label>
+                                    <label width="172" height="18" text="2025-04-05 13:33" class="disk-meta" event="none"></label>
+                                </hbox>
+
+                                <hbox class="disk-row" items-align="mid left">
+                                    <label width="34" height="18" text="□" class="disk-check" event="none"></label>
+                                    <label width="34" height="34" text="EXE" class="file-icon icon-exe" event="none"></label>
+                                    <label height="20" text="mu_visual_studio_professional_2017_version_15.3_x86_x..." ellipsis="..." align="left" class="file-name" style="margin: 0px 0px 0px 14px;" event="none"></label>
+                                    <label width="108" height="18" text="1.0MB" class="disk-meta" event="none"></label>
+                                    <label width="172" height="18" text="2021-11-05 17:12" class="disk-meta" event="none"></label>
+                                </hbox>
+                            </vbox>
+
+                            <spacer></spacer>
+
+                            <hbox height="38" items-align="mid left">
+                                <label width="auto" height="18" text="云盘空间: 6.0GB / 10.0GB" class="footer-storage" event="none"></label>
+                                <label width="auto" height="18" text="扩容 &gt;" class="footer-link" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                                <spacer></spacer>
+                                <hbox width="86" height="34" items-align="mid center" class="expand-pill">
+                                    <label width="18" height="18" text="↑" class="expand-icon" event="none"></label>
+                                    <label width="auto" height="18" text="展开" class="expand-text" event="none" style="margin: 0px 0px 0px 6px;"></label>
+                                </hbox>
+                            </hbox>
+                        </vbox>
+
+                        <vbox class="content-page" style="padding: 34px 30px 18px 40px;">
+                            <label width="auto" height="28" text="最近" class="page-title"></label>
+                            <vbox width="100%" height="auto" class="placeholder-card" style="margin: 28px 0px 0px 0px;">
+                                <label width="100%" height="20" text="最近访问" class="placeholder-title" event="none"></label>
+                                <label width="100%" height="auto" text="这里放两条最近访问的假数据，主要用于展示二级导航切页结构。" align="left" class="placeholder-copy" event="none" style="margin: 10px 0px 0px 0px;"></label>
+                                <hbox class="mini-row" items-align="mid left" style="margin: 18px 0px 0px 0px;">
+                                    <label width="34" height="34" text="ZIP" class="file-icon icon-zip" event="none"></label>
+                                    <vbox height="auto" style="margin: 0px 0px 0px 14px;">
+                                        <label height="20" text="firmware_toolkit_beta.zip" ellipsis="..." align="left" class="file-name" event="none"></label>
+                                        <label height="16" text="5分钟前访问" align="left" class="meta-text" event="none" style="margin: 6px 0px 0px 0px;"></label>
+                                    </vbox>
+                                </hbox>
+                                <hbox class="mini-row" items-align="mid left" style="margin: 12px 0px 0px 0px;">
+                                    <label width="34" height="34" text="DIR" class="file-icon icon-folder" event="none"></label>
+                                    <vbox height="auto" style="margin: 0px 0px 0px 14px;">
+                                        <label height="20" text="产品设计稿" ellipsis="..." align="left" class="file-name" event="none"></label>
+                                        <label height="16" text="今天 09:24" align="left" class="meta-text" event="none" style="margin: 6px 0px 0px 0px;"></label>
+                                    </vbox>
+                                </hbox>
+                            </vbox>
+                        </vbox>
+
+                        <vbox class="content-page" style="padding: 34px 30px 18px 40px;">
+                            <label width="auto" height="28" text="视频" class="page-title"></label>
+                            <vbox width="100%" height="auto" class="placeholder-card" style="margin: 28px 0px 0px 0px;">
+                                <label width="100%" height="20" text="视频分类" class="placeholder-title" event="none"></label>
+                                <label width="100%" height="auto" text="当前 demo 先保留结构，后续可以继续往这个页签里加视频在线播放、封面和排序栏。" align="left" class="placeholder-copy" event="none" style="margin: 10px 0px 0px 0px;"></label>
+                            </vbox>
+                        </vbox>
+
+                        <vbox class="content-page" style="padding: 34px 30px 18px 40px;">
+                            <label width="auto" height="28" text="图片" class="page-title"></label>
+                            <vbox width="100%" height="auto" class="placeholder-card" style="margin: 28px 0px 0px 0px;">
+                                <label width="100%" height="20" text="图片分类" class="placeholder-title" event="none"></label>
+                                <label width="100%" height="auto" text="这里同样先按迅雷云盘的页面节奏预留位置，方便后续继续往 EzUI 宫格或列表里扩。" align="left" class="placeholder-copy" event="none" style="margin: 10px 0px 0px 0px;"></label>
+                            </vbox>
+                        </vbox>
+                    </tabcontrol>
+                </hbox>
+
+                <vbox class="placeholder-page" items-align="mid center">
+                    <vbox width="420" height="auto" class="placeholder-card" style="padding: 24px 24px 24px 24px;">
+                        <label width="100%" height="24" text="游戏中心" class="placeholder-title" event="none"></label>
+                        <label width="100%" height="auto" text="这个页签先做占位，保持一级导航和截图里的入口结构一致。" align="left" class="placeholder-copy" event="none" style="margin: 12px 0px 0px 0px;"></label>
+                    </vbox>
+                </vbox>
+
+                <vbox class="placeholder-page" items-align="mid center">
+                    <vbox width="420" height="auto" class="placeholder-card" style="padding: 24px 24px 24px 24px;">
+                        <label width="100%" height="24" text="会员中心" class="placeholder-title" event="none"></label>
+                        <label width="100%" height="auto" text="后续如果你想继续补，就可以在这里接套餐卡片、权益列表和活动入口。" align="left" class="placeholder-copy" event="none" style="margin: 12px 0px 0px 0px;"></label>
+                    </vbox>
+                </vbox>
+
+                <vbox class="placeholder-page" items-align="mid center">
+                    <vbox width="420" height="auto" class="placeholder-card" style="padding: 24px 24px 24px 24px;">
+                        <label width="100%" height="24" text="更多功能" class="placeholder-title" event="none"></label>
+                        <label width="100%" height="auto" text="这个位置预留给设置、帮助反馈和实验功能列表。" align="left" class="placeholder-copy" event="none" style="margin: 12px 0px 0px 0px;"></label>
+                    </vbox>
+                </vbox>
+            </tabcontrol>
+        </vbox>
+    </hbox>
+</vbox>
+
+<style>
+    #windowRoot {
+        background-color: #edf2fa;
+        font-family: "Microsoft YaHei UI";
+        color: #202124;
+        border-radius: 16px;
+    }
+
+    #appShell {
+        /*margin: 8px 8px 8px 8px;*/
+        background-color: #ffffff;
+        border: 1px solid #e6ebf3;
+    }
+
+    #rail {
+        background-color: #f7f9fc;
+        border-right: 1px solid #edf1f6;
+        border-top-left-radius: 16px;
+        border-bottom-left-radius: 16px;
+    }
+
+    #brandLogo {
+        background-color: #eaf2ff;
+        border: 1px solid #d9e5ff;
+        border-radius: 21px;
+        color: #6f9fff;
+        font-size: 15px;
+        font-weight: bold;
+        text-align: mid center;
+    }
+
+    .primary-nav-item {
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 14px;
+        cursor: pointer;
+    }
+
+        .primary-nav-item:hover {
+            background-color: #f0f4fb;
+        }
+
+        .primary-nav-item:checked {
+            background-color: #edf3ff;
+            border: 1px solid #dde8ff;
+        }
+
+    .primary-nav-icon {
+        color: #8da3c7;
+        font-family: "Segoe UI Symbol";
+        font-size: 15px;
+        text-align: mid center;
+    }
+
+    .primary-nav-text {
+        color: #7f8da3;
+        font-size: 12px;
+        text-align: mid center;
+    }
+
+    .rail-dot {
+        background-color: #ff5a5a;
+        border-radius: 4px;
+    }
+
+    #railBottomBtn {
+        background-color: #ffffff;
+        border: 1px solid #e7ebf2;
+        border-radius: 19px;
+        color: #7c8aa2;
+        font-size: 18px;
+        text-align: mid center;
+        cursor: pointer;
+    }
+
+        #railBottomBtn:hover {
+            background-color: #f3f6fb;
+        }
+
+    #mainColumn {
+        background-color: #ffffff;
+        border-top-right-radius: 16px;
+        border-bottom-right-radius: 16px;
+    }
+
+    #topBar {
+        background-color: #ffffff;
+        border-bottom: 1px solid #f0f3f8;
+        border-top-right-radius: 16px;
+    }
+
+    #searchShell {
+        background-color: #f6f7fb;
+        border: 1px solid #f0f2f7;
+        border-radius: 17px;
+        padding: 0px 14px 0px 14px;
+    }
+
+    .search-icon {
+        color: #a8b0bf;
+        font-family: "Segoe UI Symbol";
+        font-size: 12px;
+        text-align: mid center;
+    }
+
+    .search-box {
+        background-color: transparent;
+        border: 0px solid transparent;
+        color: #333333;
+        font-size: 13px;
+    }
+
+    .vip-days {
+        color: #ff994c;
+        font-size: 14px;
+        font-weight: bold;
+        text-align: mid center;
+    }
+
+    .avatar-chip {
+        background-color: #f1d2bf;
+        border-radius: 17px;
+        color: #6c4a39;
+        font-size: 13px;
+        font-weight: bold;
+        text-align: mid center;
+    }
+
+    .avatar-badge {
+        background-color: #ffffff;
+        border: 1px solid #f1cf7b;
+        border-radius: 7px;
+        color: #d79d2a;
+        font-size: 8px;
+        font-weight: bold;
+        text-align: mid center;
+    }
+
+    .vip-open-btn {
+        background-color: #6d4e36;
+        border: 1px solid #6d4e36;
+        border-radius: 14px;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: bold;
+        text-align: mid center;
+    }
+
+    .top-icon-btn {
+        background-color: transparent;
+        border-radius: 14px;
+        color: #95a0b1;
+        font-family: "Segoe UI Symbol";
+        font-size: 14px;
+        text-align: mid center;
+        cursor: pointer;
+    }
+
+        .top-icon-btn:hover {
+            background-color: #f3f5f9;
+            color: #6b7d95;
+        }
+
+    .window-font {
+        font-family: "Marlett";
+        font-size: 11px;
+    }
+
+    .window-btn {
+        background-color: transparent;
+        border-radius: 6px;
+        color: #95a0b1;
+        text-align: mid center;
+        cursor: pointer;
+    }
+
+        .window-btn:hover {
+            background-color: #f3f5f9;
+            color: #54657d;
+        }
+
+    .close-btn:hover {
+        background-color: #ff5b5b;
+        color: #ffffff;
+    }
+
+    .sub-sidebar {
+        background-color: #ffffff;
+        border-right: 1px solid #f0f3f8;
+        padding: 0px 14px 0px 14px;
+    }
+
+    .sub-sidebar-title {
+        color: #a5adba;
+        font-size: 14px;
+        font-weight: bold;
+        text-align: left;
+    }
+
+    .subnav-item {
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        padding: 0px 12px 0px 12px;
+        cursor: pointer;
+    }
+
+        .subnav-item:hover {
+            background-color: #f6f8fc;
+        }
+
+        .subnav-item:checked {
+            background-color: #edf3ff;
+            border: 1px solid #dde7ff;
+        }
+
+    .subnav-icon {
+        color: #7a8daa;
+        font-family: "Segoe UI Symbol";
+        font-size: 14px;
+        text-align: mid center;
+    }
+
+    .subnav-text {
+        color: #325ea8;
+        font-size: 13px;
+    }
+
+    .subnav-count {
+        color: #4f7fd4;
+        font-size: 13px;
+    }
+
+    .side-divider {
+        width: 100%;
+        height: 1px;
+        background-color: #f0f3f8;
+    }
+
+    .side-caption {
+        color: #c1c7d3;
+        font-size: 13px;
+        text-align: left;
+    }
+
+    .side-eye {
+        color: #c1c7d3;
+        font-size: 12px;
+    }
+
+    .side-link {
+        border-radius: 10px;
+        padding: 0px 10px 0px 10px;
+        cursor: pointer;
+    }
+
+        .side-link:hover {
+            background-color: #f6f8fc;
+        }
+
+    .side-link-icon {
+        color: #7a8daa;
+        font-family: "Segoe UI Symbol";
+        font-size: 13px;
+        text-align: mid center;
+    }
+
+    .side-link-text {
+        color: #42556f;
+        font-size: 13px;
+    }
+
+    .content-page {
+        background-color: #ffffff;
+    }
+
+    .page-title {
+        color: #161d2f;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .page-accent {
+        color: #ff9a42;
+        font-size: 12px;
+    }
+
+    .tool-btn {
+        background-color: #ffffff;
+        border: 1px solid #e8edf5;
+        border-radius: 8px;
+        color: #75839a;
+        font-size: 13px;
+        text-align: mid center;
+        cursor: pointer;
+    }
+
+        .tool-btn:hover {
+            background-color: #f4f7fc;
+            color: #51617a;
+        }
+
+    .tool-btn-primary {
+        background-color: #4b86f7;
+        border: 1px solid #4b86f7;
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: bold;
+        text-align: mid center;
+        cursor: pointer;
+    }
+
+        .tool-btn-primary:hover {
+            background-color: #3f7bf1;
+            border: 1px solid #3f7bf1;
+        }
+
+    .download-item {
+        width: 100%;
+        height: 82px;
+    }
+
+    .completed-item {
+        width: 100%;
+        height: 70px;
+        border-radius: 12px;
+        padding: 0px 12px 0px 12px;
+    }
+
+    .completed-item-selected {
+        background-color: #edf3ff;
+        border: 1px solid #dce7ff;
+    }
+
+    .cloud-add-item {
+        width: 100%;
+        height: 62px;
+    }
+
+    .disk-row {
+        width: 100%;
+        height: 56px;
+    }
+
+        .disk-row:hover {
+            background-color: #f8faff;
+        }
+
+    .disk-check {
+        color: #c9d0dc;
+        font-size: 13px;
+        text-align: mid center;
+    }
+
+    .disk-meta {
+        color: #7e8ca3;
+        font-size: 13px;
+        text-align: mid center;
+    }
+
+    .table-meta {
+        color: #7a8697;
+        font-size: 13px;
+    }
+
+    .table-header {
+        width: 100%;
+        height: 28px;
+    }
+
+    .table-header-check {
+        color: #d0d6e0;
+        font-size: 13px;
+        text-align: mid center;
+    }
+
+    .table-header-text {
+        color: #8f99a8;
+        font-size: 13px;
+    }
+
+    .file-icon {
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: bold;
+        text-align: mid center;
+    }
+
+    .icon-zip {
+        background-color: #ffa5a4;
+    }
+
+    .icon-7z {
+        background-color: #6ec190;
+    }
+
+    .icon-exe {
+        background-color: #79c9ff;
+    }
+
+    .icon-iso {
+        background-color: #72cfff;
+    }
+
+    .icon-folder {
+        background-color: #ffc65b;
+        color: #9a6500;
+    }
+
+    .icon-soft {
+        background-color: #b2ddff;
+    }
+
+    .icon-unknown {
+        background-color: #d7dde8;
+        color: #8f97a5;
+    }
+
+    .file-name {
+        color: #1b2234;
+        font-size: 13px;
+    }
+
+    .file-name-muted {
+        color: #b1bac8;
+        font-size: 13px;
+    }
+
+    .meta-text {
+        color: #7e8ca3;
+        font-size: 12px;
+    }
+
+    .status-text {
+        color: #7b8aa0;
+        font-size: 12px;
+    }
+
+    .warn-text {
+        color: #ff6b63;
+        font-size: 12px;
+    }
+
+    .ok-text {
+        color: #4db85d;
+        font-size: 12px;
+    }
+
+    .progress-track {
+        background-color: #eef2f8;
+        border-radius: 2px;
+    }
+
+    .progress-fill {
+        background-color: #24a3ff;
+        border-radius: 2px;
+    }
+
+    .row-action {
+        background-color: transparent;
+        border-radius: 12px;
+        color: #7c8ca2;
+        font-size: 13px;
+        text-align: mid center;
+        cursor: pointer;
+    }
+
+        .row-action:hover {
+            background-color: #f3f6fb;
+            color: #4f617b;
+        }
+
+    .footer-links {
+        color: #8c97a8;
+    }
+
+    .footer-link {
+        color: #8c97a8;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+        .footer-link:hover {
+            color: #5f7ebf;
+        }
+
+    .footer-storage {
+        color: #7d8898;
+        font-size: 12px;
+    }
+
+    .expand-pill {
+        background-color: #ffffff;
+        border: 1px solid #e6ebf3;
+        border-radius: 17px;
+        cursor: pointer;
+    }
+
+        .expand-pill:hover {
+            background-color: #f4f7fc;
+        }
+
+    .expand-icon {
+        color: #7b8798;
+        font-size: 12px;
+        text-align: mid center;
+    }
+
+    .expand-text {
+        color: #6f7e94;
+        font-size: 12px;
+    }
+
+    .placeholder-page {
+        background-color: #ffffff;
+    }
+
+    .placeholder-card {
+        background-color: #f7f9fc;
+        border: 1px solid #e7edf5;
+        border-radius: 16px;
+        padding: 22px 22px 22px 22px;
+    }
+
+    .placeholder-title {
+        color: #1b2234;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: left;
+    }
+
+    .placeholder-copy {
+        color: #74839a;
+        font-size: 13px;
+    }
+
+    .mini-row {
+        width: 100%;
+        height: 44px;
+    }
+</style>

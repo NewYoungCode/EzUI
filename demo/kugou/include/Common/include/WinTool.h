@@ -81,6 +81,9 @@ namespace WinTool {
 		//为所有用户注册
 		bool AllUsers = true;
 	};
+
+	//启用生成dmp文件方便进行调试
+	extern void EnableCrashDumps();
 	//给进程提权
 	extern BOOL EnablePrivilege(HANDLE process = NULL);
 	//创捷快捷方式
@@ -149,8 +152,8 @@ namespace WinTool {
 	extern Text::String GetMacAddress();
 	/// 获取操作系统的版本号
 	extern Text::String GetWinVersion();
-	/// 弹出选择文件对话框(filter传入参数的方式存在问题 以后改)
-	extern Text::String ShowFileDialog(HWND ownerWnd = NULL, const Text::String& defaultPath = "", const Text::String& title = "Select a File", const Text::String& filter = "All Files\0*.*\0");
+	/// 弹出选择文件对话框(filter:逗号或者分号分割,multiSelect:是否可以选则多个文件)
+	extern std::vector<Text::String> ShowFileDialog(HWND ownerWnd = NULL, const Text::String& filter = "*.*", bool multiSelect = true);
 	/// 弹出选择目录对话框
 	extern Text::String ShowFolderDialog(HWND ownerWnd = NULL, const Text::String& defaultPath = "", const Text::String& title = "Select a directory");
 	/// 获取路由信息

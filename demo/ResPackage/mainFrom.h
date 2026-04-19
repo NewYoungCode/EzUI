@@ -1,19 +1,11 @@
-﻿#include "EzUI/Application.h"
-#include "EzUI/VLayout.h"
-#include "EzUI/TextBox.h"
-#include "EzUI/Button.h"
-#include "EzUI/Window.h"
-#include "EzUI/Resource.h"
-#include "EzUI/Task.h"
-#include "EzUI/HLayout.h"
-#include "EzUI/UILoader.h"
+﻿#include "EzUI/ezui.h"
 using namespace ezui;
 
 class MainFrm :public Window {
 	Task* task = NULL;
 	UILoader ui;
 	//选项卡
-	TabLayout* tab;
+	TabControl* tab;
 
 	//第一页的控件
 	//要打包的目录
@@ -40,7 +32,7 @@ public:
 	void OnPackDirChange();
 	void OnClose(bool& close)  override;
 	bool FileExists(const UIString& fileName);
-	void OnNotify(Control* sender, EventArgs& args)override;
+	void OnNotify(Control* sender, EventArgs* args)override;
 	void OnResFileChange(UIString& resFile);
 	virtual LRESULT WndProc(UINT msg, WPARAM wp, LPARAM lp);
 	virtual ~MainFrm();
@@ -159,7 +151,7 @@ inline std::string GetFileSize(__int64 _KEY_FILE_SIZE) {
 	else {
 		ext = "BT";
 	}
-	disp_size = UIString::ToString(KEY_FILE_SIZE, 2) + " " + ext;
+	disp_size = ezui::ToString(KEY_FILE_SIZE, 2) + " " + ext;
 	return disp_size;
 }
 
@@ -182,8 +174,8 @@ public:
 
 		name.SetHitTestVisible(false);
 
-		this->HoverStyle.BackColor = Color(100, 100, 100, 50);
-		this->Style.FontSize = 13;
-		this->ActiveStyle.FontSize = 14;
+		this->HoverStyle->BackColor = Color(100, 100, 100, 50);
+		this->Style->FontSize = 13;
+		this->ActiveStyle->FontSize = 14;
 	}
 };

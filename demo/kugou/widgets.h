@@ -27,9 +27,9 @@ public:
 };
 
 //登录窗口
-class LoginFrm :public LayeredWindow {
+class LoginFrm :public BorderlessWindow {
 protected:
-	virtual void OnNotify(Control* sender, EventArgs& args)override;
+	virtual void OnNotify(Control* sender, EventArgs* args)override;
 public:
 	//保存用户名
 	UIString m_userName;

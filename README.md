@@ -1,647 +1,374 @@
-# EzUI 框架使用说明
+<p align="center">
+  <h1 align="center">EzUI</h1>
+  <p align="center">基于 Win32 + Direct2D 的桌面 UI 框架</p>
+</p>
 
-**EzUI 2.0** 是一个基于原生 Win32 消息机制和 Direct2D 的高性能桌面 UI 框架，具备强大的弹性布局、伪类样式支持和控件系统，目标是提供如 Web 前端般灵活、直观的界面开发体验。
-
-> 🚀 **新增与优化特性（2.0）**  
-> - 性能大幅提升，布局与绘制速度优化  
-> - 修复旧版本代码 bug 与潜在隐患  
-> - 布局新增精度补偿机制，解决间隙问题  
-> - 布局支持 `min-width` / `max-width` / `min-height` / `max-height`  新增SetPadding为布局器设置内边距 输入框设置文字内边距
-> - 控件新增状态属性，提高可控性  新增自身框架鼠标穿透且子控件不受影响
-> - 增强动画效果，提升用户体验  
-> - 支持高 DPI、分层窗口、响应式布局、CSS 风格皮肤、GIF 动画、控件组合与继承机制
-
-
-## ✨ 框架特色
-
-- 🪱 **基于 Win32 消息机制**：轻量、无依赖，逻辑控件系统拦截并下发鼠标键盘消息
-- 🎨 **2D 图形绘制**：当前基于 Direct2D 绘图，具备高性能、高分辨率适配能力。
-- 🧹 **弹性布局系统**：支持自动宽高、自适应布局，开发体验类比前端 Flex 设计。
-- 🎭 **伪类 CSS 支持**：支持 `hover`、`active`、`checked`、`focus`、`disabled` 状态样式，类选择器、ID 选择器、组合选择器等选择器系统。
-- 🌟 **控件组合系统**：Label、Button、TextBox、CheckBox、RadioButton 等丰富控件可自由组合构建 UI。
-- 💡 **事件系统**：支持事件冒泡机制，可实现事件捕获与穿透。
-- 🧩 **高 DPI 适配**：框架自动处理 DPI 缩放与坐标换算，支持多显示器高分屏。
-- 💡 在 Debug 模式下运行时，按下 F11 可实时查看布局信息，高亮显示控件边界。
-
-# EzUI 框架头文件说明
-
-- **Animation.h**：动画效果相关接口与实现。
-- **Application.h**：应用程序入口类，负责初始化、资源加载和消息循环。
-- **Bitmap.h**：位图图像加载与处理。
-- **BorderlessWindow.h**：无边框窗口类，带阴影效果。
-- **Button.h**：按钮控件。
-- **CheckBox.h**：复选框控件。
-- **ComboBox.h**：下拉选择控件。
-- **Control.h**：所有控件的基类，提供属性、样式和事件管理。
-- **Direct2DRender.h**：Direct2D 渲染接口封装。
-- **EzUI.h**：框架总入口头文件，包含核心功能。
-- **Frame.h**：Frame 容器控件，用于布局或嵌套控件。
-- **HLayout.h**：水平布局控件。
-- **HListView.h**：水平列表控件。
-- **HScrollBar.h**：水平滚动条控件。
-- **Label.h**：文本标签控件。
-- **LayeredWindow.h**：分层窗口类，支持透明和异形窗口。
-- **Menu.h**：菜单控件及弹出菜单支持。
-- **NotifyIcon.h**：系统托盘图标控件。
-- **PagedListView.h**：分页列表控件。(不可以直接创建改对象)
-- **PictureBox.h**：图片显示控件。
-- **PopupWindow.h**：弹出窗口控件，失去焦点自动隐藏或关闭。
-- **RadioButton.h**：单选按钮控件。
-- **RenderTypes.h**：渲染相关基础类型定义。
-- **Resource.h**：资源管理相关接口。
-- **ScrollBar.h**：滚动条控件。
-- **ShadowBox.h**：阴影窗口。
-- **Spacer.h**：占位控件，用于布局间距。
-- **TabLayout.h**：分页布局控件。
-- **Task.h**：异步任务接口与实现。
-- **TextBox.h**：文本输入框控件。
-- **TileListView.h**：瓷砖式列表控件。
-- **Timer.h**：定时器接口。
-- **tinystr.h** / **tinyxml.h**：XML 第三方解析相关头文件。
-- **TreeView.h**：树形列表控件。
-- **UIDef.h**：UI 基础宏定义。
-- **UILoader.h**：UI XML 加载器。
-- **UISelector.h**：样式选择器接口。
-- **UIString.h**：字符串类型封装。
-- **UIStyle.h**：样式对象定义。
-- **VLayout.h**：垂直布局控件。
-- **VListView.h**：垂直列表控件。
-- **VScrollBar.h**：垂直滚动条控件。
-- **Window.h**：经典 Win32 窗口类。
-
-
-# Application 类介绍
-
-`Application` 是 EzUI 框架中程序入口管理类，用于管理窗口创建、资源加载以及消息循环。
+<p align="center">
+  <img src="https://img.shields.io/badge/platform-Windows%207+-blue" />
+  <img src="https://img.shields.io/badge/render-Direct2D-orange" />
+  <img src="https://img.shields.io/badge/version-2.0-green" />
+  <img src="https://img.shields.io/badge/license-暂时闭源-red" />
+</p>
 
 ---
 
-## 创建要求
+**EzUI 2.0** 是一套基于原生 Win32 消息机制和 Direct2D 的桌面 UI 框架。它提供声明式 XML 控件树、CSS 风格样式子集、状态伪类、资源包、动画、自绘和常见 Shell 组件，适合 Windows 桌面应用开发，而不是浏览器页面开发。
 
-- 程序必须在 `WinMain` 或 `wWinMain` 函数中创建一个 `Application` 对象。
-- 每个应用程序只能有一个 `Application` 实例。
+## ✨ 特性概览
 
----
-
-## 主要功能
-
-| 方法 | 说明 |
-| ---- | ---- |
-| `Application(HINSTANCE hInstance = NULL)` | 构造函数，可传入应用实例句柄 |
-| `bool SetResource(const UIString& localOrResName)` | 使用本地文件或资源名称加载资源包。支持 VS 资源 ID 或本地文件路径。一个 `Application` 只允许有一个资源文件。 |
-| `void EnableHighDpi()` | 启用高 DPI 适配 |
-| `int Exec()` | 执行消息循环，启动程序运行 |
-| `static void Exit(int exitCode = 0)` | 退出消息循环，结束程序 |
-| `static UIString StartPath()` | 获取程序启动路径 |
-| `~Application()` | 析构函数，释放资源 |
+- **Win32 原生窗口体系**：保留桌面程序的窗口、消息循环、模态流程和系统交互能力。
+- **Direct2D 渲染**：支持高 DPI、透明窗口、图片/GIF、自绘和渐变相关能力。
+- **声明式 UI**：通过 `LoadXml(...)` / `UILoader` 加载 `.htm` 控件树，支持 XML-first、code-first 和 hybrid 三种组合方式。
+- **布局与列表**：内置 `VLayout`、`HLayout`、`VListView`、`HListView`、`TileListView`、`TabControl`、`TreeView`、`Slider`、`RichTextView` 等控件。
+- **状态样式系统**：支持 ID、class、伪状态以及内联样式覆盖。
+- **资源打包**：支持 `Resource::Package(...)` 打包资源目录，并通过 `Application::SetResource(...)` 统一挂载。
+- **线程与交互基础设施**：提供 `Task`、`Timer`、`DebounceTimer`、`MessageQueue`、`Invoke(...)`、`BeginInvoke(...)`。
+- **Shell 组件**：提供 `PopupMenu`、`SystemMenu`、`ToolTip`、`TrayIcon`、`WindowShadow`。
+- **调试辅助**：Debug 下按 `F11` 可切换控件边界高亮，便于排查布局问题。
 
 ---
 
-## 使用示例
-### xml内容示例(文件位置:d:/res/form.xml)
+## 🚀 快速开始
+
+### `res/mainForm.htm`
+
 ```xml
-<vbox>
-    <label text="我是标签1,按住我移动窗口" action="title" style="cursor:pointer" class="label"></label>
-    <label text="我是标签2" class="label"></label>
-    <label text="我是标签3,点我关闭窗口" action="close" class="label"></label>
+<vbox style="padding: 24px; background-color: #f5f7fb;">
+    <label text="EzUI 2.0"
+           style="font-size: 24px; font-weight: bold; color: #20242c;"></label>
+
+    <label text="这里的 .htm 是控件树，不是浏览器 HTML 页面"
+           style="margin-top: 8px; color: #5a6472;"></label>
+
+    <spacer height="16"></spacer>
+
+    <button id="btnClose"
+            text="关闭窗口"
+            action="close"
+            style="width: 120px; height: 40px; background-color: #20242c; color: #ffffff; border-radius: 6px; cursor: pointer;"></button>
 </vbox>
+
 <style>
-    /*类选择器*/
-    .label {
-        color: black;
-        font-size: 13px;
+    #btnClose:hover {
+        background-color: #3a4250;
     }
-    /*统一设置鼠标悬浮样式*/
-        .label:hover {
-            font-size: 15px;
-        }
+
+    #btnClose:active {
+        background-color: #11151c;
+    }
 </style>
 ```
 
+### C++
+
 ```cpp
 #include <Windows.h>
-#include "Ezui/EzUI.h"
-#include "Ezui/Window.h"
-#include "Ezui/Application.h"
+#include "EzUI/EzUI.h"
 
 using namespace ezui;
 
-class MainFrm :public Window {
+class MainForm : public Window {
 public:
-	MainFrm() :Window(800, 600) {
-		this->LoadXml("d:/res/form.xml");//从文件中加载xml界面
-	}
-	virtual ~MainFrm() {
-	}
-	//当窗口被关闭的时候发生
-	virtual void OnClose(bool& bClose) override {
-		int result = ::MessageBoxW(frm.Hwnd(), L"要退出程序吗？", L"提示", MB_YESNO | MB_ICONQUESTION);
-		if (result == IDYES) {
-			Application::Exit(0);//当窗口关闭时 整个程序退出
-		} else {
-			bClose=false;  // 用户点击了“否” 此标志设置为false将不会关闭窗口
-		}
-	}
+    MainForm() : Window() {
+        SetSize({ 1024, 720 });
+        LoadXml("res/mainForm.htm");
+    }
+
+protected:
+    void OnClose(bool& cancel) override {
+        Application::Exit(0);
+    }
 };
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-                      _In_opt_ HINSTANCE hPrevInstance,
-                      _In_ LPWSTR    lpCmdLine,
-                      _In_ int       nCmdShow)
-{
-    
-    Application app;// 创建应用程序对象
-    app.EnableHighDpi(); // 启用高 DPI 适配
-    app.SetResource("my_res");// 设置资源包（VS 自定义资源名称或本地文件）
-	
-    MainFrm frm;// 创建主窗口
-    frm.CenterToScreen(); // 屏幕窗口居中
-    frm.Show(); // 显示窗口
-	
-    return app.Exec();// 执行消息循环
-}
-```
----
 
-# 窗口类介绍
+int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int) {
+    Application app(hInstance);
+    app.EnableHighDpi();
+    app.SetResource("my_res"); // 可填 VS 资源名或本地资源包路径
 
-EzUI 框架提供四种主要窗口类，用于不同的窗口类型和效果需求：
+    MainForm form;
+    form.CenterToScreen();
+    form.Show();
 
----
-
-## 1. `Window`
-
-- **类型**：经典 Win32 窗口  
-- **特点**：
-  - 带系统标题栏
-  - 标准边框和系统菜单
-  - 适用于传统应用场景
-
----
-
-## 2. `BorderlessWindow` 继承于Window类
-
-- **类型**：无边框窗口  
-- **特点**：
-  - 没有系统边框和标题栏
-  - 支持自定义阴影
-  - 常用于自定义界面或美化窗口外观
-
----
-
-## 3. `LayeredWindow` 继承于BorderlessWindow类
-
-- **类型**：分层窗口  
-- **特点**：
-  - 支持异形窗口和圆角
-  - 完全透明背景，可绘制任意形状
-  - 适用于悬浮窗、特效窗或复杂 UI 场景
-
-### 4. `PopupWindow` (继承于LayeredWindow类) 是一种浮动窗口，用于显示临时信息、菜单或工具提示。特点如下：  
-
-- **浮动显示**：窗口不依附于主窗口布局，可以在任意位置显示。
-- **自动关闭/隐藏**：
-  - **模态方式**启动：失去焦点后自动关闭窗口。
-  - **非模态方式**启动：失去焦点后自动隐藏窗口。
-- **适合场景**：
-  - 下拉菜单
-  - 工具提示（Tooltip）
-  - 临时弹出设置面板
-
-
-
-# 控件类介绍 
-
-## Control类(所有控件的基础类)
-### 基本属性(通过xml或者Control::SetAttribute函数进行设置)
-| 属性名 | 说明 |
-|--------|------|
-| `name` / `id` | 控件的唯一标识，用于查找和引用。(参考web前端的css样式) |
-| `class`  | 控件的类名，用于可以用于样式批量设置。(参考web前端的css样式) |
-| `x` | 控件 X 坐标（可乘缩放系数计算）。 |
-| `y` | 控件 Y 坐标（可乘缩放系数计算）。 |
-| `location` | 控件位置，可使用 `"x,y"` 格式。 |
-| `width` | 控件宽度，可使用绝对值、`auto` 或百分比（如 `"50%"`）。 |
-| `height` | 控件高度，可使用绝对值、`auto` 或百分比（如 `"50%"`）。 |
-| `size` | 控件尺寸，可使用 `"width,height"` 或 `"auto"`。 |
-| `rect` | 控件矩形区域，格式 `"x,y,width,height"`。 |
-| `margin` | 控件外边距，可使用单值、双值或四值，支持 web 风格语法（如 `"10"`, `"10 20"`, `"10 20 30 40"`）。 |
-| `margin-left` / `margin-top` / `margin-right` / `margin-bottom` | 分别设置控件的单侧外边距。 |
-|  `padding` | 控件内边距，可使用单值、双值或四值，支持 web 风格语法（如 `"10"`, `"10 20"`, `"10 20 30 40"`）。 |
-| `padding-left` / `padding-top` / `padding-right` / `padding-bottom` | 分别设置控件的单侧内边距。 |
-| `visible` | 控件可见性，`false` 隐藏控件。 |
-| `display` | 控件显示方式，`none` 隐藏控件，其他值显示控件。 |
-| `float` | 控件浮动，`true` 启用浮动布局。 |
-| `action` | 控件行为类型，例如窗口按钮：`close`、`mini`、`max`、`title`、`move` / `movewindow`。 |
-| `enable` | 是否启用控件，`true` 或 `false`。 |
-| `disabled` | 禁用控件，等效于 `enable="false"`。 |
-| `event` | `none` 忽略鼠标键盘事件,鼠标穿透效果 |
-| `style` | 内联样式字符串，优先级最高。 |
-| `scrollbar` | 绑定控件的滚动条对象，通过名称引用滚动条控件。 |
----
-
-### Control类样式(控件状态)
-| 状态 | 说明 | 示例样式 |
-| ---- | ---- | -------- |
-| Static | 默认状态样式 | `#btn{color: #000000; background-color: #FFFFFF; border: 1px solid #CCCCCC;}` |
-| Hover | 鼠标悬浮在控件上样式 | `#btn:hover{color: #000000; background-color: #F0F0F0; border-color: #999999;}` |
-| Active | 鼠标按下控件样式 | `#btn:active{color: #FFFFFF; background-color: #0078D7; border-color: #005A9E;}` |
-| Focus | 鼠标按下控件样式 | `#btn:focus{color: #FFFFFF; background-color: #0078D7; border-color: #005A9E;}` |
-| Disabled | 控件被禁用样式 | `#btn:disabled{color: #AAAAAA; background-color: #EEEEEE; border-color: #CCCCCC;}` |
-
-Control 支持的样式属性包括：
-
-| 样式名                                                                                                       | 说明                                                    |
-| --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| pointer-events                                                                                            | "none" 忽略鼠标键盘事件,鼠标穿透效果                                       |
-| min-width / max-width                                                                                     | 控件最小/最大宽度                                             |
-| min-height / max-height                                                                                   | 控件最小/最大高度                                             |
-| opacity                                                                                                   | 控件透明度(0~1.0)                                                 |
-| cursor                                                                                                    | "pointer" / "help" / "n-resize" / "e-resize" / "move" |
-| background-color                                                                                          | 背景颜色                                                  |
-| background-image                                                                                          | 背景图片                                                  |
-| background-position                                                                                       | 背景图片位置                                                |
-| background-size / background-image-size                                                                   | 背景图片尺寸                                                |
-| fore-image                                                                                                | 前景图片                                                  |
-| fore-image-size                                                                                           | 前景图片尺寸                                                |
-| color / fore-color                                                                                        | 前景颜色                                                  |
-| border-color                                                                                              | 边框颜色                                                  |
-| border-style                                                                                              | "solid" / "dashed"    (实线/虚线)                                |
-| border-radius                                                                                             | 四角圆角半径                                                |
-| border-top-left-radius / border-top-right-radius / border-bottom-left-radius / border-bottom-right-radius | 单角圆角半径                                                |
-| border-width / border                                                                                     | 边框宽度（可单边或统一设置）                                        |
-| border-left / border-top / border-right / border-bottom                                                   | 单边边框宽度                                                |
-| font-size                                                                                                 | 字体大小                                                  |
-| font-weight                                                                                               | "bold" 或数字权重                                          |
-| font-family                                                                                               | 字体名称                                                  |
-| x / y                                                                                                     | 控件位置                                                  |
-| width / height                                                                                            | 宽度 / 高度，可用百分比或 "auto"                                 |
-| margin / margin-left / margin-top / margin-right / margin-bottom                                          | 外边距，支持 CSS 写法                                         |
-| padding / padding-left / padding-top / padding-right / padding-bottom                                     | 控件内边距，支持 CSS 写法                                         |
-| display                                                                                                   | "none" 隐藏控件                                           |
-
-### 样式示例
-```css
-#submitBtn { /*设置默认样式*/
-    width: 100px; /*静态样式时支持调整大小*/
-    height: 30px; /*静态样式时支持调整大小*/
-    background-color: #0078d7;
-}
-
-#submitBtn:hover {  /*鼠标悬浮样式*/
-    background-color: #005a9e;
-}
-
-.classA,.classB {  /*为多个类名设置样式*/
-    color:#ffffff;
-}
-
-.check:checked { /*选中样式*/
-    border:1px;
-    border-radius:10px;
-    border-color: #005a9e;
-}
-
-.check:focus { /*控件具有焦点时样式*/
-   border:2px solid gray;
-}
-
-.check:disabled { /*控件被禁用样式*/
-    border-color: baclk;
-	color:gray;
+    return app.Exec();
 }
 ```
 
----
-
-### Control 方法与属性概览
-
-- 位置与大小管理（X/Y/Width/Height/SetSize/SetRect/SetRateSize 等）
-- 父子控件管理（AddChild/RemoveChild/FindControl/FindChildren/SetParent 等）
-- 样式设置（Style/HoverStyle/FocusStyle/ActiveStyle/DisabledStyle, SetStyle, SetStyleSheet）
-- 布局管理（OnLayout, RefreshLayout, EndLayout, IsPendLayout 等）
-- 事件处理（Mouse/Keyboard/Focus/OnEvent/SendEvent 等）
-- 可见性与浮动管理（SetVisible/Show/Hide/SetFloat/IsFloat）
-- 光标管理（GetCursor, SetCursor）
-- 外边距管理（SetMargin/GetMargin）
-- 内边距管理（SetPadding/GetPadding）
-- 内容尺寸管理（GetContentSize/SetContentWidth/SetContentHeight）
-- 滚动条支持（GetScrollBar）
-- 焦点控制（SetFocus）
-- 用户自定义数据 GetUserData()/SetUserData(void*userData)
-
-### Control 类函数与属性补充说明
-
-
-#### 样式设置函数
-
-| 方法 | 说明 |
-| ---- | ---- |
-| ApplyStyleProperty(key, value) | 为静态样式应用单个属性 |
-| SetStyle(style, key, value) | 为指定状态样式设置属性 |
-| SetStyleSheet(state, styleStr) | 为指定状态批量设置样式 |
-| SetStyleSheet(styleStr) | 设置样式集合并匹配应用到子控件 |
-
-#### 布局与大小函数
-
-| 方法 | 说明 |
-| ---- | ---- |
-| SetContentWidth(width) | 设置内容宽度 |
-| SetContentHeight(height) | 设置内容高度 |
-| SetContentSize(size) | 设置内容尺寸 |
-| OnLayout() | 控件布局逻辑，可重写 |
-| RefreshLayout() | 立即刷新布局 |
-| SetRect(rect) | 设置相对父控件矩形 |
-| SetSize(size) / SetFixedSize(size) | 设置控件大小 |
-| SetWidth(width) / SetHeight(height) | 设置宽高 |
-| SetFixedWidth(width) / SetFixedHeight(height) | 设置绝对宽高 |
-| SetRateWidth(rate) / SetRateHeight(rate) | 设置百分比宽高 |
-| SetAutoWidth(flag) / SetAutoHeight(flag) / SetAutoSize(flag) | 自动大小控制 |
-| GetContentSize() | 获取内容大小 |
-| GetSize() | 获取控件大小 |
-| GetLocation() | 获取控件位置 |
-| GetRect() / GetRectInClient() / GetRectInScreen() / GetRectInFrame() | 获取控件矩形 |
-
-#### 可见性与浮动
-
-| 方法 | 说明 |
-| ---- | ---- |
-| SetVisible(flag) / IsVisible() | 设置/获取控件可见性 |
-| Show() / Hide() | 显示/隐藏控件 |
-| SetFloat(flag) / IsFloat() | 设置/获取控件浮动状态,浮动状态下控件不会参与布局 |
-| SetHitTestVisible(flag) / IsHitTestVisible() | 设置/获取鼠标穿透状态(子控件一并穿透) |
-| void SetMouseTransparent(bool bFlag);//控件自身不参与命中测试 (自身鼠标穿透,但是子控件依旧可以参与命中测试)
-
-#### 子控件操作
-
-| 方法 | 说明 |
-| ---- | ---- |
-| AddChild(child) | 添加子控件到末尾 |
-| Append(UIString) | 解析xml字符并插入控件到末尾 |
-| Prepend(UIString) | 解析xml字符并插入到子控件到最前面 |
-| InsertChild(pos, child) | 插入子控件 |
-| RemoveChild(child, freeCtrl) | 移除子控件 |
-| RemoveAll(freeAll) | 移除所有子控件 |
-| SwapChildren(child1, child2) | 交换两个子控件位置 |
-| GetControls() | 获取所有子控件 |
-| GetControl(pos) | 使用下标获取控件 |
-| Contains(ctrl) | 是否包含指定控件 |
-| IndexOf(child) | 获取子控件索引 |
-| FindControl(name) / FindControls(attr, value) | 查找控件 |
-| FindChild(name) / FindChildren(attr, value) | 查找子控件（直接子集） |
-
-#### 边距与布局控制
-
-| 方法 | 说明 |
-| ---- | ---- |
-| SetMargin(...) | 设置四周边距（重载支持不同组合） |
-| GetMargin() | 获取控件边距信息 |
-| TryPendLayout() | 尝试挂起布局 |
-| EndLayout() | 结束布局使其生效 |
-| IsPendLayout() | 是否存在挂起布局 |
-| GetLayoutState() | 获取当前布局状态 |
-
-#### 边框与样式获取
-
-| 方法 | 说明 |
-| ---- | ---- |
-| GetBorderTopLeftRadius() / GetBorderTopRightRadius() / GetBorderBottomRightRadius() / GetBorderBottomLeftRadius() | 获取圆角半径 |
-| GetBorderLeft() / GetBorderTop() / GetBorderRight() / GetBorderBottom() | 获取边框宽度 |
-| GetBorderColor() | 获取当前边框颜色 |
-| GetBorderStyle() | 获取当前边框样式 |
-| GetForeImage() | 获取当前前景图片 |
-| GetBackImage() | 获取当前背景图片 |
-| GetBackColor() | 获取当前背景颜色 |
-| GetForeColor() | 获取当前前景颜色(字体颜色) |
-| GetFontFamily() / GetFontSize() / GetFontWeight() | 获取当前字体属性 |
-| GetOpacity() | 获取当前透明度 |
-| GetAngle() | 获取当前旋转角度 |
-| GetCursor() | 获取当前鼠标光标 |
-
-#### 事件相关
-
-| 方法 | 说明 |
-| ---- | ---- |
-| OnEvent(arg) | 所有事件优先进入此函数 |
-| SendEvent(arg) | 派发事件 |
-| OnMouseMove / OnMouseLeave / OnMouseWheel / OnMouseDown / OnMouseUp / OnMouseDoubleClick / OnMouseEnter | 鼠标事件 |
-| OnMouseEvent | 鼠标事件统一入口 |
-| OnKeyChar / OnKeyDown / OnKeyUp / OnKeyBoardEvent | 键盘事件 |
-| OnFocus / OnKillFocus | 焦点事件 |
-| OnRemove | 被移除时执行的逻辑 |
-
-#### 其他实用函数
-
-| 方法 | 说明 |
-| ---- | ---- |
-| Attach(img) / Detach(img) | 绑定/解绑图片 (绑定之后生命周期跟随当前对象,无其他功能) |
-| Hwnd() / SetHwnd() | 获取/设置窗口句柄 |
-| SetTips(text) / GetTips() | 设置/获取提示文字 |
-| GetScrollBar() | 获取控件滚动条对象 |
-| IsPressed() | 控件是否被按住 |
-| SetFocus() | 设置控件为焦点控件 |
-
-# 布局控件
-
-EzUI 提供多种布局控件，用于管理子控件的排列和尺寸，包括 **VLayout、HLayout、TabLayout**。
+> 推荐优先包含 `EzUI/EzUI.h`。如果只想按模块拆分，也可以改用 `core/`、`control/`、`window/`、`shell/`、`utils/` 下的头文件。
 
 ---
 
-## VLayout（垂直布局）
+## 🧭 先建立正确心智模型
 
-**功能**：  
-垂直排列子控件，支持水平对齐、间距、内外边距和自动调整子控件高度。
+- `Application` 负责应用入口、DPI、资源包和消息循环。
+- `Window` 及其子类负责窗口壳层、顶层消息和模态行为。
+- `Control` 负责控件树、布局、状态、命中测试和事件分发。
+- `Frame` 负责隔离子树中的 ID、class 和样式作用域。
+- `.htm` 是 **控件声明树**，不是 HTML。
+- `<style>` 是 **框架解析的样式子集**，不是标准 CSS。
 
-**主要属性**：
-
-- `halign / align`：子控件水平对齐方式 `"left" / "center" / "right"`  
-- 自动宽度/高度：支持自动适应子控件尺寸
-
----
-
-## HLayout（水平布局）
-
-**功能**：  
-水平排列子控件，支持垂直对齐、间距、内外边距和自动调整子控件宽度。
-
-**主要属性**：
-
-- `valign / align`：子控件垂直对齐方式 `"top" / "middle" / "bottom"`  
-- 自动宽度/高度：支持自动适应子控件尺寸
+如果某个标签、属性或写法只是“看起来像 Web”，不要默认它拥有浏览器同等语义。当前实现和当前源码应优先于旧文档、旧示例和想当然的前端经验。
 
 ---
 
-## TabLayout（选项卡布局）
+## 🪟 窗口体系
 
-**功能**：  
-管理多个 Tab 页，每页可包含不同控件，实现分页显示。
+| 类型 | 作用 | 适合场景 |
+| --- | --- | --- |
+| `Window` | 标准 Win32 窗口，带系统标题栏和边框 | 传统桌面程序、工具软件 |
+| `BorderlessWindow` | 无边框窗口，支持阴影 | 自定义标题栏、现代桌面壳层 |
+| `LayeredWindow` | 分层透明窗口，支持异形和透明度 | 悬浮窗、特效窗、透明面板 |
+| `PopupWindow` | 失焦自动隐藏或关闭的弹出窗口 | 下拉、浮层、临时面板 |
+| `Frame` | 隔离样式和命名的嵌入子树 | 复用子页面、局部作用域隔离 |
 
-**主要属性**：
-- `tabindex` 可控制默认显示页。
+说明：
 
----
-
-# 列表控件（带滚动条）
-EzUI 提供三种列表控件，用于显示多项内容，分别为 **VListView、HListView、TileListView**。
-
----
-
-## VListView（垂直列表）
-
-**功能**：  
-垂直排列子项，带滚动条)可滚动显示，常用于聊天列表、菜单列表等。
-
-**主要属性**：
-
-- `halign / align`：子控件水平对齐 `"left" / "center" / "right"`  
-
+- `PopupWindow` 继承自 `LayeredWindow`，适合临时浮层，不适合作为主窗口。
+- `WindowShadow` 定义在 `BorderlessWindow.h` 中，用于自定义阴影。
+- `LayeredWindow` 提供 `SetOpacity(...)`，但固定尺寸窗体更容易暴露裁切问题，布局要先做预算。
 
 ---
 
-## HListView（水平列表）
+## 🧱 XML / 样式方言边界
 
-**功能**：  
-水平排列子项，(带滚动条)可滚动显示，常用于图标列表或工具栏列表。
+### 这不是标准 HTML/CSS
 
-**主要属性**：
+- 标签名以 `RegisterControl<T>(...)` 的注册表为准。
+- `margin`、`padding`、`border`、`background-color` 这类视觉规则，优先写在节点 `style` 或 `<style>` 里。
+- `style` / `style:hover` / `style:active` / `style:checked` / `style:focus` / `style:disabled` 都是当前实现支持的写法。
+- `Label` / `TextBox` 的文字对齐值是 `left` / `right` / `center` / `top` / `bottom` / `mid`，不是 `middle`。
+- 当前实现识别的 tooltip 节点属性是 `tooltip`。
+- `action` 支持：`close`、`mini`、`max`、`title`、`move`、`movewindow`。
 
-- `valign / align`：子控件垂直对齐 `"top" / "middle" / "bottom"`  
+### `event="none"` 和 `mousetransparent="true"` 不是一回事
+
+- `event="none"` 会让控件整体不参与命中测试，对应 `SetHitTestVisible(false)`。
+- `mousetransparent="true"` 只让控件自身对鼠标透明，子控件仍可参与命中，对应 `SetMouseTransparent(true)`。
+
+### 不要把 README 当成浏览器兼容表
+
+下面这些事都不该默认成立：
+
+- 不要默认标准盒模型行为。
+- 不要默认所有控件都和网页输入框一样处理 `padding`。
+- 不要默认所有容器都把 `100%` 当成“吃剩余空间”。
+- 不要默认内容超界后会自动扩展父容器或自然滚动。
+- 不要默认深色 PNG 图标在深色背景上一定可见。
 
 ---
 
-## TileListView（平铺列表/ 流动列表 / 瓷砖列表）
+## 📐 布局规则
 
-**功能**：  
-网格排列子项，类似图标平铺，适合相册、图库或应用图标界面(带滚动条)。
-子控件必须指定宽高
+- `VLayout` / `HLayout` 下，子控件如果既没有固定尺寸、也没有 `auto`、也没有百分比尺寸，就会由布局器分配剩余空间，多个同类子控件常见表现是平分剩余区域。
+- 对“吃掉剩余空间”的子控件，不要用 `height="100%"` 或 `width="100%"` 表达；在 `vbox` / `hbox` 中更稳妥的方式是省略该方向尺寸，让布局器分配。
+- `fixed > auto > percent > 未指定（布局器分配）` 是更接近当前实现的尺寸优先级理解。
+- `width="100%"` 不要再叠加左右 `margin`；`height="100%"` 不要再叠加上下 `margin`。这类组合很容易出界。
+- 固定间距优先用 `margin`，需要占位拉伸时再用 `Spacer`。
+- `VLayout` / `HLayout` 推荐优先使用 `item-align`。兼容别名仍支持 `halign` / `valign` / `align`，但新文档和新示例以 `item-align` 为主。
+- 在 `vlist` / `hlist` 里，item 跟随列表容器同宽或同高时，使用 `width="100%"` / `height="100%"` 是合理的；这和 `vbox` / `hbox` 的“剩余空间分配”不是同一语义。
+- 根布局通常不要直接写 `margin`。如果需要整页留白、背景或卡片效果，更稳妥的做法是根布局里再包一层真实内容容器。
 
+---
 
-## Frame控件
+## 🧩 已确认注册的 XML 标签
 
-| 属性名 | 说明         |
-| --- | ---------- |
-| src | 加载 XML 内联子页面 (Frame页面内的子控件与外部隔离,无法匹配样式 也不可以通过FindControl等函数进行查找)| 
+- 通用基础：`<control>`、`<layout>`、`<box>`
+- 布局容器：`<vlayout>` / `<vbox>`、`<hlayout>` / `<hbox>`
+- 列表容器：`<vlist>` / `<vlistview>`、`<hlist>` / `<hlistview>`、`<tilelist>` / `<tilelistview>`
+- 页面切换：`<tabcontrol>`
+- 占位控件：`<spacer>`、`<vspacer>`、`<hspacer>`
+- 基础控件：`<label>`、`<button>`、`<checkbox>`、`<radiobutton>`
+- 文本输入：`<textbox>` / `<input>` / `<edit>`
+- 下拉框：`<combobox>` / `<select>`
+- 图片控件：`<img>` / `<image>` / `<pictureBox>`
+- 链接文本：`<a>` / `<LinkLabel>`
+- 隔离容器：`<frame>` / `<iframe>`
+- 树与扩展控件：`<treeview>`、`<treenode>`、`<slider>`、`<richtextview>`
 
+说明：
 
-## Spacer/VSpacer/HSpacer控件 占位控件(类似于QT的弹簧控件)
-xml中的用法:
- ```xml
- <vbox> <!--垂直布局-->
-    <spacer></spacer>  <!--占位控件,自动拉伸 会自动挤压label标签-->
-    <label text="我是一个标签"></label>
-    <spacer height="50"></spacer> <!--占位控件:占固定高度50像素-->
-</vbox>
- ```
+- 这些标签来自当前 `UILoader` 注册表；和旧版 README 冲突时，以当前实现为准。
+- `ComboBox` 的下拉项不建议把 `<option>` 当成基础控件标签能力来描述。稳定做法是通过 `AddOption(...)`、`OnCreateOption(...)` 或自定义控件来构建选项。
 
+---
 
-## Label控件
+## 🧷 常用属性与状态
 
-| 属性名                     | 说明                     |
-| ----------------------- | ---------------------- |
-| valign / halign / align | 设置文本对齐left,top,right,bottom,center,middle              |
-| text                    | 文本内容                   |
-| underline               | 下划线位置与长度 "start,count" |
-| ellipsis                | 设置省略文本          |
+| 类型 | 当前实现常用写法 |
+| --- | --- |
+| 标识 | `name` / `id`、`class` |
+| 内联样式 | `style` |
+| 状态样式 | `style:hover`、`style:active`、`style:checked`、`style:focus`、`style:disabled` |
+| 几何 | `location="x,y"`、`size="w,h"`、`rect="x,y,w,h"` |
+| 可见性 | `visible="false"`、`display:none` |
+| 布局参与 | `float="true"` |
+| 行为 | `action="close|mini|max|title|move|movewindow"` |
+| 启用状态 | `enable="true|false"`、`disabled` |
+| 命中测试 | `event="none"`、`mousetransparent="true"` |
+| 滚动条命名 | `scrollbar="name"` |
+| 提示文字 | `tooltip="..."` |
 
+### 控件状态
 
-## CheckBox控件 继承于Label
+- 默认状态：普通状态，无伪类
+- `:hover`：鼠标悬浮
+- `:active`：按下
+- `:focus`：获得焦点
+- `:disabled`：禁用
+- `:checked`：选中
 
-| 属性名     | 说明               |
-| ------- | ---------------- |
-| checked | "true" / "false" |
+### 文本相关控件的常用属性
 
-(控件状态及样式)
-| 状态 | 说明 | 示例样式 |
-| ---- | ---- | -------- |
-| Checked | 控件获得焦点时样式 | `#btn:checked{color: #000000; background-color: #FFFFFF; border-color: #0078D7;}` |
+- `Label`：`text`、`underline`、`ellipsis`、`align` / `text-align`
+- `TextBox`：`text` / `value`、`placeholder`、`passwordchar`、`readonly`、`multiline`、`align` / `text-align`
+- `CheckBox`：`checked`
 
+---
 
+## 🛠️ 核心模块
 
-## TextBox控件
+| 模块 | 关键能力 |
+| --- | --- |
+| `Application` | `EnableHighDpi()`、`SetResource(...)`、`Exec()`、`Exit(...)`、`StartPath()` |
+| `Window` | `SetSize(...)`、`SetLayout(...)`、`LoadXml(...)`、`Show()`、`ShowModal()`、`CenterToScreen()`、`OnNotify(...)` |
+| `Control` | `Append(...)`、`Prepend(...)`、`FindControl(...)`、`FindChildren(...)`、`SetStyleSheet(...)`、`AddEventHandler(...)` |
+| `Frame` | 隔离样式作用域、隔离命名空间、承接局部通知 |
+| `UILoader` | XML 加载、`RegisterControl<T>(...)` 自定义控件注册 |
+| `UISelector` | 链式筛选和批量操作控件 |
+| `Animation` | 数值插值、淡入淡出、切页滑动 |
+| `Timer` / `DebounceTimer` | 延迟任务、周期任务、防抖场景 |
+| `Task` / `Invoke(...)` / `BeginInvoke(...)` | 后台执行和回到 UI 线程 |
+| `MessageQueue` | 线程安全 Push/Pop 模型消息队列 |
+| `Resource` | 资源目录打包与包内文件读取 |
+| `PopupMenu` / `SystemMenu` | 自绘多级菜单与 Win32 原生菜单 |
+| `ToolTip` / `TrayIcon` | 浮动提示、系统托盘 |
 
-| 属性名                     | 说明               |
-| ----------------------- | ---------------- |
-| valign / halign / align | 文本对齐             |
-| passwordchar            | 密码掩码字符           |
-| placeholder             | 占位文本             |
-| text / value            | 文本内容             |
-| readonly                | "true" / "false" |
-| multiline               | "true" / "false" |
+### 常见控件回调
 
+- `CheckBox::CheckedChanged`
+- `TextBox::TextChanged`
+- `Slider::ValueChanged`
+- `ComboBox::SelectedChanged`
+- `Window::NotifyHandler` / `Frame::NotifyHandler`
 
-## RadioButton控件 继承于CheckBox
+---
 
-- 鼠标点击后自动设置自身为选中，并取消同父控件下其它 RadioButton 的选中状态
+## 📦 资源包工作流
 
-- 
-## PictureBox控件
+### 1. 打包资源目录
 
-| 属性名 | 说明      |
-| --- | ------- |
-| src | 图片路径 (支持gif动图)
-
-
-## Button控件 继承于Label
-
-- 继承 Label  
-- 鼠标默认光标为手型  
-
-
-## ComboBox控件
-### xml用法
-```xml
-
-            <combobox height="30" width="120" style="border:1px solid green;">
-                <option value="0" text="-未选择-" style:hover="background-color:red" ></option>
-                <option value="12" text="-青菜-"  style:hover="background-color:red"  ></option>
-                <option value="13" text="-萝卜-"  style:hover="background-color:red" ></option>
-                <option value="14" selected="selected" text="-回锅肉-"  style:checked="background-color:black" style:hover="background-color:red" ></option>
-            </combobox>
-
-```
-### c++代码
 ```cpp
-		//添加一个选项
-		ComboBox::Option* AddOption(const UIString& optionValue, const UIString& optionShowText);
-		//移除一个选项
-		void RemoveOption(const UIString& optionValue);
-		//移除全部选项
-		void RemoveAllOptions();
-		//获取选中的value(返回optionValue)
-		UIString GetValue();
-		//选中某个optionValue
-		bool SetValue(const UIString& optionValue);
-		//获取选中的文字
-		UIString GetText();
-		//获取承载选项的容器
-		VListView* GetOptionPanel();
+bool ok = Resource::Package("res", "my_res");
 ```
 
+`Resource::Package(...)` 会递归打包目录中的文件，并保留相对路径。当前仓库里 `demo/ResPackage` 展示了完整流程。
 
-## 📖 学习 & 技术支持
+### 2. 在应用启动时挂载资源包
 
-- 视频教程：https://space.bilibili.com/240269358/video
-- QQ：718987717
-- QQ群：758485934
-- 邮箱：[19980103ly@gmail.com]/[19980103ly@gmail.com]
-- 微信：wx19980103yon
+```cpp
+Application app(hInstance);
+app.EnableHighDpi();
+app.SetResource("my_res");
+```
 
----
+`SetResource(...)` 支持两种输入：
 
+- VS 内嵌资源名称
+- 本地资源包文件路径
 
-# EzUI License
+注意：
 
-**版本**：2.0（暂时闭源）  
-**适用系统**：Windows 7 及以上
-
-## 使用说明
-
-1. EzUI 框架当前 **暂时闭源**，提供 **完整的编译后文件**（DLL / LIB / 头文件），可直接用于开发。
-2. 允许在商业项目或个人项目中使用这些编译文件。
-3. 框架在 Windows 7 及以上系统中测试可用。
+- 一个 `Application` 只允许挂一个资源包。
+- `LoadXml("res/mainForm.htm")`、图片路径、子页面路径等，都会按资源包内部相对路径读取。
 
 ---
 
-> **说明**：本 License 表示暂时闭源状态，框架提供的是编译后的使用版本。
+## 🧪 自定义控件注册
 
+当 XML 需要直接按标签名创建你的控件时，使用 `RegisterControl<T>(...)`：
 
+```cpp
+#include "EzUI/EzUI.h"
 
+using namespace ezui;
+
+class SessionFrame : public Frame {
+public:
+    SessionFrame(Object* owner = nullptr) : Frame(owner) {
+        LoadXml("res/session.htm");
+    }
+};
+
+int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int) {
+    Application app(hInstance);
+    app.EnableHighDpi();
+    app.SetResource("my_res");
+
+    RegisterControl<SessionFrame>("SessionFrame");
+    return app.Exec();
+}
+```
+
+然后即可在 XML 中使用：
+
+```xml
+<SessionFrame></SessionFrame>
+```
+
+---
+
+## 🎨 自绘、图片和分页
+
+- `PictureBox` 支持 GIF 自动播放。
+- `TabControl` 提供 `SetPageIndex(...)` 和 `SlideToPage(...)`。
+- `RichTextView` 用于只读富文本展示。
+- 默认样式不够时，可以继承 `Control` / `Label` / `Frame`，重写 `OnPaint(...)`、`OnBackgroundPaint(...)`、`OnForePaint(...)`。
+- 自绘时通过 `PaintEventArgs::Graphics()` 使用 Direct2D 封装接口。
+
+建议：
+
+- 布局放在 `OnLayout()`，绘制放在 `OnPaint()`。
+- 交互反馈优先改颜色、透明度和位置，不要轻易用 hover 改宽高导致 relayout 抖动。
+
+---
+
+## 🧵 线程与 UI 线程规则
+
+- 后台任务用 `Task`。
+- 周期或延迟行为用 `Timer`。
+- 搜索框、防抖输入场景优先用 `DebounceTimer`。
+- 线程间消息传递用 `MessageQueue`。
+- 后台线程里不要直接改 UI，统一通过 `Invoke(...)` 或 `BeginInvoke(...)` 回到 UI 线程。
+
+---
+
+## 🔍 调试与预览
+
+- Debug 下按 `F11` 可切换控件边框高亮，排查文本叠加、尺寸裁切和布局越界问题。
+- `include/EzUI/XMLPreview.hpp` 提供 XML 预览窗口能力，适合做页面调试和热重载式预览。
+
+改完 `.htm` 之后，至少验证这三件事：
+
+1. 文本是否叠在一起。
+2. 内容是否被裁切。
+3. 图标是否在当前背景上可见。
+
+---
+
+## 📖 学习与技术支持
+
+- 视频教程：[Bilibili 主页](https://space.bilibili.com/240269358/video)
+- QQ：`718987717`
+- QQ 群：`758485934`
+- 邮箱：`19980103ly@gmail.com`
+- 微信：`wx19980103yon`
+
+---
+
+## 📄 License
+
+**版本**：2.0  
+**适用系统**：Windows 7 及以上  
+**当前状态**：暂时闭源
+
+- 当前以编译产物和头文件的形式提供使用。
+- 可用于个人项目和商业项目。

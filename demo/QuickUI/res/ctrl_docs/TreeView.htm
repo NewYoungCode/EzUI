@@ -1,0 +1,370 @@
+﻿<vlist width="100%" height="100%" class="page" style="padding: 28px 30px 30px 30px;">
+    <label height="auto" text="TreeView" align="left" class="title"></label>
+    <label width="100%" height="auto" text="TreeView.h 不只是一个控件，而是一套 TreeView + TreeNode API。头文件直接给出了 AddNode、SetHeader、Expand/Collapse、GetRootNodes 等能力，文档里应该把节点级接口也补齐。" align="left" class="summary" style="margin: 10px 0px 0px 0px;"></label>
+    <hbox height="28" items-align="middle left" style="margin: 16px 0px 0px 0px;">
+        <label width="auto" height="26" text="头文件 TreeView.h" align="center" class="pill" style="margin: 0px 0px 0px 0px;"></label>
+        <label width="auto" height="26" text="基类 Control + TreeNode" align="center" class="pill-accent" style="margin: 0px 0px 0px 10px;"></label>
+        <label width="auto" height="26" text="标签 &lt;treeview&gt; / &lt;treenode&gt;" align="center" class="pill" style="margin: 0px 0px 0px 10px;"></label>
+    </hbox>
+    <hbox width="100%" height="auto" items-align="top left" style="margin: 22px 0px 0px 0px;">
+        <vbox width="520" height="auto" class="panel" style="padding: 18px 18px 18px 18px;">
+            <label height="18" text="Live Demo" align="left" class="panel-title"></label>
+            <label width="100%" height="auto" text="页面最外层统一由 vlist 承载滚动，内部示例和说明都回到普通布局容器，内容直接往下展开即可。" align="left" class="panel-subtitle" style="margin: 8px 0px 0px 0px;"></label>
+            <vbox width="100%" height="auto" items-align="top left" style="margin: 14px 0px 0px 0px;">
+                <vbox width="100%" height="auto" class="demo-card">
+                    <label height="18" text="层级结构" align="left" class="demo-title"></label>
+                    <treeview height="194" class="tree-shell" style="margin: 12px 0px 0px 0px;">
+                        <treenode text="QuickUI" width="100%">
+                            <treenode class="tree-node" text="main.cpp"></treenode>
+                            <treenode class="tree-node" text="mainForm.cpp"></treenode>
+                            <treenode class="tree-node" text="res">
+                                <treenode class="tree-node" text="mainForm.htm"></treenode>
+                                <treenode class="tree-node" text="ctrl_docs"></treenode>
+                            </treenode>
+                        </treenode>
+                    </treeview>
+                </vbox>
+            </vbox>
+        </vbox>
+        <spacer width="18"></spacer>
+        <vbox width="350" height="auto" class="panel" style="padding: 18px 18px 18px 18px;">
+            <label height="18" text="头文件速查" align="left" class="panel-title"></label>
+            <label height="18" text="公开接口" align="left" class="section-title" style="margin: 16px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="TreeView::AddNode / GetRootNodes / GetVScrollBar / GetHScrollBar" align="left" class="api-line" style="margin: 12px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="TreeNode::AddNode / GetChildNodes / GetTreeView" align="left" class="api-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="TreeNode::SetText / GetText / SetHeader / GetHeader" align="left" class="api-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="TreeNode::Expand / Collapse / IsExpanded" align="left" class="api-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="OnCreateNode 可被重写来自定义节点头部" align="left" class="api-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label height="18" text="适用场景" align="left" class="section-title" style="margin: 18px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="文件树、目录树、权限树和分组导航。" align="left" class="body-line" style="margin: 12px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="数据天然带父子关系的场景。" align="left" class="body-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="需要展开/收起和节点级定制头部的区域。" align="left" class="body-line" style="margin: 8px 0px 0px 0px;"></label>
+        </vbox>
+    </hbox>
+    <hbox width="100%" height="auto" items-align="top left" style="margin: 18px 0px 0px 0px;">
+        <vbox width="520" height="auto" class="panel" style="padding: 18px 18px 18px 18px;">
+            <label height="18" text="XML + C++" align="left" class="panel-title"></label>
+            <label width="100%" height="auto" text="挑最常抄的 XML 或 C++ 片段放在这里，直接对照头文件和当前页面即可复用。" align="left" class="panel-subtitle" style="margin: 8px 0px 0px 0px;"></label>
+            <vbox width="100%" height="auto" class="code-box" style="margin: 14px 0px 0px 0px;">
+                <label width="100%" height="auto" text="&lt;treeview height=&quot;180&quot;&gt;" align="left" class="code-line" style="margin: 12px 0px 0px 0px;"></label>
+                <label width="100%" height="auto" text="  &lt;treenode text=&quot;res&quot;&gt;&lt;treenode text=&quot;mainForm.htm&quot;&gt;&lt;/treenode&gt;&lt;/treenode&gt;" align="left" class="code-line" style="margin: 8px 0px 0px 0px;"></label>
+                <label width="100%" height="auto" text="&lt;/treeview&gt;" align="left" class="code-line" style="margin: 8px 0px 0px 0px;"></label>
+                <label width="100%" height="auto" text="TreeNode* root = tree-&gt;AddNode(new TreeNode(tree));" align="left" class="code-line" style="margin: 8px 0px 0px 0px;"></label>
+                <label width="100%" height="auto" text="root-&gt;Expand();" align="left" class="code-line" style="margin: 8px 0px 0px 0px;"></label>
+            </vbox>
+        </vbox>
+        <spacer width="18"></spacer>
+        <vbox width="350" height="auto" class="panel" style="padding: 18px 18px 18px 18px;">
+            <label height="18" text="属性与提醒" align="left" class="panel-title"></label>
+            <label height="18" text="XML / 标签" align="left" class="section-title" style="margin: 16px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="XML 常见写法是 &lt;treeview&gt; + 嵌套 &lt;treenode text=&quot;...&quot;&gt;。" align="left" class="attr-line" style="margin: 12px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="如果自定义节点头部，传进去的 header 控件要有稳定宽高。" align="left" class="attr-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="TreeView 同时拥有水平和垂直滚动条对象。" align="left" class="attr-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="标签：&lt;treeview&gt; / &lt;treenode&gt;。" align="left" class="attr-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label height="18" text="使用提醒" align="left" class="section-title" style="margin: 18px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="只有数据真的有层级时才用 TreeView，不要为了“像 IDE”强行上树。" align="left" class="note-line" style="margin: 12px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="层级过深时先优化结构，不要只靠缩进硬撑。" align="left" class="note-line" style="margin: 8px 0px 0px 0px;"></label>
+            <label width="100%" height="auto" text="节点点击区过小会直接影响可用性。" align="left" class="note-line" style="margin: 8px 0px 0px 0px;"></label>
+        </vbox>
+    </hbox>
+</vlist>
+
+<style>
+    .page {
+        background-color: #10161F;
+        color: #F4F7FD;
+    }
+
+    .title {
+        color: #F6FAFF;
+        font-size: 32px;
+        font-weight: bold;
+    }
+
+    .summary {
+        color: #A6B7CD;
+        font-size: 14px;
+    }
+
+    .pill {
+        background-color: #192331;
+        border: 1px solid #2F4258;
+        border-radius: 13px;
+        color: #DCE8FB;
+        font-size: 12px;
+        padding: 0px 12px 0px 12px;
+    }
+
+    .pill-accent {
+        background-color: #14324A;
+        border: 1px solid #2F77A9;
+        border-radius: 13px;
+        color: #91D6FF;
+        font-size: 12px;
+        padding: 0px 12px 0px 12px;
+    }
+
+    .panel {
+        background-color: #151D29;
+        border: 1px solid #283749;
+        border-radius: 18px;
+    }
+
+    .panel-title {
+        color: #F5F8FF;
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    .panel-subtitle {
+        color: #7F91AA;
+        font-size: 12px;
+    }
+
+    .section-title {
+        color: #8DD5FF;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .body-line {
+        color: #D6E0F0;
+        font-size: 13px;
+    }
+
+    .api-line {
+        color: #E4ECF7;
+        font-size: 13px;
+    }
+
+    .attr-line {
+        color: #D6E3F5;
+        font-size: 13px;
+    }
+
+    .note-line {
+        color: #C5D2E4;
+        font-size: 13px;
+    }
+
+    .code-box {
+        background-color: #0E141D;
+        border: 1px solid #223145;
+        border-radius: 14px;
+        padding: 12px 14px 12px 14px;
+    }
+
+    .code-line {
+        color: #DFE7F6;
+        font-size: 12px;
+        font-family: Consolas;
+    }
+
+    .demo-card {
+        background-color: #0F1620;
+        border: 1px solid #263549;
+        border-radius: 14px;
+        padding: 14px 14px 14px 14px;
+    }
+
+    .demo-title {
+        color: #81D1FF;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .demo-text {
+        color: #E7EEF9;
+        font-size: 13px;
+    }
+
+    .demo-note {
+        color: #8E9DB3;
+        font-size: 12px;
+    }
+
+    .list-shell {
+        background-color: #101722;
+        border: 1px solid #26364A;
+        border-radius: 14px;
+    }
+
+    .surface {
+        background-color: #121B26;
+        border: 1px solid #26364A;
+        border-radius: 12px;
+    }
+
+    .surface-soft {
+        background-color: #1B2533;
+        border: 1px solid #2D3A4E;
+        border-radius: 12px;
+    }
+
+    .row-shell {
+        background-color: #1A2432;
+        border: 1px solid #29384D;
+        border-radius: 12px;
+    }
+
+    .tile-card {
+        background-color: #202C3C;
+        border: 1px solid #314359;
+        border-radius: 14px;
+        color: #EBF1FB;
+        font-size: 13px;
+    }
+
+    .input-shell {
+        background-color: #0E141D;
+        color: #E8F0FF;
+        border: 1px solid #334257;
+        border-radius: 10px;
+        padding: 8px 12px 8px 12px;
+        font-size: 13px;
+    }
+
+    .choice {
+        color: #EAF0FF;
+        font-size: 13px;
+    }
+
+        .choice:checked {
+            color: #7DD3FF;
+            font-size: 13px;
+        }
+
+    .badge {
+        background-color: #1F7CFF;
+        color: #FFFFFF;
+        border-radius: 14px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .info-chip {
+        background-color: #223041;
+        color: #DDE7F7;
+        border-radius: 10px;
+        font-size: 12px;
+        padding: 0px 10px 0px 10px;
+    }
+
+    .accent-chip {
+        background-color: #16384E;
+        border: 1px solid #285D7C;
+        color: #9CDCFD;
+        border-radius: 10px;
+        font-size: 12px;
+        padding: 0px 10px 0px 10px;
+    }
+
+    .picture-shell {
+        background-color: #0E141D;
+        border: 1px solid #2A3950;
+        border-radius: 12px;
+    }
+
+    .frame-shell {
+        background-color: #101722;
+        border: 1px solid #2D4057;
+        border-radius: 14px;
+    }
+
+    .hero-copy {
+        color: #F4F8FF;
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    .body-copy {
+        color: #D5E0F3;
+        font-size: 13px;
+    }
+
+    .muted-copy {
+        color: #8C9CB2;
+        font-size: 12px;
+    }
+
+    .tab-page {
+        background-color: #101722;
+        border: 1px solid #27384D;
+        border-radius: 12px;
+    }
+
+    .tree-shell {
+        background-color: #101722;
+        border: 1px solid #27384D;
+        border-radius: 12px;
+    }
+
+    .tree-node {
+        margin-left: 10px;
+    }
+
+    .combo-shell {
+        background-color: #0E141D;
+        color: #E8F0FF;
+        border: 1px solid #334257;
+        border-radius: 10px;
+    }
+
+    .slider-theme {
+        background-color: #2A3342;
+        color: #7DD4FF;
+        border-radius: 10px;
+    }
+
+    .btn-primary {
+        background-color: #1F83FF;
+        color: #FFFFFF;
+        border: 1px solid #1F83FF;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .btn-secondary {
+        background-color: #283243;
+        color: #EAF0FD;
+        border: 1px solid #435269;
+        border-radius: 10px;
+        font-size: 13px;
+    }
+
+    .btn-danger {
+        background-color: #8E3142;
+        color: #FFFFFF;
+        border: 1px solid #B4475A;
+        border-radius: 10px;
+        font-size: 13px;
+    }
+
+    .btn-quiet {
+        background-color: #151C27;
+        color: #CBD7E8;
+        border: 1px solid #314054;
+        border-radius: 10px;
+        font-size: 13px;
+    }
+
+    .readonly-shell {
+        background-color: #1D2532;
+        color: #95A7C2;
+    }
+
+    .avatar {
+        background-color: #1E80F7;
+        color: #FFFFFF;
+        border-radius: 19px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .rich-shell {
+        background-color: #0E141D;
+        border: 1px solid #27374B;
+        border-radius: 12px;
+    }
+</style>

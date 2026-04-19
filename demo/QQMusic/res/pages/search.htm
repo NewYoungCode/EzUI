@@ -1,0 +1,109 @@
+<vbox id="searchRoot" style="padding: 20px 30px 16px 30px;">
+    <label id="searchTitle" width="100%" height="auto" text="搜索歌曲" class="page-title" text-align="left"></label>
+    <label id="searchMeta" width="100%" height="auto" text="在顶部输入关键词开始搜索。" class="page-copy" text-align="left" style="margin: 8px 0px 0px 0px;"></label>
+
+    <hbox height="28" items-align="mid" style="margin: 18px 0px 0px 0px;">
+        <label width="auto" height="20" text="歌曲" class="search-tab search-tab-active"></label>
+        <label width="auto" height="20" text="视频" class="search-tab" style="margin: 0px 0px 0px 26px;"></label>
+        <label width="auto" height="20" text="专辑" class="search-tab" style="margin: 0px 0px 0px 26px;"></label>
+        <label width="auto" height="20" text="歌词" class="search-tab" style="margin: 0px 0px 0px 26px;"></label>
+        <label width="auto" height="20" text="歌手" class="search-tab" style="margin: 0px 0px 0px 26px;"></label>
+        <spacer></spacer>
+        <label id="searchResultCount" width="auto" height="16" text="等待搜索" class="page-copy"></label>
+    </hbox>
+
+    <hbox height="34" items-align="mid" style="margin: 16px 0px 0px 0px;">
+        <label id="searchPlayBtn" width="90" height="30" text="▶ 播放" class="action-pill action-pill-primary"></label>
+        <label id="searchDownloadBtn" width="90" height="30" text="↓ 下载" class="action-pill" style="margin: 0px 0px 0px 14px;"></label>
+        <label id="searchBatchBtn" width="90" height="30" text="≡ 批量" class="action-pill" style="margin: 0px 0px 0px 14px;"></label>
+    </hbox>
+
+    <hbox height="24" items-align="mid" style="margin: 18px 0px 0px 0px;">
+        <label class="table-head-main" text="歌名/歌手" text-align="left"></label>
+        <label class="table-head-like" text=""></label>
+        <label class="table-head-album" text="专辑" text-align="left"></label>
+        <label class="table-head-time" text="时长"></label>
+    </hbox>
+
+    <vlist id="searchSongList" class="song-list" style="margin: 8px 0px 0px 0px; padding: 2px 0px 6px 0px;"></vlist>
+</vbox>
+
+<style>
+    #searchRoot {
+        background-color: #1f1f1f;
+    }
+
+    .page-title {
+        color: #f6f6f6;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .page-copy {
+        color: #929292;
+        font-size: 12px;
+    }
+
+    .search-tab {
+        color: #d7d7d7;
+        font-size: 12px;
+    }
+
+    .search-tab-active {
+        color: #18de7f;
+        border-bottom: 2px solid #18de7f;
+        font-weight: bold;
+    }
+
+    .action-pill {
+        background-color: #353535;
+        border-radius: 15px;
+        color: #f4f4f4;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+        .action-pill:hover {
+            background-color: #404040;
+        }
+
+    .action-pill-primary {
+        background-color: #1ade80;
+        color: #0d1f14;
+        font-weight: bold;
+    }
+
+    .table-head-main,
+    .table-head-like,
+    .table-head-album,
+    .table-head-time {
+        color: #8a8a8a;
+        font-size: 12px;
+    }
+
+    .table-head-main {
+        padding: 0px 0px 0px 10px;
+    }
+
+    .table-head-like {
+        width: 42px;
+    }
+
+    .table-head-album {
+        width: 210px;
+    }
+
+    .table-head-time {
+        width: 66px;
+    }
+
+    .song-list {
+        background-color: transparent;
+    }
+
+    #searchSongList::-webkit-scrollbar {
+        border-radius: 10px;
+        width: 5px;
+        color: #8f8f8f;
+    }
+</style>

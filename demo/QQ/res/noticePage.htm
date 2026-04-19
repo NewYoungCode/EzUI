@@ -1,0 +1,189 @@
+<hbox id="noticeShell" class="pageShell" items-align="top left">
+    <vbox id="contactSidebar" class="subSidebar" width="250">
+        <hbox class="searchRow" height="54" items-align="mid left">
+            <hbox class="searchBox" width="132" height="32" items-align="mid left">
+                <label size="14,14" style="background-image:url(res/search.png);margin-left:12px" event="none"></label>
+                <input placeholder="搜索" style="margin-left:8px;margin-right:10px"></input>
+            </hbox>
+            <button class="plusBtn" text="+"></button>
+        </hbox>
+
+        <button id="friendManagerBtn" text="◉ 好友管理器" class="managerBtn"></button>
+
+        <hbox class="noticeEntry activeNotice" items-align="mid left">
+            <label text="好友通知" width="auto" style="font-size:14px;color:#202020;margin-left:12px" event="none"></label>
+            <spacer></spacer>
+            <label text=">" width="auto" style="font-size:16px;color:#808080;margin-right:12px" event="none"></label>
+        </hbox>
+
+        <hbox class="noticeEntry" items-align="mid left">
+            <label text="群通知" width="auto" style="font-size:14px;color:#202020;margin-left:12px" event="none"></label>
+            <spacer></spacer>
+            <label text=">" width="auto" style="font-size:16px;color:#808080;margin-right:12px" event="none"></label>
+        </hbox>
+
+        <hbox id="contactModeTabs" items-align="mid left">
+            <label class="modeTab active" text="好友"></label>
+            <label class="modeTab" text="群聊"></label>
+        </hbox>
+
+        <vlist id="contactGroupList" style="padding:4px 0px 10px 0px">
+            <hbox class="groupRow"><label text=">" width="12" align="center" style="font-size:13px;color:#6a6a6a;margin-left:12px" event="none"></label><label text="我的设备" width="120" align="left" style="font-size:14px;color:#1e1e1e;margin-left:6px" event="none"></label><spacer></spacer><label text="1" width="auto" style="font-size:12px;color:#8e8e8e;margin-right:12px" event="none"></label></hbox>
+            <hbox class="groupRow"><label text=">" width="12" align="center" style="font-size:13px;color:#6a6a6a;margin-left:12px" event="none"></label><label text="特别关心" width="120" align="left" style="font-size:14px;color:#1e1e1e;margin-left:6px" event="none"></label><spacer></spacer><label text="0/0" width="auto" style="font-size:12px;color:#8e8e8e;margin-right:12px" event="none"></label></hbox>
+            <hbox class="groupRow"><label text=">" width="12" align="center" style="font-size:13px;color:#6a6a6a;margin-left:12px" event="none"></label><label text="我的好友" width="120" align="left" style="font-size:14px;color:#1e1e1e;margin-left:6px" event="none"></label><spacer></spacer><label text="65/104" width="auto" style="font-size:12px;color:#8e8e8e;margin-right:12px" event="none"></label></hbox>
+            <hbox class="groupRow"><label text=">" width="12" align="center" style="font-size:13px;color:#6a6a6a;margin-left:12px" event="none"></label><label text="同事" width="120" align="left" style="font-size:14px;color:#1e1e1e;margin-left:6px" event="none"></label><spacer></spacer><label text="2/5" width="auto" style="font-size:12px;color:#8e8e8e;margin-right:12px" event="none"></label></hbox>
+            <hbox class="groupRow"><label text="∨" width="12" align="center" style="font-size:13px;color:#6a6a6a;margin-left:12px" event="none"></label><label text="游戏账号" width="120" align="left" style="font-size:14px;color:#1e1e1e;margin-left:6px" event="none"></label><spacer></spacer><label text="0/3" width="auto" style="font-size:12px;color:#8e8e8e;margin-right:12px" event="none"></label></hbox>
+
+            <hbox class="friendCard" items-align="mid left">
+                <label class="avatar avatarWhite" style="background-image:url(res/QQ.png)" event="none"></label>
+                <vbox items-align="top left" event="none" style="margin-left:12px">
+                    <label width="140" ellipsis="..." text="艾欧尼亚" align="left" style="font-size:15px;color:#1f1f1f"></label>
+                    <label width="140" ellipsis="..." text="[● 离线]" align="left" style="font-size:12px;color:#9a9a9a;margin-top:4px"></label>
+                </vbox>
+            </hbox>
+
+            <hbox class="friendCard" items-align="mid left">
+                <label class="avatar avatarGold" text="黑" event="none"></label>
+                <vbox items-align="top left" event="none" style="margin-left:12px">
+                    <label width="140" ellipsis="..." text="黑色玫瑰" align="left" style="font-size:15px;color:#1f1f1f"></label>
+                    <label width="140" ellipsis="..." text="[● 离线]" align="left" style="font-size:12px;color:#9a9a9a;margin-top:4px"></label>
+                </vbox>
+            </hbox>
+        </vlist>
+    </vbox>
+
+    <vbox id="noticePage">
+        <hbox class="pageHeader noticeHeader" height="60" items-align="mid left">
+            <label text="好友通知" width="auto" style="font-size:18px;font-weight:700;color:#171717;margin-left:20px" event="none"></label>
+            <spacer></spacer>
+            <label class="headerTool" text="⎚"></label>
+            <label class="headerTool" text="⌫" style="margin-right:18px"></label>
+        </hbox>
+
+        <vlist id="noticeList" style="padding:12px 16px 16px 16px">
+            <hbox class="noticeCardItem" items-align="mid left">
+                <vbox class="noticeAvatarSlot" items-align="mid center" event="none">
+                    <label class="avatar avatarDark" text="黑" event="none"></label>
+                </vbox>
+                <vbox width="420" items-align="top left" event="none" style="margin-left:14px">
+                    <hbox width="420" height="22" items-align="mid left" event="none">
+                        <label text="闲鱼刷机客户" width="auto" style="font-size:14px;color:#1678ff;font-weight:700" event="none"></label>
+                        <label text="请求加为好友" width="auto" style="font-size:14px;color:#222222;margin-left:6px" event="none"></label>
+                        <spacer></spacer>
+                        <label class="noticeDate" text="2026/03/17" width="76" align="right" event="none"></label>
+                    </hbox>
+                    <label text="留言：我是经典虎皮蛋糕卷" width="auto" align="left" style="font-size:13px;color:#7f7f7f;margin-top:6px" event="none"></label>
+                    <label text="来源：QQ号查找" width="auto" align="left" style="font-size:13px;color:#7f7f7f;margin-top:6px" event="none"></label>
+                </vbox>
+                <spacer></spacer>
+                <label text="已同意" width="auto" style="font-size:14px;color:#888888;margin-right:18px" event="none"></label>
+            </hbox>
+
+            <hbox class="noticeCardItem" items-align="mid left">
+                <vbox class="noticeAvatarSlot" items-align="mid center" event="none">
+                    <label class="avatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                </vbox>
+                <vbox width="420" items-align="top left" event="none" style="margin-left:14px">
+                    <hbox width="420" height="22" items-align="mid left" event="none">
+                        <label text="闲鱼刷机客户Zzz" width="auto" style="font-size:14px;color:#1678ff;font-weight:700" event="none"></label>
+                        <label text="请求加为好友" width="auto" style="font-size:14px;color:#222222;margin-left:6px" event="none"></label>
+                        <spacer></spacer>
+                        <label class="noticeDate" text="2026/03/12" width="76" align="right" event="none"></label>
+                    </hbox>
+                    <label text="留言：我是Zzz" width="auto" align="left" style="font-size:13px;color:#7f7f7f;margin-top:6px" event="none"></label>
+                    <label text="来源：QQ号查找" width="auto" align="left" style="font-size:13px;color:#7f7f7f;margin-top:6px" event="none"></label>
+                </vbox>
+                <spacer></spacer>
+                <label text="已同意" width="auto" style="font-size:14px;color:#888888;margin-right:18px" event="none"></label>
+            </hbox>
+
+            <hbox class="noticeCardItem" items-align="mid left">
+                <vbox class="noticeAvatarSlot" items-align="mid center" event="none">
+                    <label class="avatar avatarDark" text="布" event="none"></label>
+                </vbox>
+                <vbox width="420" items-align="top left" event="none" style="margin-left:14px">
+                    <hbox width="420" height="22" items-align="mid left" event="none">
+                        <label text="闲鱼刷机客户-布莱克维隆" width="auto" style="font-size:14px;color:#1678ff;font-weight:700" event="none"></label>
+                        <label text="请求加为好友" width="auto" style="font-size:14px;color:#222222;margin-left:6px" event="none"></label>
+                        <spacer></spacer>
+                        <label class="noticeDate" text="2026/03/08" width="76" align="right" event="none"></label>
+                    </hbox>
+                    <label text="留言：我是布莱克维隆" width="auto" align="left" style="font-size:13px;color:#7f7f7f;margin-top:6px" event="none"></label>
+                    <label text="来源：QQ号查找" width="auto" align="left" style="font-size:13px;color:#7f7f7f;margin-top:6px" event="none"></label>
+                </vbox>
+                <spacer></spacer>
+                <label text="已同意" width="auto" style="font-size:14px;color:#888888;margin-right:18px" event="none"></label>
+            </hbox>
+
+            <hbox class="noticeCardItem" items-align="mid left">
+                <vbox class="noticeAvatarSlot" items-align="mid center" event="none">
+                    <label class="avatar avatarPink" text="闲" event="none"></label>
+                </vbox>
+                <vbox width="420" items-align="top left" event="none" style="margin-left:14px">
+                    <hbox width="420" height="22" items-align="mid left" event="none">
+                        <label text="闲鱼刷机客户" width="auto" style="font-size:14px;color:#1678ff;font-weight:700" event="none"></label>
+                        <label text="请求加为好友" width="auto" style="font-size:14px;color:#222222;margin-left:6px" event="none"></label>
+                        <spacer></spacer>
+                        <label class="noticeDate" text="2026/03/08" width="76" align="right" event="none"></label>
+                    </hbox>
+                    <label text="留言：闲鱼" width="auto" align="left" style="font-size:13px;color:#7f7f7f;margin-top:6px" event="none"></label>
+                    <label text="来源：QQ号查找" width="auto" align="left" style="font-size:13px;color:#7f7f7f;margin-top:6px" event="none"></label>
+                </vbox>
+                <spacer></spacer>
+                <label text="已同意" width="auto" style="font-size:14px;color:#888888;margin-right:18px" event="none"></label>
+            </hbox>
+
+            <hbox class="noticeCardItem" items-align="mid left">
+                <vbox class="noticeAvatarSlot" items-align="mid center" event="none">
+                    <label class="avatar avatarGreen" text="绿" event="none"></label>
+                </vbox>
+                <vbox width="420" items-align="top left" event="none" style="margin-left:14px">
+                    <hbox width="420" height="22" items-align="mid left" event="none">
+                        <label text="绿风 闲鱼刷机客户" width="auto" style="font-size:14px;color:#1678ff;font-weight:700" event="none"></label>
+                        <label text="请求加为好友" width="auto" style="font-size:14px;color:#222222;margin-left:6px" event="none"></label>
+                        <spacer></spacer>
+                        <label class="noticeDate" text="2026/02/25" width="76" align="right" event="none"></label>
+                    </hbox>
+                    <label text="留言：可以一起研究 EzUI 吗" width="auto" align="left" style="font-size:13px;color:#7f7f7f;margin-top:6px" event="none"></label>
+                    <label text="来源：QQ号查找" width="auto" align="left" style="font-size:13px;color:#7f7f7f;margin-top:6px" event="none"></label>
+                </vbox>
+                <spacer></spacer>
+                <label text="已同意" width="auto" style="font-size:14px;color:#888888;margin-right:18px" event="none"></label>
+            </hbox>
+        </vlist>
+    </vbox>
+</hbox>
+
+<style>
+    #noticeShell, .pageShell { background-color: white; }
+    .subSidebar { background-color: white; border-right: 1px solid #f0f0f0; }
+    .searchRow { margin: 0px 10px 0px 10px; }
+    .searchBox { background-color: #f5f6f8; border-radius: 16px; }
+    .plusBtn { width: 32px; height: 32px; margin-left: 10px; border: 0px solid #000000; border-radius: 16px; background-color: #f5f6f8; color: #a0a0a0; font-size: 20px; }
+    .managerBtn { height: 32px; margin: 4px 10px 8px 10px; border: 1px solid #d5dbe5; border-radius: 12px; background-color: white; color: #202020; font-size: 14px; }
+    .noticeEntry { height: 40px; margin: 0px 6px 0px 6px; border-radius: 10px; cursor: pointer; }
+    .noticeEntry:hover { background-color: #f6f8fb; }
+    .activeNotice { background-color: #f6f8fb; }
+    #contactModeTabs { height: 42px; margin: 8px 10px 6px 10px; padding: 4px; background-color: #f4f6fa; border-radius: 10px; }
+    .modeTab { width: 50%; height: 34px; color: #5f6570; border-radius: 8px; text-align: mid center; }
+    .modeTab.active { background-color: white; color: #1788ff; font-weight: 700; }
+    .groupRow { height: 38px; width: 100%; border-radius: 8px; }
+    .groupRow:hover { background-color: #f7f8fa; }
+    .friendCard { height: 72px; width: 100%; padding: 0px 14px 0px 14px; cursor: pointer; border-radius: 12px; margin-top: 4px; }
+    .friendCard:hover { background-color: #f7f8fa; }
+    .avatar { width: 42px; height: 42px; border-radius: 21px; color: white; font-size: 14px; font-weight: 700; text-align: mid center; }
+    .avatarImage { background-color: #dfe7f5; }
+    .avatarWhite { background-color: #f4f4f4; color: #2d2d2d; border: 1px solid #ececec; }
+    .avatarGold { background-color: #d3b37a; }
+    .avatarDark { background-color: #202226; }
+    .avatarPink { background-color: #d39ae6; }
+    .avatarGreen { background-color: #5ab76c; }
+    #noticePage { background-color: #fbfbfc; }
+    .pageHeader { border-bottom: 1px solid #f0f0f0; }
+    .headerTool { width: 30px; height: 30px; margin-left: 4px; color: #3e434c; font-size: 18px; border-radius: 15px; text-align: mid center; cursor: pointer; }
+    .headerTool:hover { background-color: #f3f5f8; }
+    .noticeCardItem { height: 92px; width: 100%; margin-bottom: 12px; padding: 14px 18px 14px 18px; background-color: white; border-radius: 12px; }
+    .noticeAvatarSlot { width: 42px; height: 64px; }
+    .noticeDate { font-size: 12px; color: #8d8d8d; text-align: mid right; }
+    #contactGroupList::-webkit-scrollbar, #noticeList::-webkit-scrollbar { width: 7px; border-radius: 7px; }
+</style>

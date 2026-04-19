@@ -29,6 +29,83 @@ add_executable(XMLPreview WIN32 ${src} )
 target_include_directories(XMLPreview PRIVATE  ${include})
 add_ezui_lib(XMLPreview)
 	
+#UI速查
+project(QuickUI)
+    #主程序
+file(GLOB src CONFIGURE_DEPENDS
+    "./QuickUI/*.h"
+    "./QuickUI/*.hpp"
+    "./QuickUI/*.c"
+    "./QuickUI/*.cpp"
+    "./QuickUI/*.rc"
+    )	
+	
+add_executable(QuickUI WIN32 ${src})
+target_include_directories(QuickUI PRIVATE  ${include})
+add_ezui_lib(QuickUI)
+# 添加资源文件到"Res"筛选项下
+file(GLOB_RECURSE res_files CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/QuickUI/res/*.*")
+target_sources(QuickUI PRIVATE ${res_files})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/QuickUI/res" PREFIX "res" FILES ${res_files})
+add_resource_package(QuickUI ./QuickUI/res ./QuickUI/QuickUI.res)
+set_property(TARGET QuickUI PROPERTY FOLDER "demo")
+
+
+
+#QQ音乐
+project(QQMusic)
+    #主程序
+file(GLOB src CONFIGURE_DEPENDS
+    "./QQMusic/*.h"
+    "./QQMusic/*.hpp"
+    "./QQMusic/*.c"
+    "./QQMusic/*.cpp"
+    "./QQMusic/*.rc"
+    )	
+	
+add_executable(QQMusic WIN32 ${src})
+target_include_directories(QQMusic PRIVATE  ${include})
+add_ezui_lib(QQMusic)
+# 添加资源文件到"Res"筛选项下
+file(GLOB_RECURSE res_files CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/QQMusic/res/*.*")
+target_sources(QQMusic PRIVATE ${res_files})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/QQMusic/res" PREFIX "res" FILES ${res_files})
+add_resource_package(QQMusic ./QQMusic/res ./QQMusic/QQMusic.res)
+set_property(TARGET QQMusic PROPERTY FOLDER "demo")
+#添加常用库依赖
+target_include_directories(QQMusic PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/kugou/include/Common/include)
+target_include_directories(QQMusic PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/kugou/include/vlc/include)
+#添加vlc解码器依赖
+target_link_directories(QQMusic PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/kugou/lib)
+target_link_directories(QQMusic PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/kugou/lib)
+#执行解压vlc的解码库
+add_custom_command(
+        TARGET QQMusic
+        POST_BUILD
+        COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/kugou/extract${ARCH_NAME}.bat" "$<TARGET_FILE_DIR:QQMusic>"
+        COMMENT "Running extract.bat to conditionally extract dll.zip"
+)
+
+
+#迅雷下载 Demo
+project(Xunlei)
+file(GLOB src CONFIGURE_DEPENDS
+    "./Xunlei/*.h"
+    "./Xunlei/*.hpp"
+    "./Xunlei/*.c"
+    "./Xunlei/*.cpp"
+    "./Xunlei/*.rc"
+    )
+
+add_executable(Xunlei WIN32 ${src})
+target_include_directories(Xunlei PRIVATE ${include})
+add_ezui_lib(Xunlei)
+file(GLOB_RECURSE res_files CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/Xunlei/res/*.*")
+target_sources(Xunlei PRIVATE ${res_files})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/Xunlei/res" PREFIX "res" FILES ${res_files})
+add_resource_package(Xunlei ./Xunlei/res ./Xunlei/Xunlei.res)
+set_property(TARGET Xunlei PROPERTY FOLDER "demo")
+
 	
 #仿QQ登录界面
 project(QQ)
@@ -41,15 +118,15 @@ file(GLOB src CONFIGURE_DEPENDS
     "./QQ/*.rc"
     )	
 	
-add_executable(QQ WIN32 ${src})
-target_include_directories(QQ PRIVATE  ${include})
-add_ezui_lib(QQ)
+add_executable(QQTest WIN32 ${src})
+target_include_directories(QQTest PRIVATE  ${include})
+add_ezui_lib(QQTest)
 # 添加资源文件到"Res"筛选项下
 file(GLOB_RECURSE res_files CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/QQ/res/*.*")
-target_sources(QQ PRIVATE ${res_files})
+target_sources(QQTest PRIVATE ${res_files})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/QQ/res" PREFIX "res" FILES ${res_files})
-add_resource_package(QQ ./QQ/res ./QQ/QQ.res)
-set_property(TARGET QQ PROPERTY FOLDER "demo")
+add_resource_package(QQTest ./QQ/res ./QQ/QQ.res)
+set_property(TARGET QQTest PROPERTY FOLDER "demo")
 
 
     #模仿酷狗音乐demo
@@ -74,8 +151,8 @@ set_property(TARGET QQ PROPERTY FOLDER "demo")
     target_include_directories(kugou PRIVATE ./kugou/include/Common/include)
     target_include_directories(kugou PRIVATE ./kugou/include/vlc/include)
     #添加vlc解码器依赖
-    target_link_directories(kugou PRIVATE ./kugou/lib/${ARCH_NAME}/Common)
-    target_link_directories(kugou PRIVATE ./kugou/lib/${ARCH_NAME}/vlc)
+    target_link_directories(kugou PRIVATE ./kugou/lib)
+    target_link_directories(kugou PRIVATE ./kugou/lib)
 
     set_property(TARGET kugou PROPERTY FOLDER "demo")
     #添加引用

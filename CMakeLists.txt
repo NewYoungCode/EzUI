@@ -7,11 +7,23 @@ elseif(WIN32)
    add_compile_options(/utf-8)
 endif()
 
-#强制检查架构类型
-if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64")
-    set(ARCH_NAME "x64")
+# 对 VS 生成器，强制检查是否指定了平台
+if(CMAKE_GENERATOR MATCHES "Visual Studio")
+    if(NOT CMAKE_GENERATOR_PLATFORM)
+        message(FATAL_ERROR "请指定平台: cmake -A x64 或 cmake -A Win32")
+    endif()
+    if(CMAKE_GENERATOR_PLATFORM STREQUAL "x64")
+        set(ARCH_NAME "x64")
+    else()
+        set(ARCH_NAME "x86")
+    endif()
 else()
-    set(ARCH_NAME "x86")
+    # 非 VS 生成器（Ninja、Make 等）用指针大小判断
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(ARCH_NAME "x64")
+    else()
+        set(ARCH_NAME "x86")
+    endif()
 endif()
 
 #链接类型
@@ -29,7 +41,15 @@ project(EzUI_v2.0)
 # 添加一个选项，供用户选择构建demo
 option(BUILD_EZUI "Build BUILD_EZUI_PROJECT" ON)
 if(BUILD_EZUI)
-    file(GLOB src ./include/EzUI/*.* ./sources/*.* )
+    #file(GLOB src ./include/EzUI/*.* ./sources/*.* )
+
+    # 自动收集所有源文件
+file(GLOB_RECURSE src CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/*.*"
+    "${CMAKE_CURRENT_SOURCE_DIR}/sources/*.*"
+)
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${src})
+
 # 添加一个选项，供用户选择构建静态库或动态库
     option(BUILD_SHARED_LIBS "Build shared library instead of static library" OFF)
         if(BUILD_SHARED_LIBS)

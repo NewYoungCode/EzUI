@@ -1,0 +1,54 @@
+﻿<vbox width="100%" height="100%" items-align="top left" class="child-page" style="padding: 14px 16px 14px 16px;">
+    <label width="100%" height="auto" text="Frame Child" align="left" class="child-title"></label>
+    <label width="100%" height="auto" text="这个子页在独立 htm 中维护，适合说明块、局部预览和作用域隔离。" align="left" class="child-note" style="margin: 6px 0px 0px 0px;"></label>
+
+    <hbox height="28" items-align="middle left" style="margin: 14px 0px 0px 0px;">
+        <label width="auto" height="24" text="Scoped" align="center" class="child-chip-accent"></label>
+        <label width="auto" height="24" text="Inner Layout" align="center" class="child-chip" style="margin: 0px 0px 0px 8px;"></label>
+        <label width="auto" height="24" text="Own Style" align="center" class="child-chip" style="margin: 0px 0px 0px 8px;"></label>
+    </hbox>
+
+    <vbox class="child-card" style="margin: 14px 0px 0px 0px; padding: 12px 12px 12px 12px;">
+        <label width="100%" height="auto" text="内部可以使用自己的 class、id 和 style，不需要和外层页面抢命名。" align="left" class="child-note"></label>
+    </vbox>
+</vbox>
+
+<style>
+    .child-page {
+        background-color: #101722;
+        border-radius: 12px;
+    }
+
+    .child-title {
+        color: #F6FAFF;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .child-note {
+        color: #99A9BE;
+        font-size: 12px;
+    }
+
+    .child-chip {
+        background-color: #223041;
+        color: #DDE7F7;
+        border-radius: 8px;
+        font-size: 12px;
+        padding: 0px 10px 0px 10px;
+    }
+
+    .child-chip-accent {
+        background-color: #17384F;
+        color: #9FD9FF;
+        border-radius: 8px;
+        font-size: 12px;
+        padding: 0px 10px 0px 10px;
+    }
+
+    .child-card {
+        background-color: #16202D;
+        border: 1px solid #2A3C52;
+        border-radius: 12px;
+    }
+</style>

@@ -3,7 +3,11 @@ void* lock_cb(void* opaque, void** planes)
 {
 	VlcPlayer* vp = (VlcPlayer*)opaque;
 	vp->mtx.lock();
-	*planes = vp->BuffBitmap->GetPixel();           /*tell VLC to put decoded data to this buffer*/
+	vp->play_mtx.lock();
+	vp->play_img->LockPixels([&](uint8_t* pPixels, uint32_t bitmapStride) {
+		*planes = pPixels;   /*tell VLC to put decoded data to this buffer*/
+		});
+	vp->play_mtx.unlock();
 	return NULL;
 }
 /*##get the argb picture AND save to file*/
@@ -18,7 +22,7 @@ void display_cb(void* opaque, void* picture)
 	// 通知主线程刷新
 	BeginInvoke([=] {
 		if (vp->PlayingCallback) {
-			vp->PlayingCallback(vp->BuffBitmap);
+			vp->PlayingCallback(vp->play_img);
 		}
 		vp->Invalidate();
 		});
@@ -32,23 +36,31 @@ unsigned setup_cb(void** opaque, char* chroma, unsigned* width, unsigned* height
 {
 	int w = *width;
 	int h = *height;
+
 	VlcPlayer* vp = (VlcPlayer*)*opaque;
-	if (vp->BuffBitmap != NULL) {
-		delete vp->BuffBitmap;
+	vp->play_mtx.lock();
+	if (vp->play_img != NULL) {
+		delete vp->play_img;
+		vp->play_img = NULL;
 	}
-	vp->BuffBitmap = new Bitmap(w, h);
+	vp->play_img = new Image(w, h);
+	vp->play_mtx.unlock();
+
 	memcpy(chroma, "RV32", 4);
 	*pitches = w * 4;
 	*lines = h;
 	return 1;
 }
-VlcPlayer::VlcPlayer()
+VlcPlayer::VlcPlayer(Object* ownerObj) :Control(ownerObj)
 {
 	m_vlc = libvlc_new(NULL, NULL);
 	m_vlcplayer = libvlc_media_player_new(m_vlc);
 	libvlc_video_set_callbacks(m_vlcplayer, lock_cb, unlock_cb, display_cb, this);
 	libvlc_video_set_format_callbacks(m_vlcplayer, setup_cb, cleanup_cb);
+	//设置背景色为黑色
+	this->Style->BackColor = Color::Black;
 }
+
 VlcPlayer::~VlcPlayer()
 {
 	Stop();
@@ -59,29 +71,33 @@ VlcPlayer::~VlcPlayer()
 		libvlc_media_player_release(m_vlcplayer);
 	}
 	libvlc_release(m_vlc);
-	if (BuffBitmap) {
-		delete BuffBitmap;
+
+	this->play_mtx.lock();
+	if (play_img) {
+		delete play_img;
+		play_img = NULL;
 	}
+	this->play_mtx.unlock();
 }
-void VlcPlayer::OnBackgroundPaint(PaintEventArgs& args) {
+void VlcPlayer::OnBackgroundPaint(PaintEventArgs* args) {
 	__super::OnBackgroundPaint(args);
-	if (BuffBitmap) {
-		Image img(BuffBitmap);
-		img.SizeMode = ImageSizeMode::Fit;
-		//img.Offset = Rect(500,50,200,200);
-		args.Graphics.DrawImage(&img, GetRect());
+	this->play_mtx.lock();
+	if (this->play_img) {
+		this->play_img->SizeMode = ImageSizeMode::Fit;
+		args->Graphics()->DrawImage(this->play_img, GetRect());
 	}
+	this->play_mtx.unlock();
 }
 void VlcPlayer::SetConfig()
 {
 }
 void VlcPlayer::OpenPath(const UIString& file_)
 {
-	if (m_task && m_task->IsStopped()) {
+	if (m_task && m_task->IsFinished()) {
 		delete m_task;
 		m_task = NULL;
 	}
-	else if (m_task && !m_task->IsStopped()) {
+	else if (m_task && !m_task->IsFinished()) {
 		//上一次播放请求尚未完成
 		return;
 	}
