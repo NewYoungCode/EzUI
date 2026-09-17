@@ -1,6 +1,4 @@
 ﻿#pragma once
-#include <functional>
-#include <vector>
 #include "Control.h"
 #include "VScrollBar.h"
 #include "HScrollBar.h"
@@ -12,43 +10,44 @@ namespace ezui {
 		struct Column {
 			UIString Name;
 			UIString HeaderText;
-			int Width = 120;
-			HAlign Align = HAlign::Left;
+			int Width;
+			HAlign Align;
+			Column() : Width(120), Align(HAlign::Left) {}
 		};
 	private:
 		std::vector<Column> m_columns;
 		std::vector<std::vector<UIString>> m_rows;
 		std::vector<int> m_layoutColumnWidths;
 		std::vector<int> m_layoutColumnOffsets;
-		VScrollBar* m_vScrollBar = NULL;
-		HScrollBar* m_hScrollBar = NULL;
-		int m_totalColumnWidth = 0;
-		int m_headerHeight = 36;
-		int m_rowHeight = 32;
-		int m_cellPadding = 10;
-		int m_gridLineWidth = 1;
-		int m_defaultColumnWidth = 120;
-		int m_minColumnWidth = 48;
-		int m_scrollX = 0;
-		int m_scrollY = 0;
-		int m_selectedRow = -1;
-		int m_hoverRow = -1;
-		bool m_headerVisible = true;
-		UIString m_emptyText = "No data";
-		Color m_gridColor = Color(220, 224, 231);
-		Color m_headerBackColor = Color(245, 247, 250);
-		Color m_headerForeColor = Color(45, 52, 60);
-		Color m_rowBackColor = Color::White;
-		Color m_altRowBackColor = Color(249, 250, 252);
-		Color m_hoverRowBackColor = Color(241, 246, 255);
-		Color m_selectedRowBackColor = Color(229, 241, 251);
-		Color m_selectedRowForeColor = Color(24, 36, 50);
+		VScrollBar* m_vScrollBar;
+		HScrollBar* m_hScrollBar;
+		int m_totalColumnWidth;
+		int m_headerHeight;
+		int m_rowHeight;
+		int m_cellPadding;
+		int m_gridLineWidth;
+		int m_defaultColumnWidth;
+		int m_minColumnWidth;
+		int m_scrollX;
+		int m_scrollY;
+		int m_selectedRow;
+		int m_hoverRow;
+		bool m_headerVisible;
+		UIString m_emptyText;
+		Color m_gridColor;
+		Color m_headerBackColor;
+		Color m_headerForeColor;
+		Color m_rowBackColor;
+		Color m_altRowBackColor;
+		Color m_hoverRowBackColor;
+		Color m_selectedRowBackColor;
+		Color m_selectedRowForeColor;
 	private:
 		void Init();
 		void EnsureColumnCount(size_t count);
 		void UpdateMetrics();
-		int GetHeaderHeightInternal() const noexcept;
-		Rect GetDataViewport() const noexcept;
+		int GetHeaderHeightInternal() const EZUI_NOEXCEPT;
+		Rect GetDataViewport() const EZUI_NOEXCEPT;
 		int HitTestRow(const Point& point) const;
 		int HitTestColumn(const Point& point) const;
 		Column MakeDefaultColumn(int index) const;
@@ -57,36 +56,37 @@ namespace ezui {
 		void ApplyColumnAligns(const UIString& value);
 		void ApplyData(const UIString& value);
 	protected:
-		virtual void OnLayout() override;
-		virtual void OnScroll(int offsetX, int offsetY) override;
-		virtual void OnForePaint(PaintEventArgs* args) override;
-		virtual void OnChildPaint(PaintEventArgs* args) override;
-		virtual void OnMouseDown(MouseEventArgs* args) override;
-		virtual void OnMouseMove(MouseEventArgs* args) override;
-		virtual void OnMouseLeave(MouseEventArgs* args) override;
-		virtual void OnDpiChanged(DpiChangedEventArgs* args) override;
+		virtual void OnLayout() EZUI_OVERRIDE;
+		virtual void OnScroll(int offsetX, int offsetY) EZUI_OVERRIDE;
+		virtual void OnForePaint(PaintEventArgs* args) EZUI_OVERRIDE;
+		virtual void OnChildPaint(PaintEventArgs* args) EZUI_OVERRIDE;
+		virtual void OnMouseDown(MouseEventArgs* args) EZUI_OVERRIDE;
+		virtual void OnMouseMove(MouseEventArgs* args) EZUI_OVERRIDE;
+		virtual void OnMouseLeave(MouseEventArgs* args) EZUI_OVERRIDE;
+		virtual void OnDpiChanged(DpiChangedEventArgs* args) EZUI_OVERRIDE;
 	public:
-		std::function<void(DataGridView* sender, int rowIndex)> SelectedRowChanged = NULL;
-		std::function<void(DataGridView* sender, int rowIndex, int columnIndex)> CellClick = NULL;
+		std::function<void(DataGridView* sender, int rowIndex)> SelectedRowChanged;
+		std::function<void(DataGridView* sender, int rowIndex, int columnIndex)> CellClick;
 
 		DataGridView(Object* ownerObject = NULL);
 		virtual ~DataGridView();
 
-		virtual VScrollBar* GetVScrollBar() override;
-		virtual HScrollBar* GetHScrollBar() override;
-		virtual void RemoveAll(bool freeAll = false) override;
+		virtual VScrollBar* GetVScrollBar() EZUI_OVERRIDE;
+		virtual HScrollBar* GetHScrollBar() EZUI_OVERRIDE;
+		/// 移除全部子控件；deleteChildren 为 true 时同时立即删除这些控件。
+		virtual void RemoveAll(bool deleteChildren = false) EZUI_OVERRIDE;
 
 		void ClearColumns();
 		int AddColumn(const Column& column);
 		int AddColumn(const UIString& headerText, int width = 120, const UIString& name = "", HAlign align = HAlign::Left);
-		int GetColumnCount() const noexcept;
+		int GetColumnCount() const EZUI_NOEXCEPT;
 		Column* GetColumn(int index);
 		const Column* GetColumn(int index) const;
 
 		void RemoveAllRows();
 		void SetRows(const std::vector<std::vector<UIString>>& rows);
 		int AddRow(const std::vector<UIString>& values);
-		int GetRowCount() const noexcept;
+		int GetRowCount() const EZUI_NOEXCEPT;
 		const std::vector<UIString>* GetRow(int index) const;
 
 		void SetCellText(int rowIndex, int columnIndex, const UIString& text);
@@ -98,7 +98,7 @@ namespace ezui {
 		void SetCellPadding(int cellPadding);
 		void SetGridLineWidth(int gridLineWidth);
 		void SetSelectedRow(int rowIndex);
-		int GetSelectedRow() const noexcept;
+		int GetSelectedRow() const EZUI_NOEXCEPT;
 		void ScrollToRow(int rowIndex);
 		void ScrollToColumn(int columnIndex);
 		void SetEmptyText(const UIString& text);
@@ -118,6 +118,6 @@ namespace ezui {
 		// row-back-color / alt-row-back-color / hover-row-back-color
 		// selected-row-back-color / selected-row-fore-color
 		// All Control attributes are also supported
-		virtual void SetAttribute(const UIString& key, const UIString& value) override;
+		virtual void SetAttribute(const UIString& key, const UIString& value) EZUI_OVERRIDE;
 	};
 };

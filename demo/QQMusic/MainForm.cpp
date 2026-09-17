@@ -265,33 +265,10 @@ namespace {
 		return merged;
 	}
 
-	TaskFactory& QQMusicTaskPool()
+	ezui::ThreadPool& QQMusicTaskPool()
 	{
-		static TaskFactory pool(4);
+		static ezui::ThreadPool pool(4);
 		return pool;
-	}
-
-	void DrainPendingInvokeMessages(int maxPasses = 6)
-	{
-		auto* ctx = ezui::detail::GetGlobalContext();
-		if (!ctx || !ctx->EzUI_MessageWnd || !::IsWindow(ctx->EzUI_MessageWnd)) {
-			return;
-		}
-
-		for (int pass = 0; pass < maxPasses; ++pass) {
-			bool handledAny = false;
-			MSG msg {};
-			while (::PeekMessageW(&msg, ctx->EzUI_MessageWnd, EZUI_WM_SYSTEM, EZUI_WM_SYSTEM, PM_REMOVE)) {
-				handledAny = true;
-				::DispatchMessageW(&msg);
-			}
-
-			if (!handledAny) {
-				break;
-			}
-
-			ezui::SleepMs(1);
-		}
 	}
 
 } // namespace
@@ -315,7 +292,7 @@ bool TryEnableSystemRoundCorner(HWND hwnd)
 MainForm::MainForm() : BorderlessWindow()
 {
 
-	SetText(L"QQ音乐");
+	SetTitle(L"QQ音乐");
 	SetResizable(true);
 	LoadXml("res/mainForm.htm");
 	SetMinSize(Size(1049, 690));
@@ -369,10 +346,12 @@ MainForm::~MainForm()
 	}
 }
 
-void MainForm::OnClose(bool& cancel)
+void MainForm::OnClose(bool& allowClose)
 {
-	cancel = false;
-	isClosing_.store(true);
+	allowClose = false;
+	if (isClosing_.exchange(true)) {
+		return;
+	}
 	++searchToken_;
 	++playToken_;
 
@@ -389,8 +368,16 @@ void MainForm::OnClose(bool& cancel)
 		player_->PlayingCallback = nullptr;
 		player_->Stop();
 	}
-	DrainPendingInvokeMessages();
-	::PostQuitMessage(0);
+	if (!BeginInvoke([] {
+		Application::Exit(0);
+		})) {
+		Application::Exit(0);
+	}
+}
+
+bool MainForm::IsClosingRequested() const noexcept
+{
+	return isClosing_.load();
 }
 
 void MainForm::OnShow()
@@ -513,8 +500,11 @@ void MainForm::InitControls()
 		auto weakThis = GetWeakPtr<MainForm>();
 		progressTimer_->SetInterval(200);
 		progressTimer_->SetTickHandler([weakThis](Timer*) {
+			if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
+				return;
+			}
 			BeginInvoke([weakThis] {
-				if (weakThis.IsAlive()) {
+				if (weakThis.IsAlive() && !weakThis->IsClosingRequested()) {
 					weakThis->UpdateProgress();
 				}
 				});
@@ -524,8 +514,11 @@ void MainForm::InitControls()
 		auto weakThis = GetWeakPtr<MainForm>();
 		artworkRotationTimer_->SetInterval(33);
 		artworkRotationTimer_->SetTickHandler([weakThis](Timer*) {
+			if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
+				return;
+			}
 			BeginInvoke([weakThis] {
-				if (!weakThis.IsAlive() || !weakThis->detailCover_ || !weakThis->player_) {
+				if (!weakThis.IsAlive() || weakThis->IsClosingRequested() || !weakThis->detailCover_ || !weakThis->player_) {
 					return;
 				}
 
@@ -1052,9 +1045,12 @@ void MainForm::RequestSearchPage(int page, bool append)
 		UIString error;
 		bool hasMore = false;
 		auto songs = kugou::SearchSongs(query, page, 20, &hasMore, &error);
+		if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
+			return;
+		}
 
 		BeginInvoke([weakThis, token, page, append, hasMore, error, songs = std::move(songs)]() mutable {
-			if (!weakThis.IsAlive() || token != weakThis->searchToken_) {
+			if (!weakThis.IsAlive() || weakThis->IsClosingRequested() || token != weakThis->searchToken_) {
 				return;
 			}
 
@@ -1178,9 +1174,12 @@ void MainForm::RefreshDailySongs(bool forceRefresh)
 		if (dailySongs.empty() && error.empty()) {
 			error = L"今日推荐暂时获取失败，请稍后再试。";
 		}
+		if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
+			return;
+		}
 
 		BeginInvoke([weakThis, todayKey, error, dailySongs = std::move(dailySongs)]() mutable {
-			if (!weakThis.IsAlive()) {
+			if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
 				return;
 			}
 
@@ -1261,9 +1260,12 @@ void MainForm::RefreshHomeRecommendations()
 		if (recommendedSongs.empty() && error.empty()) {
 			error = L"“为你推荐”暂时获取失败，请稍后再试。";
 		}
+		if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
+			return;
+		}
 
 		BeginInvoke([weakThis, error, recommendedSongs = std::move(recommendedSongs)]() mutable {
-			if (!weakThis.IsAlive()) {
+			if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
 				return;
 			}
 
@@ -1396,13 +1398,7 @@ void MainForm::RenderEmptyState(VListView* list, const UIString& text)
 	}
 
 	list->RemoveAll(true);
-	auto* empty = new Label;
-	empty->SetFixedHeight(72);
-	empty->SetText(text);
-	empty->SetTextAlign(TextAlign::MiddleCenter);
-	empty->Style->ForeColor = Color(160, 160, 160);
-	empty->Style->FontSize = 14;
-	list->AddChild(empty, true);
+	list->AddChild(new SongListMessageItem(text), true);
 }
 
 #if 0
@@ -1749,9 +1745,12 @@ void MainForm::PlaySongAt(int index)
 		else {
 			ok = kugou::GetSongPlaybackInfo(song.hash, song.mvHash, info, &error);
 		}
+		if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
+			return;
+		}
 
 		BeginInvoke([weakThis, token, song, ok, info, error, useLocalFile]() mutable {
-			if (!weakThis.IsAlive() || token != weakThis->playToken_) {
+			if (!weakThis.IsAlive() || weakThis->IsClosingRequested() || token != weakThis->playToken_) {
 				return;
 			}
 
@@ -1922,7 +1921,7 @@ void MainForm::UpdateNowPlaying(const kugou::SongSummary& song, const kugou::Son
 	const UIString singer = song.singerName.empty() ? (info.singerName.empty() ? UIString(L"未知歌手") : info.singerName) : song.singerName;
 	const UIString album = song.albumName.empty() ? UIString(L"专辑信息同步中") : song.albumName;
 
-	SetText(title.empty() ? UIString(L"QQ音乐") : title);
+	SetTitle(title.empty() ? UIString(L"QQ音乐") : title);
 
 	if (dockTitle_) {
 		dockTitle_->SetText(title);
@@ -2039,9 +2038,12 @@ void MainForm::LoadLyricsAsync(const kugou::SongSummary& song, int token)
 	QQMusicTaskPool().Add([weakThis, token, song]() {
 		UIString error;
 		const auto lyric = kugou::GetSongLyrics(song.hash, song.albumId, &error);
+		if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
+			return;
+		}
 
 		BeginInvoke([weakThis, token, lyric, error]() {
-			if (!weakThis.IsAlive() || token != weakThis->playToken_) {
+			if (!weakThis.IsAlive() || weakThis->IsClosingRequested() || token != weakThis->playToken_) {
 				return;
 			}
 
@@ -2081,7 +2083,7 @@ void MainForm::UpdateArtworkAsync(const kugou::SongSummary& song, const kugou::S
 		}
 
 		Image* blurredBackground = CreateBlurredBackgroundImage(singerBackground);
-		if (!weakThis.IsAlive() || weakThis->isClosing_.load()) {
+		if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
 			delete cover;
 			delete singerAvatar;
 			delete singerBackground;
@@ -2090,7 +2092,7 @@ void MainForm::UpdateArtworkAsync(const kugou::SongSummary& song, const kugou::S
 		}
 
 		if (!BeginInvoke([weakThis, token, cover, singerAvatar, singerBackground, blurredBackground]() {
-			if (!weakThis.IsAlive() || token != weakThis->playToken_) {
+			if (!weakThis.IsAlive() || weakThis->IsClosingRequested() || token != weakThis->playToken_) {
 				delete cover;
 				delete singerAvatar;
 				delete singerBackground;
@@ -2271,8 +2273,11 @@ void MainForm::DownloadSong(const kugou::SongSummary& song)
 		}
 
 		if (!hasPlayableInfo) {
+			if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
+				return;
+			}
 			BeginInvoke([weakThis, error]() {
-				if (weakThis.IsAlive()) {
+				if (weakThis.IsAlive() && !weakThis->IsClosingRequested()) {
 					weakThis->SetSidebarStatus(error.empty() ? UIString(L"下载失败。") : error);
 					weakThis->UpdateDetailStatus(error.empty() ? UIString(L"下载失败。") : error);
 				}
@@ -2284,8 +2289,11 @@ void MainForm::DownloadSong(const kugou::SongSummary& song)
 		UIString filePath = song.localPath;
 
 		if (!filePath.empty() && File::Exists(filePath)) {
+			if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
+				return;
+			}
 			BeginInvoke([weakThis, storedSong, filePath]() {
-				if (!weakThis.IsAlive()) {
+				if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
 					return;
 				}
 				weakThis->MarkDownloaded(storedSong, filePath);
@@ -2314,8 +2322,11 @@ void MainForm::DownloadSong(const kugou::SongSummary& song)
 			filePath = downloadDir + "\\" + fileName + extension;
 
 			if (!File::Exists(filePath)) {
+				if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
+					return;
+				}
 				BeginInvoke([weakThis, storedSong]() {
-					if (weakThis.IsAlive()) {
+					if (weakThis.IsAlive() && !weakThis->IsClosingRequested()) {
 						weakThis->BeginDownloadTracking(storedSong);
 					}
 					});
@@ -2324,7 +2335,7 @@ void MainForm::DownloadSong(const kugou::SongSummary& song)
 				float lastProgress = -1.0f;
 				const auto hash = storedSong.hash;
 				const auto progressCallback = [weakThis, hash, &lastNotifyTick, &lastProgress](long long dltotal, long long dlnow) {
-					if (!weakThis.IsAlive()) {
+					if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
 						return;
 					}
 
@@ -2342,15 +2353,18 @@ void MainForm::DownloadSong(const kugou::SongSummary& song)
 					lastNotifyTick = nowTick;
 					lastProgress = progress;
 					BeginInvoke([weakThis, hash, progress]() {
-						if (weakThis.IsAlive()) {
+						if (weakThis.IsAlive() && !weakThis->IsClosingRequested()) {
 							weakThis->UpdateDownloadTracking(hash, progress);
 						}
 						});
 				};
 
 				if (!kugou::DownloadFile(info.streamUrl, filePath, &error, 120, progressCallback)) {
+					if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
+						return;
+					}
 					BeginInvoke([weakThis, error, hash = storedSong.hash]() {
-						if (weakThis.IsAlive()) {
+						if (weakThis.IsAlive() && !weakThis->IsClosingRequested()) {
 							weakThis->FinishDownloadTracking(hash);
 							if (weakThis->currentPage_ == ContentPage::Library && weakThis->currentLibraryView_ == LibraryView::Download) {
 								weakThis->PopulateLibraryList();
@@ -2362,16 +2376,22 @@ void MainForm::DownloadSong(const kugou::SongSummary& song)
 					return;
 				}
 
+				if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
+					return;
+				}
 				BeginInvoke([weakThis, hash]() {
-					if (weakThis.IsAlive()) {
+					if (weakThis.IsAlive() && !weakThis->IsClosingRequested()) {
 						weakThis->UpdateDownloadTracking(hash, 1.0f);
 					}
 					});
 			}
 		}
 
+		if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
+			return;
+		}
 		BeginInvoke([weakThis, storedSong, filePath]() {
-			if (!weakThis.IsAlive()) {
+			if (!weakThis.IsAlive() || weakThis->IsClosingRequested()) {
 				return;
 			}
 

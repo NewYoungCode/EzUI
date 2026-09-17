@@ -7,7 +7,7 @@ namespace ezui {
 		public CheckBox
 	{
 	protected:
-		virtual void OnMouseDown(MouseEventArgs* arg)override;
+		virtual void OnMouseDown(MouseEventArgs* arg)EZUI_OVERRIDE;
 	public:
 		RadioButton(Object* ownerObject = NULL);
 		virtual~RadioButton();

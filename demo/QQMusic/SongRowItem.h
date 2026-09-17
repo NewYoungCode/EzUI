@@ -6,6 +6,15 @@
 
 #include "KugouApi.h"
 
+class SongListMessageItem : public ezui::Label
+{
+public:
+	explicit SongListMessageItem(const ezui::UIString& message);
+
+private:
+	ezui::UIString message_;
+};
+
 class SongRowItem : public ezui::Frame
 {
 public:

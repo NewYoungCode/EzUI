@@ -10,13 +10,15 @@ namespace ezui {
 	private:
 		VScrollBar* m_vScrollBar;
 		void Init();
+	private:
+		virtual void SetAutoWidth(bool flag)EZUI_OVERRIDE;
 	protected:
-		virtual void OnChildPaint(PaintEventArgs* args)override;
-		virtual void OnLayout()override;
-		virtual void OnScroll(int offsetX, int offsetY)override;
+		virtual void OnChildPaint(PaintEventArgs* args)EZUI_OVERRIDE;
+		virtual void OnLayout()EZUI_OVERRIDE;
+		virtual void OnScroll(int offsetX, int offsetY)EZUI_OVERRIDE;
 	public:
 		TileListView(Object* ownerObject = NULL);
 		virtual ~TileListView();
-		virtual VScrollBar* GetVScrollBar()override;
+		virtual VScrollBar* GetVScrollBar()EZUI_OVERRIDE;
 	};
 };

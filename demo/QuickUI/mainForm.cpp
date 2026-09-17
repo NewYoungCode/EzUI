@@ -32,7 +32,11 @@ void MainForm::ApplySearchFilter(const UIString& query)
 	RadioButton* firstVisible = nullptr;
 	RadioButton* checkedVisible = nullptr;
 
-	for (auto* child : navList->GetChildren()) {
+
+	const std::vector<Control*>& children = navList->GetChildren();
+	for (std::vector<Control*>::const_iterator it = children.begin(); it != children.end(); ++it) {
+		Control* child = *it;
+
 		auto* radio = dynamic_cast<RadioButton*>(child);
 		if (!radio) {
 			continue;
@@ -62,8 +66,10 @@ void MainForm::ApplySearchFilter(const UIString& query)
 	}
 
 	if (!checkedVisible && firstVisible) {
-		for (auto* child : navList->GetChildren()) {
-			auto* radio = dynamic_cast<RadioButton*>(child);
+		const std::vector<Control*>& children = navList->GetChildren();
+		for (std::vector<Control*>::const_iterator it = children.begin(); it != children.end(); ++it) {
+			Control* child = *it;
+			RadioButton* radio = dynamic_cast<RadioButton*>(child);
 			if (radio) {
 				radio->SetCheck(radio == firstVisible);
 			}
@@ -98,7 +104,7 @@ void MainForm::UpdateSearchMeta(int visibleCount, int totalCount, const UIString
 	}
 
 	if (query.empty()) {
-		meta->SetText(std::to_string(totalCount) + UIString(L"个控件 · 基于头文件补全文档"));
+		meta->SetText(ezui::ToString(totalCount) + UIString(L"个控件 · 基于头文件补全文档"));
 		return;
 	}
 
@@ -107,7 +113,9 @@ void MainForm::UpdateSearchMeta(int visibleCount, int totalCount, const UIString
 		return;
 	}
 
-	UIString text = UIString(L"匹配") + std::to_string(visibleCount) + "/" + std::to_string(totalCount) + UIString(L"关键字") + query;
+	UIString text = UIString(L"匹配") + ezui::ToString(visibleCount) + "/" + ezui::ToString(totalCount) + UIString(L"关键字") + query;
+	meta->SetText(text);
+	meta->Invalidate();
 }
 
 void MainForm::OnNotify(Control* sender, EventArgs* args)
@@ -115,7 +123,7 @@ void MainForm::OnNotify(Control* sender, EventArgs* args)
 	__super::OnNotify(sender, args);
 }
 
-void MainForm::OnClose(bool& bClose)
+void MainForm::OnClose(bool& allowClose)
 {
 	Application::Exit(0);
 }

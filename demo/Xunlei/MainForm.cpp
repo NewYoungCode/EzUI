@@ -4,14 +4,14 @@ using namespace ezui;
 
 MainForm::MainForm() : Form()
 {
-    SetText(L"迅雷下载 Demo");
+    SetTitle(L"迅雷下载 Demo");
     SetResizable(true);
     LoadXml("res/mainForm.htm");
     SetSize({ 1026, 682 });
     SetMinSize({ 980, 640 });
 }
 
-void MainForm::OnClose(bool& bClose)
+void MainForm::OnClose(bool& allowClose)
 {
     Application::Exit(0);
 }

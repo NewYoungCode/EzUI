@@ -7,10 +7,10 @@ namespace ezui {
 		public Control
 	{
 	private:
-		Align m_itemsAlign = Align::MiddleLeft;// 垂直方向居中，水平方向从左到右排列
+		Align m_itemsAlign;// 垂直方向居中，水平方向从左到右排列
 	protected:
 		void DistributeAutoWidths(std::vector<Control*> const& autoSizeCtrls, int availableWidth);
-		virtual void OnLayout()override;
+		virtual void OnLayout()EZUI_OVERRIDE;
 	public:
 		HLayout(Object* ownerObject = NULL);
 
@@ -24,12 +24,12 @@ namespace ezui {
 		// halign: left | center | right
 		// align: can combine vertical + horizontal, e.g. "mid center"
 		// All Control attributes are also supported
-		virtual void SetAttribute(const UIString& key, const UIString& value)override;
+		virtual void SetAttribute(const UIString& key, const UIString& value)EZUI_OVERRIDE;
 
 		//设置子控件的对齐方式
 		void SetItemsAlign(Align itemsAlign);
 
 		virtual ~HLayout();
 	};
-	using HBox = HLayout;
+	typedef HLayout HBox;
 };

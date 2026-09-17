@@ -1,102 +1,9 @@
 ﻿#include "mainFrom.h"
 #include "FileSystem.h"
 
-const wchar_t* xml = LR"xml(
-<vbox id="main">
-  <hbox height="40">
-    <radiobutton class="btnTab" tabcontrol="tab" checked="true" text="打包" width="100"></radiobutton>
-    <radiobutton class="btnTab" tabcontrol="tab" text="解包" width="100"></radiobutton>
-  </hbox>
-  <tabcontrol id="tab">
-    <hbox id="page1">
-      <spacer width="10"></spacer>
-      <vbox>
-        <spacer height="10"></spacer>
-        <label height="30" halign="left" text="请选择你要打包的目录 :"></label>
-        <hbox height="30">
-          <textbox padding-left="2" class="edit" id="editPackDir"></textbox>
-          <spacer width="10"></spacer>
-          <button class="btn" id="btnBrowserDir" width="100" text="浏览"></button>
-        </hbox>
-        <label halign="left" style="color:#ff0000" id="labelTipsErr" height="20"></label>
-        <spacer></spacer>
-        <label height="30" halign="left" text="请选择输出目录 :"></label>
-        <hbox height="30">
-          <textbox padding-left="2"  class="edit" id="editPackName"></textbox>
-          <spacer width="10"></spacer>
-          <button class="btn" id="btnSatrtPackage" width="100" text="开始打包"></button>
-        </hbox>
-        <spacer></spacer>
-        <spacer height="10"></spacer>
-      </vbox>
-      <spacer width="10"></spacer>
-    </hbox>
-    <hbox id="page2">
-      <spacer width="10"></spacer>
-      <vbox>
-        <spacer height="10"></spacer>
-        <label height="30" halign="left" text="请选择你要预览的文件 :"></label>
-        <hbox height="30">
-          <textbox padding-left="2"  class="edit" readonly="true" id="editResFile"></textbox>
-          <spacer width="10"></spacer>
-          <button class="btn" id="btnBrowserFile" width="100" text="浏览"></button>
-          <spacer width="10"></spacer>
-          <button class="btn" height="30" id="btnUnPackage" width="100" text="解压至..."></button>
-        </hbox>
-        <spacer height="10"></spacer>
-        <vlist id="listFiles" scrollbar="fileScrollbar" style="background-color:rgba(175, 106, 106, 0.5)"></vlist>
-      </vbox>
-      <spacer width="10"></spacer>
-    </hbox>
-  </tabcontrol>
-  <hbox margin="0,10" height="30">
-    <label id="labelTips" text="技术支持 718987717@qq.com/19980103ly@gmail.com"></label>
-  </hbox>
-</vbox>
-<style>
-  .btn {
-    border-radius: 5px;
-    border: 1px  #D0D0D0 solid;
-    background-color: #FDFDFD;
-    font-size: 13px;
-  }
-  .btn:hover {
-    border-color: #0078D4;
-    background-color: #E0EEF9;
-  }
-  .btn:active {
-    font-size: 14px;
-  }
-  .edit {
-    border: 1px  #808080 solid;
-    border-radius: 2px;
-  }
-  #tab {
-    background-color: #F0F0F0;
-  }
-  .btnTab:checked {
-    background-color: #F0F0F0;
-  }
-  .btnTab:hover {
-    cursor: pointer;
-  }
-  #fileScrollbar {
-    border-radius: 5px;
-    background-color: rgba(50,50,50,0.5);
-    fore-color: rgba(200,200,200,0.5);
-  }
-  #fileScrollbar:active {
-    fore-color: rgba(200,200,200,0.8);
-  }
-</style>
-)xml";
-
 void MainFrm::Init() {
-	this->SetText(L"EzUI资源打包器");
-	//ui.LoadXmlFile("main.html");
-	UIString xmlData = xml;
-	ui.LoadXml(xmlData.c_str(), xmlData.size());
-	ui.SetupUI(this);
+	this->SetTitle(L"EzUI资源打包器");
+	this->LoadXml("res/main.html");
 	//第一页的控件
 	this->tab = (TabControl*)this->FindControl("tab");
 	this->editPackDir = (TextBox*)this->FindControl("editPackDir");
@@ -113,6 +20,39 @@ void MainFrm::Init() {
 	this->btnBrowserFile = (Button*)this->FindControl("btnBrowserFile");
 	this->listFiles = (VListView*)this->FindControl("listFiles");
 	this->btnUnPackage = (Button*)this->FindControl("btnUnPackage");
+
+	Control* root = this->GetLayout();
+	if (root) {
+		root->SetDropEnabled(true);
+		root->AddEventHandler(Event::DragEnter | Event::DragOver | Event::Drop, [this](Control*, EventArgs* e) {
+			FileDragEventArgs* args = e->As<FileDragEventArgs>();
+			if (!args || args->Files().empty()) {
+				return;
+			}
+
+			UIString file = args->Files()[0];
+			if (tab->GetPageIndex() == 0) {
+				if (!PathExist(file)) {
+					return;
+				}
+				args->Accept();
+				if (args->EventType() == Event::Drop) {
+					this->editPackDir->SetText(file);
+					this->editPackDir->Invalidate();
+					this->OnPackDirChange();
+				}
+			}
+			else if (tab->GetPageIndex() == 1) {
+				if (!FileExists(file)) {
+					return;
+				}
+				args->Accept();
+				if (args->EventType() == Event::Drop) {
+					this->OnResFileChange(file);
+				}
+			}
+			});
+	}
 }
 
 MainFrm::MainFrm(const UIString& cmdLine) :Window() {
@@ -137,9 +77,11 @@ void MainFrm::OnPackDirChange()
 		labelTipsErr->Invalidate();
 	}
 
-	detail::Replace(&dir, "\"", "");
-	detail::Replace(&dir, "\\", "/");
-	detail::Replace(&dir, "//", "/");
+	dir = dir.replace("\"", "");
+	dir = dir.replace("\\", "/");
+	while (dir.contains("//")) {
+		dir = dir.replace("//", "/");
+	}
 	if (dir[dir.size() - 1] == '/') {
 		dir.erase(dir.size() - 1, 1);
 	}
@@ -155,7 +97,7 @@ void MainFrm::OnPackDirChange()
 	editPackName->SetText(resFile);
 	editPackName->Invalidate();
 }
-void MainFrm::OnClose(bool& close) {
+void MainFrm::OnClose(bool& allowClose) {
 	Application::Exit(0);
 }
 bool MainFrm::FileExists(const UIString& fileName) {
@@ -207,7 +149,7 @@ void MainFrm::OnNotify(Control* sd, EventArgs* args) {
 				labelTips->SetText(L"正在计算...");
 				labelTips->Invalidate();
 
-				task = new Task([resDir, resFile, this]() {
+				task = new Thread([resDir, resFile, this]() {
 					bool ret = Resource::Package(resDir, resFile, [=](const UIString& file, int index, int count) {
 						Invoke([&]() {
 							int rate = (index + 1) * 1.0f / count * 100 + 0.5;
@@ -280,32 +222,6 @@ void MainFrm::OnResFileChange(UIString& resFile)
 			this->editResFile->Invalidate();
 		}
 	} while (false);
-}
-LRESULT MainFrm::WndProc(UINT msg, WPARAM wp, LPARAM lp) {
-	//准备做一个解压的功能
-	if (msg == WM_DROPFILES) {
-		HDROP hDrop = (HDROP)wp;
-		UINT numFiles = ::DragQueryFileW(hDrop, 0xFFFFFFFF, NULL, 0);  //  获取拖入的文件数量
-		TCHAR szFilePath[MAX_PATH]{ 0 };
-		::DragQueryFileW(hDrop, 0, szFilePath, sizeof(szFilePath));  //  获取第一个文件路径
-		UIString file = szFilePath;
-
-		if (tab->GetPageIndex() == 0) {
-			//打包
-			if (PathExist(file)) {
-				this->editPackDir->SetText(file);
-				this->editPackDir->Invalidate();
-				this->OnPackDirChange();
-			}
-		}
-		else if (tab->GetPageIndex() == 1) {
-			//解包
-			if (FileExists(file)) {
-				this->OnResFileChange(file);
-			}
-		}
-	}
-	return __super::WndProc(msg, wp, lp);
 }
 MainFrm::~MainFrm() {
 	if (task) {

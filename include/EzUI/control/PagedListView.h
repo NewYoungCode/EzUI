@@ -19,16 +19,16 @@ namespace ezui {
 		friend class HListView;
 		friend class TileListView;
 	private:
-		int m_pageIndex = 0;
-		int m_pageTotal = 0;
-		int m_pageSize = 0;
+		int m_pageIndex;
+		int m_pageTotal;
+		int m_pageSize;
 		ControlCollection& m_items;
 	private:
 		//不允许外部直接使用PagedListView(此类为接口类)
 		PagedListView(Object* ownerObject = NULL);
 	public:
 		//页面需要加载下一页的时候发生
-		std::function<bool(PagedListView*, int)> NextPaging = NULL;
+		std::function<bool(PagedListView*, int)> NextPaging;
 
 		void SetPageInfo(const ControlCollection& items, int pageSize);
 
@@ -43,7 +43,8 @@ namespace ezui {
 		//加载下一页数据
 		virtual void NextPage();
 
-		virtual void RemoveAll(bool freeChilds = false) override;
+		/// 移除全部子控件；deleteChildren 为 true 时同时立即删除这些控件。
+		virtual void RemoveAll(bool deleteChildren = false) EZUI_OVERRIDE;
 
 		virtual ~PagedListView();
 	};

@@ -22,7 +22,7 @@ public:
 
 protected:
     void OnShow() override;
-    void OnClose(bool& cancel) override;
+    void OnClose(bool& allowClose) override;
 
 private:
 	struct DownloadTaskState {
@@ -117,6 +117,7 @@ private:
     void FinishDownloadTracking(const ezui::UIString& hash);
     std::vector<kugou::SongSummary> BuildDownloadLibrarySongs() const;
     void RefreshVisibleDownloadProgress();
+    bool IsClosingRequested() const noexcept;
 
     std::vector<kugou::SongSummary> LoadSongsFromIni(IniConfig* ini) const;
     void SaveSongToIni(IniConfig* ini, const kugou::SongSummary& song) const;

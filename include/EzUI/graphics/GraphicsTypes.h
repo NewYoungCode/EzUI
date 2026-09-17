@@ -14,7 +14,7 @@
 
 namespace ezui {
 	//size模式
-	enum class SizeMode :int16_t {
+	EZUI_SCOPED_ENUM_BEGIN(SizeMode, int16_t) {
 		None,//未指定
 		//图片强行拉伸完全填充控件
 		//不裁剪,图片变形
@@ -29,8 +29,8 @@ namespace ezui {
 		//如果图片小于控件: 控件留白,
 		//如果图片大于控件: 控件边界外的部分被裁剪
 		Original
-	};
-	using ImageSizeMode = SizeMode;
+	} EZUI_SCOPED_ENUM_END(SizeMode)
+	typedef SizeMode ImageSizeMode;
 
 #define EZUI_ALIGN_TOP  1
 #define EZUI_ALIGN_BOTTOM  2
@@ -42,27 +42,27 @@ namespace ezui {
 	/// <summary>
 	/// 水平状态下的对齐方式
 	/// </summary>
-	enum class HAlign :int16_t
+	EZUI_SCOPED_ENUM_BEGIN(HAlign, int16_t)
 	{
 		Left = EZUI_ALIGN_LEFT,//左边对齐
 		Center = EZUI_ALIGN_CENTER,//水平居中
 		Right = EZUI_ALIGN_RIGHT//右边对齐
-	};
+	} EZUI_SCOPED_ENUM_END(HAlign)
 	EZUI_ENUM_OPERATORS(HAlign, int16_t);
 
 	/// <summary>
 	/// 垂直状态下的对齐方式
 	/// </summary>
-	enum class VAlign :int16_t
+	EZUI_SCOPED_ENUM_BEGIN(VAlign, int16_t)
 	{
 		Top = EZUI_ALIGN_TOP,//顶部对齐
 		Middle = EZUI_ALIGN_MID,//垂直居中
 		Bottom = EZUI_ALIGN_BOTTOM//底部对齐
-	};
+	} EZUI_SCOPED_ENUM_END(VAlign)
 	EZUI_ENUM_OPERATORS(VAlign, int16_t);
 
 	//包含垂直与水平对齐方式
-	enum class Align :int16_t {
+	EZUI_SCOPED_ENUM_BEGIN(Align, int16_t) {
 		//
 		// 摘要: 
 		//     内容在垂直方向上顶部对齐，在水平方向上左边对齐。
@@ -99,7 +99,7 @@ namespace ezui {
 		// 摘要: 
 		//     内容在垂直方向上底边对齐，在水平方向上右边对齐。
 		BottomRight = (int16_t)VAlign::Bottom | (int16_t)HAlign::Right
-	};
+	} EZUI_SCOPED_ENUM_END(Align)
 	EZUI_ENUM_OPERATORS(Align, int16_t);
 
 	inline Align operator|(Align a, VAlign b)
@@ -125,10 +125,10 @@ namespace ezui {
 		return (static_cast<int16_t>(a) & static_cast<int16_t>(b)) != 0;
 	}
 
-	using TextAlign = Align;
+	typedef Align TextAlign;
 
 	// 字体样式 倾斜等...
-	enum class FontStyle :int16_t
+	EZUI_SCOPED_ENUM_BEGIN(FontStyle, int16_t)
 	{
 		/// <summary>
 		/// 正常字体
@@ -142,24 +142,24 @@ namespace ezui {
 		/// 斜体字体（正式斜体）
 		/// </summary>
 		Italic
-	};
+	} EZUI_SCOPED_ENUM_END(FontStyle)
 
 	//描边样式
-	enum class StrokeStyle :int16_t
+	EZUI_SCOPED_ENUM_BEGIN(StrokeStyle, int16_t)
 	{
 		None,//无
 		Solid,//实线
 		Dash//虚线
-	};
+	} EZUI_SCOPED_ENUM_END(StrokeStyle)
 	//填充样式
-	enum class FillStyle :int16_t
+	EZUI_SCOPED_ENUM_BEGIN(FillStyle, int16_t)
 	{
 		Solid,      // 实心填充
 		Diagonal,   // 斜线填充
 		Cross,      // 交叉斜线填充
 		Horizontal, // 水平线填充
 		Vertical    // 垂直线填充
-	};
+	} EZUI_SCOPED_ENUM_END(FillStyle)
 
 	namespace detail {
 
@@ -199,15 +199,15 @@ namespace ezui {
 				return !(Width == right.Width && Height == right.Height);
 			}
 			void Scale(float scale) {
-				Width = std::round((Width * scale));
-				Height = std::round((Height * scale));
+				Width = EZUI_ROUND((Width * scale));
+				Height = EZUI_ROUND((Height * scale));
 			}
 
 			template<typename U>
 			BasicSize operator*(U scale) const {
 				return BasicSize(
-					T(std::round(Width * scale)),
-					T(std::round(Height * scale))
+					T(EZUI_ROUND(Width * scale)),
+					T(EZUI_ROUND(Height * scale))
 				);
 			}
 			virtual bool Equals(const BasicSize& sz) const
@@ -239,7 +239,7 @@ namespace ezui {
 					return size;
 				}
 				float scale = toScale / fromScale;
-				return BasicSize(std::round(size.Width * scale), std::round(size.Height * scale));
+				return BasicSize(EZUI_ROUND(size.Width * scale), EZUI_ROUND(size.Height * scale));
 			}
 		};
 
@@ -275,15 +275,15 @@ namespace ezui {
 				Y = y;
 			}
 			void Scale(float scale) {
-				X = std::round((X * scale));
-				Y = std::round((Y * scale));
+				X = EZUI_ROUND((X * scale));
+				Y = EZUI_ROUND((Y * scale));
 			}
 
 			template<typename U>
 			BasicPoint operator*(U scale) const {
 				return BasicPoint(
-					T(std::round(X * scale)),
-					T(std::round(Y * scale))
+					T(EZUI_ROUND(X * scale)),
+					T(EZUI_ROUND(Y * scale))
 				);
 			}
 
@@ -308,7 +308,7 @@ namespace ezui {
 					return point;
 				}
 				float scale = toScale / fromScale;
-				return BasicPoint(std::round(point.X * scale), std::round(point.Y * scale));
+				return BasicPoint(EZUI_ROUND(point.X * scale), EZUI_ROUND(point.Y * scale));
 			}
 
 		};
@@ -354,23 +354,28 @@ namespace ezui {
 				Height = rect.bottom - rect.top;
 			}
 			RECT ToRECT() const {
-				return RECT{ (LONG)GetLeft(), (LONG)GetTop(), (LONG)GetRight(), (LONG)GetBottom() };
+				RECT rc;
+				rc.left = (LONG)GetLeft();
+				rc.top = (LONG)GetTop();
+				rc.right = (LONG)GetRight();
+				rc.bottom = (LONG)GetBottom();
+				return rc;
 			}
 #endif
 
 			template<typename U>
 			BasicRect operator*(U scale) const {
 				return BasicRect(
-					T(std::round(X * scale)),
-					T(std::round(Y * scale)),
-					T(std::round(Width * scale)),
-					T(std::round(Height * scale))
+					T(EZUI_ROUND(X * scale)),
+					T(EZUI_ROUND(Y * scale)),
+					T(EZUI_ROUND(Width * scale)),
+					T(EZUI_ROUND(Height * scale))
 				);
 			}
 
 			BasicPoint<T> GetPosition() const
 			{
-				return BasicPoint<T>{ X, Y };
+				return BasicPoint<T>( X, Y );
 			}
 
 			BasicSize<T> GetSize() const
@@ -401,11 +406,25 @@ namespace ezui {
 			}
 
 			virtual const BasicRect& Scale(float scale) {
-				X = (T)std::round(X * scale);
-				Y = (T)std::round(Y * scale);
-				Width = (T)std::round(Width * scale);
-				Height = (T)std::round(Height * scale);
+				X = (T)EZUI_ROUND(X * scale);
+				Y = (T)EZUI_ROUND(Y * scale);
+				Width = (T)EZUI_ROUND(Width * scale);
+				Height = (T)EZUI_ROUND(Height * scale);
 				return *this;
+			}
+
+			BasicRect& operator*=(float scale) {
+				X = (T)EZUI_ROUND(X * scale);
+				Y = (T)EZUI_ROUND(Y * scale);
+				Width = (T)EZUI_ROUND(Width * scale);
+				Height = (T)EZUI_ROUND(Height * scale);
+				return *this;
+			}
+
+			BasicRect operator*(float scale) const {
+				BasicRect result = *this;
+				result *= scale;
+				return result;
 			}
 
 			virtual bool Equals(const BasicRect& rect) const
@@ -485,10 +504,10 @@ namespace ezui {
 				}
 				BasicRect newRect = rect;
 				float scale = toScale / fromScale;
-				newRect.X = std::round(rect.X * scale);
-				newRect.Y = std::round(rect.Y * scale);
-				newRect.Width = std::round(rect.Width * scale);
-				newRect.Height = std::round(rect.Height * scale);
+				newRect.X = EZUI_ROUND(rect.X * scale);
+				newRect.Y = EZUI_ROUND(rect.Y * scale);
+				newRect.Width = EZUI_ROUND(rect.Width * scale);
+				newRect.Height = EZUI_ROUND(rect.Height * scale);
 				return newRect;
 			}
 			static bool Intersect(BasicRect& c,
@@ -572,41 +591,40 @@ namespace ezui {
 		};
 	};
 
-	using Point = detail::BasicPoint<int>;
-	using PointF = detail::BasicPoint<float>;
-	using Line = detail::BasicLine<int>;
-	using LineF = detail::BasicLine<float>;
-	using Size = detail::BasicSize<int>;
-	using Rect = detail::BasicRect<int>;
+	typedef detail::BasicPoint<int> Point;
+	typedef detail::BasicPoint<float> PointF;
+	typedef detail::BasicLine<int> Line;
+	typedef detail::BasicLine<float> LineF;
+	typedef detail::BasicSize<int> Size;
+	typedef detail::BasicRect<int> Rect;
 	// 二维向量
-	using Vec2 = PointF;
+	typedef PointF Vec2;
 	// 边框样式
-	using BorderStyle = StrokeStyle;
+	typedef StrokeStyle BorderStyle;
 
 	class Color
 	{
 	protected:
-		uint32_t m_BGRA = 0;
+		uint32_t m_BGRA;
 #ifdef DEBUG
 		//用于调试
 		std::string m_colorStr;
 #endif
 	public:
-		Color() {}
+		Color() : m_BGRA(0) {}
 		Color(
 			const uint8_t& r,
 			const uint8_t& g,
 			const uint8_t& b,
-			const uint8_t& a = 255)
+			const uint8_t& a = 255) : m_BGRA(0)
 		{
 			m_BGRA |= static_cast<uint32_t>(b);         // 蓝色占最低8位
 			m_BGRA |= static_cast<uint32_t>(g) << 8;    // 绿色占第2字节
 			m_BGRA |= static_cast<uint32_t>(r) << 16;   // 红色占第3字节
 			m_BGRA |= static_cast<uint32_t>(a) << 24;   // Alpha 占最高字节
 		}
-		Color(uint32_t bgra)
+		Color(uint32_t bgra) : m_BGRA(bgra)
 		{
-			m_BGRA = bgra;
 		}
 		virtual ~Color() {}
 		uint8_t GetR() const {
@@ -845,7 +863,20 @@ namespace ezui {
 			Height = (Height * scale);
 			return *this;
 		}
-		virtual bool Equals(const BasicRect& rect) const override {
+
+		RectF& operator*=(float scale) {
+			X *= scale; Y *= scale;
+			Width *= scale; Height *= scale;
+			return *this;
+		}
+
+		RectF operator*(float scale) const {
+			RectF result = *this;
+			result *= scale;
+			return result;
+		}
+
+		virtual bool Equals(const BasicRect& rect) const EZUI_OVERRIDE {
 			bool a = (std::fabs(X - rect.X) < EZUI_FLOAT_EPSILON);
 			bool b = (std::fabs(Y - rect.Y) < EZUI_FLOAT_EPSILON);
 			bool c = (std::fabs(Width - rect.Width) < EZUI_FLOAT_EPSILON);
@@ -950,25 +981,25 @@ namespace ezui {
 		class IImage {
 		public:
 			//像素格式
-			enum class PixelFormat :int16_t {
+			EZUI_SCOPED_ENUM_BEGIN(PixelFormat, int16_t) {
 				PixelFormat32bppPBGRA = 0,//预乘Alpha的32位BGRA格式
 				PixelFormat32bppPRGBA = 1,//预乘Alpha的32位RGBA格式
-			};
+			} EZUI_SCOPED_ENUM_END(PixelFormat)
 		protected:
-			int m_frameCount = 0;//总帧数
-			int m_framePos = 0;//当前帧率索引
+			int m_frameCount;//总帧数
+			int m_framePos;//当前帧率索引
 		public:
 			Rect Clip;//取出图像部分区域进行绘制
 			Point DrawPosition;//绘制在owner矩形坐标
 			ezui::Size DrawSize;//绘制在owner矩形的大小
-			ImageSizeMode SizeMode = ImageSizeMode::Fit;// 图像显示模式
+			ImageSizeMode SizeMode;// 图像显示模式
 		private:
-			IImage(const IImage&) = delete;            // 禁止拷贝构造
-			IImage& operator=(const IImage&) = delete; // 禁止拷贝赋值
-			IImage(IImage&&) = delete;                 // 禁止移动构造
-			IImage& operator=(IImage&&) = delete;      // 禁止移动赋值
+			IImage(const IImage&);            // 禁止拷贝构造
+			IImage& operator=(const IImage&); // 禁止拷贝赋值
+			IImage(IImage&&);                 // 禁止移动构造
+			IImage& operator=(IImage&&);      // 禁止移动赋值
 		protected:
-			IImage() {};
+			IImage() : m_frameCount(0), m_framePos(0), SizeMode(ImageSizeMode::Fit) {};
 		public:
 			virtual ~IImage() {}
 			int FrameCount() {
@@ -980,12 +1011,12 @@ namespace ezui {
 	};
 
 	//渐变类型
-	enum class GradientType :int16_t
+	EZUI_SCOPED_ENUM_BEGIN(GradientType, int16_t)
 	{
 		Linear,// 线性渐变
 		Radial,// 径向渐变
 		Conic  // 锥形渐变
-	};
+	} EZUI_SCOPED_ENUM_END(GradientType)
 	//渐变色的一个颜色点
 	struct GradientStop
 	{
@@ -993,26 +1024,29 @@ namespace ezui {
 		Color color;// 颜色
 	};
 	//渐变扩展模式
-	enum class GradientSpread :int16_t
+	EZUI_SCOPED_ENUM_BEGIN(GradientSpread, int16_t)
 	{
 		Pad,        // 超出范围使用边界色
 		Repeat,     // 重复
 		Reflect     // 镜像
-	};
+	} EZUI_SCOPED_ENUM_END(GradientSpread)
 
 	//渐变配置类
 	class Gradient
 	{
 	private:
-		GradientType m_type = GradientType::Linear;
-		GradientSpread m_spread = GradientSpread::Pad;
+		GradientType m_type;
+		GradientSpread m_spread;
 		Vec2 m_start;
 		Vec2 m_end;
 		Vec2 m_center;
-		float m_radius = 0.0f;
-		float m_angle = 0.0f;
+		float m_radius;
+		float m_angle;
 		std::vector<GradientStop> m_stops;
-		Gradient() = default;
+		Gradient()
+			: m_type(GradientType::Linear), m_spread(GradientSpread::Pad),
+			m_radius(0.0f), m_angle(0.0f) {
+		}
 	public:
 		//创建线性渐变(从start到end)
 		static Gradient Linear(Vec2 start, Vec2 end) {
@@ -1040,7 +1074,10 @@ namespace ezui {
 		}
 		//添加颜色停靠点(pos范围0.0~1.0)
 		Gradient& AddStop(float pos, const Color& color) {
-			m_stops.push_back({ pos, color });
+			GradientStop stop;
+			stop.position = pos;
+			stop.color = color;
+			m_stops.push_back(stop);
 			return *this;
 		}
 		//设置渐变扩展模式

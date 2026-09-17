@@ -19,10 +19,11 @@
 - **Win32 原生窗口体系**：保留桌面程序的窗口、消息循环、模态流程和系统交互能力。
 - **Direct2D 渲染**：支持高 DPI、透明窗口、图片/GIF、自绘和渐变相关能力。
 - **声明式 UI**：通过 `LoadXml(...)` / `UILoader` 加载 `.htm` 控件树，支持 XML-first、code-first 和 hybrid 三种组合方式。
-- **布局与列表**：内置 `VLayout`、`HLayout`、`VListView`、`HListView`、`TileListView`、`TabControl`、`TreeView`、`Slider`、`RichTextView` 等控件。
+- **XML 解析**：使用第三方库 `tinyxml` 提供 XML 解析功能。
+- **布局与列表**：内置 `VLayout`、`HLayout`、`VListView`、`HListView`、`TileListView`、`DataGridView`、`TabControl`、`TreeView`、`Slider`、`RichTextView` 等控件。
 - **状态样式系统**：支持 ID、class、伪状态以及内联样式覆盖。
 - **资源打包**：支持 `Resource::Package(...)` 打包资源目录，并通过 `Application::SetResource(...)` 统一挂载。
-- **线程与交互基础设施**：提供 `Task`、`Timer`、`DebounceTimer`、`MessageQueue`、`Invoke(...)`、`BeginInvoke(...)`。
+- **线程与交互基础设施**：提供 `Thread`、`ThreadPool`、`Timer`、`DebounceTimer`、`MessageQueue`、`Invoke(...)`、`BeginInvoke(...)`。
 - **Shell 组件**：提供 `PopupMenu`、`SystemMenu`、`ToolTip`、`TrayIcon`、`WindowShadow`。
 - **调试辅助**：Debug 下按 `F11` 可切换控件边界高亮，便于排查布局问题。
 
@@ -70,12 +71,12 @@ using namespace ezui;
 class MainForm : public Window {
 public:
     MainForm() : Window() {
-        SetSize({ 1024, 720 });
+        SetSize(1024, 720);
         LoadXml("res/mainForm.htm");
     }
 
 protected:
-    void OnClose(bool& cancel) override {
+    void OnClose(bool& allowClose) EZUI_OVERRIDE {
         Application::Exit(0);
     }
 };
@@ -93,7 +94,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int) {
 }
 ```
 
-> 推荐优先包含 `EzUI/EzUI.h`。如果只想按模块拆分，也可以改用 `core/`、`control/`、`window/`、`shell/`、`utils/` 下的头文件。
+> 推荐优先包含 `EzUI/EzUI.h`。如果只想按模块拆分，也可以改用 `core/`、`control/`、`graphics/`、`window/`、`shell/` 下的头文件。
 
 ---
 
@@ -115,16 +116,15 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int) {
 | 类型 | 作用 | 适合场景 |
 | --- | --- | --- |
 | `Window` | 标准 Win32 窗口，带系统标题栏和边框 | 传统桌面程序、工具软件 |
-| `BorderlessWindow` | 无边框窗口，支持阴影 | 自定义标题栏、现代桌面壳层 |
-| `LayeredWindow` | 分层透明窗口，支持异形和透明度 | 悬浮窗、特效窗、透明面板 |
+| `BorderlessWindow` | 无边框窗口，支持阴影、透明度和 Alpha 混合 | 自定义标题栏、现代桌面壳层 |
 | `PopupWindow` | 失焦自动隐藏或关闭的弹出窗口 | 下拉、浮层、临时面板 |
 | `Frame` | 隔离样式和命名的嵌入子树 | 复用子页面、局部作用域隔离 |
 
 说明：
 
-- `PopupWindow` 继承自 `LayeredWindow`，适合临时浮层，不适合作为主窗口。
+- `PopupWindow` 继承自 `BorderlessWindow`，显示时会前置并抢占焦点；非模态失焦隐藏，模态失焦关闭，适合临时浮层，不适合作为主窗口。
 - `WindowShadow` 定义在 `BorderlessWindow.h` 中，用于自定义阴影。
-- `LayeredWindow` 提供 `SetOpacity(...)`，但固定尺寸窗体更容易暴露裁切问题，布局要先做预算。
+- `BorderlessWindow` 提供 `EnableAlphaBlending()` 和 `SetOpacity(...)`，但固定尺寸窗体更容易暴露裁切问题，布局要先做预算。
 
 ---
 
@@ -135,7 +135,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int) {
 - 标签名以 `RegisterControl<T>(...)` 的注册表为准。
 - `margin`、`padding`、`border`、`background-color` 这类视觉规则，优先写在节点 `style` 或 `<style>` 里。
 - `style` / `style:hover` / `style:active` / `style:checked` / `style:focus` / `style:disabled` 都是当前实现支持的写法。
-- `Label` / `TextBox` 的文字对齐值是 `left` / `right` / `center` / `top` / `bottom` / `mid`，不是 `middle`。
+- `Label` / `TextBox` 的文字对齐值可组合 `left` / `right` / `center` 和 `top` / `bottom` / `mid` / `middle`，新示例优先使用 `mid`。
 - 当前实现识别的 tooltip 节点属性是 `tooltip`。
 - `action` 支持：`close`、`mini`、`max`、`title`、`move`、`movewindow`。
 
@@ -163,7 +163,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int) {
 - `fixed > auto > percent > 未指定（布局器分配）` 是更接近当前实现的尺寸优先级理解。
 - `width="100%"` 不要再叠加左右 `margin`；`height="100%"` 不要再叠加上下 `margin`。这类组合很容易出界。
 - 固定间距优先用 `margin`，需要占位拉伸时再用 `Spacer`。
-- `VLayout` / `HLayout` 推荐优先使用 `item-align`。兼容别名仍支持 `halign` / `valign` / `align`，但新文档和新示例以 `item-align` 为主。
+- `VLayout` / `HLayout` / `VListView` / `HListView` 当前识别 `items-align` 或 `align`，新文档和新示例以 `items-align` 为主。
 - 在 `vlist` / `hlist` 里，item 跟随列表容器同宽或同高时，使用 `width="100%"` / `height="100%"` 是合理的；这和 `vbox` / `hbox` 的“剩余空间分配”不是同一语义。
 - 根布局通常不要直接写 `margin`。如果需要整页留白、背景或卡片效果，更稳妥的做法是根布局里再包一层真实内容容器。
 
@@ -182,7 +182,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int) {
 - 图片控件：`<img>` / `<image>` / `<pictureBox>`
 - 链接文本：`<a>` / `<LinkLabel>`
 - 隔离容器：`<frame>` / `<iframe>`
-- 树与扩展控件：`<treeview>`、`<treenode>`、`<slider>`、`<richtextview>`
+- 树、数据与扩展控件：`<treeview>`、`<treenode>`、`<datagridview>`、`<slider>`、`<richtextview>`
 
 说明：
 
@@ -202,7 +202,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int) {
 | 可见性 | `visible="false"`、`display:none` |
 | 布局参与 | `float="true"` |
 | 行为 | `action="close|mini|max|title|move|movewindow"` |
-| 启用状态 | `enable="true|false"`、`disabled` |
+| 启用状态 | `enable="true|false"`、`disabled="true"` |
 | 命中测试 | `event="none"`、`mousetransparent="true"` |
 | 滚动条命名 | `scrollbar="name"` |
 | 提示文字 | `tooltip="..."` |
@@ -228,16 +228,17 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int) {
 
 | 模块 | 关键能力 |
 | --- | --- |
-| `Application` | `EnableHighDpi()`、`SetResource(...)`、`Exec()`、`Exit(...)`、`StartPath()` |
+| `Application` | `EnableHighDpi()`、`SetResource(...)`、`Exec()`、`Exit(...)`、`GetStartupPath()` |
 | `Window` | `SetSize(...)`、`SetLayout(...)`、`LoadXml(...)`、`Show()`、`ShowModal()`、`CenterToScreen()`、`OnNotify(...)` |
 | `Control` | `Append(...)`、`Prepend(...)`、`FindControl(...)`、`FindChildren(...)`、`SetStyleSheet(...)`、`AddEventHandler(...)` |
 | `Frame` | 隔离样式作用域、隔离命名空间、承接局部通知 |
 | `UILoader` | XML 加载、`RegisterControl<T>(...)` 自定义控件注册 |
 | `UISelector` | 链式筛选和批量操作控件 |
 | `Animation` | 数值插值、淡入淡出、切页滑动 |
+| `Thread` / `ThreadPool` | 后台执行和线程池任务 |
 | `Timer` / `DebounceTimer` | 延迟任务、周期任务、防抖场景 |
-| `Task` / `Invoke(...)` / `BeginInvoke(...)` | 后台执行和回到 UI 线程 |
-| `MessageQueue` | 线程安全 Push/Pop 模型消息队列 |
+| `Invoke(...)` / `BeginInvoke(...)` | 同步或异步回到 UI 线程 |
+| `MessageQueue` | 线程安全 `Post(...)` / `Exec()` 模型消息队列 |
 | `Resource` | 资源目录打包与包内文件读取 |
 | `PopupMenu` / `SystemMenu` | 自绘多级菜单与 Win32 原生菜单 |
 | `ToolTip` / `TrayIcon` | 浮动提示、系统托盘 |
@@ -248,7 +249,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int) {
 - `TextBox::TextChanged`
 - `Slider::ValueChanged`
 - `ComboBox::SelectedChanged`
-- `Window::NotifyHandler` / `Frame::NotifyHandler`
+- `Window::OnNotify(...)` / `Frame::OnNotify(...)` / `SetNotifyHandler(...)`
 
 ---
 
@@ -277,14 +278,14 @@ app.SetResource("my_res");
 
 注意：
 
-- 一个 `Application` 只允许挂一个资源包。
-- `LoadXml("res/mainForm.htm")`、图片路径、子页面路径等，都会按资源包内部相对路径读取。
+- 同一时刻只有一个挂载资源包；重复调用 `SetResource(...)` 会替换旧资源包。
+- `LoadXml("res/mainForm.htm")`、图片路径、子页面路径等会优先读取本地文件；找不到本地文件时，再从当前资源包中按包内相对路径读取。
 
 ---
 
 ## 🧪 自定义控件注册
 
-当 XML 需要直接按标签名创建你的控件时，使用 `RegisterControl<T>(...)`：
+当 XML 需要直接按标签名创建你的控件时，在调用 `LoadXml(...)` 之前使用 `RegisterControl<T>(...)`：
 
 ```cpp
 #include "EzUI/EzUI.h"
@@ -293,18 +294,13 @@ using namespace ezui;
 
 class SessionFrame : public Frame {
 public:
-    SessionFrame(Object* owner = nullptr) : Frame(owner) {
+    SessionFrame(Object* owner = NULL) : Frame(owner) {
         LoadXml("res/session.htm");
     }
 };
 
-int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int) {
-    Application app(hInstance);
-    app.EnableHighDpi();
-    app.SetResource("my_res");
-
+void RegisterEzUIControls() {
     RegisterControl<SessionFrame>("SessionFrame");
-    return app.Exec();
 }
 ```
 
@@ -333,7 +329,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int) {
 
 ## 🧵 线程与 UI 线程规则
 
-- 后台任务用 `Task`。
+- 后台任务用 `Thread`；需要排队并发时用 `ThreadPool`。
 - 周期或延迟行为用 `Timer`。
 - 搜索框、防抖输入场景优先用 `DebounceTimer`。
 - 线程间消息传递用 `MessageQueue`。

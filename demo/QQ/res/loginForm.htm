@@ -1,86 +1,150 @@
-<vbox id="mainLayout" action="move" items-align="center">
-
-    <hbox height="20" action="move" style="margin-top:5px">
+<vbox id="mainLayout" action="move" items-align="top center">
+    <hbox id="topBar" height="30" action="move" items-align="mid">
         <spacer></spacer>
-        <label size="20,20" style="background-image: url(res/setting.png)"></label>
+        <label class="topIcon" size="20,20" style="background-image:url(res/setting.png)"></label>
         <spacer width="10"></spacer>
-        <label id="btnExit" size="20,20" action="close" style="background-image: url(res/close.png)"></label>
-        <spacer width="10"></spacer>
+        <label id="btnExit" class="topIcon" size="20,20" action="close" style="background-image:url(res/close.png)"></label>
+        <spacer width="12"></spacer>
     </hbox>
 
-    <!--<spacer height="40"></spacer>-->
-    <label id="headImg" size="80,80" action="move" style="margin-top:30px"></label>
+    <label id="headImg" size="56,56" action="move" style="margin-top:8px"></label>
 
-    <!-- 账号输入框 -->
-    <hbox size="258,42" style="border-radius:5px;background-color:white;margin-top:25px" items-align="mid">
-        <spacer width="24"></spacer>
-        <input id="user" halign="center" placeholder="输入QQ号" />
-        <label size="24,24" style="background-image:url(res/down.png);margin-right:5px"></label>
+    <label id="loginTitle" height="28" text="Welcome Back" width="auto" align="center" style="font-size:22px;font-weight:700;color:#1d2433;margin-top:10px"></label>
+    <label id="loginSubtitle" height="16" text="Sign in to sync chats" width="auto" align="center" style="font-size:12px;color:#77829a;margin-top:4px"></label>
+
+    <hbox class="fieldBox" height="40" items-align="mid left" style="margin-top:12px">
+        <spacer width="12"></spacer>
+        <label width="30" text="ID" align="left" style="font-size:12px;color:#748096" event="none"></label>
+        <input id="user" placeholder="QQ ID" style="margin-left:8px;margin-right:8px"></input>
+        <label size="14,14" style="background-image:url(res/down.png);margin-right:12px" event="none"></label>
     </hbox>
 
-    <!-- 密码输入框 -->
-    <hbox size="258,42" style="border-radius:5px;background-color:white;margin-top:10px" items-align="mid">
-        <spacer width="24"></spacer>
-        <input passwordchar="*" id="pwd" halign="center" placeholder="输入密码" />
-        <label size="15,15" style="background-image:url(res/close.png);margin-right:10px"></label>
+    <hbox class="fieldBox" height="40" items-align="mid left" style="margin-top:8px">
+        <spacer width="12"></spacer>
+        <label width="30" text="Key" align="left" style="font-size:12px;color:#748096" event="none"></label>
+        <input id="pwd" passwordchar="*" placeholder="Password" style="margin-left:8px;margin-right:8px"></input>
+        <label size="12,12" style="background-image:url(res/close.png);margin-right:12px" event="none"></label>
     </hbox>
 
-    <!-- 协议勾选 -->
-    <hbox size="258,42" style="font-size:12px;margin-top:10px"  items-align="mid">
-        <checkbox size="18,18" id="ckbox"></checkbox>
-        <label width="auto" text="我已阅读并同意"></label>
-        <button url="www.baidu.com" width="auto" style="color: #2D77E5;cursor:pointer" text="服务协议"></button>
-        <label width="auto" text="和"></label>
-        <button url="www.bing.com" width="auto" style="color: #2D77E5" text="QQ隐私保护指引"></button>
-    </hbox>
-
-    <button size="258,38" id="btnLogin" text="登录" style="margin-top:15px"> </button>
-
-
-    <!-- 扫码登陆/更多选项 -->
-    <hbox size="258,20" style="font-size:14px;margin-top:40px">
-
+    <hbox id="loginAssist" width="286" height="20" items-align="mid" style="margin-top:10px">
+        <hbox items-align="mid left">
+            <checkbox size="16,16" id="ckbox"></checkbox>
+            <label width="auto" text="Keep me signed in" style="font-size:11px;color:#667084;margin-left:6px"></label>
+        </hbox>
         <spacer></spacer>
-
-        <button width="auto" text="扫码登录" style="color: #2D77E5 "></button>
-
-        <label width="auto" text="|" style="color: #E4DFEB;margin:0px 5px 0px 5px"></label>
-
-        <button width="auto" text="更多选项" style="color: #2D77E5 "></button>
-
-        <spacer></spacer>
-
+        <button width="auto" text="Forgot?" style="font-size:11px;color:#2d77e5"></button>
     </hbox>
 
+    <button size="286,40" id="btnLogin" text="Sign In" style="margin-top:10px"></button>
+
+    <hbox class="dividerRow" height="18" items-align="mid" style="margin-top:10px">
+        <label class="dividerLineWide"></label>
+        <label width="auto" text="More Ways" style="font-size:11px;color:#8f98aa;margin:0px 8px 0px 8px"></label>
+        <label class="dividerLineWide"></label>
+    </hbox>
+
+    <hbox width="286" height="30" items-align="mid" style="margin-top:6px">
+        <button class="ghostBtn" text="QR Login"></button>
+        <button class="ghostBtn" text="More" style="margin-left:8px"></button>
+    </hbox>
+
+    <hbox id="loginTips" width="286" height="28" items-align="mid left">
+        <label class="tipsBadge" text="Safe"></label>
+        <label width="146" text="Device protection on" align="left" style="font-size:11px;color:#2b3445;margin-left:10px" event="none"></label>
+        <label width="60" text="Trusted" align="right" style="font-size:10px;color:#8490a6" event="none"></label>
+    </hbox>
+
+    <hbox width="286" height="16" items-align="mid">
+        <button width="auto" text="Terms" style="font-size:10px;color:#2d77e5"></button>
+        <label width="auto" text="|" style="font-size:10px;color:#b0b7c4;margin:0px 8px 0px 8px"></label>
+        <button width="auto" text="Privacy" style="font-size:10px;color:#2d77e5"></button>
+    </hbox>
 </vbox>
 
 <style>
     #mainLayout {
-        background-color: #E8F0FF;
+        background-color: #eaf2ff;
         font-size: 14px;
+    }
+
+    #topBar {
+        width: 100%;
+    }
+
+    .topIcon {
+        border-radius: 10px;
     }
 
     #headImg {
         background-image: url(res/head.png);
-        border-radius: 80px;
-        border: 2px solid white;
+        border-radius: 28px;
+        border: 3px solid #f3f7ff;
+    }
+
+    .fieldBox {
+        width: 286px;
+        background-color: #ffffff;
+        border: 1px solid #dbe4f3;
+        border-radius: 14px;
     }
 
     #ckbox {
         background-image: url(res/check.png);
     }
 
-        #ckbox:checked {
-            background-image: url(res/check_1.png);
-        }
+    #ckbox:checked {
+        background-image: url(res/check_1.png);
+    }
 
     #btnLogin {
-        background-color: #0099FF;
-        color: white;
-        border-radius: 8px;
+        background-color: #168bff;
+        color: #ffffff;
+        border: 0px solid #000000;
+        border-radius: 14px;
+        font-size: 15px;
+        font-weight: 700;
     }
-        /*登录按钮鼠标悬浮时候的外观*/
-        #btnLogin:hover {
-            background-color: #008DEB;
-        }
+
+    #btnLogin:hover {
+        background-color: #0f7fe9;
+    }
+
+    .dividerLineWide {
+        height: 1px;
+        width: 96px;
+        background-color: #e7edf7;
+    }
+
+    .ghostBtn {
+        width: 139px;
+        height: 30px;
+        background-color: #f7f9fd;
+        border: 1px solid #dbe4f3;
+        border-radius: 11px;
+        color: #334055;
+        font-size: 12px;
+    }
+
+    .ghostBtn:hover {
+        background-color: #f1f5fb;
+    }
+
+    #loginTips {
+        margin-top: 4px;
+        padding: 0px 12px 0px 12px;
+        background-color: rgba(255,255,255,0.76);
+        border: 1px solid #dce5f4;
+        border-radius: 14px;
+    }
+
+    .tipsBadge {
+        width: 34px;
+        height: 18px;
+        background-color: #eaf3ff;
+        color: #1f7dff;
+        border-radius: 9px;
+        font-size: 10px;
+        font-weight: 700;
+        text-align: mid center;
+    }
 </style>

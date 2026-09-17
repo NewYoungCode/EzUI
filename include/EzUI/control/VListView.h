@@ -8,14 +8,14 @@ namespace ezui {
 		public PagedListView
 	{
 	private:
-		HAlign m_itemsAlign = HAlign::Center;
+		HAlign m_itemsAlign;
 		VScrollBar* m_vScrollBar;
 		void Init();
 		//对控件进行偏移
 	protected:
-		virtual void OnLayout()override;
-		virtual void OnChildPaint(PaintEventArgs* args)override;
-		virtual	void OnScroll(int offsetX, int offsetY)override;
+		virtual void OnLayout()EZUI_OVERRIDE;
+		virtual void OnChildPaint(PaintEventArgs* args)EZUI_OVERRIDE;
+		virtual	void OnScroll(int offsetX, int offsetY)EZUI_OVERRIDE;
 	public:
 		VListView(Object* ownerObject = NULL);
 
@@ -28,8 +28,8 @@ namespace ezui {
 		// halign | align: left | right
 		// scrollbar: name (not implemented in code)
 		// All PagedListView attributes are also supported
-		virtual void SetAttribute(const UIString& key, const UIString& value)override;
+		virtual void SetAttribute(const UIString& key, const UIString& value)EZUI_OVERRIDE;
 
-		virtual VScrollBar* GetVScrollBar() override;
+		virtual VScrollBar* GetVScrollBar() EZUI_OVERRIDE;
 	};
 };

@@ -30,9 +30,9 @@
     " />-->
 
     <vbox width="309" id="centerLeft">
-        <hbox height="40" id="tools">
-            <spacer width="15"></spacer>
-            <label underline="1,3" text="默认列表" text-align="left" tabcontrol="leftList"></label>
+        <hbox height="40" id="tools" items-align="middle left" style="padding: 0px 12px 0px 15px;">
+            <radiobutton id="recentTab" checked="true" class="leftTab" width="74" height="26" text="最近播放" text-align="middle center" tabcontrol="leftList"></radiobutton>
+            <radiobutton id="customMediaTab" class="leftTab" width="104" height="26" text="自定义音视频" text-align="middle center" tabcontrol="leftList" style="margin: 0px 0px 0px 8px;"></radiobutton>
         </hbox>
         <tabcontrol id="leftList">
             <hbox>
@@ -40,7 +40,16 @@
                 <!--<Slider value="10" width="15"></Slider>-->
             </hbox>
 
-            <vlist id="downList"></vlist>
+            <vbox id="customMediaPage" style="background-color:#F8FBFF;padding: 10px 12px 12px 12px;">
+                <vbox height="86" id="customMediaPanel" style="background-color:#FFFFFF;border:1px solid #E7EEF8;border-radius:10px;padding: 10px 12px 10px 12px;">
+                    <label height="22" text="把常听的本地音频或视频放在这里" text-align="middle left" style="font-size:13px;color:#2A2F36;"></label>
+                    <hbox height="34" items-align="middle left" style="margin: 6px 0px 0px 0px;">
+                        <label text="支持 mp3 / flac / mp4 / mkv 等" text-align="middle left" style="font-size:11px;color:#8B96A8;"></label>
+                        <button id="btnAddCustomMedia" width="86" height="28" text="添加文件" text-align="middle center" style="background-color:#31B8FF;color:#FFFFFF;border-radius:14px;font-size:12px;"></button>
+                    </hbox>
+                </vbox>
+                <vlist id="customMediaList" items-align="center" style="margin: 10px 0px 0px 0px;"></vlist>
+            </vbox>
         </tabcontrol>
     </vbox>
     <vbox>
@@ -59,11 +68,11 @@
                 <hbox style="background-color: #F5F5F5; color: #888888 " height="32">
 
                     <spacer width="15"></spacer>
-                    <label halign="left" text="歌曲名"></label>
-                    <label halign="left" width="184" text="专辑"></label>
+                    <label text-align="left" text="歌曲名"></label>
+                    <label text-align="left" width="184" text="专辑"></label>
                     <spacer width="15"></spacer>
                     <label width="50" text="热度"></label>
-                    <label halign="left" width="60" text="时长"></label>
+                    <label text-align="left" width="60" text="时长"></label>
 
                 </hbox>
                 <vlist id="searchList" scrollbar="testBar"></vlist>
@@ -86,6 +95,30 @@
     /*选中样式*/
     .check:checked {
         border-bottom: 2px solid rgb(55,174,254);
+    }
+
+    .leftTab {
+        color: #8A94A3;
+        border-radius: 13px;
+        cursor: pointer;
+    }
+
+    .leftTab:hover {
+        background-color: #EEF7FF;
+        color: #2AAEF8;
+    }
+
+    .leftTab:checked {
+        background-color: #E2F4FF;
+        color: #169FE8;
+    }
+
+    #btnAddCustomMedia:hover {
+        background-color: #159FE7;
+    }
+
+    #btnAddCustomMedia:active {
+        background-color: #0D8DD0;
     }
 
     #icon {

@@ -13,7 +13,7 @@ namespace ezui {
 	public:
 		RichTextView(Object* ownerObject = NULL);
 
-		//设置富文本内容(支持简单的HTML标签,如<p>、<a>、<span>等)
+		//设置富文本内容(支持<p>、<a>、<span>、<strong>/<b>、<em>/<i>、<u>、<s>/<del>等标签及常用内联文字样式)
 		void SetText(const UIString& htmlText);
 
 		virtual ~RichTextView();

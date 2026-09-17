@@ -7,17 +7,17 @@ namespace ezui {
 	//BGRA 32位图 通常用于框架内部的分层窗口绘制
 	class EZUI_API Bitmap {
 	private:
-		int m_width = 0;
-		int m_height = 0;
-		HBITMAP m_bmp = NULL;
-		HDC m_hdc = NULL;
-		uint8_t* m_point = NULL;
+		int m_width;
+		int m_height;
+		HBITMAP m_bmp;
+		HDC m_hdc;
+		uint8_t* m_point;
 		BITMAPINFO& m_bmpInfo;
 	private:
-		Bitmap(const Bitmap&) = delete;            // 禁止拷贝构造
-		Bitmap& operator=(const Bitmap&) = delete; // 禁止拷贝赋值
-		Bitmap(Bitmap&&) = delete;                 // 禁止移动构造
-		Bitmap& operator=(Bitmap&&) = delete;      // 禁止移动赋值
+		Bitmap(const Bitmap&);            // 禁止拷贝构造
+		Bitmap& operator=(const Bitmap&); // 禁止拷贝赋值
+		Bitmap(Bitmap&&);                 // 禁止移动构造
+		Bitmap& operator=(Bitmap&&);      // 禁止移动赋值
 	protected:
 		void Create(int width, int height, bool zeroFill = false);
 	public:
@@ -44,10 +44,10 @@ namespace ezui {
 		Color GetPixel(int x, int y)const;
 
 		//获取位图数据指针 BGRA格式
-		uint8_t* GetPixel();
+		uint8_t* GetPixelData();
 
 		//抹除矩形内容 填充透明色
-		void Earse(const Rect& rect);
+		void Erase(const Rect& rect);
 
 		//获取HBITMAP句柄
 		HBITMAP GetHBITMAP();

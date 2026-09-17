@@ -1,22 +1,82 @@
-﻿#include "mainForm.h"
+#include "EzUI/EzUI.h"
 
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-	_In_opt_ HINSTANCE hPrevInstance,
-	_In_ LPWSTR    lpCmdLine,
-	_In_ int       nCmdShow)
+using namespace ezui;
+
+class MainForm final : public Window {
+public:
+	MainForm()
+	{
+		SetSize(900, 560);
+		LoadXml("res/mainForm.htm");
+
+		if (auto* search = FindControl<TextBox>("search")) {
+			search->TextChanged = [this](TextBox*, const UIString& text) {
+				FilterNavigation(text);
+			};
+		}
+	}
+
+	void OnClose(bool& allowClose) override
+	{
+		Application::Exit(0);
+	}
+
+private:
+	void FilterNavigation(const UIString& query)
+	{
+		auto* navigation = FindControl<VListView>("navigation");
+		auto* pages = FindControl<TabControl>("pages");
+		if (!navigation || !pages) {
+			return;
+		}
+
+		const UIString needle = query.trim().toLower();
+		RadioButton* firstVisible = nullptr;
+		int firstVisibleIndex = -1;
+		bool hasCheckedVisible = false;
+		int pageIndex = 0;
+
+		for (auto* child : navigation->GetChildren()) {
+			auto* item = dynamic_cast<RadioButton*>(child);
+			if (!item) {
+				continue;
+			}
+
+			const bool visible =
+				needle.empty() || item->GetText().toLower().contains(needle);
+			item->SetVisible(visible);
+
+			if (visible && !firstVisible) {
+				firstVisible = item;
+				firstVisibleIndex = pageIndex;
+			}
+			if (visible && item->GetCheck()) {
+				hasCheckedVisible = true;
+			}
+			if (!visible && item->GetCheck()) {
+				item->SetCheck(false);
+			}
+			++pageIndex;
+		}
+
+		if (!hasCheckedVisible && firstVisible) {
+			firstVisible->SetCheck(true);
+			pages->SetPageIndex(firstVisibleIndex);
+		}
+
+		navigation->RefreshLayout();
+		navigation->Invalidate();
+		pages->Invalidate();
+	}
+};
+
+int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int)
 {
-	//app类
 	Application app(hInstance);
-	app.EnableHighDpi();//启用高DPI
-	app.SetResource("my_res");//设定资源名称
+	app.EnableHighDpi();
 
-	//窗口实例
-	MainForm mainFrm;
-	mainFrm.Show();
-	mainFrm.CenterToScreen();
-	::SetForegroundWindow(mainFrm.GetWindowHandle());//设置为前景窗口
-
-	//开始消息循环
-	int code = app.Exec();
-	return code;
+	MainForm window;
+	window.CenterToScreen();
+	window.Show();
+	return app.Exec();
 }

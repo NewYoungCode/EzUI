@@ -1,0 +1,2 @@
+#include <windows.h>
+my_res EZUI_RES "ResPackage.res"

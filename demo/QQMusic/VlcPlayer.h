@@ -56,5 +56,5 @@ private:
     libvlc_instance_t* vlc_ = nullptr;
     libvlc_media_player_t* player_ = nullptr;
     libvlc_time_t durationMs_ = 0;
-    ezui::Task* task_ = nullptr;
+    ezui::Thread* task_ = nullptr;
 };

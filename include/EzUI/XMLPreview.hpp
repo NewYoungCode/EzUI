@@ -100,14 +100,13 @@ namespace ezui {
 		//主窗口
 		class XMLPreview :public Window {
 		public:
-			Thread* task = NULL;
+			Thread* task;
 			Label layout;
-			Window* previewWnd = NULL;
+			Window* previewWnd;
 			XMLPreview(int cx = 1200, int cy = 900);
-			virtual void OnSize(const Size& sz)override;
-			virtual void OnMove(const Point& sz)override;
-			virtual LRESULT WndProc(UINT msg, WPARAM wp, LPARAM lp)override;
-			void OnClose(bool& b)override;
+			virtual void OnSize(const Size& sz)EZUI_OVERRIDE;
+			virtual void OnMove(const Point& sz)EZUI_OVERRIDE;
+			void OnClose(bool& allowClose)EZUI_OVERRIDE;
 			void CreatePreview(const UIString& dir);
 			virtual ~XMLPreview();
 		};
@@ -115,26 +114,27 @@ namespace ezui {
 		//预览窗口
 		class PreviewForm :public BorderlessWindow {
 			UIString m_path;
-			Thread* task = NULL;
+			Thread* task;
 			std::string fileData;
-			bool exit = false;
+			bool exit;
 			std::string m_workDir;
 		public:
 			PreviewForm(const UIString& path);
 			virtual ~PreviewForm();
-			void OnClose(bool& b);
+			void OnClose(bool& allowClose);
 			void OnSize(const Size& sz);
 		};
 	};
 	//xml预览窗口
-	using XMLPreview = detail::XMLPreview;
+	typedef detail::XMLPreview XMLPreview;
 };
 
 
 namespace ezui {
 	namespace detail {
 		//===========================================================================================================================================
-		PreviewForm::PreviewForm(const UIString& path) :BorderlessWindow(0, 0) {
+		PreviewForm::PreviewForm(const UIString& path)
+			: BorderlessWindow(0, 0), task(NULL), exit(false) {
 			LONG style = GetWindowLongPtr(GetWindowHandle(), GWL_STYLE);
 			style &= ~WS_POPUP;      // 去掉 popup 样式
 			style |= WS_CHILD;       // 加上 child 样式
@@ -153,7 +153,7 @@ namespace ezui {
 						UIString out = UIString(L"重新载入: ") + m_path + "\n";
 						OutputDebugStringW(out.unicode().c_str());
 						Invoke([this]() {
-							//this->SetText(m_path);
+							//this->SetTitle(m_path);
 							this->LoadXml(m_path);
 							this->Invalidate();
 							});
@@ -169,7 +169,7 @@ namespace ezui {
 				delete task;
 			}
 		}
-		inline void PreviewForm::OnClose(bool& b) {
+		inline void PreviewForm::OnClose(bool& allowClose) {
 			auto itor = std::find(g_wnds.begin(), g_wnds.end(), this);
 			if (itor != g_wnds.end()) {
 				g_wnds.erase(itor);
@@ -179,18 +179,30 @@ namespace ezui {
 		inline void PreviewForm::OnSize(const Size& sz) {
 			__super::OnSize(sz);
 			UIString title = this->m_path +
-				" w:" + std::to_string(this->GetClientRect().Width) +
-				" h:" + std::to_string(this->GetClientRect().Height);
-			this->SetText(title);
+				" w:" + ezui::ToString(this->GetClientRect().Width) +
+				" h:" + ezui::ToString(this->GetClientRect().Height);
+			this->SetTitle(title);
 		}
 		//===========================================================================================================================================
-		inline XMLPreview::XMLPreview(int cx, int cy) :Window() {
+		inline XMLPreview::XMLPreview(int cx, int cy)
+			: Window(), task(NULL), previewWnd(NULL) {
 
 			layout.SetText(L"请将xml界面文件拖拽到此处。");
 			layout.Style->FontSize = 15;
 
-			this->SetText(L"EzUI_XMLPreview");
+			this->SetTitle(L"EzUI_XMLPreview");
 			this->SetLayout(&layout);
+			layout.SetDropEnabled(true);
+			layout.AddEventHandler(Event::DragEnter | Event::DragOver | Event::Drop, [this](Control*, EventArgs* e) {
+				FileDragEventArgs* args = e->As<FileDragEventArgs>();
+				if (!args || args->Files().empty()) {
+					return;
+				}
+				args->Accept();
+				if (args->EventType() == Event::Drop) {
+					this->CreatePreview(args->Files()[0]);
+				}
+				});
 
 			auto rectStr = ReadRegistryString("rect");
 			auto rects = rectStr.split(",");
@@ -222,26 +234,15 @@ namespace ezui {
 			wnd->Show();
 
 		}
-		inline LRESULT XMLPreview::WndProc(UINT msg, WPARAM wp, LPARAM lp) {
-			if (msg == WM_DROPFILES) {
-				HDROP hDrop = (HDROP)wp;
-				UINT numFiles = ::DragQueryFileW(hDrop, 0xFFFFFFFF, NULL, 0);  //  获取拖入的文件数量
-				TCHAR szFilePath[MAX_PATH]{ 0 };
-				::DragQueryFileW(hDrop, 0, szFilePath, sizeof(szFilePath));  //  获取第一个文件路径
-				UIString file = szFilePath;
-				this->CreatePreview(file);
-			}
-			return __super::WndProc(msg, wp, lp);
-		}
 		inline void XMLPreview::OnSize(const Size& sz) {
 			__super::OnSize(sz);
 			auto rc = this->GetRect();
 			UIString rectStr =
-				std::to_string(rc.X) + "," +
-				std::to_string(rc.Y) + "," +
-				std::to_string(rc.Width) + "," +
-				std::to_string(rc.Height) + "," +
-				std::to_string(this->GetScale()) + "," +
+				ezui::ToString(rc.X) + "," +
+				ezui::ToString(rc.Y) + "," +
+				ezui::ToString(rc.Width) + "," +
+				ezui::ToString(rc.Height) + "," +
+				ezui::ToString(this->GetScale()) + "," +
 				(this->IsMaximized() ? "1" : "0");
 			WriteRegistryString("rect", rectStr);
 		}
@@ -250,17 +251,17 @@ namespace ezui {
 			__super::OnMove(pt);
 			auto rc = this->GetRect();
 			UIString rectStr =
-				std::to_string(rc.X) + "," +
-				std::to_string(rc.Y) + "," +
-				std::to_string(rc.Width) + "," +
-				std::to_string(rc.Height) + "," +
-				std::to_string(this->GetScale()) + "," +
+				ezui::ToString(rc.X) + "," +
+				ezui::ToString(rc.Y) + "," +
+				ezui::ToString(rc.Width) + "," +
+				ezui::ToString(rc.Height) + "," +
+				ezui::ToString(this->GetScale()) + "," +
 				(this->IsMaximized() ? "1" : "0");
 			WriteRegistryString("rect", rectStr);
 		}
-		inline void XMLPreview::OnClose(bool& b) {
-			for (auto& it : g_wnds) {
-				delete it;
+		inline void XMLPreview::OnClose(bool& allowClose) {
+			for (auto it = g_wnds.begin(); it != g_wnds.end(); ++it) {
+				delete *it;
 			}
 			Application::Exit(0);
 		}

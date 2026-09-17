@@ -9,15 +9,15 @@ namespace ezui {
 		class CustomFontCollectionLoader;
 		class FontManager;
 
-		class EZUI_API FontInfo final {
+		class EZUI_API FontInfo EZUI_FINAL {
 			friend class FontManager;
 		public:
 			std::vector<uint8_t> fontData;
-			IDWriteFontFile* fontFile = NULL;
-			IDWriteFontCollection* fontCollection = NULL;
+			IDWriteFontFile* fontFile;
+			IDWriteFontCollection* fontCollection;
 			std::wstring fontName;
 		private:
-			FontInfo() {};
+			FontInfo() : fontFile(NULL), fontCollection(NULL) {};
 		public:
 			~FontInfo() {
 				fontFile->Release();
@@ -25,12 +25,12 @@ namespace ezui {
 			}
 		};
 		//管理自定义字体
-		class EZUI_API FontManager final {
+		class EZUI_API FontManager EZUI_FINAL {
 		private:
 			std::vector<FontInfo*> fonts;
 			IDWriteFactory* m_factory; // 外部传入(无需释放)
-			MemoryFontLoader* fontLoader = NULL;
-			CustomFontCollectionLoader* collectionLoader = NULL;
+			MemoryFontLoader* fontLoader;
+			CustomFontCollectionLoader* collectionLoader;
 		private:
 			FontInfo* MakeFontInfo() { return new FontInfo; };
 			// 获取字体名称
@@ -52,12 +52,12 @@ namespace ezui {
 	//字体类
 	class EZUI_API Font {
 	private:
-		Font() = delete;
-		bool m_ref = false;
-		FontStyle m_fontStyle = FontStyle::Normal;
-		float m_fontSize = 0;
-		int m_fontWeight = 0;
-		IDWriteTextFormat* m_value = NULL;
+		Font();
+		bool m_ref;
+		FontStyle m_fontStyle;
+		float m_fontSize;
+		int m_fontWeight;
+		IDWriteTextFormat* m_value;
 		std::wstring m_fontFamily;
 		void Copy(const Font& _copy);
 	public:
@@ -97,16 +97,16 @@ namespace ezui {
 	//文本布局类
 	class EZUI_API TextLayout {
 	private:
-		TextLayout(const TextLayout& rightValue) = delete;
-		int m_unicodeSize = 0;
-		float m_fontSize = 0;
-		IDWriteTextLayout* m_textLayout = NULL;
-		DWRITE_TEXT_METRICS m_textMetrics = {};
+		TextLayout(const TextLayout& rightValue);
+		int m_unicodeSize;
+		float m_fontSize;
+		IDWriteTextLayout* m_textLayout;
+		DWRITE_TEXT_METRICS m_textMetrics;
 		std::vector<RectF> m_lineRects;
 		std::wstring m_fontFamily;
 		void GetMetrics();
 	public:
-		TextLayout(const std::wstring& text, const Font& font, const SizeF& maxSize = SizeF{ EZUI_FLOAT_MAX,EZUI_FLOAT_MAX }, TextAlign textAlgin = TextAlign::TopLeft);
+		TextLayout(const std::wstring& text, const Font& font, const SizeF& maxSize = SizeF(EZUI_FLOAT_MAX, EZUI_FLOAT_MAX), TextAlign textAlgin = TextAlign::TopLeft);
 		//根据坐标执行命中测试
 		Point HitTestPoint(const Point& pt, int* outTextPos, BOOL* outIsTrailingHit, int* fontHeight);
 		//根据坐标执行命中测试
@@ -135,7 +135,10 @@ namespace ezui {
 		void SetTextAlign(TextAlign textAlign);
 		// 设置下划线 count为-1则表示从pos开始到结尾全部设置下划线
 		void SetUnderline(int pos = 0, int count = 0);
+		//绘制删除线
+		void SetStrikeThrough(int pos, int count);
+		//设置行高
+		void SetLineHeight(int lineHeight);
 		virtual ~TextLayout();
 	};
 };
-

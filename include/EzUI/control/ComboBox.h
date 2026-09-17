@@ -12,19 +12,21 @@ namespace ezui {
 	class EZUI_API ComboBox :public HLayout {
 	private:
 		//添加选项请使用AddOption
-		virtual Control* AddChild(Control* childCtrl, bool autoDelete = false)override;
+		virtual Control* AddChild(Control* childCtrl, bool takeOwnership = false)EZUI_OVERRIDE;
 		using HLayout::RemoveChild;
 		using HLayout::RemoveAll;
 		using HLayout::InsertChildAt;
 		using HLayout::SwapChild;
 	protected:
-		virtual void OnDpiChanged(DpiChangedEventArgs* arg)override;
+		virtual void OnDpiChanged(DpiChangedEventArgs* arg)EZUI_OVERRIDE;
+		//获取内部用于显示当前选项内容的控件，子类可用于自定义显示行为(默认返回TextBox*类型)
+		virtual Control* GetDisplayControl();
 	private:
 		//下拉列表窗口
 		class DropDownWindow :public PopupWindow {
 			ComboBox* m_ownerCtrl;
 		public:
-			virtual void OnNotify(Control* sender, EventArgs* args)override;
+			virtual void OnNotify(Control* sender, EventArgs* args)EZUI_OVERRIDE;
 			DropDownWindow(ComboBox* ownerCtrl);
 			virtual ~DropDownWindow();
 		};
@@ -42,23 +44,25 @@ namespace ezui {
 		//下拉动画
 		Animation* m_ani;
 		//选中的下标
-		int m_selectedIndex = -1;
+		int m_selectedIndex;
 		//下拉框是否已展开
-		bool m_expanded = false;
+		bool m_expanded;
 	public:
 		//(下拉选项)其实就是一个控件
-		using Option = Control;
+		typedef Control Option;
 		//用户界面切换选项的时候发生的回调
-		std::function<void(ComboBox* sender, int index)> SelectedChanged = NULL;
+		std::function<void(ComboBox* sender, int index)> SelectedChanged;
 	protected:
-		virtual void OnLayout()override;
+		virtual void OnLayout()EZUI_OVERRIDE;
 		//当正在创建某项option的时候发生(重写此函数来达到DIY效果 (重写此函数来达到diy效果 返回的控件请正确设置绝对高度 请自行管理Option*的释放))
 		virtual Option* OnCreateOption(const UIString& optionValue, const UIString& optionShowText, Image* icon);
-		//下拉框展开时会调用此函数(通常可以在此函数中设置窗口大小/弹出位置/下拉动画)
+		// 下拉框展开前调用。
+		// 此时 dropWindow 的默认宽高已由内部完成计算，
+		// 可在此调整最终窗口大小、弹出位置或展开动画。
 		virtual void OnDropDown(Window* dropWindow);
 		//这是一个可重写的虚函数，允许子类自定义箭头的绘制样式。
 		//当控件需要重绘箭头时，会调用此函数。
-		virtual void OnPaintDropButton(Control* btnArrow, PaintEventArgs* args);
+		virtual void OnPaintDropDownArrow(Control* btnArrow, PaintEventArgs* args);
 	public:
 		ComboBox(Object* ownerObject = NULL);
 
@@ -66,7 +70,7 @@ namespace ezui {
 		// valign | halign | align: top | bottom | mid | left | right | center (forwarded to TextBox)
 		// Note: value/text/options attributes are not handled in SetAttribute
 		// All HLayout attributes are also supported
-		virtual void SetAttribute(const UIString& attrKey, const UIString& attrValue)override;
+		virtual void SetAttribute(const UIString& attrKey, const UIString& attrValue)EZUI_OVERRIDE;
 
 		// 设置占位符文本
 		void SetPlaceholderText(const UIString& text);

@@ -3,10 +3,65 @@
 #pragma comment(lib, "dwmapi.lib")
 
 namespace {
-	TaskFactory& KugouTaskPool()
+	ezui::ThreadPool& KugouTaskPool()
 	{
-		static TaskFactory pool(4);
+		static ezui::ThreadPool pool(4);
 		return pool;
+	}
+
+	UIString MakeCustomMediaKey(const UIString& path)
+	{
+		UIString normalized = Path::Format(path).toLower();
+		unsigned long long hash = 1469598103934665603ULL;
+		for (size_t i = 0; i < normalized.size(); ++i) {
+			hash ^= static_cast<unsigned char>(normalized[i]);
+			hash *= 1099511628211ULL;
+		}
+		return UIString("custom_") + std::to_string(hash);
+	}
+
+	UIString GetMediaTitle(const UIString& filePath)
+	{
+		UIString title = Path::GetFileNameWithoutExtension(filePath);
+		if (title.empty()) {
+			title = Path::GetFileName(filePath);
+		}
+		return title.empty() ? filePath : title;
+	}
+
+	UIString GetMediaDurationText(int duration)
+	{
+		return duration > 0 ? global::toTimeStr(duration) : UIString("--:--");
+	}
+
+	bool IsVideoMediaPath(const UIString& filePath)
+	{
+		UIString ext = Path::GetExtension(filePath).toLower();
+		return ext == ".mp4" || ext == "mp4" ||
+			ext == ".mkv" || ext == "mkv" ||
+			ext == ".avi" || ext == "avi" ||
+			ext == ".mov" || ext == "mov" ||
+			ext == ".wmv" || ext == "wmv" ||
+			ext == ".webm" || ext == "webm" ||
+			ext == ".flv" || ext == "flv";
+	}
+
+	LocalItem* CreateMediaItem(const UIString& hash, const UIString& title, int duration,
+		const UIString& singer, const UIString& mediaType, const UIString& path, const UIString& listType)
+	{
+		LocalItem* item = new LocalItem(title, GetMediaDurationText(duration));
+		item->SetAttribute("FileHash", hash);
+		item->SetAttribute("SingerName", singer);
+		item->SetAttribute("Title", title);
+		item->SetAttribute("ListType", listType);
+		if (!mediaType.empty()) {
+			item->SetAttribute("MediaType", mediaType);
+		}
+		if (!path.empty()) {
+			item->SetAttribute("FilePath", path);
+		}
+		item->SetToolTip(path.empty() ? title : path);
+		return item;
 	}
 }
 
@@ -16,6 +71,7 @@ MainFrm::MainFrm() : Form()
 	InitTrayIcon();
 	InitControls();
 	InitLocalPlaylist();
+	InitCustomMediaList();
 	InitEventHandlers();
 	InitTimer();
 
@@ -43,9 +99,11 @@ MainFrm::~MainFrm()
 		delete timer;
 	}
 	delete downloadTask;
+	delete customMediaFile;
 	delete listFile;
 
 	if (vlistSearch) vlistSearch->RemoveAll(true);
+	if (vlistCustomMedia) vlistCustomMedia->RemoveAll(true);
 	if (vlistLocal) vlistLocal->RemoveAll(true);
 
 	delete deskTopWnd;
@@ -56,7 +114,7 @@ MainFrm::~MainFrm()
 void MainFrm::InitForm()
 {
 	this->SetResizable(true);
-	this->SetText(L"酷苟音乐");
+	this->SetTitle(L"酷苟音乐");
 	this->LoadXml("res/xml/main.htm");
 
 	// 找到三个 Frame
@@ -83,13 +141,13 @@ void MainFrm::InitForm()
 	//else {
 		// 不支持该属性或失败
 	this->EnableAlphaBlending();
-	this->GetLayout()->SetStyleSheet("border:1px solid rgba(128, 128, 128, 30%);border-radius:10px", VisualState::Normal);
+	this->GetLayout()->SetStyle("border:1px solid rgba(128, 128, 128, 30%);border-radius:10px", VisualState::Normal);
 	//}
 }
 
 void MainFrm::InitTrayIcon()
 {
-	ntfi.SetTips(L"酷苟音乐");
+	ntfi.SetToolTipText(L"酷苟音乐");
 	ntfi.SetIcon(ezui::LoadIcon("res/icon.ico"));
 
 	// 创建托盘菜单
@@ -128,6 +186,7 @@ void MainFrm::InitControls()
 	playerBar = bottomFrame->FindControl<Slider>("playerBar");
 	tabCtrl = centerFrame->FindControl<TabControl>("rightView");
 	vlistLocal = centerFrame->FindControl<VListView>("playList");
+	vlistCustomMedia = centerFrame->FindControl<VListView>("customMediaList");
 	vlistSearch = centerFrame->FindControl<VListView>("searchList");
 	editSearch = titleFrame->FindControl<TextBox>("searchEdit");
 	labelDeskLrc = bottomFrame->FindControl<CheckBox>("deskLrc");
@@ -136,6 +195,9 @@ void MainFrm::InitControls()
 
 	// 设置滚动条自动隐藏
 	vlistSearch->GetScrollBar()->SetAutoHide(500);
+	if (vlistCustomMedia) {
+		vlistCustomMedia->GetScrollBar()->SetAutoHide(500);
+	}
 
 	// 创建桌面歌词窗口
 	deskTopWnd = new DesktopLrcFrm(player);
@@ -160,19 +222,32 @@ void MainFrm::InitLocalPlaylist()
 		s.hash = section;
 		s.Duration = listFile->ReadInt(section, "dur");
 		s.SingerName = listFile->ReadString(section, "singer");
+		s.url = listFile->ReadString(section, "path");
+		s.fileName = s.SongName;
 		songLsit.push_back(s);
 
 		// 创建列表项
-		LocalItem* item = new LocalItem(s.SongName, global::toTimeStr(s.Duration));
-		item->SetAttribute("FileHash", section);
-		item->SetAttribute("SingerName", s.SingerName);
-		item->SetToolTip(s.SongName);
+		UIString mediaType = listFile->ReadString(section, "type");
+		LocalItem* item = CreateMediaItem(section, s.SongName, s.Duration, s.SingerName, mediaType, s.url, "recent");
 		vlistLocal->AddChild(item, true);
 
-		//vlistLocal->Append(
-		//	L"<label class=\"testXml\" text=\"测试xml加载文字\" "
-		//	L"style=\"width:100px;height:20px;font-size:12px;\" />"
-		//);
+	}
+}
+
+void MainFrm::InitCustomMediaList()
+{
+	customMediaFile = new IniConfig(Path::StartPath() + "\\custom_media.ini");
+	if (!vlistCustomMedia) {
+		return;
+	}
+
+	for (const auto& section : customMediaFile->GetSections()) {
+		UIString path = customMediaFile->ReadString(section, "path");
+		UIString title = customMediaFile->ReadString(section, "name", GetMediaTitle(path));
+		int duration = customMediaFile->ReadInt(section, "dur");
+
+		LocalItem* item = CreateMediaItem(section, title, duration, L"本地音视频", "custom", path, "customLibrary");
+		vlistCustomMedia->AddChild(item, true);
 	}
 }
 
@@ -249,11 +324,11 @@ void MainFrm::OnPaint(PaintEventArgs* args)
 	__super::OnPaint(args);
 }
 
-void MainFrm::OnClose(bool& bClose)
+void MainFrm::OnClose(bool& allowClose)
 {
 	++searchToken_;
 	++playToken_;
-	/*bClose = false;
+	/*allowClose = false;
 	Animation* ani = new Animation(this);
 	ani->SetStartValue(1.0);
 	ani->SetEndValue(0);
@@ -265,13 +340,13 @@ void MainFrm::OnClose(bool& bClose)
 	ani->Start(200);*/
 	auto ret = ::MessageBoxW(GetWindowHandle(), L"真的要退出吗？", L"提示", MB_OKCANCEL);
 	if (ret == IDOK) {
-		bClose = true;
+		allowClose = true;
 		Application::Exit(0);
 	}
 	else {
-		bClose = false;
+		allowClose = false;
 	}
-	__super::OnClose(bClose);
+	__super::OnClose(allowClose);
 }
 
 void MainFrm::OnShow()
@@ -298,17 +373,36 @@ void MainFrm::OnNotify(Control* sender, EventArgs* args)
 
 	UIString name = sender->GetName();
 	UIString fileHash = sender->GetAttribute("FileHash");
+	Control* mediaItem = sender;
+	if (fileHash.empty() && sender->GetParent()) {
+		UIString parentHash = sender->GetParent()->GetAttribute("FileHash");
+		if (!parentHash.empty()) {
+			fileHash = parentHash;
+			mediaItem = sender->GetParent();
+		}
+	}
 
 	if (args->EventType() == Event::MouseDoubleClick && args->As<MouseEventArgs>()->Button() == MouseButton::Left) {
 		if (!fileHash.empty()) {
-			PlaySong(fileHash);
+			if (mediaItem->GetAttribute("MediaType") == "custom") {
+				PlayCustomMedia(mediaItem);
+			}
+			else {
+				PlaySong(fileHash);
+			}
 		}
 		return;
 	}
 	if (args->EventType() == Event::MouseDown && args->As<MouseEventArgs>()->Button() == MouseButton::Left) {
 		// 使用映射表简化条件判断
 		if (name == "login") {
-			OpenLoginFrm(sender);
+
+
+			this->player->OpenPath("C:/Users/yang/Downloads/youtube/[4K⧸60FPS] aespa 에스파 'Whiplash' MV [9m8DB_csgBs].mp4");
+			//OpenLoginFrm(sender);
+		}
+		else if (name == "btnAddCustomMedia") {
+			AddCustomMedia();
 		}
 		else if (name == "next") {
 			NextSong();
@@ -332,14 +426,30 @@ void MainFrm::OnNotify(Control* sender, EventArgs* args)
 			mediaCtl->Invalidate();
 		}
 		else if (name == "dellocal") {
-			LocalItem* songItem = static_cast<LocalItem*>(sender->GetParent());
-			UIString hash = songItem->GetAttribute("FileHash");
-			if (!hash.empty()) {
-				listFile->DeleteSection(hash);
+			LocalItem* songItem = dynamic_cast<LocalItem*>(sender->GetParent());
+			if (!songItem) {
+				return;
 			}
-			vlistLocal->RemoveChild(songItem, true);
-			vlistLocal->Invalidate();
-			vlistLocal->RefreshLayout();
+			UIString hash = songItem->GetAttribute("FileHash");
+			if (songItem->GetAttribute("ListType") == "customLibrary") {
+				if (!hash.empty() && customMediaFile) {
+					customMediaFile->DeleteSection(hash);
+				}
+				if (vlistCustomMedia) {
+					vlistCustomMedia->RemoveChild(songItem, true);
+					vlistCustomMedia->Invalidate();
+					vlistCustomMedia->RefreshLayout();
+				}
+			}
+			else {
+				if (!hash.empty()) {
+					listFile->DeleteSection(hash);
+					RemoveRecentSong(hash);
+				}
+				vlistLocal->RemoveChild(songItem, true);
+				vlistLocal->Invalidate();
+				vlistLocal->RefreshLayout();
+			}
 		}
 		else if (sender->HasClass("testXml") || name == "gif") {
 			sender->GetParent()->RemoveChild(sender, true);
@@ -421,9 +531,9 @@ void MainFrm::PlaySong(const UIString& hash)
 			weakThis->RequestNewImage(info);
 
 			weakThis->nowSong = hash;
-			weakThis->SetText(info.fileName);
+			weakThis->SetTitle(info.fileName);
 			weakThis->bottomFrame->FindControl<Label>("songName")->SetText(info.fileName);
-			weakThis->ntfi.ShowMessage(L"播放音乐", info.fileName, 2000);
+			weakThis->ntfi.ShowBalloonTip(L"播放音乐", info.fileName, 2000);
 
 			weakThis->player->OpenUrl(info.url);
 			weakThis->player->SetDuration(info.Duration);
@@ -435,6 +545,173 @@ void MainFrm::PlaySong(const UIString& hash)
 			weakThis->timer->Start();
 			});
 		});
+}
+
+void MainFrm::PlayCustomMedia(Control* mediaItem)
+{
+	if (!mediaItem) {
+		return;
+	}
+
+	UIString path = mediaItem->GetAttribute("FilePath");
+	if (path.empty() || !File::Exists(path)) {
+		::MessageBoxW(GetWindowHandle(), L"本地音视频文件不存在，可能已经被移动或删除。", L"无法播放", MB_OK);
+		return;
+	}
+
+	timer->Stop();
+	const int token = ++playToken_;
+
+	UIString hash = mediaItem->GetAttribute("FileHash");
+	if (hash.empty()) {
+		hash = MakeCustomMediaKey(path);
+	}
+
+	UIString title = mediaItem->GetAttribute("Title");
+	if (title.empty()) {
+		title = GetMediaTitle(path);
+	}
+
+	int duration = 0;
+	if (customMediaFile) {
+		duration = customMediaFile->ReadInt(hash, "dur");
+	}
+	if (duration <= 0 && listFile) {
+		duration = listFile->ReadInt(hash, "dur");
+	}
+
+	playType = IsVideoMediaPath(path) ? 2 : 1;
+	ResetPlaybackImages();
+
+	MouseEventArgs args(Event::MouseDown, MouseButton::Left);
+	centerFrame->FindControl(playType == 2 ? "mvView" : "lrcView")->SendEvent(&args);
+
+	nowSong = hash;
+	SetTitle(title);
+	bottomFrame->FindControl<Label>("songName")->SetText(title);
+	bottomFrame->FindControl<Label>("songName")->Invalidate();
+
+	player->OpenPath(path);
+	if (duration > 0) {
+		player->SetDuration(duration);
+	}
+
+	lrcPanel->LoadLrc(L"[00:00.00]本地文件暂无歌词");
+	deskTopWnd->LoadLrc(L"[00:00.00]本地文件暂无歌词");
+
+	AddRecentCustomMediaRecord(hash, path, title, duration);
+	ntfi.ShowBalloonTip(L"播放音视频", title, 2000);
+
+	if (token == playToken_) {
+		timer->Start();
+	}
+}
+
+void MainFrm::AddRecentCustomMediaRecord(const UIString& hash, const UIString& path, const UIString& title, int duration)
+{
+	if (!listFile || !vlistLocal) {
+		return;
+	}
+
+	Song info;
+	info.hash = hash;
+	info.SongName = title;
+	info.fileName = title;
+	info.SingerName = L"本地音视频";
+	info.Duration = duration;
+	info.url = path;
+
+	Control* item = vlistLocal->FindChildren("FileHash", hash).First();
+	size_t pos = FindLocalSong(hash);
+	if (pos == size_t(-1)) {
+		songLsit.push_back(info);
+	}
+	else {
+		songLsit[pos] = info;
+	}
+
+	if (!item) {
+		item = CreateMediaItem(hash, title, duration, info.SingerName, "custom", path, "recent");
+		vlistLocal->AddChild(item);
+	}
+	else {
+		item->SetAttribute("MediaType", "custom");
+		item->SetAttribute("FilePath", path);
+		item->SetAttribute("Title", title);
+		item->SetAttribute("SingerName", info.SingerName);
+		LocalItem* localItem = dynamic_cast<LocalItem*>(item);
+		if (localItem) {
+			localItem->songName.SetText(title);
+			localItem->time.SetText(GetMediaDurationText(duration));
+		}
+	}
+
+	vlistLocal->RefreshLayout();
+	vlistLocal->GetScrollBar()->ScrollTo(item);
+	vlistLocal->Invalidate();
+
+	listFile->WriteString(hash, "type", "custom");
+	listFile->WriteString(hash, "name", title);
+	listFile->WriteString(hash, "singer", info.SingerName);
+	listFile->WriteString(hash, "dur", std::to_string(duration));
+	listFile->WriteString(hash, "path", path);
+}
+
+void MainFrm::UpdateCustomMediaDuration(const UIString& hash, int duration)
+{
+	if (hash.empty() || duration <= 0 || !vlistLocal) {
+		return;
+	}
+
+	Control* recentItem = vlistLocal->FindChildren("FileHash", hash).First();
+	if (!recentItem || recentItem->GetAttribute("MediaType") != "custom") {
+		return;
+	}
+
+	if (listFile && listFile->ReadInt(hash, "dur") != duration) {
+		listFile->WriteString(hash, "dur", std::to_string(duration));
+	}
+	if (customMediaFile && !customMediaFile->ReadString(hash, "path").empty() &&
+		customMediaFile->ReadInt(hash, "dur") != duration) {
+		customMediaFile->WriteString(hash, "dur", std::to_string(duration));
+	}
+
+	for (auto it = songLsit.begin(); it != songLsit.end(); ++it) {
+		if (it->hash == hash) {
+			it->Duration = duration;
+			break;
+		}
+	}
+
+	UIString durationText = GetMediaDurationText(duration);
+	LocalItem* recentLocalItem = dynamic_cast<LocalItem*>(recentItem);
+	if (recentLocalItem && recentLocalItem->time.GetText() != durationText) {
+		recentLocalItem->time.SetText(durationText);
+		recentLocalItem->Invalidate();
+	}
+
+	if (vlistCustomMedia) {
+		Control* customItem = vlistCustomMedia->FindChildren("FileHash", hash).First();
+		LocalItem* customLocalItem = dynamic_cast<LocalItem*>(customItem);
+		if (customLocalItem && customLocalItem->time.GetText() != durationText) {
+			customLocalItem->time.SetText(durationText);
+			customLocalItem->Invalidate();
+		}
+	}
+}
+
+void MainFrm::RemoveRecentSong(const UIString& hash)
+{
+	for (auto it = songLsit.begin(); it != songLsit.end(); ++it) {
+		if (it->hash == hash) {
+			songLsit.erase(it);
+			break;
+		}
+	}
+
+	if (nowSong == hash) {
+		nowSong.clear();
+	}
 }
 
 void MainFrm::PlayMv(const UIString& mvhash, const UIString& songHash)
@@ -466,7 +743,7 @@ void MainFrm::PlayMv(const UIString& mvhash, const UIString& songHash)
 			MouseEventArgs args(Event::MouseDown, MouseButton::Left);
 			weakThis->centerFrame->FindControl("mvView")->SendEvent(&args);
 
-			weakThis->SetText(info.SongName);
+			weakThis->SetTitle(info.SongName);
 			weakThis->bottomFrame->FindControl<Label>("songName")->SetText(info.SongName);
 			weakThis->bottomFrame->FindControl<Label>("songName")->Invalidate();
 
@@ -483,10 +760,15 @@ void MainFrm::PlayMv(const UIString& mvhash, const UIString& songHash)
 
 void MainFrm::UpSong()
 {
-	int pos = static_cast<int>(FindLocalSong(nowSong)) - 1;
-	UIString hash = (pos < 0)
-		? songLsit.back().hash
-		: songLsit[pos].hash;
+	if (songLsit.empty()) {
+		return;
+	}
+
+	size_t current = FindLocalSong(nowSong);
+	size_t pos = (current == size_t(-1) || current == 0)
+		? songLsit.size() - 1
+		: current - 1;
+	UIString hash = songLsit[pos].hash;
 
 	auto it = vlistLocal->FindChildren("FileHash", hash).First();
 	if (it) {
@@ -498,10 +780,15 @@ void MainFrm::UpSong()
 
 void MainFrm::NextSong()
 {
-	size_t pos = FindLocalSong(nowSong) + 1;
-	UIString hash = (pos >= songLsit.size())
-		? songLsit.front().hash
-		: songLsit[pos].hash;
+	if (songLsit.empty()) {
+		return;
+	}
+
+	size_t current = FindLocalSong(nowSong);
+	size_t pos = (current == size_t(-1) || current + 1 >= songLsit.size())
+		? 0
+		: current + 1;
+	UIString hash = songLsit[pos].hash;
 
 	auto it = vlistLocal->FindChildren("FileHash", hash).First();
 	if (it) {
@@ -516,6 +803,7 @@ void MainFrm::TimerTick()
 	if (player->GetState() == libvlc_state_t::libvlc_Playing) {
 		long long position = player->Position();
 		auto duration = player->Duration();
+		UpdateCustomMediaDuration(nowSong, static_cast<int>(duration));
 
 		lrcPanel->ChangePostion(position);
 		if (deskTopWnd->IsVisible()) {
@@ -583,10 +871,7 @@ void MainFrm::SearchSongs(const ezui::UIString& keyword)
 			}
 
 			if (songs.empty()) {
-				Label* empty = new Label;
-				empty->SetFixedHeight(35);
-				empty->SetText(L"没有搜索到歌曲");
-				weakThis->vlistSearch->AddChild(empty);
+				weakThis->vlistSearch->AddChild(new SearchStatusItem(L"没有搜索到歌曲"), true);
 			}
 
 			weakThis->vlistSearch->Invalidate();
@@ -622,11 +907,7 @@ void MainFrm::NextPage(float scrollPos)
 			}
 
 			if (!hasMore) {
-				Label* end = new Label;
-				end->SetFixedHeight(35);
-				end->Style->BackColor = Color(254, 249, 229);
-				end->SetText(L"已经没有更多数据");
-				weakThis->vlistSearch->AddChild(end);
+				weakThis->vlistSearch->AddChild(new SearchStatusItem(L"已经没有更多数据", true), true);
 			}
 			weakThis->vlistSearch->Invalidate();
 			});
@@ -641,6 +922,55 @@ size_t MainFrm::FindLocalSong(const UIString& hash)
 		}
 	}
 	return size_t(-1);
+}
+
+//========== 自定义音视频 ==========
+
+void MainFrm::AddCustomMedia()
+{
+	std::vector<Text::String> files = WinTool::ShowFileDialog(
+		GetWindowHandle(),
+		"*.mp3;*.flac;*.wav;*.m4a;*.aac;*.ogg;*.mp4;*.mkv;*.avi;*.mov;*.wmv;*.webm;*.flv",
+		true);
+
+	for (const auto& file : files) {
+		AddCustomMediaFile(file);
+	}
+}
+
+void MainFrm::AddCustomMediaFile(const UIString& filePath)
+{
+	if (filePath.empty() || !File::Exists(filePath) || !customMediaFile || !vlistCustomMedia) {
+		return;
+	}
+
+	UIString path = Path::Format(filePath);
+	UIString hash = MakeCustomMediaKey(path);
+	UIString title = GetMediaTitle(path);
+	int duration = customMediaFile->ReadInt(hash, "dur");
+
+	Control* item = vlistCustomMedia->FindChildren("FileHash", hash).First();
+	if (!item) {
+		item = CreateMediaItem(hash, title, duration, L"本地音视频", "custom", path, "customLibrary");
+		vlistCustomMedia->AddChild(item);
+	}
+	else {
+		item->SetAttribute("FilePath", path);
+		item->SetAttribute("Title", title);
+		LocalItem* localItem = dynamic_cast<LocalItem*>(item);
+		if (localItem) {
+			localItem->songName.SetText(title);
+			localItem->time.SetText(GetMediaDurationText(duration));
+		}
+	}
+
+	customMediaFile->WriteString(hash, "name", title);
+	customMediaFile->WriteString(hash, "path", path);
+	customMediaFile->WriteString(hash, "dur", std::to_string(duration));
+
+	vlistCustomMedia->RefreshLayout();
+	vlistCustomMedia->GetScrollBar()->ScrollTo(item);
+	vlistCustomMedia->Invalidate();
 }
 
 //========== 界面切换 ==========
@@ -722,18 +1052,43 @@ void MainFrm::ClearImages()
 	deskTopWnd->GetLayout()->Style->BackImage = nullptr;
 }
 
+void MainFrm::ResetPlaybackImages()
+{
+	ClearImages();
+
+	Image* headImg = Image::Make("res/imgs/music.png");
+	if (headImg) {
+		headImg->SizeMode = ImageSizeMode::Fit;
+		labelSinger->Style->BackImage = labelSinger->Attach(headImg);
+	}
+
+	Image* bkImg = Image::Make("res/imgs/defaultBackground.png");
+	if (bkImg) {
+		bkImg->SizeMode = ImageSizeMode::Cover;
+		mainLayout->Style->BackImage = mainLayout->Attach(bkImg);
+		deskTopWnd->GetLayout()->Style->BackImage = deskTopWnd->GetLayout()->Attach(bkImg->Clone());
+	}
+
+	labelSinger->Invalidate();
+	mainLayout->Invalidate();
+	if (deskTopWnd->IsVisible()) {
+		deskTopWnd->Invalidate();
+	}
+}
+
 void MainFrm::RequestNewImage(const Song& info)
 {
 	ClearImages();
 
 	auto weakThis = this->GetWeakPtr<MainFrm>();//用于判断this是否存活
+	const int imageToken = playToken_;
 
 	UIString singers = info.SingerName;
 	UIString headImageUrl = info.imgUrl;
 
 	delete downloadTask;
 	//创建线程去下载图片
-	downloadTask = new Task([=]() {
+	downloadTask = new ezui::Thread([=]() {
 		// 因为一首歌有多个歌手 随机选一个歌手头像就行了
 		auto strs = singers.split("、");
 		Random rdom;
@@ -773,7 +1128,7 @@ void MainFrm::RequestNewImage(const Song& info)
 
 		// 回到主线程设置图片
 		bool postDone = BeginInvoke([=]() {
-			if (!weakThis) {
+			if (!weakThis || imageToken != weakThis->playToken_) {
 				cleanup();
 				return;// 如果窗口已经被销毁了，就不设置图片了
 			}

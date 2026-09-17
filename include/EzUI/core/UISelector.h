@@ -39,7 +39,8 @@ namespace ezui {
 		UISelector& Where() {
 			ControlCollection filtered;
 			filtered.reserve(m_controls.size());
-			for (auto* ctl : m_controls) {
+			for (auto it = m_controls.begin(); it != m_controls.end(); ++it) {
+				Control* ctl = *it;
 				if (dynamic_cast<T*>(ctl)) {
 					filtered.push_back(ctl);
 				}
@@ -89,7 +90,7 @@ namespace ezui {
 			for (auto itor = m_controls.begin(); itor != m_controls.end(); ++itor) {
 				T* out = dynamic_cast<T*>(*itor);
 #ifdef DEBUG
-				EZUI_ASSERT(!*itor || out);
+				EZUI_ASSERT(!*itor || out, L"UISelector control type mismatch");
 #endif
 				if (out) {
 					outCollection.push_back(out);
@@ -100,5 +101,5 @@ namespace ezui {
 
 	};
 	//用于简便操作
-	using $ = UISelector;
+	typedef UISelector $;
 };

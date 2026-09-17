@@ -11,10 +11,10 @@ namespace ezui {
 	class EZUI_API SystemMenu :public Object
 	{
 	private:
-		HMENU m_hMenu = NULL;
+		HMENU m_hMenu;
 	public:
 		//菜单子项被选点击的回调事件 UINT:子项ID
-		std::function<void(UINT_PTR)> MenuClick = NULL;
+		std::function<void(UINT_PTR)> MenuClick;
 
 		SystemMenu(Object* ownerObject = NULL);
 
@@ -52,24 +52,24 @@ namespace ezui {
 	class EZUI_API PopupMenu :public BorderlessWindow {
 	private:
 		VListView& m_menuPanel;
-		PopupMenu* m_subMenu = NULL;
-		PopupMenu* m_ownerMenu = NULL;
+		PopupMenu* m_subMenu;
+		PopupMenu* m_ownerMenu;
 		std::map<Control*, PopupMenu*> m_subMenus;
 	protected:
-		virtual void OnNotify(Control* sender, EventArgs* args)override;
-		virtual void OnKillFocus(WindowHandle hWnd)override;
-		virtual void OnMouseLeave()override;
-		virtual void OnShow()override;
-		virtual void OnHide()override;
+		virtual void OnNotify(Control* sender, EventArgs* args)EZUI_OVERRIDE;
+		virtual void OnKillFocus(WindowHandle hWnd)EZUI_OVERRIDE;
+		virtual void OnMouseLeave()EZUI_OVERRIDE;
+		virtual void OnShow()EZUI_OVERRIDE;
+		virtual void OnHide()EZUI_OVERRIDE;
 	public:
 		//菜单项(其实就是一个控件)
-		using Item = Control;
+		typedef Control Item;
 		//菜单子项被选点击的回调事件 返回点击的控件
-		std::function<void(Item*)> MenuClick = NULL;
+		std::function<void(Item*)> MenuClick;
 	protected:
 		/// 创建并返回一个菜单项控件，可设置文本、图标及是否为子菜单 ,如需重写此函数，请给返回的控件设置绝对宽高，以便自动计算弹出菜单大小
 		/// @param text 菜单项显示文本
-		/// @param icon 菜单项图标（可为 nullptr）
+		/// @param icon 菜单项图标（可为 NULL）
 		/// @param isSubMenu 是否为子菜单项
 		/// @return 返回创建的控件指针 (返回的控件请正确设置绝对宽高)
 		virtual Item* OnCreateItem(const UIString& text, Image* icon, bool isSubMenu);
@@ -93,15 +93,25 @@ namespace ezui {
 		/// @param subMenuText 子菜单标题
 		/// @param icon 子菜单图标（可选）
 		/// @return 新创建的子菜单指针
+#ifdef EZUI_COMPILER_VS2010
+		template<typename T>
+#else
 		template<typename T = PopupMenu>
+#endif
 		T* CreateMenu(const UIString& subMenuText, Image* icon = NULL) {
 			T* sub = new T(this);
 			this->Append(sub, subMenuText, icon);
 			return sub;
 		}
 
+#ifdef EZUI_COMPILER_VS2010
+		PopupMenu* CreateMenu(const UIString& subMenuText, Image* icon = NULL) {
+			return this->CreateMenu<PopupMenu>(subMenuText, icon);
+		}
+#endif
+
 		/// 显示菜单
-		virtual void Show()override;
+		virtual void Show()EZUI_OVERRIDE;
 
 		/// 移除单个子项
 		void Remove(PopupMenu* subMenu);

@@ -6,14 +6,15 @@ namespace ezui {
 	//几何图形基础类(支持自定义路径)
 	class EZUI_API Geometry {
 	protected:
-		ID2D1GeometrySink* m_pSink = NULL;
-		ID2D1Geometry* m_rgn = NULL;
-		Geometry(const Geometry& rightCopy) = delete;
+		ID2D1GeometrySink* m_pSink;
+		ID2D1Geometry* m_rgn;
+	private:
+		Geometry(const Geometry& rightCopy);
 	public:
 		Geometry();
 		virtual ~Geometry();
 		void AddArc(const PointF& endPoint, float radius);
-		void AddAcr(const D2D1_ARC_SEGMENT& arc);
+		void AddArc(const D2D1_ARC_SEGMENT& arc);
 		void AddLine(const PointF& endPoint);
 		void BeginFigure(const PointF& startPoint, D2D1_FIGURE_BEGIN figureBegin = D2D1_FIGURE_BEGIN_FILLED);
 		void CloseFigure(D2D1_FIGURE_END figureEnd = D2D1_FIGURE_END_CLOSED);

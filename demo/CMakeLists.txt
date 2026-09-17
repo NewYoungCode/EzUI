@@ -11,15 +11,29 @@ file(GLOB src helloWorld/*.*)
 add_executable(helloWorld WIN32 ${src})
 target_include_directories(helloWorld PRIVATE  ${include})
 add_ezui_lib(helloWorld)
+file(GLOB_RECURSE res_files CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/helloWorld/res/*.*")
+target_sources(helloWorld PRIVATE ${res_files})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/helloWorld/res" PREFIX "res" FILES ${res_files})
+add_resource_package(helloWorld ./helloWorld/res ./helloWorld/ezui_helloWorld.res)
 set_property(TARGET helloWorld PROPERTY FOLDER "demo")
 
 
 #资源打包器
 project(ResPackage)
-file(GLOB src ./ResPackage/*.*)
+file(GLOB src CONFIGURE_DEPENDS
+    "./ResPackage/*.h"
+    "./ResPackage/*.hpp"
+    "./ResPackage/*.c"
+    "./ResPackage/*.cpp"
+    "./ResPackage/*.rc"
+    )
 add_executable(ResPackage WIN32 ${src} )
 target_include_directories(ResPackage PRIVATE  ${include})
 add_ezui_lib(ResPackage)
+file(GLOB_RECURSE res_files CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/ResPackage/res/*.*")
+target_sources(ResPackage PRIVATE ${res_files})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/ResPackage/res" PREFIX "res" FILES ${res_files})
+add_resource_package(ResPackage ./ResPackage/res ./ResPackage/ResPackage.res)
 
 
 #XML预览工具
@@ -28,6 +42,30 @@ file(GLOB src ./XMLPreview/*.*)
 add_executable(XMLPreview WIN32 ${src} )
 target_include_directories(XMLPreview PRIVATE  ${include})
 add_ezui_lib(XMLPreview)
+
+#系统优化
+project(SystemOptimizer)
+file(GLOB src CONFIGURE_DEPENDS
+    "./SystemOptimizer/*.h"
+    "./SystemOptimizer/*.hpp"
+    "./SystemOptimizer/*.c"
+    "./SystemOptimizer/*.cpp"
+    "./SystemOptimizer/*.rc"
+    )
+
+add_executable(SystemOptimizer WIN32 ${src})
+target_include_directories(SystemOptimizer PRIVATE ${include})
+add_ezui_lib(SystemOptimizer)
+target_link_libraries(SystemOptimizer PRIVATE shell32 advapi32)
+target_sources(SystemOptimizer PRIVATE
+    ./SystemOptimizer/SystemCheckBox.cpp
+    ./SystemOptimizer/SystemCheckBox.h
+    )
+file(GLOB_RECURSE res_files CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/SystemOptimizer/res/*.*")
+target_sources(SystemOptimizer PRIVATE ${res_files})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/SystemOptimizer/res" PREFIX "res" FILES ${res_files})
+add_resource_package(SystemOptimizer ./SystemOptimizer/res ./SystemOptimizer/SystemOptimizer.res)
+set_property(TARGET SystemOptimizer PROPERTY FOLDER "demo")
 	
 #UI速查
 project(QuickUI)
@@ -85,7 +123,6 @@ add_custom_command(
         COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/kugou/extract${ARCH_NAME}.bat" "$<TARGET_FILE_DIR:QQMusic>"
         COMMENT "Running extract.bat to conditionally extract dll.zip"
 )
-
 
 #迅雷下载 Demo
 project(Xunlei)

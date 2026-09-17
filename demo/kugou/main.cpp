@@ -13,6 +13,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	ezui::RegisterControl<VlcPlayer>("video");//注册vlcPlayer控件 视频播放控件 xml中使用<video></video>标签即可使用这个控件
 	ezui::RegisterControl<LrcPanel>("lrcPanel");//注册歌词面板控件 xml中使用<lrcPanel></lrcPanel>标签即可使用这个控件
+	ezui::RegisterControl<PlayerProgressBar>("playerProgressBar");//注册底部播放器进度条控件
 
 	MainFrm frm;//主窗口
 	frm.CenterToScreen();//屏幕居中
@@ -21,6 +22,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	//设置窗口阴影颜色
 	//frm.GetShadowHost()->SetShadowColor(Color::Red);
+
+	//auto thread = new Thread([=]() {
+	//	auto* timer = new Timer();
+	//	timer->SetTickHandler([=](Timer* timer) {
+	//		int a = 0;
+	//		});
+	//	timer->Start();
+	//	});
 
 	return app.Exec();//进行消息循环
 }

@@ -7,7 +7,7 @@
 class DesktopLrcFrm :public BorderlessWindow {
 private:
 	VlcPlayer* _player;
-	LrcPanel _lrc;
+	LrcPanel* _lrc;
 public:
 	DesktopLrcFrm(VlcPlayer* player);
 	void LoadLrc(const UIString& lrcData);

@@ -132,7 +132,7 @@
                             </hbox>
                             <control width="156" height="92" class="imageBubble" event="none">
                                 <label width="100%" height="100%" style="background-color:#4b5c7d;border-radius:16px" event="none"></label>
-                                <label width="100%" height="100%" text="图片" style="color:white;font-size:20px;font-weight:700" event="none"></label>
+                                <label width="100%" height="100%" text="图片" style="color:#ffffff;font-size:20px;font-weight:700" event="none"></label>
                             </control>
                         </vbox>
                         <label class="msgAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
@@ -737,7 +737,30 @@
                 </hbox>
             </vbox>
 
-            <vbox id="chatInfoColumn" width="220">
+            <vbox id="chatInfoColumn" width="236">
+                <vbox class="groupHeroCard">
+                    <hbox height="48" items-align="mid left" event="none">
+                        <label class="groupAvatar avatarImage" style="background-image:url(res/head.png)" event="none"></label>
+                        <vbox width="138" items-align="top left" event="none" style="margin-left:12px">
+                            <label width="138" ellipsis="..." text="EzUI交流群" align="left" style="font-size:15px;font-weight:700;color:#1c2434" event="none"></label>
+                            <label width="138" ellipsis="..." text="今晚继续收口聊天页细节" align="left" style="font-size:12px;color:#7a8495;margin-top:4px" event="none"></label>
+                        </vbox>
+                    </hbox>
+                    <hbox class="groupStatsRow" height="64" items-align="mid">
+                        <vbox class="groupStat" event="none">
+                            <label text="124" width="auto" style="font-size:18px;font-weight:700;color:#1d2433" event="none"></label>
+                            <label text="成员" width="auto" style="font-size:11px;color:#8b94a3;margin-top:4px" event="none"></label>
+                        </vbox>
+                        <vbox class="groupStat" event="none">
+                            <label text="18" width="auto" style="font-size:18px;font-weight:700;color:#1d2433" event="none"></label>
+                            <label text="在线" width="auto" style="font-size:11px;color:#8b94a3;margin-top:4px" event="none"></label>
+                        </vbox>
+                        <vbox class="groupStat" event="none">
+                            <label text="6" width="auto" style="font-size:18px;font-weight:700;color:#1d2433" event="none"></label>
+                            <label text="置顶" width="auto" style="font-size:11px;color:#8b94a3;margin-top:4px" event="none"></label>
+                        </vbox>
+                    </hbox>
+                </vbox>
                 <vbox class="noticeCard">
                     <hbox height="42" items-align="mid" event="none">
                         <label text="群公告" width="auto" style="font-size:15px;font-weight:700;color:#202020;margin-left:16px" event="none"></label>
@@ -748,6 +771,10 @@
                            align="left"
                            style="font-size:13px;color:#6d6d6d;margin-left:16px;margin-right:16px"
                            ellipsis="..."></label>
+                    <hbox height="30" items-align="mid left" style="margin:8px 12px 0px 12px" event="none">
+                        <label class="noticePill" text="今晚 20:00" event="none"></label>
+                        <label class="noticePill noticePillSoft" text="反馈走群文件" event="none"></label>
+                    </hbox>
                 </vbox>
 
                 <hbox class="memberHeader" height="44" items-align="mid">
@@ -772,19 +799,19 @@
 </hbox>
 
 <style>
-    #chatPage, .pageShell { background-color: white; }
-    .subSidebar { background-color: white; border-right: 1px solid #f0f0f0; }
+    #chatPage, .pageShell { background-color: #ffffff; }
+    .subSidebar { background-color: #ffffff; border-right: 1px solid #f0f0f0; }
     .searchRow { margin: 0px 10px 0px 10px; }
     .searchBox { background-color: #f5f6f8; border-radius: 16px; }
     .plusBtn { width: 32px; height: 32px; margin-left: 10px; border: 0px solid #000000; border-radius: 16px; background-color: #f5f6f8; color: #a0a0a0; font-size: 20px; }
     .plusBtn:hover { background-color: #ebedf2; }
-    .sessionItem { height: 74px; width: 100%; padding: 0px 14px 0px 14px; cursor: pointer; background-color: white; }
+    .sessionItem { height: 74px; width: 100%; padding: 0px 14px 0px 14px; cursor: pointer; background-color: #ffffff; }
     .sessionItem:hover { background-color: #f5f7fa; }
     .sessionItem.selected { background-color: #f1f3f7; }
     .sessionMeta { width: 44px; }
     .sessionTime { width: 44px; height: 16px; color: #999999; font-size: 11px; text-align: top right; }
     .sessionBadgeRow { width: 44px; height: 20px; }
-    .avatar { width: 42px; height: 42px; border-radius: 21px; color: white; font-size: 14px; font-weight: 700; text-align: mid center; }
+    .avatar { width: 42px; height: 42px; border-radius: 21px; color: #ffffff; font-size: 14px; font-weight: 700; text-align: mid center; }
     .avatarImage { background-color: #dfe7f5; }
     .avatarBlue { background-color: #2e85ff; }
     .avatarDark { background-color: #202226; }
@@ -794,7 +821,7 @@
     .avatarGray { background-color: #c5c8d0; color: #4f5560; }
     .avatarWhite { background-color: #f4f4f4; color: #2d2d2d; border: 1px solid #ececec; }
     .avatarGold { background-color: #d3b37a; }
-    .badge { min-width: 20px; height: 20px; padding: 0px 6px 0px 6px; background-color: #d5d7dc; color: white; border-radius: 10px; font-size: 11px; text-align: mid center; }
+    .badge { min-width: 20px; height: 20px; padding: 0px 6px 0px 6px; background-color: #d5d7dc; color: #ffffff; border-radius: 10px; font-size: 11px; text-align: mid center; }
     .pageHeader { border-bottom: 1px solid #f0f0f0; }
     .headerTool { width: 30px; height: 30px; margin-left: 4px; color: #3e434c; font-size: 18px; border-radius: 15px; text-align: mid center; cursor: pointer; }
     .headerTool:hover { background-color: #f3f5f8; }
@@ -813,12 +840,19 @@
     .editorTool { width: 28px; height: 28px; margin-left: 4px; color: #2f2f2f; font-size: 16px; border-radius: 14px; text-align: mid center; }
     .editorTool:hover { background-color: #f3f5f8; }
     #sendBar { border-top: 1px solid #f0f0f0; }
-    #sendBtn { width: 92px; height: 34px; background-color: #138bff; color: white; border: 0px solid #000000; border-radius: 12px 0px 0px 12px; }
-    #sendDropBtn { width: 30px; height: 34px; background-color: #138bff; color: white; border: 0px solid #000000; border-left: 1px solid rgba(255,255,255,0.22); border-radius: 0px 12px 12px 0px; }
+    #sendBtn { width: 92px; height: 34px; background-color: #138bff; color: #ffffff; border: 0px solid #000000; border-radius: 12px 0px 0px 12px; }
+    #sendDropBtn { width: 30px; height: 34px; background-color: #138bff; color: #ffffff; border: 0px solid #000000; border-left: 1px solid rgba(255,255,255,0.22); border-radius: 0px 12px 12px 0px; }
     #sendBtn:hover, #sendDropBtn:hover { background-color: #0d7ae5; }
-    .noticeCard { width: 100%; border-bottom: 1px solid #f0f0f0; padding-bottom: 12px; }
-    .memberHeader { border-bottom: 1px solid #f0f0f0; }
-    .memberItem { height: 40px; width: 100%; border-radius: 10px; padding: 0px 8px 0px 8px; }
+    #chatInfoColumn { background-color: #fbfcfe; }
+    .groupHeroCard { width: 100%; padding: 16px 16px 14px 16px; border-bottom: 1px solid #edf1f6; background-color: #ffffff; }
+    .groupAvatar { width: 40px; height: 40px; border-radius: 20px; }
+    .groupStatsRow { margin-top: 12px; background-color: #f7faff; border: 1px solid #e7eef8; border-radius: 14px; }
+    .groupStat { text-align: mid center; }
+    .noticeCard { width: 100%; border-bottom: 1px solid #edf1f6; padding: 10px 0px 14px 0px; background-color: #ffffff; }
+    .noticePill { width: auto; height: 22px; padding: 0px 10px 0px 10px; background-color: #eaf3ff; color: #1f7dff; border-radius: 11px; font-size: 11px; text-align: mid center; }
+    .noticePillSoft { margin-left: 8px; background-color: #f2f4f7; color: #677285; }
+    .memberHeader { border-bottom: 1px solid #edf1f6; background-color: #ffffff; }
+    .memberItem { height: 42px; width: 100%; border-radius: 10px; padding: 0px 8px 0px 8px; }
     .memberItem:hover { background-color: #f7f8fa; }
     .memberAvatar { width: 24px; height: 24px; border-radius: 12px; font-size: 10px; }
     #sessionList::-webkit-scrollbar, #messageList::-webkit-scrollbar, #memberList::-webkit-scrollbar { width: 7px; border-radius: 7px; }

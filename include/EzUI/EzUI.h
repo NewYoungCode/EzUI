@@ -11,13 +11,6 @@
 //
 #pragma once
 
-// ===== 工具相关 =====
-#include "utils/String.h"
-#include "utils/Utility.h"
-#include "utils/SmartPtr.h"
-#include "utils/Resource.h"
-#include "utils/Task.h"
-
 // ===== 核心相关 =====
 #include "core/UIDef.h"
 #include "core/UICore.h"
@@ -29,6 +22,11 @@
 #include "core/UISelector.h"
 #include "core/UILoader.h"
 #include "core/MessageQueue.h"
+#include "core/String.h"
+#include "core/Utility.h"
+#include "core/SmartPtr.h"
+#include "core/Resource.h"
+#include "core/Thread.h"
 
 // ===== 绘图相关 =====
 #include "graphics/GraphicsTypes.h"

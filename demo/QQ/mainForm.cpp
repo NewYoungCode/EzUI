@@ -13,7 +13,7 @@ void MainForm::OnNotify(Control* sd, EventArgs* args)
 	__super::OnNotify(sd, args);
 }
 
-void MainForm::OnClose(bool& bClose)
+void MainForm::OnClose(bool& allowClose)
 {
 	Application::Exit(0);
 }

@@ -7,13 +7,13 @@ namespace ezui {
 		public PagedListView
 	{
 	private:
-		VAlign m_itemsAlign = VAlign::Middle;
+		VAlign m_itemsAlign;
 		HScrollBar* m_hScrollBar;
 		void Init();
 	protected:
-		virtual void OnLayout()override;
-		virtual void OnChildPaint(PaintEventArgs* args)override;
-		virtual void OnScroll(int offsetX, int offsetY)override;
+		virtual void OnLayout()EZUI_OVERRIDE;
+		virtual void OnChildPaint(PaintEventArgs* args)EZUI_OVERRIDE;
+		virtual void OnScroll(int offsetX, int offsetY)EZUI_OVERRIDE;
 	public:
 		HListView(Object* ownerObject = NULL);
 
@@ -24,9 +24,9 @@ namespace ezui {
 		// valign | align: top | bottom
 		// scrollbar: name (not implemented in code)
 		// All PagedListView attributes are also supported
-		virtual void SetAttribute(const UIString& key, const UIString& value)override;
+		virtual void SetAttribute(const UIString& key, const UIString& value)EZUI_OVERRIDE;
 
-		virtual HScrollBar* GetHScrollBar()override;
+		virtual HScrollBar* GetHScrollBar()EZUI_OVERRIDE;
 
 		virtual ~HListView();
 	};

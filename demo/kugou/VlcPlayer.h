@@ -30,7 +30,7 @@ private:
 	libvlc_instance_t* m_vlc = NULL;
 	libvlc_media_player_t* m_vlcplayer = NULL;
 	libvlc_time_t m_duration = 0;
-	Task* m_task = NULL;
+	ezui::Thread* m_task = NULL;
 public:
 	std::mutex mtx;
 	Image* play_img = NULL;

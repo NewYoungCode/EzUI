@@ -1,0 +1,254 @@
+<vbox id="windowRoot" size="620,640" class="app-root">
+    <hbox id="titleBar" height="54" action="title" items-align="middle left" class="title-bar" style="padding: 0px 16px 0px 18px;">
+        <vbox width="auto" height="auto" items-align="top left">
+            <label width="auto" height="24" text="System Optimizer" align="left" class="title-text" event="none"></label>
+            <label width="auto" height="16" text="系统优化" align="left" class="title-subtitle" event="none"></label>
+        </vbox>
+        <spacer></spacer>
+        <label id="statusPill" width="72" height="26" text="READY" align="center" class="status-pill" event="none"></label>
+        <label width="28" height="28" text="0" action="mini" class="window-btn window-font" style="margin: 0px 0px 0px 12px;"></label>
+        <label width="28" height="28" text="r" action="close" class="window-btn window-font close-btn" style="margin: 0px 0px 0px 6px;"></label>
+    </hbox>
+
+    <vbox class="content" style="padding: 16px 18px 18px 18px;">
+        <hbox height="72" items-align="middle left" class="summary-card" style="padding: 0px 16px 0px 16px;">
+            <vbox width="auto" height="auto" items-align="top left">
+                <label width="auto" height="20" text="选择要执行的优化" align="left" class="summary-title" event="none"></label>
+                <label id="summaryText" width="auto" height="18" text="0 个项目待执行" align="left" class="summary-meta" event="none" style="margin: 6px 0px 0px 0px;"></label>
+            </vbox>
+            <spacer></spacer>
+            <label width="84" height="34" text="HKCU" align="center" class="mini-chip" event="none"></label>
+            <label width="92" height="34" text="Win11" align="center" class="mini-chip-accent" event="none" style="margin: 0px 0px 0px 8px;"></label>
+        </hbox>
+
+        <vbox height="342" class="option-panel" style="margin: 14px 0px 0px 0px; padding: 10px 10px 10px 10px;">
+            <hbox height="48" items-align="middle left" class="option-row" style="padding: 0px 12px 0px 12px;">
+                <checkbox id="ckGameBar" width="168" height="24" text="关闭 Game Bar" class="option-check"></checkbox>
+                <label height="20" text="关闭 Xbox Game Bar 与 GameDVR 捕获开关" align="left" ellipsis="..." class="option-desc" event="none"></label>
+            </hbox>
+
+            <hbox height="48" items-align="middle left" class="option-row" style="margin: 8px 0px 0px 0px; padding: 0px 12px 0px 12px;">
+                <checkbox id="ckThisPc" width="168" height="24" text="显示我的电脑" class="option-check"></checkbox>
+                <label height="20" text="在桌面显示 This PC 图标并刷新资源管理器设置" align="left" ellipsis="..." class="option-desc" event="none"></label>
+            </hbox>
+
+            <hbox height="48" items-align="middle left" class="option-row" style="margin: 8px 0px 0px 0px; padding: 0px 12px 0px 12px;">
+                <checkbox id="ckHibernate" width="168" height="24" text="关闭系统休眠" class="option-check"></checkbox>
+                <label height="20" text="执行 powercfg -h off，可能弹出管理员授权" align="left" ellipsis="..." class="option-desc" event="none"></label>
+            </hbox>
+
+            <vbox height="86" class="option-row tall-row" style="margin: 8px 0px 0px 0px; padding: 10px 12px 10px 12px;">
+                <hbox height="34" items-align="middle left">
+                    <checkbox id="ckRedirect" width="188" height="24" text="重定向 C 盘缓存" class="option-check"></checkbox>
+                    <input id="editRedirectTarget" width="210" height="34" placeholder="D 或 D:\Cache" text-align="middle left" class="target-input"></input>
+                    <label width="auto" height="20" text="目标盘" align="left" class="input-caption" event="none" style="margin: 0px 0px 0px 10px;"></label>
+                </hbox>
+                <label width="100%" height="18" text="迁移用户目录与 Temp 缓存，目标不能是 C 盘。" align="left" ellipsis="..." class="option-note" event="none" style="margin: 8px 0px 0px 0px;"></label>
+            </vbox>
+
+            <hbox height="48" items-align="middle left" class="option-row" style="margin: 8px 0px 0px 0px; padding: 0px 12px 0px 12px;">
+                <checkbox id="ckContextMenu" width="168" height="24" text="展开 Win11 右键菜单" class="option-check"></checkbox>
+                <label height="20" text="启用经典右键菜单，重启资源管理器后完全生效" align="left" ellipsis="..." class="option-desc" event="none"></label>
+            </hbox>
+        </vbox>
+
+        <hbox height="46" items-align="middle left" style="margin: 14px 0px 0px 0px;">
+            <label width="auto" height="20" text="仅执行已勾选项" align="left" class="footer-note" event="none"></label>
+            <spacer></spacer>
+            <button id="btnApply" width="132" height="38" text="应用优化" class="primary-btn"></button>
+        </hbox>
+
+        <input id="resultLog" height="108" readonly="true" multiline="true" text-align="top left" text="勾选项目后点击应用。" class="result-log" style="margin: 10px 0px 0px 0px;"></input>
+    </vbox>
+</vbox>
+
+<style>
+    #windowRoot {
+        background-color: #F7FAF8;
+        border: 1px solid #C9D7CF;
+        border-radius: 10px;
+        color: #1F2A27;
+        font-family: "Microsoft YaHei UI";
+    }
+
+    .title-bar {
+        background-color: #FFFFFF;
+        border-bottom: 1px solid #DDE6E0;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    .title-text {
+        color: #1D2B28;
+        font-size: 17px;
+        font-weight: bold;
+    }
+
+    .title-subtitle {
+        color: #6B7C74;
+        font-size: 12px;
+    }
+
+    .status-pill {
+        background-color: #E9F5F1;
+        border: 1px solid #B7DBCC;
+        border-radius: 8px;
+        color: #167C65;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .window-font {
+        font-family: "Marlett";
+        font-size: 11px;
+    }
+
+    .window-btn {
+        background-color: #00000000;
+        border-radius: 6px;
+        color: #6C7C76;
+        text-align: mid center;
+        cursor: pointer;
+    }
+
+        .window-btn:hover {
+            background-color: #EDF3F0;
+            color: #22312D;
+        }
+
+    .close-btn:hover {
+        background-color: #D95F43;
+        color: #FFFFFF;
+    }
+
+    .content {
+        background-color: #F7FAF8;
+    }
+
+    .summary-card,
+    .option-panel {
+        background-color: #FFFFFF;
+        border: 1px solid #D8E3DD;
+        border-radius: 8px;
+    }
+
+    .summary-title {
+        color: #20302B;
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    .summary-meta {
+        color: #6E7E77;
+        font-size: 12px;
+    }
+
+    .mini-chip {
+        background-color: #F1F4F2;
+        border: 1px solid #D9E1DC;
+        border-radius: 8px;
+        color: #596B63;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .mini-chip-accent {
+        background-color: #FFF4E1;
+        border: 1px solid #E9C77A;
+        border-radius: 8px;
+        color: #906414;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .option-row {
+        background-color: #F9FBFA;
+        border: 1px solid #E1E9E5;
+        border-radius: 8px;
+    }
+
+        .option-row:hover {
+            background-color: #F1F7F4;
+            border: 1px solid #C6DCD1;
+        }
+
+    .option-check {
+        color: #24322D;
+        font-size: 13px;
+        font-weight: bold;
+        text-align: mid left;
+        cursor: pointer;
+    }
+
+        .option-check:checked {
+            color: #0F7D67;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+    .option-desc {
+        color: #66766F;
+        font-size: 12px;
+    }
+
+    .option-note {
+        color: #7A6B50;
+        font-size: 12px;
+    }
+
+    .target-input {
+        background-color: #FFFFFF;
+        border: 1px solid #CAD8D1;
+        border-radius: 8px;
+        color: #20302B;
+        font-size: 13px;
+        padding: 7px 10px 7px 10px;
+    }
+
+        .target-input:disabled {
+            background-color: #EDF1EF;
+            border: 1px solid #D5DDD9;
+            color: #9AA6A0;
+        }
+
+    .input-caption {
+        color: #8A7A5A;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .footer-note {
+        color: #6D7B75;
+        font-size: 12px;
+    }
+
+    .primary-btn {
+        background-color: #167C80;
+        border: 1px solid #167C80;
+        border-radius: 8px;
+        color: #FFFFFF;
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+        .primary-btn:hover {
+            background-color: #126B6E;
+            border: 1px solid #126B6E;
+        }
+
+        .primary-btn:disabled {
+            background-color: #A7BBB7;
+            border: 1px solid #A7BBB7;
+            color: #F5F7F6;
+        }
+
+    .result-log {
+        background-color: #FFFFFF;
+        border: 1px solid #D7E0DC;
+        border-radius: 8px;
+        color: #2B3834;
+        font-size: 12px;
+        padding: 10px 12px 10px 12px;
+    }
+</style>

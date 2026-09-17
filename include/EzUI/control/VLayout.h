@@ -7,10 +7,10 @@ namespace ezui {
 		public Control
 	{
 	private:
-		Align m_itemsAlign = Align::TopCenter;// 水平方向居中，垂直方向从上到下排列
+		Align m_itemsAlign;// 水平方向居中，垂直方向从上到下排列
 	protected:
 		void DistributeAutoHeights(std::vector<Control*> const& autoSizeCtrls, int availableHeight);
-		virtual void OnLayout() override;
+		virtual void OnLayout() EZUI_OVERRIDE;
 	public:
 		VLayout(Object* ownerObject = NULL);
 		// 添加一个弹簧控件:
@@ -22,10 +22,10 @@ namespace ezui {
 		// halign: left | center | right
 		// align: can combine vertical + horizontal, e.g. "mid center"
 		// All Control attributes are also supported
-		virtual void SetAttribute(const UIString& key, const UIString& value)override;
+		virtual void SetAttribute(const UIString& key, const UIString& value)EZUI_OVERRIDE;
 		//设置子控件的对齐方式
 		void SetItemsAlign(Align itemsAlign);
 		virtual ~VLayout();
 	};
-	using VBox = VLayout;
+	typedef VLayout VBox;
 };

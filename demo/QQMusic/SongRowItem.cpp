@@ -54,8 +54,7 @@ namespace {
 		badge->SetText(text);
 		badge->Style->BackColor = backColor;
 		badge->Style->ForeColor = foreColor;
-		badge->Style->Border.Radius = 8;
-		badge->Style->FontSize = 10;
+		badge->SetStyle("border-radius:8px;font-size:10px;", VisualState::Normal);
 		badge->SetPadding(0, 7, 0, 7);
 		badge->SetMargin(0, 0, 0, 6);
 		badge->SetAttribute("event", "none");
@@ -79,14 +78,22 @@ namespace {
 
 } // namespace
 
+SongListMessageItem::SongListMessageItem(const UIString& message) : message_(message)
+{
+	SetFixedHeight(72);
+	SetText(message_);
+	SetTextAlign(TextAlign::MiddleCenter);
+	SetStyle("color:#A0A0A0;font-size:14px;", VisualState::Normal);
+	SetHitTestVisible(false);
+}
+
 SongRowItem::SongRowItem(const kugou::SongSummary& song) : song_(song)
 {
 	SetFixedHeight(56);
 	SetAttribute("SongHash", song.hash);
-	Style->Border.Radius = 10;
-	HoverStyle->BackColor = Color(37, 37, 37);
-	ActiveStyle->BackColor = Color(38, 38, 38);
-	Style->Cursor = LoadCursor(Cursor::Pointer);
+	SetStyle("border-radius:10px;cursor:pointer;", VisualState::Normal);
+	SetStyle("background-color:#252525;", VisualState::Hover);
+	SetStyle("background-color:#262626;", VisualState::Active);
 	SetMarginTop(2);
 
 	auto* root = new HBox(this);
@@ -97,10 +104,7 @@ SongRowItem::SongRowItem(const kugou::SongSummary& song) : song_(song)
 	cover->SetText(BuildCoverText());
 	cover->SetTextAlign(TextAlign::MiddleCenter);
 	cover->Style->BackColor = PickCoverColor(song.hash);
-	cover->Style->ForeColor = Color::White;
-	cover->Style->Border.Radius = 8;
-	cover->Style->FontSize = 11;
-	cover->Style->FontWeight = 700;
+	cover->SetStyle("color:#FFFFFF;border-radius:8px;font-size:11px;font-weight:bold;", VisualState::Normal);
 	cover->SetAttribute("event", "none");
 
 	auto* textBox = new VBox(root);
@@ -112,8 +116,7 @@ SongRowItem::SongRowItem(const kugou::SongSummary& song) : song_(song)
 	titleLabel_->SetText(song.songName.empty() ? UIString(L"未命名歌曲") : song.songName);
 	titleLabel_->SetTextAlign(TextAlign::MiddleLeft);
 	titleLabel_->SetElidedText("...");
-	titleLabel_->Style->ForeColor = Color(242, 242, 242);
-	titleLabel_->Style->FontSize = 14;
+	titleLabel_->SetStyle("color:#F2F2F2;font-size:14px;", VisualState::Normal);
 	titleLabel_->SetAttribute("event", "none");
 
 	auto* singerRow = new HBox(textBox);
@@ -127,8 +130,7 @@ SongRowItem::SongRowItem(const kugou::SongSummary& song) : song_(song)
 	singerLabel_->SetText(song.singerName.empty() ? UIString(L"未知歌手") : song.singerName);
 	singerLabel_->SetTextAlign(TextAlign::MiddleLeft);
 	singerLabel_->SetElidedText("...");
-	singerLabel_->Style->ForeColor = Color(171, 171, 171);
-	singerLabel_->Style->FontSize = 12;
+	singerLabel_->SetStyle("color:#ABABAB;font-size:12px;", VisualState::Normal);
 	singerLabel_->SetAttribute("event", "none");
 
 	singerRow->AddChild(singerLabel_);
@@ -155,8 +157,7 @@ SongRowItem::SongRowItem(const kugou::SongSummary& song) : song_(song)
 	heartLabel_ = new Label(root);
 	heartLabel_->SetFixedWidth(42);
 	heartLabel_->SetTextAlign(TextAlign::MiddleCenter);
-	heartLabel_->Style->FontSize = 16;
-	heartLabel_->Style->Cursor = LoadCursor(Cursor::Pointer);
+	heartLabel_->SetStyle("font-size:16px;cursor:pointer;", VisualState::Normal);
 	heartLabel_->SetAttribute("event", "none");
 
 	auto* albumName = new Label(root);
@@ -164,16 +165,14 @@ SongRowItem::SongRowItem(const kugou::SongSummary& song) : song_(song)
 	albumName->SetText(song.albumName.empty() ? UIString(L"未知专辑") : song.albumName);
 	albumName->SetTextAlign(TextAlign::MiddleLeft);
 	albumName->SetElidedText("...");
-	albumName->Style->ForeColor = Color(171, 171, 171);
-	albumName->Style->FontSize = 12;
+	albumName->SetStyle("color:#ABABAB;font-size:12px;", VisualState::Normal);
 	albumName->SetAttribute("event", "none");
 
 	auto* duration = new Label(root);
 	duration->SetFixedWidth(66);
 	duration->SetText(kugou::ToTimeString(song.durationSeconds));
 	duration->SetTextAlign(TextAlign::MiddleCenter);
-	duration->Style->ForeColor = Color(171, 171, 171);
-	duration->Style->FontSize = 12;
+	duration->SetStyle("color:#ABABAB;font-size:12px;", VisualState::Normal);
 	duration->SetAttribute("event", "none");
 
 	root->AddChild(new HSpacer(10));

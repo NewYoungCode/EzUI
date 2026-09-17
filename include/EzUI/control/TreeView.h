@@ -13,7 +13,7 @@ namespace ezui {
 	public:
 		NodeLabel(Object* owner = NULL);
 		virtual ~NodeLabel();
-		virtual void OnLayout()override;
+		virtual void OnLayout()EZUI_OVERRIDE;
 		void SetText(const UIString& text);
 		UIString GetText();
 		void Expand();
@@ -28,20 +28,20 @@ namespace ezui {
 		friend class TreeView;
 	private:
 		//显示节点名称
-		Control* m_nodeLabel = NULL;
+		Control* m_nodeLabel;
 		//节点显示的文字
 		UIString m_text;
 		//节点显示的图标
-		Image* m_icon = NULL;
+		Image* m_icon;
 		//子节点面板
-		VListView* m_childrenPanel = NULL;
+		VListView* m_childrenPanel;
 	private:
 		//内部使用 当调用此节点被使用的时候或者调用了GetText SetText SetIcon的时候才会调用此函数检查创建节点头部
 		void CreateNode();
-		virtual Control* AddChild(Control* ctrl, bool autoDelete = false)override {
+		virtual Control* AddChild(Control* ctrl, bool takeOwnership = false)EZUI_OVERRIDE {
 			auto* node = ctrl->As<TreeNode>();
-			EZUI_ASSERT(node);
-			return (Control*)AddNode(node, autoDelete);
+			EZUI_ASSERT(node, L"TreeView child must be a TreeNode");
+			return (Control*)AddNode(node, takeOwnership);
 		};
 		using VListView::RemoveChild;
 		using VListView::RemoveAll;
@@ -59,19 +59,19 @@ namespace ezui {
 	public:
 		TreeNode(Object* ownerObject = NULL);
 
-		//添加子节点
-		TreeNode* AddNode(TreeNode* childNode, bool autoDelete = false);
+		/// 添加子节点；takeOwnership 为 true 时同时取得对象所有权。
+		TreeNode* AddNode(TreeNode* childNode, bool takeOwnership = false);
 
-		//将节点插入指定位置
-		TreeNode* InsertNode(int pos, TreeNode* childNode, bool autoDelete = false);
+		/// 插入子节点；takeOwnership 为 true 时同时取得对象所有权。
+		TreeNode* InsertNode(int pos, TreeNode* childNode, bool takeOwnership = false);
 
-		//移除子节点
+		/// 移除子节点；deleteNode 为 true 时同时立即删除该节点。
 		bool RemoveNode(TreeNode* childNode, bool deleteNode = false);
 
-		//移除全部子节点
+		/// 移除全部子节点；deleteNodes 为 true 时同时立即删除这些节点。
 		void RemoveAllNodes(bool deleteNodes = false);
 
-		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue)override;
+		virtual void SetAttribute(const UIString& attrName, const UIString& attrValue)EZUI_OVERRIDE;
 
 		//获取节点的显示名称
 		UIString GetText();
@@ -113,29 +113,29 @@ namespace ezui {
 		void Init();
 		using Control::RemoveChild;
 		using Control::RemoveAll;
-		virtual Control* AddChild(Control* ctrl, bool autoDelete = false)override {
+		virtual Control* AddChild(Control* ctrl, bool takeOwnership = false)EZUI_OVERRIDE {
 			auto* node = ctrl->As<TreeNode>();
-			EZUI_ASSERT(node);
-			return (Control*)AddNode(node, autoDelete);
+			EZUI_ASSERT(node, L"TreeNode child must be a TreeNode");
+			return (Control*)AddNode(node, takeOwnership);
 		};
 	protected:
-		virtual void OnLayout()override;
-		virtual void OnScroll(int offsetX, int offsetY)override;
-		void OnChildPaint(PaintEventArgs* args)override;
+		virtual void OnLayout()EZUI_OVERRIDE;
+		virtual void OnScroll(int offsetX, int offsetY)EZUI_OVERRIDE;
+		void OnChildPaint(PaintEventArgs* args)EZUI_OVERRIDE;
 	public:
 		TreeView(Object* ownerObject = NULL);
-		//添加根节点
-		TreeNode* AddNode(TreeNode* rootNode, bool autoDelete = false);
-		//将节点插入指定位置
-		TreeNode* InsertNode(int pos, TreeNode* rootNode, bool autoDelete = false);
-		//移除子节点
+		/// 添加根节点；takeOwnership 为 true 时同时取得对象所有权。
+		TreeNode* AddNode(TreeNode* rootNode, bool takeOwnership = false);
+		/// 插入根节点；takeOwnership 为 true 时同时取得对象所有权。
+		TreeNode* InsertNode(int pos, TreeNode* rootNode, bool takeOwnership = false);
+		/// 移除根节点；deleteNode 为 true 时同时立即删除该节点。
 		bool RemoveNode(TreeNode* childNode, bool deleteNode = false);
-		//移除全部根节点
+		/// 移除全部根节点；deleteNodes 为 true 时同时立即删除这些节点。
 		void RemoveAllNodes(bool deleteNodes = false);
 		//获取根节点
 		std::vector<TreeNode*> GetRootNodes();
-		virtual VScrollBar* GetVScrollBar()override;
-		virtual HScrollBar* GetHScrollBar()override;
+		virtual VScrollBar* GetVScrollBar()EZUI_OVERRIDE;
+		virtual HScrollBar* GetHScrollBar()EZUI_OVERRIDE;
 		virtual ~TreeView();
 	};
 };

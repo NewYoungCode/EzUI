@@ -39,6 +39,6 @@ class MainForm :public Form {
 public:
 	MainForm();
 	virtual void OnNotify(Control* sd, EventArgs* args)override;
-	virtual void OnClose(bool& bClose)override;
+	virtual void OnClose(bool& allowClose)override;
 	virtual ~MainForm();
 };

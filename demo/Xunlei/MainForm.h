@@ -8,5 +8,5 @@ public:
     ~MainForm() override;
 
 protected:
-    void OnClose(bool& bClose) override;
+    void OnClose(bool& allowClose) override;
 };

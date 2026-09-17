@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "core/UICore.h"
+#include "UICore.h"
 #include "UIStyle.h"
 #include "control/Control.h"
 
@@ -24,6 +24,7 @@ namespace ezui {
 		std::multimap<Control*, UIString> m_inlineStyles;//记录的内联样式
 		void LoadControl(void* node, Control* control);
 		Control* BuildControl(void* node);//内部函数
+		void ApplyStyleRecursive(const std::list<ezui::StyleRule>& styles, Control* ctrl);
 	protected:
 		//当解析到一个节点需要创建控件的时候发生
 		virtual Control* OnBuildControl(const UIString& nodeName);

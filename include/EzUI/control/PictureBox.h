@@ -8,11 +8,11 @@ namespace ezui {
 	private:
 		Timer* m_timer;
 		//图片(支持gif图自动播放)
-		Image* m_image = NULL;
+		Image* m_image;
 	private:
 		void Init();
 	protected:
-		virtual void OnForePaint(PaintEventArgs* args)override;
+		virtual void OnForePaint(PaintEventArgs* args)EZUI_OVERRIDE;
 	public:
 		PictureBox(Object* ownerObject = NULL);
 
@@ -26,7 +26,7 @@ namespace ezui {
 		// Supported attributes:
 		// src: image file path or resource
 		// All Control attributes are also supported
-		virtual void SetAttribute(const UIString& key, const UIString& value)override;
+		virtual void SetAttribute(const UIString& key, const UIString& value)EZUI_OVERRIDE;
 
 		virtual ~PictureBox();
 	};

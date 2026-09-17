@@ -63,7 +63,9 @@
                 <label width="100%" height="auto" text="&lt;button id=&quot;saveBtn&quot; width=&quot;136&quot; height=&quot;40&quot; tips=&quot;保存当前文档&quot; class=&quot;btn-primary&quot;&gt;&lt;/button&gt;" align="left" class="code-line" style="margin: 12px 0px 0px 0px;"></label>
                 <label width="100%" height="auto" text="&lt;label width=&quot;auto&quot; height=&quot;auto&quot; style=&quot;margin: 8px 0px 0px 0px; color: #93A5BB;&quot;&gt;所有派生控件都继承 Control 的通用属性&lt;/label&gt;" align="left" class="code-line" style="margin: 8px 0px 0px 0px;"></label>
                 <label width="100%" height="auto" text="auto* panel = FindControl&lt;VLayout&gt;(L&quot;demoPanel&quot;);" align="left" class="code-line" style="margin: 8px 0px 0px 0px;"></label>
-                <label width="100%" height="auto" text="panel-&gt;Append(L&quot;&lt;button width=\\&quot;120\\&quot; height=\\&quot;36\\&quot; text=\\&quot;运行任务\\&quot;&gt;&lt;/button&gt;&quot;);" align="left" class="code-line" style="margin: 8px 0px 0px 0px;"></label>
+                <label width="100%" height="auto" text="auto* item = new OrderItem(orderData);" align="left" class="code-line" style="margin: 8px 0px 0px 0px;"></label>
+                <label width="100%" height="auto" text="item-&gt;SetStyle(&quot;height:36px;&quot;, VisualState::Normal);" align="left" class="code-line" style="margin: 8px 0px 0px 0px;"></label>
+                <label width="100%" height="auto" text="panel-&gt;AddChild(item, true);" align="left" class="code-line" style="margin: 8px 0px 0px 0px;"></label>
                 <label width="100%" height="auto" text="panel-&gt;RefreshLayout();" align="left" class="code-line" style="margin: 8px 0px 0px 0px;"></label>
                 <label width="100%" height="auto" text="auto* saveBtn = FindControl&lt;Button&gt;(L&quot;saveBtn&quot;);" align="left" class="code-line" style="margin: 8px 0px 0px 0px;"></label>
                 <label width="100%" height="auto" text="saveBtn-&gt;AddEventHandler(Event::OnMouseClick, [](EventArgs* e) { });" align="left" class="code-line" style="margin: 8px 0px 0px 0px;"></label>

@@ -1,321 +1,77 @@
-﻿<vbox size="1360,860" class="app-root">
+<hbox class="app" style="padding: 18px 18px 18px 18px;">
+    <!-- 固定导航骨架放在布局文件中。 -->
+    <vbox width="220" class="sidebar" style="padding: 16px 16px 16px 16px;">
+        <label height="auto" text="EzUI minimal demo" class="title"></label>
+        <textbox id="search" height="38" placeholder="Filter pages..." class="search" style="margin: 14px 0px 0px 0px;"></textbox>
 
-    <hbox height="128" class="hero-bar" style="padding: 0px 24px 0px 24px;">
-        <vbox width="auto" height="auto" items-align="top left">
-            <label width="auto" height="auto" text="QuickUI" align="left" class="brand-word"></label>
-            <label width="auto" height="auto" text="EzUI 组件速查台 · 文档页已按头文件能力补全" align="left" class="brand-note" style="margin: 6px 0px 0px 0px;"></label>
-            <hbox width="auto" height="30" items-align="middle left" style="margin: 12px 0px 0px 0px;">
-                <label width="auto" height="28" text="18 Controls" align="center" class="hero-pill"></label>
-                <label width="auto" height="28" text="Header Driven" align="center" class="hero-pill-accent" style="margin: 0px 0px 0px 10px;"></label>
-                <label width="auto" height="28" text="vlist Demo Stage" align="center" class="hero-pill" style="margin: 0px 0px 0px 10px;"></label>
-            </hbox>
-        </vbox>
-        <spacer></spacer>
-        <vbox width="340" height="84" class="hero-summary" style="padding: 14px 16px 14px 16px;">
-            <label width="100%" height="18" text="当前工作流" align="left" class="summary-title"></label>
-            <label width="100%" height="auto" text="左侧检索控件，右侧直接查看 live demo、XML 写法和头文件速查，不再来回切页。" align="left" class="summary-copy" style="margin: 8px 0px 0px 0px;"></label>
-        </vbox>
-    </hbox>
+        <vlist id="navigation" style="margin: 14px 0px 0px 0px;">
+            <radiobutton text="Overview" tabcontrol="pages" checked="true" class="nav-item"></radiobutton>
+            <radiobutton text="Frame" tabcontrol="pages" class="nav-item" style="margin: 8px 0px 0px 0px;"></radiobutton>
+        </vlist>
+    </vbox>
 
-    <hbox class="app-body" style="padding: 20px 20px 20px 20px;">
-
-        <vbox width="304" class="sidebar-column">
-            <vbox height="126" class="brand-card" style="padding: 18px 18px 18px 18px;">
-                <label width="100%" height="18" text="Control Atlas" align="left" class="card-kicker"></label>
-                <label width="100%" height="auto" text="QuickUI 主界面现在按导航台来组织。" align="left" class="card-title" style="margin: 8px 0px 0px 0px;"></label>
-                <label width="100%" height="auto" text="搜索、目录和阅读区被拆成更清楚的三段，浏览节奏会更稳定。" align="left" class="card-note" style="margin: 8px 0px 0px 0px;"></label>
-            </vbox>
-
-            <vbox height="176" class="search-card" style="margin: 14px 0px 0px 0px; padding: 18px 18px 18px 18px;">
-                <label width="100%" height="18" text="搜索控件" align="left" class="card-title"></label>
-                <textbox id="search" height="40" placeholder="搜索 Button / Layout / View..." class="search-box" style="margin: 10px 0px 0px 0px;"></textbox>
-                <label id="searchMeta" width="100%" height="auto" text="18 个控件 · 基于头文件补全文档" align="left" class="meta-note" style="margin: 10px 0px 0px 0px;"></label>
-                <hbox height="28" items-align="middle left" style="margin: 12px 0px 0px 0px;">
-                    <label width="auto" height="26" text="输入" align="center" class="sidebar-chip-accent"></label>
-                    <label width="auto" height="26" text="展示" align="center" class="sidebar-chip" style="margin: 0px 0px 0px 8px;"></label>
-                    <label width="auto" height="26" text="布局 / 视图" align="center" class="sidebar-chip" style="margin: 0px 0px 0px 8px;"></label>
-                </hbox>
-            </vbox>
-
-            <hbox height="28" items-align="middle left" style="margin: 16px 0px 0px 0px;">
-                <label width="auto" height="18" text="控件目录" align="left" class="section-title"></label>
-                <spacer></spacer>
-                <label width="auto" height="24" text="Search + Jump" align="center" class="section-pill"></label>
-            </hbox>
-
-            <vlist id="navList" class="sidebar-list" style="margin: 12px 0px 0px 0px; padding: 12px 12px 12px 12px;">
-                <radiobutton text="Control" tabcontrol="tabMain" checked="true" class="menu-item" style="margin: 0px 0px 8px 0px;"></radiobutton>
-                <radiobutton text="Button" tabcontrol="tabMain" class="menu-item" style="margin: 0px 0px 8px 0px;"></radiobutton>
-                <radiobutton text="CheckBox" tabcontrol="tabMain" class="menu-item" style="margin: 0px 0px 8px 0px;"></radiobutton>
-                <radiobutton text="RadioButton" tabcontrol="tabMain" class="menu-item" style="margin: 0px 0px 8px 0px;"></radiobutton>
-                <radiobutton text="Label" tabcontrol="tabMain" class="menu-item" style="margin: 0px 0px 8px 0px;"></radiobutton>
-                <radiobutton text="TextBox" tabcontrol="tabMain" class="menu-item" style="margin: 0px 0px 8px 0px;"></radiobutton>
-                <radiobutton text="ComboBox" tabcontrol="tabMain" class="menu-item" style="margin: 0px 0px 8px 0px;"></radiobutton>
-                <radiobutton text="PictureBox" tabcontrol="tabMain" class="menu-item" style="margin: 0px 0px 8px 0px;"></radiobutton>
-                <radiobutton text="Slider" tabcontrol="tabMain" class="menu-item" style="margin: 0px 0px 8px 0px;"></radiobutton>
-                <radiobutton text="RichTextView" tabcontrol="tabMain" class="menu-item" style="margin: 0px 0px 8px 0px;"></radiobutton>
-                <radiobutton text="Frame" tabcontrol="tabMain" class="menu-item" style="margin: 0px 0px 8px 0px;"></radiobutton>
-                <radiobutton text="TabControl" tabcontrol="tabMain" class="menu-item" style="margin: 0px 0px 8px 0px;"></radiobutton>
-                <radiobutton text="HLayout" tabcontrol="tabMain" class="menu-item" style="margin: 0px 0px 8px 0px;"></radiobutton>
-                <radiobutton text="VLayout" tabcontrol="tabMain" class="menu-item" style="margin: 0px 0px 8px 0px;"></radiobutton>
-                <radiobutton text="HListView" tabcontrol="tabMain" class="menu-item" style="margin: 0px 0px 8px 0px;"></radiobutton>
-                <radiobutton text="VListView" tabcontrol="tabMain" class="menu-item" style="margin: 0px 0px 8px 0px;"></radiobutton>
-                <radiobutton text="TileListView" tabcontrol="tabMain" class="menu-item" style="margin: 0px 0px 8px 0px;"></radiobutton>
-                <radiobutton text="TreeView" tabcontrol="tabMain" class="menu-item"></radiobutton>
-            </vlist>
+    <!-- RadioButton 按同级顺序切换对应的 TabControl 页面。 -->
+    <tabcontrol id="pages" class="content" style="margin: 0px 0px 0px 16px;">
+        <vbox class="page" style="padding: 24px 24px 24px 24px;">
+            <label height="auto" text="Layout + code-behind" class="page-title"></label>
+            <label height="auto" text="main.cpp 绑定 TextChanged；固定结构和样式保留在 mainForm.htm。" class="copy" style="margin: 12px 0px 0px 0px;"></label>
         </vbox>
 
-        <spacer width="20"></spacer>
-
-        <vbox class="content-column">
-            <hbox height="178" class="viewer-hero" style="padding: 20px 22px 20px 22px;">
-                <vbox items-align="top left">
-                    <label width="100%" height="auto" text="控件速查 / Live Demo / XML / API" align="left" class="viewer-title"></label>
-                    <label width="100%" height="auto" text="右侧阅读区改成更明确的文档舞台：上层负责说明当前阅读方式，下层负责实际预览，视觉上不再是一整块平铺的大面板。" align="left" class="viewer-note" style="margin: 8px 0px 0px 0px;"></label>
-                    <hbox height="28" items-align="middle left" style="margin: 14px 0px 0px 0px;">
-                        <label width="auto" height="26" text="vlist 示例区" align="center" class="viewer-chip-accent"></label>
-                        <label width="auto" height="26" text="XML 写法" align="center" class="viewer-chip" style="margin: 0px 0px 0px 8px;"></label>
-                        <label width="auto" height="26" text="Header API" align="center" class="viewer-chip" style="margin: 0px 0px 0px 8px;"></label>
-                    </hbox>
-                    <label width="100%" height="auto" text="如果父容器需要 auto 宽高，子元素对应维度也必须能被确定；这个规则现在已经同步用于主界面和 ctrl_docs。" align="left" class="viewer-rule" style="margin: 12px 0px 0px 0px;"></label>
-                </vbox>
-                <spacer width="18"></spacer>
-                <vbox width="272" class="viewer-aside" style="padding: 16px 16px 16px 16px;">
-                    <label width="100%" height="18" text="阅读提醒" align="left" class="aside-title"></label>
-                    <label width="100%" height="auto" text="示例区优先滚动查看，避免固定面板把长内容裁掉；文档描述和示例都对齐到头文件能力。" align="left" class="aside-copy" style="margin: 8px 0px 0px 0px;"></label>
-                    <hbox height="28" items-align="middle left" style="margin: 14px 0px 0px 0px;">
-                        <label width="auto" height="26" text="Scroll Demo" align="center" class="aside-chip"></label>
-                        <label width="auto" height="26" text="Auto Chain" align="center" class="aside-chip-accent" style="margin: 0px 0px 0px 8px;"></label>
-                    </hbox>
-                </vbox>
-            </hbox>
-
-            <vbox class="viewer-shell" style="margin: 16px 0px 0px 0px; padding: 14px 14px 14px 14px;">
-                <hbox height="42" class="viewer-toolbar" style="padding: 0px 14px 0px 14px;">
-                    <label width="auto" height="18" text="Documentation Stage" align="left" class="toolbar-title"></label>
-                    <spacer></spacer>
-                    <label width="auto" height="24" text="可滚动文档页" align="center" class="toolbar-pill"></label>
-                    <label width="auto" height="24" text="示例 + 属性 + 代码" align="center" class="toolbar-pill-accent" style="margin: 0px 0px 0px 8px;"></label>
-                </hbox>
-
-                <tabcontrol id="tabMain" style="margin: 12px 0px 0px 0px;">
-                    <iframe src="res/ctrl_docs/Control.htm"></iframe>
-                    <iframe src="res/ctrl_docs/Button.htm"></iframe>
-                    <iframe src="res/ctrl_docs/CheckBox.htm"></iframe>
-                    <iframe src="res/ctrl_docs/RadioButton.htm"></iframe>
-                    <iframe src="res/ctrl_docs/Label.htm"></iframe>
-                    <iframe src="res/ctrl_docs/TextBox.htm"></iframe>
-                    <iframe src="res/ctrl_docs/ComboBox.htm"></iframe>
-                    <iframe src="res/ctrl_docs/PictureBox.htm"></iframe>
-                    <iframe src="res/ctrl_docs/Slider.htm"></iframe>
-                    <iframe src="res/ctrl_docs/RichTextView.htm"></iframe>
-                    <iframe src="res/ctrl_docs/frame.htm"></iframe>
-                    <iframe src="res/ctrl_docs/TabControl.htm"></iframe>
-                    <iframe src="res/ctrl_docs/HLayout.htm"></iframe>
-                    <iframe src="res/ctrl_docs/VLayout.htm"></iframe>
-                    <iframe src="res/ctrl_docs/HListView.htm"></iframe>
-                    <iframe src="res/ctrl_docs/VListView.htm"></iframe>
-                    <iframe src="res/ctrl_docs/TileListView.htm"></iframe>
-                    <iframe src="res/ctrl_docs/TreeView.htm"></iframe>
-                </tabcontrol>
-            </vbox>
-        </vbox>
-
-    </hbox>
-
-</vbox>
+        <!-- Frame 加载独立控件树，隔离内部 ID、class 和样式。 -->
+        <iframe src="res/frame_child.htm"></iframe>
+    </tabcontrol>
+</hbox>
 
 <style>
-    .app-root {
-        background-color: #0A1016;
-        color: #F3F7FD;
+    .app {
+        background-color: #0E1621;
+        color: #EAF1FA;
     }
 
-    .hero-bar {
-        background-color: #0E1620;
-        border-bottom: 1px solid #203245;
+    .sidebar,
+    .content,
+    .page {
+        background-color: #151F2C;
+        border: 1px solid #2A3B50;
+        border-radius: 12px;
     }
 
-    .brand-word {
-        color: #F7FBFF;
-        font-size: 34px;
+    .title,
+    .page-title {
+        color: #FFFFFF;
+        font-size: 22px;
         font-weight: bold;
     }
 
-    .brand-note {
-        color: #9FB0C5;
-        font-size: 13px;
+    .search {
+        background-color: #0D151F;
+        border: 1px solid #38506B;
+        border-radius: 8px;
+        color: #EAF1FA;
+        padding: 8px 10px 8px 10px;
     }
 
-    .hero-pill {
-        background-color: #172331;
-        border: 1px solid #2D435A;
-        border-radius: 14px;
-        color: #D8E4F4;
-        font-size: 12px;
-        padding: 0px 12px 0px 12px;
+    .nav-item {
+        height: 40px;
+        background-color: #111A25;
+        border: 1px solid #223247;
+        border-radius: 8px;
+        color: #C7D3E2;
+        padding-left: 12px;
     }
 
-    .hero-pill-accent {
-        background-color: #16374F;
-        border: 1px solid #3277A8;
-        border-radius: 14px;
-        color: #A1DCFF;
-        font-size: 12px;
-        padding: 0px 12px 0px 12px;
+    .nav-item:hover {
+        background-color: #1B2A3A;
     }
 
-    .hero-summary,
-    .brand-card,
-    .search-card,
-    .viewer-hero,
-    .viewer-shell,
-    .sidebar-list {
-        background-color: #121B27;
-        border: 1px solid #26384D;
-        border-radius: 20px;
+    .nav-item:checked {
+        background-color: #24557D;
+        border: 1px solid #3B7FAE;
+        color: #FFFFFF;
     }
 
-    .hero-summary {
-        background-color: #14202C;
-        border: 1px solid #34506A;
-    }
-
-    .brand-card {
-        background-color: #13202D;
-        border: 1px solid #2F4862;
-    }
-
-    .search-card {
-        background-color: #101924;
-        border: 1px solid #293C51;
-    }
-
-    .sidebar-list {
-        background-color: #0E151D;
-        border: 1px solid #223445;
-    }
-
-    .viewer-hero {
-        background-color: #131F2A;
-        border: 1px solid #2E465D;
-    }
-
-    .viewer-aside {
-        background-color: #0D151E;
-        border: 1px solid #2F4C67;
-        border-radius: 16px;
-    }
-
-    .viewer-shell {
-        background-color: #0F1721;
-        border: 1px solid #2B4158;
-    }
-
-    .viewer-toolbar {
-        background-color: #0B1219;
-        border: 1px solid #1E3041;
-        border-radius: 16px;
-    }
-
-    .summary-title,
-    .card-kicker,
-    .aside-title,
-    .toolbar-title {
-        color: #A8D7FF;
-        font-size: 12px;
-        font-weight: bold;
-    }
-
-    .summary-copy,
-    .card-note,
-    .meta-note,
-    .viewer-note,
-    .aside-copy,
-    .viewer-rule {
-        color: #93A5BB;
-        font-size: 12px;
-    }
-
-    .viewer-rule {
-        color: #B3DEFF;
-    }
-
-    .card-title,
-    .section-title {
-        color: #F3F7FD;
-        font-size: 15px;
-        font-weight: bold;
-    }
-
-    .search-box {
-        background-color: #0D141C;
-        color: #E7F0FF;
-        border: 1px solid #34485E;
-        border-radius: 12px;
-        padding: 8px 12px 8px 12px;
-        font-size: 13px;
-    }
-
-    .section-pill,
-    .sidebar-chip,
-    .viewer-chip,
-    .aside-chip,
-    .toolbar-pill {
-        background-color: #172331;
-        border: 1px solid #2B4158;
-        border-radius: 12px;
-        color: #D7E4F5;
-        font-size: 12px;
-        padding: 0px 10px 0px 10px;
-    }
-
-    .sidebar-chip-accent,
-    .viewer-chip-accent,
-    .aside-chip-accent,
-    .toolbar-pill-accent {
-        background-color: #16384E;
-        border: 1px solid #30709D;
-        border-radius: 12px;
-        color: #9FDDFE;
-        font-size: 12px;
-        padding: 0px 10px 0px 10px;
-    }
-
-    .menu-item {
-        height: 42px;
-        background-color: #0E161E;
-        color: #D9E3F0;
-        border: 1px solid #182430;
-        border-radius: 12px;
-        padding-left: 14px;
-        font-size: 13px;
-    }
-
-        .menu-item:hover {
-            background-color: #152130;
-            border: 1px solid #2B465F;
-        }
-
-        .menu-item:checked {
-            background-color: #194366;
-            border: 1px solid #2E73A5;
-            color: #FFFFFF;
-            font-weight: bold;
-        }
-
-    .viewer-title {
-        color: #F7FAFF;
-        font-size: 23px;
-        font-weight: bold;
-    }
-
-
-    #navList::-webkit-scrollbar {
-        /*设置前景色,也就是滑块的颜色*/
-        color: #F7FBFF;
-        width: 9px;
-        border-radius: 9px;
+    .copy {
+        color: #AFC0D3;
+        font-size: 14px;
     }
 </style>
-

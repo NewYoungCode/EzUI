@@ -35,6 +35,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	Application app;
 	app.EnableHighDpi();
+	app.SetResource("my_res");
 	MainFrm frm(lpCmdLine);
 	frm.Show();
 	frm.CenterToScreen();

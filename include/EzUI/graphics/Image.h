@@ -1,8 +1,9 @@
 ﻿#pragma once
 #include "core/UIDef.h"
+#include "core/String.h"
+
 #include "GraphicsTypes.h"
 #include "Bitmap.h"
-#include "utils/String.h"
 
 namespace ezui {
 	namespace detail {
@@ -15,27 +16,28 @@ namespace ezui {
 				UINT delay;
 			};
 		protected:
-			int m_width = 0;
-			int m_height = 0;
-			IWICBitmap* m_bitMap = NULL;//位图
-			std::vector<GifFrame>* m_frames = NULL;
+			int m_width;
+			int m_height;
+			IWICBitmap* m_bitMap;//位图
+			std::vector<GifFrame>* m_frames;
 
-			IWICBitmap* m_cacheBitmap = NULL;//缓存的D2D bitmap
+			IWICBitmap* m_cacheBitmap;//缓存的D2D bitmap
 			SizeF m_cacheSize;//缓存的D2D bitmap尺寸
-			ImageSizeMode m_cacheSizeMode = ImageSizeMode::Original;//缓存的D2D bitmap尺寸模式
+			ImageSizeMode m_cacheSizeMode;//缓存的D2D bitmap尺寸模式
 #ifdef DEBUG
 			//保存图片路径方便调试
 			UIString m_path;
 #endif
 		private:
-			void CreateFormStream(IStream* istram);
+			void CreateFromStream(IStream* stream);
 			void CreateFromFile(const std::wstring& file);
+			void CreateFromHBITMAP(HBITMAP hBitmap);
 			void Init(IWICBitmapDecoder* m_bitmapdecoder);
 			void CopyFrames(UINT fCount, IWICBitmapDecoder* m_bitmapdecoder);
 			HRESULT CreateD2DBitmap(ID2D1RenderTarget* render, ID2D1Bitmap** outD2DBitmap, const SizeF& targetSize);
 		public:
 			/// 图像可见性
-			bool Visible = true;
+			bool Visible;
 
 			/// 从现有图像拷贝构造
 			D2DImage(D2DImage* image);
@@ -44,7 +46,7 @@ namespace ezui {
 			D2DImage(HBITMAP hBitmap);
 
 			/// 从流对象创建图像
-			D2DImage(IStream* istram);
+			D2DImage(IStream* stream);
 
 			/// 从Bitmap对象创建图像
 			D2DImage(Bitmap* bitmap);
@@ -68,7 +70,7 @@ namespace ezui {
 			int Height();
 
 			/// 切换到下一帧(GIF动画),返回帧延迟毫秒数
-			virtual int NextFrame()override;
+			virtual int NextFrame()EZUI_OVERRIDE;
 
 			/// 保存图像到文件(支持png/jpg/bmp/gif/tiff格式)
 			bool Save(const std::wstring& fileName);
@@ -88,6 +90,5 @@ namespace ezui {
 	};
 
 	//EzUI图像类型 已预乘A通道BGRA的格式图像
-	using Image = detail::D2DImage;
+	typedef detail::D2DImage Image;
 };
-

@@ -87,7 +87,7 @@ void SetWindowExStyle(HWND hWnd) {
 	SetWindowPos(hWnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 }
 
-DesktopLrcFrm::DesktopLrcFrm(VlcPlayer* player) :_player(player) {
+DesktopLrcFrm::DesktopLrcFrm(VlcPlayer* player) :_player(player), _lrc(NULL) {
 	//关闭默认的窗口阴影
 	this->CloseShadow();
 	////获取桌面的窗口句柄
@@ -101,12 +101,8 @@ DesktopLrcFrm::DesktopLrcFrm(VlcPlayer* player) :_player(player) {
 	::GetClientRect(workWnd, &workRect);
 	::SetWindowPos(GetWindowHandle(), NULL, workRect.left, workRect.top, workRect.left + workRect.right, workRect.top + workRect.bottom, SWP_NOZORDER | SWP_NOACTIVATE);
 	//设置窗口布局显示歌词
-	_lrc.Style->FontSize = 20;
-	_lrc.Style->ForeColor = Color::White;
-	this->SetLayout(&_lrc);
-
-	//设置窗口背景为透明
-	this->GetLayout()->Style->BackColor = Color::Transparent;
+	this->LoadXml("res/xml/desktopLrc.htm");
+	_lrc = dynamic_cast<LrcPanel*>(this->GetLayout());
 
 	//绑定主frame层的绘制回调 frame层是最底层,所以这样做没问题
 	this->GetLayout()->AddEventHandler(Event::Paint, [this](void*, EventArgs* _args) {
@@ -127,9 +123,9 @@ DesktopLrcFrm::DesktopLrcFrm(VlcPlayer* player) :_player(player) {
 
 }
 void DesktopLrcFrm::LoadLrc(const UIString& lrcData) {
-	_lrc.LoadLrc(lrcData);
+	_lrc->LoadLrc(lrcData);
 }
 
 void DesktopLrcFrm::ChangePostion(int postion) {
-	_lrc.ChangePostion(postion);
+	_lrc->ChangePostion(postion);
 }

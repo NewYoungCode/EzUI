@@ -36,9 +36,9 @@ void LoginForm::OnNotify(Control* sender, EventArgs* args)
 	__super::OnNotify(sender, args);
 }
 
-void LoginForm::OnClose(bool& bClose)
+void LoginForm::OnClose(bool& allowClose)
 {
-	//bClose = false;
+	//allowClose = false;
 }
 
 LoginForm::~LoginForm()

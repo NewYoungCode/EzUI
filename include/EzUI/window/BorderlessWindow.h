@@ -10,21 +10,20 @@ namespace ezui {
 	class EZUI_API BorderlessWindow :public Window {
 		friend class detail::RenderContext;
 	private:
-		WindowShadow* m_shadowHost = NULL;
+		WindowShadow* m_shadowHost;
 		//是否第一次已经绘制
-		bool m_isFirstPaint = false;
+		bool m_isFirstPaint;
 		//窗口透明度(分层窗口下才有效)
-		float m_opacity = 1.0f;
+		float m_opacity;
 	private:
-		virtual void OnPaintBefore(PaintEventArgs* args)override;
-		/// 更新分层窗口
-		void UpdateLayeredWindow(HDC hdc, const Rect& rePaintRect);
-		using Window::OnPaintBefore;
+		void Init();
+		virtual void OnPaintBefore(PaintEventArgs* args)EZUI_OVERRIDE;
 	protected:
-		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)override;
-		virtual void OnMove(const Point& location) override;
-		virtual void OnSize(const Size& sz) override;
+		virtual LRESULT WndProc(UINT uMsg, WPARAM wParam, LPARAM lParam)EZUI_OVERRIDE;
+		virtual void OnMove(const Point& location) EZUI_OVERRIDE;
+		virtual void OnSize(const Size& sz) EZUI_OVERRIDE;
 		virtual void OnDpiChanged(float systemScale);//当dpi发生更改时
+		virtual void UpdateLayeredWindow(HDC hdc, const Rect& rePaintRect);/// 更新分层窗口
 	public:
 		explicit BorderlessWindow(WindowHandle owner = NULL, DWORD dwStyle = NULL, DWORD dwExStyle = NULL);
 
@@ -49,7 +48,7 @@ namespace ezui {
 		float GetOpacity();
 
 		//获取窗口DC(如果当前是非layeredwindow则需要调用ReleaseDC 内部使用)
-		virtual HDC GetDC()override;
+		virtual HDC GetDC()EZUI_OVERRIDE;
 
 		virtual ~BorderlessWindow();
 	};
@@ -59,22 +58,22 @@ namespace ezui {
 
 namespace ezui {
 	//用于实现窗口阴影效果的类
-	class EZUI_API WindowShadow
+	class EZUI_API WindowShadow :public IWindow
 	{
 		friend class BorderlessWindow;
 	private:
 		//窗口透明度
-		float m_opacity = 0.0f;
-		bool m_isUpdating = false;
-		Color m_shadowColor = Color::Transparent;
-		int m_shadowBorderWidth = 20;
-		float m_shadowScale = 1.0f;
-		int16_t m_radius = 0;//圆角
-		Bitmap* m_bufBitmap = NULL;
-		WindowHandle m_hWnd = NULL;
-		WindowHandle m_mainHWnd = NULL;
+		float m_opacity;
+		bool m_isUpdating;
+		Color m_shadowColor;
+		int m_shadowBorderWidth;
+		float m_shadowScale;
+		int16_t m_radius;//圆角
+		Bitmap* m_bufBitmap;
+		WindowHandle m_hWnd;
+		WindowHandle m_mainHWnd;
 		Size m_lastSize;
-		WindowBridge* m_windowContext = NULL;
+		WindowBridge* m_windowContext;
 	private:
 		bool RenderShadow(Bitmap* bitmap, int iSize, float radius);
 	protected:

@@ -110,7 +110,7 @@ void VlcPlayer::OpenPath(const UIString& filePath)
         task_ = nullptr;
     }
 
-    task_ = new Task([this, filePath]() {
+    task_ = new ezui::Thread([this, filePath]() {
         Stop();
         Invoke([this, filePath]() {
             const UIString path = filePath.replace("/", "\\");

@@ -8,9 +8,9 @@
 namespace ezui {
 
 #define EZUI_COLOR_SCALE 0.003921569f
-#define EZUI_TO_D2D_COLOR_F(color) D2D_COLOR_F{FLOAT(color.GetR() * EZUI_COLOR_SCALE), FLOAT(color.GetG() * EZUI_COLOR_SCALE), FLOAT(color.GetB() * EZUI_COLOR_SCALE),FLOAT(color.GetA() * EZUI_COLOR_SCALE)}
-#define EZUI_TO_D2D_RectF(rect) D2D_RECT_F{(FLOAT)rect.X,(FLOAT)rect.Y,(FLOAT)rect.GetRight(),(FLOAT)rect.GetBottom() }
-#define EZUI_TO_D2D_PointF(pt)  D2D1_POINT_2F{(FLOAT)pt.X,(FLOAT)pt.Y}
+#define EZUI_TO_D2D_COLOR_F(color) D2D1::ColorF(FLOAT(color.GetR() * EZUI_COLOR_SCALE), FLOAT(color.GetG() * EZUI_COLOR_SCALE), FLOAT(color.GetB() * EZUI_COLOR_SCALE), FLOAT(color.GetA() * EZUI_COLOR_SCALE))
+#define EZUI_TO_D2D_RectF(rect) D2D1::RectF((FLOAT)rect.X, (FLOAT)rect.Y, (FLOAT)rect.GetRight(), (FLOAT)rect.GetBottom())
+#define EZUI_TO_D2D_PointF(pt)  D2D1::Point2F((FLOAT)pt.X, (FLOAT)pt.Y)
 
 	//安全释放COM对象
 	template<typename Interface>
@@ -35,6 +35,14 @@ namespace ezui {
 		EZUI_API ID2D1Factory* GetD2D1Factory();
 		EZUI_API FontManager* GetFontManager();
 	};
+
+	EZUI_SCOPED_ENUM_BEGIN(ArrowDirection, int16_t) 
+	{
+		Up,//尖锐的地方朝上
+		Down,//尖锐的地方朝下
+		Left,//尖锐的地方朝左
+		Right//尖锐的地方朝右
+		} EZUI_SCOPED_ENUM_END(ArrowDirection)
 };
 
 namespace ezui {
@@ -42,31 +50,34 @@ namespace ezui {
 		class EZUI_API D2DGraphics {
 		public:
 			struct TransformState {
-				float Angle = std::numeric_limits<float>::quiet_NaN();
+				float Angle;
 				Point Offset;
 				PointF RotatePoint;
+				TransformState()
+					: Angle(std::numeric_limits<float>::quiet_NaN()) {
+				}
 			};
 		private:
-			bool m_begin = false;
-			FillStyle m_fillStyle = FillStyle::Solid;
-			float m_angle = std::numeric_limits<float>::quiet_NaN();
+			bool m_begin;
+			FillStyle m_fillStyle;
+			float m_angle;
 			Point m_offset;
 			PointF m_rotatePoint;
 			Size m_size;
-			WindowHandle m_hwnd = NULL;
-			HDC m_hdc = NULL;
-			ID2D1RenderTarget* m_render = NULL;
-			ID2D1SolidColorBrush* m_brush = NULL;
-			ID2D1Brush* m_fillBrush = NULL;
-			Font* m_font = NULL;
-			ID2D1StrokeStyle* m_pStrokeStyle = NULL;
-			D2D_COLOR_F m_color = {};
+			WindowHandle m_hwnd;
+			HDC m_hdc;
+			ID2D1RenderTarget* m_render;
+			ID2D1SolidColorBrush* m_brush;
+			ID2D1Brush* m_fillBrush;
+			Font* m_font;
+			ID2D1StrokeStyle* m_pStrokeStyle;
+			D2D_COLOR_F m_color;
 			std::list<ID2D1Layer*> m_layers;
 		private:
-			D2DGraphics(const D2DGraphics&) = delete;            // 禁止拷贝构造
-			D2DGraphics& operator=(const D2DGraphics&) = delete; // 禁止拷贝赋值
-			D2DGraphics(D2DGraphics&&) = delete;                 // 禁止移动构造
-			D2DGraphics& operator=(D2DGraphics&&) = delete;      // 禁止移动赋值
+			D2DGraphics(const D2DGraphics&);            // 禁止拷贝构造
+			D2DGraphics& operator=(const D2DGraphics&); // 禁止拷贝赋值
+			D2DGraphics(D2DGraphics&&);                 // 禁止移动构造
+			D2DGraphics& operator=(D2DGraphics&&);      // 禁止移动赋值
 		private:
 			ID2D1Brush* GetStrokeBrush();// 获取用于描边（Stroke）绘制的画刷。
 			ID2D1Brush* GetFillBrush();// 获取用于填充（Fill）绘制的画刷。
@@ -79,7 +90,7 @@ namespace ezui {
 			bool EndDraw();
 			virtual ~D2DGraphics();
 			//如果此对象是由WindowId创建的才支持重置大小
-			void ReSize(int width, int height);
+			void Resize(int width, int height);
 			void BindDC(HDC dc, int width, int height);
 			void SetFont(const std::wstring& fontFamily, float fontSize, int fontWeight = 0, FontStyle fontStyle = FontStyle::Normal);//必须先调用
 			//设置字体 绘制之前必须先调用
@@ -90,7 +101,7 @@ namespace ezui {
 			void SetStrokeStyle(StrokeStyle strokeStyle = StrokeStyle::Solid);
 			//设置填充样式 实心/斜线...
 			void SetFillStyle(FillStyle fillStyle = FillStyle::Solid);
-			void DrawTextLayout(const TextLayout& textLayout, const PointF & = { 0,0 });//根据已有的布局绘制文字
+			void DrawTextLayout(const TextLayout& textLayout, const PointF & = PointF(0, 0));//根据已有的布局绘制文字
 			void DrawString(const std::wstring& text, const RectF& _rect, ezui::TextAlign textAlign);//绘制文字
 			void DrawLine(const PointF& _A, const  PointF& _B, float width = 1);//绘制一条线
 			void DrawRectangle(const RectF& _rect, float _radius = 0, float width = 1);//绘制矩形
@@ -104,12 +115,12 @@ namespace ezui {
 			void SetTransform(float offsetX, float offsetY);//对画布进行旋转和偏移
 			void SetTransform(float startX, float startY, float angle);//设置旋转起始点与旋转角度
 			void SetTransform(float offsetX, float offsetY, float startX, float startY, float angle);
-			TransformState GetTransformState() const noexcept;
+			TransformState GetTransformState() const EZUI_NOEXCEPT;
 			void RestoreTransformState(const TransformState& state);
 			void PushAbsoluteAxisAlignedClip(const RectF& rectBounds);
 			void PopAbsoluteAxisAlignedClip();
 			bool IsAxisAlignedRectGeometry(const Geometry& geometry, const RectF& expectedRect, float epsilon = EZUI_FLOAT_EPSILON) const;
-			void DrawImage(Image* _image, const  RectF& tagRect, float opacity = 1);//绘制图像
+			void DrawImage(Image* _image, const  RectF& targetRect, float opacity = 1);//绘制图像
 			void DrawBezier(const PointF& startPoint, const Bezier& points, float width = 1);//贝塞尔线
 			void DrawBezier(const PointF& startPoint, std::list<Bezier>& points, float width = 1);//贝塞尔线
 			void DrawEllipse(const RectF& rectF, float width = 1);
@@ -117,6 +128,11 @@ namespace ezui {
 			void DrawPie(const RectF& rectF, float startAngle, float endAngle, float strokeWidth = 1);
 			void FillPie(const RectF& rectF, float startAngle, float endAngle);
 			void DrawPoint(const PointF& pt);
+			// 绘制箭头轮廓（线框模式）
+			// rect: 绘制区域
+			// dir : 箭头方向
+			// 实现：使用两条线段组成 V 形箭头，不填充
+			void DrawArrow(const RectF& rect, ArrowDirection dir);
 			void DrawArrow(const PointF& from, const PointF& to, float headAngle = 45.f, float width = 1.0f);//绘制箭头
 			void DrawArc(const RectF& rect, float startAngle, float sweepAngle, float width = 1);
 			void DrawArc(const PointF& center, float radius, float startAngle, float sweepAngle, float width = 1);
@@ -132,5 +148,5 @@ namespace ezui {
 	/// <summary>
 	/// Graphics绘图上下文(由D2DRenderTarget实现) 功能: 绘制形状、文本、图像、变换等渲染操作
 	/// </summary>
-	using Graphics = detail::D2DGraphics;
+	typedef detail::D2DGraphics Graphics;
 };

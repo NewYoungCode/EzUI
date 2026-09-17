@@ -6,7 +6,7 @@ class LoginForm :public Form
 {
 protected:
 	virtual void OnNotify(Control* sender, EventArgs* args)override;//重载事件通知
-	virtual void OnClose(bool& close)override;//当窗口关闭的时候
+	virtual void OnClose(bool& allowClose)override;//当窗口关闭的时候
 public:
 	LoginForm();
 	virtual ~LoginForm();

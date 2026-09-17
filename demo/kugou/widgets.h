@@ -26,6 +26,25 @@ public:
 	SearchItem(const Song& s);
 };
 
+class SearchStatusItem :public Label {
+	UIString message;
+	bool highlighted;
+public:
+	SearchStatusItem(const UIString& text, bool highlight = false);
+};
+
+// 底部播放器进度条
+class PlayerProgressBar :public Slider {
+public:
+	PlayerProgressBar(Object* ownerObj = NULL);
+protected:
+	virtual void OnTrackPaint(PaintEventArgs* args) override;
+	virtual void OnThumbPaint(PaintEventArgs* args) override;
+	virtual SizeF GetThumbSize() override;
+	virtual RectF GetTrackRect() override;
+	virtual RectF GetThumbRect() override;
+};
+
 //登录窗口
 class LoginFrm :public BorderlessWindow {
 protected:

@@ -2,8 +2,7 @@
 using namespace ezui;
 
 class MainFrm :public Window {
-	Task* task = NULL;
-	UILoader ui;
+	Thread* task = NULL;
 	//选项卡
 	TabControl* tab;
 
@@ -30,11 +29,10 @@ public:
 	void Init();
 	MainFrm(const UIString& cmdLine);
 	void OnPackDirChange();
-	void OnClose(bool& close)  override;
+	void OnClose(bool& allowClose)  override;
 	bool FileExists(const UIString& fileName);
 	void OnNotify(Control* sender, EventArgs* args)override;
 	void OnResFileChange(UIString& resFile);
-	virtual LRESULT WndProc(UINT msg, WPARAM wp, LPARAM lp);
 	virtual ~MainFrm();
 };
 
@@ -174,8 +172,8 @@ public:
 
 		name.SetHitTestVisible(false);
 
-		this->HoverStyle->BackColor = Color(100, 100, 100, 50);
-		this->Style->FontSize = 13;
-		this->ActiveStyle->FontSize = 14;
+		this->SetStyle("font-size:13px;", VisualState::Normal);
+		this->SetStyle("background-color:rgba(100,100,100,20%);", VisualState::Hover);
+		this->SetStyle("font-size:14px;", VisualState::Active);
 	}
 };

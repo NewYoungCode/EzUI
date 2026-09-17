@@ -20,6 +20,7 @@ private:
 	Frame* bottomFrame = nullptr;
 	VlcPlayer* player = nullptr;
 	VListView* vlistLocal = nullptr;
+	VListView* vlistCustomMedia = nullptr;
 	VListView* vlistSearch = nullptr;
 	TextBox* editSearch = nullptr;
 	LrcPanel* lrcPanel = nullptr;
@@ -38,7 +39,8 @@ private:
 	TrayIcon ntfi;
 	Timer* timer = nullptr;
 	IniConfig* listFile = nullptr;
-	Task* downloadTask = nullptr;
+	IniConfig* customMediaFile = nullptr;
+	ezui::Thread* downloadTask = nullptr;
 	DesktopLrcFrm* deskTopWnd = nullptr;
 
 	//========== 状态数据 ==========
@@ -52,7 +54,7 @@ private:
 	bool isSearchLoading_ = false;
 
 protected:
-	void OnClose(bool& bClose) override;
+	void OnClose(bool& allowClose) override;
 	void OnShow() override;
 	void OnKeyDown(WPARAM wparam, LPARAM lParam) override;
 	void OnNotify(Control* sender, EventArgs* args) override;
@@ -64,15 +66,20 @@ private:
 	void InitTrayIcon();
 	void InitControls();
 	void InitLocalPlaylist();
+	void InitCustomMediaList();
 	void InitEventHandlers();
 	void InitTimer();
 
 	//========== 播放控制 ==========
 	void PlaySong(const UIString& hash);
+	void PlayCustomMedia(Control* mediaItem);
 	void PlayMv(const UIString& mvhash, const UIString& songHash);
 	void UpSong();
 	void NextSong();
 	void TimerTick();
+	void AddRecentCustomMediaRecord(const UIString& hash, const UIString& path, const UIString& title, int duration);
+	void UpdateCustomMediaDuration(const UIString& hash, int duration);
+	void RemoveRecentSong(const UIString& hash);
 
 	//========== 搜索相关 ==========
 	void SearchSongs(const ezui::UIString& keyword);
@@ -87,7 +94,12 @@ private:
 
 	//========== 资源管理 ==========
 	void RequestNewImage(const Song& info);
+	void ResetPlaybackImages();
 	void ClearImages();
+
+	//========== 自定义音视频 ==========
+	void AddCustomMedia();
+	void AddCustomMediaFile(const UIString& filePath);
 
 public:
 	MainFrm();

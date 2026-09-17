@@ -5,9 +5,9 @@ using namespace ezui;
 class MainForm : public Window {
 public:
     MainForm();
-    void OnNotify(Control* sender, EventArgs* args) override;
-    void OnClose(bool& bClose) override;
-    ~MainForm() override;
+    void OnNotify(Control* sender, EventArgs* args) EZUI_OVERRIDE;
+    void OnClose(bool& allowClose) EZUI_OVERRIDE;
+    ~MainForm() EZUI_OVERRIDE;
 
 private:
     void ApplySearchFilter(const UIString& query);

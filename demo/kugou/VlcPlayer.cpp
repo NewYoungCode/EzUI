@@ -101,7 +101,7 @@ void VlcPlayer::OpenPath(const UIString& file_)
 		//上一次播放请求尚未完成
 		return;
 	}
-	m_task = new Task([&, file_]() {
+	m_task = new Thread([&, file_]() {
 #ifdef _DEBUG
 		OutputDebugStringA("-----------------------------------------------------------stop in..\n");
 #endif // _DEBUG
@@ -112,7 +112,7 @@ void VlcPlayer::OpenPath(const UIString& file_)
 			libvlc_media_t* pmedia = libvlc_media_new_path(m_vlc, file.c_str());
 			libvlc_media_parse(pmedia);//
 			libvlc_media_player_set_media(m_vlcplayer, pmedia);
-			m_duration = libvlc_media_get_duration(pmedia);//
+			m_duration = libvlc_media_get_duration(pmedia) / 1000;// Duration() 统一返回秒
 			libvlc_media_player_play(m_vlcplayer);
 			libvlc_media_release(pmedia);
 			});
